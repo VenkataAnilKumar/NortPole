@@ -1,0 +1,293 @@
+{
+  "product": "EvolvXSI",
+  "reviewed": "2026-11-02",
+  "status": "reference-only-superseded-by-provider-sdk-direction",
+  "sourceManifest": "manifest.json",
+  "mappings": [
+    {
+      "target": "apps/workspace",
+      "primary": "Sim application UI",
+      "strategy": "Reference only; no runtime dependency or source-copy selection",
+      "evidence": [
+        {
+          "path": "sim/apps/sim/app",
+          "commit": "093ea9ddb2f3e47facbc2dc42d4e523ba050dedb"
+        },
+        {
+          "path": "sim/apps/sim/components",
+          "commit": "093ea9ddb2f3e47facbc2dc42d4e523ba050dedb"
+        },
+        {
+          "path": "openagents-workspace/workspace/frontend",
+          "commit": "4178b1e4a84b7e54de1d4e7dbb1d87e7a7c793cf"
+        }
+      ],
+      "gap": "Separate the UI from upstream server modules; preserve existing behavior during the first fork. MiniApps/OpenRoom provide domain-view patterns.",
+      "previousCandidateStrategy": "Fork/extract candidate",
+      "selectedForImplementation": false
+    },
+    {
+      "target": "apps/control-plane",
+      "primary": "Sim auth, organization and authorization modules",
+      "strategy": "Reference only; no runtime dependency or source-copy selection",
+      "evidence": [
+        {
+          "path": "sim/packages/auth",
+          "commit": "093ea9ddb2f3e47facbc2dc42d4e523ba050dedb"
+        },
+        {
+          "path": "sim/packages/platform-authz",
+          "commit": "093ea9ddb2f3e47facbc2dc42d4e523ba050dedb"
+        },
+        {
+          "path": "sim/apps/sim/lib/organizations",
+          "commit": "093ea9ddb2f3e47facbc2dc42d4e523ba050dedb"
+        },
+        {
+          "path": "opengeni/packages/decisions",
+          "commit": "6af476612385066db6919c176809705017976d52"
+        }
+      ],
+      "gap": "Build the unified tenant registry, task API and approval-payload contract; existing tables cannot be shared across independently owned services.",
+      "previousCandidateStrategy": "Selective reuse plus custom services",
+      "selectedForImplementation": false
+    },
+    {
+      "target": "platform/execution",
+      "primary": "Sim executor as the first integration candidate",
+      "strategy": "Reference only; no runtime dependency or source-copy selection",
+      "evidence": [
+        {
+          "path": "sim/apps/sim/executor",
+          "commit": "093ea9ddb2f3e47facbc2dc42d4e523ba050dedb"
+        },
+        {
+          "path": "sim/apps/sim/background",
+          "commit": "093ea9ddb2f3e47facbc2dc42d4e523ba050dedb"
+        },
+        {
+          "path": "sim/apps/sim/sandboxes",
+          "commit": "093ea9ddb2f3e47facbc2dc42d4e523ba050dedb"
+        },
+        {
+          "path": "agno/libs/agno/agno/workflow",
+          "commit": "b21807bb6d86d2a62efeb42d492c04e566ee7f90"
+        },
+        {
+          "path": "opengeni/apps/worker",
+          "commit": "6af476612385066db6919c176809705017976d52"
+        },
+        {
+          "path": "minimax-code/packages/agent-runtime",
+          "commit": "39c1f42444c110cfeb770c8d64bf801dc727111c"
+        }
+      ],
+      "gap": "Prove checkpoint/recovery and approval semantics first. Agno and Opengeni are alternate runtimes; MiniMax Code/OpenAgentCore are optional coding backends, not concurrent owners of the same run.",
+      "previousCandidateStrategy": "One primary runtime; alternatives evaluated separately",
+      "selectedForImplementation": false
+    },
+    {
+      "target": "platform/agents",
+      "primary": "Agno agent/team definitions and Mini-Agent examples",
+      "strategy": "Reference only; no runtime dependency or source-copy selection",
+      "evidence": [
+        {
+          "path": "agno/libs/agno/agno/agent",
+          "commit": "b21807bb6d86d2a62efeb42d492c04e566ee7f90"
+        },
+        {
+          "path": "agno/libs/agno/agno/team",
+          "commit": "b21807bb6d86d2a62efeb42d492c04e566ee7f90"
+        },
+        {
+          "path": "minimax-mini-agent/mini_agent",
+          "commit": "d76a4f6389688cabda39c224a6cdfa274215d47c"
+        }
+      ],
+      "gap": "Define EvolvXSI manifests in contracts; do not copy framework agent objects into public APIs.",
+      "previousCandidateStrategy": "Definition patterns and adapters",
+      "selectedForImplementation": false
+    },
+    {
+      "target": "platform/skills",
+      "primary": "MiniMax skills",
+      "strategy": "Reference only; no runtime dependency or source-copy selection",
+      "evidence": [
+        {
+          "path": "minimax-skills/skills",
+          "commit": "60aaae52bb2af8162732751a4332f62a5fef518b"
+        },
+        {
+          "path": "minimax-mini-agent/mini_agent/skills",
+          "commit": "d76a4f6389688cabda39c224a6cdfa274215d47c"
+        }
+      ],
+      "gap": "Select document/report skills, declare dependencies and permissions, and validate output quality in isolated execution. Domain skills remain with their pack.",
+      "previousCandidateStrategy": "Adapt selected capability packages",
+      "selectedForImplementation": false
+    },
+    {
+      "target": "platform/hybrid",
+      "primary": "Sim providers and Agno model adapters",
+      "strategy": "Reference only; no runtime dependency or source-copy selection",
+      "evidence": [
+        {
+          "path": "sim/apps/sim/providers",
+          "commit": "093ea9ddb2f3e47facbc2dc42d4e523ba050dedb"
+        },
+        {
+          "path": "agno/libs/agno/agno/models",
+          "commit": "b21807bb6d86d2a62efeb42d492c04e566ee7f90"
+        },
+        {
+          "path": "kortix/apps/llm-gateway",
+          "commit": "68fd3646bca1a7af4aee50cd3c314f6225e86c35"
+        }
+      ],
+      "gap": "EvolvXSI must own data-placement decisions, policy-preserving fallback, budgets and usage identity. Multiple model clients do not establish a working hybrid policy.",
+      "previousCandidateStrategy": "Adapter reuse candidate",
+      "selectedForImplementation": false
+    },
+    {
+      "target": "platform/knowledge",
+      "primary": "Onyx knowledge backend",
+      "strategy": "Reference only; no runtime dependency or source-copy selection",
+      "evidence": [
+        {
+          "path": "onyx/backend/onyx/indexing",
+          "commit": "332b908f4a05090882ffaf7219d904c467bb7ce1"
+        },
+        {
+          "path": "onyx/backend/onyx/document_index",
+          "commit": "332b908f4a05090882ffaf7219d904c467bb7ce1"
+        },
+        {
+          "path": "onyx/backend/onyx/file_processing",
+          "commit": "332b908f4a05090882ffaf7219d904c467bb7ce1"
+        },
+        {
+          "path": "agno/libs/agno/agno/memory",
+          "commit": "b21807bb6d86d2a62efeb42d492c04e566ee7f90"
+        },
+        {
+          "path": "busabase/packages/busabase-core",
+          "commit": "a525be9c5e3d74a21eec022469f9973378a49448"
+        }
+      ],
+      "gap": "Validate edition-specific source ACLs and derived-content access. Choose one scoped-memory owner; Busabase is an optional work-product data reference, not an extra mandatory store.",
+      "previousCandidateStrategy": "Service integration candidate",
+      "selectedForImplementation": false
+    },
+    {
+      "target": "platform/integrations",
+      "primary": "Sim tools/connectors and Opengeni gateway",
+      "strategy": "Reference only; no runtime dependency or source-copy selection",
+      "evidence": [
+        {
+          "path": "sim/apps/sim/tools",
+          "commit": "093ea9ddb2f3e47facbc2dc42d4e523ba050dedb"
+        },
+        {
+          "path": "sim/apps/sim/connectors",
+          "commit": "093ea9ddb2f3e47facbc2dc42d4e523ba050dedb"
+        },
+        {
+          "path": "opengeni/packages/tool-gateway",
+          "commit": "6af476612385066db6919c176809705017976d52"
+        }
+      ],
+      "gap": "Adapt credentials, actor identity, approval binding, idempotency and provider rate limits. Source-ingestion connectors execute under knowledge ownership.",
+      "previousCandidateStrategy": "Selected adapters behind EvolvXSI tool contracts",
+      "selectedForImplementation": false
+    },
+    {
+      "target": "platform/evaluations",
+      "primary": "Agno/Onyx evaluation code and Sim testing helpers",
+      "strategy": "Reference only; no runtime dependency or source-copy selection",
+      "evidence": [
+        {
+          "path": "agno/libs/agno/agno/eval",
+          "commit": "b21807bb6d86d2a62efeb42d492c04e566ee7f90"
+        },
+        {
+          "path": "onyx/backend/onyx/evals",
+          "commit": "332b908f4a05090882ffaf7219d904c467bb7ce1"
+        },
+        {
+          "path": "sim/packages/testing",
+          "commit": "093ea9ddb2f3e47facbc2dc42d4e523ba050dedb"
+        }
+      ],
+      "gap": "Author pilot-specific cases and cross-service gates; framework unit tests do not prove EvolvXSI outcomes.",
+      "previousCandidateStrategy": "Reference harnesses plus custom business suites",
+      "selectedForImplementation": false
+    },
+    {
+      "target": "packages/pack-sdk",
+      "primary": "MiniApps plugin and Busabase package patterns",
+      "strategy": "Reference only; no runtime dependency or source-copy selection",
+      "evidence": [
+        {
+          "path": "minimax-miniapps/plugins",
+          "commit": "0f2183f14dd8b8ebffcd08ba42ad719a53a5f5b8"
+        },
+        {
+          "path": "busabase/packages/busabase-package",
+          "commit": "a525be9c5e3d74a21eec022469f9973378a49448"
+        }
+      ],
+      "gap": "Build EvolvXSI authoring/validation helpers; MiniApps desktop host plugins require adaptation to the chosen web extension boundary.",
+      "previousCandidateStrategy": "Reference plus new SDK",
+      "selectedForImplementation": false
+    },
+    {
+      "target": "packages/contracts",
+      "primary": "Existing workflow/event contracts",
+      "strategy": "Reference only; no runtime dependency or source-copy selection",
+      "evidence": [
+        {
+          "path": "sim/packages/workflow-types",
+          "commit": "093ea9ddb2f3e47facbc2dc42d4e523ba050dedb"
+        },
+        {
+          "path": "opengeni/packages/contracts",
+          "commit": "6af476612385066db6919c176809705017976d52"
+        },
+        {
+          "path": "minimax-agent-core/contracts",
+          "commit": "d5a9c31d18b11c07af01777cb09c4db099a051bd"
+        }
+      ],
+      "gap": "Define stable tenant-aware API/events and agent/skill/pack manifests. Compatibility with upstream internals must use explicit adapters.",
+      "previousCandidateStrategy": "Reference plus EvolvXSI-owned schemas",
+      "selectedForImplementation": false
+    },
+    {
+      "target": "infra/deployment",
+      "primary": "Sim deployment assets plus service-specific upstream deployment",
+      "strategy": "Reference only; no runtime dependency or source-copy selection",
+      "evidence": [
+        {
+          "path": "sim/docker",
+          "commit": "093ea9ddb2f3e47facbc2dc42d4e523ba050dedb"
+        },
+        {
+          "path": "sim/helm",
+          "commit": "093ea9ddb2f3e47facbc2dc42d4e523ba050dedb"
+        },
+        {
+          "path": "opengeni/deploy",
+          "commit": "6af476612385066db6919c176809705017976d52"
+        },
+        {
+          "path": "onyx/deployment",
+          "commit": "332b908f4a05090882ffaf7219d904c467bb7ce1"
+        }
+      ],
+      "gap": "Create a compatible deployment set, migration order, resource/network boundaries and recovery procedures. Compose files from unrelated products cannot simply be merged.",
+      "previousCandidateStrategy": "Adapt per selected component",
+      "selectedForImplementation": false
+    }
+  ],
+  "dependencyDecision": "docs/07-implementation/EvolvXSI_Provider-SDK-Decision.md"
+}

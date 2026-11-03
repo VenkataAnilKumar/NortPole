@@ -1,0 +1,100 @@
+{
+  "product": "EvolvXSI",
+  "downloaded": "2026-11-02",
+  "buildStatus": "paused",
+  "repositories": [
+    {
+      "directory": "agno",
+      "url": "https://github.com/agno-agi/agno.git",
+      "commit": "b21807bb6d86d2a62efeb42d492c04e566ee7f90",
+      "shallow": true
+    },
+    {
+      "directory": "busabase",
+      "url": "https://github.com/busabase/busabase.git",
+      "commit": "a525be9c5e3d74a21eec022469f9973378a49448",
+      "shallow": true
+    },
+    {
+      "directory": "kortix",
+      "url": "https://github.com/kortix-ai/suna.git",
+      "commit": "68fd3646bca1a7af4aee50cd3c314f6225e86c35",
+      "shallow": true
+    },
+    {
+      "directory": "minimax-agent-core",
+      "url": "https://github.com/MiniMax-AI/OpenAgentCore.git",
+      "commit": "d5a9c31d18b11c07af01777cb09c4db099a051bd",
+      "shallow": true
+    },
+    {
+      "directory": "minimax-code",
+      "url": "https://github.com/MiniMax-AI/minimax-code.git",
+      "commit": "39c1f42444c110cfeb770c8d64bf801dc727111c",
+      "shallow": true
+    },
+    {
+      "directory": "minimax-mini-agent",
+      "url": "https://github.com/MiniMax-AI/Mini-Agent.git",
+      "commit": "d76a4f6389688cabda39c224a6cdfa274215d47c",
+      "shallow": true
+    },
+    {
+      "directory": "minimax-miniapps",
+      "url": "https://github.com/MiniMax-AI/MiniMax-Code-MiniApps.git",
+      "commit": "0f2183f14dd8b8ebffcd08ba42ad719a53a5f5b8",
+      "shallow": true
+    },
+    {
+      "directory": "minimax-openroom",
+      "url": "https://github.com/MiniMax-AI/OpenRoom.git",
+      "commit": "02468154c4d99f8925916425bf444d672454fb3d",
+      "shallow": true
+    },
+    {
+      "directory": "minimax-skills",
+      "url": "https://github.com/MiniMax-AI/skills.git",
+      "commit": "60aaae52bb2af8162732751a4332f62a5fef518b",
+      "shallow": true
+    },
+    {
+      "directory": "onyx",
+      "url": "https://github.com/onyx-dot-app/onyx.git",
+      "commit": "332b908f4a05090882ffaf7219d904c467bb7ce1",
+      "shallow": true
+    },
+    {
+      "directory": "openagents",
+      "url": "https://github.com/OpenAgentsInc/openagents.git",
+      "commit": "1e3a10fa8eb36856063769dbce311bd953491c4b",
+      "shallow": true,
+      "role": "unrelated-project-retained",
+      "note": "OpenAgentsInc/openagents is not the collaboration product linked by openagents.org."
+    },
+    {
+      "directory": "opengeni",
+      "url": "https://github.com/Cloudgeni-ai/opengeni.git",
+      "commit": "6af476612385066db6919c176809705017976d52",
+      "shallow": true
+    },
+    {
+      "directory": "rerun",
+      "url": "https://github.com/rerun-build/rerun.git",
+      "commit": "a6d63a4b542674ddd002e51b39ba0df6e0807bcc",
+      "shallow": true
+    },
+    {
+      "directory": "sim",
+      "url": "https://github.com/simstudioai/sim.git",
+      "commit": "093ea9ddb2f3e47facbc2dc42d4e523ba050dedb",
+      "shallow": true
+    },
+    {
+      "directory": "openagents-workspace",
+      "url": "https://github.com/openagents-org/openagents.git",
+      "commit": "4178b1e4a84b7e54de1d4e7dbb1d87e7a7c793cf",
+      "shallow": true,
+      "role": "collaboration-workspace-reference"
+    }
+  ]
+}

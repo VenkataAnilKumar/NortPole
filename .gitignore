@@ -1,0 +1,10 @@
+.env
+.env.*
+!.env.example
+**/node_modules/
+**/__pycache__/
+**/.venv/
+sources/*/
+!sources/README.md
+!sources/manifest.json
+!sources/reuse-map.json

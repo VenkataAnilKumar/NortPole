@@ -1,0 +1,44 @@
+# EvolvXSI — user journey
+
+Status: **proposed journey for a candidate research report workflow** · Updated: 2026-11-02
+
+The first vertical is undecided. This journey makes the [first-workflow PRD](EvolvXSI_First-Workflow-PRD.md) concrete enough to test with practitioners and administrators. Adapt the task, sources, and output after discovery.
+
+## Practitioner journey
+
+| Stage | User action | System response | Risk and design response |
+| --- | --- | --- | --- |
+| 1. Start | Enter a question, scope, intended audience, and report format. | Validate required fields and show what data and tools the workflow may use. | Ambiguous request: allow revision before execution. |
+| 2. Plan | Review proposed outline, source coverage, and known gaps. | Show a concise plan and estimated next steps. | Wrong scope: practitioner edits or rejects plan. |
+| 3. Gather evidence | Inspect retrieved sources and passages. | Display source identity, permission status, timestamp, and passage link. | Missing or conflicting evidence: flag explicitly. |
+| 4. Draft | Open structured report and claim-to-source links. | Show progress, unsupported claims, and failures. | Hallucination: require evidence review before approval. |
+| 5. Review | Edit, ask for a targeted revision, or reject. | Preserve revisions and show what changed. | Automation overreach: no silent finalization. |
+| 6. Approve | Confirm final artifact. | Record approver, version, timestamp, and export. | Accountability: keep a clear approval record. |
+| 7. Revisit | Search prior task or reopen an issue. | Show source set, run history, feedback, and current artifact. | Stale evidence: mark when source freshness needs review. |
+
+## Administrator journey
+
+1. Create a tenant or workspace and assign roles.
+2. Connect one approved source and verify ingestion status.
+3. Define access rules, permitted model destinations, tool scopes, and retention.
+4. Review a versioned workflow and its evaluation results before publishing.
+5. Observe runs, failures, cost, and user feedback.
+6. Disable a workflow or connector and revoke access when needed.
+
+## Key states and transitions
+
+`Draft task → Submitted → Planning → Awaiting scope review → Running → Draft ready → Awaiting final review → Approved → Exported`
+
+These are task stages. Run states are queued, running, waiting_for_review, paused, succeeded, failed, and cancelled. Approval belongs to an artifact version; export is a separate event. Alternative task states: `Needs input`, `Failed`, `Rejected`, `Cancelled`, and `Archived`. A run must never appear approved when the practitioner has only reviewed an outline. Retry should preserve the original task and create an auditable new attempt where appropriate.
+
+## Usability questions for interviews
+
+- At which point does the practitioner want to see and change the plan?
+- Which source details are necessary to trust a citation?
+- Is review easier in a report view, claim list, or side-by-side source panel?
+- Which revisions are common, and how should they be requested?
+- Who can approve, export, reopen, or delete a task?
+
+## Journey success measures
+
+Time to first useful draft, practitioner review time, percentage of tasks completed, number of revisions, citation verification rate, and successful return to a previous task. Set targets only after observing the current process.

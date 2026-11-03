@@ -1,0 +1,79 @@
+{
+  "product": "EvolvXSI",
+  "created": "2026-11-02",
+  "status": "skeletons-created-builds-paused",
+  "repositories": [
+    {
+      "path": "apps/workspace",
+      "name": "evolvxsi-workspace",
+      "branch": "main",
+      "remote": null
+    },
+    {
+      "path": "apps/control-plane",
+      "name": "evolvxsi-control-plane",
+      "branch": "main",
+      "remote": null
+    },
+    {
+      "path": "platform/execution",
+      "name": "evolvxsi-execution",
+      "branch": "main",
+      "remote": null
+    },
+    {
+      "path": "platform/agents",
+      "name": "evolvxsi-agents",
+      "branch": "main",
+      "remote": null
+    },
+    {
+      "path": "platform/skills",
+      "name": "evolvxsi-skills",
+      "branch": "main",
+      "remote": null
+    },
+    {
+      "path": "platform/hybrid",
+      "name": "evolvxsi-hybrid",
+      "branch": "main",
+      "remote": null
+    },
+    {
+      "path": "platform/knowledge",
+      "name": "evolvxsi-knowledge",
+      "branch": "main",
+      "remote": null
+    },
+    {
+      "path": "platform/integrations",
+      "name": "evolvxsi-integrations",
+      "branch": "main",
+      "remote": null
+    },
+    {
+      "path": "platform/evaluations",
+      "name": "evolvxsi-evaluations",
+      "branch": "main",
+      "remote": null
+    },
+    {
+      "path": "packages/pack-sdk",
+      "name": "evolvxsi-pack-sdk",
+      "branch": "main",
+      "remote": null
+    },
+    {
+      "path": "packages/contracts",
+      "name": "evolvxsi-contracts",
+      "branch": "main",
+      "remote": null
+    },
+    {
+      "path": "infra/deployment",
+      "name": "evolvxsi-deploy",
+      "branch": "main",
+      "remote": null
+    }
+  ]
+}

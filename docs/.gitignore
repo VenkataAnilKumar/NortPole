@@ -1,0 +1,8 @@
+# Local artifacts and secrets
+.env
+.env.*
+!.env.example
+*.tmp
+~$*
+.DS_Store
+Thumbs.db
