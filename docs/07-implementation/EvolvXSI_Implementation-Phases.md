@@ -1,16 +1,44 @@
 # EvolvXSI — phased implementation plan
 
-Prepared: 2026-11-02 · Status: planning only; implementation and builds remain paused
+Updated: 2026-11-05 · Status: phased delivery proposal; application implementation has not started
 
 ## Baseline and implementation rules
 
-The workspace contains module skeletons in the EvolvXSI monorepo, a vertical-pack template, product/architecture documents, and a separate external collection of downloaded source references. Repository structure exists; application logic, dependency manifests, CI pipelines, deployment configuration and working features do not yet exist.
+The workspace contains module skeletons in the EvolvXSI monorepo, a vertical-pack template, product/architecture documents, and a separate external collection of downloaded source references. Repository structure and its tested validation tooling exist; application logic, dependency manifests, CI pipelines, deployment configuration and working product features do not yet exist.
 
 EvolvXSI owns the platform implementation. Use official provider SDKs behind internal adapters; downloaded agent/application platforms remain references. The [provider SDK decision](EvolvXSI_Provider-SDK-Decision.md) supersedes older fork/runtime-reuse suggestions. Ordinary infrastructure and language dependencies remain necessary. This plan neither installs packages nor authorizes a live API test or production release.
 
 The [first-workflow PRD](../04-specs/EvolvXSI_First-Workflow-PRD.md) owns acceptance; [repository structure](../06-technical/EvolvXSI_Repo-Structure.md) owns code boundaries; [deployment architecture](../06-technical/EvolvXSI_Deployment-Architecture.md) owns service/data responsibilities. Keep exact SDK/library versions and implementation selections in the reference/decision documents rather than product positioning.
 
 No delivery dates or effort estimates are committed. Estimate after P00 selects the workflow, language, deployment and initial inference path. Each phase requires a named accountable owner when implementation is scheduled; do not mark a phase complete because folders exist.
+
+## Delivery milestones
+
+This plan delivers the complete ten-layer EvolvXSI direction through gated increments. Cohere North remains a product benchmark; these phases are EvolvXSI engineering decisions, not a claim about North internals. All application phases below are planned. The completed repository/documentation work is a starting baseline, not completion of P00 or P01.
+
+| Milestone | Phases | Demonstrable outcome | Accountable role |
+| --- | --- | --- | --- |
+| M0: Decisions ready | P00 | Fixture stack and pilot decision register with owners and measurable gates | Product owner and technical lead |
+| M1: Working foundation | P01, P02 fixture gate | Authorized draft, explicit start, durable worker and persisted synthetic result in the workspace | Platform lead |
+| M2: Governed execution | P02 live-route gate, P03 | Approved inference plus exact-action approval, isolation and recovery controls | Runtime lead with security reviewer |
+| M3: Evidence workflow | P04–P06 | One source, evaluated definitions, cited artifact, review and authorized export | Knowledge and workspace leads |
+| M4: Validated vertical | Required P07/P08 subsets, P09 | Selected domain pack passes representative evaluation against a manual baseline | Domain workflow owner |
+| M5: Controlled release | P10 | Accepted pilot, tested restore/rollback and operational support | Release owner |
+| M6: Broader platform | P11A–P11F | Self-service Studio, reusable packs, enterprise surfaces and measured scale | Product and platform leads |
+
+Roles are responsibilities to assign in P00, not invented staff assignments. Each milestone requires recorded evidence and an acceptance decision. No calendar dates or staffing estimates are committed before the technical spike and customer scope are known.
+
+## Decision gates and work that can proceed
+
+| Gate | Decisions required | Work unlocked |
+| --- | --- | --- |
+| P00 fixture gate | Language/framework, local persistence/dispatch, identity test strategy, contract tooling, owners | P01 and P02 synthetic slice |
+| P00 live-route gate | Selected provider/model, credential mechanism, processing policy, budget and authorized test access | P02 live verification with synthetic inputs |
+| P00 pilot gate | Customer/workflow, source, artifact, review roles, deployment, retention, quality/cost/latency/recovery targets | Customer-specific P04/P09 scope and acceptance |
+| P03 safety gate | Working authorization, tool approval and required isolation | Protected data processing only with source grants and destination checks; external actions only after action-specific tests |
+| P10 release gate | Accepted quality, security, recovery, support and commercial evidence | Controlled production rollout |
+
+P03 can be developed and verified against the P02 fixture while live-route decisions are pending. P04/P05 can use synthetic data during that period. Their live customer acceptance still requires an approved route and the relevant pilot decisions. A delayed provider selection must not force a false P02 completion claim.
 
 ## Delivery coverage by engineering layer
 
@@ -102,7 +130,7 @@ Domain discovery may continue alongside domain-independent foundation work. Prot
 
 **Modules:** `services/control-plane`, `services/execution`, `services/model-gateway`, `packages/integrations`, `apps/workspace`, `infrastructure`.
 
-**Prerequisites:** P02; required before customer documents or side-effecting tools are enabled.
+**Prerequisites:** P02 fixture gate; live-route controls must also pass before live processing. Required before customer documents or side-effecting tools are enabled.
 
 1. Implement approval requests/decisions bound to tenant, run, step and immutable payload/artifact version. Reject stale, conflicting or changed-payload approvals.
 2. Recheck actor permissions and current policy when consuming approvals, resuming work and invoking tools. Add workflow/connector disable controls.
@@ -118,7 +146,7 @@ Domain discovery may continue alongside domain-independent foundation work. Prot
 
 **Modules:** `services/knowledge`, `packages/integrations`, `services/model-gateway`, `services/execution`, `apps/workspace`, `infrastructure`.
 
-**Prerequisites:** P01-P03.
+**Prerequisites:** P01, P02 fixture gate and P03; synthetic development can proceed before the live-route gate. Customer acceptance requires P02 live verification and the selected source grants.
 
 1. Implement one source-ingestion path with connection status, versioned documents, parsing, passages, access metadata and refresh/error reporting.
 2. Build permission-filtered text/vector retrieval with stable source identifiers and citation locations. Route any embedding/reranking request through approved processing destinations.
@@ -134,7 +162,7 @@ Domain discovery may continue alongside domain-independent foundation work. Prot
 
 **Modules:** `packages/agents`, `packages/skills`, `packages/contracts`, `packages/pack-sdk`, `services/execution`, `services/control-plane`, `evaluations`, `packs/_template`.
 
-**Prerequisites:** P01-P03; uses the provider and run contracts from P02.
+**Prerequisites:** P01, P02 fixture gate and P03; uses the inference and run contracts from P02. Live evaluation requires the live-route gate.
 
 1. Implement schema validation and immutable version identifiers for agent, skill and pack definitions. Pin dependencies and record content digests.
 2. Implement the registry lifecycle: draft, validate, evaluate, publish, activate and disable. Tenant grants remain separate from permissions requested by a manifest.
@@ -151,7 +179,7 @@ Domain discovery may continue alongside domain-independent foundation work. Prot
 
 **Modules:** `apps/workspace`, `services/control-plane`, `services/execution`, `services/knowledge`, `packages/skills`, `packages/contracts`.
 
-**Prerequisites:** P03-P05.
+**Prerequisites:** P03-P05; live end-to-end acceptance also requires the P02 live-route gate.
 
 1. Build task history, plan review, evidence navigation, structured draft display, user edits, revision requests, rejection and final approval.
 2. Persist artifact versions and claim-to-source links. Edits to approved content create a new version requiring fresh approval.
@@ -240,6 +268,57 @@ Domain discovery may continue alongside domain-independent foundation work. Prot
 
 **Exit evidence:** The next pack operates through existing shared contracts without duplicating identity, checkpoint or routing services. Added capabilities have customers, owners, evaluations and operating-cost evidence.
 
+## First working slice: implementation batches
+
+These batches are sequential reviewable changes within P01/P02. They are the proposed first coding scope once P00 fixture decisions are accepted. Each batch preserves the prior working path and includes its own relevant tests.
+
+| Batch | Change | Modules | Required verification |
+| --- | --- | --- | --- |
+| B01 | Toolchain, local profile, module commands and root CI for active modules | infrastructure/profiles/local, tools, root CI | Fresh setup, structure validation and reproducible check commands |
+| B02 | Task/run/error contracts, tenant and actor primitives, owned migrations | packages/contracts, packages/identity-policy, services/control-plane | Contract compatibility, invalid inputs and cross-tenant denial |
+| B03 | Save/list/reopen task drafts through authenticated API | services/control-plane, apps/workspace | Draft persists across restart and creates zero jobs; unauthorized reads/writes fail |
+| B04 | Explicit start with atomic run/job/outbox and idempotency | services/execution, packages/contracts | Same tenant/task/key returns one run; conflicting reuse rejects; crash between commit and dispatch loses no accepted run |
+| B05 | Durable worker with deterministic inference adapter and persisted events/results | services/execution, services/model-gateway | Duplicate dispatch, lease expiry, worker restart, bounded retries, cancellation and prohibited route tests |
+| B06 | Workspace progress/result view and fixture evidence report | apps/workspace, services/control-plane, services/execution | User completes draft-to-result flow; refresh/reconnect and tenant-denial cases pass |
+| B07 | Separate official provider adapter and live evidence report | services/model-gateway, evaluations | Real protocol behavior, allowed destination, budget/error handling and safe diagnostics with synthetic input |
+
+M1 ends at B06. B07 completes the live-route portion of P02; it is not required to demonstrate the synthetic fixture. Initial schema scope should cover the active slice; extend contracts with their owning feature rather than inventing every future API upfront. Select the simplest durable local topology that satisfies the acceptance cases. Separate cache, broker or object-store processes are introduced when the selected implementation actually needs them.
+
+## P11 expansion delivery stages
+
+P11 remains the canonical expansion phase in feature mappings. The following subphases make the full product direction deliverable. Entry requires P10 and adoption evidence; later capabilities are not removed from product scope because their delivery is staged. Sequence independent subphases according to customer demand after their prerequisites pass.
+
+| Stage | Scope and feature coverage | Primary modules | Dependencies | Exit evidence |
+| --- | --- | --- | --- | --- |
+| P11A: Agent and Automation Studio | Self-service agent/workflow configuration, candidate comparison, publication, schedules and disable controls; PF-01.05, PF-02.01, PF-03.02, PF-05.03, PF-09.02 | apps/workspace, services/control-plane, services/execution, evaluations | P05 publication gate, P07 selected automation, P10 | Author creates a version, compares evidence and activates it; stale/failed evidence and unauthorized changes fail; running work retains pinned versions |
+| P11B: Horizontal and vertical pack reuse | Horizontal bundles, second vertical, catalog, compatibility and upgrades; PF-02.03, PF-02.04 | packages/agents, packages/skills, packages/pack-sdk, packs/horizontal, packs/vertical | P05, P09, P10; self-service Studio optional | Two verticals reuse one evaluated horizontal bundle; upgrade and rollback preserve existing runs and grants; report actual shared code/configuration reuse |
+| P11C: Collaborative workspace and creation | Chat-to-task, libraries, scoped shared context, handoffs and generated applications; PF-01.03, PF-01.06, PF-06.02 | apps/workspace, services/knowledge, services/execution | P04, P06, P10; isolation before generated code runs | Recipient access/revocation works across content and notifications; citations retain permissions; generated apps are isolated, versioned and can be unpublished |
+| P11D: Developer and embedded ecosystem | Developer portal, selected SDK, versioned examples, MCP/tools/webhooks and embedded surfaces; PF-01.04, PF-03.03, PF-08.02 | apps/developer-portal, sdks, packages/contracts, packages/integrations, services/control-plane | P07 contracts, P10; create planned modules when this work starts | External developer completes a documented integration; scopes, duplicate/replayed events, credential rotation and channel authorization pass |
+| P11E: Enterprise and commercial surfaces | Selected enterprise provisioning and delegated administration, trust and support controls; PF-04.03, PF-01.07 | apps/workspace, apps/public-site, services/control-plane, packages/identity-policy, infrastructure | P10 deployment/retention/support baseline | Provisioning and revocation work end to end; support access is scoped/time-bound/audited; public commitments match verified evidence |
+| P11F: Scale and deployment breadth | Quality/spend analytics, alerts, additional inference and deployment profiles; PF-07.03, PF-09.03, PF-10.03 | infrastructure, services/model-gateway, evaluations, apps/workspace; all service owners | P08 selected route controls, P10; selected expansion workload | Measured load and tenant-fairness targets pass; overload is bounded; policy survives fallback; each new profile separately demonstrates upgrade, restore and rollback |
+
+P11E extends P10's minimum support/trust controls; those baseline controls cannot be deferred for a production customer. P11F extends baseline monitoring and recovery already required by P02/P10. Voice and model-training experiments require separate scoped decisions and evidence; neither blocks these platform stages.
+
+## Verification and release discipline
+
+| Verification level | When required | Evidence |
+| --- | --- | --- |
+| Repository and contract checks | Every affected change | Layout, links, module checks and schema compatibility; update consumers with contracts |
+| Service boundary tests | Every implemented state or policy boundary | Real persistence/dispatch where relevant, denied access, retries and failure handling |
+| End-to-end acceptance | Each completed milestone | Exact user journey through deployed components; fixtures labeled separately from live processing |
+| Quality evaluation | Definition publication and domain release | Immutable candidate/dependency/suite binding, recorded rubric and accepted thresholds |
+| Operational acceptance | P10 and each new deployment profile | Load, restore, migration, rollback, alerts and incident ownership |
+
+Tests must cover the risk of the change; passing repository checks alone never proves a service or product feature. Rollout stops for unauthorized disclosure, prohibited data transmission or an unapproved write regardless of average quality scores. External actions with uncertain outcomes require reconciliation before retry.
+
+Each implementation change records phase/batch IDs, affected PF/FR IDs, owner, scope, tests and migration impact. Each gate records the exact revision/artifacts, environment, input/suite versions, observed results, unresolved defects, acceptance decision and rollback procedure where applicable. Keep customer data and secrets out of repository evidence; store approved evidence artifacts in an access-controlled location and commit only permitted references or synthetic summaries.
+
+## Estimation and execution cadence
+
+After the P00 fixture gate, estimate B01–B06 from the chosen stack and available team. Re-estimate pilot phases after source and workflow discovery; estimate P11 stages individually after adoption priorities are known. Track work as planned, in progress, blocked, in review or accepted. A deferred optional pilot capability is marked deferred with a reason, never complete.
+
+At each milestone review, demonstrate the working behavior, compare evidence against the agreed gate, update the remaining dependencies and choose the next bounded scope. Parallel work is suitable for P04/P05 after shared contracts stabilize, and for selected P07/P08 work after their prerequisites. Assign explicit reviewers for cross-module changes.
+
 ## Requirement coverage and evidence
 
 | PRD | Main phases | Required evidence |
@@ -283,6 +362,81 @@ See [learning environments](../06-technical/EvolvXSI_Learning-Environments.md). 
 - P09: Validate one domain environment with expert-reviewed criteria, baseline and separated training/validation/held-out tasks.
 - P11 (optional): Compare instruction/skill/workflow optimization first; authorize model RL separately only with a trainable model/interface, approved data, compute budget and an accountable owner.
 - Promotion: Require held-out gains, policy/regression gates, digest-bound approval, controlled rollout and rollback before activating an improved candidate.
+
+## Reference-only implementation workstream
+
+**Owner direction confirmed: 2026-11-05.** The owner selected the attached local/web reference approach. This supersedes the intervening fork, copy and rebrand proposals. EvolvXSI will study product behavior and source implementations, then implement its own contracts, modules, interfaces and tests. No build-versus-fork prototype is scheduled by this plan.
+
+### Boundaries
+
+- Product and source research are allowed. Downloaded application platforms stay outside the product build and Git tree.
+- Do not copy or adapt upstream implementation files, snippets, prompts/skills, tests, frontend assets or deployment templates into EvolvXSI under this workstream. Renaming symbols or branding does not change that boundary.
+- Write original EvolvXSI code and acceptance cases from our requirements and documented design decisions. Credit the references in the design record without claiming their code as ours.
+- Ordinary libraries, databases and official provider clients remain separately selectable dependencies. Record purpose, version, license, maintenance and integration boundary before adoption. A reference-study entry never silently authorizes a dependency.
+- No application-platform fork, runtime adoption, copied connector or enterprise component is selected. Any future departure requires a new explicit owner decision; it is outside the planned work below.
+- Preserve the existing local collection and provenance manifests. Do not relabel all local projects commercially proven. NorthWritX remains outside EvolvXSI scope.
+
+### Evidence and reference selection
+
+Use the [commercial research](EvolvXSI_Commercial_Reference_Research.md) and [local source mapping](EvolvXSI_Source-Repository-Mapping.md) as starting registers. The current collection has 15 recorded project snapshots; Sim and Onyx are the primary local product references in the selected approach. Other local snapshots remain supplemental and must meet the commercial-evidence gate before they become primary phase references.
+
+Temporal, LiteLLM, Langfuse, Qdrant, Infisical, E2B, Appsmith, Dify, n8n and Airbyte are web-reviewed references, not newly acquired local checkouts. Their roles below are design-study assignments, not dependencies. Dify, n8n and Airbyte must be labeled source-available/restricted rather than treated as unrestricted open-source foundations. Mixed-license projects require component/edition boundaries in the record.
+
+For each selected study, verify official source availability and license at the exact revision, a commercial offering, named organizational adoption evidence, and a specific EvolvXSI feature question. Prefer detailed customer accounts; label named-user lists as weaker evidence. A customer story does not establish which edition or public-code feature was used. If evidence cannot be verified, record the limitation and use a stronger primary reference; do not delay independent implementation waiting for optional research.
+
+Local snapshots are historical evidence. Record the manifest revision separately from current upstream findings; do not claim a local checkout contains a feature shown on a newer website. Refresh official evidence at the relevant phase. Research conclusions are engineering judgments, not performance guarantees or license clearance for copying.
+
+### Phase-by-phase study and implementation
+
+| Phase | Primary references to study | EvolvXSI-owned output | Required acceptance |
+| --- | --- | --- | --- |
+| P00: Scope and decisions | Sim/Onyx product journeys; commercial register | Selected fixture/pilot scope, reference shortlist, dependency decision register, owner assignments | Every primary reference has provenance, commercial-evidence grade and a concrete study question; unresolved decisions remain explicit |
+| P01: Contracts and foundation | Sim authorization and API boundaries; Infisical identity concepts | Tenant/task/run contracts, state ownership, authentication primitives, local setup and root CI | Invalid contracts and cross-tenant access fail; dependencies are explicitly selected and pinned |
+| P02: First working slice | Temporal recovery semantics; Sim task/run UX; LiteLLM adapter behavior; Langfuse trace concepts | EvolvXSI atomic start, worker lifecycle, deterministic adapter, original workspace and run events | B01–B06 fixture tests pass, including zero-job draft, duplicate start and worker failure; B07 live evidence remains separate |
+| P03: Secure actions | Temporal recovery; Infisical scoped credentials; E2B isolation lifecycle | Approval bindings, policy checks, isolated tool boundary and reconciliation states | Changed payload and revoked authority fail; cancellation/resource limits work; uncertain writes are reconciled before retry |
+| P04: Knowledge fabric | Local Onyx ingestion/indexing; Qdrant retrieval concepts; Airbyte sync lifecycle | Original connector contract, ingestion, access-aware retrieval, source versions and derived-content dependencies | Denied/revoked documents remain unavailable in passages, generated text, traces and exports; sync/deletion cases pass |
+| P05: Definitions and quality gates | Sim/Dify publication journey; Langfuse datasets and evaluation flow | EvolvXSI agent/skill/pack manifests, registry, runner and publication gate | Failed, stale or mismatched evidence blocks publication; manifest permissions never grant authority |
+| P06: Complete workspace | Sim/Onyx evidence interaction; Appsmith operational screen patterns | Original review/edit/approve/export experience and accessible components | User completes the evidence workflow; edits invalidate approval; export rechecks access; keyboard flow passes |
+| P07: Automation and ecosystem | n8n trigger/operator journeys; Temporal durable scheduling; Airbyte connector failures | EvolvXSI schedules, events, integration adapters and manual recovery controls | Duplicate/replayed events do not repeat completed writes; disabled resources cannot start work; expired credentials fail safely |
+| P08: Hybrid inference | LiteLLM routing/capability concepts | EvolvXSI policy-preserving routing, budget accounting and selected adapters | Prohibited fallback fails before transmission; unknown usage is explicit; each enabled route has real compatibility evidence |
+| P09: First vertical pack | Relevant Dify workflow/Appsmith view patterns plus selected domain evidence | Original domain workflow, template, reviewer rules and evaluation suite | Domain owner accepts the recorded sample and agreed targets; generic reference products are not treated as complete vertical packs |
+| P10: Controlled production | Selected references' official deployment/recovery documentation; Langfuse operational experience | EvolvXSI release manifests, quotas, safe telemetry, runbooks and support controls | Tested restore, rollback, tenant isolation and release acceptance for the selected deployment |
+| P11A–P11F: Expansion | Sim/Dify Studio; n8n automations; Appsmith views; Onyx context; LiteLLM/Langfuse operations | Original self-service Studio, horizontal-pack reuse, collaboration, developer surfaces and scale controls | Apply each P11 subphase gate; prove reuse across verticals and validate every added deployment profile separately |
+
+The existing phase specifications and PF/FR mappings remain authoritative for detailed acceptance. The study matrix adds research inputs, not new requirements to integrate those products. Study only the selected component behavior needed for the current phase.
+
+### Work sequence within each phase
+
+1. **Scope:** Select PF/FR IDs and a bounded design question. Assign a module owner and reviewer.
+2. **Inspect:** Read the relevant official docs, pinned source paths and upstream tests; record what was actually inspected versus merely located.
+3. **Decide:** Describe our required behavior, state owner, failure modes, differences from the references and any separate dependency proposal.
+4. **Implement:** Write EvolvXSI code against its own contracts, using the approved repository boundaries. Keep research checkouts out of imports, build contexts and deployment images.
+5. **Verify:** Run original acceptance tests through the relevant persistence, authorization and service boundaries. A reference product's passing tests are not EvolvXSI evidence.
+6. **Review:** Check origin of added files/assets and dependency changes; reject unapproved upstream imports or copied platform material. Record the phase evidence and remaining gaps.
+
+### Reference record template
+
+Store a concise record alongside the affected architecture decision or reference document. Do not create a second competing product specification.
+
+| Field | Required content |
+| --- | --- |
+| Study ID and status | Stable ID; planned, inspected, decision recorded or verified |
+| Phase and features | Pxx/Bxx/P11x and relevant PF/FR IDs |
+| Owner and reviewer | Assigned people before implementation |
+| Question | Specific user behavior or engineering failure mode |
+| Source provenance | Official repository URL, immutable revision, exact paths, local manifest entry if applicable and inspection date |
+| Commercial evidence | Official offering and named adoption link; case study versus vendor list; edition uncertainty |
+| License boundary | Relevant revision's license files, enterprise exceptions and source-available classification; reference-only disposition |
+| Findings | Observed behavior and limitations; distinguish inspected code from documentation claims |
+| EvolvXSI decision | Original design, state owner, contracts, rejected alternatives and differences |
+| Dependencies | None selected, or link to a separate approved dependency decision |
+| Acceptance | Tests, suite/input versions, results and candidate commit; evidence location without customer data/secrets |
+
+### Immediate next scope
+
+Begin with P00 fixture decisions and four bounded studies: explicit task/run lifecycle in Sim, crash/retry semantics in Temporal, capability/destination boundaries in LiteLLM, and run correlation in Langfuse. Produce an EvolvXSI contract sketch and B01–B06 backlog before coding. Live provider choice can remain separate until B07. Onyx/Qdrant studies become active with P04; do not study every reference exhaustively before delivering the fixture.
+
+This strategy trades some initial implementation effort for direct control over EvolvXSI behavior. Estimates must include research, original implementation, integration and verification; no fork-based time saving is assumed. Dates remain unset until stack, staffing and pilot decisions are accepted.
 
 ## Feature acceptance tracking
 

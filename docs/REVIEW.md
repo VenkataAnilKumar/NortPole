@@ -101,3 +101,11 @@ Applied the modular monorepo direction: relocated the control-plane skeleton, al
 - Documented the checker's limits: layout and supported Markdown links do not establish application readiness, manifest schema validity or enforced dependency boundaries.
 
 No source modules, original documents or legacy placeholders were removed. No stack, pilot, dependency or production deployment was selected.
+
+## Multi-phase delivery plan — 2026-11-05
+
+Expanded the existing P00-P11 plan with M0-M6 milestones, explicit fixture/live/pilot decision gates, B01-B07 first-slice batches and P11A-P11F expansion stages. Added accountable roles, module scope, dependencies, verification levels, acceptance evidence and estimation rules. Updated the matching checklist and document index. Synthetic policy/knowledge work can proceed after the fixture gate while live-route decisions remain open; live customer acceptance cannot bypass those decisions. Existing PF/FR mappings and phase IDs remain valid. No application phase is marked complete and no implementation stack or customer target is invented.
+
+## Reference-only implementation plan — 2026-11-05
+
+Recorded the owner's selection of the attached reference-only approach and superseded intervening fork/rebrand proposals. Added a P00–P11 source-study matrix, evidence selection, reference record template, original implementation/test sequence and dependency boundary to the existing plan. Aligned the checklist, provider decision, source mapping and index. Corrected stale base-candidate, extraction, alternate-runtime and imported-skill wording. Research sources are inputs rather than dependencies; no copying, installation or application implementation occurred. Existing commercial evidence is linked as research provenance, not re-audited by this planning edit.

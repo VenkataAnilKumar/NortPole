@@ -23,7 +23,7 @@ The document names and numbered areas follow the convention used by the Qvora do
 | 06 Technical | [EvolvXSI_Feature-Architecture-Mapping.md](06-technical/EvolvXSI_Feature-Architecture-Mapping.md) | Draft | Complete PF module/phase mapping and first-workflow PRD traceability. |
 | 06 Technical | [EvolvXSI_API-Design.md](06-technical/EvolvXSI_API-Design.md) | Draft | Proposed public and internal API contracts. |
 | 06 Technical | [EvolvXSI_Data-Model.md](06-technical/EvolvXSI_Data-Model.md) | Draft | Conceptual task, run, evidence, approval, and tenant records. |
-| 07 Implementation | [EvolvXSI_Implementation-Phases.md](07-implementation/EvolvXSI_Implementation-Phases.md) | Draft | P00-P11 delivery plan with repository scope, dependencies, exit evidence and PRD coverage. |
+| 07 Implementation | [EvolvXSI_Implementation-Phases.md](07-implementation/EvolvXSI_Implementation-Phases.md) | Draft | P00-P11 delivery plan, M0-M6 milestones, first-slice batches, P11A-P11F expansion, dependencies and acceptance evidence. |
 | 07 Implementation | [EvolvXSI_Implementation-Checklist.md](07-implementation/EvolvXSI_Implementation-Checklist.md) | Draft | Phase-aligned execution tasks and release evidence checklist. |
 | 07 Implementation | [EvolvXSI_Documentation-Governance.md](07-implementation/EvolvXSI_Documentation-Governance.md) | Planning baseline | Documentation ownership, version control and release commit pinning. |
 | 07 Implementation | [EvolvXSI_Provider-SDK-Decision.md](07-implementation/EvolvXSI_Provider-SDK-Decision.md) | Owner direction | Official provider SDKs with EvolvXSI-owned logic; downloaded platforms remain references. |
@@ -66,3 +66,7 @@ Start with the [ten engineering layers](06-technical/EvolvXSI_System-Architectur
 ## Platform feature index
 
 The [feature catalog](04-specs/EvolvXSI_Feature-Spec.md#full-platform-feature-catalog) covers all ten engineering layers. The first-workflow PRD retains pilot requirements. The user stories, UI specification and implementation phases link the catalog to delivery.
+
+## Reference-only delivery plan
+
+The [reference-only implementation workstream](07-implementation/EvolvXSI_Implementation-Phases.md#reference-only-implementation-workstream) maps local and web studies to P00–P11, defines provenance/commercial-evidence gates and records the per-phase design/test workflow. The selected direction is EvolvXSI-owned implementation; application-platform copying and rebranding are not selected. Use the aligned [implementation checklist](07-implementation/EvolvXSI_Implementation-Checklist.md#reference-only-workstream-gates).

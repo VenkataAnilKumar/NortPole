@@ -145,3 +145,39 @@ Use the [layer delivery map](EvolvXSI_Implementation-Phases.md#delivery-coverage
 - [ ] Record each selected feature's accountable person, dependencies, acceptance cases and evidence; keep unselected expansion features planned.
 - [ ] Record P02 fixture and live-route decisions separately; never mark the full phase complete from fixture evidence alone.
 - [ ] For P11, verify self-service Studio, collaboration, horizontal-pack reuse and applicable public/support surfaces against their PF acceptance criteria.
+
+## Milestone and batch tracking
+
+- [ ] P00: Assign accountable people and record separate fixture, live-route and pilot decisions.
+- [ ] M1: Complete B01–B06 with accepted fixture evidence; do not mark live inference complete.
+- [ ] M2: Complete B07 and P03 with approved inference, policy and action-control evidence.
+- [ ] M3: Complete P04–P06 with citations, publication evaluation and authorized export.
+- [ ] M4: Complete P09 and only the P07/P08 subsets required by the selected vertical.
+- [ ] M5: Accept P10 operational, commercial and release evidence before production rollout.
+- [ ] M6: Schedule P11 subphases from adoption needs and record acceptance separately.
+
+See [implementation batches](EvolvXSI_Implementation-Phases.md#first-working-slice-implementation-batches) and [decision gates](EvolvXSI_Implementation-Phases.md#decision-gates-and-work-that-can-proceed). P03 and synthetic P04/P05 work can proceed after the fixture gate; live customer acceptance still requires the live-route and pilot gates.
+
+## P11 expansion acceptance
+
+- [ ] P11A: Author, evaluate, publish and disable a workflow through Studio; deny stale/failed evidence and preserve running versions.
+- [ ] P11B: Reuse a horizontal bundle in two verticals; verify compatibility, grants, upgrade and rollback.
+- [ ] P11C: Verify collaborative access, notifications, revocation and scoped context; isolate generated applications before execution.
+- [ ] P11D: Complete an external integration through documented SDK/API contracts; test channel identity, scopes, duplicate events and credential rotation.
+- [ ] P11E: Verify chosen enterprise provisioning, delegated roles, support access and evidence-backed public commitments.
+- [ ] P11F: Meet agreed workload targets, bounded overload and tenant fairness; separately accept each added inference/deployment profile.
+
+Use the [expansion delivery stages](EvolvXSI_Implementation-Phases.md#p11-expansion-delivery-stages) for module owners and dependencies. Estimate only selected scope with an assigned team. Baseline security, support, monitoring and recovery remain required before expansion.
+
+## Reference-only workstream gates
+
+- [ ] P00: Assign owners and select bounded studies with commercial evidence; retain supplemental local projects without promoting them automatically.
+- [ ] Each phase: Record official URL, immutable revision, inspected paths, local/web distinction, license boundaries and adoption evidence.
+- [ ] Each phase: Write the EvolvXSI design decision and original acceptance cases before implementing the selected behavior.
+- [ ] Each phase: Keep downloaded application platforms outside imports, build contexts and deployment images; review new code/assets for unapproved copying.
+- [ ] Each dependency change: Record a separate purpose/version/license/maintenance decision; reference selection is not dependency approval.
+- [ ] P02: Complete the four initial studies and B01–B06 fixture evidence; keep B07 live verification separate.
+- [ ] P04–P10: Apply the phase study matrix to knowledge, policy, quality and release work without adopting upstream runtime ownership.
+- [ ] P11: Apply the same provenance and acceptance gates to Studio, packs, portals and scaling.
+
+See the [reference-only implementation workstream](EvolvXSI_Implementation-Phases.md#reference-only-implementation-workstream). Application copying, forks and codebase rebranding are outside the selected plan.
