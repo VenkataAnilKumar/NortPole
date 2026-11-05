@@ -68,7 +68,7 @@ Verify tenant isolation, denied source access, invalid state transitions, idempo
 | POST /v1/runs/{id}/cancel | Stop pending work. | Block new tool calls; report completed side effects. |
 | POST /v1/runs/{id}/retry | Create a linked new run attempt. | Preserve side-effect deduplication. |
 | POST /v1/tasks/{id}/artifacts | Save an edited artifact version. | Edit permission and expected version. |
-| GET /v1/exports/{id} | Read status or download an export. | Recheck artifact and evidence access; expire links. |
+| GET /v1/exports/{id} | Read status or download an export. | Recheck artifact and evidence access on every new download request; do not rely on an unrevocable storage URL. |
 | POST /v1/workflows/{id}/versions | Create a draft version. | Workflow owner permission. |
 | POST /v1/workflows/{id}/versions/{version}/publish | Publish a tested version. | Passing release gates and publisher permission. |
 | POST /v1/workflows/{id}/disable | Block new runs and stop active runs at safe checkpoints. | Administrator permission and audit event. |
@@ -85,3 +85,9 @@ A repeated key within the tenant/task/start-operation scope with the same reques
 ## Layer boundaries
 
 L03 owns public schemas and task drafts. L04 records approval decisions. L05 owns explicit start and run state. A web, scheduled, or embedded caller must pass the same authorization and idempotency checks.
+
+## Development fixture definition before publication exists
+
+P02 uses a fixed, synthetic-only development workflow definition pinned by content digest and explicitly allowlisted in the local test configuration. It is not a published/activated customer package and must not expose a general publication bypass. The development profile rejects arbitrary workflow definitions and customer sources. The live-route test may use this same fixed definition with synthetic inputs and approved processing destinations.
+
+Before P05 acceptance, replace the fixture definition resolution with the evaluated registry/publication path. Production and customer profiles must reject the development bootstrap path. Add tests for digest mismatch, an unlisted definition and attempts to enable bootstrap in a customer/production profile. The first-workflow APIs otherwise require published, authorized versions as specified above.

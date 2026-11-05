@@ -4,7 +4,7 @@ Status: **draft for discovery** · Updated: 2026-11-05
 
 ## 1. Objective
 
-Deliver one production-style, evidence-based agent workflow on a reusable platform. The initial scenario used here is **research report production**. The domain, user, and report type must be confirmed before implementation. This PRD gives a testable shape to the first release without treating the scenario as a settled market decision.
+Deliver one production-style, evidence-based agent workflow on a reusable platform. The initial scenario used here is **research report production**. The domain, user, and report type must be confirmed before customer-specific implementation and pilot acceptance. Domain-independent synthetic fixture work may proceed after P00 fixture decisions. This PRD gives a testable shape to the first release without treating the scenario as a settled market decision.
 
 ## Reference pilot scenario
 
@@ -13,7 +13,7 @@ Use a question such as “Which operating procedures changed, and what should th
 ## 2. Primary user journey
 
 1. An administrator connects an approved knowledge source, sets access policy, configures permitted models and tools, and publishes a versioned workflow.
-2. A practitioner starts a task with a question, scope, and desired output.
+2. A practitioner saves a task draft with a question, scope, and desired output, then explicitly starts a run. Saving the draft dispatches no work.
 3. The system retrieves authorized evidence, records provenance, and produces a plan or outline.
 4. The practitioner reviews the plan and can refine scope before execution continues.
 5. The agent drafts a structured report with citations linked to source passages and flags missing or conflicting evidence.

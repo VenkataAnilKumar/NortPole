@@ -101,9 +101,9 @@ Domain discovery may continue alongside domain-independent foundation work. Prot
 
 **Prerequisites:** P00 technical decisions; domain-independent contracts can proceed while discovery continues.
 
-1. Define versioned task, run, event, error, approval, inference, artifact and manifest schemas. Keep provider response objects out of public contracts.
+1. Define the task, run, event, error and inference contracts needed by the fixture. Extend approval, artifact and manifest contracts in their owning phases. Keep provider response objects out of public contracts.
 2. Create service authentication and tenant/user authorization primitives. Implement minimal tenant, membership, project and task records with service-owned migrations.
-3. Create the local database, dispatch queue, cache, object-storage and secret-reference configuration. Use separate service credentials and queues/cache boundaries.
+3. Configure the selected durable local persistence/dispatch and secret-reference mechanism. Add a separate broker, cache or object store only when the active slice requires it. Preserve service-owned state and separate credentials.
 4. Add per-module dependency pinning, formatting, type checks and CI. Publish initial contract packages and a deployment manifest pinning compatible versions plus the reviewed documentation commit and approval record.
 
 **Deliverable:** Versioned contracts, authenticated task API, reproducible local environment and functioning CI for active modules.
@@ -441,3 +441,11 @@ This strategy trades some initial implementation effort for direct control over 
 ## Feature acceptance tracking
 
 Use the [platform feature catalog](../04-specs/EvolvXSI_Feature-Spec.md#full-platform-feature-catalog) alongside FR-01–FR-12. Track each implemented PF entry with a release target and acceptance evidence. Keep expansion entries in the roadmap until their prerequisites and rollout scope are agreed.
+
+## Pre-implementation readiness gate
+
+The documentation and skeleton are ready for P00 decisions, not yet a selected application stack. Before B01, assign the technical owner/reviewer and record language/framework, dependency tooling, durable local topology, development identity strategy and CI commands. No live provider or pilot vertical is required for B01–B06.
+
+P02 must implement the [restricted fixture definition](../06-technical/EvolvXSI_API-Design.md#development-fixture-definition-before-publication-exists) before P05 publication exists. Record the pinned definition and profile guard tests; customer/production profiles reject this bootstrap. P05 replaces it with evaluated registry resolution before customer release.
+
+Before B07, select the provider/model, authorized credential setup, destination rules and test budget. Before customer-specific acceptance, select the workflow owner, source, review roles, deployment constraints and measurable quality/latency/cost/recovery targets. These remain unresolved decisions rather than implied choices from the topology diagram.

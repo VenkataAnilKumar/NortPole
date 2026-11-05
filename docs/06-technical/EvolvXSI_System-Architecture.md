@@ -186,3 +186,9 @@ EvolvXSI owns the service logic and public contracts. Use official provider clie
 ## Controlled improvement extension
 
 See [learning environments](EvolvXSI_Learning-Environments.md) for offline candidate execution, verification and approval-bound promotion. Evaluation fixtures fit existing repositories; optional model training remains a later decision. Production definitions remain immutable and cannot self-modify.
+
+## Implementation bootstrap and integration hosts
+
+Before P05 implements publication, the P02 fixture uses the restricted synthetic-only development definition described in [API bootstrap](EvolvXSI_API-Design.md#development-fixture-definition-before-publication-exists). This never grants customer publication or activation rights.
+
+packages/integrations is shared adapter code. Execution owns action receipts/reconciliation; Knowledge owns source cursors and ingestion state; Control owns tenant integration grants/configuration. Separate connector worker processes scale under their host service ownership without introducing an unassigned connector database.

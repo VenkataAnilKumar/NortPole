@@ -88,7 +88,7 @@ These are conceptual contracts for P01 schema design, not implemented migrations
 | Run event | Execution | Run, sequence, event ID, safe payload. Unique run/sequence for ordered replay. |
 | Outbox event | Each producing service | Event ID, aggregate/version, safe payload, available time, delivery attempts. Written with its owner's state change; duplicate delivery expected. |
 | Inbox receipt | Each consuming service | Producer/event ID, result and processed time. Unique producer/event; commit receipt with local effect. External effects still require reconciliation. |
-| Tool invocation | Execution | Run/step, immutable action digest, approval ID, deduplication key and outcome. Integrations owns the corresponding remote receipt/reconciliation state. |
+| Tool invocation | Execution | Run/step, immutable action digest, approval ID, deduplication key and outcome. Execution owns remote receipts and reconciliation state for action tools. packages/integrations supplies stateless adapters; it has no independent schema. |
 | Source connection/document/passage | Knowledge | Versions and current ACL metadata. Integration credential references are opaque IDs; knowledge owns ingestion/access state. |
 | Memory entry | Knowledge | Tenant, scope kind (session/project/tenant), scope ID, content reference, source dependencies, creator, version, expiry, access policy. Explicit grants and current source access apply on every read. |
 | Source dependency | Owning derived-content service | Derived record/version, source document/version, access status. Execution owns artifact dependencies; knowledge owns memory dependencies. Revocation events invalidate projections, and reads verify current authority. |
@@ -101,3 +101,7 @@ Control-to-execution task and decision links are logical references. Registry pa
 ## Layer boundary checks
 
 Keep registry state (L03), approval decisions (L04), run state (L05), source versions (L06), model usage (L07), and evaluation results (L09) under their designated owners. Link records through tenant-scoped identifiers and versioned contracts.
+
+## Connector persistence ownership
+
+Execution persists action invocation receipts, idempotency scope and uncertain-outcome reconciliation. Knowledge persists source sync cursors, ingestion receipts, source health and ACL refresh state. Control owns tenant integration configuration and grants; credential material remains in the selected secret store. packages/integrations provides adapter contracts and code hosted by these services, not a fifth state-owning service. Each host writes only its own migrations and records.

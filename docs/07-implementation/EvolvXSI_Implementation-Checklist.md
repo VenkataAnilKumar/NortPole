@@ -15,9 +15,9 @@ The monorepo module skeletons and vertical template are in place. Those complete
 
 ## P01 — Contracts, identity and development foundation
 
-- [ ] Define versioned task, run, event, error, approval, inference, artifact and manifest schemas. Keep provider response objects out of public contracts.
+- [ ] Define the task, run, event, error and inference contracts needed by the fixture. Extend approval, artifact and manifest contracts in their owning phases. Keep provider response objects out of public contracts.
 - [ ] Create service authentication and tenant/user authorization primitives. Implement minimal tenant, membership, project and task records with service-owned migrations.
-- [ ] Create the local database, dispatch queue, cache, object-storage and secret-reference configuration. Use separate service credentials and queues/cache boundaries.
+- [ ] Configure the selected durable local persistence/dispatch and secret-reference mechanism. Add a separate broker, cache or object store only when the active slice requires it. Preserve service-owned state and separate credentials.
 - [ ] Add per-module dependency pinning, formatting, type checks and CI. Publish initial contract packages and a deployment manifest pinning compatible versions plus the reviewed documentation commit and approval record.
 - [ ] Publish deliverable: Versioned contracts, authenticated task API, reproducible local environment and functioning CI for active modules.
 - [ ] Record accountable owner and exit evidence: A developer can provision the local environment, migrate storage and call an authorized task endpoint. Negative tenant/access cases fail correctly. Contract consumers use the versioned interfaces from packages/contracts.
@@ -181,3 +181,12 @@ Use the [expansion delivery stages](EvolvXSI_Implementation-Phases.md#p11-expans
 - [ ] P11: Apply the same provenance and acceptance gates to Studio, packs, portals and scaling.
 
 See the [reference-only implementation workstream](EvolvXSI_Implementation-Phases.md#reference-only-implementation-workstream). Application copying, forks and codebase rebranding are outside the selected plan.
+
+## Final readiness checks before coding
+
+- [ ] Before B01: record the fixture stack/toolchain, durable local topology, development identity strategy, accountable owner/reviewer and CI commands.
+- [ ] P02: add a fixed synthetic definition with content digest and local allowlist; test mismatch/unlisted definitions and reject bootstrap in customer/production profiles.
+- [ ] P05: replace fixture definition resolution with evaluated publication/activation before customer release.
+- [ ] P03/P04: persist action receipts in Execution and source cursors in Knowledge; integrations remains adapter code with no independent database.
+- [ ] P06: recheck current authority on every new protected download/range request; an old storage URL cannot bypass revocation.
+- [ ] Before B07 and pilot acceptance: close the separately listed provider and customer decisions without marking fixture evidence as live acceptance.

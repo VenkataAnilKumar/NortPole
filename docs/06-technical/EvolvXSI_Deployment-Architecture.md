@@ -89,11 +89,11 @@ flowchart TB
 
 Connections show ownership and transport, not execution order. No database, queue, gateway, or model-serving endpoint is public. All service calls authenticate their caller and authorize tenant scope. Ingestion, workers and sandboxes also send redacted telemetry through the collector.
 
-## Concrete runtime choices
+## Proposed runtime choices
 
-Select the language and framework in P00 for EvolvXSI-owned services. Proposed common service contracts are JSON over HTTPS with streaming updates over SSE. PostgreSQL stores authoritative metadata and execution state. The knowledge service starts with text/vector indexes colocated with its own PostgreSQL data and can replace its search backend without exposing index internals to callers. Object storage provides versioned binary artifacts and source files. Redis dispatches work and holds ephemeral cache in separate instances.
+P00 selects the stack and topology. JSON over HTTPS with SSE, PostgreSQL authoritative state, colocated text/vector indexes, object storage and separate Redis dispatch/cache instances are proposals, not selected dependencies. The fixture may start with database-backed jobs/outbox and no separate broker, cache or object store if its tests pass. Add those components only when the selected workload needs them. Knowledge keeps index internals behind its contracts.
 
-An initial developer environment uses container composition. The production target uses a container cluster with separate CPU worker, sandbox and optional GPU node pools. Do not add a service mesh, several workflow engines or several vector stores before a demonstrated requirement. Exact hosting provider, application framework versions, model server and orchestration libraries remain implementation choices documented in the separate reference material.
+An initial developer environment uses container composition. A possible production target uses a container cluster with separate CPU worker, sandbox and optional GPU node pools; P00/P10 must select and validate the actual profile. Do not add a service mesh, several workflow engines or several vector stores before a demonstrated requirement. Exact hosting provider, application framework versions, model server and orchestration libraries remain implementation choices documented in the separate reference material.
 
 ## Deployable units
 
@@ -107,7 +107,7 @@ An initial developer environment uses container composition. The production targ
 | Knowledge API | Authorized search, citations, provenance and scoped memory. | Knowledge schema and index. | Search latency and index load. |
 | Ingestion workers | Fetch, parse, chunk, embed and refresh source ACLs. | Knowledge API/schema under its own credentials. | Ingestion backlog and source rate limits. |
 | Inference gateway | Destination policy, provider credentials, routing, fallback and usage accounting. | Inference schema and ephemeral cache. | In-flight inference, token throughput and budgets. |
-| Connector workers | Execute authorized remote tools, refresh integrations, record invocation outcome. | Connector schema; run linkage through contracts. | Provider rate limits and tool queue backlog. |
+| Connector workers | Host packages/integrations adapters for authorized remote actions or source sync. | Execution owns action receipts/reconciliation; Knowledge owns sync cursors/ACL state. No independent connector schema. | Provider rate limits and owner-specific queue backlog. |
 | Sandbox jobs | Per-task code/browser containers or stronger isolated machines for untrusted code. | Restricted temporary files; approved outputs uploaded through scoped access. | CPU/memory slots, job age and tenant quotas. |
 | Evaluation jobs | Execute versioned suites and produce release reports. | Versioned reports and evaluation records. | Explicit CI/batch concurrency. |
 | Private model servers | Load selected models and serve inference. | Model weights and capacity state. | GPU memory, queue wait and token throughput. |
@@ -124,9 +124,9 @@ External writes have deduplication keys and immutable approval bindings. A timed
 
 ## Storage isolation
 
-Start with a shared PostgreSQL server only if service schemas, credentials and migrations remain separate. Control owns configuration and decisions; execution owns runs/artifacts; knowledge owns source ACLs and indexes; integrations owns connector state; inference owns route accounting. Cross-service access uses APIs/events, never cross-schema business queries. A future customer-isolated deployment can move each owner to a separate database without changing public contracts.
+Start with a shared PostgreSQL server only if service schemas, credentials and migrations remain separate. Control owns configuration and decisions; execution owns runs/artifacts; knowledge owns source ACLs and indexes; execution owns tool receipts/reconciliation and knowledge owns source sync state; inference owns route accounting. Cross-service access uses APIs/events, never cross-schema business queries. A future customer-isolated deployment can move each owner to a separate database without changing public contracts.
 
-Object storage is private. Downloads pass through authorization or short-lived scoped links. Source revocation blocks derived artifacts and new downloads until redaction/regeneration. Already downloaded files cannot be recalled. Backups, retention, recovery objectives and geographic placement must be selected before production.
+Object storage is private. Protected downloads pass through an authorization endpoint that rechecks current artifact and source access for each new request, including range requests. A raw presigned storage URL that remains valid after revocation does not satisfy this requirement. Client download tokens must resolve through current authorization or be invalidated by the serving layer. Source revocation blocks derived artifacts and new downloads until redaction/regeneration. Already downloaded files cannot be recalled. Backups, retention, recovery objectives and geographic placement must be selected before production.
 
 ## Trust and policy enforcement
 
@@ -158,3 +158,7 @@ Task creation in control stores a draft only. The explicit run-start endpoint be
 ## Layer placement
 
 L10 owns deployment. Record application, source index, artifact storage, model inference and telemetry placement separately. L07 checks the current L04 destination policy before each inference request.
+
+## Fixture versus target topology
+
+The diagram is a target decomposition, not a list of processes required for B01. Select only the components needed for the fixture, retaining explicit state ownership and durable recovery. In the proposed database/broker topology, the database is authoritative and the broker is reconstructable. Equivalent ownership and recovery guarantees are required if P00 selects another stack. Existing local/staging/production folders are placeholders, not tested deployment profiles.

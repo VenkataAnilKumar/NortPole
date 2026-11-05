@@ -109,3 +109,23 @@ Expanded the existing P00-P11 plan with M0-M6 milestones, explicit fixture/live/
 ## Reference-only implementation plan — 2026-11-05
 
 Recorded the owner's selection of the attached reference-only approach and superseded intervening fork/rebrand proposals. Added a P00–P11 source-study matrix, evidence selection, reference record template, original implementation/test sequence and dependency boundary to the existing plan. Aligned the checklist, provider decision, source mapping and index. Corrected stale base-candidate, extraction, alternate-runtime and imported-skill wording. Research sources are inputs rather than dependencies; no copying, installation or application implementation occurred. Existing commercial evidence is linked as research provenance, not re-audited by this planning edit.
+
+## Final pre-implementation review — 2026-11-05
+
+**Verdict: ready to close P00 fixture decisions; application implementation is not yet unblocked by a selected stack.** Reference-only implementation and the modular monorepo are confirmed. No copying, rebranding, live provider setup or application implementation was performed in this review.
+
+| Finding | Severity | Resolution |
+| --- | --- | --- |
+| Connector receipts were assigned to a shared package and a nonexistent connector schema. | High | Execution owns tool receipts/reconciliation, Knowledge owns sync state, and Control owns configuration/grants. Aligned data, deployment, architecture and package guidance. |
+| P02 depended on publication that is only implemented in P05. | High | Defined a fixed synthetic-only development bootstrap with digest/allowlist checks and explicit rejection in customer/production profiles. P05 must replace it for customer use. |
+| Raw short-lived storage links could outlive source revocation. | High | Require current authorization on each new protected download/range request. Direct storage URLs cannot bypass this boundary. |
+| Proposed database/broker/cache choices appeared mandatory, contradicting the open fixture stack. | Medium | Labeled topology as proposed; reduced P01 to the components/contracts needed by the selected slice. |
+| PRD required a selected domain before any implementation, conflicting with domain-independent fixture work. | Medium | Customer decisions gate customer-specific work; P00 fixture decisions unlock B01–B06. |
+
+Remaining decisions, in order:
+
+1. **Before B01:** implementation language/framework and tooling; local durable storage/dispatch; development identity strategy; technical owner/reviewer and check commands.
+2. **Before B07:** provider/model, authorized credentials, processing destinations and test budget.
+3. **Before customer-specific work and acceptance:** vertical/customer workflow, source, artifact, reviewer roles, deployment/retention constraints and numeric acceptance targets.
+
+Validation: run repository structure/link checks, feature-to-module traceability checks and the nine tooling regression tests. These verify the planning baseline and tooling only. Runtime security, worker recovery, provider compatibility and production readiness still require the phased implementation evidence. External commercial references/licenses were not re-audited in this internal consistency review.
