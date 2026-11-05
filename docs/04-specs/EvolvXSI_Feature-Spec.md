@@ -1,6 +1,6 @@
 # EvolvXSI — feature specification
 
-Status: **draft for the candidate first workflow** · Updated: 2026-11-02
+Status: **draft for the candidate first workflow** · Updated: 2026-11-04
 
 This specification translates the [PRD](EvolvXSI_First-Workflow-PRD.md) into feature behavior. It is intentionally independent of implementation projects. The selected customer workflow may change field names, source types, and output format.
 
@@ -35,6 +35,10 @@ Show each run's steps, status, timings, evidence references, model and tool iden
 ## F-08 Evaluation and publication
 
 A workflow version has a representative test set with expected properties. The owner can compare citation quality, unsupported claims, task completeness, policy violations, and completion rate against a previous version. Publication records who approved the version and when. Publication requires passing agreed quality thresholds. Unauthorized disclosure, prohibited transmission, and unapproved external writes block rollout regardless of aggregate scores.
+
+## Cross-feature acceptance example
+
+Use F-01 to save a draft without starting execution. After explicit start, F-02 and F-04 must produce a finding linked to an accessible passage or mark it unsupported. Under F-05 and F-09, editing approved content requires fresh approval and losing source access blocks the affected export. F-07 must show the review history without disclosing restricted passages. Under F-08, replay the same cases before publishing a changed workflow.
 
 ## Shared rules
 

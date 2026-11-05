@@ -135,3 +135,8 @@ The public repository exposes agent, agent_loop, reward, tool_client, tool_serve
 | Training/inference design experiments | Compare simple candidate changes before authorizing model RL. |
 
 The adaptation above is our proposal, not a claim about Pokee's internal system. [Learning-environment architecture](../06-technical/EvolvXSI_Learning-Environments.md) defines EvolvXSI-owned contracts and controlled promotion. This does not supersede the provider SDK decision or permit automatic production self-modification.
+
+
+## Commercial reference research — 4 November 2026
+
+The [commercial reference review](EvolvXSI_Commercial_Reference_Research.md) evaluates Temporal, Langfuse, LiteLLM, Qdrant, Infisical, Appsmith, E2B, Dify, n8n and Airbyte against named adoption evidence and product-module relevance. It records source-license boundaries and maps each study to an EvolvXSI design question. Temporal and LiteLLM were already mentioned in earlier research. All entries remain reference only. This review adds research candidates to the documentation. The downloaded-source manifest continues to describe only existing local snapshots.

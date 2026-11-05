@@ -1,6 +1,6 @@
 # EvolvXSI — user journey
 
-Status: **proposed journey for a candidate research report workflow** · Updated: 2026-11-02
+Status: **proposed journey for a candidate research report workflow** · Updated: 2026-11-04
 
 The first vertical is undecided. This journey makes the [first-workflow PRD](EvolvXSI_First-Workflow-PRD.md) concrete enough to test with practitioners and administrators. Adapt the task, sources, and output after discovery.
 
@@ -38,6 +38,10 @@ These are task stages. Run states are queued, running, waiting_for_review, pause
 - Is review easier in a report view, claim list, or side-by-side source panel?
 - Which revisions are common, and how should they be requested?
 - Who can approve, export, reopen, or delete a task?
+
+## From a question to a reusable team workflow
+
+A practitioner opens a question in the workspace and selects the team's published workflow. The review screen keeps each finding beside the permitted passage that supports it. If two versions disagree, the practitioner can inspect both and refer the uncertainty to the reviewer. After approval, a colleague reopening the task sees only material their own access permits. When the task repeats, the workflow owner can use reviewer corrections as cases for evaluating the next version.
 
 ## Journey success measures
 

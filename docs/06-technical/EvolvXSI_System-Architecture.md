@@ -1,10 +1,57 @@
 # EvolvXSI — system architecture
 
-Status: proposed for review; implementation paused · Updated: 2026-11-02
+Status: proposed for review; implementation paused · Updated: 2026-11-04
 
 For deployable services, storage, network boundaries and scaling, see the [deployment architecture](EvolvXSI_Deployment-Architecture.md).
 
-## Architecture
+## Horizontal platform and vertical packs
+
+EvolvXSI gives practitioners one workspace for questions, tasks, evidence, reviews, and approved outputs. Workflow authors use Agent and Automation Studio to test and publish definitions. Administrators configure access and processing destinations. Developers invoke the same task and run contracts through the developer portal. Cohere North informs the breadth of these surfaces. EvolvXSI's design centers on whether a team can produce and verify a recurring deliverable within its own policies.
+
+```mermaid
+flowchart TB
+  Studio[Agent and Automation Studio] --> Registry[Control plane and version registry]
+  Pack[Vertical pack] --> Registry
+  Shared[Shared agents and skills] --> Registry
+  Admin[Enterprise admin] --> Registry
+  Eval[Evaluation suites] -->|Publication evidence| Registry
+  UI[Practitioner workspace] -->|Save draft| Registry
+  UI -->|Start run| Runtime[Secure execution runtime]
+  Dev[Developer portal and API clients] -->|Start run| Runtime
+  Runtime -->|Check grants and pin versions| Registry
+  Runtime --> Knowledge[Knowledge and context]
+  Runtime --> Gateway[Hybrid model gateway]
+  Knowledge -->|Approved embedding or reranking| Gateway
+  Gateway --> Models[Local, private or cloud inference]
+  Runtime --> Tools[Scoped tools and isolated workers]
+  Runtime --> History[Run events, artifacts and audit]
+  History --> UI
+  History -->|Policy-filtered evidence| Eval
+```
+
+### What each layer owns
+
+| Layer | Responsibility |
+| --- | --- |
+| Experience | The workspace shows the result beside its sources and approval state. Studio manages definitions and automations. Admin and developer views use the same tenant boundaries. |
+| Vertical packs | A versioned pack supplies domain workflows, terminology, source mappings, templates, review requirements and evaluation cases. Its manifest pins shared skills and declares requested tools. |
+| Horizontal control plane | Owns tenant membership, task drafts, activation grants, policy versions, the registry and approval decisions. Publication binds passing evaluation evidence to the exact candidate and dependencies. |
+| Horizontal execution | Owns the run, checkpoints, cancellation, artifact versions and recovery. Both a scheduled trigger and a manual start enter the same authorized run lifecycle. |
+| Knowledge, inference and tools | Knowledge filters passages and tracks provenance. The gateway enforces processing destinations and budgets. Integrations resolve scoped credentials and apply action limits. |
+| Operations and evaluation | Correlated events explain outcomes, latency, failures and available cost. Evaluation compares versions on fixed cases. Deployment provides isolation, telemetry, storage and recovery. |
+
+### Pack activation and a single run
+
+Consider a manufacturing quality pack as an illustration. Its author defines what counts as a material procedure change, the brief's required fields and the reviewer's role. Shared skills compare documents and attach citations. A tenant administrator activates a tested version and grants access to selected sources and tools.
+
+1. A practitioner saves a question as a draft, then explicitly starts the comparison. Execution validates authority, pins the activated versions and atomically records the run, job and dispatch intent.
+2. Knowledge returns permitted passages from the old and new procedures. The gateway checks the permitted destination before model processing. When policy permits only local inference and that route is unavailable, the run reports the problem.
+3. Execution produces a versioned brief with passage references and flags unsupported findings. The reviewer approves that exact version. A subsequent edit requires a fresh decision.
+4. On reopening or exporting the brief, EvolvXSI checks current access to the artifact and its sources. Revoked access withholds affected content until redaction or regeneration. Run history and evaluation evidence follow the same access policy.
+
+The pack defines the meaning and quality of the deliverable. The platform owns identity, run history, routing, approvals and export authorization across all packs. Shared agents and skills can be referenced directly. Downloaded open-source projects remain design references only.
+
+## Execution and service boundaries
 
 Use independently versioned repositories and services with clear ownership. Definitions and packages have independent releases without becoming separate services. Scale worker execution, ingestion, inference, and connector workloads independently.
 

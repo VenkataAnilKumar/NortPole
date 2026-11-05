@@ -1,6 +1,6 @@
 # EvolvXSI — competitive analysis
 
-Status: **initial landscape; revisit after segment selection** · Updated: 2026-11-02
+Status: **initial landscape; revisit after segment selection** · Updated: 2026-11-04
 
 ## Comparison frame
 
@@ -17,6 +17,18 @@ The statements below are limited to capabilities described by each vendor's own 
 | [ServiceNow AI Agents](https://www.servicenow.com/products/ai-agents.html) | AI Agent Studio and agentic workflows sit within ServiceNow's workflow platform. | ServiceNow-centered buyers may have a strong incumbent for IT, HR, and service processes. |
 
 Each row is a vendor claim, not an independent assessment. Compare actual task completion, source access, approval flow, evaluation, deployment, and total cost in the pilot environment.
+
+## Cohere North as the horizontal benchmark
+
+| Cohere's published offer | Implication for the EvolvXSI proposal |
+| --- | --- |
+| A workspace combining agents, skills, libraries, and memory | A buyer can already look for these capabilities together. Test how quickly a practitioner finds and verifies evidence within one task. |
+| Natural-language automations, analytics, and artifact creation | Compare reviewer time and corrections per approved deliverable across the same representative tasks. |
+| Administrative controls and private deployment options | Ask the buyer which data can leave its environment. Demonstrate allowed and denied processing routes against that policy. |
+
+These descriptions come from [Cohere's North product page](https://cohere.com/north), reviewed 4 November 2026. The comparison concerns published product capabilities. Comparative performance and any advantage for EvolvXSI remain open.
+
+For a pilot, use the same source documents, user permissions, output format, and rubric for each available option. Record whether reviewers can trace claims, resolve unsupported statements, recover a run, and verify the approved version. Mark unavailable observations as untested.
 
 ## Non-platform alternatives
 

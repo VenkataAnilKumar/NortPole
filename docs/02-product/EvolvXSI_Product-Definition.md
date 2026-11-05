@@ -1,6 +1,6 @@
 # EvolvXSI — product definition
 
-Status: **draft; first market not selected** · Updated: 2026-11-02
+Status: **draft; first market not selected** · Updated: 2026-11-04
 
 ## Definition
 
@@ -18,6 +18,21 @@ The product is valuable when a team can complete a real workflow with less effor
 | Model access | Use approved inference destinations within budget and quality rules. | Deny prohibited destinations before transmission. |
 | Trust and operations | Show evidence, status, errors, feedback, and evaluation. | Make outcomes reviewable and supportable. |
 | Vertical solution | Package domain workflows and evaluation. | Shares platform identity, audit, and policy controls. |
+
+## What users can do across the horizontal platform
+
+| Product area | First workflow | Broader product direction |
+| --- | --- | --- |
+| Unified workspace | Start a task, reopen its run, inspect evidence, and approve an output. | Move between chat, team libraries, tasks, and shared artifacts. |
+| Agent and Automation Studio | An owner publishes one tested workflow version. | Authors configure agents, test skills, schedule automations, inspect failures, and disable a schedule. |
+| Knowledge and context | Retrieve permitted passages from one source and preserve citation locations. | Manage shared libraries and memory with explicit user, project, and tenant scopes. |
+| Hybrid model access | Apply the administrator's destination policy before processing content. | Choose among local, private, and cloud routes within the same policy, including during fallback. |
+| Secure agent runtime | Show progress, pause for review, and recover interrupted work. | Delegate bounded tasks and run approved tools with scoped access. |
+| Enterprise admin | Grant access, configure destinations, and disable a workflow or connector. | Manage team policy, spend, and audit history across workflows. |
+| Developer portal | Document how an authorized caller starts a task and reads its result. | Provide worked integration examples and versioned extension contracts. |
+| Observability and evaluation | Inspect run history and compare workflow versions on a fixed set of tasks. | Compare quality, cost, and recovery across teams and deployments. |
+
+EvolvXSI owns these product contracts. Downloaded open-source projects are design references only.
 
 ## Initial offer hypothesis
 

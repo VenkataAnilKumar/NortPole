@@ -1,6 +1,6 @@
 # EvolvXSI — UI specification
 
-Status: **proposed screens for the candidate first workflow** · Updated: 2026-11-02
+Status: **proposed screens for the candidate first workflow** · Updated: 2026-11-04
 
 ## Navigation
 
@@ -23,6 +23,10 @@ Primary areas: **Tasks**, **Sources**, **Workflows**, and **Operations**. Practi
 ## Task detail layout
 
 Use a clear task header with status and owner, a main artifact area, and a side panel for evidence and run activity. Keep the current action visible. When a user selects a claim, show the exact linked passage and its source location. When source access has changed, withhold the affected artifact until its access can be revalidated or its content safely regenerated.
+
+## Workspace review flow
+
+A question becomes a saved draft. Show an explicit Start action before creating a run. In the result view, selecting a claim opens its source passage and version. Mark an unsupported finding in plain language. Keep revision and approval actions beside the version under review. On a later visit, show whether that version is approved and whether its sources are still accessible. A restricted item should expose a useful status without revealing its title or text when those are protected.
 
 ## Interaction rules
 

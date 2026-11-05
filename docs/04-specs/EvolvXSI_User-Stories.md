@@ -1,6 +1,6 @@
 # EvolvXSI — user stories
 
-Status: **candidate first-release backlog** · Updated: 2026-11-02
+Status: **candidate first-release backlog** · Updated: 2026-11-04
 
 Priority labels: **P0** required for a credible first workflow, **P1** pilot improvement, **Later** dependent on observed demand. These are product stories, not engineering estimates. The [PRD](EvolvXSI_First-Workflow-PRD.md) is the source for release gates.
 
@@ -47,6 +47,10 @@ Priority labels: **P0** required for a credible first workflow, **P1** pilot imp
 | US-17 | P0 | As a workflow owner, I can evaluate a version before publishing. | A fixed test set produces comparable results and keeps the version identifier. |
 | US-18 | P0 | As a practitioner, I can export an approved report and citations. | Export includes the approved version and has a recorded timestamp. |
 | US-19 | P1 | As a workflow owner, I can compare pilot outcomes with the manual baseline. | Completion, effort, quality, latency, and cost measures can be reviewed together. |
+
+## Pilot walkthrough for the existing stories
+
+Give two practitioners different access to the same project. The first creates an evidence brief and sends it for review. The second opens the shared task after losing access to one supporting source. Verify that the second user can understand the task state without seeing the restricted passage or dependent text. Ask the reviewer to edit the brief, approve the new version, and identify the exact version that was exported.
 
 ## Later backlog
 

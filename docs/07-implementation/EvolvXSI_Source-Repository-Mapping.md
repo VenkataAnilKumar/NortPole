@@ -128,3 +128,8 @@ The earlier clone named sources/openagents points to OpenAgentsInc/openagents, w
 ## Integration gates
 
 Choose one runtime owner and one authoritative data owner per capability. Run a thin workflow against the proposed sources before extracting services. Verify tenant/actor propagation, approvals, source permissions, checkpoint recovery, artifact provenance and model destination policy. Forks retain upstream dependency boundaries until extraction is tested. No downloaded code has been copied into src/, dependencies installed, or builds started.
+
+
+## Commercial reference research — 4 November 2026
+
+The [commercial reference review](EvolvXSI_Commercial_Reference_Research.md) evaluates Temporal, Langfuse, LiteLLM, Qdrant, Infisical, Appsmith, E2B, Dify, n8n and Airbyte against named adoption evidence and product-module relevance. It records source-license boundaries and maps each study to an EvolvXSI design question. Temporal and LiteLLM were already mentioned in earlier research. All entries remain reference only. This review adds research candidates to the documentation. The downloaded-source manifest continues to describe only existing local snapshots.

@@ -1,6 +1,6 @@
 # EvolvXSI — market assessment
 
-Status: **discovery plan; no market-size claim** · Updated: 2026-11-02
+Status: **discovery plan; no market-size claim** · Updated: 2026-11-04
 
 ## Market question
 
@@ -41,6 +41,10 @@ Interview at least two practitioners, one workflow owner, and one economic buyer
 ## Pilot economics worksheet
 
 For a selected workflow, estimate monthly value from task volume × time saved × loaded labor rate, plus measurable avoided rework or faster cycle time. Subtract model, infrastructure, integration, review, support, and sales costs. Keep assumptions visible and update with pilot measurements.
+
+## Interview prompt for buyers considering an enterprise AI workspace
+
+Ask a team to bring its last completed deliverable and walk through retrieval, verification, revision, and sign-off. Record who spent time at each step, what the current workspace already handles, and which failure would prevent adoption. Ask whether improving this workflow would justify a funded pilot alongside the buyer's existing tools.
 
 ## Decision gate
 

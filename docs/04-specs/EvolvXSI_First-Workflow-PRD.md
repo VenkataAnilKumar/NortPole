@@ -1,10 +1,14 @@
 # EvolvXSI — first workflow PRD
 
-Status: **draft for discovery** · Updated: 2026-11-02
+Status: **draft for discovery** · Updated: 2026-11-04
 
 ## 1. Objective
 
 Deliver one production-style, evidence-based agent workflow on a reusable platform. The initial scenario used here is **research report production**. The domain, user, and report type must be confirmed before implementation. This PRD gives a testable shape to the first release without treating the scenario as a settled market decision.
+
+## Reference pilot scenario
+
+Use a question such as “Which operating procedures changed, and what should the team review?” to exercise FR-01 through FR-12 with synthetic documents. Include two versions of a permitted procedure, a restricted passage, and one question the documents cannot answer. The reviewer should see a cited change and an explicit evidence gap, correct the draft, and export only the approved version. Revoking a source must also restrict subsequent views of dependent text. This example leaves the customer, source type, and final format open for discovery.
 
 ## 2. Primary user journey
 
