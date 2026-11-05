@@ -1,6 +1,6 @@
 # EvolvXSI — competitive analysis
 
-Status: **initial landscape; revisit after segment selection** · Updated: 2026-11-04
+Status: **initial landscape; revisit after segment selection** · Updated: 2026-11-05
 
 ## Comparison frame
 
@@ -46,3 +46,7 @@ Use a common task set. Record outcome quality, unsupported claims, source verifi
 ## Proposed position to validate
 
 EvolvXSI should compete through one well-executed, evidence-based workflow with shared governance and flexible deployment policy. This is a hypothesis, not a verified competitive advantage. Confirm it in buyer interviews and a head-to-head pilot before using it in external messaging.
+
+## Benchmark scope
+
+Compare public North capabilities against the [ten product areas](../02-product/EvolvXSI_Product-Definition.md#product-coverage-and-engineering-ownership). Use the same scenario for both products. Record unverified behavior as untested and distinguish public North capability from EvolvXSI design.

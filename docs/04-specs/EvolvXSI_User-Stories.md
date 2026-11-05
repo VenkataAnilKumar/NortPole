@@ -1,6 +1,6 @@
 # EvolvXSI — user stories
 
-Status: **candidate first-release backlog** · Updated: 2026-11-04
+Status: **candidate first-release backlog and platform expansion epics** · Updated: 2026-11-05
 
 Priority labels: **P0** required for a credible first workflow, **P1** pilot improvement, **Later** dependent on observed demand. These are product stories, not engineering estimates. The [PRD](EvolvXSI_First-Workflow-PRD.md) is the source for release gates.
 
@@ -8,7 +8,7 @@ Priority labels: **P0** required for a credible first workflow, **P1** pilot imp
 
 | ID | Priority | Story | Acceptance |
 | --- | --- | --- | --- |
-| US-01 | P0 | As a practitioner, I can create a task with a question, scope, and output request. | Required fields are validated and the task is saved with an owner and status. |
+| US-01 | P0 | As a practitioner, I can create a task with a question, scope, and output request. | Required fields are validated; save creates a draft and zero jobs. Explicit start creates one authorized run, including under duplicate requests. |
 | US-02 | P0 | As a practitioner, I can return to my prior tasks. | I can search and open tasks I am authorized to see; inaccessible tasks are absent. |
 | US-03 | P1 | As a workflow owner, I can use a reusable task template. | Template version and user changes are recorded. |
 
@@ -55,3 +55,29 @@ Give two practitioners different access to the same project. The first creates a
 ## Later backlog
 
 Multiple verticals, public marketplace, advanced workflow builder, broad connector catalog, and autonomous workflow changes require evidence from the first paid deployment. They are outside the first-release commitment.
+
+## Cross-layer ownership
+
+Use the [requirement-to-layer map](../06-technical/EvolvXSI_Feature-Architecture-Mapping.md#layer-traceability-for-the-first-release) when assigning stories. Treat portal and pack extensions as later backlog unless the first workflow needs them.
+
+## Platform capability epics
+
+| Epic | Story and evidence | Feature references |
+| --- | --- | --- |
+| Author and publish (pilot controls; self-service Studio in expansion) | An author configures a workflow, compares two candidates and publishes the exact version that passed. | PF-01.05, PF-02.01, PF-03.02, PF-09.02 |
+| Automate safely | An operator disables a schedule and resolves an uncertain tool outcome before retrying. | PF-05.03, PF-08.02 |
+| Govern enterprise access | An admin revokes access and verifies it across the workspace, embedded channels and exports. | PF-01.04, PF-04.02–03 |
+| Integrate and operate | A developer starts a run through the API. An operator identifies a failure and restores the selected environment. | PF-03.03, PF-09.03, PF-10.02 |
+| Extend with packs | A domain owner activates an evaluated pack and upgrades it while existing runs keep their pinned versions. | PF-02.02–03 |
+
+Use the [platform feature catalog](EvolvXSI_Feature-Spec.md#full-platform-feature-catalog) to assign engineering owners and acceptance evidence.
+
+## Additional expansion acceptance
+
+| Epic | Story and evidence | Feature references |
+| --- | --- | --- |
+| Collaborate | A practitioner shares a task and hands off review; revoked recipients cannot read content or receive protected notifications. | PF-01.06 |
+| Reuse horizontal packs | A pack author uses the same evaluated domain-neutral bundle in two verticals and demonstrates that tenant grants remain separate. | PF-02.04 |
+| Operate commercial surfaces | A buyer sees evidence-backed commitments; support staff access only authorized tenant records and leave an audit trail. | PF-01.07 |
+
+Capability epics span pilot foundations and expansion. The feature catalog's First target and the phase matrix control scope; an epic title is not a pilot commitment.

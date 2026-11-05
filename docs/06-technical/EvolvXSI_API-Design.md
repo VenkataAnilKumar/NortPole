@@ -1,6 +1,6 @@
 # EvolvXSI — API design
 
-Status: **proposed contract; no implementation exists** · Updated: 2026-11-02
+Status: **proposed contract; no implementation exists** · Updated: 2026-11-05
 
 ## Scope
 
@@ -78,6 +78,10 @@ Task creation saves a draft; run creation starts execution. Decisions specify th
 
 ## Explicit run-start contract
 
-POST /v1/tasks belongs to control; POST /v1/tasks/{id}/runs belongs to execution, routed through the workspace BFF. The start request carries an idempotency key and expected task version. Execution obtains the authorized task snapshot and current published definition versions through control APIs, rejecting stale versions or disabled resources. It commits the run, job, start-request digest/result and dispatch outbox atomically in execution-owned storage. No cross-service transaction is assumed.
+POST /v1/tasks belongs to control in services/control-plane; POST /v1/tasks/{id}/runs belongs to services/execution, routed through the public API or workspace BFF. The start request carries an idempotency key and expected task version. Execution obtains the authorized task snapshot and current published definition versions through control APIs, rejecting stale versions or disabled resources. It commits the run, job, start-request digest/result and dispatch outbox atomically in execution-owned storage. No cross-service transaction is assumed.
 
 A repeated key within the tenant/task/start-operation scope with the same request returns the original run ID; changed input returns STATE_CONFLICT. A timeout is retried with the same key. Task creation retries cannot start a run. Intentional reruns use a new key; retries of failed runs use the linked retry operation and retain external-action deduplication. Workers recheck current permissions before protected actions. Contract tests cover duplicate/concurrent starts, lost responses, stale task versions, and a saved draft producing zero jobs.
+
+## Layer boundaries
+
+L03 owns public schemas and task drafts. L04 records approval decisions. L05 owns explicit start and run state. A web, scheduled, or embedded caller must pass the same authorization and idempotency checks.

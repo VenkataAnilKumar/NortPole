@@ -1,6 +1,6 @@
 # EvolvXSI — design system
 
-Status: **interaction principles; visual tokens pending brand approval** · Updated: 2026-11-02
+Status: **interaction principles; visual tokens pending brand approval** · Updated: 2026-11-05
 
 ## Purpose
 
@@ -46,3 +46,7 @@ Use task verbs: “Review plan,” “Open source,” “Approve report,” and 
 ## Validation before visual sign-off
 
 Prototype the task, evidence, and approval screens. Test them with practitioners using a representative report. Measure whether users can find an unsupported claim, open its source, and identify the next action. Check keyboard navigation, screen-reader labels, contrast, zoom, and reduced-motion behavior. Record final tokens only after the brand and UI review.
+
+## Shared surfaces
+
+Apply common evidence, approval, permission and run status components across the [portal inventory](EvolvXSI_UI-Spec.md#portal-and-surface-inventory-l01). Domain views inherit those interaction rules.

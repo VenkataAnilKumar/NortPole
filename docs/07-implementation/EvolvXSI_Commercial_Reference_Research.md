@@ -130,3 +130,7 @@ The shortlist does not establish a complete vertical-pack implementation. That r
 - Customer stories generally describe a deployment of a commercial product. They do not establish which features are present in the public repository. Check edition and source boundaries before treating a behavior as demonstrated in public code.
 
 For any later source snapshot, record repository URL, exact commit, retrieval date, license files, the module being studied and the design question. Downloaded code remains outside the EvolvXSI product build. Record design conclusions in the original reference documentation and implement EvolvXSI contracts and behavior independently.
+
+## Use in the engineering architecture
+
+Assign reference findings to the owning layer in the [engineering map](../06-technical/EvolvXSI_System-Architecture.md#ten-engineering-layers). Keep the existing commercial evidence and reference-only disposition.

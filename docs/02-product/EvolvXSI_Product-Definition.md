@@ -1,6 +1,6 @@
 # EvolvXSI — product definition
 
-Status: **draft; first market not selected** · Updated: 2026-11-04
+Status: **draft; first market not selected** · Updated: 2026-11-05
 
 ## Definition
 
@@ -33,6 +33,23 @@ The product is valuable when a team can complete a real workflow with less effor
 | Observability and evaluation | Inspect run history and compare workflow versions on a fixed set of tasks. | Compare quality, cost, and recovery across teams and deployments. |
 
 EvolvXSI owns these product contracts. Downloaded open-source projects are design references only.
+
+## Product coverage and engineering ownership
+
+| Product coverage area | Engineering layers |
+| --- | --- |
+| Core product modules | L01 workspace, L02 definitions, L03 control plane, L06 knowledge |
+| Discover, Create, Automate and Customize | L01 user journeys backed by L02 and L05–L08 |
+| Models and inference | L07 gateway, L04 destination policy, L10 serving placement |
+| Data and retrieval | L06 knowledge, L08 connectors, L04 authorization |
+| Agent runtime and orchestration | L05 execution, L02 definitions, L04 approvals |
+| Portals and surfaces | L01, with role-specific capabilities from all layers |
+| Security and governance | L04 policy, enforced by the owning service |
+| Deployment | L10 operations, with placement controlled separately for L07 inference |
+| Integrations and ecosystem | L08 adapters and extension interfaces, L03 contracts |
+| Vertical solutions and go-to-market | L02 pack definitions, L01 distribution, L09 pilot evidence and a commercial workstream |
+
+The first offer proves a reviewed, cited deliverable for one team. The industry, customer source and deployment profile remain open. See the [ten engineering layers](../06-technical/EvolvXSI_System-Architecture.md#ten-engineering-layers) and [portal inventory](../05-design/EvolvXSI_UI-Spec.md#portal-and-surface-inventory-l01).
 
 ## Initial offer hypothesis
 
@@ -71,3 +88,13 @@ The first customer can repeatedly complete the selected workflow with an accepta
 ## Decisions to close
 
 First customer segment; workflow; practitioner and buyer; deployment location; permitted data destinations; artifact standard; approval policy; baseline and target; visual identity.
+
+## Product feature scope
+
+The [platform feature catalog](../04-specs/EvolvXSI_Feature-Spec.md#full-platform-feature-catalog) separates the engineering fixture, customer pilot and expansion features across all ten layers.
+
+## Horizontal and vertical packs
+
+Horizontal packs bundle domain-neutral capabilities such as evidence briefing or document comparison for reuse across teams. Vertical packs add domain terminology, workflows, templates, tool mappings, reviewer rules and evaluation cases. Both use the same versioned manifest, compatibility checks, evaluation gate and tenant activation rules. Neither owns a separate identity, runtime, gateway or audit system.
+
+PF-02.04 records horizontal-pack expansion acceptance; the first pilot uses selected shared agents and skills plus one selected vertical pack. Existing `packages/agents`, `packages/skills` and `packages/pack-sdk` own shared definitions and validation. Physical bundle layout is decided when contracts are implemented; no new repository or active pack is implied by this proposal.

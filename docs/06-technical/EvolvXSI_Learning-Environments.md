@@ -1,6 +1,6 @@
 # EvolvXSI — learning environments and controlled improvement
 
-Status: proposed capability; no implementation or training authorized · Updated: 2026-11-02
+Status: proposed capability; no implementation or training authorized · Updated: 2026-11-05
 
 ## Purpose and scope
 
@@ -46,14 +46,14 @@ Promotion requires comparison against the pinned baseline, predeclared threshold
 | Repository | Responsibility |
 | --- | --- |
 | packages/contracts | Environment, episode, reward/result and candidate manifest schemas. |
-| platform/evaluations | Shared environment harness, simulation adapters, verifiers, independent held-out evaluation and reports. |
-| platform/execution | Candidate agent execution, isolation, budgets and trajectory events. |
-| platform/agents and platform/skills | Versioned candidate definitions and approved packages. |
-| packs/<domain> | Domain tasks, fixtures, tool simulations and expert-reviewed criteria. |
-| apps/control-plane | Dataset-use authorization, registry, publication gates and promotion/rollback decisions. |
-| platform/hybrid | Approved inference routes and accounting for candidate and judge calls. |
-| infra/deployment | Isolated compute, storage, access policies and optional training resources. |
-| platform/learning (future, not created) | Training and optimization jobs, experiment lineage and candidate model artifacts if scope justifies a separate repository. |
+| evaluations | Shared environment harness, simulation adapters, verifiers, independent held-out evaluation and reports. |
+| services/execution | Candidate agent execution, isolation, budgets and trajectory events. |
+| packages/agents and packages/skills | Versioned candidate definitions and approved packages. |
+| packs/vertical/<domain> | Domain tasks, fixtures, tool simulations and expert-reviewed criteria. |
+| services/control-plane | Dataset-use authorization, registry, publication gates and promotion/rollback decisions. |
+| services/model-gateway | Approved inference routes and accounting for candidate and judge calls. |
+| infrastructure | Isolated compute, storage, access policies and optional training resources. |
+| services/learning (future, not created) | Training and optimization jobs, experiment lineage and candidate model artifacts if scope justifies a separate module. |
 
 Evaluations remain independent of the optimizer: the candidate cannot alter the held-out verifier or its acceptance criteria. No new source repository or runtime dependency is selected by this proposal.
 
@@ -65,3 +65,7 @@ Evaluations remain independent of the optimizer: the candidate cannot alter the 
 - Model-training exit: held-out improvement and acceptable cost, no blocking regressions, expert acceptance, approved immutable release and tested rollback. No automatic production learning loop.
 
 Open decisions: first domain/task, training rights and retention, reward rubric, judge calibration, dataset sizes, compute ceiling, model/interface and accountable learning owner. These are prerequisites for the relevant experiment, not invented defaults.
+
+## Evaluation ownership
+
+L09 owns held-out evaluation and records immutable evidence. L03 uses that evidence for publication and L04 applies data and access policy to candidate runs.

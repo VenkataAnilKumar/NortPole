@@ -1,0 +1,137 @@
+{
+  "modules": [
+    {
+      "implemented": false,
+      "path": "apps/workspace",
+      "responsibility": "Practitioner workspace, Agent and Automation Studio, administration and developer views.",
+      "maturity": "skeleton"
+    },
+    {
+      "implemented": false,
+      "path": "services/control-plane",
+      "responsibility": "Public API routing and control-plane ownership of tenants, memberships, projects, task drafts, registry, policies and approval decisions.",
+      "maturity": "skeleton"
+    },
+    {
+      "implemented": false,
+      "path": "services/execution",
+      "responsibility": "Run creation and state, jobs, outbox, worker leases, checkpoints, scheduling, artifacts and exports.",
+      "maturity": "skeleton"
+    },
+    {
+      "implemented": false,
+      "path": "services/knowledge",
+      "responsibility": "Source ingestion, permissions, passages, citations, context and scoped memory.",
+      "maturity": "skeleton"
+    },
+    {
+      "implemented": false,
+      "path": "services/model-gateway",
+      "responsibility": "Processing destination policy, provider adapters, fallback, budgets and usage accounting.",
+      "maturity": "skeleton"
+    },
+    {
+      "implemented": false,
+      "path": "packages/contracts",
+      "responsibility": "Versioned API and event schemas, manifests, compatibility and generated clients.",
+      "maturity": "skeleton"
+    },
+    {
+      "implemented": false,
+      "path": "packages/identity-policy",
+      "responsibility": "Shared verification and authorization primitives. Control-plane records remain owned by services/control-plane.",
+      "maturity": "skeleton"
+    },
+    {
+      "implemented": false,
+      "path": "packages/integrations",
+      "responsibility": "Connector and tool contracts, credential references and remote receipt/reconciliation adapters.",
+      "maturity": "skeleton"
+    },
+    {
+      "implemented": false,
+      "path": "packages/agents",
+      "responsibility": "Shared immutable agent definitions with pinned skills and tool requirements.",
+      "maturity": "skeleton"
+    },
+    {
+      "implemented": false,
+      "path": "packages/skills",
+      "responsibility": "Shared capabilities, schemas, permission declarations and local evaluation cases.",
+      "maturity": "skeleton"
+    },
+    {
+      "implemented": false,
+      "path": "packages/pack-sdk",
+      "responsibility": "Pack authoring and validation using canonical manifest schemas.",
+      "maturity": "skeleton"
+    },
+    {
+      "implemented": false,
+      "path": "packages/ui",
+      "responsibility": "Shared accessible interface components and design tokens.",
+      "maturity": "skeleton"
+    },
+    {
+      "implemented": false,
+      "path": "evaluations",
+      "responsibility": "Cross-module evaluation suites, immutable results and publication evidence.",
+      "maturity": "skeleton"
+    },
+    {
+      "implemented": false,
+      "path": "infrastructure",
+      "responsibility": "Local and production deployment profiles, release manifests, telemetry and recovery.",
+      "maturity": "skeleton"
+    }
+  ],
+  "status": "structure-and-design-baseline",
+  "updated": "2026-11-05",
+  "product": "EvolvXSI",
+  "structure": "modular-monorepo",
+  "packs": {
+    "template": "packs/_template",
+    "active": [],
+    "namespaces": [
+      "packs/horizontal",
+      "packs/vertical"
+    ],
+    "manifest_file": "manifest.yaml"
+  },
+  "references": {
+    "policy": "reference-only",
+    "location": "V:/AI Engineer/Agentic AI and Autonmous AI/EvolvXSI/sources"
+  },
+  "planned_modules": [
+    {
+      "path": "apps/developer-portal",
+      "implemented": false,
+      "maturity": "planned",
+      "responsibility": "Developer guides, API examples and extension discovery."
+    },
+    {
+      "path": "apps/public-site",
+      "implemented": false,
+      "maturity": "planned",
+      "responsibility": "Public product, trust and support entry points."
+    },
+    {
+      "path": "packages/telemetry",
+      "implemented": false,
+      "maturity": "planned",
+      "responsibility": "Shared correlation and safe telemetry instrumentation."
+    },
+    {
+      "path": "packages/testing",
+      "implemented": false,
+      "maturity": "planned",
+      "responsibility": "Shared fixtures and contract-testing utilities."
+    },
+    {
+      "path": "sdks",
+      "implemented": false,
+      "maturity": "planned",
+      "responsibility": "Supported external developer clients consuming canonical contracts."
+    }
+  ]
+}

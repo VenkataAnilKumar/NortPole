@@ -1,6 +1,6 @@
 # EvolvXSI — document list
 
-Updated: 2026-11-02 · Status: working product definition
+Updated: 2026-11-05 · Status: working product definition
 
 The document names and numbered areas follow the convention used by the Qvora document set. Every listed file now exists. **Draft** means the content is written for review; it does not mean the product decision or implementation is complete.
 
@@ -13,14 +13,14 @@ The document names and numbered areas follow the convention used by the Qvora do
 | 03 Market | [EvolvXSI_Competitive-Analysis.md](03-market/EvolvXSI_Competitive-Analysis.md) | Draft | Initial landscape and pilot comparison rubric. |
 | 04 Specs | [EvolvXSI_First-Workflow-PRD.md](04-specs/EvolvXSI_First-Workflow-PRD.md) | Draft | First workflow, requirements, acceptance criteria, and release gates. |
 | 04 Specs | [EvolvXSI_User-Journey.md](04-specs/EvolvXSI_User-Journey.md) | Draft | Candidate practitioner and administrator journeys. |
-| 04 Specs | [EvolvXSI_User-Stories.md](04-specs/EvolvXSI_User-Stories.md) | Draft | Prioritized stories for the first workflow. |
-| 04 Specs | [EvolvXSI_Feature-Spec.md](04-specs/EvolvXSI_Feature-Spec.md) | Draft | Detailed behavior for the candidate first release. |
+| 04 Specs | [EvolvXSI_User-Stories.md](04-specs/EvolvXSI_User-Stories.md) | Draft | First-workflow stories and phased platform capability epics. |
+| 04 Specs | [EvolvXSI_Feature-Spec.md](04-specs/EvolvXSI_Feature-Spec.md) | Draft | Ten-layer platform feature catalog and detailed first-workflow behavior. |
 | 05 Design | [EvolvXSI_UI-Spec.md](05-design/EvolvXSI_UI-Spec.md) | Draft | Screens, states, interactions, and accessibility details. |
 | 05 Design | [EvolvXSI_Design-System.md](05-design/EvolvXSI_Design-System.md) | Draft | Interaction rules and visual token categories; final brand pending. |
 | 06 Technical | [EvolvXSI_System-Architecture.md](06-technical/EvolvXSI_System-Architecture.md) | Draft | Capability boundaries, contracts, execution flow, and risks. |
 | 06 Technical | [EvolvXSI_Deployment-Architecture.md](06-technical/EvolvXSI_Deployment-Architecture.md) | Draft | Deployable services, persistence, queues, network boundaries and scaling. |
-| 06 Technical | [EvolvXSI_Repo-Structure.md](06-technical/EvolvXSI_Repo-Structure.md) | Draft | Independent repositories mapped to the boxed target architecture, templates and release rules. |
-| 06 Technical | [EvolvXSI_Feature-Architecture-Mapping.md](06-technical/EvolvXSI_Feature-Architecture-Mapping.md) | Draft | Feature ownership, boxed architecture alignment and PRD traceability. |
+| 06 Technical | [EvolvXSI_Repo-Structure.md](06-technical/EvolvXSI_Repo-Structure.md) | Draft | Monorepo layout, module ownership and release rules. |
+| 06 Technical | [EvolvXSI_Feature-Architecture-Mapping.md](06-technical/EvolvXSI_Feature-Architecture-Mapping.md) | Draft | Complete PF module/phase mapping and first-workflow PRD traceability. |
 | 06 Technical | [EvolvXSI_API-Design.md](06-technical/EvolvXSI_API-Design.md) | Draft | Proposed public and internal API contracts. |
 | 06 Technical | [EvolvXSI_Data-Model.md](06-technical/EvolvXSI_Data-Model.md) | Draft | Conceptual task, run, evidence, approval, and tenant records. |
 | 07 Implementation | [EvolvXSI_Implementation-Phases.md](07-implementation/EvolvXSI_Implementation-Phases.md) | Draft | P00-P11 delivery plan with repository scope, dependencies, exit evidence and PRD coverage. |
@@ -29,6 +29,7 @@ The document names and numbered areas follow the convention used by the Qvora do
 | 07 Implementation | [EvolvXSI_Provider-SDK-Decision.md](07-implementation/EvolvXSI_Provider-SDK-Decision.md) | Owner direction | Official provider SDKs with EvolvXSI-owned logic; downloaded platforms remain references. |
 | 07 Implementation | [EvolvXSI_Source-Repository-Mapping.md](07-implementation/EvolvXSI_Source-Repository-Mapping.md) | Draft | Local source evidence, reuse candidates, gaps and source identity correction. |
 | 07 Implementation | [EvolvXSI_Open-Source-References.md](07-implementation/EvolvXSI_Open-Source-References.md) | Draft | External project shortlist, eight-platform review, and due diligence; kept outside the product definition. |
+| 07 Implementation | [Commercial reference research](07-implementation/EvolvXSI_Commercial_Reference_Research.md) | Reference | Commercial evidence, module mappings and license boundaries. |
 
 ## Source context
 
@@ -52,8 +53,16 @@ The owner's earlier chats establish two related ideas: a horizontal super intell
 
 ## Documentation version control
 
-This directory is the independent evolvxsi-docs repository. See [documentation governance](07-implementation/EvolvXSI_Documentation-Governance.md) for ownership, review and release-baseline rules. The initial local commit records planning changes; it does not approve an implementation or release.
+The EvolvXSI monorepo versions canonical documentation alongside product modules. See [documentation governance](07-implementation/EvolvXSI_Documentation-Governance.md) for ownership, review and release-baseline rules. The initial local commit records planning changes; it does not approve an implementation or release.
 
 ## Learning environments
 
 [Learning environments and controlled improvement](06-technical/EvolvXSI_Learning-Environments.md) records the proposed architecture, ownership and delivery gates. The [external reference document](07-implementation/EvolvXSI_Open-Source-References.md) contains the supporting research review.
+
+## Architecture entry points
+
+Start with the [ten engineering layers](06-technical/EvolvXSI_System-Architecture.md#ten-engineering-layers), [product coverage map](02-product/EvolvXSI_Product-Definition.md#product-coverage-and-engineering-ownership), [portal inventory](05-design/EvolvXSI_UI-Spec.md#portal-and-surface-inventory-l01), and [delivery coverage](07-implementation/EvolvXSI_Implementation-Phases.md#delivery-coverage-by-engineering-layer).
+
+## Platform feature index
+
+The [feature catalog](04-specs/EvolvXSI_Feature-Spec.md#full-platform-feature-catalog) covers all ten engineering layers. The first-workflow PRD retains pilot requirements. The user stories, UI specification and implementation phases link the catalog to delivery.

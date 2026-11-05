@@ -1,6 +1,6 @@
 # EvolvXSI — brand identity
 
-Status: **product name confirmed; visual identity proposed** · Updated: 2026-11-02
+Status: **product name confirmed; visual identity proposed** · Updated: 2026-11-05
 
 ## Name decision
 
@@ -39,3 +39,7 @@ The visual identity is open. Test a calm, technical interface that makes task st
 ## Approval checklist
 
 Complete domain and legal checks; choose the launch audience; test the one-line description with prospective users; approve brand tokens and a public claim review process. Until then, this is an internal working identity.
+
+## Platform naming
+
+Use EvolvXSI for the horizontal platform. Name vertical packs by the workflow or industry they serve. Use the [surface inventory](../05-design/EvolvXSI_UI-Spec.md#portal-and-surface-inventory-l01) for consistent product navigation terms.

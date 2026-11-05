@@ -4,7 +4,7 @@ Prepared: 2026-11-02 · Status: planning only; implementation and builds remain 
 
 ## Baseline and implementation rules
 
-The workspace contains 12 independent repository skeletons under src/, a vertical-pack template, product/architecture documents, and downloaded source references. Repository structure exists; application logic, dependency manifests, CI pipelines, deployment configuration and working features do not yet exist.
+The workspace contains module skeletons in the EvolvXSI monorepo, a vertical-pack template, product/architecture documents, and a separate external collection of downloaded source references. Repository structure exists; application logic, dependency manifests, CI pipelines, deployment configuration and working features do not yet exist.
 
 EvolvXSI owns the platform implementation. Use official provider SDKs behind internal adapters; downloaded agent/application platforms remain references. The [provider SDK decision](EvolvXSI_Provider-SDK-Decision.md) supersedes older fork/runtime-reuse suggestions. Ordinary infrastructure and language dependencies remain necessary. This plan neither installs packages nor authorizes a live API test or production release.
 
@@ -12,13 +12,30 @@ The [first-workflow PRD](../04-specs/EvolvXSI_First-Workflow-PRD.md) owns accept
 
 No delivery dates or effort estimates are committed. Estimate after P00 selects the workflow, language, deployment and initial inference path. Each phase requires a named accountable owner when implementation is scheduled; do not mark a phase complete because folders exist.
 
+## Delivery coverage by engineering layer
+
+| Layer | Initial proof | Expansion |
+| --- | --- | --- |
+| L01 | P02 task and result; P06 review and export | P07 authoring and operations; P11 wider portals and embedded surfaces |
+| L02 | P05 versioned definitions | P09 first vertical pack; P11 prove reuse with a second |
+| L03 | P01 draft and identity contracts; P02 explicit start | P05 registry and publication; P07 developer access |
+| L04 | P01 tenant isolation; P03 approvals and tool policy | P10 deployment-specific enterprise controls and audit |
+| L05 | P02 durable run and fixture | P03 isolated tools; P07 schedules, triggers and recovery |
+| L06 | P04 one authorized source and citations | P06 artifact provenance; P11 broaden libraries and retrieval |
+| L07 | P02 deterministic adapter first, then one approved live route | P08 additional routes and policy-preserving fallback |
+| L08 | P04 one source connector | P07 external tools and triggers; P11 broader ecosystem |
+| L09 | P02 events and diagnostics; P05 evaluation gate | P09 domain quality and cost; P10 operating evidence |
+| L10 | P01 reproducible local profile | P10 selected production profile, backup and rollback |
+
+P00 separates choices needed for the fixture slice from choices needed for a customer pilot. A fixture run verifies execution and policy boundaries. Live provider integration has its own acceptance evidence.
+
 ## Phase overview
 
 | Phase | Outcome | Main gate |
 | --- | --- | --- |
 | P00 | Confirm scope and technical decisions | Decision records, first-workflow scope, initial backlog and acceptance worksheet. |
-| P01 | Contracts, identity and development foundation | Versioned contracts, authenticated task API, reproducible local environment and functioning CI for active repositories. |
-| P02 | Minimal execution and direct provider integration | First working thin slice: authenticated task submission -> worker -> approved model route -> persisted result -> workspace. |
+| P01 | Contracts, identity and development foundation | Versioned contracts, authenticated task API, reproducible local environment and functioning CI for active modules. |
+| P02 | Minimal execution and direct provider integration | Two recorded gates: synthetic draft -> explicit start -> durable worker -> deterministic adapter -> persisted result -> workspace; then separate verification of one approved live route. |
 | P03 | Policy, approvals and execution isolation | Working human approval boundary, policy enforcement, audit records and isolation controls for enabled tools. |
 | P04 | Knowledge, evidence and scoped memory | Authorized evidence retrieval and inspectable citations from one selected source, with documented memory scopes. |
 | P05 | Agents, skills and vertical-package contracts | Versioned definitions, registry activation and a validated package consumed by the execution runtime. |
@@ -37,7 +54,7 @@ Domain discovery may continue alongside domain-independent foundation work. Prot
 
 ## P00 — Confirm scope and technical decisions
 
-**Repositories:** `apps/workspace`, `apps/control-plane`, `platform/execution`, `platform/hybrid`, `infra/deployment`.
+**Modules:** `apps/workspace`, `services/control-plane`, `services/execution`, `services/model-gateway`, `infrastructure`.
 
 **Prerequisites:** None. Architecture and repository skeletons already exist.
 
@@ -52,38 +69,38 @@ Domain discovery may continue alongside domain-independent foundation work. Prot
 
 ## P01 — Contracts, identity and development foundation
 
-**Repositories:** `packages/contracts`, `apps/control-plane`, `infra/deployment`.
+**Modules:** `packages/contracts`, `services/control-plane`, `infrastructure`.
 
 **Prerequisites:** P00 technical decisions; domain-independent contracts can proceed while discovery continues.
 
 1. Define versioned task, run, event, error, approval, inference, artifact and manifest schemas. Keep provider response objects out of public contracts.
 2. Create service authentication and tenant/user authorization primitives. Implement minimal tenant, membership, project and task records with service-owned migrations.
 3. Create the local database, dispatch queue, cache, object-storage and secret-reference configuration. Use separate service credentials and queues/cache boundaries.
-4. Add per-repository dependency pinning, formatting, type checks and CI. Publish initial contract packages and a deployment manifest pinning compatible versions plus the reviewed documentation commit and approval record.
+4. Add per-module dependency pinning, formatting, type checks and CI. Publish initial contract packages and a deployment manifest pinning compatible versions plus the reviewed documentation commit and approval record.
 
-**Deliverable:** Versioned contracts, authenticated task API, reproducible local environment and functioning CI for active repositories.
+**Deliverable:** Versioned contracts, authenticated task API, reproducible local environment and functioning CI for active modules.
 
-**Exit evidence:** A developer can provision the local environment, migrate storage and call an authorized task endpoint. Negative tenant/access cases fail correctly. Contract consumers use released versions rather than cross-repository imports.
+**Exit evidence:** A developer can provision the local environment, migrate storage and call an authorized task endpoint. Negative tenant/access cases fail correctly. Contract consumers use the versioned interfaces from packages/contracts.
 
 ## P02 — Minimal execution and direct provider integration
 
-**Repositories:** `platform/execution`, `platform/hybrid`, `apps/control-plane`, `apps/workspace`, `packages/contracts`, `infra/deployment`.
+**Modules:** `services/execution`, `services/model-gateway`, `services/control-plane`, `apps/workspace`, `packages/contracts`, `infrastructure`.
 
 **Prerequisites:** P01.
 
-1. Implement task submission, durable run/job records, database outbox, worker leases, persisted events and basic status streaming. Start with one sequential agent loop.
-2. Implement one official provider-client adapter behind the EvolvXSI inference contract. Preserve provider-specific streaming/tool behavior behind capability checks; do not assume protocol parity.
+1. Implement draft saving with zero jobs and a separate authorized start. Atomically persist the run, job, outbox and idempotency result in execution-owned storage. Add worker leases, persisted events and basic status streaming. Start with one sequential agent loop.
+2. Implement a deterministic adapter first and record the fixture gate independently. Then implement one official provider-client adapter behind the EvolvXSI inference contract. Preserve provider-specific streaming/tool behavior behind capability checks; do not assume protocol parity.
 3. Enforce destination allowlists and run budgets before model calls. Record usage, request IDs, errors and safe diagnostic metadata.
 4. Add a minimal workspace screen for submitting a task and seeing run status/text output. Support cancellation at safe boundaries and bounded retries.
 5. Use controlled fixtures for most integration checks. Configure authorized credentials securely before any live provider test; do not place secrets in source or logs.
 
-**Deliverable:** First working thin slice: authenticated task submission -> worker -> approved model route -> persisted result -> workspace.
+**Deliverable:** Two recorded gates: synthetic draft -> explicit start -> durable worker -> deterministic adapter -> persisted result -> workspace; then separate verification of one approved live route.
 
-**Exit evidence:** A controlled task completes through real service boundaries. Duplicate dispatch does not create duplicate jobs; worker interruption recovers or exposes a clear failure. A prohibited provider route is blocked. Live verification uses only configured authorized access.
+**Exit evidence:** Fixture gate: saving a draft creates no job; identical concurrent starts return one run; duplicate dispatch does not duplicate execution; worker interruption recovers or exposes a clear failure; cancellation, tenant denial and prohibited routing are verified using synthetic data. Live-route gate: separately verify the approved adapter with authorized credentials and synthetic inputs. Fixture success does not complete the live-route gate or permit customer-data use before P03.
 
 ## P03 — Policy, approvals and execution isolation
 
-**Repositories:** `apps/control-plane`, `platform/execution`, `platform/hybrid`, `platform/integrations`, `apps/workspace`, `infra/deployment`.
+**Modules:** `services/control-plane`, `services/execution`, `services/model-gateway`, `packages/integrations`, `apps/workspace`, `infrastructure`.
 
 **Prerequisites:** P02; required before customer documents or side-effecting tools are enabled.
 
@@ -99,7 +116,7 @@ Domain discovery may continue alongside domain-independent foundation work. Prot
 
 ## P04 — Knowledge, evidence and scoped memory
 
-**Repositories:** `platform/knowledge`, `platform/integrations`, `platform/hybrid`, `platform/execution`, `apps/workspace`, `infra/deployment`.
+**Modules:** `services/knowledge`, `packages/integrations`, `services/model-gateway`, `services/execution`, `apps/workspace`, `infrastructure`.
 
 **Prerequisites:** P01-P03.
 
@@ -115,7 +132,7 @@ Domain discovery may continue alongside domain-independent foundation work. Prot
 
 ## P05 — Agents, skills and vertical-package contracts
 
-**Repositories:** `platform/agents`, `platform/skills`, `packages/contracts`, `packages/pack-sdk`, `platform/execution`, `apps/control-plane`, `platform/evaluations`, `packs/_template`.
+**Modules:** `packages/agents`, `packages/skills`, `packages/contracts`, `packages/pack-sdk`, `services/execution`, `services/control-plane`, `evaluations`, `packs/_template`.
 
 **Prerequisites:** P01-P03; uses the provider and run contracts from P02.
 
@@ -123,8 +140,8 @@ Domain discovery may continue alongside domain-independent foundation work. Prot
 2. Implement the registry lifecycle: draft, validate, evaluate, publish, activate and disable. Tenant grants remain separate from permissions requested by a manifest.
 3. Create one shared agent definition and one artifact-oriented skill with input/output schemas, declared dependencies and evaluation cases.
 4. Implement pack authoring/validation helpers consuming canonical contract schemas. Validate compatibility, required tools and permissions before activation.
-5. Implement a shared evaluation runner in platform/evaluations and a control-plane publication gate. Bind results to immutable candidate, dependency and suite digests, rubric version and configured thresholds. Missing, failed or mismatched evidence blocks publication; unauthorized disclosure, prohibited transmission and unapproved writes always fail. Verify passing, failing and stale-evidence cases before P05 exit.
-6. Complete the domain-neutral template. Initialize an active domain repository only after P00 selects the first vertical; never treat the template as an installed pack.
+5. Implement a shared evaluation runner in evaluations and a control-plane publication gate. Bind results to immutable candidate, dependency and suite digests, rubric version and configured thresholds. Missing, failed or mismatched evidence blocks publication; unauthorized disclosure, prohibited transmission and unapproved writes always fail. Verify passing, failing and stale-evidence cases before P05 exit.
+6. Complete the domain-neutral template. Initialize an active domain pack only after P00 selects the first vertical; never treat the template as an installed pack.
 
 **Deliverable:** Versioned definitions, registry activation and a validated package consumed by the execution runtime.
 
@@ -132,7 +149,7 @@ Domain discovery may continue alongside domain-independent foundation work. Prot
 
 ## P06 — Complete the reviewed artifact workflow
 
-**Repositories:** `apps/workspace`, `apps/control-plane`, `platform/execution`, `platform/knowledge`, `platform/skills`, `packages/contracts`.
+**Modules:** `apps/workspace`, `services/control-plane`, `services/execution`, `services/knowledge`, `packages/skills`, `packages/contracts`.
 
 **Prerequisites:** P03-P05.
 
@@ -148,7 +165,7 @@ Domain discovery may continue alongside domain-independent foundation work. Prot
 
 ## P07 — Broaden orchestration and enterprise integrations
 
-**Repositories:** `platform/execution`, `platform/integrations`, `platform/agents`, `apps/control-plane`, `apps/workspace`, `platform/evaluations`.
+**Modules:** `services/execution`, `packages/integrations`, `packages/agents`, `services/control-plane`, `apps/workspace`, `evaluations`.
 
 **Prerequisites:** P03, P05 and the P06 working workflow. Only capabilities needed by the selected pilot are mandatory before P09.
 
@@ -163,7 +180,7 @@ Domain discovery may continue alongside domain-independent foundation work. Prot
 
 ## P08 — Expand hybrid intelligence routes
 
-**Repositories:** `platform/hybrid`, `platform/execution`, `platform/knowledge`, `apps/control-plane`, `infra/deployment`, `platform/evaluations`.
+**Modules:** `services/model-gateway`, `services/execution`, `services/knowledge`, `services/control-plane`, `infrastructure`, `evaluations`.
 
 **Prerequisites:** P02-P03. Additional routes can be implemented alongside P07; required before pilot only when its deployment/data policy needs them.
 
@@ -178,11 +195,11 @@ Domain discovery may continue alongside domain-independent foundation work. Prot
 
 ## P09 — Build and validate the first vertical pack
 
-**Repositories:** `packs/<selected-domain>`, `packages/pack-sdk`, `platform/agents`, `platform/skills`, `platform/evaluations`, `apps/workspace`, `platform/knowledge`.
+**Modules:** `packs/vertical/<selected-domain>`, `packages/pack-sdk`, `packages/agents`, `packages/skills`, `evaluations`, `apps/workspace`, `services/knowledge`.
 
 **Prerequisites:** Confirmed P00 domain and P06; complete P07/P08 capabilities specifically required by that domain.
 
-1. Initialize the selected domain repository and implement domain agents, skills, workflows, tool adapters, schemas, templates, review views and evaluation cases.
+1. Initialize the selected domain pack and implement domain agents, skills, workflows, tool adapters, schemas, templates, review views and evaluation cases.
 2. Package the complete domain workflow with compatibility, dependency, permission and review requirements. Reuse shared services through contracts.
 3. Extend the P05 runner with the domain-specific representative evaluation suite, review rubric and manual baseline agreed with a workflow owner.
 4. Run the pilot workflow end to end, measure practitioner effort, evidence quality, completion, latency and cost, and classify failure modes.
@@ -194,7 +211,7 @@ Domain discovery may continue alongside domain-independent foundation work. Prot
 
 ## P10 — Production hardening and controlled release
 
-**Repositories:** `infra/deployment`, `apps/control-plane`, `apps/workspace`, `platform/execution`, `platform/hybrid`, `platform/knowledge`, `platform/integrations`, `platform/evaluations`.
+**Modules:** `infrastructure`, `services/control-plane`, `apps/workspace`, `services/execution`, `services/model-gateway`, `services/knowledge`, `packages/integrations`, `evaluations`.
 
 **Prerequisites:** P09 and all pilot-required P07/P08 work.
 
@@ -210,7 +227,7 @@ Domain discovery may continue alongside domain-independent foundation work. Prot
 
 ## P11 — Expand verticals and horizontal product capabilities
 
-**Repositories:** `packs/<next-domain>`, `apps/workspace`, `apps/control-plane`, `platform/execution`, `platform/knowledge`, `platform/hybrid`, `platform/integrations`, `platform/skills`, `platform/evaluations`.
+**Modules:** `packs/vertical/<next-domain>`, `apps/workspace`, `services/control-plane`, `services/execution`, `services/knowledge`, `services/model-gateway`, `packages/integrations`, `packages/skills`, `evaluations`.
 
 **Prerequisites:** P10 and evidence of repeat use and sustainable operating economics.
 
@@ -252,7 +269,7 @@ Do not broaden testing without a remaining risk or release gate. Start with cont
 | --- | --- |
 | Scope grows across every vertical before one outcome works | Gate expansion at P11; first paid workflow drives priorities. |
 | Provider compatibility is assumed | Capability-based adapters and per-route integration checks in P02/P08. |
-| Services diverge across repositories | Versioned contracts, consumer checks and pinned deployment sets from P01. |
+| Modules and deployed versions diverge | Versioned contracts, consumer checks and pinned deployment sets from P01. |
 | Too many services are deployed before demand | Keep owned boundaries explicit; colocate process images when appropriate and scale workers separately. |
 | Model retries duplicate tool side effects | Track invocation identity and approval binding; reconcile remote outcomes before retry. |
 | Data leaks through generated content or telemetry | Enforce provenance dependencies, revocation and redaction gates in P03/P04. |
@@ -266,3 +283,7 @@ See [learning environments](../06-technical/EvolvXSI_Learning-Environments.md). 
 - P09: Validate one domain environment with expert-reviewed criteria, baseline and separated training/validation/held-out tasks.
 - P11 (optional): Compare instruction/skill/workflow optimization first; authorize model RL separately only with a trainable model/interface, approved data, compute budget and an accountable owner.
 - Promotion: Require held-out gains, policy/regression gates, digest-bound approval, controlled rollout and rollback before activating an improved candidate.
+
+## Feature acceptance tracking
+
+Use the [platform feature catalog](../04-specs/EvolvXSI_Feature-Spec.md#full-platform-feature-catalog) alongside FR-01–FR-12. Track each implemented PF entry with a release target and acceptance evidence. Keep expansion entries in the roadmap until their prerequisites and rollout scope are agreed.

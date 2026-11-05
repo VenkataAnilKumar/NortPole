@@ -1,6 +1,6 @@
 # EvolvXSI — data model
 
-Status: **conceptual model; PostgreSQL proposed for authoritative state; final selection in P00** · Updated: 2026-11-02
+Status: **conceptual model; PostgreSQL proposed for authoritative state; final selection in P00** · Updated: 2026-11-05
 
 ## Core entities
 
@@ -69,6 +69,8 @@ Runs use queued, running, waiting_for_review, paused, succeeded, failed, or canc
 
 ## Ownership and additional implementation records
 
+Control and registry records belong to services/control-plane. Execution, Knowledge and Hybrid map to services/execution, services/knowledge and services/model-gateway. Connector and evaluation contracts map to packages/integrations and evaluations. Physical data ownership follows these boundaries even when processes share infrastructure.
+
 These are conceptual contracts for P01 schema design, not implemented migrations. Relationships across owners are tenant-scoped IDs validated through APIs/events; they are not cross-schema joins or foreign keys. Existing User records represent tenant-local identities; membership binds that identity to the external identity-provider subject.
 
 | Record | Owner | Key fields and invariant |
@@ -94,4 +96,8 @@ These are conceptual contracts for P01 schema design, not implemented migrations
 | Evaluation suite/result | Evaluations | Immutable suite/rubric, candidate/dependency digests, thresholds, per-case outcomes and report digest. Control consumes results to enforce publication. |
 | Audit event | Producing service; restricted operational projection | Actor, tenant, resource, action, outcome, time and event ID. No sensitive source text; explicit retention and access policy. |
 
-Control-to-execution task and decision links are logical references. Registry packages reference released definitions authored in agent/skill/pack repositories; the registry does not own their source code. Jobs and outbox records become durable in P02, scoped memory in P04, and registry/evaluation records in P05, using the contracts designed in P01.
+Control-to-execution task and decision links are logical references. Registry packages reference released definitions authored in agent/skill/pack modules; the registry does not own their source code. Jobs and outbox records become durable in P02, scoped memory in P04, and registry/evaluation records in P05, using the contracts designed in P01.
+
+## Layer boundary checks
+
+Keep registry state (L03), approval decisions (L04), run state (L05), source versions (L06), model usage (L07), and evaluation results (L09) under their designated owners. Link records through tenant-scoped identifiers and versioned contracts.

@@ -1,6 +1,6 @@
 # EvolvXSI — first workflow PRD
 
-Status: **draft for discovery** · Updated: 2026-11-04
+Status: **draft for discovery** · Updated: 2026-11-05
 
 ## 1. Objective
 
@@ -86,3 +86,7 @@ Generated reports, task history, logs, and exports inherit restrictions from the
 Before rollout, the workflow owner records the suite version, rubric, baseline, numeric quality and latency targets, cost limit, sample size, and release approver. Pending targets block release. Unauthorized disclosure, prohibited transmission, and unapproved external writes block rollout regardless of aggregate scores.
 
 Citation verification rate is supported citations divided by reviewed citations. Unsupported-claim rate is unsupported material factual claims divided by reviewed material factual claims, including claims without citations. Report sample size and review method. Define completion and failure from terminal run states and report cancellations separately.
+
+## Layer acceptance
+
+The first engineering slice proves authorized draft, explicit start, durable execution, a deterministic adapter and persisted status. The pilot adds real retrieval, inference, review and export. Use the [requirement-to-layer map](../06-technical/EvolvXSI_Feature-Architecture-Mapping.md#layer-traceability-for-the-first-release) to assign acceptance evidence.

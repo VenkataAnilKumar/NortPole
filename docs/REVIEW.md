@@ -1,6 +1,6 @@
-# EvolvXSI — document review
+# EvolvXSI â€” document review
 
-Reviewed: 2026-11-02 · Scope: product documents, architecture, phased plan and 12 source repository boundaries
+Reviewed: 2026-11-05 Â· Scope: product documents, architecture, phased plan and monorepo module boundaries
 
 ## Assessment
 
@@ -58,10 +58,46 @@ All five documentation/repository findings from the follow-up review are address
 | Task creation could implicitly dispatch execution. | Draft creation creates no job. Explicit run start belongs to execution and atomically records run/job/outbox/idempotency result. API and topology agree. | P02 duplicate, concurrent, timeout and draft-without-job tests. |
 | Evaluation publication gate was scheduled too late. | P05 now includes the shared runner, immutable evidence bindings and passing/failing/stale publication tests. P09 extends it for the domain. | P05 enforced gate; P09 domain results. |
 | Data model omitted architecture records. | Added explicit owners and contracts for projects/membership, registry/activation, publication evidence, memory, jobs/outbox/inbox and start idempotency. | P01 schema contracts and owning-service migrations in delivery phases. |
-| Canonical documents lacked version-control ownership. | Independent evolvxsi-docs repository, ownership rules and release commit/approval pinning specified. | P01 manifest integration and P10 accepted release evidence. |
+| Canonical documents lacked version-control ownership. | Canonical docs/ in the product monorepo, ownership rules and release commit/approval pinning specified. | P01 manifest integration and P10 accepted release evidence. |
 
 Also corrected the outdated workspace-name statement, storage status and prior review stage labels. Customer segment, source, deployment, provider, visual identity and numeric targets remain explicit P00 decisions; documentation fixes do not invent those choices. No application implementation, dependency install or build was performed.
 
 ## Learning-environment proposal
 
 Added the requested offline learning-environment proposal, environment contracts, repository ownership, held-out evaluation and approval-bound promotion gates. External project details stay in the reference document. Plan and checklist contain matching delivery additions. No training, dependency installation or new source repository was started.
+
+
+## Monorepo alignment â€” 2026-11-05
+
+The working tree now uses a single product layout with separate module owners. The first customer workflow and implementation stack remain open. The product retains separate draft and start actions. The execution module owns atomic run creation. The current repository structure supersedes the independent-repository proposal recorded above.
+
+## Ten-layer documentation review
+
+The system architecture now defines L01â€“L10. Product coverage, surfaces, requirement traceability and delivery phases point to that model. The pilot vertical, technology selections and deployment profile remain open.
+
+## Product feature consistency review â€” 2026-11-05
+
+| Finding | Correction |
+| --- | --- |
+| PF catalog lacked a complete module and delivery mapping. | Every PF entry now has a primary module, collaborators and phase mapping; the checklist requires evidence for selected IDs. |
+| Studio, collaboration, horizontal packs and commercial/support surfaces lacked explicit feature acceptance. | Added PF-01.05â€“07 and PF-02.04; connected stories, surface coverage and product packaging. All remain proposed expansion scope. |
+| P02 wording conflated a fixture with live inference and omitted atomic draft/start semantics from checklist tasks. | Defined separate fixture/live-route gates in both plan and checklist, with duplicate-start, recovery and authorization evidence. |
+| Version pinning implied reproducible model output. | Replaced that promise with immutable definitions/evidence and explicit limits on replay. |
+| Journey implied export happened as part of approval. | Separated explicit start, artifact approval and separately authorized export. |
+| Ownership tables and governance retained old repository wording. | Corrected module paths, supporting-module terminology and monorepo documentation ownership. |
+
+Validation covers local document links and anchors, catalog IDs against the ownership matrix, referenced module paths and matching P02 gates. This is a documentation consistency review: no application behavior, competitor capabilities or external licenses were re-audited. Product and technical owners still need to select the pilot workflow, stack, deployment and measurable release thresholds. No implementation or release approval is implied.
+
+## Approved repository alignment â€” 2026-11-05
+
+Applied the modular monorepo direction: relocated the control-plane skeleton, aligned backend interface/adapter folders, aligned evaluation and infrastructure names, and updated module references. Future applications and shared utilities remain explicitly planned. Original files and numbered documents are preserved. The structure validator checks module paths, local links and obsolete references; no application behavior is claimed.
+
+## Repository follow-up review — 2026-11-05
+
+- Corrected two remaining delivery-plan pack paths to the vertical namespace.
+- Added responsibilities to planned inventory entries and documented existing local-profile and preserved scaffolding locations.
+- Strengthened structure validation to reject duplicate existing/planned paths, unsafe paths, inconsistent maturity and invalid active-pack locations; exclude dependency/cache/generated directories from document scans.
+- Added regression tests for valid and invalid inventories, obsolete references, missing links, encoded links, repeated heading anchors and dependency exclusion.
+- Documented the checker's limits: layout and supported Markdown links do not establish application readiness, manifest schema validity or enforced dependency boundaries.
+
+No source modules, original documents or legacy placeholders were removed. No stack, pilot, dependency or production deployment was selected.

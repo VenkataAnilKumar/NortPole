@@ -1,6 +1,6 @@
 # EvolvXSI — product overview
 
-Status: **proposed** · Updated: 2026-11-04
+Status: **proposed** · Updated: 2026-11-05
 
 ## Product thesis
 
@@ -69,3 +69,7 @@ The first release should demonstrate one workflow end to end for one customer se
 ## Success definition
 
 A pilot succeeds when practitioners repeatedly complete the chosen workflow with less effort, can verify evidence and correct errors, and the organization can operate it within agreed security, quality, cost, and reliability thresholds. Specific numeric targets require a measured baseline and pilot agreement.
+
+## Architecture and product scope
+
+The ten engineering layers support the horizontal workspace and its vertical packs. The ten product coverage areas include user journeys and commercial responsibilities alongside technical capabilities. See the [product definition](EvolvXSI_Product-Definition.md#product-coverage-and-engineering-ownership) and [engineering architecture](../06-technical/EvolvXSI_System-Architecture.md#ten-engineering-layers).

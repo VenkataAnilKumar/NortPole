@@ -1,150 +1,92 @@
-# EvolvXSI — repository structure
+# EvolvXSI repository structure
 
-Status: local repository skeletons created; implementation and builds paused · Updated: 2026-11-02
+Updated: 2026-11-05. Status: approved structural direction; module skeletons only.
 
-## Workspace layout
+## Structure and ownership
 
-Use independent Git repositories grouped by responsibility under src/. Group folders are local containers. Each active leaf is an independent local repository; CI pipelines and releases will be added during implementation. Local paths are short; remote repository names retain the evolvxsi- prefix. The src/ layout is created with 12 independent local repositories. No remotes or initial commits exist. packs/_template/ supplies the vertical directory template; the first active domain remains undecided.
+One modular monorepo preserves the existing product history and original documents. Services can deploy and scale independently. Engineering layers define ownership, not a requirement for ten processes or repositories.
 
-```text
-EvolvXSI/
-  README.md
-  docs/                              Canonical product and architecture documents
-  sources/                           Downloaded upstream reference checkouts
-  src/
-    apps/
-      workspace/
-      control-plane/
-    platform/
-      execution/
-      agents/
-      skills/
-      hybrid/
-      knowledge/
-      integrations/
-      evaluations/
-    packs/
-      <domain>/                      One repository per active vertical
-    packages/
-      pack-sdk/
-      contracts/
-    infra/
-      deployment/
-```
-
-The workspace and grouping folders do not track child repository source in a parent Git index. Keep docs/ as the canonical documentation location and independent evolvxsi-docs Git repository. It is separate from the 12 source repositories. sources/ is reference material and is excluded from product builds.
-
-## Repository ownership
-
-| Local path under src/ | Remote repository | Architecture layer and responsibility |
+| Location | Responsibility | Current scope |
 | --- | --- | --- |
-| apps/workspace | evolvxsi-workspace | Experience: chat, projects, studio, artifact editor and review screens. |
-| apps/control-plane | evolvxsi-control-plane | Cross-cutting control: identity integration, tenants, tasks/projects, configuration, registry, policy and approval decisions. |
-| platform/execution | evolvxsi-execution | Horizontal: runtime, harness, orchestration, scheduling, workflows, checkpoints, artifact versions and exports. |
-| platform/agents | evolvxsi-agents | Horizontal: shared agent definitions and collaboration templates. |
-| platform/skills | evolvxsi-skills | Horizontal: shared capability packages and skill-local evaluations. |
-| platform/hybrid | evolvxsi-hybrid | Hybrid intelligence: model adapters, placement policy, routing, fallback, budgets and usage. |
-| platform/knowledge | evolvxsi-knowledge | Horizontal: context, retrieval, scoped memory, ingestion, evidence and source permissions. |
-| platform/integrations | evolvxsi-integrations | Horizontal: tools, connectors, MCP adapters and connection health. |
-| platform/evaluations | evolvxsi-evaluations | Cross-cutting quality: cross-service suites, rubrics and release reports. |
-| packs/<domain> | evolvxsi-pack-<domain> | Vertical: domain agents, skills, workflows, tools, schemas, views, templates and evaluations. |
-| packages/pack-sdk | evolvxsi-pack-sdk | Pack authoring helpers, validation tooling and host adapter interfaces. |
-| packages/contracts | evolvxsi-contracts | API/event schemas, manifests, compatibility rules and generated clients. |
-| infra/deployment | evolvxsi-deploy | Infrastructure: environment profiles, compatible release sets, monitoring and rollback. |
+| apps/workspace | Unified workspace, Studio, admin and operations feature areas | Existing skeleton |
+| apps/developer-portal | Developer guides, API examples and extension discovery | Planned; create when implemented |
+| apps/public-site | Product, trust and support entry points | Planned; create when implemented |
+| services/control-plane | Public API, tenant membership, projects, drafts, registry, policy and approval records | Existing API skeleton moved here |
+| services/execution | Runs, jobs, outbox, checkpoints, scheduling, artifacts and exports | Existing skeleton |
+| services/knowledge | Ingestion, source permissions, retrieval, citations and scoped memory | Existing skeleton |
+| services/model-gateway | Inference adapters, destination checks, routing, budgets and usage | Existing skeleton |
+| packages/contracts | Canonical public API, event and pack manifest schemas | Existing skeleton |
+| packages/identity-policy | Shared identity verification and policy enforcement primitives | Existing skeleton |
+| packages/ui | Accessible components and design tokens | Existing skeleton |
+| packages/agents, packages/skills | Shared immutable definitions and reusable capabilities | Existing skeletons |
+| packages/integrations, packages/pack-sdk | Tool/source adapters and pack authoring/validation | Existing skeletons |
+| packages/telemetry, packages/testing | Shared instrumentation and test utilities | Planned; create when required |
+| packs/_template | Common pack authoring template | Template only |
+| packs/horizontal, packs/vertical | Domain-neutral and domain-specific bundles | Planned namespaces; no active packs |
+| sdks | Supported external clients using canonical contracts | Planned; select languages from demand |
+| evaluations | Runner, shared suites, synthetic fixtures, rubrics and evaluation formats | Existing skeleton; runners renamed runner |
+| tests | Cross-module contract, integration, end-to-end, security and resilience checks | Planned; local tests remain with modules |
+| infrastructure | Local setup, reusable modules, profiles, observability and releases | Existing skeletons aligned to target names |
+| tools | Repository maintenance and validation | Structure validator available |
+| examples | Supported integration and pack examples | Planned |
+| docs | Original numbered documents, decisions and operational runbooks | Original documents retained; decision recorded |
 
-Runtime, harness, orchestration and workflows remain internal execution modules initially. Context and memory remain internal knowledge modules. Control-plane policy is enforced locally at every protected service boundary. No service reads another service's business tables.
+The [module inventory](../../modules.json) distinguishes existing skeletons from planned modules. Do not create empty future applications or mark capabilities implemented because their folders exist.
 
-## Service repository template
+## Service layout
 
 ```text
-<service>/
+services/<service>/
   src/
-    api/
-    application/
-    domain/
-    infrastructure/
-  migrations/
-  tests/
-    contracts/
-    integration/
-    e2e/
-  deploy/
-  docs/
-  .github/workflows/
+    domain/          # Business rules
+    application/     # Use cases
+    interfaces/      # API and event consumers
+    adapters/        # Storage and external systems
+    entrypoints/     # API/worker/scheduler processes, added as needed
+  migrations/        # Only service-owned records
+  tests/             # Service-local verification
   README.md
 ```
 
-Adapt this template to the implementation language. Build EvolvXSI-owned modules and use official provider clients behind internal adapters. Each service owns its tests, migrations and operating instructions. Cross-service tests belong with evaluation or deployment verification rather than a central implementation test directory.
+Execution workers and ingestion workers remain owned by their respective service, even when deployed separately. Model serving capacity may be external to the gateway and selected through deployment profiles. Existing auxiliary docs, deploy and test folders are preserved. Repository workflows will live in root .github/workflows; nested workflow placeholders are legacy scaffolding, not active CI.
 
-## Agent and skill repositories
+## Dependency and state rules
 
-```text
-platform/agents/
-  agents/<agent-name>/
-    agent.yaml
-    instructions.md
-    evaluations/
-  tests/
+Applications and services consume shared packages. Packages must not import applications or service internals. A pack depends on public extension contracts and declared capabilities. Service-to-service access uses explicit APIs/events; no cross-service table writes or direct imports of another service's business implementation.
 
-platform/skills/
-  skills/<skill-name>/
-    skill.yaml
-    SKILL.md
-    schemas/
-    scripts/
-    templates/
-    evaluations/
-  tests/
-```
+Control plane owns task drafts and configuration; execution owns atomic run/job/outbox creation and artifact history; knowledge owns source versions and retrieval state. Each owner supplies migrations and recovery procedures. A shared physical database is possible initially with separate ownership and credentials; it does not grant unrestricted table access.
 
-Agents pin skill/tool versions, limits and model requirements. Skill manifests declare schemas, dependencies, permissions and runtime compatibility. The contracts repository owns canonical manifest schemas. The pack SDK consumes those schemas rather than duplicating them. Agents and skills publish immutable packages; they do not each require a service. Customer secrets and tenant configuration stay outside these packages.
+Canonical wire and manifest schemas live in packages/contracts. Evaluation-local rubrics and formats live in evaluations; published evaluation event contracts remain canonical. SDKs consume or generate from canonical contracts rather than defining competing schemas.
 
-## Vertical repository template
+## Packs
 
-```text
-packs/<domain>/
-  pack.yaml
-  agents/
-  skills/
-  workflows/
-  tools/
-  schemas/
-  knowledge/
-  views/
-  templates/
-  policies/
-  evaluations/
-  tests/
-  README.md
-```
+Target: packs/horizontal/<name> and packs/vertical/<name>. Both use manifest.yaml, agents/, skills/, workflows/, schemas/, templates/, knowledge/, tools/, views/, policies/, evaluations/ and tests/ as applicable. The manifest schema is a P01/P05 deliverable, so no executable manifest is fabricated now.
 
-knowledge/ stores domain schemas and configuration, not customer data. Domain definitions live with their pack; shared agents and skills are referenced by released version. Packs request permissions and cannot override tenant policy. Views use a controlled host interface. The first vertical remains undecided; create only the selected pack when work starts.
+Horizontal bundles package reusable workflows; vertical bundles reference them and add domain rules. Compatibility, dependency digests, requested permissions and evaluations are checked before tenant activation. Pack policies cannot grant authority. Customer records never belong in pack folders.
 
-## Release and dependency rules
+## Scaling and release rules
 
-- Each leaf repository will have independent ownership, CI and versioned releases; current skeletons have no CI configuration or releases.
-- Services communicate through authenticated APIs and events; package consumers pin released versions.
-- No cross-repository relative imports or shared business-table access.
-- Deployment configuration pins a tested compatible set of services, agents, skills and packs.
-- Contracts own wire schemas; pack SDK owns authoring helpers; service repositories own business behavior.
-- One repository can produce multiple processes, such as execution API, coordinator and worker.
-- A package repository may require no deployed service.
-- Provider and infrastructure dependency selections are recorded in decision/reference documents. Downloaded platforms remain reference-only.
-- Release manifests pin the documentation commit and its approval record, following [documentation governance](../07-implementation/EvolvXSI_Documentation-Governance.md).
+- Scale API processes and worker pools separately by measured demand; use bounded concurrency, tenant quotas and queue admission controls.
+- Isolate untrusted tools/code with scoped credentials, network restrictions and resource limits. Directory separation is not a security boundary.
+- Keep Studio, administration and operations inside the workspace initially. Extract a portal only for a demonstrated release, access or ownership need.
+- CI checks changed modules and dependent consumers, plus required release-wide security and end-to-end gates. Root workflows and real dependency declarations are implementation work.
+- Release manifests pin component artifacts, pack versions, contract compatibility, evaluation evidence and the documentation commit. Restore compatible sets during rollback.
+- Assign named owners in P00 before introducing enforceable CODEOWNERS rules. Do not invent team identities.
 
-## Creation sequence
+## Migration and verification
 
-All 12 shared-platform repository skeletons are created. Begin implementation with contracts, deployment, workspace, control plane, execution and one chosen vertical. Populate the existing agents, skills, hybrid and knowledge skeletons as those capabilities are implemented. Add pack SDK helpers when pack authoring needs them. Connectors can start as packaged adapters and gain separate service deployment for load or credential isolation. Populate the existing evaluations repository with shared cross-service suites.
+The existing API skeleton moves from the former apps location to services/control-plane. Each service's src/api becomes src/interfaces and src/infrastructure becomes src/adapters. Infrastructure environments, infrastructure and monitoring directories become profiles, modules and observability respectively. evaluations/runners becomes evaluations/runner. These are ownership-preserving moves; existing files and placeholders remain intact.
 
-The repository map does not require creating every project immediately. See the [system architecture](EvolvXSI_System-Architecture.md) and [deployment architecture](EvolvXSI_Deployment-Architecture.md) for runtime responsibilities and data ownership.
+Run `python tools/validate_structure.py` using the available Python runtime to check existing/planned inventory entries, maturity, responsibilities, service layouts, active-pack paths and inline local Markdown links. Run `python -m unittest discover -s tools/tests` for checker regression tests. Dependency, build, cache and Git directories are excluded. Link checks support inline links and heading fragments; reference-style links, raw HTML anchors and full Markdown parsing are outside this lightweight checker. It does not inspect code dependencies or enforce service isolation. This validates documentation/layout only. No application build, dependency installation or runtime readiness is implied.
 
-See [feature and architecture mapping](EvolvXSI_Feature-Architecture-Mapping.md) for detailed feature ownership.
+Upstream source snapshots remain outside the product tree and reference-only. See [source mapping](../07-implementation/EvolvXSI_Source-Repository-Mapping.md). No NorthWritX dependency is introduced.
 
+See the [ten engineering layers](EvolvXSI_System-Architecture.md#ten-engineering-layers) and [structure decision](../decisions/0001-modular-monorepo.md).
 
-## Current implementation direction
+## Inventory conventions and preserved scaffolding
 
-EvolvXSI owns the service logic and public contracts. Use official provider clients behind internal adapters. Downloaded application and agent-framework sources are reference material; earlier extraction suggestions are not selected dependencies. The optional agent-loop SDK choice remains separate from the API client choice. See the [dependency decision](../07-implementation/EvolvXSI_Provider-SDK-Decision.md).
+Existing modules have a repository-relative path, responsibility, implemented flag and maturity (skeleton or implemented). Future modules use maturity planned and implemented false. Paths are unique across both lists. Active packs are repository-relative paths beneath packs/horizontal or packs/vertical, each with manifest.yaml; manifest contents will be validated against the future canonical schema.
 
-## Learning environment ownership
+The current local profile is infrastructure/profiles/local; staging and production are placeholder profiles, not validated deployment offerings. No separate infrastructure/local folder is needed now. Existing infrastructure/containers, evaluations/reports and evaluations/rubrics remain owned scaffolding. Reports must use synthetic/redacted data and exclude customer records and secrets. Named deployment profiles and evaluation formats are added only with their implementation.
 
-[Learning environments](EvolvXSI_Learning-Environments.md) initially use contracts, evaluations, execution and domain packs. A future platform/learning repository is conditional on approved training scope; it is not created or included in the current 12-repository inventory.
+Responsibility fields describe capability ownership; they are not assigned people or a machine-enforced dependency graph. Named owners, dependency manifests and affected-consumer CI remain P00/P01 deliverables.

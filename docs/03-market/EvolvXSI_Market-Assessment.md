@@ -1,6 +1,6 @@
 # EvolvXSI — market assessment
 
-Status: **discovery plan; no market-size claim** · Updated: 2026-11-04
+Status: **discovery plan; no market-size claim** · Updated: 2026-11-05
 
 ## Market question
 
@@ -49,3 +49,7 @@ Ask a team to bring its last completed deliverable and walk through retrieval, v
 ## Decision gate
 
 Choose one segment only when there is a named buyer, representative workflow data, an agreed quality standard, a baseline, accessible users, and a realistic path to a paid pilot. Otherwise continue discovery rather than expanding the platform scope.
+
+## Vertical offer
+
+Select a pilot workflow for a named buyer and team. The vertical pack supplies the workflow, reviewer rules and quality cases. Evaluate willingness to pay, repeated use and review effort before expanding.

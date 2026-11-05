@@ -1,8 +1,8 @@
 # EvolvXSI — deployment architecture
 
-Status: proposed target topology; not implemented · Updated: 2026-11-02
+Status: proposed target topology; not implemented · Updated: 2026-11-05
 
-This document specifies deployable units, processes, persistence, network boundaries and scaling. The system architecture document describes the logical responsibilities. Repository boundaries and deployment boundaries are separate decisions. This is a target for EvolvXSI-owned services; downloaded projects are reference material and are not implementation foundations.
+This document specifies deployable units, processes, persistence, network boundaries and scaling. The system architecture document describes the logical responsibilities. The monorepo groups the product modules. Deployment groups processes by isolation, workload and recovery needs. This is a target for EvolvXSI-owned services; downloaded projects are reference material and are not implementation foundations.
 
 ## Physical topology
 
@@ -112,7 +112,7 @@ An initial developer environment uses container composition. The production targ
 | Evaluation jobs | Execute versioned suites and produce release reports. | Versioned reports and evaluation records. | Explicit CI/batch concurrency. |
 | Private model servers | Load selected models and serve inference. | Model weights and capacity state. | GPU memory, queue wait and token throughput. |
 
-API and coordinator code may ship from the same execution repository in different process modes. Agent and connector processes may share an image initially but have separate queues, credentials and resource limits. This permits independent scaling without premature duplication of code.
+API and coordinator code may ship from the same execution module in different process modes. Agent and connector processes may share an image initially but have separate queues, credentials and resource limits. This permits independent scaling without premature duplication of code.
 
 ## Durable state and message delivery
 
@@ -138,7 +138,7 @@ Approval decisions belong to the control plane; the pending run belongs to execu
 
 ## Agent, skill and vertical-package distribution
 
-These are repositories and release artifacts rather than extra network services. CI builds immutable versioned packages, scans/tests them and publishes signed artifacts or recorded content digests. The control registry stores approved versions and compatibility. Workers fetch the pinned versions and verify their digest. Packs include agents, domain skills, workflows, schemas, review views, templates, policies and evaluation cases. UI extensions require a controlled host contract; a pack cannot execute arbitrary privileged frontend code by declaring a view.
+These are versioned packages in the monorepo. CI builds immutable versioned packages, scans/tests them and publishes signed artifacts or recorded content digests. The control registry stores approved versions and compatibility. Workers fetch the pinned versions and verify their digest. Packs include agents, domain skills, workflows, schemas, review views, templates, policies and evaluation cases. UI extensions require a controlled host contract; a pack cannot execute arbitrary privileged frontend code by declaring a view.
 
 ## Production boundaries and rollout
 
@@ -154,3 +154,7 @@ EvolvXSI owns the service logic and public contracts. Use official provider clie
 ## Start and event ownership
 
 Task creation in control stores a draft only. The explicit run-start endpoint belongs to execution, which validates task access through control and transactionally persists the run, job, idempotency result and dispatch outbox. Its coordinator relays only execution-owned outbox records. Control has its own relay for approval/configuration events, and knowledge has its own relay for source-access events. Consumers record processed event IDs in their own inbox; no relay reads another service's tables. Current authority is rechecked at protected actions even when an event is delayed.
+
+## Layer placement
+
+L10 owns deployment. Record application, source index, artifact storage, model inference and telemetry placement separately. L07 checks the current L04 destination policy before each inference request.

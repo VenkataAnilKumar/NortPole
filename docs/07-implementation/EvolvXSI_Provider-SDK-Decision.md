@@ -21,12 +21,16 @@ Start with the official API client and an EvolvXSI provider interface. Implement
 
 | Repository | Implementation direction |
 | --- | --- |
-| platform/execution | EvolvXSI-owned run state and lifecycle; optional official agent-loop SDK after explicit selection. |
-| platform/agents | EvolvXSI-owned definitions; no imports from third-party agent definitions. |
-| platform/skills | EvolvXSI skill contracts; existing skill repositories are examples, not implicit dependencies. |
-| platform/hybrid | Official provider clients, capability-aware adapters and EvolvXSI placement policy. |
-| platform/knowledge | EvolvXSI retrieval/memory boundary using selected storage infrastructure; no mandatory Agno or Onyx service. |
-| platform/evaluations | EvolvXSI quality suites and release gates. |
+| services/execution | EvolvXSI-owned run state and lifecycle; optional official agent-loop SDK after explicit selection. |
+| packages/agents | EvolvXSI-owned definitions; no imports from third-party agent definitions. |
+| packages/skills | EvolvXSI skill contracts; existing skill repositories are examples, not implicit dependencies. |
+| services/model-gateway | Official provider clients, capability-aware adapters and EvolvXSI placement policy. |
+| services/knowledge | EvolvXSI retrieval/memory boundary using selected storage infrastructure; no mandatory Agno or Onyx service. |
+| evaluations | EvolvXSI quality suites and release gates. |
 | Other product repositories | EvolvXSI-owned implementation; downloaded application platforms remain references unless the owner later selects explicit reuse. |
 
 Provider endpoints, credentials, retry behavior, streaming, tool calls and usage accounting are isolated in adapters. Persist checkpoints independently of a model response. Apply policy to all processing destinations and recheck approvals before external actions.
+
+## Layer assignment
+
+L07 owns provider adapters and destination enforcement. L05 owns orchestration and run state. The reference-only decision applies across the platform.

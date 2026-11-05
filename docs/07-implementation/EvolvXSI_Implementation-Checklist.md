@@ -1,8 +1,8 @@
 # EvolvXSI — implementation checklist
 
-Updated: 2026-11-02 · Status: execution checklist; phases not started
+Updated: 2026-11-05 · Status: execution checklist; phases not started
 
-The 12 repository skeletons and vertical template are created. Those completed setup actions do not satisfy any implementation gate below. Builds and dependency installation remain paused. This checklist follows the [phased plan](EvolvXSI_Implementation-Phases.md).
+The monorepo module skeletons and vertical template are in place. Those completed setup actions do not satisfy any implementation gate below. Builds and dependency installation remain paused. This checklist follows the [phased plan](EvolvXSI_Implementation-Phases.md).
 
 ## P00 — Confirm scope and technical decisions
 
@@ -18,19 +18,19 @@ The 12 repository skeletons and vertical template are created. Those completed s
 - [ ] Define versioned task, run, event, error, approval, inference, artifact and manifest schemas. Keep provider response objects out of public contracts.
 - [ ] Create service authentication and tenant/user authorization primitives. Implement minimal tenant, membership, project and task records with service-owned migrations.
 - [ ] Create the local database, dispatch queue, cache, object-storage and secret-reference configuration. Use separate service credentials and queues/cache boundaries.
-- [ ] Add per-repository dependency pinning, formatting, type checks and CI. Publish initial contract packages and a deployment manifest pinning compatible versions plus the reviewed documentation commit and approval record.
-- [ ] Publish deliverable: Versioned contracts, authenticated task API, reproducible local environment and functioning CI for active repositories.
-- [ ] Record accountable owner and exit evidence: A developer can provision the local environment, migrate storage and call an authorized task endpoint. Negative tenant/access cases fail correctly. Contract consumers use released versions rather than cross-repository imports.
+- [ ] Add per-module dependency pinning, formatting, type checks and CI. Publish initial contract packages and a deployment manifest pinning compatible versions plus the reviewed documentation commit and approval record.
+- [ ] Publish deliverable: Versioned contracts, authenticated task API, reproducible local environment and functioning CI for active modules.
+- [ ] Record accountable owner and exit evidence: A developer can provision the local environment, migrate storage and call an authorized task endpoint. Negative tenant/access cases fail correctly. Contract consumers use the versioned interfaces from packages/contracts.
 
 ## P02 — Minimal execution and direct provider integration
 
-- [ ] Implement task submission, durable run/job records, database outbox, worker leases, persisted events and basic status streaming. Start with one sequential agent loop.
-- [ ] Implement one official provider-client adapter behind the EvolvXSI inference contract. Preserve provider-specific streaming/tool behavior behind capability checks; do not assume protocol parity.
+- [ ] Implement draft saving with zero jobs and a separate authorized start. Atomically persist the run, job, outbox and idempotency result in execution-owned storage. Add worker leases, persisted events and basic status streaming. Start with one sequential agent loop.
+- [ ] Implement a deterministic adapter first and record the fixture gate independently. Then implement one official provider-client adapter behind the EvolvXSI inference contract. Preserve provider-specific streaming/tool behavior behind capability checks; do not assume protocol parity.
 - [ ] Enforce destination allowlists and run budgets before model calls. Record usage, request IDs, errors and safe diagnostic metadata.
 - [ ] Add a minimal workspace screen for submitting a task and seeing run status/text output. Support cancellation at safe boundaries and bounded retries.
 - [ ] Use controlled fixtures for most integration checks. Configure authorized credentials securely before any live provider test; do not place secrets in source or logs.
-- [ ] Publish deliverable: First working thin slice: authenticated task submission -> worker -> approved model route -> persisted result -> workspace.
-- [ ] Record accountable owner and exit evidence: A controlled task completes through real service boundaries. Duplicate dispatch does not create duplicate jobs; worker interruption recovers or exposes a clear failure. A prohibited provider route is blocked. Live verification uses only configured authorized access.
+- [ ] Publish deliverable: Two recorded gates: synthetic draft -> explicit start -> durable worker -> deterministic adapter -> persisted result -> workspace; then separate verification of one approved live route.
+- [ ] Record accountable owner and exit evidence: Fixture gate: saving a draft creates no job; identical concurrent starts return one run; duplicate dispatch does not duplicate execution; worker interruption recovers or exposes a clear failure; cancellation, tenant denial and prohibited routing are verified using synthetic data. Live-route gate: separately verify the approved adapter with authorized credentials and synthetic inputs. Fixture success does not complete the live-route gate or permit customer-data use before P03.
 
 ## P03 — Policy, approvals and execution isolation
 
@@ -58,8 +58,8 @@ The 12 repository skeletons and vertical template are created. Those completed s
 - [ ] Implement the registry lifecycle: draft, validate, evaluate, publish, activate and disable. Tenant grants remain separate from permissions requested by a manifest.
 - [ ] Create one shared agent definition and one artifact-oriented skill with input/output schemas, declared dependencies and evaluation cases.
 - [ ] Implement pack authoring/validation helpers consuming canonical contract schemas. Validate compatibility, required tools and permissions before activation.
-- [ ] Implement a shared evaluation runner in platform/evaluations and a control-plane publication gate. Bind results to immutable candidate, dependency and suite digests, rubric version and configured thresholds. Missing, failed or mismatched evidence blocks publication; unauthorized disclosure, prohibited transmission and unapproved writes always fail. Verify passing, failing and stale-evidence cases before P05 exit.
-- [ ] Complete the domain-neutral template. Initialize an active domain repository only after P00 selects the first vertical; never treat the template as an installed pack.
+- [ ] Implement a shared evaluation runner in evaluations and a control-plane publication gate. Bind results to immutable candidate, dependency and suite digests, rubric version and configured thresholds. Missing, failed or mismatched evidence blocks publication; unauthorized disclosure, prohibited transmission and unapproved writes always fail. Verify passing, failing and stale-evidence cases before P05 exit.
+- [ ] Complete the domain-neutral template. Initialize an active domain pack only after P00 selects the first vertical; never treat the template as an installed pack.
 - [ ] Publish deliverable: Versioned definitions, registry activation and a validated package consumed by the execution runtime.
 - [ ] Record accountable owner and exit evidence: Invalid manifests, unsupported versions and missing permissions are rejected. A run records exact agent/skill/pack versions. Republishing or editing definitions does not change past runs. A skill cannot grant its own permissions. The P05 evaluation runner blocks publication for missing, failed or stale evidence and permits an authorized publication with matching passing evidence.
 
@@ -93,7 +93,7 @@ The 12 repository skeletons and vertical template are created. Those completed s
 
 ## P09 — Build and validate the first vertical pack
 
-- [ ] Initialize the selected domain repository and implement domain agents, skills, workflows, tool adapters, schemas, templates, review views and evaluation cases.
+- [ ] Initialize the selected domain pack and implement domain agents, skills, workflows, tool adapters, schemas, templates, review views and evaluation cases.
 - [ ] Package the complete domain workflow with compatibility, dependency, permission and review requirements. Reuse shared services through contracts.
 - [ ] Extend the P05 runner with the domain-specific representative evaluation suite, review rubric and manual baseline agreed with a workflow owner.
 - [ ] Run the pilot workflow end to end, measure practitioner effort, evidence quality, completion, latency and cost, and classify failure modes.
@@ -134,3 +134,14 @@ The 12 repository skeletons and vertical template are created. Those completed s
 - [ ] P09: Validate one domain environment with expert-reviewed criteria, baseline and separated training/validation/held-out tasks.
 - [ ] P11 (optional): Compare instruction/skill/workflow optimization first; authorize model RL separately only with a trainable model/interface, approved data, compute budget and an accountable owner.
 - [ ] Promotion: Require held-out gains, policy/regression gates, digest-bound approval, controlled rollout and rollback before activating an improved candidate.
+
+## Ten-layer delivery evidence
+
+Use the [layer delivery map](EvolvXSI_Implementation-Phases.md#delivery-coverage-by-engineering-layer). Record fixture results separately from live provider verification. A passing fixture does not satisfy the live route gate.
+
+## Platform feature traceability
+
+- [ ] Use the [complete PF ownership and phase matrix](../06-technical/EvolvXSI_Feature-Architecture-Mapping.md#platform-feature-ownership-and-delivery) to select feature IDs for each release.
+- [ ] Record each selected feature's accountable person, dependencies, acceptance cases and evidence; keep unselected expansion features planned.
+- [ ] Record P02 fixture and live-route decisions separately; never mark the full phase complete from fixture evidence alone.
+- [ ] For P11, verify self-service Studio, collaboration, horizontal-pack reuse and applicable public/support surfaces against their PF acceptance criteria.

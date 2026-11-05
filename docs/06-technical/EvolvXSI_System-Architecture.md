@@ -1,8 +1,29 @@
 # EvolvXSI — system architecture
 
-Status: proposed for review; implementation paused · Updated: 2026-11-04
+Status: proposed for review; implementation paused · Updated: 2026-11-05
 
 For deployable services, storage, network boundaries and scaling, see the [deployment architecture](EvolvXSI_Deployment-Architecture.md).
+
+## Ten engineering layers
+
+These IDs are the canonical ownership map for EvolvXSI. A layer can span several modules, and several layers can share a deployment. The monorepo inventory records the physical layout.
+
+| Layer | Responsibility | Monorepo owners |
+| --- | --- | --- |
+| L01 Portals & Surfaces | Practitioner workspace, Studio, admin, developer, operator and public experiences. | `apps/workspace`, `packages/ui` |
+| L02 Agents, Skills & Vertical Packs | Versioned definitions, templates, domain rules and pack validation. | `packages/agents`, `packages/skills`, `packages/pack-sdk`, `packs/` |
+| L03 Control Plane & Platform Contracts | Tenant, project and draft records, registry, publication, activation and versioned interfaces. | `services/control-plane`, `packages/contracts` |
+| L04 Security, Policy & Governance | Actor identity, grants, policy decisions, exact-version approvals, and audit and retention rules. | `services/control-plane`, `packages/identity-policy`; every protected service enforces its own boundary |
+| L05 Agent Runtime & Orchestration | Durable runs, scheduling, workers, checkpoints, retries, cancellation and artifacts. | `services/execution` |
+| L06 Data, Knowledge & Retrieval | Ingestion state, source permissions, versioned passages, citations, libraries and scoped memory. | `services/knowledge` |
+| L07 Model Gateway & Inference | Destination policy enforcement, provider adapters, routing, fallback and usage. | `services/model-gateway` |
+| L08 Integrations & Ecosystem | Connectors, tools, credential references, webhooks and extension interfaces. | `packages/integrations`, with execution or knowledge hosts |
+| L09 Observability & Evaluation | Run telemetry, diagnostic views, repeatable evaluation and version-bound publication evidence. | `evaluations`, execution event producers and workspace views |
+| L10 Deployment & Platform Operations | Deployment profiles, service health, upgrades, backups, restore and rollback. | `infrastructure` |
+
+L03 records registry and activation state. L04 defines authority and records approval decisions. L05 applies those decisions to the current run, with an access and policy check before protected actions. L06 owns retrieval authorization and provenance. L07 applies destination policy before sending content, including embedding requests and fallback. L09 provides evaluation evidence for L03 to enforce at publication. L10 operates the infrastructure used by all layers.
+
+The [product definition](../02-product/EvolvXSI_Product-Definition.md) describes the ten product coverage areas. Discover, Create, Automate and Customize cross layers. Go-to-market uses the public surface and vertical packs and is owned by the commercial workstream. Cohere North is the product benchmark. This layer model belongs to EvolvXSI. Downloaded source projects serve as design references only.
 
 ## Horizontal platform and vertical packs
 
@@ -53,7 +74,7 @@ The pack defines the meaning and quality of the deliverable. The platform owns i
 
 ## Execution and service boundaries
 
-Use independently versioned repositories and services with clear ownership. Definitions and packages have independent releases without becoming separate services. Scale worker execution, ingestion, inference, and connector workloads independently.
+Use one monorepo with explicit module and service ownership. Definitions and packages have independent releases without becoming separate services. Scale worker execution, ingestion, inference, and connector workloads independently.
 
 ```mermaid
 flowchart TB
@@ -82,24 +103,24 @@ flowchart TB
 
 ## Repository and ownership map
 
-| Repository | Owns | Release artifact |
+| Module | Owns | Release artifact |
 | --- | --- | --- |
-| evolvxsi-workspace | Chat, projects, agent studio, artifacts, review and admin views. | Web application |
-| evolvxsi-control-plane | Tenants, membership, tasks, policy versions, registry metadata and approval decisions. | API and migrations |
-| evolvxsi-execution | Agent loop, orchestration, run/step state, checkpoints, tool calls, artifacts and exports. | Worker images and migrations |
-| evolvxsi-hybrid | Model adapters, data-destination checks, routing, fallback, budgets and usage. | Gateway and adapters |
-| evolvxsi-knowledge | Ingestion connections, document versions, source ACLs, passages, indexes, provenance and scoped memory. | API and ingestion workers |
-| evolvxsi-integrations | Tool adapters, connection health, credential references and remote subscriptions. | Adapter packages; isolated services when needed |
-| evolvxsi-agents | Shared agent definitions, roles, instructions, skill/tool requirements and collaboration patterns. | Definition packages |
-| evolvxsi-skills | Shared skills, schemas, dependencies, permissions and skill-local evaluations. | Skill packages |
-| evolvxsi-pack-sdk | Pack authoring helpers and manifest validation using canonical contracts. | SDK package |
-| evolvxsi-contracts | Versioned API/event schemas, manifests and generated clients. | Contract packages |
-| evolvxsi-evaluations | Cross-service evaluation suites, rubrics and release reports. | CI and batch jobs |
-| evolvxsi-deploy | Compatible release sets, deployment profiles, monitoring and rollback configuration. | Deployment manifests |
-| evolvxsi-docs (workspace docs/) | Canonical product, architecture, decisions and separate reference research. | Independently versioned documentation baseline |
-| evolvxsi-pack-<domain> | Domain agents, skills, workflows, review views, templates, policies and evaluations. | Vertical package; optional specialized worker |
+| apps/workspace | Chat, projects, agent studio, artifacts, review and admin views. | Web application |
+| services/control-plane | Tenants, membership, tasks, policy versions, registry metadata and approval decisions. | API and migrations |
+| services/execution | Agent loop, orchestration, run/step state, checkpoints, tool calls, artifacts and exports. | Worker images and migrations |
+| services/model-gateway | Model adapters, data-destination checks, routing, fallback, budgets and usage. | Gateway and adapters |
+| services/knowledge | Ingestion connections, document versions, source ACLs, passages, indexes, provenance and scoped memory. | API and ingestion workers |
+| packages/integrations | Tool adapters, connection health, credential references and remote subscriptions. | Adapter packages; isolated services when needed |
+| packages/agents | Shared agent definitions, roles, instructions, skill/tool requirements and collaboration patterns. | Definition packages |
+| packages/skills | Shared skills, schemas, dependencies, permissions and skill-local evaluations. | Skill packages |
+| packages/pack-sdk | Pack authoring helpers and manifest validation using canonical contracts. | SDK package |
+| packages/contracts | Versioned API/event schemas, manifests and generated clients. | Contract packages |
+| evaluations | Cross-service evaluation suites, rubrics and release reports. | CI and batch jobs |
+| infrastructure | Compatible release sets, deployment profiles, monitoring and rollback configuration. | Deployment manifests |
+| docs | Canonical product, architecture, decisions and separate reference research. | Documentation pinned to the product commit |
+| packs/vertical/<domain> | Domain agents, skills, workflows, review views, templates, policies and evaluations. | Vertical package; optional specialized worker |
 
-Twelve local repository skeletons now exist; no application implementation or CI pipeline has been built. The current sources directory remains a collection of reference checkouts. Implement EvolvXSI-owned modules within these boundaries, using official provider clients behind internal adapters. Reference checkouts are excluded from product builds.
+The product monorepo contains module skeletons; no application implementation or CI pipeline has been built. The current sources directory remains a collection of reference checkouts. Implement EvolvXSI-owned modules within these boundaries, using official provider clients behind internal adapters. Reference checkouts are excluded from product builds.
 
 ## Skills, agents, and hybrid intelligence
 

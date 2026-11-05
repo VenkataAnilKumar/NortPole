@@ -2,7 +2,7 @@
 
 > Current dependency direction (2026-11-02): downloaded projects are reference-only. Earlier fork, adapter-copy and runtime-selection suggestions below are historical candidates, superseded by [the provider SDK decision](EvolvXSI_Provider-SDK-Decision.md). Implement EvolvXSI-owned boundaries using official provider clients; no third-party agent platform is a required dependency.
 
-Status: **official-site review, not product decisions** · Updated: 2026-11-02
+Status: **official-site review, not product decisions** · Updated: 2026-11-05
 
 This document is the sole place in the EvolvXSI document set for named external projects and open source implementation research. The [product overview](../02-product/EvolvXSI_Product-Overview.md), [PRD](../04-specs/EvolvXSI_First-Workflow-PRD.md), [architecture](../06-technical/EvolvXSI_System-Architecture.md), and [implementation phases](EvolvXSI_Implementation-Phases.md) describe EvolvXSI independently of any vendor or project.
 
@@ -140,3 +140,7 @@ The adaptation above is our proposal, not a claim about Pokee's internal system.
 ## Commercial reference research — 4 November 2026
 
 The [commercial reference review](EvolvXSI_Commercial_Reference_Research.md) evaluates Temporal, Langfuse, LiteLLM, Qdrant, Infisical, Appsmith, E2B, Dify, n8n and Airbyte against named adoption evidence and product-module relevance. It records source-license boundaries and maps each study to an EvolvXSI design question. Temporal and LiteLLM were already mentioned in earlier research. All entries remain reference only. This review adds research candidates to the documentation. The downloaded-source manifest continues to describe only existing local snapshots.
+
+## Layer mapping
+
+Use the [canonical engineering layer map](../06-technical/EvolvXSI_System-Architecture.md#ten-engineering-layers) when recording what an upstream reference teaches. Reference work does not select a production dependency.
