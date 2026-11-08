@@ -58,6 +58,8 @@ The module skeletons in modules.json cover the proposed shared platform boundari
 | FR-10 Evaluation | evaluations | Skill/pack owners, services/control-plane |
 | FR-11 Export | services/execution | packages/skills, services/knowledge, apps/workspace |
 | FR-12 Administration | services/control-plane | Owning services apply disable/revoke actions; workspace provides controls. |
+| FR-13 Agent safety controls | services/control-plane | Execution enforces autonomy tiers and untrusted-content checks; the model gateway applies redaction and destination policy. |
+| FR-14 Review inbox and notifications | apps/workspace | Control-plane supplies decisions and preferences; access is rechecked when an item is opened. |
 
 ## Vertical pack coverage
 
@@ -97,8 +99,8 @@ Every catalog entry is planned. Primary owner means the module responsible for c
 | PF-01.05 | `apps/workspace` | services/control-plane, evaluations, services/execution | P05 publication foundation; P11 self-service Studio |
 | PF-01.06 | `apps/workspace` | services/control-plane, services/knowledge | P11 |
 | PF-01.07 | `apps/workspace` | services/control-plane, infrastructure; commercial and support owners | P10 required rollout evidence; P11 full portals |
-| PF-01.08 | `apps/workspace` | services/control-plane, services/execution | P11C |
-| PF-01.09 | `apps/workspace` | services/control-plane, packages/integrations | P11C |
+| PF-01.08 | `apps/workspace` | services/control-plane, services/execution | P06 |
+| PF-01.09 | `apps/workspace` | services/control-plane, packages/integrations | P06 |
 | PF-01.10 | `apps/workspace` | packages/ui, services/control-plane | P11C |
 | PF-01.11 | `apps/workspace` | services/control-plane, packages/agents, evaluations | P11A |
 | PF-01.12 | `apps/workspace` | packages/skills, services/control-plane | P11A |
@@ -117,10 +119,10 @@ Every catalog entry is planned. Primary owner means the module responsible for c
 | PF-04.01 | `packages/identity-policy` | services/control-plane; every protected service | P01, P02 |
 | PF-04.02 | `services/control-plane` | services/execution, services/knowledge, apps/workspace | P03, P04, P06 |
 | PF-04.03 | `services/control-plane` | packages/identity-policy, infrastructure | P10 selected controls; P11 broader provisioning |
-| PF-04.04 | `services/control-plane` | services/model-gateway, services/knowledge, services/execution | P11G |
-| PF-04.05 | `services/execution` | packages/identity-policy, services/knowledge, evaluations | P11G |
+| PF-04.04 | `services/control-plane` | services/model-gateway, services/knowledge, services/execution | P03 |
+| PF-04.05 | `services/execution` | packages/identity-policy, services/knowledge, evaluations | P03, P04 |
 | PF-04.06 | `services/control-plane` | infrastructure, evaluations; compliance owner | P11E |
-| PF-04.07 | `services/control-plane` | services/execution, packages/identity-policy, apps/workspace | P11G |
+| PF-04.07 | `services/control-plane` | services/execution, packages/identity-policy, apps/workspace | P03 |
 | PF-05.01 | `services/execution` | services/control-plane, packages/contracts | P02 |
 | PF-05.02 | `services/execution` | services/control-plane, apps/workspace | P03, P06 |
 | PF-05.03 | `services/execution` | packages/integrations, infrastructure | P03 isolation; P07 required automation; P11 breadth |

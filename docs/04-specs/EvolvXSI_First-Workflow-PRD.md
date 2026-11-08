@@ -36,6 +36,8 @@ Use a question such as “Which operating procedures changed, and what should th
 | FR-10 | Evaluation | Team can run a fixed test set against a workflow version and compare results before publication. |
 | FR-11 | Export | Practitioner can export the approved report and its citation list in one agreed format. |
 | FR-12 | Administration | Admin can disable a workflow or connector and revoke its tool access. |
+| FR-13 | Agent safety controls | Sensitive values never reach a destination policy forbids; hostile content in sources or tool results triggers no unapproved tool call or transmission; an agent cannot exceed its autonomy tier, and approval never overrides a policy block. Evidence is a fixed test suite, not a guarantee. |
+| FR-14 | Review inbox and notifications | An approver finds and resolves pending approvals from one inbox and is alerted; alerts and inbox items reveal no protected text after access is lost. |
 
 ## 4. Nonfunctional requirements
 

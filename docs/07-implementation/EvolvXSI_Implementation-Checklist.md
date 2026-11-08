@@ -39,7 +39,9 @@ The monorepo module skeletons and vertical template are in place. Those complete
 - [ ] Implement scoped credential references and isolated execution for scripts/browser work when those capabilities are enabled. Apply network/resource limits and run cancellation.
 - [ ] Expose pending decisions and safe errors in the workspace. Record audit events without leaking source text or secret values.
 - [ ] Test duplicate decisions, policy changes, permission revocation and timeouts with a controlled test tool before any real external write.
-- [ ] Publish deliverable: Working human approval boundary, policy enforcement, audit records and isolation controls for enabled tools.
+- [ ] Add sensitive-data detection with block/mask/allow before any model, tool, export or log destination; treat retrieved content, tool results and files as untrusted data that cannot grant permissions or select tools.
+- [ ] Enforce per-agent autonomy tiers at tool invocation; approval never overrides a policy block. Build and pass the fixed redaction and adversarial suites.
+- [ ] Publish deliverable: Working human approval boundary, policy enforcement, audit records, isolation controls, redaction, untrusted-content handling and autonomy tiers.
 - [ ] Record accountable owner and exit evidence: No protected test action executes without the required authority and exact approval. Changed arguments require a new decision. Disabled resources cannot start new work. Interrupted or timed-out actions have an explicit reconciliation path.
 
 ## P04 — Knowledge, evidence and scoped memory
@@ -70,6 +72,7 @@ The monorepo module skeletons and vertical template are in place. Those complete
 - [ ] Implement one agreed export format with citations, export status and authorization at download time.
 - [ ] Show waiting/running/failed/cancelled states, safe recovery actions, actor identity, model/tool usage and cost estimates. Mark unavailable cost as unknown.
 - [ ] Verify keyboard navigation and the selected accessibility target for the complete task/review/export flow.
+- [ ] Add the review inbox and notifications; alerts carry no protected text and opening an item rechecks current access.
 - [ ] Publish deliverable: First complete evidence-based workflow: intake -> plan -> evidence -> draft -> human review -> approved export.
 - [ ] Record accountable owner and exit evidence: A representative practitioner completes the journey with inspectable evidence and versioned approval. Stale approvals and revoked-source exports fail. History remains understandable after revisions and workflow updates.
 
@@ -166,7 +169,7 @@ See [implementation batches](EvolvXSI_Implementation-Phases.md#first-working-sli
 - [ ] P11D: Complete an external integration through documented SDK/API contracts; test channel identity, scopes, duplicate events and credential rotation; verify sandbox isolation, MCP server and agent-to-agent scopes, and extension allowlists.
 - [ ] P11E: Verify chosen enterprise provisioning, delegated roles, support access and evidence-backed public commitments; verify compliance evidence exports, outcome reports and metering exports.
 - [ ] P11F: Meet agreed workload targets, bounded overload and tenant fairness; separately accept each added inference/deployment profile; verify spend controls, tenant-scoped caching, customer-supplied model routes, shadow-mode evaluation, feedback capture, customer-managed keys and any hybrid control/data-plane profile.
-- [ ] P11G: Pass the fixed redaction and adversarial suites; block calls above an autonomy tier; confirm sub-agents never exceed parent permissions and browser sessions hold no implicit credentials.
+- [ ] P11G: Confirm sub-agents never exceed parent permissions or budget, delegated calls obey the same tiers and redaction, browser sessions hold no implicit credentials, and the adversarial suite passes with browser content.
 
 Use the [expansion delivery stages](EvolvXSI_Implementation-Phases.md#p11-expansion-delivery-stages) for module owners and dependencies. Estimate only selected scope with an assigned team. Baseline security, support, monitoring and recovery remain required before expansion.
 
