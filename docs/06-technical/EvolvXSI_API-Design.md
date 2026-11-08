@@ -1,6 +1,6 @@
 # EvolvXSI — API design
 
-Status: **proposed contract; no implementation exists** · Updated: 2026-11-05
+Status: **proposed contract; no implementation exists** · Updated: 2026-11-08
 
 ## Scope
 
@@ -91,3 +91,38 @@ L03 owns public schemas and task drafts. L04 records approval decisions. L05 own
 P02 uses a fixed, synthetic-only development workflow definition pinned by content digest and explicitly allowlisted in the local test configuration. It is not a published/activated customer package and must not expose a general publication bypass. The development profile rejects arbitrary workflow definitions and customer sources. The live-route test may use this same fixed definition with synthetic inputs and approved processing destinations.
 
 Before P05 acceptance, replace the fixture definition resolution with the evaluated registry/publication path. Production and customer profiles must reject the development bootstrap path. Add tests for digest mismatch, an unlisted definition and attempts to enable bootstrap in a customer/production profile. The first-workflow APIs otherwise require published, authorized versions as specified above.
+
+## Expansion endpoints (proposed, not first release)
+
+Added 2026-11-08 for the expansion features in the feature catalog. These are illustrative paths that follow the common conventions above; none is committed and none changes first-release scope.
+
+| Method and path | Purpose | Feature | Required control |
+| --- | --- | --- | --- |
+| `GET /v1/review-items` | List pending approvals and escalations for the caller. | PF-01.08, PF-05.05 | Current role and source access; withheld items are omitted, not masked. |
+| `GET/PUT /v1/notification-preferences` | Read or set alert channels. | PF-01.09 | Self or administrator; alert bodies carry no protected text. |
+| `POST /v1/agent-drafts` | Draft an agent definition from a prompt. | PF-01.11 | Draft only; publication still needs the evaluation gate. |
+| `GET/POST /v1/saved-prompts` | Manage slash commands and saved prompts. | PF-01.12 | Owner or tenant scope; running one is an ordinary task start. |
+| `POST /v1/packages/{id}/signatures` | Attach and verify a package signature. | PF-02.05 | Publisher key and registry policy; unsigned packages do not activate. |
+| `POST /v1/partner-submissions` | Submit a partner package for review. | PF-02.06 | Partner identity; review and evaluation before listing. |
+| `POST /v1/sandboxes` | Create an isolated developer sandbox. | PF-03.04 | Synthetic data only; no production credentials. |
+| `GET /v1/inventory` | List agents, tools and grants. | PF-03.05 | Administrator permission. |
+| `GET/PUT /v1/agents/{id}/guardrails` | Read or set autonomy tier and limits. | PF-04.07 | Administrator; changes are versioned and take effect on new runs. |
+| `GET/PUT /v1/policies/redaction` | Manage sensitive-data rules. | PF-04.04 | Administrator; fixed test suite must pass before activation. |
+| `POST /v1/compliance-exports` | Generate an evidence export. | PF-04.06 | Compliance role; evidence only, not a certification. |
+| `POST /v1/runs/{id}/delegations` | Delegate to a sub-agent. | PF-05.04 | Child permissions and budget never exceed the parent. |
+| `POST /v1/browser-sessions` | Open a bounded browser or computer-use session. | PF-05.06 | No implicit credentials; external effects need exact-action approval. |
+| `POST /v1/sources/{id}/files` | Upload a file for parsing. | PF-06.03 | Source permission; parsed text inherits the file ACL. |
+| `GET/DELETE /v1/memory/{id}` | Inspect or delete a memory entry. | PF-06.04 | Scope owner; deletion removes derived projections. |
+| `GET/PUT /v1/spend-limits` | Read or set quotas and alerts. | PF-07.06 | Administrator; the limit is enforced in the model gateway. |
+| `POST /v1/model-routes` | Register a customer-supplied model. | PF-07.05 | Administrator; evaluation and destination policy first. |
+| `/mcp` (server interface) | Expose approved tools to external MCP clients. | PF-08.03 | Per-client scopes; same policy as internal calls. |
+| `POST /v1/tools/import` | Import an OpenAPI description as a tool. | PF-08.04 | Administrator; tool is inactive until allowlisted. |
+| `GET/PUT /v1/extension-allowlist` | Allow or block servers and tools. | PF-08.05 | Administrator; blocked entries are never called. |
+| `POST /v1/workflows/{id}/shadow-runs` | Run a candidate beside the live version. | PF-09.04 | Outputs are not delivered; no external writes. |
+| `POST /v1/artifacts/{id}/feedback` | Record a reviewer correction or rating. | PF-09.05 | Reviewer access; dataset use needs authorization and redaction. |
+| `GET /v1/reports/outcomes` | Read completion, review time and cost per task. | PF-09.06 | Tenant-scoped aggregates. |
+| `GET /v1/usage-exports` | Export metered usage. | PF-09.07 | Administrator; metering only, no prices. |
+| `PUT /v1/tenant/keys` | Set a customer-managed key and residency region. | PF-10.04 | Tenant owner; revocation stops reads. |
+| `POST /v1/hybrid/enrollments` | Enroll a customer-side data plane. | PF-10.05 | Mutual authentication; local policy holds offline. |
+
+Contract tests to add for these: a withheld item never appears in the inbox or an alert; a child run is denied anything its parent lacks; a call above its autonomy tier is blocked and approval cannot override a policy block; redaction and injection suites pass before activation; a blocked extension is never called; shadow runs deliver nothing; a revoked key stops reads.

@@ -71,11 +71,11 @@ Artifact format, source citation style, plan-review timing, collaboration model,
 
 | Surface group | Feature references |
 | --- | --- |
-| Workspace and review | PF-01.01–03, PF-01.06, PF-04.02, PF-06.01 |
-| Studio | PF-01.05, PF-02.01–04, PF-03.02, PF-05.03, PF-09.02 |
-| Enterprise Admin | PF-04.01–03, PF-07.03, PF-08.01–02 |
-| Developer Portal and embedded channels | PF-01.04, PF-03.03, PF-08.02 |
-| Public Website, Trust Center and Support Console | PF-01.07 |
-| Run Operations and Deployment Console | PF-09.01–03, PF-10.02–03 |
+| Workspace and review | PF-01.01–03, PF-01.06, PF-01.08–01.10, PF-01.12, PF-04.02, PF-05.05, PF-06.01, PF-06.03–06.05 |
+| Studio | PF-01.05, PF-01.11, PF-02.01–06, PF-03.02, PF-03.05, PF-05.03, PF-09.02, PF-09.04 |
+| Enterprise Admin | PF-03.05, PF-04.01–07, PF-07.03–07.06, PF-08.01–02, PF-08.05, PF-10.04 |
+| Developer Portal and embedded channels | PF-01.04, PF-01.13, PF-03.03–03.04, PF-08.02–08.04 |
+| Public Website, Trust Center and Support Console | PF-01.07, PF-04.06 |
+| Run Operations and Deployment Console | PF-09.01–09.07, PF-10.02–10.05 |
 
 The [feature catalog](../04-specs/EvolvXSI_Feature-Spec.md#full-platform-feature-catalog) specifies what each capability must demonstrate. The portal inventory also covers public, trust and support surfaces for rollout.

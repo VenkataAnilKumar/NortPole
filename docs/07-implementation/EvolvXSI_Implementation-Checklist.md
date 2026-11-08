@@ -160,12 +160,13 @@ See [implementation batches](EvolvXSI_Implementation-Phases.md#first-working-sli
 
 ## P11 expansion acceptance
 
-- [ ] P11A: Author, evaluate, publish and disable a workflow through Studio; deny stale/failed evidence and preserve running versions.
-- [ ] P11B: Reuse a horizontal bundle in two verticals; verify compatibility, grants, upgrade and rollback.
-- [ ] P11C: Verify collaborative access, notifications, revocation and scoped context; isolate generated applications before execution.
-- [ ] P11D: Complete an external integration through documented SDK/API contracts; test channel identity, scopes, duplicate events and credential rotation.
-- [ ] P11E: Verify chosen enterprise provisioning, delegated roles, support access and evidence-backed public commitments.
-- [ ] P11F: Meet agreed workload targets, bounded overload and tenant fairness; separately accept each added inference/deployment profile.
+- [ ] P11A: Author, evaluate, publish and disable a workflow through Studio; deny stale/failed evidence and preserve running versions; confirm prompt-to-agent drafts cannot bypass the evaluation gate and only signed, approved packages install.
+- [ ] P11B: Reuse a horizontal bundle in two verticals; verify compatibility, grants, upgrade and rollback; confirm partner packages pass manifest, evaluation and security review.
+- [ ] P11C: Verify collaborative access, notifications, revocation and scoped context; isolate generated applications before execution; verify the review inbox, escalation queues, mobile approval, file parsing, memory controls and conflict handling.
+- [ ] P11D: Complete an external integration through documented SDK/API contracts; test channel identity, scopes, duplicate events and credential rotation; verify sandbox isolation, MCP server and agent-to-agent scopes, and extension allowlists.
+- [ ] P11E: Verify chosen enterprise provisioning, delegated roles, support access and evidence-backed public commitments; verify compliance evidence exports, outcome reports and metering exports.
+- [ ] P11F: Meet agreed workload targets, bounded overload and tenant fairness; separately accept each added inference/deployment profile; verify spend controls, tenant-scoped caching, customer-supplied model routes, shadow-mode evaluation, feedback capture, customer-managed keys and any hybrid control/data-plane profile.
+- [ ] P11G: Pass the fixed redaction and adversarial suites; block calls above an autonomy tier; confirm sub-agents never exceed parent permissions and browser sessions hold no implicit credentials.
 
 Use the [expansion delivery stages](EvolvXSI_Implementation-Phases.md#p11-expansion-delivery-stages) for module owners and dependencies. Estimate only selected scope with an assigned team. Baseline security, support, monitoring and recovery remain required before expansion.
 

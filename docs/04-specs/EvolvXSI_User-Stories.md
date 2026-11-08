@@ -79,5 +79,13 @@ Use the [platform feature catalog](EvolvXSI_Feature-Spec.md#full-platform-featur
 | Collaborate | A practitioner shares a task and hands off review; revoked recipients cannot read content or receive protected notifications. | PF-01.06 |
 | Reuse horizontal packs | A pack author uses the same evaluated domain-neutral bundle in two verticals and demonstrates that tenant grants remain separate. | PF-02.04 |
 | Operate commercial surfaces | A buyer sees evidence-backed commitments; support staff access only authorized tenant records and leave an audit trail. | PF-01.07 |
+| Review and notify | A reviewer finds pending approvals in one inbox and receives an alert; after losing access the reviewer sees neither the item nor its protected text. | PF-01.08–01.09 |
+| Delegate and escalate | A parent run delegates to a sub-agent within budget and routes a policy hold to a reviewer queue. | PF-05.04–05.05 |
+| Resist hostile content | A document contains injected instructions; the agent neither calls an unapproved tool nor sends content to a prohibited destination, and sensitive fields are redacted before transmission. | PF-04.04–04.05 |
+| Control autonomy and spend | An administrator sets an agent to draft-only and sets a quota; the alert fires before the limit, and a blocked call stays blocked after approval. | PF-04.07, PF-07.06 |
+| Extend safely | An administrator allows one MCP server with read-only tools; a blocked server is never called, and an external client uses the MCP server interface within its scopes. | PF-08.03–08.05 |
+| Learn from feedback | Reviewer corrections are stored with the artifact version and enter an evaluation dataset only after authorization and redaction; a candidate runs in shadow mode before publication. | PF-09.04–09.05 |
+| Report outcomes | A workflow owner compares completion, reviewer time and cost per completed task with the manual baseline and exports usage for billing. | PF-09.06–09.07 |
+| Operate hybrid | A customer keeps documents and credentials local while a cloud control plane distributes signed definitions; local policy holds offline, and a revoked key stops reads. | PF-10.04–10.05 |
 
 Capability epics span pilot foundations and expansion. The feature catalog's First target and the phase matrix control scope; an epic title is not a pilot commitment.
