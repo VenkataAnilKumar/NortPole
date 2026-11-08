@@ -36,6 +36,8 @@ The set provides a coherent working definition of a horizontal agent platform wi
 | FR-10 Evaluation | F-08 | US-17 |
 | FR-11 Export | F-05, F-09 | US-18 |
 | FR-12 Administration | F-06, F-09; lifecycle API | US-15 |
+| FR-13 Agent safety controls | F-11, F-12, F-13 | Resist hostile content; Control autonomy and spend |
+| FR-14 Review inbox and notifications | F-10 | Review and notify |
 
 ## Decisions that remain open
 
@@ -135,3 +137,7 @@ Validation: run repository structure/link checks, feature-to-module traceability
 Added 32 proposed expansion entries (PF-01.08–13, PF-02.05–06, PF-03.04–05, PF-04.04–07, PF-05.04–06, PF-06.03–05, PF-07.04–06, PF-08.03–05, PF-09.04–07, PF-10.04–05) after comparing the catalog with common enterprise agent-platform capabilities. Gaps covered: review inbox and notifications, mobile approval, prompt-to-agent drafting, slash commands, voice, signed packages and partner publishing, developer sandbox, agent/tool inventory, sensitive-data redaction, prompt-injection defense, compliance evidence, autonomy tiers, bounded delegation, escalation queues, browser use, file parsing, memory controls, freshness handling, inference caching, customer-supplied models, spend controls, MCP server and agent-to-agent interfaces, custom tools, extension allowlists, shadow mode, feedback capture, outcome reporting, metering export, customer-managed keys and hybrid control/data planes.
 
 Every new ID has a primary module, collaborators and phase in the ownership matrix. The UI surface map, user-story epics, P11 stages (new P11G) and checklist were updated together. All entries are expansion scope and none changes the first-release PRD. Open decisions: whether the inbox, notifications, redaction, injection defense, autonomy tiers and spend controls move to the pilot target; whether voice and a public marketplace are ever scoped; and how PF-10.05 reconciles with the deployment architecture. API-Design and Data-Model now carry expansion sections for the new IDs; F-10–F-14 draft the behavior for the six items awaiting a pilot-scope decision; F-xx specs for the remaining new IDs are not yet written. No implementation, dependency or release approval is implied.
+
+## Pilot scope promotion — 2026-11-08
+
+PF-01.08, PF-01.09, PF-04.04, PF-04.05 and PF-04.07 moved from Expansion to Pilot, adding FR-13 and FR-14 to the PRD. Placement: P03 for redaction, untrusted-content handling and autonomy tiers (injection suite extended in P04); P06 for the review inbox and notifications; P11G now covers only delegation and browser actions. PF-07.06 stays expansion. Basis: the owner accepted the recommendation that a trust-positioned platform needs these before a first customer; the pilot customer and workflow are still undecided, so reverse the change if that scope does not need them. Batches B01–B07 are unchanged; the work lands after B07. Effort and schedule impact are not estimated, and no implementation exists.
