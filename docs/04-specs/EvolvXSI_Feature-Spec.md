@@ -73,6 +73,62 @@ Verify access before displaying generated content or downloading exports. Withho
 
 **Inputs:** a quota scope (tenant, project, user, agent or workflow), period, limit and alert thresholds. **Behavior:** the model gateway checks the remaining budget before each invocation and again before a retry. Alerts fire at configured thresholds. At the limit the policy is block, pause for approval, or downgrade to an allowed cheaper route; the downgrade never uses a destination the tenant policy forbids. When usage is unknown it is marked unknown and handled by the configured policy. **Errors:** limit reached (state the scope and how to request more), usage feed delayed (apply the unknown-usage policy). **Acceptance:** a run that would exceed its limit is stopped or paused per policy; the threshold alert fires once; a retry cannot bypass the limit; no fallback uses a prohibited route. Quotas count estimated usage, not invoiced price.
 
+## F-15 Mobile review and approval (expansion; PF-01.10)
+
+**Inputs:** a pending decision opened on a phone. **Behavior:** the reviewer can read the summary and cited passages the policy allows, then approve, reject or request a revision. Approval binds to the exact artifact version or action payload shown, and a stale view is refused. High-risk actions can require desktop confirmation. **Errors:** version changed since opened (reload and show what changed), access lost (generic denial). **Acceptance:** an approval from a phone records the same bound version as on desktop; an edited artifact cannot be approved from an old view; a lost-access reviewer sees no protected text; the core flow works with keyboard and screen-reader support.
+
+## F-16 Prompt-to-agent drafting and saved prompts (expansion; PF-01.11, PF-01.12)
+
+**Inputs:** a plain-language description of an agent, or a saved prompt invoked by a slash command. **Behavior:** drafting produces a draft agent definition (instructions, tools requested, sources) for the author to edit. The draft grants nothing: requested tools and sources need explicit grants, and publication still passes the evaluation gate (F-08). A saved prompt belongs to a user or tenant scope; running it starts an ordinary task under the caller's permissions. **Errors:** draft requests an unavailable tool (flag it, do not substitute), prompt references a removed workflow (show a clear error). **Acceptance:** a drafted agent cannot run in production before passing evaluation; a saved prompt run by a user without access to its sources returns only what that user may see; deleting a prompt does not change past runs.
+
+## F-17 Voice channel (expansion; PF-01.13)
+
+**Status:** needs a separately scoped decision before any design; not scheduled. **Questions to settle first:** which workflows need voice, speech-provider and retention policy, how identity is verified, whether recordings are stored, and how approvals work without a screen. **Constraint if scoped:** voice input is untrusted content (F-12) and cannot approve an action by itself; approvals still bind to an exact version or payload.
+
+## F-18 Signed packages and partner publishing (expansion; PF-02.05, PF-02.06)
+
+**Inputs:** a skill, plugin or pack package with a manifest and signature; for partners, a submission. **Behavior:** the registry verifies the signature and content digest before activation; unsigned or mismatched packages do not activate. A manifest requests permissions and never grants them. A partner submission goes through manifest, security and evaluation review, and is listed only after approval. A public marketplace is not part of this spec and needs its own decision. **Errors:** bad signature, revoked key, failed review (state which). **Acceptance:** a tampered package is rejected; a revoked signer's packages stop activating and installed ones are flagged; a partner package cannot be listed without a recorded review and evaluation result; upgrade and rollback preserve past run versions.
+
+## F-19 Developer sandbox and agent inventory (expansion; PF-03.04, PF-03.05)
+
+**Inputs:** a developer request for a sandbox; an administrator request for the inventory. **Behavior:** a sandbox uses synthetic data and holds no production credentials, with limited network access and an expiry. The inventory lists agents, skills, tools, owners, versions, grants and last use, so an administrator can find and disable any of them. **Errors:** sandbox expired (state how to recreate), disable of an in-use agent (affect new runs per policy and say so). **Acceptance:** code in a sandbox cannot reach production data or credentials; the inventory matches the registry and grants; disabling an item stops new work and appears in the audit trail.
+
+## F-20 Compliance evidence reports (expansion; PF-04.06)
+
+**Inputs:** a compliance role and a reporting period. **Behavior:** map platform controls (access reviews, approvals, audit events, change records) to the evidence they produce, and export it with digests and the period covered. The export contains no source text. **Boundary:** this is evidence for the customer's own compliance work, not a certification, and public statements must match recorded evidence. **Errors:** missing evidence for a control (show the gap, do not fill it). **Acceptance:** every exported claim links to a recorded event; a gap is shown as a gap; the export rechecks the requester's access.
+
+## F-21 Bounded delegation and escalation queues (expansion; PF-05.04, PF-05.05)
+
+**Inputs:** a parent run delegating to a sub-agent; a run reaching a hold or low-confidence point. **Behavior:** a child receives a subset of the parent's permissions, a budget and a depth limit, and is checked against the same autonomy tier (F-13) and redaction rules (F-11). Holds route to a named queue with an owner and due time; unclaimed items escalate per policy. **Errors:** child requests more than the parent has (denied), depth or budget exceeded (stop and report). **Acceptance:** a child never exceeds its parent's permissions or budget; delegation cycles are rejected; an escalated item reaches the queue once and shows who holds it.
+
+## F-22 Browser and computer-use actions (expansion; PF-05.06)
+
+**Inputs:** a task needing a website or desktop app. **Behavior:** actions run in an isolated session with an allowed-domain list and no implicit credentials. Page content is untrusted (F-12). Reading is allowed by policy; any external effect needs approval bound to the exact action, and an uncertain outcome is reconciled before retry. A session log is kept without sensitive values. **Errors:** domain not allowed, session timeout, ambiguous result (pause for review). **Acceptance:** a page containing hostile instructions causes no unapproved action; the session cannot reach credentials or domains outside the list; a retried action does not repeat a completed effect.
+
+## F-23 File ingestion, memory controls and freshness (expansion; PF-06.03, PF-06.04, PF-06.05)
+
+**Inputs:** an uploaded file; a user or administrator managing memory; changing sources. **Behavior:** supported file types are parsed into passages that inherit the file's access rules; parse failures are shown with the reason. Users can inspect, edit and delete memory entries in their scope; deleting an entry removes derived projections. Entries and passages show source version and age; stale or conflicting entries are flagged, not silently used. **Errors:** unsupported or malformed file (reject safely), conflict between sources (show both with versions). **Acceptance:** a parsed passage is hidden when file access is revoked; a deleted memory entry no longer influences new runs; a changed source marks dependent entries stale.
+
+## F-24 Inference caching and customer-supplied models (expansion; PF-07.04, PF-07.05)
+
+**Inputs:** repeated model requests; an administrator registering a model endpoint. **Behavior:** cache entries are scoped by tenant and policy version, expire, and are never served across tenants, after a policy change or after source access is revoked. A customer-supplied or tuned model is registered with its destination policy, passes evaluation, and uses credential references only. It never becomes an unreviewed fallback. **Errors:** cache miss on policy change (recompute), model fails evaluation (not routable). **Acceptance:** cached content is never returned to another tenant or after revocation; an unregistered or failing model is not routable; the cache honors the same redaction as direct calls.
+
+## F-25 MCP server, custom tools and extension allowlists (expansion; PF-08.03, PF-08.04, PF-08.05)
+
+**Inputs:** an external client calling the platform; an administrator importing a tool or allowing an extension. **Behavior:** the MCP server and agent-to-agent interface expose only approved tools under per-client scopes and the same policy as internal calls. Importing an OpenAPI description creates an inactive tool with its actions, credential scope and side-effect flag declared. Only allowlisted servers and tools can be called, and permissions are set per tool. Tool results are untrusted content (F-12). **Errors:** blocked server or tool (never called, clear reason), invalid description (reject). **Acceptance:** an external client cannot call a tool outside its scopes; an imported tool is inactive until allowed; a blocked extension is never invoked, even if content asks for it.
+
+## F-26 Shadow-mode evaluation and feedback capture (expansion; PF-09.04, PF-09.05)
+
+**Inputs:** a candidate workflow version; reviewer corrections and ratings. **Behavior:** a candidate runs beside the live version on the same inputs; its outputs are compared but never delivered, and it makes no external writes. Feedback is stored with the artifact version and reviewer. It enters an evaluation dataset only after authorization and redaction. **Errors:** candidate violates policy (flag and stop), feedback from a user without access (reject). **Acceptance:** shadow runs deliver nothing and write nothing externally; a policy violation in shadow blocks publication; feedback containing restricted text is excluded or redacted before dataset use.
+
+## F-27 Outcome reporting and metering export (expansion; PF-09.06, PF-09.07)
+
+**Inputs:** a workflow owner or administrator and a period. **Behavior:** outcome reports show completion, reviewer time and cost per completed task against an agreed manual baseline, as tenant-scoped aggregates. The usage export lists metered usage by run, model and tool for the customer's own billing. It sets no price. Unknown usage is marked unknown. **Errors:** no baseline recorded (show results without a comparison and say so). **Acceptance:** report figures reconcile with run history; exports contain no source text; unknown usage is not counted as zero.
+
+## F-28 Customer-managed keys, residency and hybrid planes (expansion; PF-10.04, PF-10.05)
+
+**Inputs:** a tenant owner choosing a key and region; a customer enrolling a local data plane. **Behavior:** tenant data is encrypted under the customer's key and stored in the chosen region; revoking the key stops reads, and restore preserves both constraints. In a hybrid profile, customer-side runners keep documents, indexes and credentials local and connect outbound only; the cloud distributes signed definitions and policy; the local side keeps enforcing the last signed policy offline. **Open item:** reconcile this topology with the deployment architecture before selecting it. **Errors:** key unavailable (fail closed), unsigned or stale policy (keep last good, alert). **Acceptance:** revoking a key stops reads and a restore keeps key and region; a local plane never sends documents or credentials to the cloud; an offline plane denies what its policy denies.
+
 ## Layer ownership
 
 Use the [feature architecture mapping](../06-technical/EvolvXSI_Feature-Architecture-Mapping.md) to connect feature behavior with owning modules and acceptance.
