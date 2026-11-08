@@ -1,6 +1,6 @@
 # EvolvXSI — feature specification
 
-Status: **platform catalog and first-workflow specification** · Updated: 2026-11-05
+Status: **platform catalog and first-workflow specification** · Updated: 2026-11-08
 
 This specification translates the [PRD](EvolvXSI_First-Workflow-PRD.md) into feature behavior. It is intentionally independent of implementation projects. The selected customer workflow may change field names, source types, and output format.
 
@@ -52,6 +52,26 @@ Use F-01 to save a draft without starting execution. After explicit start, F-02 
 ## F-09 Access changes and approval bindings
 
 Verify access before displaying generated content or downloading exports. Withhold affected artifacts after source access revocation until safe redaction or regeneration. Apply the same restriction to previews, traces, and cached exports. External writes require approval bound to immutable action arguments, target, and run; changed payloads require fresh approval and policy checks at execution.
+
+## F-10 Review inbox and notifications (proposed; PF-01.08, PF-01.09)
+
+**Status:** proposed expansion; becomes pilot scope only if the owner promotes it. **Inputs:** a pending decision, escalation or completed run for a recipient. **Behavior:** one inbox lists the items the user may act on now, with task, step, due time and state. A notification names the event and links to the item; it carries no source text, artifact text or citation. Opening an item rechecks the recipient's role and current source access. Users choose channels and quiet hours; administrators can require a channel for approvals. Duplicate events produce one item and one alert. **Errors:** item already resolved (show the outcome), access lost (item disappears and the link shows a generic denial), channel failure (retry, then leave the inbox item as the source of truth). **Acceptance:** an approver finds and resolves a pending approval from the inbox; after source access is revoked, the item and its alert link reveal no protected text; a replayed event creates no second item.
+
+## F-11 Sensitive-data redaction (proposed; PF-04.04)
+
+**Inputs:** content bound for a model, tool, export or log, and the tenant's detection rules. **Behavior:** detect configured kinds (such as personal identifiers and credentials) before transmission and apply the rule action: block, mask, or allow with a recorded reason. The decision is made by the policy engine, not the model. Detection events store the kind, location and rule version, never the value. A rule set activates only after a fixed test suite passes. **Errors:** detector unavailable (fail closed for protected classifications), rule conflict (the stricter action wins). **Acceptance:** seeded sensitive values never reach a model or tool destination that policy forbids; traces and exports show masked values; a changed rule set is not active until its suite passes; false-positive and false-negative rates are reported against a fixed corpus.
+
+## F-12 Prompt-injection and exfiltration defense (proposed; PF-04.05)
+
+**Inputs:** retrieved passages, tool results, files and web content treated as untrusted data. **Behavior:** untrusted content is separated from instructions and cannot grant permissions, change the plan, or select a tool. Tool calls are checked against the run's declared tools and the autonomy tier regardless of what the content says. Outbound content is checked against destination policy and the sensitivity of its sources. A suspected injection is recorded as a finding and the run continues without acting on it, or pauses for review per policy. **Errors:** policy block (no override by approval), ambiguous finding (pause for review). **Acceptance:** a fixed adversarial suite of hostile documents, tool results and pages produces no unapproved tool call, no prohibited transmission and no permission change; the suite is replayed before any model, prompt or tool change is published. Passing the suite is evidence, not a guarantee.
+
+## F-13 Per-agent guardrails and autonomy tiers (proposed; PF-04.07)
+
+**Inputs:** an agent, its tier and its limits. **Behavior:** tiers are draft-only, act-with-approval and act-within-limits. Limits cover allowed tools and actions, call count, run duration and cost. The platform enforces the tier at tool invocation, so a prompt cannot raise it. Approval satisfies an approval requirement but never overrides a policy block. Tier or limit changes are versioned, audited and apply to new runs; a run keeps the version it started with. **Errors:** call above tier (blocked with a clear reason and a path to request a change), limit reached (pause and notify). **Acceptance:** a draft-only agent cannot invoke a side-effecting tool; an act-with-approval call without a bound approval is blocked; an administrator change does not alter an in-flight run; every block appears in the run history.
+
+## F-14 Spend controls (proposed; PF-07.06)
+
+**Inputs:** a quota scope (tenant, project, user, agent or workflow), period, limit and alert thresholds. **Behavior:** the model gateway checks the remaining budget before each invocation and again before a retry. Alerts fire at configured thresholds. At the limit the policy is block, pause for approval, or downgrade to an allowed cheaper route; the downgrade never uses a destination the tenant policy forbids. When usage is unknown it is marked unknown and handled by the configured policy. **Errors:** limit reached (state the scope and how to request more), usage feed delayed (apply the unknown-usage policy). **Acceptance:** a run that would exceed its limit is stopped or paused per policy; the threshold alert fires once; a retry cannot bypass the limit; no fallback uses a prohibited route. Quotas count estimated usage, not invoiced price.
 
 ## Layer ownership
 
