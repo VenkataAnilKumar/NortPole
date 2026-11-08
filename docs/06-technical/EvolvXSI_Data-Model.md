@@ -1,6 +1,6 @@
 # EvolvXSI — data model
 
-Status: **conceptual model; PostgreSQL proposed for authoritative state; final selection in P00** · Updated: 2026-11-05
+Status: **conceptual model; PostgreSQL proposed for authoritative state; final selection in P00** · Updated: 2026-11-08
 
 ## Core entities
 
@@ -105,3 +105,34 @@ Keep registry state (L03), approval decisions (L04), run state (L05), source ver
 ## Connector persistence ownership
 
 Execution persists action invocation receipts, idempotency scope and uncertain-outcome reconciliation. Knowledge persists source sync cursors, ingestion receipts, source health and ACL refresh state. Control owns tenant integration configuration and grants; credential material remains in the selected secret store. packages/integrations provides adapter contracts and code hosted by these services, not a fifth state-owning service. Each host writes only its own migrations and records.
+
+## Expansion records (proposed, not first release)
+
+Added 2026-11-08 for the expansion features. Same ownership rules as above: relationships across owners are tenant-scoped IDs, not cross-schema joins.
+
+| Record | Owner | Key fields and invariant | Feature |
+| --- | --- | --- | --- |
+| Notification preference, Notification | Control | User, channel, event kinds, delivery state. Body holds no protected text; a lost-access recipient sees nothing on open. | PF-01.09 |
+| Review item | Execution | Run/step or artifact version, assignee or queue, state, expected version. Derived from decisions; visibility rechecks current access. | PF-01.08, PF-05.05 |
+| Saved prompt | Control | Owner, scope, template, version. Running it creates an ordinary task. | PF-01.12 |
+| Package signature | Control registry | Package digest, signer key reference, verification time. Activation requires a valid signature under tenant policy. | PF-02.05 |
+| Partner submission | Control registry | Publisher, package version, review state, evaluation result digest. Listing requires approval. | PF-02.06 |
+| Sandbox | Control | Tenant, owner, synthetic data reference, expiry. Holds no production credential reference. | PF-03.04 |
+| Guardrail policy | Control | Agent, autonomy tier, call and cost limits, version. A change applies to new runs only. | PF-04.07 |
+| Redaction rule, Detection event | Control | Rule version, pattern kind, action. The event stores kind and location, never the sensitive value. | PF-04.04 |
+| Injection finding | Execution | Run/step, source reference, action taken. No raw hostile text beyond a safe excerpt. | PF-04.05 |
+| Compliance export | Control | Control mapping, evidence digests, period, requester, expiry. Evidence only. | PF-04.06 |
+| Delegation | Execution | Parent run, child run, granted permissions subset, budget. Child never exceeds parent. | PF-05.04 |
+| Browser session | Execution | Run/step, allowed domains, action log reference. No implicit credentials. | PF-05.06 |
+| Parsed file | Knowledge | Source document version, parser version, text/passage references, inherited ACL. | PF-06.03 |
+| Memory conflict/staleness flag | Knowledge | Memory entry, source dependency, reason, state. Stale or conflicting entries are marked, not silently used. | PF-06.04, PF-06.05 |
+| Cache entry | Model gateway | Tenant, scope key, policy version, expiry. Never served across tenants or after policy change. | PF-07.04 |
+| Model route | Model gateway | Tenant, endpoint reference, policy and evaluation references. Credentials are opaque references. | PF-07.05 |
+| Spend limit, Usage record | Control, Model gateway | Scope, period, limit, alert thresholds; usage by run and invocation. Enforced at invocation time. | PF-07.06, PF-09.07 |
+| Extension allowlist entry, Tool definition | Integrations contract, Control | Server or tool identity, scopes, state. Blocked or unlisted entries are not callable; imported tools start inactive. | PF-08.03–08.05 |
+| Shadow run | Evaluations | Candidate and live version, input set reference, comparison result. Outputs are not delivered. | PF-09.04 |
+| Feedback | Evaluations | Artifact version, reviewer, correction or rating, dataset eligibility. Dataset use requires authorization and redaction. | PF-09.05 |
+| Outcome report | Control | Tenant, period, completion, review time, cost per task, baseline reference. Aggregates only. | PF-09.06 |
+| Key reference, Data plane enrollment | Infrastructure, Control | Key version, residency region, enrollment identity, policy version. Revocation stops reads; offline plane enforces last signed policy. | PF-10.04, PF-10.05 |
+
+Lifecycle questions still open: retention of feedback and cache entries, and whether local data planes keep their own audit store.

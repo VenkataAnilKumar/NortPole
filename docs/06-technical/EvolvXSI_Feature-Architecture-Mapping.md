@@ -97,29 +97,61 @@ Every catalog entry is planned. Primary owner means the module responsible for c
 | PF-01.05 | `apps/workspace` | services/control-plane, evaluations, services/execution | P05 publication foundation; P11 self-service Studio |
 | PF-01.06 | `apps/workspace` | services/control-plane, services/knowledge | P11 |
 | PF-01.07 | `apps/workspace` | services/control-plane, infrastructure; commercial and support owners | P10 required rollout evidence; P11 full portals |
+| PF-01.08 | `apps/workspace` | services/control-plane, services/execution | P11C |
+| PF-01.09 | `apps/workspace` | services/control-plane, packages/integrations | P11C |
+| PF-01.10 | `apps/workspace` | packages/ui, services/control-plane | P11C |
+| PF-01.11 | `apps/workspace` | services/control-plane, packages/agents, evaluations | P11A |
+| PF-01.12 | `apps/workspace` | packages/skills, services/control-plane | P11A |
+| PF-01.13 | `apps/workspace` | services/execution, packages/integrations, services/model-gateway | Not scheduled; needs a separately scoped decision |
 | PF-02.01 | `packages/agents` | packages/skills, services/control-plane, services/execution | P05 |
 | PF-02.02 | `packages/pack-sdk` | packs/_template, packages/contracts, evaluations | P05 contracts; P09 selected active pack |
 | PF-02.03 | `packages/pack-sdk` | services/control-plane, evaluations | P11 |
 | PF-02.04 | `packages/skills` | packages/agents, packages/pack-sdk, packages/contracts | P11 |
+| PF-02.05 | `packages/pack-sdk` | services/control-plane, packages/skills, packages/contracts | P11A |
+| PF-02.06 | `packages/pack-sdk` | services/control-plane, evaluations, apps/workspace | P11B; public marketplace needs a separate decision |
 | PF-03.01 | `packages/contracts` | services/control-plane, services/execution | P01, P02 |
 | PF-03.02 | `services/control-plane` | evaluations, packages/contracts | P05 |
 | PF-03.03 | `packages/contracts` | services/control-plane, services/execution, packages/integrations | P07, P11 |
+| PF-03.04 | `packages/contracts` | services/control-plane, services/execution; planned apps/developer-portal | P11D |
+| PF-03.05 | `services/control-plane` | apps/workspace, packages/agents, packages/integrations | P11A |
 | PF-04.01 | `packages/identity-policy` | services/control-plane; every protected service | P01, P02 |
 | PF-04.02 | `services/control-plane` | services/execution, services/knowledge, apps/workspace | P03, P04, P06 |
 | PF-04.03 | `services/control-plane` | packages/identity-policy, infrastructure | P10 selected controls; P11 broader provisioning |
+| PF-04.04 | `services/control-plane` | services/model-gateway, services/knowledge, services/execution | P11G |
+| PF-04.05 | `services/execution` | packages/identity-policy, services/knowledge, evaluations | P11G |
+| PF-04.06 | `services/control-plane` | infrastructure, evaluations; compliance owner | P11E |
+| PF-04.07 | `services/control-plane` | services/execution, packages/identity-policy, apps/workspace | P11G |
 | PF-05.01 | `services/execution` | services/control-plane, packages/contracts | P02 |
 | PF-05.02 | `services/execution` | services/control-plane, apps/workspace | P03, P06 |
 | PF-05.03 | `services/execution` | packages/integrations, infrastructure | P03 isolation; P07 required automation; P11 breadth |
+| PF-05.04 | `services/execution` | packages/agents, services/control-plane | P11G |
+| PF-05.05 | `services/execution` | apps/workspace, services/control-plane | P11C |
+| PF-05.06 | `services/execution` | packages/integrations, infrastructure | P11G |
 | PF-06.01 | `services/knowledge` | packages/integrations, services/model-gateway | P04 |
 | PF-06.02 | `services/knowledge` | services/model-gateway, services/control-plane | P04 scoped baseline; P11 broad retrieval and sharing |
+| PF-06.03 | `services/knowledge` | packages/integrations, services/model-gateway, apps/workspace | P11C |
+| PF-06.04 | `services/knowledge` | apps/workspace, services/control-plane | P11C |
+| PF-06.05 | `services/knowledge` | apps/workspace, services/execution | P11C |
 | PF-07.01 | `services/model-gateway` | services/execution | P02 fixture gate |
 | PF-07.02 | `services/model-gateway` | services/execution, infrastructure | P02 live-route gate |
 | PF-07.03 | `services/model-gateway` | services/control-plane, infrastructure | P02 baseline budget; P08 selected routes; P11 breadth |
+| PF-07.04 | `services/model-gateway` | services/control-plane, infrastructure | P11F |
+| PF-07.05 | `services/model-gateway` | evaluations, services/control-plane, infrastructure | P11F |
+| PF-07.06 | `services/model-gateway` | services/control-plane, apps/workspace | P11F |
 | PF-08.01 | `packages/integrations` | services/knowledge, services/control-plane | P04 |
 | PF-08.02 | `packages/integrations` | services/execution, services/control-plane | P07 required tools; P11 ecosystem |
+| PF-08.03 | `packages/integrations` | packages/contracts, services/control-plane, services/execution | P11D |
+| PF-08.04 | `packages/integrations` | services/control-plane, services/execution, packages/skills | P11D |
+| PF-08.05 | `packages/integrations` | services/control-plane, services/execution, apps/workspace | P11D |
 | PF-09.01 | `services/execution` | services/control-plane, apps/workspace, infrastructure | P02 |
 | PF-09.02 | `evaluations` | services/control-plane, packages/agents, packages/skills | P05 gate; P09 domain evidence |
 | PF-09.03 | `services/control-plane` | apps/workspace, infrastructure; all event producers | P10 required alerts; P11 analytics |
+| PF-09.04 | `evaluations` | services/execution, services/control-plane | P11F |
+| PF-09.05 | `evaluations` | apps/workspace, services/execution, services/control-plane | P11F |
+| PF-09.06 | `services/control-plane` | apps/workspace, services/execution | P11E |
+| PF-09.07 | `services/control-plane` | services/model-gateway, services/execution; commercial owner | P11E |
 | PF-10.01 | `infrastructure` | services/control-plane, apps/workspace, services/execution | P01 configuration; P02 running slice |
 | PF-10.02 | `infrastructure` | all deployed services | P10 |
 | PF-10.03 | `infrastructure` | services/model-gateway; all deployed services | P11 |
+| PF-10.04 | `infrastructure` | services/control-plane; all deployed services | P11F |
+| PF-10.05 | `infrastructure` | services/control-plane, services/model-gateway, services/execution, services/knowledge | P11F |
