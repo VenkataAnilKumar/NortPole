@@ -1,10 +1,10 @@
 # EvolvXSI — design system
 
-Status: **interaction principles; visual tokens pending brand approval** · Updated: 2026-11-05
+Status: **interaction principles and proposed glass visual direction** · Updated: 2026-11-09
 
 ## Purpose
 
-Create a consistent interface for task execution, evidence inspection, review, and administration. The product name is EvolvXSI. Colors, typography, and logo are unapproved, so this document defines design rules and token categories without inventing final brand assets.
+Create a consistent interface for task execution, evidence inspection, review, and administration. The product name is EvolvXSI. The visual direction is modern frosted glass. Final palette, typography and brand assets remain open for review.
 
 ## Principles
 
@@ -13,6 +13,15 @@ Create a consistent interface for task execution, evidence inspection, review, a
 3. **Control is explicit:** approvals, external actions, and policy blocks have clear actors and consequences.
 4. **Complexity is progressive:** practitioners see the task; operators can reveal traces and diagnostics.
 5. **History is stable:** prior outputs and decisions remain understandable after a workflow update.
+
+## Glass visual direction
+
+- Use frosted surfaces on navigation, the header and the request composer. Soft blue and violet gradients provide depth in the workspace concept.
+- Use solid surfaces for evidence, approval dialogs, dense admin tables, audit records and critical warnings. Preserve clear text and focus contrast over every background.
+- Keep the request composer prominent on the User Portal. Keep the Admin Console compact and oriented around finding records and resolving issues.
+- Define separate tokens for solid and translucent surfaces, edge highlight, blur and elevation. Provide light and dark themes and a solid fallback for high-contrast settings or unavailable blur.
+- Keep run states and policy decisions legible as text. Support keyboard navigation, visible focus, responsive panel stacking and reduced motion.
+- Verify contrast, keyboard flow and readability at narrow and wide widths before adopting tokens in the app.
 
 ## Token categories
 
