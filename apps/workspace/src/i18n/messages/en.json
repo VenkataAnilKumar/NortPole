@@ -15225,7 +15225,7 @@
         "title": "Delete \"{title}\"?"
       },
       "newSession": {
-        "label": "New Session"
+        "label": "New task"
       },
       "options": {
         "label": "Session options"
@@ -16872,7 +16872,7 @@
         "label": "Craft"
       },
       "exploreAgents": {
-        "label": "Explore Agents"
+        "label": "All agents"
       },
       "moreAgents": {
         "label": "More Agents"
@@ -16885,7 +16885,7 @@
         "tooltip": "New Project"
       },
       "newSession": {
-        "label": "New Session"
+        "label": "New task"
       },
       "projects": {
         "title": "Projects"
@@ -16894,10 +16894,10 @@
         "empty": {
           "text": "Try sending a message! Your chat history will appear here."
         },
-        "title": "Recents"
+        "title": "Tasks"
       },
       "searchChats": {
-        "label": "Search Chats"
+        "label": "Search"
       },
       "plugins": {
         "label": "Plugins"
@@ -16969,7 +16969,7 @@
         "label": "New Project"
       },
       "newSession": {
-        "label": "New Session"
+        "label": "New task"
       },
       "noMoreResults": {
         "text": "No more results"
