@@ -37,8 +37,17 @@ Adapted from the Onyx Community Edition, commit `919578e0408a2d739a16215c09844c6
 - `evolvxsi.main` imports without `ee`, and the FastAPI app builds with 616 routes including `/health`. Telemetry is off by default.
 - 825 unit tests passed in `tests/unit/evolvxsi/skills` and `tests/unit/evolvxsi/utils`; one module needs the dev package `hypothesis`. The full unit suite has not been run.
 - Web dependencies install except `xlsx` (its download host was blocked in the sandbox). `tsc` reports no errors in non-test source apart from the spreadsheet preview that needs `xlsx`. Test files fail type-checking because the upstream test setup folder was not copied.
-- Not done: starting the backend against a database, running the web app, or a production build.
+- **Runs end to end in a sandbox, lite mode:** Postgres 16 plus Redis (Redis holds login tokens), with `DISABLE_VECTOR_DB=true`, `CACHE_BACKEND=postgres` and `FILE_STORE_BACKEND=postgres`. All 100-plus migrations apply; `/health` and `/health/ready` return 200; the web dev server renders the sign-up and sign-in pages with the new logo, and sign-up, sign-in and the main chat screen work.
+- Chat has not been tried: no language model is configured, and search and indexing are off in lite mode. The run also needs `USER_AUTH_SECRET` set; the backend refuses to start without it.
+- Not done: a production build, the full unit suite, or any connector test.
 - Functional markdown (the built-in skill definitions under `skills/builtin`) is required at start-up and is included; other markdown documentation was left out.
+
+## Leftovers found while running it
+
+- The footer text "Open Source AI Platform" (`i18n/messages/*.json`, key `slogan`) is upstream wording.
+- A seeded anonymous user is created as `anonymous@onyx.app`.
+- The connector-request feature (`server/documents/connector.py`) tracks to PostHog and sends an email to an upstream address. Remove or make it configurable before release.
+- The web dev server accepts only the `localhost` origin in development.
 
 ## Known gaps to build
 
