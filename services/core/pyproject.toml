@@ -170,7 +170,6 @@ dev = [
     "types-pytz==2023.3.1.1",
     "types-regex==2023.3.23.1",
     "types-requests==2.32.0.20250328",
-    { include-group = "ods" },
     { include-group = "ruff" },
     { include-group = "zizmor" },
 ]
@@ -178,7 +177,6 @@ dev = [
 # One-tool groups, installed with `--only-group` by the pre-commit hooks: each
 # tool comes from hash-verified uv.lock artifacts without a full project sync,
 # and each pin below is the only one in the repo.
-ods = ["evolvxsi-devtools[audit]==0.13.15"]
 ruff = ["ruff==0.16.1"]
 zizmor = ["zizmor==1.25.2"]
 
@@ -212,7 +210,7 @@ model_server = [
 # deps from the requirements exports, and local imports resolve via cwd /
 # PYTHONPATH conventions (see backend/pytest.ini).
 package = false
-default-groups = ["backend", "dev", "ee", "model_server"]
+default-groups = ["backend", "dev"]
 
 # Loosen mitmproxy's over-tight upper caps so the resolver keeps the
 # backend's newer versions.
@@ -267,9 +265,6 @@ include = ["backend/alembic/versions/**"]
 
 [tool.ty.overrides.rules]
 pydantic-discarded-extra-argument = "ignore"
-
-[tool.uv.workspace]
-members = ["tools/ods"]
 
 [tool.basedpyright]
 include = ["backend"]

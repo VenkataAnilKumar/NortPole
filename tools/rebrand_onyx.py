@@ -25,7 +25,7 @@ SKIP_FILES = {"LICENSE", "NOTICE", "UPSTREAM.md", "uv.lock", "bun.lock",
 TEXT_EXT = {".py", ".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".json", ".md",
             ".mdx", ".yml", ".yaml", ".toml", ".ini", ".cfg", ".txt", ".css",
             ".scss", ".html", ".sh", ".env", ".sql", ".mako", ".conf", ".pyi", ""}
-PROTECT = ["onyx-dot-app", "DanswerAI", "danswer-ai"]
+PROTECT = ["onyx-dot-app", "onyx-devtools", "DanswerAI", "danswer-ai"]
 EXTERNAL = re.compile(r"[A-Za-z0-9./:_-]*onyx\.(?:app|dev|ai)[A-Za-z0-9./_-]*", re.I)
 PATTERN = re.compile(r"ONYX|Onyx|onyx")
 MAP = {"ONYX": "EVOLVXSI", "Onyx": "EvolvXSI", "onyx": "evolvxsi"}
