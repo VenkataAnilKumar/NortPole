@@ -311,3 +311,12 @@
 .container {
   margin-bottom: 1rem;
 }
+
+/* Home greeting: serif headline, larger than the default heading preset. */
+[data-testid="chat-intro"] p {
+  font-family: var(--font-serif) !important;
+  font-weight: 500 !important;
+  font-size: 2.5rem !important;
+  line-height: 1.15 !important;
+  letter-spacing: -0.02em;
+}

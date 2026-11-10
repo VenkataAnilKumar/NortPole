@@ -13756,8 +13756,8 @@
     },
     "welcome": {
       "greeting": {
-        "helpText": "How can I help?",
-        "startText": "Let's get started."
+        "helpText": "What can I do for you?",
+        "startText": "What can I do for you?"
       },
       "incognito": {
         "title": "You're incognito"

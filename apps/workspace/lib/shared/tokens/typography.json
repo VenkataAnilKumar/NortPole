@@ -14,5 +14,9 @@
   "font-sf-pro": {
     "value": "\"SF Pro\", \"SF Pro Text\", -apple-system, BlinkMacSystemFont, system-ui,\n    sans-serif",
     "type": "fontFamily"
+  },
+  "font-serif": {
+    "value": "\"Newsreader\", \"Iowan Old Style\", Georgia, \"Times New Roman\", serif",
+    "type": "fontFamily"
   }
 }
