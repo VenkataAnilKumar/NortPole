@@ -154,3 +154,5 @@ Follow-up, same day: replaced upstream brand imagery and logo components with ge
 
 Route policy and picker, same day: added an EvolvXSI-owned route policy in `services/core` (route kinds, data classes, a fail-closed decision before any content is sent, `POLICY_BLOCKED`) and a route picker in the web app. Verified in a sandbox with two deterministic mock routes: the server refused a message to a disallowed route and the page showed the reason; 17 new unit tests and 903 chat tests passed. Not done: per-task data classes, a policy editor page for administrators, per-route evaluation, and any real model route.
 
+First-user admin check, same day: on a fresh database the first registration is placed in the Admin group, so the earlier sandbox problem was not a code bug (an extra registration took the first slot; its cause is unexplained). The rule was left as is, because granting admin to whoever registers while no admin exists would be a privilege-escalation risk. Added `services/core/scripts/grant_admin.py`, a database-access recovery command, and tested it on a second account.
+

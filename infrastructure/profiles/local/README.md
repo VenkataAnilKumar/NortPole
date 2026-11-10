@@ -17,6 +17,6 @@ Runs the adapted backend and web app on one machine with no search index, no mod
 
 ## Known problems seen in the sandbox
 
-- The first account was not placed in the Admin group and had to be promoted by hand.
+- On a fresh database the first account becomes an administrator (checked through the API on 2026-11-10). In the sandbox an unexplained extra registration took that slot first, and the next account landed in the Basic group. If nobody can reach the admin panel, run `PYTHONPATH=. python scripts/grant_admin.py <email>` in `services/core` with the same database settings. It moves an existing user into the Admin group and recomputes permissions; it never creates users, and running it requires database access.
 - The `xlsx` package is downloaded from a host a sandbox may block.
 - Without `EVOLVXSI_OFFLINE_TOKENIZER=true` the backend tries to download a tokenizer and chat fails if the download is blocked.
