@@ -31,6 +31,15 @@ Adapted from the Onyx Community Edition, commit `919578e0408a2d739a16215c09844c6
 - Telemetry: upstream sends fleet telemetry to an upstream domain by default. In this copy telemetry is **off by default** (`DISABLE_TELEMETRY` defaults to true) and the default endpoint is empty. Do not enable it without a deliberate decision.
 - About 292 references to upstream domains (docs links, an HTTP-Referer header, pricing links) were deliberately left as written. Review them and replace or remove each before release; none is a data endpoint beyond the telemetry default above, but this was a grep, not an audit.
 
+## Verified so far (2026-11-10, in a sandbox)
+
+- Backend dependencies install from the regenerated `uv.lock` (backend group only; the model server and dev groups were not installed).
+- `evolvxsi.main` imports without `ee`, and the FastAPI app builds with 616 routes including `/health`. Telemetry is off by default.
+- 825 unit tests passed in `tests/unit/evolvxsi/skills` and `tests/unit/evolvxsi/utils`; one module needs the dev package `hypothesis`. The full unit suite has not been run.
+- Web dependencies install except `xlsx` (its download host was blocked in the sandbox). `tsc` reports no errors in non-test source apart from the spreadsheet preview that needs `xlsx`. Test files fail type-checking because the upstream test setup folder was not copied.
+- Not done: starting the backend against a database, running the web app, or a production build.
+- Functional markdown (the built-in skill definitions under `skills/builtin`) is required at start-up and is included; other markdown documentation was left out.
+
 ## Known gaps to build
 
 - Per-user external permission sync (upstream keeps it in `ee`).
