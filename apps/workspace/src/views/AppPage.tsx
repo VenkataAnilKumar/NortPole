@@ -50,7 +50,7 @@ import { FederatedConnectorDetail } from "@/lib/types";
 import DocumentsSidebar from "@/sections/document-sidebar/DocumentsSidebar";
 import useChatController from "@/hooks/useChatController";
 import useMultiModelChat from "@/hooks/useMultiModelChat";
-import MultiModelSelector from "@/sections/model-selector/MultiModelSelector";
+import RoutePicker from "@/sections/model-selector/RoutePicker";
 import { useActiveAgent } from "@/lib/agents/hooks";
 import useChatSessionController from "@/hooks/useChatSessionController";
 import useDeepResearchToggle from "@/hooks/useDeepResearchToggle";
@@ -1099,13 +1099,10 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
                         ) &&
                         activeAgent &&
                         llmManager.hasAnyProvider && (
-                          <MultiModelSelector
+                          <RoutePicker
                             selectedModels={multiModel.selectedModels}
-                            onAdd={multiModel.addModel}
-                            onRemove={multiModel.removeModel}
                             onReplace={multiModel.replaceModel}
-                            temperatureManager={llmManager}
-                            reasoningManager={llmManager}
+                            providers={llmManager.llmProviders}
                           />
                         )}
                     </Section>
@@ -1198,13 +1195,11 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
                       />
                       {appPosition.isChat() && activeAgent && (
                         <div className="pb-1">
-                          <MultiModelSelector
+                          <RoutePicker
                             selectedModels={multiModel.selectedModels}
-                            onAdd={multiModel.addModel}
-                            onRemove={multiModel.removeModel}
                             onReplace={multiModel.replaceModel}
-                            temperatureManager={llmManager}
-                            reasoningManager={llmManager}
+                            providers={llmManager.llmProviders}
+                            direction="up"
                           />
                         </div>
                       )}

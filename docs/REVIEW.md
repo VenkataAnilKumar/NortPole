@@ -152,3 +152,5 @@ Recorded decision 0004. Copied the Onyx Community Edition backend and web app (M
 
 Follow-up, same day: replaced upstream brand imagery and logo components with generated EvolvXSI placeholders, removed the upstream licensed font and unreferenced sample images, and removed the `ee` requirements file. Third-party product logos and test fixtures were kept. Final brand artwork is still open.
 
+Route policy and picker, same day: added an EvolvXSI-owned route policy in `services/core` (route kinds, data classes, a fail-closed decision before any content is sent, `POLICY_BLOCKED`) and a route picker in the web app. Verified in a sandbox with two deterministic mock routes: the server refused a message to a disallowed route and the page showed the reason; 17 new unit tests and 903 chat tests passed. Not done: per-task data classes, a policy editor page for administrators, per-route evaluation, and any real model route.
+

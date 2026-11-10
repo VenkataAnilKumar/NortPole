@@ -38,6 +38,7 @@ class EvolvXSIErrorCode(Enum):
     # --------------------------------------------------------------------------
     UNAUTHORIZED = ("UNAUTHORIZED", 403)
     INSUFFICIENT_PERMISSIONS = ("INSUFFICIENT_PERMISSIONS", 403)
+    POLICY_BLOCKED = ("POLICY_BLOCKED", 403)
     ADMIN_ONLY = ("ADMIN_ONLY", 403)
     REGISTRATION_DISABLED = ("REGISTRATION_DISABLED", 403)
     EE_REQUIRED = ("EE_REQUIRED", 403)

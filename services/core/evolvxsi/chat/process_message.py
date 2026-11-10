@@ -92,6 +92,7 @@ from evolvxsi.llm.factory import (
 from evolvxsi.llm.interfaces import LLM, LLMUserIdentity
 from evolvxsi.llm.models import ReasoningEffort
 from evolvxsi.llm.override_models import LLMOverride
+from evolvxsi.route_policy.enforce import enforce_route
 from evolvxsi.natural_language_processing.utils import get_tokenizer
 from evolvxsi.evolvxsibot.slack.models import SlackContext
 from evolvxsi.prompts.prompt_utils import substitute_user_placeholders
@@ -205,6 +206,8 @@ def _select_models(
             additional_headers=litellm_additional_headers,
             policy_fn=incognito_policy_fn,
         )
+        # EvolvXSI route policy: fail before any content reaches a blocked route.
+        enforce_route(db_session, llm.config.model_configuration_id)
         check_llm_cost_limit_for_provider(
             db_session=db_session,
             tenant_id=get_current_tenant_id(),
