@@ -156,3 +156,5 @@ Route policy and picker, same day: added an EvolvXSI-owned route policy in `serv
 
 First-user admin check, same day: on a fresh database the first registration is placed in the Admin group, so the earlier sandbox problem was not a code bug (an extra registration took the first slot; its cause is unexplained). The rule was left as is, because granting admin to whoever registers while no admin exists would be a privilege-escalation risk. Added `services/core/scripts/grant_admin.py`, a database-access recovery command, and tested it on a second account.
 
+Audit trail, same day: added a stored audit record for route-policy changes and refused requests (who, what, when, policy facts; no message content), an admin endpoint and a "Recent activity" list on the Route Policy page. Verified live: two policy changes and one blocked request were recorded with the acting account. 3 new unit tests; 906 tests passed with the chat suite. Not done: retention or pruning, a record of allowed requests, export, and a general audit view beyond route policy.
+

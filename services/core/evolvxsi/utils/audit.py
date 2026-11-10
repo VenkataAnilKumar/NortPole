@@ -89,6 +89,9 @@ class AuditAction(str, Enum):
     DEFAULT_LANGUAGE_CHANGE = "settings.default_language_change"
     LLM_GATEWAY_ENABLED_CHANGE = "settings.llm_gateway_enabled_change"
     SECURITY_SETTINGS_CHANGE = "settings.security_settings_change"
+    # EvolvXSI route policy (append-only taxonomy)
+    ROUTE_POLICY_CHANGE = "route_policy.change"
+    ROUTE_BLOCKED = "route.blocked"
     CONTEXTUAL_RAG_MODEL_UPDATE = "search_settings.contextual_rag_model_update"
     CC_PAIR_ACCESS_MODE_CHANGE = "search_settings.cc_pair_access_mode_change"
     LLM_PROVIDER_CREATE = "llm_provider.create"
@@ -138,6 +141,8 @@ _OCSF_CLASS_BY_ACTION: dict[AuditAction, OCSFEventClass] = {
     AuditAction.DEFAULT_LANGUAGE_CHANGE: OCSFEventClass.API_ACTIVITY,
     AuditAction.LLM_GATEWAY_ENABLED_CHANGE: OCSFEventClass.API_ACTIVITY,
     AuditAction.SECURITY_SETTINGS_CHANGE: OCSFEventClass.API_ACTIVITY,
+    AuditAction.ROUTE_POLICY_CHANGE: OCSFEventClass.API_ACTIVITY,
+    AuditAction.ROUTE_BLOCKED: OCSFEventClass.API_ACTIVITY,
     AuditAction.CONTEXTUAL_RAG_MODEL_UPDATE: OCSFEventClass.API_ACTIVITY,
     AuditAction.CC_PAIR_ACCESS_MODE_CHANGE: OCSFEventClass.API_ACTIVITY,
     AuditAction.LLM_PROVIDER_CREATE: OCSFEventClass.API_ACTIVITY,

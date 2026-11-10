@@ -10,6 +10,8 @@ from evolvxsi.db.enums import Permission
 from evolvxsi.db.models import LLMProvider, User
 from evolvxsi.error_handling.error_codes import EvolvXSIErrorCode
 from evolvxsi.error_handling.exceptions import EvolvXSIError
+from evolvxsi.utils.audit import AuditAction, AuditOutcome
+from evolvxsi.route_policy.audit import describe_policy_change, list_audit, record_audit
 from evolvxsi.route_policy.policy import (
     AUTO_PREFERENCE,
     DATA_CLASSES,
@@ -114,7 +116,7 @@ def check_route_policy(
 @router.put("/admin/route-policy")
 def put_route_policy(
     update: RoutePolicyUpdate,
-    _: User = Depends(require_permission(Permission.MANAGE_LLMS)),
+    user: User = Depends(require_permission(Permission.MANAGE_LLMS)),
     db_session: Session = Depends(get_session),
 ) -> RoutePolicyView:
     current = load_policy()
@@ -135,4 +137,45 @@ def put_route_policy(
             f"Unknown provider id(s): {', '.join(sorted(unknown))}",
         )
     save_policy(new)
+    summary, details = describe_policy_change(current, new)
+    record_audit(
+        AuditAction.ROUTE_POLICY_CHANGE,
+        AuditOutcome.SUCCESS,
+        actor=user,
+        summary=summary,
+        details=details,
+        resource_type="route_policy",
+        resource_id=new.version,
+    )
     return _view(new, db_session, None)
+
+
+class AuditEventView(BaseModel):
+    id: int
+    created_at: str
+    action: str
+    outcome: str
+    actor_email: str | None
+    summary: str
+    details: dict | None
+
+
+@router.get("/admin/route-policy/audit")
+def get_route_audit(
+    limit: int = 50,
+    action: str | None = None,
+    _: User = Depends(require_permission(Permission.MANAGE_LLMS)),
+    db_session: Session = Depends(get_session),
+) -> list[AuditEventView]:
+    return [
+        AuditEventView(
+            id=e.id,
+            created_at=e.created_at.isoformat(),
+            action=e.action,
+            outcome=e.outcome,
+            actor_email=e.actor_email,
+            summary=e.summary,
+            details=e.details,
+        )
+        for e in list_audit(db_session, limit, action)
+    ]

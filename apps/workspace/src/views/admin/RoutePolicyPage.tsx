@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { mutate } from "swr";
+import useSWR, { mutate } from "swr";
+import { errorHandlingFetcher } from "@/lib/fetcher";
 import { useRoutePolicy, ROUTE_POLICY_URL } from "@/lib/routePolicy/hooks";
 import type { DataClass, RouteKind, RoutePolicyView } from "@/lib/routePolicy/types";
 
@@ -42,12 +43,29 @@ async function callJson(url: string, method: string, body: unknown) {
   return data;
 }
 
+const AUDIT_URL = "/api/admin/route-policy/audit?limit=25";
+
+interface AuditEvent {
+  id: number;
+  created_at: string;
+  action: string;
+  outcome: string;
+  actor_email: string | null;
+  summary: string;
+}
+
+const ACTION_LABEL: Record<string, string> = {
+  "route_policy.change": "Policy changed",
+  "route.blocked": "Request blocked",
+};
+
 const card = "rounded-2xl border border-border-01 bg-background-neutral-00 p-5 shadow-sm";
 const select =
   "min-h-10 rounded-xl border border-border-02 bg-background-neutral-00 px-3 text-sm text-text-05";
 
 export default function RoutePolicyPage() {
   const { data: policy, error } = useRoutePolicy();
+  const { data: audit } = useSWR<AuditEvent[]>(AUDIT_URL, errorHandlingFetcher, { refreshInterval: 15000 });
   const [draft, setDraft] = useState<Draft | null>(null);
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState<{ ok: boolean; text: string } | null>(null);
@@ -93,6 +111,7 @@ export default function RoutePolicyPage() {
         route_kinds,
       });
       await mutate(ROUTE_POLICY_URL);
+      await mutate(AUDIT_URL);
       setStatus({ ok: true, text: "Policy saved. It applies to new requests; past runs keep the version they used." });
     } catch (e) {
       setStatus({ ok: false, text: e instanceof Error ? e.message : "Could not save." });
@@ -282,6 +301,45 @@ export default function RoutePolicyPage() {
               ? `Allowed: ${testResult.kind} routes may process this data class.`
               : `POLICY_BLOCKED before send. ${testResult.reason ?? ""} No content would be transmitted.`}
           </p>
+        )}
+      </section>
+
+      <section aria-labelledby="rp-audit" className={card}>
+        <h2 id="rp-audit" className="mb-1 text-base font-semibold text-text-05">Recent activity</h2>
+        <p className="mb-3 text-sm text-text-03">
+          Policy changes and requests the server refused. Entries hold who, what and when, never message content.
+        </p>
+        {!audit ? (
+          <p className="text-sm text-text-03">Loading…</p>
+        ) : audit.length === 0 ? (
+          <p className="text-sm text-text-03">Nothing recorded yet.</p>
+        ) : (
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left text-text-03">
+                <th className="py-2 pr-3 font-medium">When</th>
+                <th className="py-2 pr-3 font-medium">Event</th>
+                <th className="py-2 pr-3 font-medium">Who</th>
+                <th className="py-2 font-medium">Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              {audit.map((e) => (
+                <tr key={e.id} className="border-t border-border-01 align-top">
+                  <td className="whitespace-nowrap py-2 pr-3 text-text-03">{new Date(e.created_at).toLocaleString()}</td>
+                  <td className="py-2 pr-3">
+                    <span
+                      className={`whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium ${e.outcome === "denied" ? "bg-status-error-01 text-status-error-05" : "bg-background-neutral-02 text-text-05"}`}
+                    >
+                      {ACTION_LABEL[e.action] ?? e.action}
+                    </span>
+                  </td>
+                  <td className="py-2 pr-3 text-text-05">{e.actor_email ?? "System"}</td>
+                  <td className="py-2 text-text-05">{e.summary}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </section>
     </div>
