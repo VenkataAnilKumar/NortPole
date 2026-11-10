@@ -68,6 +68,40 @@ class TiktokenTokenizer(BaseTokenizer):
         return self.encoder.decode(tokens)
 
 
+class ApproximateTokenizer(BaseTokenizer):
+    """Offline fallback: one token per up to four characters.
+
+    Used when no real tokenizer can be loaded (for example in an air-gapped
+    install or when the mock model route is used). Counts are approximate,
+    which is acceptable for context budgeting but is not exact for any model.
+    Encoding is reversible through an in-memory chunk table.
+    """
+
+    _CHUNK = 4
+
+    def __init__(self) -> None:
+        self._ids: dict[str, int] = {}
+        self._chunks: list[str] = []
+
+    def _split(self, string: str) -> list[str]:
+        return [string[i : i + self._CHUNK] for i in range(0, len(string), self._CHUNK)]
+
+    def encode(self, string: str) -> list[int]:
+        out: list[int] = []
+        for chunk in self._split(string):
+            if chunk not in self._ids:
+                self._ids[chunk] = len(self._chunks)
+                self._chunks.append(chunk)
+            out.append(self._ids[chunk])
+        return out
+
+    def tokenize(self, string: str) -> list[str]:
+        return self._split(string)
+
+    def decode(self, tokens: list[int]) -> str:
+        return "".join(self._chunks[t] for t in tokens if 0 <= t < len(self._chunks))
+
+
 class HuggingFaceTokenizer(BaseTokenizer):
     def __init__(self, model_name: str):
         # Registry models load at their pinned revision, the same one the model
@@ -177,7 +211,19 @@ def _get_default_tokenizer() -> BaseTokenizer:
     """Lazy-load the default tokenizer to avoid loading it at module import time."""
     global _DEFAULT_TOKENIZER
     if _DEFAULT_TOKENIZER is None:
-        _DEFAULT_TOKENIZER = HuggingFaceTokenizer(DEFAULT_TOKENIZER_MODEL)
+        if os.environ.get("EVOLVXSI_OFFLINE_TOKENIZER", "").lower() == "true":
+            _DEFAULT_TOKENIZER = ApproximateTokenizer()
+        else:
+            try:
+                _DEFAULT_TOKENIZER = HuggingFaceTokenizer(DEFAULT_TOKENIZER_MODEL)
+            except Exception as exc:
+                logger.warning(
+                    "Could not load tokenizer %s (%s); using the approximate offline tokenizer. "
+                    "Set EVOLVXSI_OFFLINE_TOKENIZER=true to skip the download attempt.",
+                    DEFAULT_TOKENIZER_MODEL,
+                    exc,
+                )
+                _DEFAULT_TOKENIZER = ApproximateTokenizer()
     return _DEFAULT_TOKENIZER
 
 
