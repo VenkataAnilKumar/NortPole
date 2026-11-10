@@ -31,11 +31,11 @@ def _make_container(
     """
     labels: dict[str, str] = {}
     if component is not None:
-        labels["onyx.app/component"] = component
+        labels["evolvxsi.local/component"] = component
     if sandbox_id is not None:
-        labels["onyx.app/sandbox-id"] = sandbox_id
+        labels["evolvxsi.local/sandbox-id"] = sandbox_id
     if tenant_id is not None:
-        labels["onyx.app/tenant-id"] = tenant_id
+        labels["evolvxsi.local/tenant-id"] = tenant_id
 
     networks: dict[str, dict[str, str]] = {}
     if ip is not None:

@@ -11755,7 +11755,7 @@
         "description": "Zugriffsbeschränkungen oder Berechtigungen des Kontos"
       },
       "cloudSupportPrompt": {
-        "text": "Wenn das Problem weiterhin besteht, wenden Sie sich an das EvolvXSI-Team unter <link>support@onyx.app</link>"
+        "text": "Wenn das Problem weiterhin besteht, wenden Sie sich an das EvolvXSI-Team unter <link>support@evolvxsi.local</link>"
       },
       "code": {
         "accessDenied": "Ihr Identitätsanbieter hat den Zugriff verweigert.",
@@ -11839,7 +11839,7 @@
     },
     "impersonate": {
       "adminNote": {
-        "text": "Hinweis: Diese Funktion ist nur für @onyx.app-Administratoren verfügbar"
+        "text": "Hinweis: Diese Funktion ist nur für @evolvxsi.local-Administratoren verfügbar"
       },
       "apiKeyField": {
         "label": "API-Schlüssel",
@@ -13936,7 +13936,7 @@
     "errorPages": {
       "accessRestricted": {
         "billingAdminHint": {
-          "text": "Wenn Sie der Administrator sind, besuchen Sie bitte die Seite <billingLink>Admin-Abrechnung</billingLink>, um Ihre Lizenz zu {hadLicense, select, true {verlängern} other {aktivieren}}, registrieren Sie sich über Stripe oder wenden Sie sich an <supportLink>support@onyx.app</supportLink> für Unterstützung bei der Abrechnung."
+          "text": "Wenn Sie der Administrator sind, besuchen Sie bitte die Seite <billingLink>Admin-Abrechnung</billingLink>, um Ihre Lizenz zu {hadLicense, select, true {verlängern} other {aktivieren}}, registrieren Sie sich über Stripe oder wenden Sie sich an <supportLink>support@evolvxsi.local</supportLink> für Unterstützung bei der Abrechnung."
         },
         "downgradeButton": {
           "label": "Auf Community herabstufen"
@@ -14337,7 +14337,7 @@
       }
     },
     "appFooter": {
-      "slogan": "Open-Source-KI-Plattform"
+      "slogan": "Governed agent workspace"
     },
     "states": {
       "noItems": {
@@ -17539,7 +17539,7 @@
     "disk": "Die OpenSearch-Festplattenbelegung beträgt auf einem Datenknoten mindestens 85 %. Bei voller Festplatte kann die Indexierung stoppen.",
     "jvmMemory": "Die JVM-Speicherbelegung von OpenSearch lag bei wiederholten Prüfungen über 85 %. Suche und Indexierung können fehlschlagen.",
     "vectorMemory": "Der Vektorspeicher von OpenSearch ist fast voll oder hat sein Limit erreicht. Suche und Indexierung können fehlschlagen.",
-    "contact": "Wenden Sie sich an Ihre Systemadministration oder das EvolvXSI-Team unter [support@onyx.app](mailto:support@onyx.app).",
+    "contact": "Wenden Sie sich an Ihre Systemadministration oder das EvolvXSI-Team unter [support@evolvxsi.local](mailto:support@evolvxsi.local).",
     "stale": "Die aktuelle Prüfung ist nicht verfügbar. Diese Warnung basiert auf der letzten erfolgreichen Prüfung; eine Erholung wurde nicht bestätigt.",
     "dismiss": "Schließen",
     "diskTitle": "Festplattenspeicher",

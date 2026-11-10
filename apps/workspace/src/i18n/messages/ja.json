@@ -11755,7 +11755,7 @@
         "description": "アカウントのアクセス制限または権限"
       },
       "cloudSupportPrompt": {
-        "text": "問題が解決しない場合は、EvolvXSI チーム（<link>support@onyx.app</link>）までご連絡ください"
+        "text": "問題が解決しない場合は、EvolvXSI チーム（<link>support@evolvxsi.local</link>）までご連絡ください"
       },
       "code": {
         "accessDenied": "ID プロバイダーによってアクセスが拒否されました。",
@@ -11839,7 +11839,7 @@
     },
     "impersonate": {
       "adminNote": {
-        "text": "注：この機能は @onyx.app の管理者のみが利用できます"
+        "text": "注：この機能は @evolvxsi.local の管理者のみが利用できます"
       },
       "apiKeyField": {
         "label": "API キー",
@@ -13936,7 +13936,7 @@
     "errorPages": {
       "accessRestricted": {
         "billingAdminHint": {
-          "text": "管理者の場合は、<billingLink>管理者請求</billingLink>ページでライセンスを{hadLicense, select, true {更新} other {有効化}}するか、Stripe経由で登録するか、請求に関するサポートは<supportLink>support@onyx.app</supportLink>までお問い合わせください。"
+          "text": "管理者の場合は、<billingLink>管理者請求</billingLink>ページでライセンスを{hadLicense, select, true {更新} other {有効化}}するか、Stripe経由で登録するか、請求に関するサポートは<supportLink>support@evolvxsi.local</supportLink>までお問い合わせください。"
         },
         "downgradeButton": {
           "label": "Community にダウングレード"
@@ -14337,7 +14337,7 @@
       }
     },
     "appFooter": {
-      "slogan": "オープンソース AI プラットフォーム"
+      "slogan": "Governed agent workspace"
     },
     "states": {
       "noItems": {
@@ -17539,7 +17539,7 @@
     "disk": "OpenSearchのデータノードでディスク使用率が85%以上です。ディスクがいっぱいになるとインデックス作成が停止する可能性があります。",
     "jvmMemory": "OpenSearchのJVMメモリ使用率が複数回のチェックで85%を超えています。検索やインデックス作成が失敗する可能性があります。",
     "vectorMemory": "OpenSearchのベクトルメモリがほぼ満杯、または上限に達しています。検索やインデックス作成が失敗する可能性があります。",
-    "contact": "システム管理者、またはEvolvXSIチーム（[support@onyx.app](mailto:support@onyx.app)）にお問い合わせください。",
+    "contact": "システム管理者、またはEvolvXSIチーム（[support@evolvxsi.local](mailto:support@evolvxsi.local)）にお問い合わせください。",
     "stale": "最新のチェックを利用できません。この警告は最後に成功したチェックに基づいており、復旧は確認されていません。",
     "dismiss": "閉じる",
     "diskTitle": "ディスク容量",

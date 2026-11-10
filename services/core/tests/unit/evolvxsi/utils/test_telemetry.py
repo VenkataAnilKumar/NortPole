@@ -114,12 +114,12 @@ def test_mt_cloud_identify_user_resolves_tenant_by_email_when_not_provided(
 
     telemetry_utils.mt_cloud_identify_user(
         distinct_id="user-id",
-        email="wenxi@onyx.app",
+        email="wenxi@evolvxsi.local",
     )
 
-    assert harness.lookup_emails == ["wenxi@onyx.app"]
+    assert harness.lookup_emails == ["wenxi@evolvxsi.local"]
     assert harness.identify_calls == [
-        ("user-id", {"email": "wenxi@onyx.app", "tenant_id": "tenant_dev"})
+        ("user-id", {"email": "wenxi@evolvxsi.local", "tenant_id": "tenant_dev"})
     ]
 
 
@@ -138,7 +138,7 @@ def test_mt_cloud_identify_user_uses_provided_tenant_without_lookup(
 
     telemetry_utils.mt_cloud_identify_user(
         distinct_id="user-id",
-        email="wenxi@onyx.app",
+        email="wenxi@evolvxsi.local",
         request=request,
         tenant_id="tenant_dev",
     )
@@ -146,7 +146,7 @@ def test_mt_cloud_identify_user_uses_provided_tenant_without_lookup(
     assert harness.lookup_emails == []
     assert harness.alias_calls == [("user-id", "anon-id")]
     assert harness.identify_calls == [
-        ("user-id", {"email": "wenxi@onyx.app", "tenant_id": "tenant_dev"})
+        ("user-id", {"email": "wenxi@evolvxsi.local", "tenant_id": "tenant_dev"})
     ]
 
 
@@ -166,11 +166,11 @@ def test_mt_cloud_identify_user_omits_public_tenant(
 
     telemetry_utils.mt_cloud_identify_user(
         distinct_id="user-id",
-        email="wenxi@onyx.app",
+        email="wenxi@evolvxsi.local",
     )
 
-    assert harness.lookup_emails == ["wenxi@onyx.app"]
-    assert harness.identify_calls == [("user-id", {"email": "wenxi@onyx.app"})]
+    assert harness.lookup_emails == ["wenxi@evolvxsi.local"]
+    assert harness.identify_calls == [("user-id", {"email": "wenxi@evolvxsi.local"})]
 
 
 def test_mt_cloud_identify_user_noop_when_not_multi_tenant(monkeypatch: Any) -> None:
@@ -183,5 +183,5 @@ def test_mt_cloud_identify_user_noop_when_not_multi_tenant(monkeypatch: Any) -> 
 
     telemetry_utils.mt_cloud_identify_user(
         distinct_id="user-id",
-        email="wenxi@onyx.app",
+        email="wenxi@evolvxsi.local",
     )

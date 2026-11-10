@@ -14,8 +14,8 @@ jest.mock("@/hooks/useShareableUsers", () => ({
   __esModule: true,
   default: () => ({
     data: [
-      { id: "user-1", email: "subash@onyx.app" },
-      { id: "user-2", email: "thomas@onyx.app" },
+      { id: "user-1", email: "subash@evolvxsi.local" },
+      { id: "user-2", email: "thomas@evolvxsi.local" },
     ],
   }),
 }));

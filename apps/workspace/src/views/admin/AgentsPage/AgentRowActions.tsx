@@ -132,17 +132,6 @@ export default function AgentRowActions({
           },
         ]
       : []),
-    ...(businessTier && canViewStats
-      ? [
-          {
-            kind: "action" as const,
-            id: "stats",
-            icon: SvgBarChart,
-            title: t("rowActions.statsItem.title"),
-            onSelect: () => navigation.go(`/ee/agents/stats/${agent.id}`),
-          },
-        ]
-      : []),
     ...(canDeleteRow
       ? [
           {

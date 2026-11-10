@@ -28,7 +28,7 @@ depends_on = None
 
 # Must match constants in evolvxsi/configs/constants.py file
 NO_AUTH_PLACEHOLDER_USER_UUID = "00000000-0000-0000-0000-000000000001"
-NO_AUTH_PLACEHOLDER_USER_EMAIL = "no-auth-placeholder@onyx.app"
+NO_AUTH_PLACEHOLDER_USER_EMAIL = "no-auth-placeholder@evolvxsi.local"
 
 # Trigger and function names
 TRIGGER_NAME = "trg_migrate_no_auth_data"

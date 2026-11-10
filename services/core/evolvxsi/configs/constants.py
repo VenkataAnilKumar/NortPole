@@ -48,10 +48,10 @@ NEXT_LOCALE_COOKIE_NAME = "NEXT_LOCALE"
 ANONYMOUS_USER_INFO_ID = "__anonymous_user__"
 # Placeholder user for migrating no-auth data to first registered user
 NO_AUTH_PLACEHOLDER_USER_UUID = "00000000-0000-0000-0000-000000000001"
-NO_AUTH_PLACEHOLDER_USER_EMAIL = "no-auth-placeholder@onyx.app"
+NO_AUTH_PLACEHOLDER_USER_EMAIL = "no-auth-placeholder@evolvxsi.local"
 # Real anonymous user in DB for anonymous access feature
 ANONYMOUS_USER_UUID = "00000000-0000-0000-0000-000000000002"
-ANONYMOUS_USER_EMAIL = "anonymous@onyx.app"
+ANONYMOUS_USER_EMAIL = "anonymous@evolvxsi.local"
 
 # For chunking/processing chunks
 RETURN_SEPARATOR = "\n\r\n"

@@ -343,7 +343,7 @@ function SubscriptionCard({
                   br: () => <br />,
                   link: (chunks) => (
                     <a
-                      href="mailto:support@onyx.app?subject=Billing%20change%20request"
+                      href="mailto:support@evolvxsi.local?subject=Billing%20change%20request"
                       className="underline"
                     >
                       {chunks}

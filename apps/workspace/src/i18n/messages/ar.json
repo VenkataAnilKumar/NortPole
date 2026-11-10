@@ -11755,7 +11755,7 @@
         "description": "قيود أو أذونات الوصول إلى الحساب"
       },
       "cloudSupportPrompt": {
-        "text": "إذا استمرت المشكلة، يرجى التواصل مع فريق EvolvXSI على <link>support@onyx.app</link>"
+        "text": "إذا استمرت المشكلة، يرجى التواصل مع فريق EvolvXSI على <link>support@evolvxsi.local</link>"
       },
       "code": {
         "accessDenied": "رفض موفر الهوية الوصول.",
@@ -11839,7 +11839,7 @@
     },
     "impersonate": {
       "adminNote": {
-        "text": "ملاحظة: هذه الميزة متاحة فقط لمسؤولي @onyx.app"
+        "text": "ملاحظة: هذه الميزة متاحة فقط لمسؤولي @evolvxsi.local"
       },
       "apiKeyField": {
         "label": "مفتاح API",
@@ -13936,7 +13936,7 @@
     "errorPages": {
       "accessRestricted": {
         "billingAdminHint": {
-          "text": "إذا كنت المسؤول، فيرجى زيارة صفحة <billingLink>فوترة المسؤول</billingLink> من أجل {hadLicense, select, true {تجديد} other {تفعيل}} ترخيصك، أو التسجيل عبر Stripe، أو التواصل مع <supportLink>support@onyx.app</supportLink> للمساعدة في الفوترة."
+          "text": "إذا كنت المسؤول، فيرجى زيارة صفحة <billingLink>فوترة المسؤول</billingLink> من أجل {hadLicense, select, true {تجديد} other {تفعيل}} ترخيصك، أو التسجيل عبر Stripe، أو التواصل مع <supportLink>support@evolvxsi.local</supportLink> للمساعدة في الفوترة."
         },
         "downgradeButton": {
           "label": "الرجوع إلى إصدار المجتمع"
@@ -14337,7 +14337,7 @@
       }
     },
     "appFooter": {
-      "slogan": "منصة ذكاء اصطناعي مفتوحة المصدر"
+      "slogan": "Governed agent workspace"
     },
     "states": {
       "noItems": {
@@ -17539,7 +17539,7 @@
     "disk": "يبلغ استخدام قرص OpenSearch ‏85% على الأقل على إحدى عقد البيانات. قد تتوقف الفهرسة عند امتلاء القرص.",
     "jvmMemory": "ظل استخدام ذاكرة JVM في OpenSearch أعلى من 85% عبر فحوصات متكررة. قد يفشل البحث والفهرسة.",
     "vectorMemory": "ذاكرة المتجهات في OpenSearch شبه ممتلئة أو وصلت إلى حدها. قد يفشل البحث والفهرسة.",
-    "contact": "تواصل مع مسؤول النظام أو فريق EvolvXSI على [support@onyx.app](mailto:support@onyx.app).",
+    "contact": "تواصل مع مسؤول النظام أو فريق EvolvXSI على [support@evolvxsi.local](mailto:support@evolvxsi.local).",
     "stale": "الفحص الأخير غير متاح. يعكس هذا التحذير آخر فحص ناجح؛ لم يتم تأكيد التعافي.",
     "dismiss": "إغلاق",
     "diskTitle": "مساحة القرص",

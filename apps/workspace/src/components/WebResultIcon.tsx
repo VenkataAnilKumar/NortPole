@@ -17,11 +17,11 @@ export function WebResultIcon({
   try {
     hostname = new URL(url).hostname;
   } catch (e) {
-    hostname = "onyx.app";
+    hostname = "evolvxsi.local";
   }
   return (
     <>
-      {hostname.includes("onyx.app") ? (
+      {hostname.includes("evolvxsi.local") ? (
         <SvgEvolvXSILogo size={size} className="dark:text-white text-black" />
       ) : hostname === "github.com" || hostname.endsWith(".github.com") ? (
         <SvgGitHub size={size} />

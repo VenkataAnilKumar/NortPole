@@ -21,9 +21,9 @@ def _make_pod(
     if managed_by is not None:
         labels["app.kubernetes.io/managed-by"] = managed_by
     if sandbox_id is not None:
-        labels["onyx.app/sandbox-id"] = sandbox_id
+        labels["evolvxsi.local/sandbox-id"] = sandbox_id
     if tenant_id is not None:
-        labels["onyx.app/tenant-id"] = tenant_id
+        labels["evolvxsi.local/tenant-id"] = tenant_id
     return client.V1Pod(
         metadata=client.V1ObjectMeta(name=name, labels=labels),
         status=client.V1PodStatus(pod_ip=pod_ip),

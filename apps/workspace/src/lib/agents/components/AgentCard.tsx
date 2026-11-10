@@ -130,19 +130,6 @@ export function AgentCard({ agent, onView, viewing = false }: AgentCardProps) {
                     gap={0}
                     padding={1}
                   >
-                    {can(agent, "view_stats") && businessTier && (
-                      <Hoverable.Item group="AgentCard">
-                        <Button
-                          icon={SvgBarChart}
-                          prominence="tertiary"
-                          size="md"
-                          onClick={noProp(() =>
-                            navigation.go(`/ee/agents/stats/${agent.id}`)
-                          )}
-                          tooltip={t("card.viewStats.tooltip")}
-                        />
-                      </Hoverable.Item>
-                    )}
                     {can(agent, "edit") && (
                       <Hoverable.Item group="AgentCard">
                         <Button

@@ -26,7 +26,7 @@ def upgrade() -> None:
             WHERE is_active IS TRUE
               AND effective_permissions @> '["admin"]'::jsonb
               AND email NOT LIKE '%evolvxsiapikey.ai'
-              AND email NOT IN ('anonymous@onyx.app', 'no-auth-placeholder@onyx.app')
+              AND email NOT IN ('anonymous@evolvxsi.local', 'no-auth-placeholder@evolvxsi.local')
             ORDER BY id
             LIMIT 1
         )

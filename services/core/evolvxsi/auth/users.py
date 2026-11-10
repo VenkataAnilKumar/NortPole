@@ -448,7 +448,7 @@ def verify_email_domain(
                 "Gmail addresses with '.' are not allowed. Please use your base email address.",
             )
 
-        if "+" in local_part and domain != "onyx.app":
+        if "+" in local_part and domain != "evolvxsi.local":
             raise EvolvXSIError(
                 EvolvXSIErrorCode.INVALID_INPUT,
                 "Email addresses with '+' are not allowed. Please use your base email address.",

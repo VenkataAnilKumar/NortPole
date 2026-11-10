@@ -11755,7 +11755,7 @@
         "description": "Restrictions d'accès ou autorisations du compte"
       },
       "cloudSupportPrompt": {
-        "text": "Si le problème persiste, contactez l'équipe EvolvXSI à <link>support@onyx.app</link>"
+        "text": "Si le problème persiste, contactez l'équipe EvolvXSI à <link>support@evolvxsi.local</link>"
       },
       "code": {
         "accessDenied": "Votre fournisseur d'identité a refusé l'accès.",
@@ -11839,7 +11839,7 @@
     },
     "impersonate": {
       "adminNote": {
-        "text": "Remarque : cette fonctionnalité est réservée aux administrateurs @onyx.app"
+        "text": "Remarque : cette fonctionnalité est réservée aux administrateurs @evolvxsi.local"
       },
       "apiKeyField": {
         "label": "Clé d'API",
@@ -13936,7 +13936,7 @@
     "errorPages": {
       "accessRestricted": {
         "billingAdminHint": {
-          "text": "Si vous êtes l'administrateur, rendez-vous sur la page <billingLink>Facturation admin</billingLink> pour {hadLicense, select, true {renouveler} other {activer}} votre licence, inscrivez-vous via Stripe ou contactez <supportLink>support@onyx.app</supportLink> pour toute question de facturation."
+          "text": "Si vous êtes l'administrateur, rendez-vous sur la page <billingLink>Facturation admin</billingLink> pour {hadLicense, select, true {renouveler} other {activer}} votre licence, inscrivez-vous via Stripe ou contactez <supportLink>support@evolvxsi.local</supportLink> pour toute question de facturation."
         },
         "downgradeButton": {
           "label": "Passer à Community"
@@ -14337,7 +14337,7 @@
       }
     },
     "appFooter": {
-      "slogan": "Plateforme d'IA open source"
+      "slogan": "Governed agent workspace"
     },
     "states": {
       "noItems": {
@@ -17539,7 +17539,7 @@
     "disk": "L’utilisation du disque OpenSearch atteint au moins 85 % sur un nœud de données. L’indexation peut s’arrêter si le disque se remplit.",
     "jvmMemory": "L’utilisation de la mémoire JVM d’OpenSearch est restée supérieure à 85 % lors de contrôles répétés. La recherche et l’indexation peuvent échouer.",
     "vectorMemory": "La mémoire vectorielle d’OpenSearch est presque pleine ou a atteint sa limite. La recherche et l’indexation peuvent échouer.",
-    "contact": "Contactez votre administrateur système ou l’équipe EvolvXSI à [support@onyx.app](mailto:support@onyx.app).",
+    "contact": "Contactez votre administrateur système ou l’équipe EvolvXSI à [support@evolvxsi.local](mailto:support@evolvxsi.local).",
     "stale": "Le dernier contrôle est indisponible. Cet avertissement reflète le dernier contrôle réussi ; le rétablissement n’a pas été confirmé.",
     "dismiss": "Fermer",
     "diskTitle": "Espace disque",

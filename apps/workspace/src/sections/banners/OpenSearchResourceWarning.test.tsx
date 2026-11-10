@@ -125,8 +125,8 @@ test("dismisses the entry popup while keeping the admin banner and avoids repeat
   expect(within(popup).getByText(/disk usage/)).toBeInTheDocument();
   expect(within(popup).getByText(/JVM memory usage/)).toBeInTheDocument();
   expect(
-    within(popup).getByRole("link", { name: "support@onyx.app" })
-  ).toHaveAttribute("href", "mailto:support@onyx.app");
+    within(popup).getByRole("link", { name: "support@evolvxsi.local" })
+  ).toHaveAttribute("href", "mailto:support@evolvxsi.local");
   await user.click(within(popup).getByRole("button", { name: "Dismiss" }));
   expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   expect(

@@ -41,7 +41,7 @@ def test_verify_email_domain_allows_plus_for_evolvxsi_app(
     monkeypatch.setattr(users, "MULTI_TENANT", True, raising=False)
 
     # Should not raise for onyx.app domain
-    verify_email_domain("user+tag@onyx.app", valid_email_domains=[])
+    verify_email_domain("user+tag@evolvxsi.local", valid_email_domains=[])
 
 
 def test_verify_email_domain_rejects_dotted_gmail_on_registration(

@@ -11755,7 +11755,7 @@
         "description": "Restricciones de acceso o permisos de la cuenta"
       },
       "cloudSupportPrompt": {
-        "text": "Si el problema continúa, contacta al equipo de EvolvXSI en <link>support@onyx.app</link>"
+        "text": "Si el problema continúa, contacta al equipo de EvolvXSI en <link>support@evolvxsi.local</link>"
       },
       "code": {
         "accessDenied": "Tu proveedor de identidad denegó el acceso.",
@@ -11839,7 +11839,7 @@
     },
     "impersonate": {
       "adminNote": {
-        "text": "Nota: esta función solo está disponible para administradores de @onyx.app"
+        "text": "Nota: esta función solo está disponible para administradores de @evolvxsi.local"
       },
       "apiKeyField": {
         "label": "Clave de API",
@@ -13936,7 +13936,7 @@
     "errorPages": {
       "accessRestricted": {
         "billingAdminHint": {
-          "text": "Si eres el administrador, visita la página de <billingLink>Facturación de administración</billingLink> para {hadLicense, select, true {renovar} other {activar}} tu licencia, regístrate a través de Stripe o escribe a <supportLink>support@onyx.app</supportLink> para obtener ayuda con la facturación."
+          "text": "Si eres el administrador, visita la página de <billingLink>Facturación de administración</billingLink> para {hadLicense, select, true {renovar} other {activar}} tu licencia, regístrate a través de Stripe o escribe a <supportLink>support@evolvxsi.local</supportLink> para obtener ayuda con la facturación."
         },
         "downgradeButton": {
           "label": "Cambiar a Community"
@@ -14337,7 +14337,7 @@
       }
     },
     "appFooter": {
-      "slogan": "Plataforma de IA de código abierto"
+      "slogan": "Governed agent workspace"
     },
     "states": {
       "noItems": {
@@ -17539,7 +17539,7 @@
     "disk": "El uso de disco de OpenSearch es de al menos el 85 % en un nodo de datos. La indexación puede detenerse si el disco se llena.",
     "jvmMemory": "El uso de memoria JVM de OpenSearch se mantuvo por encima del 85 % en comprobaciones repetidas. La búsqueda y la indexación pueden fallar.",
     "vectorMemory": "La memoria vectorial de OpenSearch está casi llena o ha alcanzado su límite. La búsqueda y la indexación pueden fallar.",
-    "contact": "Contacta con el administrador del sistema o con el equipo de EvolvXSI en [support@onyx.app](mailto:support@onyx.app).",
+    "contact": "Contacta con el administrador del sistema o con el equipo de EvolvXSI en [support@evolvxsi.local](mailto:support@evolvxsi.local).",
     "stale": "La última comprobación no está disponible. Esta advertencia refleja la última comprobación correcta; no se ha confirmado la recuperación.",
     "dismiss": "Cerrar",
     "diskTitle": "Espacio en disco",

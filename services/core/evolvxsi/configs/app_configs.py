@@ -1810,7 +1810,7 @@ SCHEDULED_EVAL_DATASET_NAMES = [
 ]
 # Email address to use for search permissions during scheduled evals
 SCHEDULED_EVAL_PERMISSIONS_EMAIL = os.environ.get(
-    "SCHEDULED_EVAL_PERMISSIONS_EMAIL", "roshan@onyx.app"
+    "SCHEDULED_EVAL_PERMISSIONS_EMAIL", ""
 )
 # Braintrust project name to use for scheduled evals
 SCHEDULED_EVAL_PROJECT = os.environ.get("SCHEDULED_EVAL_PROJECT", "st-dev")
@@ -2286,3 +2286,6 @@ STRIPE_PUBLISHABLE_KEY_URL = (
 )
 # Override for local testing with Stripe test keys (pk_test_*)
 STRIPE_PUBLISHABLE_KEY_OVERRIDE = os.environ.get("STRIPE_PUBLISHABLE_KEY")
+
+# Where connector requests are emailed. Empty means no email is sent.
+CONNECTOR_REQUEST_EMAIL = os.environ.get("CONNECTOR_REQUEST_EMAIL", "")

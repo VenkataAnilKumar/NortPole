@@ -11755,7 +11755,7 @@
         "description": "계정 액세스 제한 또는 권한 문제"
       },
       "cloudSupportPrompt": {
-        "text": "문제가 계속되면 <link>support@onyx.app</link>으로 EvolvXSI 팀에 문의하세요"
+        "text": "문제가 계속되면 <link>support@evolvxsi.local</link>으로 EvolvXSI 팀에 문의하세요"
       },
       "code": {
         "accessDenied": "ID 공급자가 액세스를 거부했습니다.",
@@ -11839,7 +11839,7 @@
     },
     "impersonate": {
       "adminNote": {
-        "text": "참고: 이 기능은 @onyx.app 관리자만 사용할 수 있습니다"
+        "text": "참고: 이 기능은 @evolvxsi.local 관리자만 사용할 수 있습니다"
       },
       "apiKeyField": {
         "label": "API 키",
@@ -13936,7 +13936,7 @@
     "errorPages": {
       "accessRestricted": {
         "billingAdminHint": {
-          "text": "관리자라면 <billingLink>관리자 결제</billingLink> 페이지에서 라이선스를 {hadLicense, select, true {갱신} other {활성화}}하거나 Stripe를 통해 가입하거나 결제 관련 지원은 <supportLink>support@onyx.app</supportLink>으로 문의하세요."
+          "text": "관리자라면 <billingLink>관리자 결제</billingLink> 페이지에서 라이선스를 {hadLicense, select, true {갱신} other {활성화}}하거나 Stripe를 통해 가입하거나 결제 관련 지원은 <supportLink>support@evolvxsi.local</supportLink>으로 문의하세요."
         },
         "downgradeButton": {
           "label": "Community로 다운그레이드"
@@ -14337,7 +14337,7 @@
       }
     },
     "appFooter": {
-      "slogan": "오픈 소스 AI 플랫폼"
+      "slogan": "Governed agent workspace"
     },
     "states": {
       "noItems": {
@@ -17539,7 +17539,7 @@
     "disk": "OpenSearch 데이터 노드의 디스크 사용률이 85% 이상입니다. 디스크가 가득 차면 인덱싱이 중단될 수 있습니다.",
     "jvmMemory": "반복 검사에서 OpenSearch JVM 메모리 사용률이 85%를 초과했습니다. 검색 및 인덱싱이 실패할 수 있습니다.",
     "vectorMemory": "OpenSearch 벡터 메모리가 거의 가득 찼거나 한도에 도달했습니다. 검색 및 인덱싱이 실패할 수 있습니다.",
-    "contact": "시스템 관리자 또는 EvolvXSI 팀([support@onyx.app](mailto:support@onyx.app))에 문의하세요.",
+    "contact": "시스템 관리자 또는 EvolvXSI 팀([support@evolvxsi.local](mailto:support@evolvxsi.local))에 문의하세요.",
     "stale": "최신 검사를 사용할 수 없습니다. 이 경고는 마지막으로 성공한 검사를 반영하며 복구는 확인되지 않았습니다.",
     "dismiss": "닫기",
     "diskTitle": "디스크 공간",

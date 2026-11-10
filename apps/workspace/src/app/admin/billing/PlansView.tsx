@@ -25,7 +25,7 @@ import type { IconProps } from "@opal/types";
 import Card from "@/refresh-components/cards/Card";
 import { Button, Text } from "@opal/components";
 
-const SALES_URL = "https://www.onyx.app/contact-sales";
+const SALES_URL = process.env.NEXT_PUBLIC_SALES_URL || "#";
 
 // ----------------------------------------------------------------------------
 // Types

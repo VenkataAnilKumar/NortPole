@@ -42,11 +42,15 @@ Adapted from the Onyx Community Edition, commit `919578e0408a2d739a16215c09844c6
 - Not done: a production build, the full unit suite, or any connector test.
 - Functional markdown (the built-in skill definitions under `skills/builtin`) is required at start-up and is included; other markdown documentation was left out.
 
-## Leftovers found while running it
+## Clean-up of upstream leftovers (done 2026-11-10)
 
-- The footer text "Open Source AI Platform" (`i18n/messages/*.json`, key `slogan`) is upstream wording.
-- A seeded anonymous user is created as `anonymous@onyx.app`.
-- The connector-request feature (`server/documents/connector.py`) tracks to PostHog and sends an email to an upstream address. Remove or make it configurable before release.
+- Seeded and placeholder users now use `evolvxsi.local` addresses (code and migrations); all other `@onyx.app` addresses, including a named person's, were replaced or removed.
+- The connector-request email is sent only when `CONNECTOR_REQUEST_EMAIL` is set; it no longer goes to an upstream address.
+- The `HTTP-Referer` header for model providers now uses the app's own `WEB_DOMAIN`; the web crawler user agent no longer links to an upstream site; the evaluation CLI default points to localhost.
+- Sandbox label keys moved from `onyx.app/...` to `evolvxsi.local/...`.
+- The Craft background video no longer loads from an upstream CDN (and the content security policy no longer allows it); the footer link and slogan are now neutral ("Governed agent workspace", English in every locale until translated); the contact-sales link is `NEXT_PUBLIC_SALES_URL` or `#`.
+- The enterprise-only agent statistics links were removed, because that page was part of `ee`.
+- **Still to review:** about 290 references to the upstream documentation site (`docs.onyx.app`) remain as help links and in a few skill and migration text strings; none sends data.
 - The web dev server accepts only the `localhost` origin in development.
 
 ## Known gaps to build

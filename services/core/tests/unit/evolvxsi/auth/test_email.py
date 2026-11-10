@@ -18,8 +18,8 @@ def test_send_user_email_invite() -> None:
 
     subject = f"Invitation to Join {application_name} Organization"
 
-    FROM_EMAIL = "noreply@onyx.app"
-    TO_EMAIL = "support@onyx.app"
+    FROM_EMAIL = "noreply@evolvxsi.local"
+    TO_EMAIL = "support@evolvxsi.local"
     text_content, html_content = build_user_email_invite(
         FROM_EMAIL, TO_EMAIL, EVOLVXSI_DEFAULT_APPLICATION_NAME
     )

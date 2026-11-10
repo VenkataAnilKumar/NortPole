@@ -35,6 +35,7 @@ from evolvxsi.auth.users import current_chat_accessible_user
 from evolvxsi.background.celery.tasks.beat_schedule import BEAT_EXPIRES_DEFAULT
 from evolvxsi.background.celery.tasks.pruning.tasks import try_creating_prune_generator_task
 from evolvxsi.background.celery.versioned_apps.client import app as client_app
+from evolvxsi.configs.app_configs import CONNECTOR_REQUEST_EMAIL
 from evolvxsi.configs.app_configs import (
     EMAIL_CONFIGURED,
     ENABLED_CONNECTOR_TYPES,
@@ -2344,7 +2345,7 @@ def submit_connector_request(
 ) -> StatusResponse:
     """
     Submit a connector request for Cloud deployments.
-    Tracks via PostHog telemetry and sends email to hello@onyx.app.
+    Tracks via telemetry (multi-tenant only) and emails CONNECTOR_REQUEST_EMAIL when it is set.
     """
     tenant_id = get_current_tenant_id()
     connector_name = request_data.connector_name.strip()
@@ -2368,8 +2369,8 @@ def submit_connector_request(
             },
         )
 
-    # Send email notification (if email is configured)
-    if EMAIL_CONFIGURED:
+    # Send email notification (only if email and a recipient are configured)
+    if EMAIL_CONFIGURED and CONNECTOR_REQUEST_EMAIL:
         try:
             subject = "EvolvXSI Craft Connector Request"
             email_body_text = f"""A new connector request has been submitted:
@@ -2390,13 +2391,13 @@ Tenant ID: {tenant_id}
 </html>"""
 
             send_email(
-                user_email="hello@onyx.app",
+                user_email=CONNECTOR_REQUEST_EMAIL,
                 subject=subject,
                 html_body=email_body_html,
                 text_body=email_body_text,
             )
             logger.info(
-                "Connector request email sent to hello@onyx.app for connector: %s",
+                "Connector request email sent for connector: %s",
                 connector_name,
             )
         except Exception as e:

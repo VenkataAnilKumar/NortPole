@@ -11755,7 +11755,7 @@
         "description": "账户访问限制或权限问题"
       },
       "cloudSupportPrompt": {
-        "text": "如果问题持续存在，请通过 <link>support@onyx.app</link> 联系 EvolvXSI 团队"
+        "text": "如果问题持续存在，请通过 <link>support@evolvxsi.local</link> 联系 EvolvXSI 团队"
       },
       "code": {
         "accessDenied": "您的身份提供方拒绝了访问。",
@@ -11839,7 +11839,7 @@
     },
     "impersonate": {
       "adminNote": {
-        "text": "注意：此功能仅面向 @onyx.app 管理员开放"
+        "text": "注意：此功能仅面向 @evolvxsi.local 管理员开放"
       },
       "apiKeyField": {
         "label": "API 密钥",
@@ -13936,7 +13936,7 @@
     "errorPages": {
       "accessRestricted": {
         "billingAdminHint": {
-          "text": "如果您是管理员，请访问<billingLink>管理员账单</billingLink>页面以{hadLicense, select, true {续订} other {激活}}您的许可证，通过 Stripe 注册，或联系 <supportLink>support@onyx.app</supportLink> 获取账单帮助。"
+          "text": "如果您是管理员，请访问<billingLink>管理员账单</billingLink>页面以{hadLicense, select, true {续订} other {激活}}您的许可证，通过 Stripe 注册，或联系 <supportLink>support@evolvxsi.local</supportLink> 获取账单帮助。"
         },
         "downgradeButton": {
           "label": "降级到 Community"
@@ -14337,7 +14337,7 @@
       }
     },
     "appFooter": {
-      "slogan": "开源 AI 平台"
+      "slogan": "Governed agent workspace"
     },
     "states": {
       "noItems": {
@@ -17539,7 +17539,7 @@
     "disk": "OpenSearch 数据节点的磁盘使用率至少为 85%。磁盘空间耗尽时，索引可能停止。",
     "jvmMemory": "多次检查显示 OpenSearch JVM 内存使用率持续超过 85%。搜索和索引可能失败。",
     "vectorMemory": "OpenSearch 向量内存接近满载或已达到上限。搜索和索引可能失败。",
-    "contact": "请联系系统管理员或通过 [support@onyx.app](mailto:support@onyx.app) 联系 EvolvXSI 团队。",
+    "contact": "请联系系统管理员或通过 [support@evolvxsi.local](mailto:support@evolvxsi.local) 联系 EvolvXSI 团队。",
     "stale": "最新检查不可用。此警告反映上次成功检查的结果，尚未确认恢复。",
     "dismiss": "关闭",
     "diskTitle": "磁盘空间",

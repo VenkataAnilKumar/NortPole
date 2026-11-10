@@ -174,7 +174,7 @@ export default function AccessRestricted() {
                   </NavLink>
                 ),
                 supportLink: (chunks) => (
-                  <a className={linkClassName} href="mailto:support@onyx.app">
+                  <a className={linkClassName} href="mailto:support@evolvxsi.local">
                     {chunks}
                   </a>
                 ),

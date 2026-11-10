@@ -209,7 +209,7 @@ def test_bold_url_delimiters_stay_outside_the_link() -> None:
 def test_unlinked_email_is_still_not_split_by_zero_width_space() -> None:
     # Rejected as a truncated local part, so it stays plain text and the
     # mention defanging is the only thing left that could corrupt it
-    assert "a *support@onyx.app" == _render("a *support@onyx.app")
+    assert "a *support@evolvxsi.local" == _render("a *support@evolvxsi.local")
 
 
 def test_italic_and_strikethrough_urls_stay_intact() -> None:
@@ -218,22 +218,22 @@ def test_italic_and_strikethrough_urls_stay_intact() -> None:
 
 
 def test_bold_email_renders_as_mailto_link() -> None:
-    rendered = _render("Contact **support@onyx.app** for help.")
+    rendered = _render("Contact **support@evolvxsi.local** for help.")
 
-    assert "Contact *<mailto:support@onyx.app|support@onyx.app>* for help." == rendered
-    assert "_<mailto:support@onyx.app|support@onyx.app>_" == _render(
-        "_support@onyx.app_"
+    assert "Contact *<mailto:support@evolvxsi.local|support@evolvxsi.local>* for help." == rendered
+    assert "_<mailto:support@evolvxsi.local|support@evolvxsi.local>_" == _render(
+        "_support@evolvxsi.local_"
     )
-    assert "~<mailto:support@onyx.app|support@onyx.app>~" == _render(
-        "~~support@onyx.app~~"
+    assert "~<mailto:support@evolvxsi.local|support@evolvxsi.local>~" == _render(
+        "~~support@evolvxsi.local~~"
     )
 
 
 def test_bare_email_is_not_split_by_zero_width_space() -> None:
-    rendered = _render("plain support@onyx.app plain")
+    rendered = _render("plain support@evolvxsi.local plain")
 
     assert "\u200b" not in rendered
-    assert "<mailto:support@onyx.app|support@onyx.app>" in rendered
+    assert "<mailto:support@evolvxsi.local|support@evolvxsi.local>" in rendered
 
 
 def test_mentions_are_still_defanged() -> None:
@@ -267,8 +267,8 @@ def test_all_slack_notification_shapes_are_defanged() -> None:
 
 
 def test_email_specials_and_url_userinfo_survive_mention_defanging() -> None:
-    email = "support!@onyx.app"
-    url = "https://support!@onyx.app/docs"
+    email = "support!@evolvxsi.local"
+    url = "https://support!@evolvxsi.local/docs"
 
     rendered = _render(f"{email} {url} `{email}`")
 
@@ -279,7 +279,7 @@ def test_email_specials_and_url_userinfo_survive_mention_defanging() -> None:
 
 
 def test_slack_style_mailto_link_survives_formatting() -> None:
-    message = "<mailto:support@onyx.app|support@onyx.app>"
+    message = "<mailto:support@evolvxsi.local|support@evolvxsi.local>"
 
     assert message == _render(message)
 
@@ -316,8 +316,8 @@ def test_code_is_left_literal_by_every_pre_parse_transform() -> None:
     # Link conversion, HTML stripping and destination normalization all run
     # before mistune sees the text, so each has to honor the code guard
     for snippet in (
-        "`<mailto:admin@onyx.app|admin@onyx.app>`",
-        "`<https://onyx.app/docs|onyx.app/docs>`",
+        "`<mailto:admin@evolvxsi.local|admin@evolvxsi.local>`",
+        "`<https://onyx.app/docs|evolvxsi.local/docs>`",
         "`<div>hi</div>`",
         "`[label](https://onyx.app/x)`",
     ):
@@ -336,8 +336,8 @@ def test_link_label_text_is_not_autolinked() -> None:
     title = _clean_markdown_link_text("Runbook for https://onyx.app/docs")
 
     assert "Runbook for https://onyx.app/docs" == title
-    assert "Contact support@onyx.app" == _clean_markdown_link_text(
-        "Contact support@onyx.app"
+    assert "Contact support@evolvxsi.local" == _clean_markdown_link_text(
+        "Contact support@evolvxsi.local"
     )
     assert "Read the portal" == _clean_markdown_link_text(
         "Read the [portal](https://onyx.app)"

@@ -37,7 +37,7 @@ class CleanupNamespace:
             LABEL_TENANT_ID: tenant,
             LABEL_K8S_MANAGED_BY: LABEL_K8S_MANAGED_BY_EVOLVXSI,
             LABEL_K8S_COMPONENT: "sandbox",
-            "onyx.app/provisioning-attempt": str(attempt),
+            "evolvxsi.local/provisioning-attempt": str(attempt),
         }
         self.core.create_namespaced_pod(
             self.name,

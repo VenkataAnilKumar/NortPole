@@ -86,8 +86,7 @@ const CSP_HEADER = [
   // img-src stays broad: chat markdown and connector content render remote
   // images.
   strictCspEnabled ? "img-src 'self' data: blob: https:;" : "",
-  // cdn.onyx.app serves the Craft page's animated background video.
-  strictCspEnabled ? "media-src 'self' blob: data: https://cdn.onyx.app;" : "",
+  strictCspEnabled ? "media-src 'self' blob: data:;" : "",
   // worker-src blob: covers pdf.js-style workers and the PostHog session
   // recorder; frame-src blob: covers in-app PDF preview.
   strictCspEnabled ? "worker-src 'self' blob:;" : "",

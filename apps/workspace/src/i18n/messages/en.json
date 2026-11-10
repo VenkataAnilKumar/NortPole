@@ -11755,7 +11755,7 @@
         "description": "Account access restrictions or permissions"
       },
       "cloudSupportPrompt": {
-        "text": "If you continue to experience problems, please reach out to the EvolvXSI team at <link>support@onyx.app</link>"
+        "text": "If you continue to experience problems, please reach out to the EvolvXSI team at <link>support@evolvxsi.local</link>"
       },
       "code": {
         "accessDenied": "Access was denied by your identity provider.",
@@ -11839,7 +11839,7 @@
     },
     "impersonate": {
       "adminNote": {
-        "text": "Note: This feature is only available for @onyx.app administrators"
+        "text": "Note: This feature is only available for @evolvxsi.local administrators"
       },
       "apiKeyField": {
         "label": "API Key",
@@ -13936,7 +13936,7 @@
     "errorPages": {
       "accessRestricted": {
         "billingAdminHint": {
-          "text": "If you are the administrator, please visit the <billingLink>Admin Billing</billingLink> page to {hadLicense, select, true {renew} other {activate}} your license, sign up through Stripe or reach out to <supportLink>support@onyx.app</supportLink> for billing assistance."
+          "text": "If you are the administrator, please visit the <billingLink>Admin Billing</billingLink> page to {hadLicense, select, true {renew} other {activate}} your license, sign up through Stripe or reach out to <supportLink>support@evolvxsi.local</supportLink> for billing assistance."
         },
         "downgradeButton": {
           "label": "Downgrade to Community"
@@ -14337,7 +14337,7 @@
       }
     },
     "appFooter": {
-      "slogan": "Open Source AI Platform"
+      "slogan": "Governed agent workspace"
     },
     "states": {
       "noItems": {
@@ -17539,7 +17539,7 @@
     "disk": "OpenSearch disk usage is at least 85% on a data node. Indexing may stop as the disk fills.",
     "jvmMemory": "OpenSearch JVM memory usage stayed above 85% across repeated checks. Search and indexing may fail.",
     "vectorMemory": "OpenSearch vector memory is nearly full or has reached its limit. Search and indexing may fail.",
-    "contact": "Contact your system administrator or the EvolvXSI team at [support@onyx.app](mailto:support@onyx.app).",
+    "contact": "Contact your system administrator or the EvolvXSI team at [support@evolvxsi.local](mailto:support@evolvxsi.local).",
     "stale": "The latest check is unavailable. This warning reflects the last successful check; recovery has not been confirmed.",
     "dismiss": "Dismiss",
     "diskTitle": "Disk space",

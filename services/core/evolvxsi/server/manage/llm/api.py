@@ -12,6 +12,7 @@ from fastapi import APIRouter, Depends, Query
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
+from evolvxsi.configs.app_configs import WEB_DOMAIN
 from evolvxsi.auth.permissions import has_global_permission, require_permission
 from evolvxsi.auth.users import current_chat_accessible_user, scope_exempt
 from evolvxsi.db.engine.sql_engine import get_session
@@ -2296,7 +2297,7 @@ def _get_openrouter_models_response(
         url += "?output_modalities=decisions"
     headers: dict[str, str] = {
         # Optional headers recommended by OpenRouter for attribution
-        "HTTP-Referer": "https://onyx.app",
+        "HTTP-Referer": WEB_DOMAIN,
         "X-Title": "EvolvXSI",
     }
     if api_key:
@@ -2703,7 +2704,7 @@ def _get_openai_compatible_models_response(
     """Fetch model metadata from an OpenAI-compatible `/models` endpoint."""
     headers = {
         "Authorization": f"Bearer {api_key}",
-        "HTTP-Referer": "https://onyx.app",
+        "HTTP-Referer": WEB_DOMAIN,
         "X-Title": "EvolvXSI",
     }
     if not api_key:

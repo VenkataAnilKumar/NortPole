@@ -39,7 +39,7 @@ _CA_KEY_SECRET_KEY = "ca.key"
 _CA_CERT_CONFIGMAP_KEY = "ca.crt"
 
 _COMPONENT_VALUE_PROXY = "sandbox-proxy"
-_RESOURCE_LABEL_KEY = "onyx.app/resource"
+_RESOURCE_LABEL_KEY = "evolvxsi.local/resource"
 _SECRET_RESOURCE_LABEL = "sandbox-proxy-ca"
 _CONFIGMAP_RESOURCE_LABEL = "sandbox-proxy-ca-bundle"
 

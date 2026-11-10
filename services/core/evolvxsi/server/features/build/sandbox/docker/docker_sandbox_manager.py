@@ -183,9 +183,9 @@ from evolvxsi.utils.logger import setup_logger
 logger = setup_logger()
 
 
-LABEL_COMPONENT = "onyx.app/component"
+LABEL_COMPONENT = "evolvxsi.local/component"
 LABEL_COMPONENT_VALUE = "craft-sandbox"
-LABEL_USER_ID = "onyx.app/user-id"
+LABEL_USER_ID = "evolvxsi.local/user-id"
 
 # Path conventions inside the sandbox container — must match the K8s image.
 WORKSPACE_ROOT = "/workspace"

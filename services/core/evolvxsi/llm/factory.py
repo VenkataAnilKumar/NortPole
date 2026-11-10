@@ -4,6 +4,7 @@ from functools import lru_cache
 from pydantic import JsonValue
 from sqlalchemy.orm import Session
 
+from evolvxsi.configs.app_configs import WEB_DOMAIN
 from evolvxsi.auth.permissions import has_global_permission
 from evolvxsi.configs.model_configs import GEN_AI_TEMPERATURE
 from evolvxsi.db.engine.sql_engine import get_session_with_current_tenant
@@ -63,7 +64,7 @@ def _build_provider_extra_headers(
     # Passing these will put EvolvXSI on the OpenRouter leaderboard
     elif provider == LlmProviderNames.OPENROUTER:
         return {
-            "HTTP-Referer": "https://onyx.app",
+            "HTTP-Referer": WEB_DOMAIN,
             "X-Title": "EvolvXSI",
         }
 
