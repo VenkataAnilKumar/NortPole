@@ -15,6 +15,7 @@ The document names and numbered areas follow the convention used by the Qvora do
 | 04 Specs | [EvolvXSI_User-Journey.md](04-specs/EvolvXSI_User-Journey.md) | Draft | Candidate practitioner and administrator journeys. |
 | 04 Specs | [EvolvXSI_User-Stories.md](04-specs/EvolvXSI_User-Stories.md) | Draft | First-workflow stories and phased platform capability epics. |
 | 04 Specs | [EvolvXSI_Feature-Spec.md](04-specs/EvolvXSI_Feature-Spec.md) | Draft | Ten-layer platform feature catalog and detailed first-workflow behavior. |
+| 04 Specs | [EvolvXSI_North-Feature-Mapping.md](04-specs/EvolvXSI_North-Feature-Mapping.md) | Draft | Cohere North capabilities mapped to the PF catalog, with gaps and suggested sequence; secondary sources only. |
 | 05 Design | [EvolvXSI_UI-Spec.md](05-design/EvolvXSI_UI-Spec.md) | Draft | Screens, states, interactions, and accessibility details. |
 | 05 Design | [EvolvXSI_Design-System.md](05-design/EvolvXSI_Design-System.md) | Draft | Interaction rules and visual token categories; final brand pending. |
 | 06 Technical | [EvolvXSI_System-Architecture.md](06-technical/EvolvXSI_System-Architecture.md) | Draft | Capability boundaries, contracts, execution flow, and risks. |
@@ -70,3 +71,7 @@ The [feature catalog](04-specs/EvolvXSI_Feature-Spec.md#full-platform-feature-ca
 ## Reference-only delivery plan
 
 The [reference-only implementation workstream](07-implementation/EvolvXSI_Implementation-Phases.md#reference-only-implementation-workstream) maps local and web studies to P00–P11, defines provenance/commercial-evidence gates and records the per-phase design/test workflow. The selected direction is EvolvXSI-owned implementation; application-platform copying and rebranding are not selected. Use the aligned [implementation checklist](07-implementation/EvolvXSI_Implementation-Checklist.md#reference-only-workstream-gates).
+
+## Decisions
+
+[0001 modular monorepo](decisions/0001-modular-monorepo.md) · [0002 hybrid routing and pilot scope](decisions/0002-hybrid-routing-and-pilot-scope.md) (proposed).
