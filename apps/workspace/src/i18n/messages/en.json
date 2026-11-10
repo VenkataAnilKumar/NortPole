@@ -12443,7 +12443,7 @@
         "input": {
           "ariaLabel": "Message input",
           "listeningPlaceholder": "Listening...",
-          "placeholder": "How can I help you today?",
+          "placeholder": "Assign a task or type / for more",
           "queuedPlaceholder": "Press up to edit queued messages",
           "searchPlaceholder": "Search connected sources",
           "speakingPlaceholder": "{appName} is speaking..."
