@@ -18,7 +18,7 @@ import os
 import re
 import sys
 
-SKIP_DIRS = {".git", "node_modules", ".next", "__pycache__", ".venv", "dist", "build"}
+SKIP_DIRS = {".git", "node_modules", ".next", "__pycache__", ".venv"}
 SKIP_EE = {"ee"}
 SKIP_FILES = {"LICENSE", "NOTICE", "UPSTREAM.md", "uv.lock", "bun.lock",
               "package-lock.json", "yarn.lock", "pnpm-lock.yaml"}
@@ -55,6 +55,13 @@ def rewrite(text):
         token = f"\u0001P{i}\u0001"
         placeholders[token] = p
         text = text.replace(p, token)
+
+    def hold(m):
+        token = f"\u0001D{len(placeholders)}\u0001"
+        placeholders[token] = m.group(0)
+        return token
+
+    text = EXTERNAL.sub(hold, text)  # external upstream domains stay as written
     text = PATTERN.sub(lambda m: MAP[m.group(0)], text)
     for token, p in placeholders.items():
         text = text.replace(token, p)

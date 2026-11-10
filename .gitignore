@@ -9,5 +9,5 @@ Thumbs.db
 __pycache__/
 *.py[cod]
 node_modules/
-dist/
-build/
+/dist/
+/build/

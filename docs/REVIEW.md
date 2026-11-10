@@ -145,3 +145,8 @@ PF-01.08, PF-01.09, PF-04.04, PF-04.05 and PF-04.07 moved from Expansion to Pilo
 ## Hybrid routing, navigation and extension levels: 2026-11-10
 
 Recorded the owner's direction as proposed decisions 0002 (user-selectable local, private and cloud routes inside administrator policy, per-route evaluation, pilot of one pack on two routes) and 0003 (extension levels and terminology). Added the North feature mapping. Shortened user and admin tab names and added proposed sub-tabs and User Settings to the UI specification; Knowledge is now Libraries, and Skills, Connectors and Plugins are sub-tabs. Added PF-08.06 and F-29, with ownership, API, data, story, phase and checklist entries; extended PF-02.02 and PF-07.03 acceptance for per-route evaluation. All remain expansion scope and none changes the first-release PRD. North details come from secondary sources and are unverified. Open: where local models run, per-task or per-workspace route choice, first vertical and models, whether personal skills may use Cloud routes, and whether Usage moves earlier. No implementation exists.
+
+## Community source adopted as pilot core: 2026-11-10
+
+Recorded decision 0004. Copied the Onyx Community Edition backend and web app (MIT parts only, commit 919578e) into `services/core` and `apps/workspace`, rebranded them with `tools/rebrand_onyx.py`, replaced `ee` imports with community stubs, and turned upstream telemetry off by default. Only a Python compile check was run; nothing was installed, built or started, lock files are stale, and upstream external URLs remain for review. Permission sync and search are upstream `ee` features that EvolvXSI must build. Legal review of trademark and notices is open.
+

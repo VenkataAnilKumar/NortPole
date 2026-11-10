@@ -74,4 +74,4 @@ The [reference-only implementation workstream](07-implementation/EvolvXSI_Implem
 
 ## Decisions
 
-[0001 modular monorepo](decisions/0001-modular-monorepo.md) · [0002 hybrid routing and pilot scope](decisions/0002-hybrid-routing-and-pilot-scope.md) (proposed) · [0003 extension levels and terminology](decisions/0003-extension-levels-and-terminology.md) (proposed).
+[0001 modular monorepo](decisions/0001-modular-monorepo.md) · [0002 hybrid routing and pilot scope](decisions/0002-hybrid-routing-and-pilot-scope.md) (proposed) · [0003 extension levels and terminology](decisions/0003-extension-levels-and-terminology.md) (proposed) · [0004 adopt community source as pilot core](decisions/0004-adopt-community-source-as-pilot-core.md) (proposed).
