@@ -16,6 +16,7 @@ export function useAdminNavLabels(): Record<AdminNavItemId, string> {
   return useMemo<Record<AdminNavItemId, string>>(
     () => ({
       languageModels: t("adminNav.items.languageModels.label"),
+      routePolicy: t("adminNav.items.routePolicy.label"),
       webSearch: t("adminNav.items.webSearch.label"),
       imageGeneration: t("adminNav.items.imageGeneration.label"),
       voice: t("adminNav.items.voice.label"),

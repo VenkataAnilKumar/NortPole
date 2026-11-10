@@ -57,6 +57,7 @@ Adapted from the Onyx Community Edition, commit `919578e0408a2d739a16215c09844c6
 
 - `evolvxsi/route_policy/`: route kinds (local, private, cloud), data classes (public, internal, confidential, restricted), the administrator's policy, a decision function, `GET /route-policy`, `POST /route-policy/check` and `PUT /admin/route-policy`. A request to a blocked route fails with `POLICY_BLOCKED` before any content is sent; a model that cannot be placed on a provider, and a provider with no route type, are treated as cloud (fail closed). The one upstream edit is the `enforce_route` call in `chat/process_message.py` (`_select_models`).
 - Web: `RoutePicker` (`sections/model-selector/RoutePicker.tsx`) replaces the upstream model selector on the home and chat screens; a blocked route is listed but disabled with its reason.
+- Admin page `Route Policy` (`/admin/route-policy`, view `RoutePolicyPage.tsx`): route type per provider, the data-class matrix, the workspace data class and a test panel. It needs the manage-LLMs permission. The sidebar label is English in every locale until translated.
 - `services/model-gateway/src/adapters/mock/`: the deterministic mock model route used for development.
 - The policy lives in the key-value store; the workspace data class is one default value for now. Per-task data classes need the source and classification work.
 

@@ -16824,6 +16824,9 @@
         },
         "spendingLimits": {
           "label": "Limites de dépenses"
+        },
+        "routePolicy": {
+          "label": "Route Policy"
         }
       },
       "sections": {
