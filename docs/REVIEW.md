@@ -150,3 +150,5 @@ Recorded the owner's direction as proposed decisions 0002 (user-selectable local
 
 Recorded decision 0004. Copied the Onyx Community Edition backend and web app (MIT parts only, commit 919578e) into `services/core` and `apps/workspace`, rebranded them with `tools/rebrand_onyx.py`, replaced `ee` imports with community stubs, and turned upstream telemetry off by default. Only a Python compile check was run; nothing was installed, built or started, lock files are stale, and upstream external URLs remain for review. Permission sync and search are upstream `ee` features that EvolvXSI must build. Legal review of trademark and notices is open.
 
+Follow-up, same day: replaced upstream brand imagery and logo components with generated EvolvXSI placeholders, removed the upstream licensed font and unreferenced sample images, and removed the `ee` requirements file. Third-party product logos and test fixtures were kept. Final brand artwork is still open.
+

@@ -2,7 +2,6 @@
  * @opal/typography — web-only font plumbing.
  *
  * Covers:
- *   - KH Teka @font-face declaration (loads the web font file)
  *   - The `.font-main-content-body strong` weight override
  *
  * The typography PRESETS (the `@utility font-*` blocks) are now design tokens in
@@ -12,23 +11,6 @@
  *
  * Automatically included when consumers import `@evolvxsi-ai/opal/root.css`.
  */
-
-@layer base {
-  @font-face {
-    font-family: "KH Teka";
-    src: url("/fonts/KHTeka-Regular.otf") format("opentype");
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-  }
-  @font-face {
-    font-family: "KH Teka";
-    src: url("/fonts/KHTeka-Medium.otf") format("opentype");
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap;
-  }
-}
 
 .font-main-content-body strong {
   font-weight: 700;

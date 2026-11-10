@@ -46,7 +46,7 @@ export default function BuildModeIntroContent({
                   <span
                     className="font-heading-hero text-9xl! text-white! relative inline-block"
                     style={{
-                      fontFamily: "var(--font-kh-teka)",
+                      fontFamily: "var(--font-brand)",
                       fontWeight: 500,
                     }}
                   >

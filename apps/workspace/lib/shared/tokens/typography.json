@@ -7,8 +7,8 @@
     "value": "\"DM Mono\", \"SF Mono\", Monaco, \"Cascadia Code\", \"Roboto Mono\", Consolas,\n    \"Courier New\", monospace",
     "type": "fontFamily"
   },
-  "font-kh-teka": {
-    "value": "\"KH Teka\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif",
+  "font-brand": {
+    "value": "Inter", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif",
     "type": "fontFamily"
   },
   "font-sf-pro": {

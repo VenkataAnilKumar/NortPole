@@ -82,10 +82,10 @@ export default function BuildWelcome({
               <span
                 className="font-main-ui-body text-text-05"
                 style={{
-                  fontFamily: "var(--font-kh-teka)",
+                  fontFamily: "var(--font-brand)",
                   fontWeight: 400,
                   // Sized so the x-height matches the custom "evolvxsi" logotype
-                  // (its x-height ≈ 0.595em vs KH Teka's 0.504em at size 28).
+                  // (its x-height ≈ 0.595em vs the brand font's 0.504em at size 28).
                   fontSize: "34px",
                   lineHeight: "1",
                   letterSpacing: "-0.02em",

@@ -18,6 +18,14 @@ Adapted from the Onyx Community Edition, commit `919578e0408a2d739a16215c09844c6
 - Rebranded with `tools/rebrand_onyx.py` (Onyx to EvolvXSI). Re-run it on a fresh copy when taking a newer upstream commit.
 - Community stubs replace `ee` imports in the web app: `src/lib/community/*`, `src/sections/SearchUI.tsx` and the hooks admin page.
 
+## Brand assets and documents
+
+- Upstream brand assets were removed and replaced with new EvolvXSI placeholder assets: `public/logo*.png`, `logo.svg`, `logotype*.png`, `evolvxsi.ico`, `OpenSource.png`, the chat background images and thumbnails, the inline logo components in `lib/opal/src/logos` and `lib/opal/src/icons`, and the favicon and app icons in the sandbox web template. The wordmark text uses a system font; final brand artwork and typeface are still open.
+- The upstream licensed font (KH Teka) was removed. The font token is now `font-brand` (Inter, then system fonts).
+- Unreferenced Vercel and Next.js sample images and `favicon.zip` were removed from the sandbox web template, and the `ee` requirements file was removed.
+- Third-party product logos (connector, model-provider and Slack source icons) were kept because they identify other companies' products. Check each company's brand rules before release.
+- Unit-test fixture documents (PDF, Office files) were kept so the copied tests still work.
+
 ## Changes that matter for safety
 
 - Telemetry: upstream sends fleet telemetry to an upstream domain by default. In this copy telemetry is **off by default** (`DISABLE_TELEMETRY` defaults to true) and the default endpoint is empty. Do not enable it without a deliberate decision.
