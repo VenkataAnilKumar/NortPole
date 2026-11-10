@@ -30,6 +30,7 @@ For teams responsible for repeatable, evidence-heavy work, EvolvXSI provides a s
 - Use plain, specific language and describe the work completed by an agent.
 - Say “AI-assisted” when a human remains responsible for review or approval.
 - Distinguish a **task** (one request), **workflow** (versioned sequence), **run** (one execution), and **vertical solution** (domain package).
+- Use extension terms consistently: a **connector** links a data source or app; a **skill** is a versioned reusable capability; a **plugin** is a signed package that adds skills, tools or interface; an **MCP server** is a tool server reached through the Model Context Protocol; a **pack** bundles agents, skills, templates and rules for a domain.
 - Avoid unsupported claims such as “superhuman,” “fully autonomous,” “error-free,” or guaranteed compliance. “Super intelligent” may remain in vision language but must not imply proven capability.
 
 ## Visual direction to test

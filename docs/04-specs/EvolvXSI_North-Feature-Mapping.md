@@ -13,7 +13,7 @@ This maps publicly described Cohere North capabilities to the [platform feature 
 | Agents built from simple prompts | PF-02.01 agents and skills; PF-01.11 prompt-to-agent drafting | Pilot / Expansion | Strong. Drafts must pass evaluation and are never published automatically. |
 | Skills (reusable capabilities) | PF-02.01; PF-02.05 signed packages | Pilot / Expansion | Strong |
 | Automations with drag-and-drop templates | PF-01.05 Studio; PF-05.03 schedules, triggers and isolation | Expansion | Partial. No visual builder is specified. |
-| Libraries (shared organization assets) | PF-06.01; PF-06.03 file parsing; Knowledge tab in the [UI spec](../05-design/EvolvXSI_UI-Spec.md#user-portal) | Pilot / Expansion | Naming gap: the UI spec says Knowledge, the built interface says Libraries. |
+| Libraries (shared organization assets) | PF-06.01; PF-06.03 file parsing; Knowledge tab in the [UI spec](../05-design/EvolvXSI_UI-Spec.md#user-portal) | Pilot / Expansion | The UI tab is now named Libraries (renamed from Knowledge on 2026-11-10). |
 | Memory across sessions | PF-06.04 memory controls | Expansion | Strong. Adds view, edit, delete and scope limits. |
 | Connectors (Slack, SharePoint, OneDrive, Outlook, Exchange, Jira, Linear, Notion, GitHub, Google Drive, Gmail) | PF-08.01 source adapters; PF-08.02 tool ecosystem | Pilot / Expansion | Partial. One connector is planned for the pilot and none is named. |
 | Orchestration with human sign-off before critical actions | PF-05.02 human checkpoints; PF-04.02 approval and revocation; PF-05.04 delegation | Pilot / Expansion | Strong. Approval binds to the exact version or payload. |
@@ -31,7 +31,8 @@ This maps publicly described Cohere North capabilities to the [platform feature 
 - Connector breadth: email and calendar connectors and the list above are not catalog entries.
 - A visual workflow builder for automations (PF-01.05 and PF-05.03 do not specify one).
 - Air-gapped deployment as an explicit profile (PF-10.03).
-- Navigation naming: Knowledge versus Libraries; Skills, Memory and Connectors as user-visible tabs; Usage & Billing as an admin tab.
+- Navigation: Knowledge is now Libraries. Skills, Memory and Connectors are sub-tabs (Agents, My Files, Settings) rather than top-level tabs; reconsider if visible parity with North matters. Usage is an admin tab but remains expansion scope, although spend controls are North's best-described admin area.
+- Personal and requested extensions: PF-08.06 covers Off, Request and Self-serve levels; North sources did not describe an equivalent.
 
 ## EvolvXSI areas not seen in North sources
 

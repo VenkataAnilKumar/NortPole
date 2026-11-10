@@ -22,4 +22,6 @@ EvolvXSI is a North-like whole product with hybrid intelligence: a user can choo
 
 ## Consequences
 
-Update PF-07.03 acceptance to include per-route evaluation, add route and pack-compatibility fields to the pack manifest and evaluation record, and update the UI specification (route picker, Apps & Packs, Skills & Packs). These updates are not made by this record. It selects no provider or stack, approves no vertical, adds no dependencies and claims no implementation.
+Applied 2026-11-10: PF-07.03 and PF-02.02 acceptance now cover per-route evaluation and manifest model requirements (Feature-Spec); the route picker and tab changes are in the UI specification; route evaluation results are in the data model; and `GET/PUT /v1/me/preferences` is in the API draft. Still open: the pack manifest schema itself, which is defined when contracts are implemented in P05.
+
+This record selects no provider or stack, approves no vertical, adds no dependencies and claims no implementation.

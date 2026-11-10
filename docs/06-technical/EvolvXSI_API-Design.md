@@ -118,6 +118,9 @@ Added 2026-11-08 for the expansion features in the feature catalog. These are il
 | `/mcp` (server interface) | Expose approved tools to external MCP clients. | PF-08.03 | Per-client scopes; same policy as internal calls. |
 | `POST /v1/tools/import` | Import an OpenAPI description as a tool. | PF-08.04 | Administrator; tool is inactive until allowlisted. |
 | `GET/PUT /v1/extension-allowlist` | Allow or block servers and tools. | PF-08.05 | Administrator; blocked entries are never called. |
+| `GET/PUT /v1/extension-policy` | Set Off, Request or Self-serve per extension type. | PF-08.06 | Administrator; the server rejects an add action when the level is Off. |
+| `POST /v1/extension-requests` | Request a connector, skill, plugin or MCP server. | PF-08.06 | Authenticated user; unusable until an administrator approves. |
+| `GET/PUT /v1/me/preferences` | Read or set the user's default model route and notification choices. | PF-07.03, PF-01.09 | The user; a preference never overrides administrator policy. |
 | `POST /v1/workflows/{id}/shadow-runs` | Run a candidate beside the live version. | PF-09.04 | Outputs are not delivered; no external writes. |
 | `POST /v1/artifacts/{id}/feedback` | Record a reviewer correction or rating. | PF-09.05 | Reviewer access; dataset use needs authorization and redaction. |
 | `GET /v1/reports/outcomes` | Read completion, review time and cost per task. | PF-09.06 | Tenant-scoped aggregates. |

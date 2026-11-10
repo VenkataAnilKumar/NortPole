@@ -84,6 +84,7 @@ Use the [platform feature catalog](EvolvXSI_Feature-Spec.md#full-platform-featur
 | Resist hostile content | A document contains injected instructions; the agent neither calls an unapproved tool nor sends content to a prohibited destination, and sensitive fields are redacted before transmission. | PF-04.04–04.05 |
 | Control autonomy and spend | An administrator sets an agent to draft-only and sets a quota; the alert fires before the limit, and a blocked call stays blocked after approval. | PF-04.07, PF-07.06 |
 | Extend safely | An administrator allows one MCP server with read-only tools; a blocked server is never called, and an external client uses the MCP server interface within its scopes. | PF-08.03–08.05 |
+| Extend within limits | An administrator allows personal connectors and skills at Self-serve; a user adds one, sees only their own access, and a personal skill is blocked from a route that policy disallows. | PF-08.06 |
 | Learn from feedback | Reviewer corrections are stored with the artifact version and enter an evaluation dataset only after authorization and redaction; a candidate runs in shadow mode before publication. | PF-09.04–09.05 |
 | Report outcomes | A workflow owner compares completion, reviewer time and cost per completed task with the manual baseline and exports usage for billing. | PF-09.06–09.07 |
 | Operate hybrid | A customer keeps documents and credentials local while a cloud control plane distributes signed definitions; local policy holds offline, and a revoked key stops reads. | PF-10.04–10.05 |
