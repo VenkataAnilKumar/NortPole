@@ -103,6 +103,7 @@ import useScreenSize from "@/hooks/useScreenSize";
 import { useSidebarState } from "@opal/layouts";
 import { useQueryController } from "@/providers/QueryControllerProvider";
 import WelcomeMessage from "@/app/app/components/WelcomeMessage";
+import QuickStartCards from "@/app/app/components/QuickStartCards";
 import ChatUI, { FULL_WIDTH_TRANSITION } from "@/sections/chat/ChatUI";
 import { useFullWidthChat } from "@/providers/FullWidthChatProvider";
 import SearchUI from "@/sections/SearchUI";
@@ -1108,6 +1109,18 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
                           />
                         )}
                     </Section>
+                    {isPlainChat &&
+                      isWelcomeFocus &&
+                      Boolean(user?.personalization?.name) && (
+                      <div className="w-full max-w-(--app-chat-column-width)">
+                        <QuickStartCards
+                          onPick={(prompt) => {
+                            chatInputBarRef.current?.restore(prompt, []);
+                            chatInputBarRef.current?.focus();
+                          }}
+                        />
+                      </div>
+                    )}
                     <Spacer rem={1.5} />
                   </Fade>
                 </div>

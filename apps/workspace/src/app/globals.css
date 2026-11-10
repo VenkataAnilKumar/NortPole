@@ -320,3 +320,15 @@
   line-height: 1.15 !important;
   letter-spacing: -0.02em;
 }
+
+/* Center the greeting block (icon above the headline) on the home screen. */
+[data-testid="chat-intro"],
+[data-testid="chat-intro"] > * {
+  align-items: center;
+  text-align: center;
+}
+/* Let the row that holds the greeting span the column so it can be centered. */
+*:has(> [data-testid="chat-intro"]) {
+  width: 100%;
+  justify-content: center;
+}
