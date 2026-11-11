@@ -24,40 +24,64 @@ Use the same tenant policies and run contracts across these surfaces. Pack views
 
 The employee workspace opens on a request composer with recent tasks and approved workflows nearby. Task detail keeps the request, current status, output, citations and run activity together. Reviewers see decisions only for the records and versions they are authorized to review.
 
-| Tab | User features | Earliest delivery |
+Tab names are short. Each tab can have sub-tabs; sub-tabs are proposed and appear only when their capability is usable and authorized. Earlier drafts listed Knowledge, Skills and Connectors as tabs. Knowledge is now **Libraries**; Skills is a sub-tab of Agents; personal connectors sit under My Files and Settings, and plugins under Apps and Packs.
+
+| Tab | Sub-tabs | User features | Earliest delivery |
+| --- | --- | --- | --- |
+| New task | Ask, Task, Model, Quick starts | Describe a request, choose an approved workflow and a model route, then get a cited answer (Ask) or save a draft (Task). An explicit Start shows the scope before anything runs. Slash commands run permitted skills. | Fixture composer, then pilot evidence |
+| Tasks | Active, Drafts, Done, Detail | Open drafts, explicitly start a run, inspect progress, replay and retry steps, reopen results. | Fixture |
+| Search | Answers, Sources, Filters | Cited answers over permitted sources with access state and versions; turn a result into a task. | Pilot |
+| Agents | Approved, Mine, Shared, Skills, Studio | Discover and launch approved agents with visible permissions, tools and the routes each has passed evaluation on. Skills lists approved reusable capabilities. Studio is the authoring surface. | Pilot selected workflow, then catalog; Skills and Studio expansion |
+| Libraries | Shared, Team, Status | Browse permitted shared knowledge, search it, and see indexing, freshness and conflicts. | Pilot one source, then expansion |
+| Automations | Schedules, Triggers, History | View schedules, triggers and run history. Authorized users can pause or change schedules. | Expansion |
+| Apps and Packs | Installed, Browse, Plugins | Open installed domain applications and workflows within granted permissions. Plugins are installed by an administrator. | Pilot selected pack, then catalog |
+| My Files | Uploads, Connected, Memory | Uploaded files with parsing status; personal connected accounts where policy allows; view, edit and delete memory. | Pilot as required; Connected and Memory expansion |
+| Projects | Overview, Tasks, People | Organize shared goals, files, instructions, tasks and deliverables. | Expansion |
+| Inbox | Needs action, Resolved, Updates | Follow assignments, approvals and results. Authorized reviewers act on a specific version or action payload. | Pilot review, then unified inbox |
+| Settings | Profile, Appearance, Models, Notifications, Memory, Accounts, Prompts, Privacy, Security | See User Settings below. | Pilot as required |
+
+### Model route picker
+
+The composer and Search show the current route (Auto, Local, Private or Cloud). Routes the administrator's policy blocks for the task's data class stay visible but disabled, with the reason. A pack or agent offers only the routes on which its exact version has passed evaluation. A blocked route fails before any content is sent, and fallback never leaves the allowed set. User choice is a preference inside administrator policy and never overrides it ([decision 0002](../decisions/0002-hybrid-routing-and-pilot-scope.md)).
+
+### User Settings
+
+User Settings are personal. They are separate from the Admin Console's Platform tab, which governs the organization. A setting an administrator locks appears read-only with the reason, and no user setting grants access to a source or workflow.
+
+| Settings tab | Features | Earliest delivery |
 | --- | --- | --- |
-| Home / Chat | Describe a request, choose an approved workflow, and save a draft. Add chat, attachments and cited answers as supported. | Fixture composer, then pilot evidence |
-| Tasks | Open drafts, explicitly start a run, inspect progress and reopen results. | Fixture |
-| Knowledge | Browse permitted sources, search indexed content, and open cited passages. | Pilot |
-| Settings | Manage personal preferences and workspace selection where available. | Pilot as required |
-| Projects | Organize shared goals, files, instructions, tasks and deliverables. | Expansion |
-| Agents | Discover and launch approved agents with visible permissions and required tools. | Pilot selected workflow, then catalog |
-| Automations | View schedules, triggers and run history. Authorized users can pause or change schedules. | Expansion |
-| Skills | Browse approved reusable capabilities and their requirements. | Expansion |
-| Connectors | See available integrations, request access and connect a personal account where policy allows. | Expansion |
-| Apps & Packs | Open installed domain applications and workflows within granted permissions. | Pilot selected pack, then catalog |
-| Activity / Inbox | Follow assignments, approvals and results. Authorized reviewers act on a specific version. | Pilot review, then unified inbox |
+| Profile | Name and photo; workspace selection; role and approver status (read-only); language and time zone. | Pilot as required |
+| Appearance | Theme (Light, Dark, System); increased contrast; reduced motion; density. | Pilot as required |
+| Models | Default route; ask before switching; allowed routes with policy reasons; cost view where permitted. | Pilot |
+| Notifications | Channels, events and quiet hours; administrator-required channels shown. Alerts never include source or report text. | Pilot |
+| Memory | View, edit, delete and pause scoped memory; restricted scopes shown. | Expansion |
+| Accounts | Connected personal accounts, their permissions, disconnect, and requests for access, subject to the extension level. | Expansion |
+| Prompts | Saved prompts and task templates, slash commands, keyboard shortcuts. | Expansion |
+| Privacy | Activity history, export and deletion within retention rules, sharing defaults. | Proposed; depends on retention decisions |
+| Security | Sessions, sign-in and MFA status, developer sandbox tokens. | Proposed; depends on identity decisions |
 
 ## Admin Console
 
 Provide a separate navigation context for authorized administrators and operators. Administrative permissions govern configuration and operations. Content reads still require the relevant resource and source grants.
 
-| Tab | Admin features | Earliest delivery |
-| --- | --- | --- |
-| Overview | See service and connector health, failed runs and policy alerts. | Pilot diagnostics, then overview |
-| Organization & Workspaces | Configure workspace ownership, provisioning, environments, retention and residency. | Expansion |
-| People & Access | Manage users, grants and roles. Add SSO, SCIM and service identities when selected. | Pilot basic roles |
-| Security & Governance | Manage approvals, tool policy, isolation and network rules. Inspect audit history and export authorized records. | Pilot policy and audit |
-| Models & Inference | Configure approved routes, eligibility, usage limits and fallback policy. | Pilot one route |
-| Agents & Deployments | Inspect versions and owners, approve releases, disable workflows and roll back. | Pilot configured publication, then broader deployment |
-| Integrations & MCP | Register integrations, configure scopes and tool allowlists, inspect health and revoke access. | Pilot one connector, then MCP registry |
-| Skills & Packs | Check compatibility, approve versions and manage installation, upgrades and rollback. Access grants are separate from installation. | Pilot selected pack, then registry |
-| Knowledge & Data | Manage source indexing, permission synchronization, retention and deletion. | Pilot one source |
-| Observability & Evaluation | Inspect authorized run diagnostics, evaluation evidence and quality regressions. | Pilot checks, then operational views |
-| Usage & Billing | Track spend and apply quotas, rate limits and cost alerts. | Expansion |
-| Platform Settings | Manage selected feature flags, API access, webhooks, backups and recovery. | Pilot operational setup, then broader controls |
+Tab names are short; sub-tabs are proposed. Mapping from earlier names: Organization & Workspaces is **Workspaces**, People & Access is **People**, Security & Governance is **Security**, Models & Inference is **Models**, Agents & Deployments is **Agents**, Skills & Packs is **Packs**, Integrations & MCP is **Connectors**, Knowledge & Data is **Knowledge**, Observability & Evaluation is **Quality**, Usage & Billing is **Usage**, and Platform Settings is **Platform**.
 
-The fixture exposes Home and Tasks. Pilot navigation adds only working knowledge, review and administration capabilities. Expand tabs when their workflows are usable and authorized. Agent Studio remains the authoring surface, and the Developer Portal remains the integration surface. These are proposed navigation and delivery scopes.
+| Tab | Sub-tabs | Admin features | Earliest delivery |
+| --- | --- | --- | --- |
+| Overview | Health, Alerts, Activity | See service and connector health, failed runs, policy alerts and recent admin changes. | Pilot diagnostics, then overview |
+| Workspaces | Orgs, Environments, Retention | Configure workspace ownership, provisioning, environments, retention and residency. | Expansion |
+| People | Users, Roles, Grants, Identity | Manage users, roles and source and workflow grants, with an effect preview before revoking. Add SSO, SCIM and service identities when selected. | Pilot basic roles |
+| Security | Approvals, Tools, Data, Defense, Network, Extensions, Audit | Autonomy tiers and approvals; tool policy; sensitive-data redaction; prompt-injection policy; isolation and network rules; extension levels (Off, Request, Self-serve); audit history and export. | Pilot policy and audit |
+| Models | Routes, Policy, Fallback, Test, Limits | Configure approved routes (Local, Private, Cloud, customer-supplied), allowed routes by data class, fallback order, a test of a request against policy, and usage limits. | Pilot one route; hybrid routing expansion |
+| Agents | Versions, Publish, Rollout, Inventory | Inspect versions and owners, run the publish gate, activate per tenant, disable and roll back, and list every active agent, skill, connector and tool. | Pilot configured publication, then broader deployment |
+| Packs | Catalog, Compatibility, Install, Signing | Check compatibility and per-route evaluation, approve versions, install, upgrade and roll back. Accept only signed packages. Access grants are separate from installation. | Pilot selected pack, then registry |
+| Connectors | Sources, Tools, MCP, Webhooks | Register sources and tools, configure scopes and credentials, allow or block MCP servers, set read and write permission per tool, inspect health and the call log, and revoke access. | Pilot one connector, then MCP registry |
+| Knowledge | Sources, Permissions, Memory, Quality | Manage source indexing, permission synchronization, memory scopes, retention and deletion; flag stale, superseded and conflicting sources. | Pilot one source |
+| Quality | Runs, Evals, Feedback, Trends | Inspect authorized run diagnostics, evaluation evidence by version and route, reviewer feedback and quality regressions. | Pilot checks, then operational views |
+| Usage | Spend, Quotas, Export | Track spend by user, group and agent; apply quotas, rate limits and cost alerts; export metering. | Expansion |
+| Platform | Deploy, Keys, API, Backup | Manage the deployment profile, customer-managed keys and residency, API access, webhooks, feature flags, backups and recovery. | Pilot operational setup, then broader controls |
+
+The fixture exposes New task and Tasks. Pilot navigation adds only working search, library, review and administration capabilities. Expand tabs when their workflows are usable and authorized. Agent Studio remains the authoring surface, and the Developer Portal remains the integration surface. These are proposed navigation and delivery scopes.
 
 ## Screen inventory
 
@@ -106,9 +130,9 @@ Artifact format, source citation style, plan-review timing, collaboration model,
 
 | Surface group | Feature references |
 | --- | --- |
-| Workspace and review | PF-01.01–03, PF-01.06, PF-01.08–01.10, PF-01.12, PF-04.02, PF-05.05, PF-06.01, PF-06.03–06.05 |
+| Workspace and review | PF-01.01–03, PF-01.06, PF-01.08–01.10, PF-01.12, PF-04.02, PF-05.05, PF-06.01, PF-06.03–06.05, PF-08.06 |
 | Studio | PF-01.05, PF-01.11, PF-02.01–06, PF-03.02, PF-03.05, PF-05.03, PF-09.02, PF-09.04 |
-| Enterprise Admin | PF-03.05, PF-04.01–07, PF-07.03–07.06, PF-08.01–02, PF-08.05, PF-10.04 |
+| Enterprise Admin | PF-03.05, PF-04.01–07, PF-07.03–07.06, PF-08.01–02, PF-08.05–08.06, PF-10.04 |
 | Developer Portal and embedded channels | PF-01.04, PF-01.13, PF-03.03–03.04, PF-08.02–08.04 |
 | Public Website, Trust Center and Support Console | PF-01.07, PF-04.06 |
 | Run Operations and Deployment Console | PF-09.01–09.07, PF-10.02–10.05 |

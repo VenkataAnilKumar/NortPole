@@ -145,6 +145,7 @@ Every catalog entry is planned. Primary owner means the module responsible for c
 | PF-08.03 | `packages/integrations` | packages/contracts, services/control-plane, services/execution | P11D |
 | PF-08.04 | `packages/integrations` | services/control-plane, services/execution, packages/skills | P11D |
 | PF-08.05 | `packages/integrations` | services/control-plane, services/execution, apps/workspace | P11D |
+| PF-08.06 | `packages/integrations` | services/control-plane, packages/skills, services/execution, apps/workspace | P11D |
 | PF-09.01 | `services/execution` | services/control-plane, apps/workspace, infrastructure | P02 |
 | PF-09.02 | `evaluations` | services/control-plane, packages/agents, packages/skills | P05 gate; P09 domain evidence |
 | PF-09.03 | `services/control-plane` | apps/workspace, infrastructure; all event producers | P10 required alerts; P11 analytics |

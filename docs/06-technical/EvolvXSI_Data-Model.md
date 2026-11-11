@@ -130,6 +130,8 @@ Added 2026-11-08 for the expansion features. Same ownership rules as above: rela
 | Model route | Model gateway | Tenant, endpoint reference, policy and evaluation references. Credentials are opaque references. | PF-07.05 |
 | Spend limit, Usage record | Control, Model gateway | Scope, period, limit, alert thresholds; usage by run and invocation. Enforced at invocation time. | PF-07.06, PF-09.07 |
 | Extension allowlist entry, Tool definition | Integrations contract, Control | Server or tool identity, scopes, state. Blocked or unlisted entries are not callable; imported tools start inactive. | PF-08.03–08.05 |
+| Extension policy, Extension request, Personal item | Control | Level per type (Off, Request, Self-serve); request with requester and decision; personal item with owner and visibility (owner only until reviewed). A personal item never widens its owner's access. | PF-08.06 |
+| Route evaluation result | Evaluations contract, Control | Candidate version, route, suite and result. A route is offered only for an exact version with a passing result; pack manifests declare model requirements. | PF-07.03, PF-09.02 |
 | Shadow run | Evaluations | Candidate and live version, input set reference, comparison result. Outputs are not delivered. | PF-09.04 |
 | Feedback | Evaluations | Artifact version, reviewer, correction or rating, dataset eligibility. Dataset use requires authorization and redaction. | PF-09.05 |
 | Outcome report | Control | Tenant, period, completion, review time, cost per task, baseline reference. Aggregates only. | PF-09.06 |

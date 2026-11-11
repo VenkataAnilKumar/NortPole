@@ -8,6 +8,12 @@
     },
     {
       "implemented": false,
+      "path": "services/core",
+      "responsibility": "Adopted community backend (chat, retrieval, connectors, agents, model routing) used as the combined pilot service until the control-plane, execution, knowledge and model-gateway owners are carved out. See decision 0004.",
+      "maturity": "skeleton"
+    },
+    {
+      "implemented": false,
       "path": "services/control-plane",
       "responsibility": "Public API routing and control-plane ownership of tenants, memberships, projects, task drafts, registry, policies and approval decisions.",
       "maturity": "skeleton"

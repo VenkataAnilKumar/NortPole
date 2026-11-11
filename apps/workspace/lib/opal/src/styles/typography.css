@@ -1,0 +1,17 @@
+/**
+ * @opal/typography — web-only font plumbing.
+ *
+ * Covers:
+ *   - The `.font-main-content-body strong` weight override
+ *
+ * The typography PRESETS (the `@utility font-*` blocks) are now design tokens in
+ * @evolvxsi-ai/shared and are generated into `@evolvxsi-ai/shared/typography.css`, imported
+ * via _reference.css (which leads the bundle). The font-family CSS variables and the
+ * height metrics they reference also live in @evolvxsi-ai/shared (tokens.css).
+ *
+ * Automatically included when consumers import `@evolvxsi-ai/opal/root.css`.
+ */
+
+.font-main-content-body strong {
+  font-weight: 700;
+}

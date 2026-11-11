@@ -1,0 +1,16 @@
+LABEL_SANDBOX_ID = "evolvxsi.local/sandbox-id"
+LABEL_TENANT_ID = "evolvxsi.local/tenant-id"
+# Creation attempt. Cleanup compares it with the database owner before deletion.
+LABEL_PROVISIONING_ATTEMPT = "evolvxsi.local/provisioning-attempt"
+LABEL_K8S_COMPONENT = "app.kubernetes.io/component"
+LABEL_K8S_COMPONENT_SANDBOX = "sandbox"
+LABEL_K8S_MANAGED_BY = "app.kubernetes.io/managed-by"
+LABEL_K8S_MANAGED_BY_EVOLVXSI = "evolvxsi"
+
+# Docker-backend equivalents of the K8s component label. The proxy's
+# DockerEventsLookup filters on these; ``docker_sandbox_manager`` stamps them
+# onto every sandbox container it creates.
+LABEL_DOCKER_COMPONENT = "evolvxsi.local/component"
+LABEL_DOCKER_COMPONENT_SANDBOX = "craft-sandbox"
+LABEL_DOCKER_NETWORK = "evolvxsi.local/sandbox-network"
+LABEL_K8S_COMPONENT_AUTH = "sandbox-opencode-auth"
