@@ -1,0 +1,77 @@
+{
+  "description": "Fixed A5 test set. Invented content; no customer data. Each question lists the documents a correct answer must cite and who may receive that answer.",
+  "viewers": {
+    "analyst": {"email": "analyst@example.com", "groups": ["research"]},
+    "contractor": {"email": "contractor@example.com", "groups": []},
+    "admin": {"email": "admin@example.com", "groups": [], "is_admin": true},
+    "anonymous": {"email": null, "groups": []}
+  },
+  "documents": [
+    {
+      "doc_id": "policy-travel-v2",
+      "title": "Travel policy (2026)",
+      "text": "Economy class is required for flights under six hours. Receipts are due within 30 days.",
+      "access": {"user_groups": ["research", "all-staff"], "is_public": false}
+    },
+    {
+      "doc_id": "policy-travel-v1",
+      "title": "Travel policy (2024)",
+      "text": "Economy class is required for flights under four hours. Receipts are due within 60 days.",
+      "superseded_by": "policy-travel-v2",
+      "access": {"user_groups": ["research", "all-staff"], "is_public": false}
+    },
+    {
+      "doc_id": "board-acquisition-memo",
+      "title": "Board memo: acquisition target",
+      "text": "The board approved exploratory talks with the target at a ceiling of 40 million.",
+      "access": {"user_emails": ["ceo@example.com"], "user_groups": ["board"], "is_public": false}
+    },
+    {
+      "doc_id": "handbook-public",
+      "title": "Public handbook",
+      "text": "The office is open from 08:00 to 18:00 on working days.",
+      "access": {"is_public": true}
+    },
+    {
+      "doc_id": "unsynced-contract",
+      "title": "Supplier contract (not yet synced)",
+      "text": "Payment terms are net 45.",
+      "access": null
+    }
+  ],
+  "questions": [
+    {
+      "id": "permitted",
+      "question": "How long do I have to submit travel receipts?",
+      "must_cite": ["policy-travel-v2"],
+      "must_not_cite": ["policy-travel-v1"],
+      "answerable_by": ["analyst"]
+    },
+    {
+      "id": "restricted",
+      "question": "What ceiling did the board set for the acquisition?",
+      "must_cite": ["board-acquisition-memo"],
+      "answerable_by": []
+    },
+    {
+      "id": "superseded",
+      "question": "What was the receipt deadline in the 2024 travel policy?",
+      "must_cite": ["policy-travel-v1"],
+      "expect_flag": "superseded",
+      "answerable_by": ["analyst"]
+    },
+    {
+      "id": "unanswerable",
+      "question": "What is the company's policy on drone flights?",
+      "must_cite": [],
+      "expect": "no_answer",
+      "answerable_by": []
+    },
+    {
+      "id": "public",
+      "question": "When is the office open?",
+      "must_cite": ["handbook-public"],
+      "answerable_by": ["analyst", "contractor", "admin", "anonymous"]
+    }
+  ]
+}

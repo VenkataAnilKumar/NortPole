@@ -11,6 +11,8 @@ Read from `services/core/evolvxsi` on 2026-11-11:
 - **A retrieval index interface** (`document_index/`) with an OpenSearch implementation and a disabled stub used by lite mode.
 - **Not present:** automatic per-user permission sync from a source. Upstream keeps that in its enterprise edition, which we excluded. Connectors can record who a document is shared with, but nothing keeps that in step with the source over time.
 
+- **Groups are not applied for the asking user.** The community `_get_acl_for_user` returns the user's email addresses and the public marker only. Group and external-group access is added by the excluded enterprise code, so EvolvXSI has to supply it.
+
 Lite mode runs with `DISABLE_VECTOR_DB=true`, so nothing can be indexed or retrieved there. Any retrieval test needs a real index service.
 
 ## Proposed approach
@@ -41,3 +43,15 @@ Lite mode runs with `DISABLE_VECTOR_DB=true`, so nothing can be indexed or retri
 - Permission meanings differ between sources (inherited folders, link sharing, group nesting). Each connector needs its own tests.
 - Index and permission data can drift. The sync interval is a trade-off between freshness and load.
 - This was read from source, not run. No retrieval has been tested in this environment.
+
+## Progress (2026-11-11)
+
+Step 1 is done and part of step 2 exists without an index:
+
+- `services/core/evolvxsi/knowledge_access/decisions.py` holds the access rules as pure functions: the viewer's access strings (emails, groups, external groups), who may see a document, evidence filtering that counts hidden documents without describing them, citation re-checks, and the withhold rule.
+- `services/core/tests/unit/evolvxsi/knowledge_access/a5_test_set.json` is the fixed test set (invented content): a permitted document, a restricted one, a superseded version, a public one, a document with unknown access and an unanswerable question.
+- The unit tests pass (39 passed with the existing access tests, 4 skipped as not applicable).
+
+Two rules the tests pin down: unknown access is visible to administrators only, and the administrator role does not open a document that has a known access list.
+
+Not done: nothing calls these functions yet. Retrieval, citations and export still use the upstream paths, and no answer quality has been tested because there is no index or real model here.
