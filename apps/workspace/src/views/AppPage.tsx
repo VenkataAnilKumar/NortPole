@@ -1086,6 +1086,7 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
                       alignItems="end"
                       className={cn(
                         "max-w-(--app-chat-column-width)",
+                        "max-sm:!flex-col max-sm:!items-center max-sm:gap-3",
                         FULL_WIDTH_TRANSITION
                       )}
                     >

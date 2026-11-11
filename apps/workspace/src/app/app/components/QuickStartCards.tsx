@@ -76,14 +76,14 @@ export default function QuickStartCards({
   return (
     <div
       data-testid="quick-start-cards"
-      className="grid w-full grid-cols-2 gap-3 pt-6 sm:grid-cols-4"
+      className="grid w-full grid-cols-2 gap-3 pt-4 sm:grid-cols-4 sm:pt-6"
     >
       {QUICK_STARTS.map((q) => (
         <button
           key={q.id}
           type="button"
           onClick={() => onPick(q.prompt)}
-          className="flex min-h-28 flex-col justify-between gap-6 rounded-2xl border border-border-01 bg-background-neutral-00 p-4 text-left text-sm font-medium text-text-05 shadow-sm transition-colors hover:bg-background-neutral-01"
+          className="flex min-h-14 flex-row items-center gap-3 rounded-2xl border border-border-01 bg-background-neutral-00 p-3 sm:min-h-28 sm:flex-col sm:items-start sm:justify-between sm:gap-6 sm:p-4 text-left text-sm font-medium text-text-05 shadow-sm transition-colors hover:bg-background-neutral-01"
         >
           {q.icon}
           {q.label}
