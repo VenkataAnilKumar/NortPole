@@ -76,6 +76,7 @@ import {
   SvgDevKit,
   SvgPlug,
   SvgFiles,
+  SvgClock,
   SvgBell,
   SvgEditBig,
   SvgFolderPlus,
@@ -690,6 +691,13 @@ export default function AppSidebar() {
               </Disabled>
             </div>
           )}
+          <SidebarTab
+            icon={SvgClock}
+            {...navigation.linkTo("/app/automations", { scroll: false })}
+            selected={activeSidebarTab.isAutomations()}
+          >
+            {t("appSidebar.automations.label")}
+          </SidebarTab>
           <SidebarTab
             icon={SvgPlug}
             {...navigation.linkTo("/app/plugins", { scroll: false })}

@@ -16911,6 +16911,9 @@
       "libraries": {
         "label": "Libraries"
       },
+      "automations": {
+        "label": "Automations"
+      },
       "inbox": {
         "label": "Inbox"
       }

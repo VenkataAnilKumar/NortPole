@@ -30,6 +30,7 @@ type AppPositionType =
         | "shared-chat"
         | "plugins"
         | "libraries"
+        | "automations"
         | "inbox";
     };
 
@@ -67,6 +68,8 @@ function hrefFor(value: AppPositionType): Route {
       return "/app/plugins";
     case "libraries":
       return "/app/libraries";
+    case "automations":
+      return "/app/automations";
     case "inbox":
       return "/app/inbox";
     case "user-settings":
@@ -199,6 +202,10 @@ class AppPosition {
     return this.value.location === "plugins";
   }
 
+  isAutomations(): boolean {
+    return this.value.location === "automations";
+  }
+
   isLibraries(): boolean {
     return this.value.location === "libraries";
   }
@@ -278,6 +285,12 @@ export function useAppPosition(): AppPosition {
     }
     if (pathname === "/app/plugins" || pathname.startsWith("/app/plugins/")) {
       return new AppPosition({ location: "plugins" }, navigation);
+    }
+    if (
+      pathname === "/app/automations" ||
+      pathname.startsWith("/app/automations/")
+    ) {
+      return new AppPosition({ location: "automations" }, navigation);
     }
     if (pathname === "/app/libraries" || pathname.startsWith("/app/libraries/")) {
       return new AppPosition({ location: "libraries" }, navigation);
