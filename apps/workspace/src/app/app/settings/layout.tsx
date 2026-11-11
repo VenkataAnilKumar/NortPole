@@ -43,6 +43,7 @@ export default function Layout({ children }: LayoutProps) {
       label: t("tabs.chatPreferences.label"),
     },
     { href: "/app/settings/models", label: t("tabs.models.label") },
+    { href: "/app/settings/notifications", label: t("tabs.notifications.label") },
     ...(showAccountsAccessTab
       ? ([
           {

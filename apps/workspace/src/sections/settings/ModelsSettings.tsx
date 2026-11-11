@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRoutePolicy } from "@/lib/routePolicy/hooks";
-import { getDefaultRoute, setDefaultRoute, type DefaultRoute } from "@/lib/routePolicy/preferences";
+import { saveUserPreferences, useUserPreferences, type DefaultRoute } from "@/lib/userPreferences/hooks";
 import type { RouteKind } from "@/lib/routePolicy/types";
 
 const KIND_LABEL: Record<RouteKind, string> = { local: "Local", private: "Private", cloud: "Cloud" };
@@ -17,18 +17,19 @@ const card = "rounded-2xl border border-border-01 bg-background-neutral-00 p-5 s
 /** Personal model settings: a default route for new tasks, and the routes your administrator allows. */
 export default function ModelsSettings() {
   const { data: policy } = useRoutePolicy();
-  const [pref, setPref] = useState<DefaultRoute>("auto");
-  const [saved, setSaved] = useState(false);
+  const { data: prefs } = useUserPreferences();
+  const [status, setStatus] = useState<"idle" | "saved" | "error">("idle");
+  const pref: DefaultRoute = prefs?.default_route ?? "auto";
 
-  useEffect(() => {
-    setPref(getDefaultRoute());
-  }, []);
-
-  const choose = (v: DefaultRoute) => {
-    setPref(v);
-    setDefaultRoute(v);
-    setSaved(true);
-    window.setTimeout(() => setSaved(false), 2500);
+  const choose = async (v: DefaultRoute) => {
+    if (!prefs) return;
+    try {
+      await saveUserPreferences({ ...prefs, default_route: v });
+      setStatus("saved");
+    } catch {
+      setStatus("error");
+    }
+    window.setTimeout(() => setStatus("idle"), 2500);
   };
 
   const options: { value: DefaultRoute; label: string; help: string }[] = [
@@ -67,8 +68,11 @@ export default function ModelsSettings() {
             </label>
           ))}
         </div>
-        {saved && (
-          <p role="status" className="mt-3 text-sm text-status-success-05">Saved in this browser.</p>
+        {status === "saved" && (
+          <p role="status" className="mt-3 text-sm text-status-success-05">Saved.</p>
+        )}
+        {status === "error" && (
+          <p role="alert" className="mt-3 text-sm text-status-error-05">Could not save. Try again in a moment.</p>
         )}
         {blockedPref && (
           <p role="status" className="mt-3 text-sm text-status-error-05">
@@ -76,7 +80,7 @@ export default function ModelsSettings() {
             data, so Auto is used instead.
           </p>
         )}
-        <p className="mt-3 text-xs text-text-03">This preference is stored in this browser only for now.</p>
+        <p className="mt-3 text-xs text-text-03">Saved to your account, so it follows you to other devices.</p>
       </section>
 
       <section className={card} aria-labelledby="ms-routes">

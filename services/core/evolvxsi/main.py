@@ -138,6 +138,7 @@ from evolvxsi.server.manage.image_generation.api import (
     admin_router as image_generation_admin_router,
 )
 from evolvxsi.route_policy.api import router as route_policy_router
+from evolvxsi.user_preferences.api import router as user_preferences_router
 from evolvxsi.server.manage.llm.api import admin_router as llm_admin_router
 from evolvxsi.server.manage.llm.api import basic_router as llm_router
 from evolvxsi.server.manage.oauth_test import router as oauth_test_admin_router
@@ -636,6 +637,7 @@ def get_application(lifespan_override: Lifespan | None = None) -> FastAPI:
     include_router_with_global_prefix_prepended(application, sso_admin_router)
     include_router_with_global_prefix_prepended(application, llm_admin_router)
     include_router_with_global_prefix_prepended(application, route_policy_router)
+    include_router_with_global_prefix_prepended(application, user_preferences_router)
     include_router_with_global_prefix_prepended(application, kg_admin_router)
     include_router_with_global_prefix_prepended(application, llm_router)
     include_router_with_global_prefix_prepended(
