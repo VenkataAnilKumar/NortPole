@@ -87,6 +87,10 @@ Delivered (PF-07.03 slice, PF-04.02 groundwork): route kinds (local, private, cl
 
 **Dependencies:** none external. **Risks:** many upstream files touched; keep changes in separate components and styles where possible.
 
+## Direction note, 2026-11-11
+
+[Decision 0005](../decisions/0005-north-plus-pokee-unified-direction.md) (proposed) makes the product a governed workspace with action agents on top. It raises the weight of A6 (approval-gated actions) and A7 (connectors as actions) and changes no phase scope. It rests on Pokee's own marketing page, not on anything we measured.
+
 ## A5 — Knowledge, evidence and permissions (planned, XL)
 
 **Goal:** answers cite passages the asking user may see, and access changes take effect immediately (PF-06.01, PF-06.02, PF-01.02, PF-08.01, PF-04.02).
