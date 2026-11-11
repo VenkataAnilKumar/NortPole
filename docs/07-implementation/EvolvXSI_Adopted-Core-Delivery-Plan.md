@@ -81,9 +81,15 @@ Delivered (PF-07.03 slice, PF-04.02 groundwork): route kinds (local, private, cl
 | Translations | Labels in other languages, or a documented English-only fallback. |
 | Admin tab names | Short tab names with sub-tabs from the UI specification. |
 
+**Progress (2026-11-11):** Libraries and Inbox pages and sidebar entries exist. Libraries lists the backend's document sets and otherwise states plainly that sources cannot be connected without a retrieval index. The Inbox groups notifications into Needs action (approval types), Updates and Resolved, with a working Dismiss. A Models settings tab (default route, routes you can use) is in, and the home screen applies the saved default route; the browser-stored preference is a stopgap until a server-side user preference exists. Theme selection (Light, Dark, System) already sits in the existing General settings tab. Still to do in A4: Automations, Apps and Packs, My Files, the composer strip with Project and Workflow chips, a Notifications settings tab (needs a backend preference), the dark and narrow-width pass, fonts and translations.
+
 **Exit evidence:** every sidebar entry opens a real page; screenshot set in light, dark and narrow widths; keyboard-only path through the home, chat and settings screens.
 
 **Dependencies:** none external. **Risks:** many upstream files touched; keep changes in separate components and styles where possible.
+
+## Direction note, 2026-11-11
+
+[Decision 0005](../decisions/0005-north-plus-pokee-unified-direction.md) (proposed) makes the product a governed workspace with action agents on top. It raises the weight of A6 (approval-gated actions) and A7 (connectors as actions) and changes no phase scope. It rests on Pokee's own marketing page, not on anything we measured.
 
 ## A5 — Knowledge, evidence and permissions (planned, XL)
 

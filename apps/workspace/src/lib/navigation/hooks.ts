@@ -28,7 +28,10 @@ type AppPositionType =
         | "new-session"
         | "user-settings"
         | "shared-chat"
-        | "plugins";
+        | "plugins"
+        | "libraries"
+        | "automations"
+        | "inbox";
     };
 
 /** A row id, or null for a parameter that is absent or is not one. */
@@ -63,6 +66,12 @@ function hrefFor(value: AppPositionType): Route {
       return "/app/agents";
     case "plugins":
       return "/app/plugins";
+    case "libraries":
+      return "/app/libraries";
+    case "automations":
+      return "/app/automations";
+    case "inbox":
+      return "/app/inbox";
     case "user-settings":
       return "/app/settings";
     case "shared-chat":
@@ -193,6 +202,18 @@ class AppPosition {
     return this.value.location === "plugins";
   }
 
+  isAutomations(): boolean {
+    return this.value.location === "automations";
+  }
+
+  isLibraries(): boolean {
+    return this.value.location === "libraries";
+  }
+
+  isInbox(): boolean {
+    return this.value.location === "inbox";
+  }
+
   isUserSettings(): boolean {
     return this.value.location === "user-settings";
   }
@@ -264,6 +285,18 @@ export function useAppPosition(): AppPosition {
     }
     if (pathname === "/app/plugins" || pathname.startsWith("/app/plugins/")) {
       return new AppPosition({ location: "plugins" }, navigation);
+    }
+    if (
+      pathname === "/app/automations" ||
+      pathname.startsWith("/app/automations/")
+    ) {
+      return new AppPosition({ location: "automations" }, navigation);
+    }
+    if (pathname === "/app/libraries" || pathname.startsWith("/app/libraries/")) {
+      return new AppPosition({ location: "libraries" }, navigation);
+    }
+    if (pathname === "/app/inbox" || pathname.startsWith("/app/inbox/")) {
+      return new AppPosition({ location: "inbox" }, navigation);
     }
     if (pathname.startsWith("/app/agents")) {
       return new AppPosition({ location: "more-agents" }, navigation);

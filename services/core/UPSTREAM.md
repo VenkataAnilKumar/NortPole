@@ -62,6 +62,10 @@ Adapted from the Onyx Community Edition, commit `919578e0408a2d739a16215c09844c6
 - `services/model-gateway/src/adapters/mock/`: the deterministic mock model route used for development.
 - The policy lives in the key-value store; the workspace data class is one default value for now. Per-task data classes need the source and classification work.
 
+## Notification seeds disabled (2026-11-11)
+
+The notifications poll used to create three upstream-seeded items on every read: a build-mode intro, a permissions-migration announcement linking to the upstream docs site, and release notes fetched from the upstream project's changelog on GitHub (an outbound network call). `_check_for_notifications_to_create` now does nothing. Admin-authored system announcements and the license-expiry notice still work, and EvolvXSI's own events arrive in later phases.
+
 ## Known gaps to build
 
 - Per-user external permission sync (upstream keeps it in `ee`).

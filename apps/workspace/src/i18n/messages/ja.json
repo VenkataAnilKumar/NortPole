@@ -16522,6 +16522,9 @@
         },
         "usage": {
           "label": "使用状況"
+        },
+        "models": {
+          "label": "Models"
         }
       }
     },
@@ -16904,6 +16907,15 @@
       },
       "plugins": {
         "label": "プラグイン"
+      },
+      "libraries": {
+        "label": "Libraries"
+      },
+      "automations": {
+        "label": "Automations"
+      },
+      "inbox": {
+        "label": "Inbox"
       }
     },
     "chatButton": {

@@ -75,6 +75,9 @@ import { useModalContext } from "@/components/context/ModalContext";
 import {
   SvgDevKit,
   SvgPlug,
+  SvgFiles,
+  SvgClock,
+  SvgBell,
   SvgEditBig,
   SvgFolderPlus,
   SvgMoreHorizontal,
@@ -636,6 +639,13 @@ export default function AppSidebar() {
               </SidebarTab>
             )}
           />
+          <SidebarTab
+            icon={SvgFiles}
+            {...navigation.linkTo("/app/libraries", { scroll: false })}
+            selected={activeSidebarTab.isLibraries()}
+          >
+            {t("appSidebar.libraries.label")}
+          </SidebarTab>
           {(isEvolvXSICraftEnabled || isEvolvXSICraftUpsell) && (
             <div data-testid="AppSidebar/build">
               <Disabled
@@ -682,11 +692,25 @@ export default function AppSidebar() {
             </div>
           )}
           <SidebarTab
+            icon={SvgClock}
+            {...navigation.linkTo("/app/automations", { scroll: false })}
+            selected={activeSidebarTab.isAutomations()}
+          >
+            {t("appSidebar.automations.label")}
+          </SidebarTab>
+          <SidebarTab
             icon={SvgPlug}
             {...navigation.linkTo("/app/plugins", { scroll: false })}
             selected={activeSidebarTab.isPlugins()}
           >
             {t("appSidebar.plugins.label")}
+          </SidebarTab>
+          <SidebarTab
+            icon={SvgBell}
+            {...navigation.linkTo("/app/inbox", { scroll: false })}
+            selected={activeSidebarTab.isInbox()}
+          >
+            {t("appSidebar.inbox.label")}
           </SidebarTab>
           {/* Folded, the body's sections collapse into the header, in the
               unfolded order: Agents, then Projects. */}

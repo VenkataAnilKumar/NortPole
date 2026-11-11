@@ -6,6 +6,7 @@ import { useRoutePolicy } from "@/lib/routePolicy/hooks";
 import type { RouteKind, RouteView } from "@/lib/routePolicy/types";
 import type { LLMProviderDescriptor } from "@/lib/languageModels/types";
 import type { SelectedModel } from "@/sections/model-selector/MultiModelSelector";
+import { getDefaultRoute } from "@/lib/routePolicy/preferences";
 
 const KIND_LABEL: Record<RouteKind, string> = {
   local: "Local",
@@ -43,6 +44,7 @@ export default function RoutePicker({
   const { data: policy } = useRoutePolicy();
   const [open, setOpen] = useState(false);
   const [autoMode, setAutoMode] = useState(true);
+  const appliedDefault = useRef(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const [anchor, setAnchor] = useState<DOMRect | null>(null);
@@ -82,8 +84,6 @@ export default function RoutePicker({
     });
   }, [policy, current, providerById]);
 
-  if (!policy || policy.routes.length === 0) return null;
-
   const pick = (providerId: number) => {
     const p = providerById.get(providerId);
     const mc = p?.model_configurations.find((m) => m.is_visible) ?? p?.model_configurations[0];
@@ -96,6 +96,24 @@ export default function RoutePicker({
       displayName: mc.display_name || mc.name,
     });
   };
+
+  // Honour the saved default route once, on the home screen only (a new task).
+  // An open chat keeps the model it already uses.
+  useEffect(() => {
+    if (direction !== "down" || appliedDefault.current || !policy || !providers?.length) return;
+    appliedDefault.current = true;
+    const pref = getDefaultRoute();
+    const target =
+      pref === "auto"
+        ? policy.auto_provider_id
+        : (policy.routes.find((r) => r.kind === pref && r.allowed && r.model_names.length > 0)?.provider_id ?? null);
+    if (target == null) return;
+    setAutoMode(pref === "auto");
+    pick(target);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [policy, providers, direction]);
+
+  if (!policy || policy.routes.length === 0) return null;
 
   const chooseAuto = () => {
     setAutoMode(true);

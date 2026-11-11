@@ -16522,6 +16522,9 @@
         },
         "usage": {
           "label": "사용량"
+        },
+        "models": {
+          "label": "Models"
         }
       }
     },
@@ -16904,6 +16907,15 @@
       },
       "plugins": {
         "label": "플러그인"
+      },
+      "libraries": {
+        "label": "Libraries"
+      },
+      "automations": {
+        "label": "Automations"
+      },
+      "inbox": {
+        "label": "Inbox"
       }
     },
     "chatButton": {
