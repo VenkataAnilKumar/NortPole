@@ -12,7 +12,7 @@ import {
   WebVitals,
 } from "@/lib/analytics/shared";
 import Script from "next/script";
-import { DM_Mono, Hanken_Grotesk } from "next/font/google";
+import localFont from "next/font/local";
 import { ThemeProvider } from "next-themes";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import StatsOverlayLoader from "@/components/dev/StatsOverlayLoader";
@@ -33,15 +33,26 @@ import { htmlDirForLocale, messageLocale, type HtmlDir } from "@/i18n/config";
 // the composed --font-* variables on <html> below, after the per-locale CJK
 // tail (--font-cjk-sans, defined in globals.css). A generic here would sit
 // before the CJK fonts and swallow every CJK codepoint.
-const hankenGrotesk = Hanken_Grotesk({
-  subsets: ["latin"],
+// Fonts are bundled with the app (see fonts/LICENSES.txt), so no font is
+// fetched from a third-party host at build or run time. Inter is the interface
+// font, Newsreader the serif headline font, DM Mono the code font.
+const hankenGrotesk = localFont({
+  src: "./fonts/inter-latin-wght-normal.woff2",
+  weight: "100 900",
   display: "swap",
   fallback: ["-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto"],
 });
 
-const dmMono = DM_Mono({
+const newsreader = localFont({
+  src: "./fonts/newsreader-latin-wght-normal.woff2",
+  weight: "200 800",
+  display: "swap",
+  fallback: ["Iowan Old Style", "Georgia", "Times New Roman"],
+});
+
+const dmMono = localFont({
+  src: "./fonts/dm-mono-latin-400-normal.woff2",
   weight: "400",
-  subsets: ["latin"],
   display: "swap",
   fallback: [
     "SF Mono",
@@ -100,6 +111,7 @@ export default async function Layout({ children }: LayoutProps) {
       style={
         {
           "--font-hanken-grotesk": `${hankenGrotesk.style.fontFamily}, var(--font-cjk-sans), sans-serif`,
+          "--font-serif": `${newsreader.style.fontFamily}, serif`,
           "--font-dm-mono": `${dmMono.style.fontFamily}, var(--font-cjk-sans), monospace`,
         } as React.CSSProperties
       }
