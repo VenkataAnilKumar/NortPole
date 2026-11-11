@@ -19,18 +19,13 @@ from evolvxsi.db.notification import (
 )
 from evolvxsi.error_handling.error_codes import EvolvXSIErrorCode
 from evolvxsi.error_handling.exceptions import EvolvXSIError
-from evolvxsi.server.features.build.utils import ensure_build_mode_intro_notification
 from evolvxsi.server.features.notifications.models import (
     NotificationResponse,
     NotificationSummary,
     PaginatedNotifications,
 )
 from evolvxsi.server.features.notifications.utils import (
-    ensure_permissions_migration_notification,
     ensure_system_announcement_notification,
-)
-from evolvxsi.server.features.release_notes.utils import (
-    ensure_release_notes_fresh_and_notify,
 )
 from evolvxsi.utils.logger import setup_logger
 from evolvxsi.utils.variable_functionality import fetch_ee_implementation_or_noop
@@ -62,27 +57,18 @@ def _mark_polled_ensures_done(user_id: UUID) -> None:
 
 
 def _check_for_notifications_to_create(
-    user: User,
-    db_session: Session,
+    user: User,  # noqa: ARG001
+    db_session: Session,  # noqa: ARG001
 ) -> None:
-    try:
-        ensure_build_mode_intro_notification(user, db_session)
-    except Exception:
-        logger.exception(
-            "Failed to check for build mode intro in notifications endpoint"
-        )
+    """EvolvXSI creates no upstream-seeded notifications.
 
-    try:
-        ensure_permissions_migration_notification(user, db_session)
-    except Exception:
-        logger.exception(
-            "Failed to create permissions_migration_v1 announcement in notifications endpoint"
-        )
-
-    try:
-        ensure_release_notes_fresh_and_notify(db_session)
-    except Exception:
-        logger.exception("Failed to check for release notes in notifications endpoint")
+    The upstream build-mode intro, the permissions-migration announcement and the
+    release-notes poll are disabled here: the last one fetched the upstream
+    project's changelog from the network on every poll. Admin-authored system
+    announcements still work (see ``_ensure_system_announcement_notification``),
+    and EvolvXSI's own events (approvals, updates) are added by later phases.
+    """
+    return
 
 
 def _ensure_system_announcement_notification(user: User, db_session: Session) -> bool:

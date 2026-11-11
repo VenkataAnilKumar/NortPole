@@ -16904,6 +16904,12 @@
       },
       "plugins": {
         "label": "الإضافات"
+      },
+      "libraries": {
+        "label": "Libraries"
+      },
+      "inbox": {
+        "label": "Inbox"
       }
     },
     "chatButton": {

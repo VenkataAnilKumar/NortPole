@@ -81,6 +81,8 @@ Delivered (PF-07.03 slice, PF-04.02 groundwork): route kinds (local, private, cl
 | Translations | Labels in other languages, or a documented English-only fallback. |
 | Admin tab names | Short tab names with sub-tabs from the UI specification. |
 
+**Progress (2026-11-11):** Libraries and Inbox pages and sidebar entries exist. Libraries lists the backend's document sets and otherwise states plainly that sources cannot be connected without a retrieval index. The Inbox groups notifications into Needs action (approval types), Updates and Resolved, with a working Dismiss. Still to do in A4: Automations, Apps and Packs, My Files, the composer strip, the settings tabs, the dark and narrow-width pass, fonts and translations.
+
 **Exit evidence:** every sidebar entry opens a real page; screenshot set in light, dark and narrow widths; keyboard-only path through the home, chat and settings screens.
 
 **Dependencies:** none external. **Risks:** many upstream files touched; keep changes in separate components and styles where possible.

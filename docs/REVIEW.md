@@ -160,3 +160,5 @@ Audit trail, same day: added a stored audit record for route-policy changes and 
 
 Delivery plan, 2026-11-11: added `EvolvXSI_Adopted-Core-Delivery-Plan.md` (phases A0 to A12) to record what the adopted core has delivered (A0 to A3, verified in a sandbox only), the order of what remains, exit evidence, dependencies and a decision register. It supersedes the sequencing, not the scope, of the P00 to P11 plan. No dates or staffing are committed; real model access, a customer and a hosting target remain open inputs.
 
+A4 first slice, 2026-11-11: added Libraries and Inbox pages with sidebar entries. Found and disabled a leftover that fetched the upstream project's changelog from GitHub and seeded upstream announcements on every notifications poll. Verified in a sandbox: both pages render, the Inbox shows approval-type items under Needs action and moves a dismissed item to Resolved (tested with inserted test rows, since no approval flow exists yet); 2 new unit tests. Not done: the rest of A4 (see the delivery plan).
+
