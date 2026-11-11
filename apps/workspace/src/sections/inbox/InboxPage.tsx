@@ -5,20 +5,14 @@ import useSWR from "swr";
 import { errorHandlingFetcher } from "@/lib/fetcher";
 import { SWR_KEYS } from "@/lib/swr-keys";
 import { dismissNotification, invalidateNotificationCaches } from "@/lib/notifications/api";
-import { NotificationType, type Notification } from "@/lib/notifications/interfaces";
+import { type Notification } from "@/lib/notifications/interfaces";
+import { isAction } from "@/lib/notifications/inbox";
 
 type Tab = "action" | "resolved" | "updates";
 
 interface Feed {
   notifications: Notification[];
 }
-
-/** Notification types that ask the reader to decide something. */
-const ACTION_TYPES = new Set<NotificationType>([
-  NotificationType.APPROVAL_REQUESTED,
-  NotificationType.SCHEDULED_TASK_AWAITING_APPROVAL,
-  NotificationType.SCHEDULED_TASK_PRE_APPROVED_ACTION,
-]);
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "action", label: "Needs action" },
@@ -53,8 +47,8 @@ export default function InboxPage() {
   const all = data?.notifications ?? [];
 
   const byTab: Record<Tab, Notification[]> = {
-    action: all.filter((n) => !n.dismissed && ACTION_TYPES.has(n.notif_type)),
-    updates: all.filter((n) => !n.dismissed && !ACTION_TYPES.has(n.notif_type)),
+    action: all.filter((n) => !n.dismissed && isAction(n)),
+    updates: all.filter((n) => !n.dismissed && !isAction(n)),
     resolved: all.filter((n) => n.dismissed),
   };
   const items = byTab[tab];
