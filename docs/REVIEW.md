@@ -162,3 +162,5 @@ Delivery plan, 2026-11-11: added `EvolvXSI_Adopted-Core-Delivery-Plan.md` (phase
 
 A4 first slice, 2026-11-11: added Libraries and Inbox pages with sidebar entries. Found and disabled a leftover that fetched the upstream project's changelog from GitHub and seeded upstream announcements on every notifications poll. Verified in a sandbox: both pages render, the Inbox shows approval-type items under Needs action and moves a dismissed item to Resolved (tested with inserted test rows, since no approval flow exists yet); 2 new unit tests. Not done: the rest of A4 (see the delivery plan).
 
+A4 second slice, 2026-11-11: added a Models tab to user settings (default route and the routes the user may use, with the administrator's policy shown) and made the home screen apply the saved default route. The preference is stored in the browser only. Verified in a sandbox: choosing Local in settings set the home picker to Local. The composer strip chips and a Notifications settings tab were not built: chips would need real project and workflow selection, and notification preferences need a backend setting.
+

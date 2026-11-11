@@ -1,0 +1,110 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRoutePolicy } from "@/lib/routePolicy/hooks";
+import { getDefaultRoute, setDefaultRoute, type DefaultRoute } from "@/lib/routePolicy/preferences";
+import type { RouteKind } from "@/lib/routePolicy/types";
+
+const KIND_LABEL: Record<RouteKind, string> = { local: "Local", private: "Private", cloud: "Cloud" };
+const KIND_HELP: Record<RouteKind, string> = {
+  local: "Runs on your organization's own hardware",
+  private: "Customer-controlled private inference",
+  cloud: "Third-party cloud provider",
+};
+
+const card = "rounded-2xl border border-border-01 bg-background-neutral-00 p-5 shadow-sm";
+
+/** Personal model settings: a default route for new tasks, and the routes your administrator allows. */
+export default function ModelsSettings() {
+  const { data: policy } = useRoutePolicy();
+  const [pref, setPref] = useState<DefaultRoute>("auto");
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    setPref(getDefaultRoute());
+  }, []);
+
+  const choose = (v: DefaultRoute) => {
+    setPref(v);
+    setDefaultRoute(v);
+    setSaved(true);
+    window.setTimeout(() => setSaved(false), 2500);
+  };
+
+  const options: { value: DefaultRoute; label: string; help: string }[] = [
+    { value: "auto", label: "Auto", help: "Best allowed route for each task" },
+    ...(["local", "private", "cloud"] as RouteKind[]).map((k) => ({ value: k as DefaultRoute, label: KIND_LABEL[k], help: KIND_HELP[k] })),
+  ];
+
+  const blockedPref =
+    policy && pref !== "auto" && !policy.routes.some((r) => r.kind === pref && r.allowed);
+
+  return (
+    <div className="flex flex-col gap-6" data-testid="models-settings">
+      <section className={card} aria-labelledby="ms-default">
+        <h2 id="ms-default" className="mb-1 text-base font-semibold text-text-05">Default route</h2>
+        <p className="mb-4 text-sm text-text-03">
+          Where new tasks run unless you pick another route. Your administrator's policy always comes first: a route it
+          blocks for your workspace's data cannot be used, whatever you choose here.
+        </p>
+        <div role="radiogroup" aria-label="Default route" className="flex flex-col gap-2">
+          {options.map((o) => (
+            <label
+              key={o.value}
+              className={`flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border px-4 py-2 ${pref === o.value ? "border-text-05 bg-background-neutral-01" : "border-border-01"}`}
+            >
+              <input
+                type="radio"
+                name="default-route"
+                className="h-4 w-4"
+                checked={pref === o.value}
+                onChange={() => choose(o.value)}
+              />
+              <span>
+                <span className="block text-sm font-semibold text-text-05">{o.label}</span>
+                <span className="block text-xs text-text-03">{o.help}</span>
+              </span>
+            </label>
+          ))}
+        </div>
+        {saved && (
+          <p role="status" className="mt-3 text-sm text-status-success-05">Saved in this browser.</p>
+        )}
+        {blockedPref && (
+          <p role="status" className="mt-3 text-sm text-status-error-05">
+            Your administrator's policy does not currently allow {KIND_LABEL[pref as RouteKind]} routes for this workspace's
+            data, so Auto is used instead.
+          </p>
+        )}
+        <p className="mt-3 text-xs text-text-03">This preference is stored in this browser only for now.</p>
+      </section>
+
+      <section className={card} aria-labelledby="ms-routes">
+        <h2 id="ms-routes" className="mb-1 text-base font-semibold text-text-05">Routes you can use</h2>
+        <p className="mb-4 text-sm text-text-03">
+          {policy
+            ? `This workspace treats data as ${policy.data_class} (policy v${policy.version}).`
+            : "Loading the policy…"}
+        </p>
+        {policy && policy.routes.length === 0 && <p className="text-sm text-text-03">No model routes are set up yet.</p>}
+        <ul className="divide-y divide-border-01">
+          {policy?.routes.map((r) => (
+            <li key={r.provider_id} className="flex flex-wrap items-center gap-3 py-3">
+              <div className="min-w-0 flex-1">
+                <div className="text-sm font-semibold text-text-05">
+                  {KIND_LABEL[r.kind]} <span className="font-normal text-text-03">· {r.name ?? r.provider}</span>
+                </div>
+                <div className="text-xs text-text-03">{r.allowed ? KIND_HELP[r.kind] : (r.reason ?? "Not allowed by policy")}</div>
+              </div>
+              <span
+                className={`whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium ${r.allowed ? "bg-status-success-01 text-status-success-05" : "bg-status-error-01 text-status-error-05"}`}
+              >
+                {r.allowed ? "Allowed" : "Blocked"}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </div>
+  );
+}
