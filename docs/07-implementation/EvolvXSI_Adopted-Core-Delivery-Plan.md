@@ -124,6 +124,8 @@ Delivered (PF-07.03 slice, PF-04.02 groundwork): route kinds (local, private, cl
 | Export | Separate action with a fresh access check; includes the citation list. |
 | Recovery | Worker restart and retry without repeating completed external actions. |
 
+**Progress and finding (2026-11-11):** the adopted core already has an action-approval system for sandbox tasks (`server/features/build/approvals`, `db/action_approval.py`): a stored payload, a race-safe decision, a wait timeout and a list of live approvals. It has no payload fingerprint, no idempotency key, and it offers "approve for the whole session", which conflicts with our one-action rule. A6 should extend this system rather than add a second one, and decide whether session-wide grants are switched off for governed packs. The binding rules now exist as pure, tested functions in `services/core/evolvxsi/action_binding/binding.py` (exact action, payload and target fingerprint; policy block beats approval; expiry; single use; one idempotency key per approved action). Nothing calls them yet.
+
 **Exit evidence:** the cross-feature acceptance example in the feature specification passes; restart, duplicate-start and revocation tests pass.
 
 **Dependencies:** A5 for real evidence; a durable execution choice (extend the adapted background workers or add an EvolvXSI-owned executor). **Risks:** the adapted code was not designed around approval binding; narrow the guarantee for the pilot if it cannot be met cleanly, and record it.
