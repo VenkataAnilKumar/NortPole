@@ -208,6 +208,25 @@ def list_session_approval_status(
     ]
 
 
+@router.get("/live")
+def list_my_live_approvals(
+    user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
+    db_session: Session = Depends(get_session),
+) -> ApprovalListResponse:
+    """Every pending approval the caller may decide, across all of their sessions.
+
+    Only the caller's own sessions are searched, so nobody sees another
+    person's requests. Rows older than the proxy's wait window are excluded.
+    """
+    cutoff = datetime.now(timezone.utc) - timedelta(
+        seconds=SANDBOX_APPROVAL_WAIT_TIMEOUT_SECONDS
+    )
+    rows = action_approval.list_user_pending_action_approvals(
+        db_session, user.id, created_after=cutoff
+    )
+    return ApprovalListResponse(items=[ApprovalView.model_validate(r) for r in rows])
+
+
 @router.get("/sessions/{session_id}/live")
 def list_live_approvals(
     session_id: UUID,

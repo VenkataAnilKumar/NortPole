@@ -51,3 +51,14 @@ def test_decision_is_audited_with_a_fingerprint_and_no_payload_text() -> None:
     assert args[0] is AuditAction.APPROVAL_DECISION and args[1] is AuditOutcome.SUCCESS
     assert len(kwargs["details"]["fingerprint"]) == 64
     assert "secret text" not in str(kwargs)
+
+
+def test_my_live_approvals_searches_only_the_callers_sessions() -> None:
+    user = MagicMock()
+    user.id = uuid4()
+    with patch.object(
+        approvals_api.action_approval, "list_user_pending_action_approvals", return_value=[]
+    ) as q:
+        result = approvals_api.list_my_live_approvals(user=user, db_session=MagicMock())
+    assert result.items == []
+    assert q.call_args.args[1] == user.id

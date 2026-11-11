@@ -52,4 +52,10 @@ describe("inboxBadgeCount", () => {
     const quiet = prefs({ quiet_hours: { enabled: true, start: "22:00", end: "07:00" } });
     expect(inboxBadgeCount(items, quiet, at(23))).toBe(2);
   });
+  it("counts live approvals as items that need action, and never holds them back", () => {
+    const quiet = prefs({ quiet_hours: { enabled: true, start: "22:00", end: "07:00" } });
+    expect(inboxBadgeCount(items, prefs(), at(12), 2)).toBe(5);
+    expect(inboxBadgeCount(items, quiet, at(23), 2)).toBe(4);
+    expect(inboxBadgeCount(items, prefs({ approvals: false }), at(12), 2)).toBe(1);
+  });
 });

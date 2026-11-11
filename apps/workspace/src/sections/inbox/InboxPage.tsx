@@ -7,6 +7,7 @@ import { SWR_KEYS } from "@/lib/swr-keys";
 import { dismissNotification, invalidateNotificationCaches } from "@/lib/notifications/api";
 import { type Notification } from "@/lib/notifications/interfaces";
 import { isAction } from "@/lib/notifications/inbox";
+import LiveApprovals from "@/sections/inbox/LiveApprovals";
 
 type Tab = "action" | "resolved" | "updates";
 
@@ -45,6 +46,11 @@ export default function InboxPage() {
     errorHandlingFetcher
   );
   const all = data?.notifications ?? [];
+  const { data: live } = useSWR<{ items: unknown[] }>(SWR_KEYS.myLiveApprovals, errorHandlingFetcher, {
+    refreshInterval: 15_000,
+    shouldRetryOnError: false,
+  });
+  const liveCount = live?.items.length ?? 0;
 
   const byTab: Record<Tab, Notification[]> = {
     action: all.filter((n) => !n.dismissed && isAction(n)),
@@ -82,12 +88,16 @@ export default function InboxPage() {
             className={`min-h-11 px-4 text-sm font-semibold ${tab === t.id ? "border-b-2 border-text-05 text-text-05" : "text-text-03 hover:text-text-05"}`}
           >
             {t.label}
-            {byTab[t.id].length > 0 && (
-              <span className="ml-2 rounded-full bg-background-neutral-02 px-2 py-0.5 text-xs">{byTab[t.id].length}</span>
+            {byTab[t.id].length + (t.id === "action" ? liveCount : 0) > 0 && (
+              <span className="ml-2 rounded-full bg-background-neutral-02 px-2 py-0.5 text-xs">
+                {byTab[t.id].length + (t.id === "action" ? liveCount : 0)}
+              </span>
             )}
           </button>
         ))}
       </div>
+
+      {tab === "action" && <LiveApprovals />}
 
       {isLoading ? (
         <p className="text-sm text-text-03">Loading…</p>
@@ -95,7 +105,7 @@ export default function InboxPage() {
         <div className={`${card} p-5`} role="alert">
           <p className="text-sm text-text-05">The inbox could not be loaded. Try again in a moment.</p>
         </div>
-      ) : items.length === 0 ? (
+      ) : items.length === 0 && tab === "action" && liveCount > 0 ? null : items.length === 0 ? (
         <section className={`${card} p-5`} aria-labelledby="inbox-empty">
           <h2 id="inbox-empty" className="mb-1 text-base font-semibold text-text-05">{EMPTY[tab].title}</h2>
           <p className="text-sm text-text-03">{EMPTY[tab].body}</p>

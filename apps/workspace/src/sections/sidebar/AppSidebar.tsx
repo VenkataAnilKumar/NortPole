@@ -235,9 +235,19 @@ export default function AppSidebar() {
     errorHandlingFetcher,
     { refreshInterval: 60_000 }
   );
+  const { data: liveApprovals } = useSWR<{ items: unknown[] }>(
+    SWR_KEYS.myLiveApprovals,
+    errorHandlingFetcher,
+    { refreshInterval: 15_000, shouldRetryOnError: false }
+  );
   const inboxCount =
     userPrefs && inboxFeed
-      ? inboxBadgeCount(inboxFeed.notifications, userPrefs.notifications, new Date())
+      ? inboxBadgeCount(
+          inboxFeed.notifications,
+          userPrefs.notifications,
+          new Date(),
+          liveApprovals?.items.length ?? 0
+        )
       : 0;
   const combinedSettingsData = useSettings();
   const { newTenantInfo, invitationInfo } = useModalContext();

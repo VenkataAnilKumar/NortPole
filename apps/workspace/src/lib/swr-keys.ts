@@ -214,6 +214,7 @@ export const SWR_KEYS = {
   userPatScopes: "/api/user/pats/scopes",
   notifications: "/api/notifications",
   notificationsSummary: "/api/notifications/summary",
+  myLiveApprovals: "/api/build/approvals/live",
   notificationsPage: (pageNum: number, pageSize: number) => {
     const params = new URLSearchParams({
       page_num: pageNum.toString(),

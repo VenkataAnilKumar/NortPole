@@ -112,6 +112,22 @@ def get_action_approval(
     return db_session.get(ActionApproval, approval_id)
 
 
+def list_user_pending_action_approvals(
+    db_session: Session, user_id: UUID, *, created_after: datetime
+) -> list[ActionApproval]:
+    """Undecided, still-live rows across every session the user owns."""
+    stmt = (
+        select(ActionApproval)
+        .join(BuildSession, BuildSession.id == ActionApproval.session_id)
+        .where(BuildSession.user_id == user_id)
+        .where(ActionApproval.decision.is_(None))
+        .where(ActionApproval.created_at >= created_after)
+        .options(selectinload(ActionApproval.gated_app))
+        .order_by(ActionApproval.created_at.desc())
+    )
+    return list(db_session.scalars(stmt))
+
+
 def get_action_approval_for_user(
     db_session: Session, approval_id: UUID, user_id: UUID, *, lock_session: bool = False
 ) -> ActionApproval | None:
