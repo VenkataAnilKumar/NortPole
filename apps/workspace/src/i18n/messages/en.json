@@ -16721,7 +16721,7 @@
           "label": "Analytics"
         },
         "appearanceAndTheming": {
-          "label": "Appearance & Theming"
+          "label": "Appearance"
         },
         "chatPreferences": {
           "label": "Chat Preferences"
@@ -16748,7 +16748,7 @@
           "label": "Document Sets"
         },
         "indexingStatus": {
-          "label": "Indexing Status"
+          "label": "Indexing"
         },
         "exportLogs": {
           "label": "Export Logs"
@@ -16766,7 +16766,7 @@
           "label": "Index Settings"
         },
         "languageModels": {
-          "label": "Language Models"
+          "label": "Models"
         },
         "decisionModels": {
           "label": "Decision Models"
@@ -16784,7 +16784,7 @@
           "label": "OpenAPI Actions"
         },
         "plansAndBilling": {
-          "label": "Plans & Billing"
+          "label": "Billing"
         },
         "queryHistory": {
           "label": "Query History"
@@ -16793,7 +16793,7 @@
           "label": "SCIM"
         },
         "securityAndHardening": {
-          "label": "Security & Hardening"
+          "label": "Security"
         },
         "serviceAccounts": {
           "label": "Service Accounts"
@@ -16834,22 +16834,22 @@
       },
       "sections": {
         "agentsAndActions": {
-          "label": "Agents & Actions"
+          "label": "Agents"
         },
         "craft": {
           "label": "Craft"
         },
         "documentsAndKnowledge": {
-          "label": "Documents & Knowledge"
+          "label": "Knowledge"
         },
         "integrations": {
-          "label": "Integrations"
+          "label": "Connectors"
         },
         "organization": {
-          "label": "Organization"
+          "label": "Workspace"
         },
         "permissions": {
-          "label": "Permissions"
+          "label": "People"
         },
         "usage": {
           "label": "Usage"
