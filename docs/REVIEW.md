@@ -158,3 +158,5 @@ First-user admin check, same day: on a fresh database the first registration is 
 
 Audit trail, same day: added a stored audit record for route-policy changes and refused requests (who, what, when, policy facts; no message content), an admin endpoint and a "Recent activity" list on the Route Policy page. Verified live: two policy changes and one blocked request were recorded with the acting account. 3 new unit tests; 906 tests passed with the chat suite. Not done: retention or pruning, a record of allowed requests, export, and a general audit view beyond route policy.
 
+Delivery plan, 2026-11-11: added `EvolvXSI_Adopted-Core-Delivery-Plan.md` (phases A0 to A12) to record what the adopted core has delivered (A0 to A3, verified in a sandbox only), the order of what remains, exit evidence, dependencies and a decision register. It supersedes the sequencing, not the scope, of the P00 to P11 plan. No dates or staffing are committed; real model access, a customer and a hosting target remain open inputs.
+

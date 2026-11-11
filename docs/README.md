@@ -25,6 +25,7 @@ The document names and numbered areas follow the convention used by the Qvora do
 | 06 Technical | [EvolvXSI_API-Design.md](06-technical/EvolvXSI_API-Design.md) | Draft | Proposed public and internal API contracts. |
 | 06 Technical | [EvolvXSI_Data-Model.md](06-technical/EvolvXSI_Data-Model.md) | Draft | Conceptual task, run, evidence, approval, and tenant records. |
 | 07 Implementation | [EvolvXSI_Implementation-Phases.md](07-implementation/EvolvXSI_Implementation-Phases.md) | Draft | P00-P11 delivery plan, M0-M6 milestones, first-slice batches, P11A-P11F expansion, dependencies and acceptance evidence. |
+| 07 Implementation | [EvolvXSI_Adopted-Core-Delivery-Plan.md](07-implementation/EvolvXSI_Adopted-Core-Delivery-Plan.md) | Proposed | Phases A0-A12 on the adopted core: what is done, what remains, exit evidence, dependencies and decisions. |
 | 07 Implementation | [EvolvXSI_Implementation-Checklist.md](07-implementation/EvolvXSI_Implementation-Checklist.md) | Draft | Phase-aligned execution tasks and release evidence checklist. |
 | 07 Implementation | [EvolvXSI_Documentation-Governance.md](07-implementation/EvolvXSI_Documentation-Governance.md) | Planning baseline | Documentation ownership, version control and release commit pinning. |
 | 07 Implementation | [EvolvXSI_Provider-SDK-Decision.md](07-implementation/EvolvXSI_Provider-SDK-Decision.md) | Owner direction | Official provider SDKs with EvolvXSI-owned logic; downloaded platforms remain references. |
