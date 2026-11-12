@@ -116,7 +116,7 @@ def test_no_audit_row_anywhere_holds_task_text(session) -> None:  # type: ignore
 
 
 ADMIN_AUDIT = [("GET", "/admin/audit"), ("GET", "/admin/audit?outcome=denied"), ("GET", "/admin/audit/export"), ("GET", "/admin/audit/export?format=csv"),
-               ("GET", "/admin/retention"), ("PUT", "/admin/retention"), ("POST", "/admin/retention/prune"), ("GET", "/admin/action-targets"), ("POST", "/admin/action-targets")]
+               ("GET", "/admin/retention"), ("GET", "/admin/inventory"), ("PUT", "/admin/retention"), ("POST", "/admin/retention/prune"), ("GET", "/admin/action-targets"), ("POST", "/admin/action-targets")]
 
 
 @pytest.mark.parametrize("method,path", ADMIN_AUDIT)
