@@ -712,6 +712,7 @@ class EvolvXSICeleryTask:
     CLEANUP_INDEX_ATTEMPT = "cleanup_index_attempt"
 
     CLEANUP_OAUTH_PROVIDER_GRANTS = "cleanup_oauth_provider_grants"
+    EVOLVXSI_RETENTION_PRUNE = "evolvxsi_retention_prune"
     CLEANUP_OAUTH_PROVIDER_CLIENTS = "cleanup_oauth_provider_clients"
 
     # Old-index reclamation (post-reindex deletion of the now-PAST index)

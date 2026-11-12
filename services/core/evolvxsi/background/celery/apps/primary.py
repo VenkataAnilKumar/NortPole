@@ -353,6 +353,7 @@ celery_app.autodiscover_tasks(
             "evolvxsi.background.celery.tasks.port",
             "evolvxsi.background.celery.tasks.evals",
             "evolvxsi.background.celery.tasks.oauth_provider",
+            "evolvxsi.background.celery.tasks.evolvxsi_retention",
             "evolvxsi.background.celery.tasks.hierarchyfetching",
             "evolvxsi.background.celery.tasks.pruning",
             "evolvxsi.background.celery.tasks.scheduled_tasks",
