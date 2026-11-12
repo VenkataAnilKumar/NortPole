@@ -10,7 +10,8 @@
       "id": "receipt-rules",
       "title": "Travel receipt rules",
       "request": "When are travel expense receipts due, and what happens if they are late?",
-      "desired_output": "A short answer for staff, with citations"
+      "desired_output": "A short answer for staff, with citations",
+      "style": "Answer in at most three short sentences, plain language, no headings."
     },
     {
       "id": "approval-limits",
@@ -43,6 +44,7 @@
   "evaluation_cases": [
     {
       "question": "How long do I have to hand in my trip receipts?",
+      "template": "receipt-rules",
       "expect": "30 days",
       "evidence": [
         "Travel expense receipts must be submitted within 30 days of the end of the trip. Late submissions need a manager's note."

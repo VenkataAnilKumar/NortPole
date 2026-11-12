@@ -269,3 +269,25 @@ def test_evaluation_needs_cases_and_an_admin_listing(signer) -> None:  # type: i
         with pytest.raises(EvolvXSIError) as err:
             packs.evaluate_version(PACK_ID, "1.0.0", user=ADMIN, db_session=s)
         assert "no evaluation cases" in err.value.detail
+
+
+def test_a_task_drafts_with_the_style_of_the_version_it_started_from(signer, person) -> None:  # type: ignore[no-untyped-def]
+    from evolvxsi.packs.guidance import style_for
+
+    key, key_id = signer
+    templates = copy.deepcopy(SAMPLE["templates"])
+    templates[0]["style"] = "Use bullet points."
+    with get_session_with_current_tenant() as s:
+        u = s.get(User, person)
+        _install_active(s, key, key_id, "1.0.0", templates=templates)
+        t = packs.start_from_template(PACK_ID, "receipt-rules", user=u, db_session=s)
+        assert style_for(s, PACK_ID, "1.0.0", "receipt-rules") == "Use bullet points."
+
+        newer = copy.deepcopy(templates)
+        newer[0]["style"] = "Use a table."
+        packs.install_pack(_package(key, key_id, _manifest("1.1.0", templates=newer)), user=ADMIN, db_session=s)
+        packs.activate(PACK_ID, "1.1.0", user=ADMIN, db_session=s)
+        # The task keeps the style of version 1.0.0, not the one that is active now.
+        row = s.get(EvolvXSITask, t.id)
+        assert style_for(s, row.pack_id, row.pack_version, row.pack_template) == "Use bullet points."
+        assert style_for(s, None, None, None) == "" and style_for(s, PACK_ID, "9.9.9", "receipt-rules") == ""

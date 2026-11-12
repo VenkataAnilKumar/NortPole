@@ -8,7 +8,7 @@ import json
 import re
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from evolvxsi.route_policy.policy import DATA_CLASSES, ROUTE_KINDS
 
@@ -25,6 +25,9 @@ class Template(_Strict):
     title: str = Field(min_length=1, max_length=200)
     request: str = Field(min_length=1, max_length=4000)
     desired_output: str = Field(default="", max_length=2000)
+    # House style for the draft: wording and layout only. It is added to the
+    # prompt below the citation rules and cannot change them.
+    style: str = Field(default="", max_length=800)
 
     @field_validator("id")
     @classmethod
@@ -77,6 +80,9 @@ class EvalCase(_Strict):
     question: str = Field(min_length=1, max_length=500)
     expect: str = Field(min_length=1, max_length=500)
     evidence: list[str] = Field(default_factory=list, max_length=3)
+    # Run the case with this template's house style, so a style that makes the
+    # model drop its citations is caught before the pack is offered.
+    template: str | None = None
 
     @field_validator("evidence")
     @classmethod
@@ -111,6 +117,14 @@ class Manifest(_Strict):
         if not SEMVER.match(v):
             raise ValueError("version must look like 1.2.3")
         return v
+
+    @model_validator(mode="after")
+    def _case_templates_exist(self) -> "Manifest":
+        ids = {t.id for t in self.templates}
+        bad = [c.template for c in self.evaluation_cases if c.template and c.template not in ids]
+        if bad:
+            raise ValueError(f"evaluation case names a template that does not exist: {bad[0]}")
+        return self
 
     @field_validator("templates")
     @classmethod
