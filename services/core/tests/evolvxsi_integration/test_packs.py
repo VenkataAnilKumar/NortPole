@@ -291,3 +291,64 @@ def test_a_task_drafts_with_the_style_of_the_version_it_started_from(signer, per
         row = s.get(EvolvXSITask, t.id)
         assert style_for(s, row.pack_id, row.pack_version, row.pack_template) == "Use bullet points."
         assert style_for(s, None, None, None) == "" and style_for(s, PACK_ID, "9.9.9", "receipt-rules") == ""
+
+
+def _rule(kind, value=None, severity="block", message="rule"):  # type: ignore[no-untyped-def]
+    return {"kind": kind, "value": value, "severity": severity, "message": message}
+
+
+def _run_to_draft(s, u, t, text, cited):  # type: ignore[no-untyped-def]
+    from evolvxsi.tasks.drafter import DraftResult
+    from evolvxsi.tasks.evidence import Evidence
+
+    ev = [Evidence(n=i, doc_id=f"doc-{i}", title=f"Doc {i}", link=None, passage="p") for i in (1, 2)]
+    with patch.object(tasks, "draft_plan", return_value=PlanResult(["a", "b"], "local")):
+        t = tasks.start_task(t.id, tasks.VersionOnly(version=t.version), user=u, db_session=s)
+    t = tasks.accept_plan(t.id, tasks.VersionOnly(version=t.version), user=u, db_session=s)
+    with patch.object(tasks, "gather_evidence", return_value=ev), patch.object(tasks, "filter_relevant", side_effect=lambda *a, **k: a[-1]), \
+         patch.object(tasks, "recheck_cited_sources", return_value=SimpleNamespace(withheld=False)), \
+         patch.object(tasks, "draft_answer", return_value=DraftResult(text, cited, 0, "local")):
+        return tasks.run_task(t.id, tasks.VersionOnly(version=t.version), user=u, db_session=s)
+
+
+@pytest.fixture()
+def _sources_open():  # type: ignore[no-untyped-def]
+    """The synthetic evidence has no real documents, so say the owner can still open them."""
+    with patch.object(tasks, "_withheld_count", return_value=0):
+        yield
+
+
+def test_review_rules_block_approval_until_met_and_warnings_do_not(signer, person, _sources_open) -> None:  # type: ignore[no-untyped-def]
+    key, key_id = signer
+    rules = [_rule("min_citations", 2, "block", "Cite at least two sources."), _rule("must_not_include", "guarantee", "block", "Do not promise outcomes."),
+             _rule("max_words", 10, "warn", "Keep it short.")]
+    with get_session_with_current_tenant() as s:
+        u = s.get(User, person)
+        _install_active(s, key, key_id, "1.0.0", review_rules=rules[:2], templates=[{**SAMPLE["templates"][0], "review_rules": [rules[2]]}])
+        one = packs.start_from_template(PACK_ID, "receipt-rules", user=u, db_session=s)
+        assert s.get(EvolvXSITask, one.id).review_rules == rules, "pack-wide and template rules are snapshotted together"
+        t = _run_to_draft(s, u, one, "Receipts are due within thirty days of the end of the trip [1].", [1])
+        assert [r["passed"] for r in t.rule_results] == [False, True, False]
+        with pytest.raises(EvolvXSIError) as err:
+            tasks.approve_draft(t.id, tasks.Approve(version=t.version, draft_hash=t.draft_hash), user=u, db_session=s)
+        assert "Cite at least two sources." in err.value.detail and "Keep it short" not in err.value.detail
+        denied = s.execute(text("select outcome, summary from evolvxsi_audit_event where action='task.approve' order by id desc limit 1")).one()
+        assert denied.outcome == "denied" and "review rule" in denied.summary
+
+        two = packs.start_from_template(PACK_ID, "receipt-rules", user=u, db_session=s)
+        t2 = _run_to_draft(s, u, two, "Receipts are due within thirty days of the end of the trip [1][2].", [1, 2])
+        assert [r["passed"] for r in t2.rule_results] == [True, True, False], "the warning still shows"
+        approved = tasks.approve_draft(t2.id, tasks.Approve(version=t2.version, draft_hash=t2.draft_hash), user=u, db_session=s)
+        assert approved.state.value == "approved"
+
+
+def test_a_task_keeps_the_rules_of_the_version_it_started_from(signer, person) -> None:  # type: ignore[no-untyped-def]
+    key, key_id = signer
+    with get_session_with_current_tenant() as s:
+        u = s.get(User, person)
+        _install_active(s, key, key_id, "1.0.0", review_rules=[_rule("min_citations", 2)])
+        old = packs.start_from_template(PACK_ID, "receipt-rules", user=u, db_session=s)
+        packs.install_pack(_package(key, key_id, _manifest("1.1.0", review_rules=[])), user=ADMIN, db_session=s)
+        packs.activate(PACK_ID, "1.1.0", user=ADMIN, db_session=s)
+        new = packs.start_from_template(PACK_ID, "receipt-rules", user=u, db_session=s)
+        assert s.get(EvolvXSITask, old.id).review_rules and s.get(EvolvXSITask, new.id).review_rules is None

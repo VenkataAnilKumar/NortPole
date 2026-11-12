@@ -11,7 +11,15 @@
       "title": "Travel receipt rules",
       "request": "When are travel expense receipts due, and what happens if they are late?",
       "desired_output": "A short answer for staff, with citations",
-      "style": "Answer in at most three short sentences, plain language, no headings."
+      "style": "Answer in at most three short sentences, plain language, no headings.",
+      "review_rules": [
+        {
+          "kind": "max_words",
+          "value": 120,
+          "severity": "warn",
+          "message": "Keep the answer under 120 words."
+        }
+      ]
     },
     {
       "id": "approval-limits",
@@ -62,6 +70,14 @@
       "question": "What is the price limit the board set for the takeover?",
       "expect": "No source you are allowed to open",
       "evidence": []
+    }
+  ],
+  "review_rules": [
+    {
+      "kind": "min_citations",
+      "value": 1,
+      "severity": "block",
+      "message": "Cite at least one source."
     }
   ]
 }

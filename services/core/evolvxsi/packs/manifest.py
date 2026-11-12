@@ -8,7 +8,7 @@ import json
 import re
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import BaseModel, StrictInt, StrictStr, ConfigDict, Field, field_validator, model_validator
 
 from evolvxsi.route_policy.policy import DATA_CLASSES, ROUTE_KINDS
 
@@ -20,6 +20,30 @@ class _Strict(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
+class ReviewRule(_Strict):
+    """A check on a draft, before it can be approved. Declarative only: a rule names one of
+    the built-in kinds, so no pack runs code. A "block" rule that fails stops approval; a
+    "warn" rule is shown to the reviewer and does not."""
+
+    kind: Literal["min_citations", "max_words", "must_include", "must_not_include", "all_claims_supported"]
+    value: StrictInt | StrictStr | None = None
+    severity: Literal["block", "warn"] = "block"
+    message: str = Field(min_length=1, max_length=200)
+
+    @model_validator(mode="after")
+    def _value_matches_kind(self) -> "ReviewRule":
+        if self.kind in ("min_citations", "max_words"):
+            lo, hi = (1, 20) if self.kind == "min_citations" else (10, 5000)
+            if not isinstance(self.value, int) or isinstance(self.value, bool) or not lo <= self.value <= hi:
+                raise ValueError(f"{self.kind} needs a whole number from {lo} to {hi}")
+        elif self.kind in ("must_include", "must_not_include"):
+            if not isinstance(self.value, str) or not 1 <= len(self.value.strip()) <= 100:
+                raise ValueError(f"{self.kind} needs a phrase of 1 to 100 characters")
+        elif self.value is not None:
+            raise ValueError(f"{self.kind} takes no value")
+        return self
+
+
 class Template(_Strict):
     id: str
     title: str = Field(min_length=1, max_length=200)
@@ -28,6 +52,7 @@ class Template(_Strict):
     # House style for the draft: wording and layout only. It is added to the
     # prompt below the citation rules and cannot change them.
     style: str = Field(default="", max_length=800)
+    review_rules: list[ReviewRule] = Field(default_factory=list, max_length=10)
 
     @field_validator("id")
     @classmethod
@@ -106,6 +131,8 @@ class Manifest(_Strict):
     # prepared and reviewed but not approved or sent. It can only lower what a
     # destination allows, never raise it.
     autonomy: Literal["draft_only", "act_with_approval"] = "act_with_approval"
+    # Checks every draft from this pack must pass (in addition to each template's own).
+    review_rules: list[ReviewRule] = Field(default_factory=list, max_length=10)
     evaluation_cases: list[EvalCase] = Field(default_factory=list, max_length=100)
 
     @field_validator("id")

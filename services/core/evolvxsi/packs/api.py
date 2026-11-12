@@ -360,9 +360,11 @@ def start_from_template(
     t = next((x for x in v.manifest["templates"] if x["id"] == template_id), None)
     if t is None:
         raise EvolvXSIError(EvolvXSIErrorCode.NOT_FOUND, "Template not found.")
+    rules = list(v.manifest.get("review_rules", [])) + list(t.get("review_rules", []))
     task = EvolvXSITask(
         owner_id=user.id, title=t["title"], request=t["request"], desired_output=t.get("desired_output", ""),
         state=TaskState.DRAFT.value, version=1, pack_id=v.pack_id, pack_version=v.version, pack_template=template_id,
+        review_rules=rules or None,
     )
     db_session.add(task)
     db_session.commit()

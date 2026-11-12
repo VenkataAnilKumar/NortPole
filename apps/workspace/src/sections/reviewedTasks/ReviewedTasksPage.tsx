@@ -31,6 +31,7 @@ interface Task {
   draft_versions: { v: number; by: "model" | "owner"; text: string; at: string }[] | null;
   withheld: boolean;
   withheld_message: string | null;
+  rule_results?: { kind: string; severity: "block" | "warn"; message: string; passed: boolean; detail: string }[];
   draft_claims: { i: number; text: string; cites: number[]; status: "supported" | "unsupported" | "notice"; decision: "keep" | "remove" | null }[] | null;
   approved_at: string | null;
   exported_at: string | null;
@@ -442,12 +443,21 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
               </button>
             </div>
           )}
+          {(task.rule_results ?? []).length > 0 && (
+            <ul className="w-full text-sm" data-testid="rule-results" aria-label="Pack review rules">
+              {(task.rule_results ?? []).map((r, i) => (
+                <li key={i} className={r.passed ? "text-text-03" : r.severity === "block" ? "text-status-error-05" : "text-status-warning-05"}>
+                  {r.passed ? "Met" : r.severity === "block" ? "Not met (must be fixed to approve)" : "Warning"}: {r.message} <span className="text-xs">({r.detail})</span>
+                </li>
+              ))}
+            </ul>
+          )}
           {task.state === "draft_ready" && task.draft_hash && !task.withheld && (
             <button
               type="button"
               className={primary}
-              disabled={!!busy || openClaims > 0}
-              title={openClaims > 0 ? `Decide on ${openClaims} unsupported claim(s) first` : undefined}
+              disabled={!!busy || openClaims > 0 || (task.rule_results ?? []).some((r) => !r.passed && r.severity === "block")}
+              title={openClaims > 0 ? `Decide on ${openClaims} unsupported claim(s) first` : (task.rule_results ?? []).some((r) => !r.passed && r.severity === "block") ? "The pack's review rules are not met" : undefined}
               onClick={() => act("approve", "/approve", { version: task.version, draft_hash: task.draft_hash })}
             >
               {busy === "approve" ? "Approving…" : openClaims > 0 ? `Approve (${openClaims} claim${openClaims === 1 ? "" : "s"} to decide)` : "Approve this draft"}
