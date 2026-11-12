@@ -204,6 +204,16 @@ class MCPTool(Tool):
         _start = time.monotonic()
         _server = self.mcp_server.name
         outcome = MCPToolCallStatus.ERROR
+        # EvolvXSI: a server whose host is no longer on the allowlist is not called, whatever was saved earlier.
+        from evolvxsi.extensions.policy import host_allowed
+
+        if not host_allowed(self.mcp_server.server_url):
+            from evolvxsi.route_policy.audit import record_audit
+            from evolvxsi.utils.audit import AuditAction, AuditOutcome
+
+            record_audit(AuditAction.EXTENSION_BLOCKED, AuditOutcome.DENIED, actor=None, resource_type="mcp_server",
+                         resource_id=self.mcp_server.id, summary=f"Call to {self._name} on {_server} refused: its host is not on the MCP allowlist")
+            return self._error_result(f"The {_server} server is blocked by this workspace's MCP allowlist. Tell the user to ask an administrator.")
         try:
             request_headers = {
                 name: value

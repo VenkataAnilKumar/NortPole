@@ -19,6 +19,7 @@ from pydantic import AnyUrl, BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from evolvxsi.extensions.enforce import assert_mcp_url_allowed
 from evolvxsi.auth.oauth_token_manager import validate_oauth_endpoint_url
 from evolvxsi.auth.permission_projection import mcp_server_permissions, tool_permissions
 from evolvxsi.auth.permissions import (
@@ -670,6 +671,7 @@ async def stream_admin_mcp_probe(
         require_permission(Permission.MANAGE_ACTIONS, allow_scope=True)
     ),
 ) -> StreamingResponse:
+    assert_mcp_url_allowed(request.server_url, _user)
     return StreamingResponse(
         stream_mcp_probe(request.server_url),
         media_type="application/x-ndjson",
@@ -1936,6 +1938,7 @@ def _upsert_mcp_server(
     """
     Creates a new or edits an existing MCP server. Returns the DB model
     """
+    assert_mcp_url_allowed(request.server_url, user)
     _validate_mcp_server_url(request.server_url, "server_url", require_https=False)
     _validate_mcp_server_url(
         request.oauth_authorization_endpoint,
@@ -2624,6 +2627,7 @@ def upsert_mcp_server(
     ),
 ) -> MCPServerCreateResponse:
     """Create or update an MCP server (no tools yet)"""
+    assert_mcp_url_allowed(request.server_url, user)
 
     # Validate auth_performer for non-none auth types
     if request.auth_type != MCPAuthenticationType.NONE and not request.auth_performer:
@@ -3280,6 +3284,7 @@ async def setup_mcp_server(
     request, expected_configuration_fingerprint, client_information = (
         _prepare_mcp_setup(request, user, db)
     )
+    assert_mcp_url_allowed(getattr(request, "server_url", None), user)
     _validate_mcp_setup(request, user, db)
     headers = _mcp_setup_headers(request, user)
     provider = None
