@@ -202,3 +202,5 @@ First real-model results, 2026-11-12: a real small model now runs in the sandbox
 
 Tests: 42 unit tests and 95 integration checks pass. Four tests that asserted the mock model's wording now assert behaviour. Plan and draft quality beyond a 1.5B model, and a real cloud route, are untested.
 
+Browser check with a real model, 2026-11-12: with the default model set to qwen2.5:7b (Local route, Ollama on CPU), a task went draft, Start (a real three-step plan), Accept plan, Run plan. Lite mode has no index, so the run produced the no-source draft, shown as a "notice" that needs no decision, and Approve this draft was enabled at once. Not seen in the browser: the screens for source passages, the instruction-like flag, and a draft hidden after access is lost (all covered by database tests, 99 integration checks), because they need sources in the index, which lite mode lacks. The earlier real-retrieval, real-model results are from scripts outside the task flow.
+
