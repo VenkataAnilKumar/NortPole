@@ -81,3 +81,13 @@ Checked end to end on the sandbox database and OpenSearch (`tests/evolvxsi_integ
 
 Not done: removing a group from a source changes stored document access lists only on re-index (no re-sync job yet); the query-time source check is only active when its rollout flag is on and was not exercised here; there is still no screen or API to manage groups or link them to sources, since that was enterprise-only upstream.
 
+## Progress (2026-11-12): managing groups
+
+The community code already lets an administrator add reading groups to a source from the source's own settings, and refuses the built-in role groups there. What was missing was managing the groups themselves, which upstream kept in its enterprise edition. Added:
+
+- `services/core/evolvxsi/knowledge_access/group_admin.py`: `GET` and `POST /admin/access-groups`, `PATCH` and `DELETE /admin/access-groups/{id}` (needs the manage-user-groups permission). Each change is audited.
+- Safety rules: a group that reads any source cannot be renamed or deleted, because documents carry the group's name on their access lists and a new group given the old name would inherit that access. Names are unique whatever the case. Built-in role groups are not managed here. Unknown users are refused.
+- `apps/workspace/src/views/admin/AccessGroupsPage.tsx` at `/admin/access-groups`, listed as Groups in the admin sidebar: create a group, pick members, rename, delete, and see which sources each group reads.
+
+Checked: six integration tests on the real database pass (32 in the integration folder in total). The page had not been type-checked or opened in a browser when this was committed; see `docs/REVIEW.md` for the follow-up.
+

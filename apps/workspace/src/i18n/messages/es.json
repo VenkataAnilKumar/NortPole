@@ -16833,6 +16833,9 @@
         },
         "routePolicy": {
           "label": "Route Policy"
+        },
+        "accessGroups": {
+          "label": "Groups"
         }
       },
       "sections": {

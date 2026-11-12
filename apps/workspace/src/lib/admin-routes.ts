@@ -417,6 +417,16 @@ export const ADMIN_ROUTES = {
     requiredTier: null,
     visibleWhen: null,
   },
+  ACCESS_GROUPS: {
+    path: "/admin/access-groups",
+    icon: SvgUsers,
+    title: "Groups",
+    sidebarLabel: "Groups",
+    requiredPermission: Permission.MANAGE_USER_GROUPS,
+    section: "Permissions",
+    requiredTier: null,
+    visibleWhen: null,
+  },
   GROUPS: {
     path: "/admin/groups",
     icon: SvgUsers,
