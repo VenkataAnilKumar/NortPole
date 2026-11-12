@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
 import { errorHandlingFetcher } from "@/lib/fetcher";
 import TaskActions from "@/sections/reviewedTasks/TaskActions";
@@ -497,7 +498,8 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
  */
 export default function ReviewedTasksPage() {
   const { data, error, isLoading, mutate } = useSWR<Task[]>(URL, errorHandlingFetcher);
-  const [selected, setSelected] = useState<string | null>(null);
+  const params = useSearchParams();
+  const [selected, setSelected] = useState<string | null>(params.get("task"));
   const [creating, setCreating] = useState(false);
   const tasks = data ?? [];
   const current = tasks.find((t) => t.id === selected) ?? null;

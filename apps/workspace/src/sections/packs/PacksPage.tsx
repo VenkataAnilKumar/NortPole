@@ -52,7 +52,8 @@ export default function PacksPage() {
         }
         throw new Error(typeof detail === "string" && detail ? detail : `Could not create the draft (HTTP ${res.status}).`);
       }
-      router.push("/app/reviewed-tasks");
+      const created = (await res.json()) as { id: string };
+      router.push(`/app/reviewed-tasks?task=${encodeURIComponent(created.id)}`);
     } catch (e) {
       setFailed(e instanceof Error ? e.message : "Could not create the draft.");
       setBusy(null);
