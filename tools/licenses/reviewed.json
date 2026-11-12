@@ -1,0 +1,26 @@
+{
+  "note": "Packages whose licence needs a human decision. Each entry says what was decided and why. Written 2026-11-12 from reading package files and metadata; not legal advice. Re-read an entry when its package changes licence or major version.",
+  "packages": {
+    "PyGithub": "LGPL: used as an installed library, not modified or bundled.",
+    "chardet": "LGPL-2.1+: used as an installed library, not modified.",
+    "ldap3": "LGPL-3: used as an installed library, not modified.",
+    "psycopg2-binary": "LGPL with the OpenSSL exception: used as an installed library, not modified.",
+    "python-gitlab": "LGPL-3: used as an installed library, not modified.",
+    "urwid": "LGPL: pulled in only by mitmproxy's console; not imported by the product.",
+    "docutils": "Offers BSD among its licences; the BSD option is the one relied on.",
+    "text-unidecode": "Offers the Artistic licence among its licences; that option is the one relied on. Check before shipping to a customer.",
+    "tld": "MPL-1.1 OR GPL-2.0 OR LGPL-2.1+: the MPL or LGPL option is the one relied on.",
+    "agent-client-protocol": "Metadata states no licence; the package's own file is the Apache-2.0 text (read 2026-11-12).",
+    "google-crc32c": "Metadata states no licence; the package's own file is the Apache-2.0 text (read 2026-11-12).",
+    "voyageai": "Metadata states no licence; the package's own file is the MIT text (read 2026-11-12).",
+    "mitmproxy-rs": "Metadata states no licence; the package's own metadata carries the MIT text (read 2026-11-12). Used only by the sandbox-proxy feature.",
+    "mitmproxy-linux": "No licence text in the package. Built from the same project as mitmproxy-rs (MIT): an inference, not stated by the package. Used only by the sandbox-proxy feature. Confirm with the project before shipping that feature.",
+    "tqdm": "MPL-2.0 AND MIT: file-level copyleft; used unmodified as an installed library.",
+    "certifi": "MPL-2.0: file-level copyleft; used unmodified as an installed library.",
+    "publicsuffix2": "MIT and MPL-2.0: used unmodified as an installed library.",
+    "python-dateutil": "Dual BSD-3-Clause and Apache-2.0 (its LICENSE file); either is acceptable.",
+    "defusedxml": "Python Software Foundation licence: permissive.",
+    "tiktoken": "Metadata states no licence; the package's own file is the MIT text (read 2026-11-12).",
+    "zulip": "Metadata and files state no licence. NOT verified. Used only by the Zulip connector inherited from the upstream project; confirm with the project or remove the connector's dependency before shipping."
+  }
+}

@@ -1618,13 +1618,15 @@ dependencies = [
 ]
 
 [package.dev-dependencies]
+azure-voice = [
+    { name = "azure-cognitiveservices-speech" },
+]
 backend = [
     { name = "aiohttp" },
     { name = "alembic" },
     { name = "asana" },
     { name = "asyncpg" },
     { name = "atlassian-python-api" },
-    { name = "azure-cognitiveservices-speech" },
     { name = "azure-identity" },
     { name = "azure-storage-blob" },
     { name = "azure-storage-file-datalake" },
@@ -1797,13 +1799,13 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
+azure-voice = [{ name = "azure-cognitiveservices-speech", specifier = "==1.50.0" }]
 backend = [
     { name = "aiohttp", specifier = "==3.14.4" },
     { name = "alembic", specifier = "==1.18.4" },
     { name = "asana", specifier = "==5.0.8" },
     { name = "asyncpg", specifier = "==0.30.0" },
     { name = "atlassian-python-api", specifier = "==4.0.7" },
-    { name = "azure-cognitiveservices-speech", specifier = "==1.50.0" },
     { name = "azure-identity", specifier = ">=1.23.0,<2.0.0" },
     { name = "azure-storage-blob", specifier = ">=12.24.0,<13.0.0" },
     { name = "azure-storage-file-datalake", specifier = ">=12.19.0,<13.0.0" },
