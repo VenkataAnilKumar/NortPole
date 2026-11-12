@@ -19,7 +19,8 @@ from evolvxsi.db.models import User
 from evolvxsi.error_handling.error_codes import EvolvXSIErrorCode
 from evolvxsi.error_handling.exceptions import EvolvXSIError
 from evolvxsi.packs.manifest import Manifest, canonical_bytes, digest, version_key
-from evolvxsi.packs.models import EvolvXSIPackSigner, EvolvXSIPackVersion
+from evolvxsi.packs.evaluation import evaluate
+from evolvxsi.packs.models import EvolvXSIPackEvaluation, EvolvXSIPackSigner, EvolvXSIPackVersion
 from evolvxsi.packs.signing import SignatureProblem, parse_public_key, verify
 from evolvxsi.route_policy.audit import record_audit
 from evolvxsi.tasks.api import TaskView, _view
@@ -49,6 +50,16 @@ class Package(BaseModel):
     key_id: str
 
 
+class EvalView(BaseModel):
+    model_name: str
+    route_kind: str
+    passed: bool
+    cases_passed: int
+    cases_total: int
+    run_at: datetime.datetime
+    failures: list[str]
+
+
 class VersionView(BaseModel):
     pack_id: str
     version: str
@@ -59,6 +70,8 @@ class VersionView(BaseModel):
     signer_revoked: bool
     digest: str
     installed_at: datetime.datetime
+    evaluation_cases: int = 0
+    evaluations: list[EvalView] = []
 
 
 class TemplateView(BaseModel):
@@ -78,6 +91,10 @@ class PackView(BaseModel):
     data_classes: list[str]
     route_kinds: list[str]
     requests_send_destinations: bool
+    # False when the pack has evaluation cases and has not passed them on the
+    # model route in use now; starting a task from it would be refused.
+    ready_on_current_route: bool = True
+    readiness_note: str | None = None
 
 
 def _audit(user: User, action: AuditAction, summary: str, rid: str, outcome: AuditOutcome = AuditOutcome.SUCCESS) -> None:
@@ -89,12 +106,46 @@ def _revoked(db: Session, key_id: str) -> bool:
     return signer is None or signer.revoked
 
 
+def _evals(db: Session, pack_id: str, version: str) -> list[EvalView]:
+    rows = db.scalars(select(EvolvXSIPackEvaluation).where(
+        EvolvXSIPackEvaluation.pack_id == pack_id, EvolvXSIPackEvaluation.version == version).order_by(EvolvXSIPackEvaluation.run_at.desc()))
+    return [EvalView(model_name=e.model_name, route_kind=e.route_kind, passed=e.passed, cases_passed=e.cases_passed,
+                     cases_total=e.cases_total, run_at=e.run_at,
+                     failures=[d["question"] + ": " + d["reason"] for d in e.details if not d["passed"]]) for e in rows]
+
+
 def _vview(db: Session, v: EvolvXSIPackVersion) -> VersionView:
     m = v.manifest
     return VersionView(
         pack_id=v.pack_id, version=v.version, name=m["name"], vertical=m["vertical"], active=v.active,
         signer_key_id=v.signer_key_id, signer_revoked=_revoked(db, v.signer_key_id), digest=v.digest, installed_at=v.installed_at,
+        evaluation_cases=len(m.get("evaluation_cases", [])), evaluations=_evals(db, v.pack_id, v.version),
     )
+
+
+def current_model(db: Session):  # type: ignore[no-untyped-def]
+    from evolvxsi.db.enums import LLMModelFlowType
+    from evolvxsi.db.llm import fetch_default_model
+
+    return fetch_default_model(db, LLMModelFlowType.CHAT)
+
+
+def passed_on_current_model(db: Session, pack_id: str, version: str, manifest: dict) -> tuple[bool, str | None]:
+    """A pack with no evaluation cases needs no evaluation. One with cases must
+    have passed them, at this exact version, on the model in use now."""
+    if not manifest.get("evaluation_cases"):
+        return True, None
+    model = current_model(db)
+    if model is None:
+        return False, "there is no default model"
+    ev = db.scalar(select(EvolvXSIPackEvaluation).where(
+        EvolvXSIPackEvaluation.pack_id == pack_id, EvolvXSIPackEvaluation.version == version,
+        EvolvXSIPackEvaluation.model_configuration_id == model.id))
+    if ev is None:
+        return False, f"it has not been evaluated on {model.name}"
+    if not ev.passed:
+        return False, f"it did not pass evaluation on {model.name} ({ev.cases_passed} of {ev.cases_total} cases)"
+    return True, None
 
 
 # ---- administrators ----------------------------------------------------------
@@ -213,6 +264,48 @@ def activate(
     return _vview(db_session, v)
 
 
+@router.post("/admin/packs/{pack_id}/{version}/evaluate")
+def evaluate_version(
+    pack_id: str, version: str,
+    user: User = Depends(require_permission(Permission.MANAGE_CONNECTORS)),
+    db_session: Session = Depends(get_session),
+) -> VersionView:
+    """Run the version's evaluation cases on the model in use now and record the
+    result for that exact model. Cases carry their own evidence, so the result
+    does not depend on what is indexed."""
+    from evolvxsi.route_policy.enforce import check_route
+
+    v = db_session.scalar(select(EvolvXSIPackVersion).where(EvolvXSIPackVersion.pack_id == pack_id, EvolvXSIPackVersion.version == version))
+    if v is None:
+        raise EvolvXSIError(EvolvXSIErrorCode.NOT_FOUND, "Pack version not found.")
+    manifest = Manifest.model_validate(v.manifest)
+    if not manifest.evaluation_cases:
+        raise EvolvXSIError(EvolvXSIErrorCode.INVALID_INPUT, "This pack version has no evaluation cases.")
+    model = current_model(db_session)
+    if model is None:
+        raise EvolvXSIError(EvolvXSIErrorCode.INVALID_INPUT, "There is no default model to evaluate on.")
+    kind = check_route(db_session, model.id).kind
+    results = evaluate(db_session, user, manifest)
+    details = [{"question": r.question, "passed": r.passed, "reason": r.reason} for r in results]
+    passed = all(r.passed for r in results)
+    row = db_session.scalar(select(EvolvXSIPackEvaluation).where(
+        EvolvXSIPackEvaluation.pack_id == pack_id, EvolvXSIPackEvaluation.version == version,
+        EvolvXSIPackEvaluation.model_configuration_id == model.id))
+    if row is None:
+        row = EvolvXSIPackEvaluation(pack_id=pack_id, version=version, model_configuration_id=model.id, model_name=model.name,
+                                     route_kind=kind, passed=passed, cases_total=len(results),
+                                     cases_passed=sum(r.passed for r in results), details=details)
+        db_session.add(row)
+    else:
+        row.passed, row.route_kind, row.cases_total = passed, kind, len(results)
+        row.cases_passed, row.details, row.run_at = sum(r.passed for r in results), details, datetime.datetime.now(datetime.timezone.utc)
+    db_session.commit()
+    _audit(user, AuditAction.PACK_EVALUATE,
+           f"Evaluated {pack_id} {version} on {model.name} ({kind}): {'passed' if passed else 'failed'}, "
+           f"{row.cases_passed} of {row.cases_total} cases", pack_id, AuditOutcome.SUCCESS if passed else AuditOutcome.FAILURE)
+    return _vview(db_session, v)
+
+
 @router.post("/admin/packs/{pack_id}/deactivate")
 def deactivate(
     pack_id: str,
@@ -241,11 +334,13 @@ def list_packs(
     out = []
     for v in _active_versions(db_session):
         m = v.manifest
+        ready, note = passed_on_current_model(db_session, v.pack_id, v.version, m)
         out.append(PackView(
             pack_id=v.pack_id, version=v.version, name=m["name"], vertical=m["vertical"], description=m.get("description", ""),
             templates=[TemplateView(**{k: t.get(k, "") for k in ("id", "title", "request", "desired_output")}) for t in m["templates"]],
             data_classes=m["requires"]["data_classes"], route_kinds=m["requires"]["route_kinds"],
             requests_send_destinations=bool(m.get("requests", {}).get("send_destinations")),
+            ready_on_current_route=ready, readiness_note=None if ready else f"Not available on the current model: {note}.",
         ))
     return out
 

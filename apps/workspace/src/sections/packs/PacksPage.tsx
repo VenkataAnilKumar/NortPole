@@ -21,6 +21,8 @@ interface Pack {
   data_classes: string[];
   route_kinds: string[];
   requests_send_destinations: boolean;
+  ready_on_current_route: boolean;
+  readiness_note: string | null;
 }
 
 const card = "rounded-2xl border border-border-01 bg-background-neutral-00 p-5 shadow-sm";
@@ -95,6 +97,7 @@ export default function PacksPage() {
                 Runs on {p.route_kinds.join(" or ")} model routes, for {p.data_classes.join(", ")} data.
                 {p.requests_send_destinations ? " This pack asks to send results to a destination; an administrator decides whether that is allowed." : ""}
               </p>
+              {!p.ready_on_current_route && <p role="status" className="mt-2 text-xs text-status-warning-05" data-testid="not-ready">{p.readiness_note}</p>}
               <ul className="mt-3 grid gap-2 sm:grid-cols-2">
                 {p.templates.map((t) => (
                   <li key={t.id} className="flex flex-col justify-between gap-2 rounded-xl border border-border-01 p-3">
@@ -102,7 +105,7 @@ export default function PacksPage() {
                       <div className="text-sm font-semibold text-text-05">{t.title}</div>
                       <div className="mt-1 text-xs text-text-03">{t.request}</div>
                     </div>
-                    <button type="button" className={secondary} disabled={!!busy} onClick={() => use(p, t)}>
+                    <button type="button" className={secondary} disabled={!!busy || !p.ready_on_current_route} onClick={() => use(p, t)}>
                       {busy === `${p.pack_id}/${t.id}` ? "Creating…" : "Use this template"}
                     </button>
                   </li>

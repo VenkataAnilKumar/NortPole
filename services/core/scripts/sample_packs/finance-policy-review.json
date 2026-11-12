@@ -6,14 +6,60 @@
   "vertical": "finance",
   "description": "Task templates for finance teams reviewing internal policies. Answers cite only documents the person may open.",
   "templates": [
-    {"id": "receipt-rules", "title": "Travel receipt rules", "request": "When are travel expense receipts due, and what happens if they are late?", "desired_output": "A short answer for staff, with citations"},
-    {"id": "approval-limits", "title": "Expense approval limits", "request": "Who must approve expense claims above the standard limit, and what are the thresholds?", "desired_output": "A table of thresholds and approvers"},
-    {"id": "policy-changes", "title": "What changed in the policy", "request": "Which parts of the finance policies changed between the two latest versions, and what should the team review?", "desired_output": "A list of changes with the old and new wording cited"}
+    {
+      "id": "receipt-rules",
+      "title": "Travel receipt rules",
+      "request": "When are travel expense receipts due, and what happens if they are late?",
+      "desired_output": "A short answer for staff, with citations"
+    },
+    {
+      "id": "approval-limits",
+      "title": "Expense approval limits",
+      "request": "Who must approve expense claims above the standard limit, and what are the thresholds?",
+      "desired_output": "A table of thresholds and approvers"
+    },
+    {
+      "id": "policy-changes",
+      "title": "What changed in the policy",
+      "request": "Which parts of the finance policies changed between the two latest versions, and what should the team review?",
+      "desired_output": "A list of changes with the old and new wording cited"
+    }
   ],
-  "requires": {"data_classes": ["public", "internal", "confidential"], "route_kinds": ["local", "private"]},
-  "requests": {"send_destinations": false, "personal_connectors": false},
+  "requires": {
+    "data_classes": [
+      "public",
+      "internal",
+      "confidential"
+    ],
+    "route_kinds": [
+      "local",
+      "private"
+    ]
+  },
+  "requests": {
+    "send_destinations": false,
+    "personal_connectors": false
+  },
   "evaluation_cases": [
-    {"question": "How long do I have to hand in my trip receipts?", "expect": "30 days"},
-    {"question": "Who signs off a very large expense claim?", "expect": "director"}
+    {
+      "question": "How long do I have to hand in my trip receipts?",
+      "expect": "30 days",
+      "evidence": [
+        "Travel expense receipts must be submitted within 30 days of the end of the trip. Late submissions need a manager's note."
+      ]
+    },
+    {
+      "question": "Who signs off a very large expense claim?",
+      "expect": "director",
+      "evidence": [
+        "Expense claims over 1,000 euros need approval from a director in addition to the line manager.",
+        "The office is open from 08:00 to 18:00 on working days."
+      ]
+    },
+    {
+      "question": "What is the price limit the board set for the takeover?",
+      "expect": "No source you are allowed to open",
+      "evidence": []
+    }
   ]
 }

@@ -18,6 +18,8 @@ interface Version {
   signer_key_id: string;
   signer_revoked: boolean;
   digest: string;
+  evaluation_cases: number;
+  evaluations: { model_name: string; route_kind: string; passed: boolean; cases_passed: number; cases_total: number; failures: string[] }[];
 }
 
 const card = "rounded-2xl border border-border-01 bg-background-neutral-00 p-5 shadow-sm";
@@ -143,6 +145,11 @@ export default function PacksAdminPage() {
                   {v.signer_revoked && <p role="alert" className="mt-1 text-xs text-status-error-05">The signer was revoked: this pack is not offered and cannot be activated.</p>}
                 </div>
                 <div className="flex gap-2">
+                  {v.evaluation_cases > 0 && (
+                    <button type="button" className={secondary} disabled={busy} onClick={() => run(() => send(`/api/admin/packs/${v.pack_id}/${v.version}/evaluate`, "POST"))}>
+                      Evaluate on current model
+                    </button>
+                  )}
                   {v.active ? (
                     <button type="button" className={secondary} disabled={busy} onClick={() => run(() => send(`/api/admin/packs/${v.pack_id}/deactivate`, "POST"))}>
                       Deactivate
@@ -154,6 +161,17 @@ export default function PacksAdminPage() {
                   )}
                 </div>
               </div>
+              {v.evaluation_cases > 0 && (
+                <ul className="mt-2 text-xs text-text-03" data-testid="evaluations">
+                  {v.evaluations.length === 0 && <li>Not evaluated yet. It will not run until it passes its {v.evaluation_cases} cases on the model in use.</li>}
+                  {v.evaluations.map((e) => (
+                    <li key={e.model_name} className={e.passed ? "" : "text-status-error-05"}>
+                      {e.model_name} ({e.route_kind}): {e.passed ? "passed" : "failed"}, {e.cases_passed} of {e.cases_total} cases
+                      {e.failures.map((f) => <div key={f}>{f}</div>)}
+                    </li>
+                  ))}
+                </ul>
+              )}
               {v.active && <p className="mt-2 text-xs text-text-03" data-testid="active-flag">Active: people see this version.</p>}
             </li>
           ))}

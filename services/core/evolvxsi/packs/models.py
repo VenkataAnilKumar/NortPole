@@ -36,3 +36,22 @@ class EvolvXSIPackVersion(Base):
     signer_key_id: Mapped[str] = mapped_column(String(80), nullable=False)
     active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     installed_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+
+class EvolvXSIPackEvaluation(Base):
+    """The latest evaluation of one pack version on one model."""
+
+    __tablename__ = "evolvxsi_pack_eval"
+    __table_args__ = (UniqueConstraint("pack_id", "version", "model_configuration_id", name="uq_evolvxsi_pack_eval"),)
+
+    row_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    pack_id: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
+    version: Mapped[str] = mapped_column(String(20), nullable=False)
+    model_configuration_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    model_name: Mapped[str] = mapped_column(String, nullable=False)
+    route_kind: Mapped[str] = mapped_column(String(20), nullable=False)
+    passed: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    cases_total: Mapped[int] = mapped_column(Integer, nullable=False)
+    cases_passed: Mapped[int] = mapped_column(Integer, nullable=False)
+    details: Mapped[list[dict[str, Any]]] = mapped_column(JSONB, nullable=False)
+    run_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
