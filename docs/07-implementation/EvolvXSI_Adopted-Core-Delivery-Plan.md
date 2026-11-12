@@ -194,6 +194,8 @@ Delivered (PF-07.03 slice, PF-04.02 groundwork): route kinds (local, private, cl
 
 Checked: unit tests for each control, and a run with a hostile passage (asks to cite [9] and fakes a second source) through the real drafter and mock route produced a draft with only the real source and no injected citations. The mock model does not try to obey injected text, so this shows the structural controls hold, not that a real model resists instructions; that needs testing against real models (A8).
 
+**Progress (2026-11-12), second A9 slice: endpoint access and audit privacy** (`services/core/tests/evolvxsi_integration/test_endpoint_security.py`, against the running API with one throwaway user): 16 EvolvXSI endpoints (tasks, preferences, route policy, access groups, source groups, pending approvals) refuse signed-out requests; a signed-in ordinary user is refused (403) on the five admin endpoints but can use their own tasks and preferences; another person's task answers 404, the same as a missing one; and after creating and cancelling a task with a distinctive title and request, no audit row holds that text. 25 checks pass, run twice. Limits: this covers the endpoints we added, not the whole upstream API; an administrator role was not probed in this file; sign-in used basic auth only (no SSO).
+
 ## A10 — Deployment, operations and upstream upkeep (planned, L)
 
 **Goal:** a repeatable, supportable release; upstream files were not copied, so EvolvXSI owns this.
