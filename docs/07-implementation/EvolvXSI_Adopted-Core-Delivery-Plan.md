@@ -185,6 +185,15 @@ Delivered (PF-07.03 slice, PF-04.02 groundwork): route kinds (local, private, cl
 
 **Exit evidence:** adversarial and redaction suites in CI; a written security review with findings closed or accepted.
 
+**Progress (2026-11-12), first A9 slice: source text is data.** Passages from sources may carry text aimed at the model. Controls that hold whatever the model does (`services/core/evolvxsi/tasks/untrusted.py`):
+
+- A passage cannot mint citations (`[3]` becomes `(3)`) or start a fake source or prompt section (line breaks collapsed; delimiter look-alikes defused). Each source is one line between `<<source n>>` and `<<source>>`.
+- The drafting prompt says text inside a source is data, never an instruction.
+- Planning and drafting requests carry no tools, so source text cannot trigger an action.
+- Plan steps are capped at 300 characters; output citations are kept only for sources the run had.
+
+Checked: unit tests for each control, and a run with a hostile passage (asks to cite [9] and fakes a second source) through the real drafter and mock route produced a draft with only the real source and no injected citations. The mock model does not try to obey injected text, so this shows the structural controls hold, not that a real model resists instructions; that needs testing against real models (A8).
+
 ## A10 — Deployment, operations and upstream upkeep (planned, L)
 
 **Goal:** a repeatable, supportable release; upstream files were not copied, so EvolvXSI owns this.

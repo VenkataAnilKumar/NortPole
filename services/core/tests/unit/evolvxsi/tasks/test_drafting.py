@@ -22,7 +22,7 @@ def test_no_sources_means_every_citation_goes() -> None:
 
 def test_prompt_lists_sources_or_says_none() -> None:
     ev = [Evidence(n=1, doc_id="d", title="Travel policy", link=None, passage="Receipts in 30 days.")]
-    assert "[1] Travel policy: Receipts in 30 days." in build_prompt("t", "r", ["step"], ev)
+    assert "[1] Travel policy: <<source 1>> Receipts in 30 days. <<source>>" in build_prompt("t", "r", ["step"], ev)
     assert "Sources: none" in build_prompt("t", "r", ["step"], [])
 
 
