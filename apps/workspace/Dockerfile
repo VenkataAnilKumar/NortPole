@@ -5,8 +5,8 @@ FROM node:22-slim AS build
 RUN npm install -g bun@1.4.4
 WORKDIR /app
 COPY package.json bun.lock ./
-COPY lib/opal/package.json lib/opal/package.json
-COPY lib/shared/package.json lib/shared/package.json
+# The workspace packages build themselves while installing, so their sources come first.
+COPY lib ./lib
 RUN bun install --frozen-lockfile
 COPY . .
 RUN cd lib/shared && bun run build && cd ../opal && bun run build
