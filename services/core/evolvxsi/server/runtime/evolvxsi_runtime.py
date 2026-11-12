@@ -11,6 +11,7 @@ from evolvxsi.cache.interface import CacheBackend, CacheBackendType
 from evolvxsi.configs.app_configs import (
     CACHE_BACKEND,
     ENABLE_CC_PAIR_ACCESS_FILTER,
+    ENFORCE_CC_PAIR_ACCESS_FILTER,
     ENABLE_TENANT_WORK_GATING,
     TENANT_WORK_GATING_FULL_FANOUT_INTERVAL_SECONDS,
     TENANT_WORK_GATING_TTL_SECONDS,
@@ -247,11 +248,11 @@ class EvolvXSIRuntime:
     @staticmethod
     def get_cc_pair_access_filter_enforce() -> bool:
         """Should search use the cc-pair access filter for results, in tenants
-        whose index is ready for it? Cache-only (no env var) with a hard-coded default of
-        False, like `get_tenant_work_gating_enforce`. Only meaningful when
-        `get_cc_pair_access_filter_enabled()` is also True."""
+        whose index is ready for it? EvolvXSI default: on
+        (`ENFORCE_CC_PAIR_ACCESS_FILTER`), overridable in the cache. Only
+        meaningful when `get_cc_pair_access_filter_enabled()` is also True."""
         return EvolvXSIRuntime._read_request_path_bool_flag(
-            "cc_pair_access_filter", "enforce", default=False
+            "cc_pair_access_filter", "enforce", default=ENFORCE_CC_PAIR_ACCESS_FILTER
         )
 
     @staticmethod

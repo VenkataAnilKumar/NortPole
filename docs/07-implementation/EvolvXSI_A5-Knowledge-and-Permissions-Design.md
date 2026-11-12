@@ -101,3 +101,17 @@ Checked on the sandbox database and OpenSearch (34 integration checks pass): rem
 
 Known window: between the change and the background sync, the index still holds the old access list, so a removed group keeps reading for that time. The query-time source check (behind a rollout setting, not exercised here) would close that window. There is no screen for this yet; it is an API only.
 
+## Progress (2026-11-12): search-time source check on by default
+
+The core can decide at search time which sources a person may read, from the database, instead of relying only on the access list stored on each document. Upstream shipped it switched off. EvolvXSI now turns it on and enforces it by default (`ENABLE_CC_PAIR_ACCESS_FILTER` and `ENFORCE_CC_PAIR_ACCESS_FILTER`, both default true; set either to `false` to turn it off; a cache override still wins).
+
+Enforcement takes effect only once every indexed chunk carries its source ids (the core's backfill). Until then search stays in shadow mode: results still use the document access list, as before, and a second comparison query is logged per search. So the new default is never less strict than the old one.
+
+Checked against the real database and OpenSearch (`tests/evolvxsi_integration/test_source_access_enforced.py`, 37 integration checks pass in total):
+
+- Private source: a reading-group member finds its documents, others do not.
+- Removing the group from the source hides the documents at once when enforced, before any re-sync; the old filter still showed them, which is the window this closes.
+- Permission-synced source: visible only to someone who is both in a reading group and named on the document; being named alone, or in the group alone, is not enough.
+
+The rollout gate itself (flag plus backfill state) was stubbed in that test and covered by unit tests. The backfill task needs background workers, so it has not run in this sandbox.
+

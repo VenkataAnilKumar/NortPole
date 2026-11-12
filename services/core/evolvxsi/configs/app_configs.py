@@ -2033,12 +2033,17 @@ ENABLE_TENANT_WORK_GATING = (
     os.environ.get("ENABLE_TENANT_WORK_GATING", "").lower() == "true"
 )
 
-# Master switch for query-time cc-pair access filtering. Controls the `enabled`
-# axis only: True puts the filter in shadow mode (search keeps the old ACL
-# filter and logs where the cc-pair filter disagrees). The `enforce` axis is
-# cache-only (Redis, or the Postgres cache) with a hard-coded default of False.
+# Query-time cc-pair (source) access filtering. EvolvXSI turns it on and
+# enforces it by default: which sources a person may read is then computed from
+# the database on every search, so group changes apply at once. Enforcement
+# only takes effect once every chunk carries its source ids (the backfill);
+# until then search stays on the document access list, as before. Set either
+# variable to "false" to turn it off; a cache override still wins.
 ENABLE_CC_PAIR_ACCESS_FILTER = (
-    os.environ.get("ENABLE_CC_PAIR_ACCESS_FILTER", "").lower() == "true"
+    os.environ.get("ENABLE_CC_PAIR_ACCESS_FILTER", "true").lower() != "false"
+)
+ENFORCE_CC_PAIR_ACCESS_FILTER = (
+    os.environ.get("ENFORCE_CC_PAIR_ACCESS_FILTER", "true").lower() != "false"
 )
 
 # Turns on behavior that needs the connector checks UI (today: the first index
