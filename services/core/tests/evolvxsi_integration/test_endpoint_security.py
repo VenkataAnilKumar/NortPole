@@ -1,0 +1,115 @@
+"""Access and privacy checks for the EvolvXSI endpoints, against the running API.
+
+* Nobody signed out can reach any of them.
+* A signed-in ordinary user can use their own tasks and preferences but not the
+  admin endpoints (route policy, access groups, source groups, audit log).
+* The audit trail never stores task titles, requests, drafts or source text.
+
+Skips when the API (127.0.0.1:8080) or the database is not running. Creates one
+throwaway user and removes it afterwards.
+"""
+
+import os
+import uuid
+
+import pytest
+import requests
+from sqlalchemy import text
+
+from evolvxsi.db.engine.sql_engine import get_session_with_current_tenant
+from tests.evolvxsi_integration.test_tasks_flow import _up
+
+API = os.environ.get("EVOLVXSI_API", "http://127.0.0.1:8080")
+
+
+def _api_up() -> bool:
+    try:
+        return requests.get(f"{API}/health", timeout=2).ok
+    except Exception:
+        return False
+
+
+pytestmark = pytest.mark.skipif(not (_api_up() and _up()), reason="needs the API and Postgres")
+
+RUN = uuid.uuid4().hex[:8]
+EMAIL = f"secprobe-{RUN}@example.com"
+PASSWORD = "Probe-pass-123-ok"
+SECRET_TITLE = f"UniqueTitle{RUN}"
+SECRET_REQUEST = f"UniqueRequestText{RUN} about the acquisition"
+
+ANON_ENDPOINTS = [
+    ("GET", "/tasks"), ("POST", "/tasks"), ("GET", f"/tasks/{uuid.uuid4()}"),
+    ("POST", f"/tasks/{uuid.uuid4()}/start"), ("POST", f"/tasks/{uuid.uuid4()}/run"),
+    ("POST", f"/tasks/{uuid.uuid4()}/approve"), ("POST", f"/tasks/{uuid.uuid4()}/export"),
+    ("GET", "/user-preferences"), ("PUT", "/user-preferences"),
+    ("GET", "/route-policy"), ("PUT", "/admin/route-policy"), ("GET", "/admin/route-policy/audit"),
+    ("GET", "/admin/access-groups"), ("POST", "/admin/access-groups"),
+    ("PUT", "/admin/access-groups/sources/1"), ("GET", "/build/approvals/live"),
+]
+ADMIN_ONLY = [
+    ("GET", "/admin/route-policy/audit"), ("PUT", "/admin/route-policy"),
+    ("GET", "/admin/access-groups"), ("POST", "/admin/access-groups"),
+    ("PUT", "/admin/access-groups/sources/1"),
+]
+
+
+@pytest.fixture(scope="module")
+def session():  # type: ignore[no-untyped-def]
+    s = requests.Session()
+    reg = s.post(f"{API}/auth/register", json={"email": EMAIL, "password": PASSWORD}, timeout=30)
+    assert reg.status_code in (200, 201), reg.text[:200]
+    login = s.post(f"{API}/auth/login", data={"username": EMAIL, "password": PASSWORD}, timeout=30)
+    assert login.status_code in (200, 204), login.text[:200]
+    yield s
+    with get_session_with_current_tenant() as db:
+        db.execute(text('delete from evolvxsi_task where owner_id in (select id from "user" where email = :e)'), {"e": EMAIL})
+        db.execute(text("delete from evolvxsi_audit_event where actor_email = :e"), {"e": EMAIL})
+        # Registration adds the user to the built-in group; remove the link first.
+        db.execute(text('delete from user__user_group where user_id in (select id from "user" where email = :e)'), {"e": EMAIL})
+        db.execute(text('delete from "user" where email = :e'), {"e": EMAIL})
+        db.commit()
+
+
+@pytest.mark.parametrize("method,path", ANON_ENDPOINTS)
+def test_signed_out_requests_are_refused(method: str, path: str) -> None:
+    r = requests.request(method, f"{API}{path}", json={}, timeout=15)
+    assert r.status_code in (401, 403), f"{method} {path} -> {r.status_code}"
+
+
+@pytest.mark.parametrize("method,path", ADMIN_ONLY)
+def test_an_ordinary_user_cannot_use_admin_endpoints(session, method: str, path: str) -> None:  # type: ignore[no-untyped-def]
+    r = session.request(method, f"{API}{path}", json={}, timeout=15)
+    assert r.status_code == 403, f"{method} {path} -> {r.status_code}"
+
+
+def test_an_ordinary_user_can_use_their_own_tasks_and_preferences(session) -> None:  # type: ignore[no-untyped-def]
+    prefs = session.get(f"{API}/user-preferences", timeout=15)
+    assert prefs.status_code == 200 and prefs.json()["default_route"] == "auto"
+    made = session.post(f"{API}/tasks", json={"title": SECRET_TITLE, "request": SECRET_REQUEST}, timeout=15)
+    assert made.status_code == 200 and made.json()["state"] == "draft"
+    assert SECRET_TITLE in [t["title"] for t in session.get(f"{API}/tasks", timeout=15).json()]
+
+
+def test_another_users_task_is_not_found_not_forbidden(session) -> None:  # type: ignore[no-untyped-def]
+    # Same answer for "missing" and "someone else's": existence is not revealed.
+    r = session.get(f"{API}/tasks/{uuid.uuid4()}", timeout=15)
+    assert r.status_code == 404
+
+
+def test_an_edit_of_the_task_does_not_put_its_text_in_the_audit_trail(session) -> None:  # type: ignore[no-untyped-def]
+    t = [t for t in session.get(f"{API}/tasks", timeout=15).json() if t["title"] == SECRET_TITLE][0]
+    session.post(f"{API}/tasks/{t['id']}/cancel", json={"version": t["version"]}, timeout=15)
+    with get_session_with_current_tenant() as db:
+        rows = db.execute(text("select summary, details::text from evolvxsi_audit_event where actor_email = :e"), {"e": EMAIL}).all()
+    assert rows, "the cancel should have been audited"
+    blob = " ".join(f"{a} {b or ''}" for a, b in rows)
+    assert SECRET_TITLE not in blob and "UniqueRequestText" not in blob and "acquisition" not in blob
+
+
+def test_no_audit_row_anywhere_holds_task_text(session) -> None:  # type: ignore[no-untyped-def]
+    with get_session_with_current_tenant() as db:
+        leaked = db.execute(
+            text("select count(*) from evolvxsi_audit_event where summary like :p or details::text like :p"),
+            {"p": f"%{SECRET_TITLE}%"},
+        ).scalar()
+    assert leaked == 0

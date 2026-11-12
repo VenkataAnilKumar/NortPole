@@ -21,6 +21,7 @@ PLAN_SYSTEM_PROMPT = (
     "each starting with its number and a full stop. No other text."
 )
 MAX_STEPS = 8
+MAX_STEP_CHARS = 300
 _STEP = re.compile(r"^\s*(\d{1,2})[.)]\s+(.+?)\s*$")
 
 
@@ -35,7 +36,7 @@ class PlanError(Exception):
 
 
 def parse_plan(text: str) -> list[str]:
-    steps = [m.group(2) for line in text.splitlines() if (m := _STEP.match(line))]
+    steps = [m.group(2)[:MAX_STEP_CHARS] for line in text.splitlines() if (m := _STEP.match(line))]
     return steps[:MAX_STEPS]
 
 
