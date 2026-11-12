@@ -49,6 +49,12 @@ def owner():  # type: ignore[no-untyped-def]
 
 
 @pytest.fixture(autouse=True)
+def _no_relevance_judge(monkeypatch):  # type: ignore[no-untyped-def]
+    """These tests supply their own evidence; the model-based relevance check has its own tests."""
+    monkeypatch.setenv("EVOLVXSI_RELEVANCE_CHECK", "false")
+
+
+@pytest.fixture(autouse=True)
 def _sources_are_open():  # type: ignore[no-untyped-def]
     """These tests are about running and drafting. Their made-up document ids
     are not in the database, so the owner-access recheck is stubbed to open;

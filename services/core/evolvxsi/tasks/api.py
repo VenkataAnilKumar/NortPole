@@ -36,6 +36,7 @@ from evolvxsi.tasks.claims import (
 )
 from evolvxsi.tasks.export import draft_fingerprint, recheck_cited_sources, to_markdown
 from evolvxsi.tasks.planner import PlanError, draft_plan
+from evolvxsi.tasks.relevance import filter_relevant
 from evolvxsi.tasks.untrusted import looks_like_instructions, neutralize_passage
 from evolvxsi.tasks.states import EDITABLE, InvalidTransition, TaskAction, TaskState, next_state
 from evolvxsi.utils.audit import AuditAction, AuditOutcome
@@ -341,7 +342,8 @@ def run_task(
     task = _move(db_session, task_id, user, body.version, TaskAction.RUN, run_error=None)
     _audit(user, AuditAction.TASK_RUN, task, "Started a task run")
     try:
-        evidence = gather_evidence(db_session, user, f"{task.title}\n{task.request}")
+        question = f"{task.title}\n{task.request}"
+        evidence = filter_relevant(db_session, user, task.request, gather_evidence(db_session, user, question))
         result = draft_answer(db_session, user, task.title, task.request, task.plan or [], evidence)
     except EvolvXSIError as e:
         return _view(_move(db_session, task_id, user, task.version, TaskAction.RUN_FAILED, run_error=e.detail))

@@ -141,3 +141,20 @@ Checked on the real database (42 integration checks pass, 5 new): the edit reads
 
 Limits: the corpus is small, short and easy, so this shows the pipeline works and that meaning-based search helps, not production-level quality; passages are one chunk each, with no long documents, noisy text or near-duplicates. The task evidence step still uses keyword search only; it does not yet embed the question. The test skips unless OpenSearch and Ollama are running.
 
+## Progress (2026-11-12): feeding the model only passages that answer the question
+
+End-to-end with real retrieval (nomic-embed-text, OpenSearch) and a real model, three questions on the synthetic corpus showed a gap that search scores cannot close: passages that answer the question score 0.79 to 0.92 and topically close passages that do not score up to 0.84, so no cutoff separates them. A staff member asking about the restricted board memo (which they cannot see) got the two nearest unrelated policies, and the 1.5B model confidently answered "the takeover price limit is 5,000 euros".
+
+Added a relevance check (`services/core/evolvxsi/tasks/relevance.py`, on by default, `EVOLVXSI_RELEVANCE_CHECK=false` turns it off): each candidate passage is judged yes or no by the default model through the route policy, and only "yes" passages reach drafting. A judge that fails, or says anything but yes, drops the passage. With nothing left, the run states that no source covers the request, without asking the model to draft.
+
+Measured on 24 questions with their top 3 retrieved passages (72 pairs, `/tmp`-style script, not yet a repo test because it needs a downloaded 7B model):
+
+| Judge | Accuracy | Wrong passages let through | Relevant passages kept | Unanswerable question |
+| --- | --- | --- | --- | --- |
+| qwen2.5 1.5B | 0.81 | 12 of 48 | 22 of 24 | kept an unrelated procurement policy |
+| qwen2.5 7B | 0.94 | 0 of 48 | 20 of 24 | kept nothing |
+
+End to end with the 7B model: the receipts question kept one of three retrieved passages and produced a cited answer; the board question for a staff viewer kept none and produced the no-source notice; for a board viewer it kept the memo and answered correctly (40 million) with its citation.
+
+Costs and limits: one extra model call per candidate passage (about 15 seconds on first load of a 7B model on this CPU, then faster); the 7B judge is cautious and dropped 4 of 24 relevant passages, so it trades some recall for no wrong evidence; a small corpus of short invented passages; the task evidence step itself still uses keyword search, not the embedding, so this check was run on semantic retrieval outside the task flow. A passage that tells the judge to say yes can keep itself in, which retrieval had already done. Unit tests cover verdict parsing, renumbering, a failing judge, the off switch and a blocked route (48 task unit tests, 99 integration checks pass).
+
