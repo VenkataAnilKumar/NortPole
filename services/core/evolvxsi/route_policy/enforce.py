@@ -68,3 +68,15 @@ def enforce_route(
             decision.reason or "This model route is not allowed for this data class.",
         )
     return decision
+
+
+def default_route_kind(db_session: Session) -> str | None:
+    """The route kind (local, private or cloud) of the default chat model, or
+    None when there is no default model."""
+    from evolvxsi.db.enums import LLMModelFlowType
+    from evolvxsi.db.llm import fetch_default_model
+
+    model = fetch_default_model(db_session, LLMModelFlowType.CHAT)
+    if model is None:
+        return None
+    return check_route(db_session, model.id).kind

@@ -103,6 +103,9 @@ class AuditAction(str, Enum):
     ACTION_APPROVE = "action.approve"
     ACTION_EXECUTE = "action.execute"
     ACTION_TARGET_CHANGE = "action.target_change"
+    PACK_SIGNER_CHANGE = "pack.signer_change"
+    PACK_INSTALL = "pack.install"
+    PACK_ACTIVATE = "pack.activate"
     CONTEXTUAL_RAG_MODEL_UPDATE = "search_settings.contextual_rag_model_update"
     CC_PAIR_ACCESS_MODE_CHANGE = "search_settings.cc_pair_access_mode_change"
     LLM_PROVIDER_CREATE = "llm_provider.create"
@@ -165,6 +168,9 @@ _OCSF_CLASS_BY_ACTION: dict[AuditAction, OCSFEventClass] = {
     AuditAction.ACTION_APPROVE: OCSFEventClass.API_ACTIVITY,
     AuditAction.ACTION_EXECUTE: OCSFEventClass.API_ACTIVITY,
     AuditAction.ACTION_TARGET_CHANGE: OCSFEventClass.API_ACTIVITY,
+    AuditAction.PACK_SIGNER_CHANGE: OCSFEventClass.API_ACTIVITY,
+    AuditAction.PACK_INSTALL: OCSFEventClass.API_ACTIVITY,
+    AuditAction.PACK_ACTIVATE: OCSFEventClass.API_ACTIVITY,
     AuditAction.CONTEXTUAL_RAG_MODEL_UPDATE: OCSFEventClass.API_ACTIVITY,
     AuditAction.CC_PAIR_ACCESS_MODE_CHANGE: OCSFEventClass.API_ACTIVITY,
     AuditAction.LLM_PROVIDER_CREATE: OCSFEventClass.API_ACTIVITY,

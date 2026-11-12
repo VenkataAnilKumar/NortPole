@@ -79,6 +79,9 @@ class TaskView(BaseModel):
     # claims, sources and versions are then not returned until it is redrafted.
     withheld: bool = False
     withheld_message: str | None = None
+    pack_id: str | None = None
+    pack_version: str | None = None
+    pack_template: str | None = None
 
 
 class TaskDraft(BaseModel):
@@ -269,6 +272,35 @@ def edit_draft(
     return _view(_own(db_session, task_id, user))
 
 
+def _enforce_pack_requirements(db: Session, task: EvolvXSITask, user: User) -> None:
+    """A task started from a pack runs only where that exact pack version says it
+    may: the workspace's data class and the model route in use must both be
+    listed. A pack from a signer revoked since is refused."""
+    if not task.pack_id:
+        return
+    from evolvxsi.packs.models import EvolvXSIPackSigner, EvolvXSIPackVersion
+    from evolvxsi.route_policy.enforce import default_route_kind
+    from evolvxsi.route_policy.policy import load_policy
+
+    v = db.scalar(select(EvolvXSIPackVersion).where(
+        EvolvXSIPackVersion.pack_id == task.pack_id, EvolvXSIPackVersion.version == task.pack_version))
+    signer = db.get(EvolvXSIPackSigner, v.signer_key_id) if v else None
+    if v is None or signer is None or signer.revoked:
+        raise EvolvXSIError(EvolvXSIErrorCode.CONFLICT, "The pack this task started from is no longer trusted, so it cannot run.")
+    req = v.manifest["requires"]
+    data_class = load_policy().default_data_class
+    kind = default_route_kind(db)
+    problem = None
+    if data_class not in req["data_classes"]:
+        problem = f"this workspace's data class ({data_class}) is not one the pack supports"
+    elif kind is None or kind not in req["route_kinds"]:
+        problem = f"the model route in use ({kind or 'none'}) is not one the pack supports ({', '.join(req['route_kinds'])})"
+    if problem:
+        record_audit(AuditAction.ROUTE_BLOCKED, AuditOutcome.DENIED, actor=user,
+                     summary=f"Pack {task.pack_id} {task.pack_version} cannot run: {problem}", resource_type="task", resource_id=str(task.id))
+        raise EvolvXSIError(EvolvXSIErrorCode.POLICY_BLOCKED, f"This pack cannot run here: {problem}.")
+
+
 @router.post("/{task_id}/start")
 def start_task(
     task_id: UUID,
@@ -278,6 +310,7 @@ def start_task(
 ) -> TaskView:
     """The explicit start. Moves the draft to planning atomically (a duplicate
     start is refused), then drafts a plan through the route policy."""
+    _enforce_pack_requirements(db_session, _own(db_session, task_id, user), user)
     task = _move(db_session, task_id, user, body.version, TaskAction.START,
                  started_at=func.now(), plan=None, plan_error=None, plan_route=None)
     _audit(user, AuditAction.TASK_START, task, "Started a task")
@@ -339,6 +372,7 @@ def run_task(
     """Run an accepted plan (or retry a failed run): gather evidence as the
     owner, then draft a cited answer through the route policy. The move to
     running is atomic, so the same run cannot start twice."""
+    _enforce_pack_requirements(db_session, _own(db_session, task_id, user), user)
     task = _move(db_session, task_id, user, body.version, TaskAction.RUN, run_error=None)
     _audit(user, AuditAction.TASK_RUN, task, "Started a task run")
     try:

@@ -37,6 +37,11 @@ class EvolvXSITask(Base):
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
     )
     started_at: Mapped[datetime.datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    # The pack version this task was started from, kept so later upgrades
+    # or rollbacks never change what a past run was.
+    pack_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    pack_version: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    pack_template: Mapped[str | None] = mapped_column(String(64), nullable=True)
     # The latest run's draft. Sources are the passages the owner could see
     # when the run gathered them: [{"n", "doc_id", "title", "link"}].
     draft_text: Mapped[str | None] = mapped_column(Text, nullable=True)
