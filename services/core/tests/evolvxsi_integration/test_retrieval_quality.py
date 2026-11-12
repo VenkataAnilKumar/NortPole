@@ -129,3 +129,28 @@ def test_the_board_can_find_it_with_the_right_access(index) -> None:  # type: ig
     v = _embed([q["q"]], "search_query")[0]
     ids = [c.document_id for c in index.semantic_retrieval(query_embedding=v, filters=_filters(BOARD), num_to_retrieve=3)]
     assert "board-acquisition" in ids
+
+
+def test_the_task_evidence_step_uses_meaning_based_search_and_access(index) -> None:  # type: ignore[no-untyped-def]
+    """`gather_evidence` end to end: the question is embedded with the configured
+    model (here Ollama), a reworded question finds the right document that
+    keyword matching would miss, and a restricted document stays hidden."""
+    from unittest.mock import MagicMock, patch
+
+    from evolvxsi.tasks import evidence
+
+    def run(viewer: Viewer, question: str) -> list[str]:
+        user = MagicMock()
+        with patch.object(evidence, "DISABLE_VECTOR_DB", False), \
+             patch("evolvxsi.db.search_settings.get_active_search_settings", return_value=MagicMock(primary=None, secondary=None)), \
+             patch("evolvxsi.document_index.factory.get_default_document_index", return_value=index), \
+             patch("evolvxsi.tasks.evidence.build_access_filters_for_user",
+                   return_value=MagicMock(access_control_list=sorted(viewer_acl(viewer)), cc_pair_access=None)), \
+             patch("evolvxsi.context.search.utils.get_query_embedding", side_effect=lambda q, db=None: _embed([q], "search_query")[0]):
+            return [e.doc_id for e in evidence.gather_evidence(MagicMock(), user, question)]
+
+    reworded = "Can a guest walk around the building alone?"
+    assert "visitor-policy" in run(STAFF, reworded)
+    board_q = "What is the price limit the board set for the takeover?"
+    assert "board-acquisition" not in run(STAFF, board_q)
+    assert "board-acquisition" in run(BOARD, board_q)

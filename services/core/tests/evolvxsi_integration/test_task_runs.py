@@ -133,7 +133,10 @@ def test_evidence_is_gathered_with_the_owners_own_access(owner) -> None:  # type
         idx.index([doc(mine, f"runner-{RUN}@example.com"), doc(theirs, f"neighbour-{RUN}@example.com")],
                   IndexingMetadata(doc_id_to_chunk_cnt_diff={d: IndexingMetadata.ChunkCounts(old_chunk_cnt=0, new_chunk_cnt=1) for d in (mine, theirs)}))
         requests.post(f"http://{host}:9200/{name}/_refresh", timeout=10)
+        # Keyword retrieval only here: the query embedding is unavailable, so the
+        # step falls back to keyword search (the embedding path has its own test).
         with get_session_with_current_tenant() as s, \
+             patch("evolvxsi.context.search.utils.get_query_embedding", side_effect=RuntimeError("no embedding model")), \
              patch.object(evidence, "DISABLE_VECTOR_DB", False), \
              patch("evolvxsi.db.search_settings.get_active_search_settings", return_value=type("A", (), {"primary": None, "secondary": None})()), \
              patch("evolvxsi.document_index.factory.get_default_document_index", return_value=idx), \
