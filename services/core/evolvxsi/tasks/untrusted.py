@@ -40,14 +40,35 @@ def neutralize_title(text: str) -> str:
 _INSTRUCTION_LIKE = re.compile(
     r"(ignore|disregard|forget|override)\s+(all\s+|any\s+|the\s+)?(previous|prior|above|earlier|your)\s+(instructions?|rules?|prompts?)"
     r"|you\s+are\s+now\b"
-    r"|\b(reveal|print|show|repeat)\s+(your\s+)?(system\s+)?(prompt|instructions)"
+    r"|\b(reveal|print|show|repeat|quote)\s+(your\s+|the\s+)?(full\s+|complete\s+)?(system\s+)?(prompt|instructions)"
+    r"|\binstructions\s+you\s+were\s+given"
     r"|\bsystem\s*:"
-    r"|do\s+not\s+follow\s+(the\s+)?(above|previous|earlier)",
-    re.IGNORECASE,
+    r"|do\s+not\s+follow\s+(the\s+)?(above|previous|earlier)"
+    # text addressed to the model rather than to a reader
+    r"|\b(note|message|instructions?)\s+(for|to)\s+(the\s+)?(ai|assistant|model|llm|chatbot)\b"
+    r"|\bdisregard\s+(the\s+)?(user'?s?\s+)?(question|request)"
+    r"|\b(reply|respond|answer|output)\s+(only|exactly)\b"
+    r"|\bnothing\s+else\b.{0,20}$"
+    r"|\b(end|finish|start|begin)\s+(every|each|your)\s+(answer|reply|response)\b"
+    r"|\b(append|add|include|insert|put)\b.{0,60}\b(to|at\s+the\s+end\s+of|in)\s+(your|the)\s+(answer|reply|response|draft)\b"
+    r"|\bwhen\s+you\s+(answer|respond|reply|write)\b"
+    r"|\b(email|send|forward|post)\b.{0,50}\b(draft|answer|summary|conversation)\b.{0,30}\bto\s+\S+@"
+    r"|<\s*img\b|!\[[^\]]*\]\(\s*https?://"
+    r"|\bdecode\b.{0,40}\b(and|then)\s+(do|follow|execute|run)\b",
+    re.IGNORECASE | re.DOTALL,
 )
+_HIDDEN = re.compile("[\u200b-\u200f\u2060\ufeff]")
+_SPACED = re.compile(r"\b(?:[A-Za-z]\s){3,}[A-Za-z]\b")
+
+
+def _normalised(text: str) -> str:
+    """Undo two cheap disguises before matching: invisible characters between letters and letters
+    spaced apart (I G N O R E)."""
+    text = _HIDDEN.sub("", text)
+    return _SPACED.sub(lambda m: re.sub(r"\s", "", m.group(0)), text)
 
 
 def looks_like_instructions(text: str) -> bool:
     """A cheap signal, not a defence: text in a source that reads like an
     instruction to a model. The reviewer is told; the source is not dropped."""
-    return bool(_INSTRUCTION_LIKE.search(text))
+    return bool(_INSTRUCTION_LIKE.search(_normalised(text)))
