@@ -4,11 +4,10 @@
 FROM node:22-slim AS build
 RUN npm install -g bun@1.4.4
 WORKDIR /app
-COPY package.json bun.lock ./
-# The workspace packages build themselves while installing, so their sources come first.
-COPY lib ./lib
-RUN bun install --frozen-lockfile
+# The workspace packages build themselves while installing and read the root tsconfig,
+# so the whole source tree comes before the install.
 COPY . .
+RUN bun install --frozen-lockfile
 RUN cd lib/shared && bun run build && cd ../opal && bun run build
 ARG INTERNAL_URL=http://api:8080
 ENV INTERNAL_URL=$INTERNAL_URL NEXT_TELEMETRY_DISABLED=1
