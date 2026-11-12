@@ -28,6 +28,16 @@ class RoutePolicy(BaseModel):
     allowed: dict[str, list[str]] = Field(default_factory=default_allowed)
     # provider id (as a string) -> route kind
     route_kinds: dict[str, str] = Field(default_factory=dict)
+    # Route kinds whose requests have listed sensitive patterns replaced before sending.
+    redact_route_kinds: list[str] = Field(default_factory=lambda: ["cloud"])
+
+    @field_validator("redact_route_kinds")
+    @classmethod
+    def _check_redact(cls, v: list[str]) -> list[str]:
+        for k in v:
+            if k not in ROUTE_KINDS:
+                raise ValueError(f"unknown route kind: {k}")
+        return list(dict.fromkeys(v))
 
     @field_validator("default_data_class")
     @classmethod

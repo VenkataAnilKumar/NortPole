@@ -1,0 +1,273 @@
+{
+ "note": "Synthetic labelled set. Positives carry the kinds that must be found; negatives must stay untouched.",
+ "cases": [
+  {
+   "text": "Contact me at anna.smith@example.com about the invoice.",
+   "expect": [
+    "EMAIL"
+   ]
+  },
+  {
+   "text": "Send to ops+billing@sub.corp.co.uk please",
+   "expect": [
+    "EMAIL"
+   ]
+  },
+  {
+   "text": "Reach her on +1 415 555 0132 after 5pm",
+   "expect": [
+    "PHONE"
+   ]
+  },
+  {
+   "text": "Office line (415) 555-0132, mobile 415.555.0199",
+   "expect": [
+    "PHONE"
+   ]
+  },
+  {
+   "text": "Call +44 20 7946 0958 tomorrow",
+   "expect": [
+    "PHONE"
+   ]
+  },
+  {
+   "text": "Telefon: +49 30 901820",
+   "expect": [
+    "PHONE"
+   ]
+  },
+  {
+   "text": "Card 4111 1111 1111 1111 expires 12/29",
+   "expect": [
+    "CARD"
+   ]
+  },
+  {
+   "text": "Paid with 5500-0000-0000-0004 yesterday",
+   "expect": [
+    "CARD"
+   ]
+  },
+  {
+   "text": "Amex 378282246310005 on file",
+   "expect": [
+    "CARD"
+   ]
+  },
+  {
+   "text": "SSN is 123-45-6789 for the applicant",
+   "expect": [
+    "SSN"
+   ]
+  },
+  {
+   "text": "Tax id 219-09-9999 provided",
+   "expect": [
+    "SSN"
+   ]
+  },
+  {
+   "text": "IBAN GB82 WEST 1234 5698 7654 32 for the transfer",
+   "expect": [
+    "IBAN"
+   ]
+  },
+  {
+   "text": "Pay DE89370400440532013000 by Friday",
+   "expect": [
+    "IBAN"
+   ]
+  },
+  {
+   "text": "key sk-abcdefghijklmnop12345678 leaked",
+   "expect": [
+    "SECRET"
+   ]
+  },
+  {
+   "text": "AWS id AKIAIOSFODNN7EXAMPLE in the log",
+   "expect": [
+    "SECRET"
+   ]
+  },
+  {
+   "text": "token ghp_abcdefghijklmnopqrstuvwxyz0123456789 pasted",
+   "expect": [
+    "SECRET"
+   ]
+  },
+  {
+   "text": "Authorization: Bearer abcdefghijklmnopqrstuvwxyz123456",
+   "expect": [
+    "SECRET"
+   ]
+  },
+  {
+   "text": "jwt eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.abcdefghijk used",
+   "expect": [
+    "SECRET"
+   ]
+  },
+  {
+   "text": "slack xoxb-123456789012-abcdefghijkl",
+   "expect": [
+    "SECRET"
+   ]
+  },
+  {
+   "text": "-----BEGIN RSA PRIVATE KEY-----\nMIIEowIBAAKCAQEA\n-----END RSA PRIVATE KEY-----",
+   "expect": [
+    "PRIVATE_KEY"
+   ]
+  },
+  {
+   "text": "Email bob@x.org and phone +1 212 555 0100",
+   "expect": [
+    "EMAIL",
+    "PHONE"
+   ]
+  },
+  {
+   "text": "Card 4111 1111 1111 1111, ssn 123-45-6789",
+   "expect": [
+    "CARD",
+    "SSN"
+   ]
+  },
+  {
+   "text": "From: legal@firm.com; key sk-live_abcdefghijklmnop99",
+   "expect": [
+    "EMAIL",
+    "SECRET"
+   ]
+  },
+  {
+   "text": "Patient mail: p.jones@clinic.org, iban FR1420041010050500013M02606",
+   "expect": [
+    "EMAIL",
+    "IBAN"
+   ]
+  },
+  {
+   "text": "Receipts are due within 30 days of the end of the trip.",
+   "expect": []
+  },
+  {
+   "text": "The meeting is on 2024-11-12 at 14:30.",
+   "expect": []
+  },
+  {
+   "text": "Total: 1,250.00 EUR for 3 nights.",
+   "expect": []
+  },
+  {
+   "text": "Order number 1234567890123456 was shipped.",
+   "expect": []
+  },
+  {
+   "text": "Version 3.12.4 released with build 20241112.",
+   "expect": []
+  },
+  {
+   "text": "The ISBN is 978-3-16-148410-0.",
+   "expect": []
+  },
+  {
+   "text": "Server at 192.168.10.25 on port 8080.",
+   "expect": []
+  },
+  {
+   "text": "Commit 9f86d081884c7d659a2feaa0c55ad015a3bf4f1b fixed it.",
+   "expect": []
+  },
+  {
+   "text": "UUID 550e8400-e29b-41d4-a716-446655440000 is the id.",
+   "expect": []
+  },
+  {
+   "text": "Claims over 5,000 need director sign-off.",
+   "expect": []
+  },
+  {
+   "text": "Call the helpdesk on extension 4421.",
+   "expect": []
+  },
+  {
+   "text": "Room 1204, floor 12, building 7.",
+   "expect": []
+  },
+  {
+   "text": "Pages 100-250 of the manual cover this.",
+   "expect": []
+  },
+  {
+   "text": "Invoice INV-2024-000123 dated 12/11/2024.",
+   "expect": []
+  },
+  {
+   "text": "Budget FY2025: 1,000,000 across 4 teams.",
+   "expect": []
+  },
+  {
+   "text": "Latitude 51.5074, longitude -0.1278.",
+   "expect": []
+  },
+  {
+   "text": "Use the @mention syntax in chat, for example @team.",
+   "expect": []
+  },
+  {
+   "text": "Write to the finance team (see the intranet page).",
+   "expect": []
+  },
+  {
+   "text": "The hotel cap is 180 per night in tier 1 cities.",
+   "expect": []
+  },
+  {
+   "text": "A 16 digit number like 1111 2222 3333 4444 is not a card.",
+   "expect": []
+  },
+  {
+   "text": "Phone numbers should be stored in E.164 format.",
+   "expect": []
+  },
+  {
+   "text": "The ratio was 123-45-678 in the sample.",
+   "expect": []
+  },
+  {
+   "text": "Bearer of the policy is the director.",
+   "expect": []
+  },
+  {
+   "text": "Key results: sk-8 was the style code.",
+   "expect": []
+  },
+  {
+   "text": "IBAN format is two letters then two digits.",
+   "expect": []
+  },
+  {
+   "text": "Timestamp 1699999999 and 1700000000 differ by one second.",
+   "expect": []
+  },
+  {
+   "text": "Section 4.2.1 and 4.2.2 apply to travel.",
+   "expect": []
+  },
+  {
+   "text": "Zip 94105-1234 is the delivery area.",
+   "expect": []
+  },
+  {
+   "text": "Meal allowance is 60 per day, 25 for breakfast.",
+   "expect": []
+  },
+  {
+   "text": "Contact: the travel desk during office hours.",
+   "expect": []
+  }
+ ]
+}

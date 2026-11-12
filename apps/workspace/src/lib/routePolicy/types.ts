@@ -20,6 +20,7 @@ export interface RoutePolicyView {
   data_classes: DataClass[];
   route_kinds: RouteKind[];
   allowed: Record<DataClass, RouteKind[]>;
+  redact_route_kinds?: RouteKind[];
   routes: RouteView[];
   auto_provider_id: number | null;
 }

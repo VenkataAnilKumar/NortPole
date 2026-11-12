@@ -11,7 +11,7 @@ Status: Plan, written 2026-11-12, before any of this is built. It rests on what 
 
 | # | Phase | Item | Size | Why this position |
 |---|---|---|---|---|
-| 1 | A9 | Sensitive-data redaction before model calls, traces and exports | M | The main trust claim of a governed product; no dependencies. |
+| 1 | A9 | Sensitive-data redaction before model calls and traces (built 2026-11-12; exports follow item 3) | M | The main trust claim of a governed product; no dependencies. |
 | 2 | A9 | Autonomy tiers per destination and pack | S | Small, builds on the action layer; gives A7 a control to inherit. |
 | 3 | A9 | Retention, audit pruning, legal hold, audit export | M | Needed for any pilot's records policy; periods are placeholders until **you** set them. |
 | 4 | A7 | Agent and tool inventory (admin, read-only) | S | Gives A7 and A9 one place to see what is active. |
