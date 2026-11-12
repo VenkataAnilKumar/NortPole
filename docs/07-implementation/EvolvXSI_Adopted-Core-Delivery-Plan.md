@@ -8,18 +8,20 @@ How to read it: **Done** means verified in a sandbox on 2026-11-10 (not producti
 
 ## Phase summary
 
+Status as of 2026-11-12, from what is built and tested in the sandbox only (see `docs/REVIEW.md`).
+
 | Phase | Name | Status | Size | Old plan |
 | --- | --- | --- | --- | --- |
 | A0 | Direction, documents and designs | Done | M | P00 (partly) |
 | A1 | Adopt and rebrand the core | Done | L | New |
 | A2 | Run, verify and restyle | Done | L | P01–P02 (partly) |
 | A3 | Hybrid routing and governance first slice | Done | M | P03, P08 (slice) |
-| A4 | Product shell and navigation | Next | M | P06 (UI) |
-| A5 | Knowledge, evidence and permissions | Planned | XL | P04 |
-| A6 | Reviewed task workflow and approvals | Planned | XL | P03, P06 |
-| A7 | Agents, skills, packs and extension levels | Planned | L | P05, P07 |
-| A8 | Real model routes, evaluation and spend | Planned; needs model access | L | P02 live, P08 |
-| A9 | Security and trust hardening | Planned | L | P03, P10 |
+| A4 | Product shell and navigation | Mostly done (composer chips, My Files, Apps page, other locales open) | M | P06 (UI) |
+| A5 | Knowledge, evidence and permissions | Built for one path (no real connector; synthetic corpus) | XL | P04 |
+| A6 | Reviewed task workflow and approvals | Built (web and email destinations; Craft set aside) | XL | P03, P06 |
+| A7 | Agents, skills, packs and extension levels | Partly built (signed packs and evaluation gating; no pack agents, skills or connectors) | L | P05, P07 |
+| A8 | Real model routes, evaluation and spend | Started (local 7B and embeddings; no cloud model or spend tracking); needs model access | L | P02 live, P08 |
+| A9 | Security and trust hardening | Partly built (address safety, endpoint checks, audit log) | L | P03, P10 |
 | A10 | Deployment, operations and upstream upkeep | Planned | L | P10 |
 | A11 | Pilot with one vertical | Planned; needs customer | XL | P09 |
 | A12 | Expansion | Later | XL | P11 |
