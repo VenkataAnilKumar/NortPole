@@ -1,0 +1,61 @@
+# EvolvXSI — threat model and security scan
+
+Status: first version, 2026-11-12. **Written by the developer of the product (an AI assistant working with the owner), from what is built and checked in a sandbox. It is not an independent review, a penetration test or legal advice.** Each "control" below points to a check recorded in [REVIEW.md](../REVIEW.md); where no check exists the row says so.
+
+## 1. What is being protected
+
+| Asset | Why it matters |
+| --- | --- |
+| Documents a person may read, and the access rules around them | The product's central promise is that a draft only uses what its owner could open. |
+| Drafts, approvals and what was sent | An approved draft can leave the workspace (web or email destination). |
+| Credentials: model-provider keys, mail settings, signing keys, session secret | Theft lets an attacker use models, send mail, or sign packs. |
+| The audit log and usage counters | The evidence of who did what. |
+| Model routes and the data-class rules | They decide which data may reach a cloud model. |
+
+## 2. Who might attack, and from where
+
+An outsider reaching the web address; a signed-in person trying to read or send more than they may; a hostile **document** (a source or an uploaded file) that carries instructions for the model; a pack or plugin author; an administrator who is careless or compromised; a compromised dependency or image; the upstream project's servers (the product started from their code).
+
+Trust boundaries: browser to proxy; proxy to web and API; API to database, cache and search index; API to model routes (local, private, cloud); API to send destinations; package signer to installer; the host to the internet.
+
+## 3. Threats, controls and what is left
+
+| # | Threat | Controls built (check) | Left open |
+| --- | --- | --- | --- |
+| T1 | A source tries to steer the model (override, leak, link, forged citation) | Source text neutralised and quoted as data; no tools on planning and drafting; citations kept only for sources the run had; a reviewer warning flag; owner approves the exact draft (injection suite and unit tests) | **The 7B obeyed in 31% of runs on 25 hostile passages.** The model can still print text, add a link, repeat a false claim. The reviewer is the control. Only one small model measured. |
+| T2 | Confidential data reaches a cloud model | Route kinds and data-class rules; unassigned route treated as cloud; refusal before any content is sent; redaction of listed patterns per route; audit of refusals (route and redaction tests) | Redaction catches listed patterns only (no names, addresses, free-text secrets); the data class is workspace-wide, not per document. |
+| T3 | Someone reads a document they should not | Group-aware access lists; private-source rule; fail closed where unsure; access re-checked at send and when a draft is read (access tests on a real index) | Only synthetic data and one source type; no real connector with per-document sharing. |
+| T4 | A draft changes after approval, or is sent to the wrong place | Approval names the draft's fingerprint; action fingerprint covers destination and payload; expiry and single use; tiers re-read at each step; send-time re-check (action tests) | Approval is by the same person who drafted; no second approver. |
+| T5 | A destination used to reach internal systems (SSRF) | Address checked once and the connection pinned to it; link-local, metadata and reserved ranges refused; no redirects; certificates verified; recipients fixed by the administrator (delivery tests incl. a live TLS check) | The private-network range is allowed for the web destination (needed for local testing); an administrator can register an internal address. |
+| T6 | A malicious or tampered pack | Signed packs, strict manifest, trusted-signer list, revocation, per-model evaluation, declarative-only rules, autonomy tiers (pack tests, runbook) | Signing keys are held by whoever signs; no hardware keys or expiry; no code in packs by design. |
+| T7 | The audit log is changed or lost | Written for refusals, changes, sends and exports; privacy checks that it holds no draft text; retention with a floor and a legal hold; export is itself audited | **Not tamper-evident:** a database administrator can edit or delete rows; no hash chain, no off-box copy. |
+| T8 | A compromised or careless administrator | Admin-only endpoints checked for signed-out and ordinary users; admin changes audited | One administrator can change policy, lift a hold, register destinations and place signers. No two-person rule, no admin MFA (single sign-on not built). |
+| T9 | Secrets leak | Compose refuses to start without the session secret and database password; keys not in the repository; extension and MCP calls checked against an allowlist | Provider keys and mail credentials live in the database or environment, not a secrets manager; no rotation procedure for them. |
+| T10 | The product calls the upstream project's servers | **Found and fixed in this pass:** release notes, price tables and recommended-model lists were fetched from the upstream GitHub repository by default (and would have shown upstream's release notes to users); `EVOLVXSI_AIRGAPPED` now defaults on. Telemetry was already off by default | The web app can still reach analytics or error services if their keys are set; not exercised. |
+| T11 | A vulnerable dependency | Scanned in this pass (section 4); 12 of 13 Python findings and the one high JavaScript finding fixed | 1 Python and 5 JavaScript findings remain (build tools or unused code paths); no scan in CI. |
+| T12 | One customer sees another's data | Single workspace by design | **Not multi-tenant.** Hosting several customers in one deployment is out of scope until designed. |
+| T13 | Overload or abuse (denial of service) | Request-size limits in the proxy file; upstream rate limits unchanged | Not tested; no per-user quotas for model use; a malicious PDF could cost CPU (dependency fixed, unproven). |
+| T14 | Weak sign-in | Basic email and password with the upstream's rules; first account becomes administrator | No single sign-on, no MFA, no recovery procedure written; the first-account rule is a risk on an exposed fresh install. |
+| T15 | A compromised image or build | Images built from the lockfiles; no system packages in the API image; non-root user | Not signed; no software bill of materials; base images not pinned by digest; no scan of the built images. |
+| T16 | Personal data kept too long or in the wrong place | Retention periods and a legal hold exist | Periods are placeholders; stored drafts and source snippets are not redacted; no per-person deletion or export. |
+
+## 4. Dependency and licence scan, 2026-11-12
+
+Tools: `pip-audit` (PyPI advisories) on the 349 packages pinned by the lockfile's backend group; `bun audit` on the web lockfile; `pip-licenses` on the installed Python packages; `license-checker` on the web production tree. Advisory databases change daily; this is one snapshot.
+
+**Python, before:** 13 known vulnerabilities in 4 packages. **Fixed** by raising pins: `pyasn1` 0.6.4 to 0.6.5 (4 findings, certificate and ASN.1 decoding), `pypdf` 6.21.2 to 6.21.4 (7 findings, crafted PDFs causing heavy memory or CPU), `oauthlib` 4.0.0 to 4.0.1 (1 finding). After the change a PDF reads and the OAuth client builds a request; the unit tests that cover these libraries could not be run here because they need a database engine. **Left:** `urwid` 2.6.16 (CVE-2026-103022, fix needs version 4): it comes in through `mitmproxy`, which the sandbox-proxy feature (Craft, not running here) imports for HTTP only; the product does not import urwid and the flaw is in urwid's web display. Accepted for now.
+
+**Web, before:** 11 vulnerabilities (1 high, 6 moderate, 4 low). **Fixed** within version ranges: `source-map-js` (the high one; denial of service in a build tool), `fast-uri` and `qs`. **Left (5):** `glob`, `minimatch`, `postcss-selector-parser` (build and test tooling), `deepmerge`, `katex` (a low prototype-pollution issue in the maths renderer; a fix crosses a major version). A clean frozen install works with the new lockfile.
+
+**Licences, Python (347 packages):** no GPL-only, AGPL or source-available (SSPL, BUSL) licence found. LGPL libraries (`PyGithub`, `chardet`, `ldap3`, `psycopg2-binary`, `python-gitlab`, `urwid`) are used as installed libraries; dual-licensed packages (`docutils`, `text-unidecode`, `tld`) offer a permissive option. Five packages report no licence in their metadata (`agent-client-protocol`, `google-crc32c`, `mitmproxy_rs`, `mitmproxy_linux`, `voyageai`): **not verified** here; check them before any release. **Web (71 production packages):** MIT, Apache-2.0, BSD, ISC and MPL-2.0 or Apache-2.0 only. The development tree was not scanned. A lawyer should review this before distribution.
+
+## 5. Findings changed in this pass
+- Upstream fetches off by default (`EVOLVXSI_AIRGAPPED` now defaults on; set it to `false` to allow them).
+- Seven admin screen strings pointed to the upstream project's documentation or used its domain as an example; they now carry no upstream link (docs link removed, LiteLLM's own docs linked for the custom-provider help, example.com in placeholders). About 90 further references to the upstream project remain in code comments, tests, a skill, an MCP server note and file headers; none is shown to people or fetched at run time; the `cloud.onyx.app` address sits in an MCP client configuration template (`mcp_server/mcp.json.template`) that a person would copy, and still points to the upstream project's hosted service.
+- Dependency pins raised (section 4).
+
+## 6. Not assessed
+Penetration testing; the chat path and the upstream features this product inherits (the connectors, Craft, the Slack bot) beyond what is listed; mobile clients; physical and organisational controls; backup and recovery; the behaviour of any cloud model; a review by someone who did not write the code.
+
+## 7. Suggested next steps (not done)
+A tamper-evident audit log (hash chain plus an off-box copy); administrator MFA and single sign-on; a secrets manager; image signing and a bill of materials; a dependency scan in CI; a second approver for sends; an external review before any pilot with real data.

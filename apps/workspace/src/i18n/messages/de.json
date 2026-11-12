@@ -6947,11 +6947,11 @@
           "title": "Wählen Sie, wie dieses LLM für Contextual Retrieval angewendet wird"
         },
         "default": {
-          "description": "Änderungen an den Embedding- oder Retrieval-Einstellungen erfordern eine vollständige Neuindexierung aller Dokumente, damit sie wirksam werden. Das kann je nach Korpusgröße **Stunden oder Tage** dauern. [Mehr erfahren](https://docs.onyx.app/security/architecture/data_flows)",
+          "description": "Änderungen an den Embedding- oder Retrieval-Einstellungen erfordern eine vollständige Neuindexierung aller Dokumente, damit sie wirksam werden. Das kann je nach Korpusgröße **Stunden oder Tage** dauern.",
           "title": "Änderungen erfordern eine vollständige Neuindexierung."
         },
         "doNotReindex": {
-          "description": "Bildverarbeitungseinstellungen wirken nur auf Dokumente, die ab jetzt indexiert werden. Vorhandene Dokumente werden nicht aktualisiert, sofern Sie keine vollständige Neuindexierung ausführen.\n\nDie Neuindexierung kann je nach Korpusgröße *Stunden oder Tage* dauern. [Mehr erfahren](https://docs.onyx.app/security/architecture/data_flows).",
+          "description": "Bildverarbeitungseinstellungen wirken nur auf Dokumente, die ab jetzt indexiert werden. Vorhandene Dokumente werden nicht aktualisiert, sofern Sie keine vollständige Neuindexierung ausführen.\n\nDie Neuindexierung kann je nach Korpusgröße *Stunden oder Tage* dauern..",
           "title": "Änderungen gelten nur für neu indexierte Inhalte."
         },
         "orSeparator": {
@@ -6962,7 +6962,7 @@
           "title": "Der Index wird neu aufgebaut."
         },
         "reindex": {
-          "description": "Die Neuindexierung kann je nach Korpusgröße *Stunden oder Tage* dauern. [Mehr erfahren](https://docs.onyx.app/security/architecture/data_flows)",
+          "description": "Die Neuindexierung kann je nach Korpusgröße *Stunden oder Tage* dauern.",
           "title": "Eine vollständige Neuindexierung wird ausgeführt."
         },
         "reindexModel": {
@@ -7711,7 +7711,7 @@
             "addButton": {
               "label": "Zeile hinzufügen"
             },
-            "description": "Fügen Sie weitere Eigenschaften hinzu, die der Modellanbieter benötigt. Diese werden dem `completion()`-Aufruf von LiteLLM als [Umgebungsvariablen](https://docs.litellm.ai/docs/set_keys#environment-variables) übergeben. Weitere Anweisungen finden Sie in der [Dokumentation](https://docs.onyx.app/admins/ai_models/custom_inference_provider).",
+            "description": "Fügen Sie weitere Eigenschaften hinzu, die der Modellanbieter benötigt. Diese werden dem `completion()`-Aufruf von LiteLLM als [Umgebungsvariablen](https://docs.litellm.ai/docs/set_keys#environment-variables) übergeben. Weitere Anweisungen finden Sie in der [Dokumentation](https://docs.litellm.ai/docs/providers).",
             "keyInput": {
               "placeholder": "z. B. OPENAI_ORGANIZATION"
             },
@@ -8631,7 +8631,7 @@
       },
       "authentication": {
         "allowedEmailDomains": {
-          "placeholder": "Domain hinzufügen (z. B. onyx.app)",
+          "placeholder": "Domain hinzufügen (z. B. example.com)",
           "subDescription": "Neue Benutzer können neue Konten nur mit E-Mail-Adressen aus dieser Domainliste registrieren.",
           "title": "Zugelassene E-Mail-Domains"
         },
@@ -9431,7 +9431,7 @@
           "emailDomainsField": {
             "description": "Nur E-Mail-Adressen dieser Domains dürfen sich über diesen Anbieter anmelden.",
             "optionalDescription": "Nur E-Mail-Adressen dieser Domains dürfen sich über diesen Anbieter anmelden. Empfohlen, aber Sie können das Feld leer lassen, um alle zuzulassen.",
-            "placeholder": "Domain hinzufügen (z. B. onyx.app)",
+            "placeholder": "Domain hinzufügen (z. B. example.com)",
             "recommendedTitle": "Zugelassene E-Mail-Domains (Empfohlen)",
             "title": "Zugelassene E-Mail-Domains"
           },
@@ -9888,7 +9888,7 @@
         }
       },
       "placeholders": {
-        "helpUrl": "https://docs.onyx.app"
+        "helpUrl": "https://docs.example.com"
       }
     },
     "tracing": {

@@ -199,7 +199,10 @@ MULTI_TENANT = os.environ.get("MULTI_TENANT", "").lower() == "true"
 # Air-gapped deployment: no outbound calls to evolvxsi-controlled endpoints
 # (recommended-models sync, remote model catalog lookup, release notes).
 # Inbound traffic and user-configured integrations are unaffected.
-EVOLVXSI_AIRGAPPED = os.environ.get("EVOLVXSI_AIRGAPPED", "").lower() == "true"
+# EvolvXSI: on by default. While on, the product does not fetch release notes, model price tables or
+# recommended-model lists from the upstream project's GitHub repository. Set EVOLVXSI_AIRGAPPED=false
+# to allow those fetches (the release notes shown would then be the upstream project's, not EvolvXSI's).
+EVOLVXSI_AIRGAPPED = os.environ.get("EVOLVXSI_AIRGAPPED", "true").lower() == "true"
 
 # How often to check GitHub for updated evolvxsi-published LLM config
 # (recommended-models, remote model catalog sections).

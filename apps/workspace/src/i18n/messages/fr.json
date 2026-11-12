@@ -6947,11 +6947,11 @@
           "title": "Choisissez comment appliquer ce LLM de récupération contextuelle"
         },
         "default": {
-          "description": "La modification des paramètres d'embedding ou de récupération exige une réindexation complète de tous les documents pour prendre effet. Cela peut prendre **des heures ou des jours** selon la taille du corpus. [En savoir plus](https://docs.onyx.app/security/architecture/data_flows)",
+          "description": "La modification des paramètres d'embedding ou de récupération exige une réindexation complète de tous les documents pour prendre effet. Cela peut prendre **des heures ou des jours** selon la taille du corpus.",
           "title": "Les modifications exigent une réindexation complète."
         },
         "doNotReindex": {
-          "description": "Les paramètres de traitement d’images ne prendront effet que pour les documents indexés à partir de maintenant. Les documents existants ne seront pas mis à jour sauf si vous lancez une réindexation complète.\n\nLa réindexation peut prendre *des heures ou des jours* selon la taille du corpus. [En savoir plus](https://docs.onyx.app/security/architecture/data_flows).",
+          "description": "Les paramètres de traitement d’images ne prendront effet que pour les documents indexés à partir de maintenant. Les documents existants ne seront pas mis à jour sauf si vous lancez une réindexation complète.\n\nLa réindexation peut prendre *des heures ou des jours* selon la taille du corpus..",
           "title": "Les modifications s’appliquent uniquement au contenu nouvellement indexé."
         },
         "orSeparator": {
@@ -6962,7 +6962,7 @@
           "title": "L'index sera reconstruit."
         },
         "reindex": {
-          "description": "La réindexation peut prendre *des heures ou des jours* selon la taille du corpus. [En savoir plus](https://docs.onyx.app/security/architecture/data_flows)",
+          "description": "La réindexation peut prendre *des heures ou des jours* selon la taille du corpus.",
           "title": "Une réindexation complète va s’exécuter."
         },
         "reindexModel": {
@@ -7711,7 +7711,7 @@
             "addButton": {
               "label": "Ajouter une ligne"
             },
-            "description": "Ajoutez les propriétés supplémentaires exigées par le fournisseur de modèles. Elles sont transmises à l'appel `completion()` de LiteLLM comme [variables d'environnement](https://docs.litellm.ai/docs/set_keys#environment-variables). Consultez la [documentation](https://docs.onyx.app/admins/ai_models/custom_inference_provider) pour plus d'instructions.",
+            "description": "Ajoutez les propriétés supplémentaires exigées par le fournisseur de modèles. Elles sont transmises à l'appel `completion()` de LiteLLM comme [variables d'environnement](https://docs.litellm.ai/docs/set_keys#environment-variables). Consultez la [documentation](https://docs.litellm.ai/docs/providers) pour plus d'instructions.",
             "keyInput": {
               "placeholder": "par ex. OPENAI_ORGANIZATION"
             },
@@ -8631,7 +8631,7 @@
       },
       "authentication": {
         "allowedEmailDomains": {
-          "placeholder": "Ajoutez un domaine (ex. onyx.app)",
+          "placeholder": "Ajoutez un domaine (ex. example.com)",
           "subDescription": "Les nouveaux utilisateurs peuvent seulement créer un compte avec une adresse e-mail de cette liste de domaines.",
           "title": "Domaines de messagerie autorisés"
         },
@@ -9431,7 +9431,7 @@
           "emailDomainsField": {
             "description": "Seules les adresses e-mail de ces domaines peuvent se connecter via ce fournisseur.",
             "optionalDescription": "Seules les adresses e-mail de ces domaines peuvent se connecter via ce fournisseur. Recommandé, mais vous pouvez laisser vide pour tout autoriser.",
-            "placeholder": "Ajoutez un domaine (par ex. onyx.app)",
+            "placeholder": "Ajoutez un domaine (par ex. example.com)",
             "recommendedTitle": "Domaines de messagerie autorisés (recommandé)",
             "title": "Domaines de messagerie autorisés"
           },
@@ -9888,7 +9888,7 @@
         }
       },
       "placeholders": {
-        "helpUrl": "https://docs.onyx.app"
+        "helpUrl": "https://docs.example.com"
       }
     },
     "tracing": {
