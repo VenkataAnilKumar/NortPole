@@ -34,6 +34,7 @@ The document names and numbered areas follow the convention used by the Qvora do
 | 07 Implementation | [EvolvXSI_Source-Repository-Mapping.md](07-implementation/EvolvXSI_Source-Repository-Mapping.md) | Draft | Local source evidence, reuse candidates, gaps and source identity correction. |
 | 07 Implementation | [EvolvXSI_Open-Source-References.md](07-implementation/EvolvXSI_Open-Source-References.md) | Draft | External project shortlist, eight-platform review, and due diligence; kept outside the product definition. |
 | 07 Implementation | [Commercial reference research](07-implementation/EvolvXSI_Commercial_Reference_Research.md) | Reference | Commercial evidence, module mappings and license boundaries. |
+| 07 Implementation | [EvolvXSI_Pack-Signing-Runbook.md](07-implementation/EvolvXSI_Pack-Signing-Runbook.md) | Current | Create, trust and rotate pack signing keys; what revoking does. |
 
 ## Source context
 
