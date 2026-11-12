@@ -66,6 +66,11 @@ const select =
 export default function RoutePolicyPage() {
   const { data: policy, error } = useRoutePolicy();
   const { data: audit } = useSWR<AuditEvent[]>(AUDIT_URL, errorHandlingFetcher, { refreshInterval: 15000 });
+  const { data: usage } = useSWR<{ route_kind: string; model_name: string; data_class: string; purpose: string; requests: number }[]>(
+    "/api/admin/route-usage?days=30",
+    errorHandlingFetcher,
+    { refreshInterval: 30000 }
+  );
   const [draft, setDraft] = useState<Draft | null>(null);
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState<{ ok: boolean; text: string } | null>(null);
@@ -301,6 +306,39 @@ export default function RoutePolicyPage() {
               ? `Allowed: ${testResult.kind} routes may process this data class.`
               : `POLICY_BLOCKED before send. ${testResult.reason ?? ""} No content would be transmitted.`}
           </p>
+        )}
+      </section>
+
+      <section aria-labelledby="rp-usage" className={card} data-testid="route-usage">
+        <h2 id="rp-usage" className="text-base font-semibold text-text-05">Where requests ran (last 30 days)</h2>
+        <p className="mt-1 text-sm text-text-03">
+          Allowed model requests, counted by route, model, data class and purpose. These are request counts only: no people, no text, and no token or cost figures.
+        </p>
+        {!usage || usage.length === 0 ? (
+          <p className="mt-3 text-sm text-text-03">No model requests have been counted yet.</p>
+        ) : (
+          <table className="mt-3 w-full text-left text-sm">
+            <thead>
+              <tr className="text-text-03">
+                <th className="py-2 pr-3 font-medium">Route</th>
+                <th className="py-2 pr-3 font-medium">Model</th>
+                <th className="py-2 pr-3 font-medium">Data class</th>
+                <th className="py-2 pr-3 font-medium">Purpose</th>
+                <th className="py-2 text-right font-medium">Requests</th>
+              </tr>
+            </thead>
+            <tbody>
+              {usage.map((u) => (
+                <tr key={`${u.route_kind}-${u.model_name}-${u.data_class}-${u.purpose}`} className="border-t border-border-01">
+                  <td className="py-2 pr-3 text-text-05">{u.route_kind}</td>
+                  <td className="py-2 pr-3 text-text-05">{u.model_name}</td>
+                  <td className="py-2 pr-3 text-text-05">{u.data_class}</td>
+                  <td className="py-2 pr-3 text-text-05">{u.purpose.replace("_", " ")}</td>
+                  <td className="py-2 text-right text-text-05">{u.requests}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </section>
 

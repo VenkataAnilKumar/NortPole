@@ -39,8 +39,10 @@ def enforce_route(
     model_configuration_id: int | None,
     data_class: str | None = None,
     actor: User | None = None,
+    purpose: str | None = None,
 ) -> RouteDecision:
-    """Raise POLICY_BLOCKED before any content is sent to a blocked route."""
+    """Raise POLICY_BLOCKED before any content is sent to a blocked route. When a
+    purpose is given, an allowed request is counted (see usage.py)."""
     decision = check_route(db_session, model_configuration_id, data_class)
     logger.info(
         "route_policy decision allowed=%s kind=%s data_class=%s model_configuration_id=%s",
@@ -67,6 +69,12 @@ def enforce_route(
             EvolvXSIErrorCode.POLICY_BLOCKED,
             decision.reason or "This model route is not allowed for this data class.",
         )
+    if purpose:
+        from evolvxsi.route_policy.usage import record_usage
+
+        row = db_session.get(ModelConfiguration, model_configuration_id) if model_configuration_id is not None else None
+        record_usage(route_kind=decision.kind, provider_id=row.llm_provider_id if row else None,
+                     model_name=row.name if row else "unknown", data_class=decision.data_class, purpose=purpose)
     return decision
 
 

@@ -55,7 +55,7 @@ def _prompt(title: str, request: str, desired_output: str) -> str:
 def draft_plan(db_session: Session, user: User, title: str, request: str, desired_output: str) -> PlanResult:
     llm = get_default_llm()
     # Raises POLICY_BLOCKED (and records it) before anything is sent.
-    decision = enforce_route(db_session, llm.config.model_configuration_id, actor=user)
+    decision = enforce_route(db_session, llm.config.model_configuration_id, actor=user, purpose="task_plan")
     reply = llm.invoke(
         GenerationRequest(
             system_prompt=PLAN_SYSTEM_PROMPT,
