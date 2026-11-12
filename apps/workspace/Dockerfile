@@ -2,7 +2,7 @@
 # Next.js bakes its rewrites into the build:
 #   docker build --build-arg INTERNAL_URL=http://api:8080 -t evolvxsi-web .
 FROM node:22-slim AS build
-RUN npm install -g bun@1.2.23
+RUN npm install -g bun@1.4.4
 WORKDIR /app
 COPY package.json bun.lock ./
 COPY lib/opal/package.json lib/opal/package.json
