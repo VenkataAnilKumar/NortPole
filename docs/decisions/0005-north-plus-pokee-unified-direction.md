@@ -1,6 +1,6 @@
 # Decision 0005 — North's governed workspace plus Pokee-style action agents
 
-Status: **proposed** · Date: 2026-11-11
+Status: **accepted** (confirmed by the product owner, 2026-11-12) · Date: 2026-11-11
 
 ## Context
 

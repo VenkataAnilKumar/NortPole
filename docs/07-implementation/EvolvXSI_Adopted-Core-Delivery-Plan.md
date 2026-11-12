@@ -89,7 +89,7 @@ Delivered (PF-07.03 slice, PF-04.02 groundwork): route kinds (local, private, cl
 
 ## Direction note, 2026-11-11
 
-[Decision 0005](../decisions/0005-north-plus-pokee-unified-direction.md) (proposed) makes the product a governed workspace with action agents on top. It raises the weight of A6 (approval-gated actions) and A7 (connectors as actions) and changes no phase scope. It rests on Pokee's own marketing page, not on anything we measured.
+[Decision 0005](../decisions/0005-north-plus-pokee-unified-direction.md) (accepted 2026-11-12) makes the product a governed workspace with action agents on top. It raises the weight of A6 (approval-gated actions) and A7 (connectors as actions) and changes no phase scope. It rests on Pokee's own marketing page, not on anything we measured.
 
 ## A5 — Knowledge, evidence and permissions (planned, XL)
 
