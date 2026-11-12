@@ -64,7 +64,7 @@ def world():  # type: ignore[no-untyped-def]
         s.commit()
 
 
-def _ready(s, uid):  # type: ignore[no-untyped-def]
+def _ready(s, uid, draft="Receipts are due in 30 days [1]."):  # type: ignore[no-untyped-def]
     """A task with a draft that cites the test document."""
     u = s.get(User, uid)
     t = api.create_draft(api.TaskDraft(title="Receipt rules", request="When are receipts due?"), user=u, db_session=s)
@@ -73,7 +73,7 @@ def _ready(s, uid):  # type: ignore[no-untyped-def]
     t = api.accept_plan(t.id, api.VersionOnly(version=t.version), user=u, db_session=s)
     ev = [Evidence(n=1, doc_id=DOC, title="Receipt rules doc", link="https://example.com/r", passage="Due in 30 days.")]
     with patch.object(api, "gather_evidence", return_value=ev), \
-         patch.object(api, "draft_answer", return_value=DraftResult("Receipts are due in 30 days [1].", [1], 0, "local")):
+         patch.object(api, "draft_answer", return_value=DraftResult(draft, [1], 0, "local")):
         t = api.run_task(t.id, api.VersionOnly(version=t.version), user=u, db_session=s)
     assert t.state is TaskState.DRAFT_READY and t.draft_hash
     return u, t
@@ -129,3 +129,38 @@ def test_export_is_withheld_once_access_to_a_cited_source_is_gone(world) -> None
         finally:
             s.add(User__UserGroup(user_id=world["u"], user_group_id=world["g"]))
             s.commit()
+
+
+MIXED = "Receipts are due in 30 days [1]. Late receipts are probably fine. Ask finance if unsure."
+
+
+def test_approval_waits_for_every_unsupported_claim(world) -> None:  # type: ignore[no-untyped-def]
+    with get_session_with_current_tenant() as s:
+        u, t = _ready(s, world["u"], MIXED)
+        assert [c["status"] for c in t.draft_claims] == ["supported", "unsupported", "unsupported"]
+        with pytest.raises(EvolvXSIError) as err:
+            api.approve_draft(t.id, api.Approve(version=t.version, draft_hash=t.draft_hash), user=u, db_session=s)
+        assert "2 unsupported" in err.value.detail
+
+
+def test_keep_and_remove_shape_the_approved_export(world) -> None:  # type: ignore[no-untyped-def]
+    with get_session_with_current_tenant() as s:
+        u, t = _ready(s, world["u"], MIXED)
+        old_hash = t.draft_hash
+        t = api.decide_claim(t.id, 1, api.ClaimDecision(version=t.version, decision="remove"), user=u, db_session=s)
+        t = api.decide_claim(t.id, 2, api.ClaimDecision(version=t.version, decision="keep"), user=u, db_session=s)
+        assert "probably fine" not in t.draft_text and t.draft_hash != old_hash
+        with pytest.raises(EvolvXSIError):
+            api.approve_draft(t.id, api.Approve(version=t.version, draft_hash=old_hash), user=u, db_session=s)
+        a = api.approve_draft(t.id, api.Approve(version=t.version, draft_hash=t.draft_hash), user=u, db_session=s)
+        out = api.export_draft(t.id, api.VersionOnly(version=a.version), user=u, db_session=s)
+        assert "probably fine" not in out.markdown
+        assert "Ask finance if unsure. _(unsupported)_" in out.markdown
+        assert "Receipts are due in 30 days [1]." in out.markdown
+
+
+def test_supported_claims_need_no_decision(world) -> None:  # type: ignore[no-untyped-def]
+    with get_session_with_current_tenant() as s:
+        u, t = _ready(s, world["u"], MIXED)
+        with pytest.raises(EvolvXSIError):
+            api.decide_claim(t.id, 0, api.ClaimDecision(version=t.version, decision="keep"), user=u, db_session=s)

@@ -20,9 +20,15 @@ from evolvxsi.access.access import get_acl_for_user, get_access_for_documents
 from evolvxsi.db.models import User
 
 
-def draft_fingerprint(text: str, sources: list[dict[str, Any]] | None) -> str:
+def draft_fingerprint(
+    text: str, sources: list[dict[str, Any]] | None, claims: list[dict[str, Any]] | None = None
+) -> str:
     body = json.dumps(
-        {"text": text, "sources": [[s.get("n"), s.get("doc_id")] for s in (sources or [])]},
+        {
+            "text": text,
+            "sources": [[s.get("n"), s.get("doc_id")] for s in (sources or [])],
+            "decisions": [[c["i"], c.get("decision")] for c in (claims or [])],
+        },
         sort_keys=True,
         separators=(",", ":"),
     )

@@ -25,6 +25,7 @@ interface Task {
   draft_route: string | null;
   run_error: string | null;
   draft_hash: string | null;
+  draft_claims: { i: number; text: string; cites: number[]; status: "supported" | "unsupported"; decision: "keep" | "remove" | null }[] | null;
   approved_at: string | null;
   exported_at: string | null;
 }
@@ -130,6 +131,8 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const openClaims = (task.draft_claims ?? []).filter((c) => c.status === "unsupported" && c.decision === null).length;
+
   const exportDraft = async () => {
     setBusy("export");
     setError(null);
@@ -223,7 +226,53 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
               <span className="ml-2 font-normal text-text-03">written on the {ROUTE_LABEL[task.draft_route] ?? task.draft_route} route</span>
             )}
           </h3>
-          <p className="whitespace-pre-wrap text-sm text-text-05">{task.draft_text}</p>
+          {task.draft_claims && task.draft_claims.length > 0 ? (
+            <ul className="flex flex-col gap-2" data-testid="task-claims">
+              {task.draft_claims.map((c) => {
+                const removed = c.decision === "remove";
+                const needsDecision = c.status === "unsupported" && c.decision === null && task.state === "draft_ready";
+                return (
+                  <li
+                    key={c.i}
+                    className={`rounded-xl border px-3 py-2 text-sm ${c.status === "unsupported" ? "border-status-warning-02" : "border-border-01"}`}
+                  >
+                    <span className={removed ? "text-text-03 line-through" : "text-text-05"}>{c.text}</span>
+                    <span className="ml-2 text-xs text-text-03">
+                      {c.status === "supported"
+                        ? "supported"
+                        : removed
+                          ? "unsupported · removed"
+                          : c.decision === "keep"
+                            ? "unsupported · kept, labelled in the export"
+                            : "unsupported · needs your decision"}
+                    </span>
+                    {needsDecision && (
+                      <span className="ml-2 inline-flex gap-1">
+                        <button
+                          type="button"
+                          className="min-h-9 rounded-lg border border-border-02 px-3 text-xs font-semibold text-text-05 disabled:opacity-50"
+                          disabled={!!busy}
+                          onClick={() => act(`keep-${c.i}`, `/claims/${c.i}`, { version: task.version, decision: "keep" })}
+                        >
+                          Keep
+                        </button>
+                        <button
+                          type="button"
+                          className="min-h-9 rounded-lg border border-border-02 px-3 text-xs font-semibold text-text-05 disabled:opacity-50"
+                          disabled={!!busy}
+                          onClick={() => act(`remove-${c.i}`, `/claims/${c.i}`, { version: task.version, decision: "remove" })}
+                        >
+                          Remove
+                        </button>
+                      </span>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <p className="whitespace-pre-wrap text-sm text-text-05">{task.draft_text}</p>
+          )}
           {task.draft_sources && task.draft_sources.length > 0 ? (
             <ol className="mt-3 space-y-1 text-xs text-text-03" aria-label="Sources" data-testid="task-sources">
               {task.draft_sources.map((src) => (
@@ -293,10 +342,11 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
             <button
               type="button"
               className={primary}
-              disabled={!!busy}
+              disabled={!!busy || openClaims > 0}
+              title={openClaims > 0 ? `Decide on ${openClaims} unsupported claim(s) first` : undefined}
               onClick={() => act("approve", "/approve", { version: task.version, draft_hash: task.draft_hash })}
             >
-              {busy === "approve" ? "Approving…" : "Approve this draft"}
+              {busy === "approve" ? "Approving…" : openClaims > 0 ? `Approve (${openClaims} claim${openClaims === 1 ? "" : "s"} to decide)` : "Approve this draft"}
             </button>
           )}
           {task.state === "approved" && (

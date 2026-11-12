@@ -25,6 +25,7 @@ from evolvxsi.route_policy.audit import record_audit
 from evolvxsi.tasks.models import EvolvXSITask
 from evolvxsi.tasks.drafter import draft_answer
 from evolvxsi.tasks.evidence import gather_evidence
+from evolvxsi.tasks.claims import KEEP, REMOVE, open_unsupported, split_claims, visible_text
 from evolvxsi.tasks.export import draft_fingerprint, recheck_cited_sources, to_markdown
 from evolvxsi.tasks.planner import PlanError, draft_plan
 from evolvxsi.tasks.states import EDITABLE, InvalidTransition, TaskAction, TaskState, next_state
@@ -58,6 +59,7 @@ class TaskView(BaseModel):
     run_error: str | None = None
     drafted_at: datetime.datetime | None = None
     draft_hash: str | None = None
+    draft_claims: list[dict] | None = None
     approved_hash: str | None = None
     approved_at: datetime.datetime | None = None
     exported_at: datetime.datetime | None = None
@@ -298,6 +300,7 @@ def run_task(
         logger.exception("task run failed task_id=%s", task_id)
         return _view(_move(db_session, task_id, user, task.version, TaskAction.RUN_FAILED,
                            run_error="The run stopped before a draft was ready. Try again in a moment."))
+    claims = split_claims(result.text)
     by_n = {e.n: e for e in evidence}
     sources = [
         {"n": e.n, "doc_id": e.doc_id, "title": e.title, "link": e.link, "cited": e.n in result.cited}
@@ -307,7 +310,8 @@ def run_task(
         logger.info("task run removed %s citation(s) to sources not provided task_id=%s", result.removed_citations, task_id)
     return _view(_move(db_session, task_id, user, task.version, TaskAction.DRAFT_DONE,
                        draft_text=result.text, draft_sources=sources, draft_route=result.route_kind,
-                       drafted_at=func.now(), draft_hash=draft_fingerprint(result.text, sources),
+                       drafted_at=func.now(), draft_claims=claims,
+                       draft_hash=draft_fingerprint(result.text, sources, claims),
                        approved_hash=None, approved_at=None))
 
 
@@ -332,6 +336,11 @@ def approve_draft(
     """Approve one exact draft. The approval names the draft's fingerprint, so
     a draft that changed since the owner read it cannot be approved by mistake."""
     task = _own(db_session, task_id, user)
+    if (pending := open_unsupported(task.draft_claims)):
+        raise EvolvXSIError(
+            EvolvXSIErrorCode.CONFLICT,
+            f"Decide on {pending} unsupported claim(s) first: keep each one as unsupported, or remove it.",
+        )
     if not task.draft_hash or task.draft_hash != body.draft_hash:
         raise EvolvXSIError(EvolvXSIErrorCode.CONFLICT, "The draft changed since you read it. Reload and review it again.")
     task = _move(db_session, task_id, user, body.version, TaskAction.APPROVE,
@@ -351,7 +360,7 @@ def export_draft(
     task = _own(db_session, task_id, user)
     if TaskState(task.state) is not TaskState.APPROVED or task.version != body.version:
         raise EvolvXSIError(EvolvXSIErrorCode.CONFLICT, "Only the approved draft you are looking at can be exported.")
-    if task.approved_hash != draft_fingerprint(task.draft_text or "", task.draft_sources):
+    if task.approved_hash != draft_fingerprint(task.draft_text or "", task.draft_sources, task.draft_claims):
         raise EvolvXSIError(EvolvXSIErrorCode.CONFLICT, "The draft no longer matches what was approved.")
     check = recheck_cited_sources(db_session, user, task.draft_sources)
     if check.withheld:
@@ -372,4 +381,56 @@ def export_draft(
     _audit(user, AuditAction.TASK_EXPORT, task, "Exported an approved draft")
     safe = "".join(ch if ch.isalnum() or ch in "-_ " else "" for ch in task.title).strip().replace(" ", "-")[:60] or "task"
     return ExportResult(task=_view(task), filename=f"{safe}.md",
-                        markdown=to_markdown(task.title, task.draft_text or "", task.draft_sources))
+                        markdown=to_markdown(
+                            task.title,
+                            visible_text(task.draft_claims, label_unsupported=True) if task.draft_claims else (task.draft_text or ""),
+                            task.draft_sources,
+                        ))
+
+
+class ClaimDecision(BaseModel):
+    version: int
+    decision: str
+
+    @field_validator("decision")
+    @classmethod
+    def _d(cls, v: str) -> str:
+        if v not in (KEEP, REMOVE):
+            raise ValueError("Choose keep or remove.")
+        return v
+
+
+@router.post("/{task_id}/claims/{claim_index}")
+def decide_claim(
+    task_id: UUID, claim_index: int, body: ClaimDecision,
+    user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
+    db_session: Session = Depends(get_session),
+) -> TaskView:
+    """Keep an unsupported claim (it is labelled unsupported in the export) or
+    remove it from the draft. Either way the draft's fingerprint changes."""
+    task = _own(db_session, task_id, user)
+    if TaskState(task.state) is not TaskState.DRAFT_READY:
+        raise EvolvXSIError(EvolvXSIErrorCode.CONFLICT, "Claims can only be reviewed on a draft that is ready.")
+    claims = [dict(c) for c in (task.draft_claims or [])]
+    target = next((c for c in claims if c["i"] == claim_index), None)
+    if target is None:
+        raise EvolvXSIError(EvolvXSIErrorCode.NOT_FOUND, "Claim not found.")
+    if target["status"] != "unsupported":
+        raise EvolvXSIError(EvolvXSIErrorCode.INVALID_INPUT, "Only unsupported claims need a decision.")
+    target["decision"] = body.decision
+    text_now = visible_text(claims)
+    result = db_session.execute(
+        update(EvolvXSITask)
+        .where(EvolvXSITask.id == task_id, EvolvXSITask.owner_id == user.id,
+               EvolvXSITask.state == TaskState.DRAFT_READY.value, EvolvXSITask.version == body.version)
+        .values(draft_claims=claims, draft_text=text_now,
+                draft_hash=draft_fingerprint(text_now, task.draft_sources, claims),
+                version=EvolvXSITask.version + 1, updated_at=func.now())
+        .execution_options(synchronize_session=False)
+    )
+    if result.rowcount != 1:
+        db_session.rollback()
+        raise EvolvXSIError(EvolvXSIErrorCode.CONFLICT, "This task changed since you opened it. Reload and try again.")
+    db_session.commit()
+    db_session.expire_all()
+    return _view(_own(db_session, task_id, user))
