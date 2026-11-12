@@ -417,6 +417,16 @@ export const ADMIN_ROUTES = {
     requiredTier: null,
     visibleWhen: null,
   },
+  ACTION_TARGETS: {
+    path: "/admin/action-targets",
+    icon: SvgPlug,
+    title: "Send destinations",
+    sidebarLabel: "Send destinations",
+    requiredPermission: Permission.MANAGE_CONNECTORS,
+    section: "Integrations",
+    requiredTier: null,
+    visibleWhen: null,
+  },
   ACCESS_GROUPS: {
     path: "/admin/access-groups",
     icon: SvgUsers,

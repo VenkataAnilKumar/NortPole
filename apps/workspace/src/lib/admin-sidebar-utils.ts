@@ -21,6 +21,7 @@ export type AdminNavItemId =
   | "languageModels"
   | "routePolicy"
   | "accessGroups"
+  | "actionTargets"
   | "webSearch"
   | "imageGeneration"
   | "voice"
@@ -84,6 +85,7 @@ export const NAV_ITEM_IDS: Record<
   LLM_MODELS: "languageModels",
   ROUTE_POLICY: "routePolicy",
   ACCESS_GROUPS: "accessGroups",
+  ACTION_TARGETS: "actionTargets",
   DECISION_MODELS: "decisionModels",
   WEB_SEARCH: "webSearch",
   IMAGE_GENERATION: "imageGeneration",
