@@ -19,6 +19,7 @@ export function useAdminNavLabels(): Record<AdminNavItemId, string> {
       routePolicy: t("adminNav.items.routePolicy.label"),
       accessGroups: t("adminNav.items.accessGroups.label"),
       actionTargets: t("adminNav.items.actionTargets.label"),
+      auditLog: t("adminNav.items.auditLog.label"),
       webSearch: t("adminNav.items.webSearch.label"),
       imageGeneration: t("adminNav.items.imageGeneration.label"),
       voice: t("adminNav.items.voice.label"),

@@ -113,3 +113,12 @@ def test_no_audit_row_anywhere_holds_task_text(session) -> None:  # type: ignore
             {"p": f"%{SECRET_TITLE}%"},
         ).scalar()
     assert leaked == 0
+
+
+ADMIN_AUDIT = [("GET", "/admin/audit"), ("GET", "/admin/audit?outcome=denied"), ("GET", "/admin/action-targets"), ("POST", "/admin/action-targets")]
+
+
+@pytest.mark.parametrize("method,path", ADMIN_AUDIT)
+def test_the_audit_log_and_action_targets_are_admin_only(session, method: str, path: str) -> None:  # type: ignore[no-untyped-def]
+    assert requests.request(method, f"{API}{path}", json={}, timeout=15).status_code in (401, 403)
+    assert session.request(method, f"{API}{path}", json={}, timeout=15).status_code == 403
