@@ -16836,6 +16836,9 @@
         },
         "accessGroups": {
           "label": "Groups"
+        },
+        "actionTargets": {
+          "label": "Send destinations"
         }
       },
       "sections": {

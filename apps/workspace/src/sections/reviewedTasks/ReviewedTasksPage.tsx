@@ -3,6 +3,7 @@
 import { useState } from "react";
 import useSWR from "swr";
 import { errorHandlingFetcher } from "@/lib/fetcher";
+import TaskActions from "@/sections/reviewedTasks/TaskActions";
 
 const URL = "/api/tasks";
 
@@ -479,6 +480,7 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
           )}
         </div>
       )}
+      {task.state === "approved" && !task.withheld && <TaskActions taskId={task.id} />}
       {task.state === "plan_accepted" && (
         <p className="mt-4 text-sm text-text-03">
           Plan accepted. Run it to gather sources you can open and write a cited draft.
