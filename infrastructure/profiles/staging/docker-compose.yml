@@ -50,6 +50,8 @@ services:
       EVOLVXSI_OFFLINE_TOKENIZER: "true"
       HF_HUB_OFFLINE: "1"
       EVOLVXSI_VERSION: ${EVOLVXSI_VERSION:-dev}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"   # lets a model server on this machine be used as http://host.docker.internal:<port>
     expose:
       - "8080"   # reached through the proxy; not published
     restart: unless-stopped
