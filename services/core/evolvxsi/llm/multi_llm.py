@@ -2094,6 +2094,10 @@ class LitellmLLM(LLM):
         self, request: GenerationRequest
     ) -> tuple[list[ChatCompletionMessage], dict[str, str]]:
         config = self.config
+        # EvolvXSI: replace listed sensitive patterns before the request leaves, per route policy.
+        from evolvxsi.redaction.request import redact_request
+
+        request = redact_request(request, config.model_configuration_id)
         messages, request_prefix = serialize_request(request, config)
         # request_prefix counts the request's messages, which cache_split_stats
         # walks. cacheable_prefix counts the provider messages; it is smaller

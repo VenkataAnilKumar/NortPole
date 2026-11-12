@@ -45,6 +45,7 @@ class RoutePolicyView(BaseModel):
     data_classes: list[str]
     route_kinds: list[str]
     allowed: dict[str, list[str]]
+    redact_route_kinds: list[str]
     routes: list[RouteView]
     auto_provider_id: int | None
 
@@ -53,6 +54,7 @@ class RoutePolicyUpdate(BaseModel):
     default_data_class: str | None = None
     allowed: dict[str, list[str]] | None = None
     route_kinds: dict[str, str] | None = None
+    redact_route_kinds: list[str] | None = None
 
 
 class RouteCheckRequest(BaseModel):
@@ -91,6 +93,7 @@ def _view(policy: RoutePolicy, db_session: Session, data_class: str | None) -> R
         data_classes=list(DATA_CLASSES),
         route_kinds=list(ROUTE_KINDS),
         allowed=policy.allowed,
+        redact_route_kinds=policy.redact_route_kinds,
         routes=routes,
         auto_provider_id=auto,
     )
@@ -126,6 +129,7 @@ def put_route_policy(
             default_data_class=update.default_data_class or current.default_data_class,
             allowed=update.allowed if update.allowed is not None else current.allowed,
             route_kinds=update.route_kinds if update.route_kinds is not None else current.route_kinds,
+            redact_route_kinds=update.redact_route_kinds if update.redact_route_kinds is not None else current.redact_route_kinds,
         )
     except ValueError as exc:
         raise EvolvXSIError(EvolvXSIErrorCode.VALIDATION_ERROR, str(exc)) from exc

@@ -18,12 +18,13 @@ interface Draft {
   defaultClass: DataClass;
   allowed: Record<DataClass, RouteKind[]>;
   kinds: Record<number, RouteKind>;
+  redact: RouteKind[];
 }
 
 function toDraft(v: RoutePolicyView): Draft {
   const kinds: Record<number, RouteKind> = {};
   v.routes.forEach((r) => (kinds[r.provider_id] = r.kind));
-  return { defaultClass: v.default_data_class, allowed: structuredClone(v.allowed), kinds };
+  return { defaultClass: v.default_data_class, allowed: structuredClone(v.allowed), kinds, redact: [...(v.redact_route_kinds ?? [])] };
 }
 
 async function callJson(url: string, method: string, body: unknown) {
@@ -114,6 +115,7 @@ export default function RoutePolicyPage() {
         default_data_class: draft.defaultClass,
         allowed: draft.allowed,
         route_kinds,
+        redact_route_kinds: draft.redact,
       });
       await mutate(ROUTE_POLICY_URL);
       await mutate(AUDIT_URL);
@@ -189,6 +191,29 @@ export default function RoutePolicyPage() {
             </tbody>
           </table>
         )}
+      </section>
+
+      <section aria-labelledby="rp-redact" className={card} data-testid="redaction-settings">
+        <h2 id="rp-redact" className="mb-1 text-base font-semibold text-text-05">Sensitive-data redaction</h2>
+        <p className="mb-3 text-sm text-text-03">
+          Before a request is sent to the ticked route types, email addresses, phone numbers, card numbers (checksum-checked), national-ID-style numbers, IBANs, API keys, tokens and private keys are replaced with a placeholder such as [REDACTED:EMAIL].
+          Names, addresses and free-text secrets are not detected. Counts of replaced items are kept; the text is not.
+        </p>
+        <div className="flex flex-wrap gap-4">
+          {policy.route_kinds.map((k) => (
+            <label key={k} className="inline-flex min-h-10 cursor-pointer items-center gap-2 text-sm text-text-05">
+              <input
+                type="checkbox"
+                checked={draft.redact.includes(k)}
+                onChange={() =>
+                  setDraft((d) => (d ? { ...d, redact: d.redact.includes(k) ? d.redact.filter((x) => x !== k) : [...d.redact, k] } : d))
+                }
+              />
+              {KIND_LABEL[k]}
+            </label>
+          ))}
+        </div>
+        <p className="mt-2 text-xs text-text-03">Saved with the rest of the policy below.</p>
       </section>
 
       <section aria-labelledby="rp-matrix" className={card}>
