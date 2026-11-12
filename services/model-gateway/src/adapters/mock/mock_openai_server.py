@@ -27,7 +27,26 @@ def last_user_text(messages):
     return ""
 
 
+def system_text(messages):
+    return " ".join(
+        str(m.get("content") or "") for m in (messages or []) if m.get("role") == "system"
+    )
+
+
+def plan_text(route, model, messages):
+    """Fixture plan for planning prompts: deterministic, labelled as a mock."""
+    said = last_user_text(messages)
+    title = next((l[len("Title:"):].strip() for l in said.splitlines() if l.startswith("Title:")), "the request")
+    return "\n".join([
+        f"1. Find the sources that cover {title} (mock plan from {route} / {model}).",
+        "2. Compare what the sources say and note any gaps or conflicts.",
+        "3. Draft the answer with a citation for each claim.",
+    ])
+
+
 def reply_text(route, model, messages):
+    if "numbered plan" in system_text(messages):
+        return plan_text(route, model, messages)
     said = last_user_text(messages).strip().replace("\n", " ")
     if len(said) > 300:
         said = said[:300] + "..."
