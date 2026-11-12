@@ -11,6 +11,7 @@ interface Target {
   id: number;
   name: string;
   url: string;
+  kind?: string;
   allowed_data_classes: string[];
   enabled: boolean;
 }
@@ -61,6 +62,7 @@ export default function ActionTargetsPage() {
   const { data, error, isLoading, mutate } = useSWR<Target[]>(URL, errorHandlingFetcher);
   const [name, setName] = useState("");
   const [url, setUrl] = useState("");
+  const [kind, setKind] = useState<"webhook" | "email">("webhook");
   const [classes, setClasses] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -96,8 +98,15 @@ export default function ActionTargetsPage() {
             <input className={input} value={name} onChange={(e) => setName(e.target.value)} />
           </label>
           <label className="flex flex-col gap-1 text-sm font-medium text-text-05">
-            Web address (https recommended)
-            <input className={input} value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://example.com/hook" />
+            Type
+            <select className={input} value={kind} onChange={(e) => { setKind(e.target.value as "webhook" | "email"); setUrl(""); }}>
+              <option value="webhook">Web address (webhook)</option>
+              <option value="email">Email (fixed recipients)</option>
+            </select>
+          </label>
+          <label className="flex flex-col gap-1 text-sm font-medium text-text-05">
+            {kind === "email" ? "Recipients (people choosing this destination cannot change them)" : "Web address (https recommended)"}
+            <input className={input} value={url} onChange={(e) => setUrl(e.target.value)} placeholder={kind === "email" ? "mailto:finance@example.com" : "https://example.com/hook"} />
           </label>
           <ClassPicker value={classes} onChange={setClasses} />
           {message && <p role="alert" className="text-sm text-status-error-05">{message}</p>}
@@ -108,7 +117,7 @@ export default function ActionTargetsPage() {
               disabled={busy || !name.trim() || !url.trim()}
               onClick={() =>
                 run(async () => {
-                  await send(URL, "POST", { name, url, allowed_data_classes: classes, enabled: true });
+                  await send(URL, "POST", { name, kind, url, allowed_data_classes: classes, enabled: true });
                   setName("");
                   setUrl("");
                   setClasses([]);
@@ -132,7 +141,7 @@ export default function ActionTargetsPage() {
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0">
                   <h2 className="truncate text-base font-semibold text-text-05">{t.name}</h2>
-                  <p className="truncate text-sm text-text-03">{t.url}</p>
+                  <p className="truncate text-sm text-text-03">{t.kind === "email" ? "Email · " : ""}{t.url}</p>
                   <p className="text-sm text-text-03">
                     May receive: {t.allowed_data_classes.length ? t.allowed_data_classes.join(", ") : "nothing"}
                   </p>
@@ -141,7 +150,7 @@ export default function ActionTargetsPage() {
                   type="button"
                   className={secondary}
                   disabled={busy}
-                  onClick={() => run(() => send(`${URL}/${t.id}`, "PATCH", { name: t.name, url: t.url, allowed_data_classes: t.allowed_data_classes, enabled: !t.enabled }))}
+                  onClick={() => run(() => send(`${URL}/${t.id}`, "PATCH", { name: t.name, kind: t.kind ?? "webhook", url: t.url, allowed_data_classes: t.allowed_data_classes, enabled: !t.enabled }))}
                 >
                   {t.enabled ? "Disable" : "Enable"}
                 </button>

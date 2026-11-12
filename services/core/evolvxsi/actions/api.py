@@ -5,6 +5,7 @@ and execute it. Administrators register the targets."""
 from __future__ import annotations
 
 import datetime
+from typing import Literal
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
@@ -13,7 +14,7 @@ from sqlalchemy import func, select, update
 from sqlalchemy.orm import Session
 
 from evolvxsi.action_binding.binding import Approval, Verdict, action_fingerprint, decide_execution
-from evolvxsi.actions.delivery import UnsafeTarget, check_target_url, deliver
+from evolvxsi.actions.delivery import UnsafeTarget, check_target_url, deliver, deliver_email, parse_mailto
 from evolvxsi.actions.models import EvolvXSIAction, EvolvXSIActionTarget
 from evolvxsi.auth.permissions import require_permission
 from evolvxsi.db.engine.sql_engine import get_session
@@ -35,8 +36,16 @@ ACTION_NAME = "send_draft"
 APPROVAL_LIFETIME = datetime.timedelta(minutes=30)
 
 
+def _check_target(kind: str, url: str) -> None:
+    if kind == "email":
+        parse_mailto(url)
+    else:
+        check_target_url(url)
+
+
 class TargetIn(BaseModel):
     name: str
+    kind: Literal["webhook", "email"] = "webhook"
     url: str
     allowed_data_classes: list[str]
     enabled: bool = True
@@ -61,6 +70,7 @@ class TargetIn(BaseModel):
 class TargetView(BaseModel):
     id: int
     name: str
+    kind: str = "webhook"
     url: str
     allowed_data_classes: list[str]
     enabled: bool
@@ -100,7 +110,7 @@ class ApproveAction(BaseModel):
 
 
 def _tview(t: EvolvXSIActionTarget) -> TargetView:
-    return TargetView(id=t.id, name=t.name, url=t.url, allowed_data_classes=list(t.allowed_data_classes or []), enabled=t.enabled)
+    return TargetView(id=t.id, name=t.name, kind=t.kind, url=t.url, allowed_data_classes=list(t.allowed_data_classes or []), enabled=t.enabled)
 
 
 def _aview(a: EvolvXSIAction) -> ActionView:
@@ -137,12 +147,12 @@ def create_target(
     db_session: Session = Depends(get_session),
 ) -> TargetView:
     try:
-        check_target_url(body.url)
+        _check_target(body.kind, body.url)
     except UnsafeTarget as e:
         raise EvolvXSIError(EvolvXSIErrorCode.INVALID_INPUT, str(e)) from e
     if db_session.scalar(select(EvolvXSIActionTarget.id).where(func.lower(EvolvXSIActionTarget.name) == body.name.lower())):
         raise EvolvXSIError(EvolvXSIErrorCode.CONFLICT, "A target with that name already exists.")
-    t = EvolvXSIActionTarget(name=body.name, url=body.url, allowed_data_classes=body.allowed_data_classes, enabled=body.enabled)
+    t = EvolvXSIActionTarget(name=body.name, kind=body.kind, url=body.url, allowed_data_classes=body.allowed_data_classes, enabled=body.enabled)
     db_session.add(t)
     db_session.commit()
     record_audit(AuditAction.ACTION_TARGET_CHANGE, AuditOutcome.SUCCESS, actor=user,
@@ -161,10 +171,10 @@ def update_target(
     if t is None:
         raise EvolvXSIError(EvolvXSIErrorCode.NOT_FOUND, "Target not found.")
     try:
-        check_target_url(body.url)
+        _check_target(body.kind, body.url)
     except UnsafeTarget as e:
         raise EvolvXSIError(EvolvXSIErrorCode.INVALID_INPUT, str(e)) from e
-    t.name, t.url, t.allowed_data_classes, t.enabled = body.name, body.url, body.allowed_data_classes, body.enabled
+    t.name, t.kind, t.url, t.allowed_data_classes, t.enabled = body.name, body.kind, body.url, body.allowed_data_classes, body.enabled
     db_session.commit()
     record_audit(AuditAction.ACTION_TARGET_CHANGE, AuditOutcome.SUCCESS, actor=user,
                  summary=f"Changed action target {t.name} (enabled: {t.enabled}; classes: {', '.join(t.allowed_data_classes) or 'none'})",
@@ -319,7 +329,8 @@ def execute_action(
     if a.state not in ("approved", "failed"):
         raise EvolvXSIError(EvolvXSIErrorCode.CONFLICT, f"An action that is {a.state} cannot be sent.")
     a = _move(db_session, a, user, body.version, {"approved", "failed"}, "executing", idempotency_key=key, attempts=EvolvXSIAction.attempts + 1)
-    result = deliver(target.url, a.payload, key)  # type: ignore[union-attr]
+    send = deliver_email if target.kind == "email" else deliver  # type: ignore[union-attr]
+    result = send(target.url, a.payload, key)  # type: ignore[union-attr]
     a = _move(
         db_session, a, user, a.version, {"executing"}, "succeeded" if result.ok else "failed",
         result_status=result.status, error=result.error, executed_at=func.now() if result.ok else None,
