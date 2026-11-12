@@ -96,6 +96,7 @@ class AuditAction(str, Enum):
     TASK_START = "task.start"
     TASK_PLAN_ACCEPT = "task.plan_accept"
     TASK_CANCEL = "task.cancel"
+    TASK_RUN = "task.run"
     CONTEXTUAL_RAG_MODEL_UPDATE = "search_settings.contextual_rag_model_update"
     CC_PAIR_ACCESS_MODE_CHANGE = "search_settings.cc_pair_access_mode_change"
     LLM_PROVIDER_CREATE = "llm_provider.create"
@@ -151,6 +152,7 @@ _OCSF_CLASS_BY_ACTION: dict[AuditAction, OCSFEventClass] = {
     AuditAction.TASK_START: OCSFEventClass.API_ACTIVITY,
     AuditAction.TASK_PLAN_ACCEPT: OCSFEventClass.API_ACTIVITY,
     AuditAction.TASK_CANCEL: OCSFEventClass.API_ACTIVITY,
+    AuditAction.TASK_RUN: OCSFEventClass.API_ACTIVITY,
     AuditAction.CONTEXTUAL_RAG_MODEL_UPDATE: OCSFEventClass.API_ACTIVITY,
     AuditAction.CC_PAIR_ACCESS_MODE_CHANGE: OCSFEventClass.API_ACTIVITY,
     AuditAction.LLM_PROVIDER_CREATE: OCSFEventClass.API_ACTIVITY,

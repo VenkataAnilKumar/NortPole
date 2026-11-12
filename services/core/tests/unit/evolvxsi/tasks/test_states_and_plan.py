@@ -26,9 +26,21 @@ def test_only_a_draft_can_start(state: TaskState) -> None:
         next_state(state, TaskAction.START)
 
 
-def test_accepted_and_cancelled_are_final_for_this_slice() -> None:
-    for s in (TaskState.PLAN_ACCEPTED, TaskState.CANCELLED):
-        assert not [a for (st, a) in ALLOWED if st is s]
+def test_cancelled_is_final() -> None:
+    assert not [a for (st, a) in ALLOWED if st is TaskState.CANCELLED]
+
+
+def test_run_path_and_retry() -> None:
+    assert next_state(TaskState.PLAN_ACCEPTED, TaskAction.RUN) is TaskState.RUNNING
+    assert next_state(TaskState.RUNNING, TaskAction.DRAFT_DONE) is TaskState.DRAFT_READY
+    assert next_state(TaskState.RUNNING, TaskAction.RUN_FAILED) is TaskState.RUN_FAILED
+    assert next_state(TaskState.RUN_FAILED, TaskAction.RUN) is TaskState.RUNNING
+
+
+@pytest.mark.parametrize("state", [TaskState.DRAFT, TaskState.PLAN_REVIEW, TaskState.RUNNING, TaskState.DRAFT_READY])
+def test_only_an_accepted_plan_or_failed_run_can_run(state: TaskState) -> None:
+    with pytest.raises(InvalidTransition):
+        next_state(state, TaskAction.RUN)
 
 
 def test_plan_cannot_be_accepted_before_it_exists() -> None:

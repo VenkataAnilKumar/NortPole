@@ -37,6 +37,13 @@ class EvolvXSITask(Base):
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
     )
     started_at: Mapped[datetime.datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    # The latest run's draft. Sources are the passages the owner could see
+    # when the run gathered them: [{"n", "doc_id", "title", "link"}].
+    draft_text: Mapped[str | None] = mapped_column(Text, nullable=True)
+    draft_sources: Mapped[list[dict[str, Any]] | None] = mapped_column(JSONB, nullable=True)
+    draft_route: Mapped[str | None] = mapped_column(String, nullable=True)
+    run_error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    drafted_at: Mapped[datetime.datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     def as_dict(self) -> dict[str, Any]:
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
