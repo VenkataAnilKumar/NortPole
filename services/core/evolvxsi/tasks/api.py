@@ -25,6 +25,7 @@ from evolvxsi.route_policy.audit import record_audit
 from evolvxsi.tasks.models import EvolvXSITask
 from evolvxsi.tasks.drafter import draft_answer
 from evolvxsi.tasks.evidence import gather_evidence
+from evolvxsi.tasks.export import draft_fingerprint, recheck_cited_sources, to_markdown
 from evolvxsi.tasks.planner import PlanError, draft_plan
 from evolvxsi.tasks.states import EDITABLE, InvalidTransition, TaskAction, TaskState, next_state
 from evolvxsi.utils.audit import AuditAction, AuditOutcome
@@ -56,6 +57,10 @@ class TaskView(BaseModel):
     draft_route: str | None = None
     run_error: str | None = None
     drafted_at: datetime.datetime | None = None
+    draft_hash: str | None = None
+    approved_hash: str | None = None
+    approved_at: datetime.datetime | None = None
+    exported_at: datetime.datetime | None = None
 
 
 class TaskDraft(BaseModel):
@@ -302,4 +307,69 @@ def run_task(
         logger.info("task run removed %s citation(s) to sources not provided task_id=%s", result.removed_citations, task_id)
     return _view(_move(db_session, task_id, user, task.version, TaskAction.DRAFT_DONE,
                        draft_text=result.text, draft_sources=sources, draft_route=result.route_kind,
-                       drafted_at=func.now()))
+                       drafted_at=func.now(), draft_hash=draft_fingerprint(result.text, sources),
+                       approved_hash=None, approved_at=None))
+
+
+class Approve(BaseModel):
+    version: int
+    # The fingerprint of the draft the owner looked at. A different draft is refused.
+    draft_hash: str
+
+
+class ExportResult(BaseModel):
+    task: TaskView
+    filename: str
+    markdown: str
+
+
+@router.post("/{task_id}/approve")
+def approve_draft(
+    task_id: UUID, body: Approve,
+    user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
+    db_session: Session = Depends(get_session),
+) -> TaskView:
+    """Approve one exact draft. The approval names the draft's fingerprint, so
+    a draft that changed since the owner read it cannot be approved by mistake."""
+    task = _own(db_session, task_id, user)
+    if not task.draft_hash or task.draft_hash != body.draft_hash:
+        raise EvolvXSIError(EvolvXSIErrorCode.CONFLICT, "The draft changed since you read it. Reload and review it again.")
+    task = _move(db_session, task_id, user, body.version, TaskAction.APPROVE,
+                 approved_hash=body.draft_hash, approved_at=func.now())
+    _audit(user, AuditAction.TASK_APPROVE, task, f"Approved draft {body.draft_hash[:12]}")
+    return _view(task)
+
+
+@router.post("/{task_id}/export")
+def export_draft(
+    task_id: UUID, body: VersionOnly,
+    user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
+    db_session: Session = Depends(get_session),
+) -> ExportResult:
+    """Export the approved draft as Markdown, after re-checking access to every
+    cited source. Withheld if any cited source is no longer open to the owner."""
+    task = _own(db_session, task_id, user)
+    if TaskState(task.state) is not TaskState.APPROVED or task.version != body.version:
+        raise EvolvXSIError(EvolvXSIErrorCode.CONFLICT, "Only the approved draft you are looking at can be exported.")
+    if task.approved_hash != draft_fingerprint(task.draft_text or "", task.draft_sources):
+        raise EvolvXSIError(EvolvXSIErrorCode.CONFLICT, "The draft no longer matches what was approved.")
+    check = recheck_cited_sources(db_session, user, task.draft_sources)
+    if check.withheld:
+        _audit(user, AuditAction.TASK_EXPORT, task,
+               f"Export withheld: {check.withheld} cited source(s) no longer open", AuditOutcome.DENIED)
+        raise EvolvXSIError(
+            EvolvXSIErrorCode.INSUFFICIENT_PERMISSIONS,
+            f"Export withheld: you can no longer open {check.withheld} of the cited sources. "
+            "Redraft the task or ask for access again.",
+        )
+    db_session.execute(
+        update(EvolvXSITask).where(EvolvXSITask.id == task_id).values(exported_at=func.now())
+        .execution_options(synchronize_session=False)
+    )
+    db_session.commit()
+    db_session.expire_all()
+    task = _own(db_session, task_id, user)
+    _audit(user, AuditAction.TASK_EXPORT, task, "Exported an approved draft")
+    safe = "".join(ch if ch.isalnum() or ch in "-_ " else "" for ch in task.title).strip().replace(" ", "-")[:60] or "task"
+    return ExportResult(task=_view(task), filename=f"{safe}.md",
+                        markdown=to_markdown(task.title, task.draft_text or "", task.draft_sources))

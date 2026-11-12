@@ -6,7 +6,7 @@ import { errorHandlingFetcher } from "@/lib/fetcher";
 
 const URL = "/api/tasks";
 
-type State = "draft" | "planning" | "plan_review" | "plan_accepted" | "plan_failed" | "running" | "draft_ready" | "run_failed" | "cancelled";
+type State = "draft" | "planning" | "plan_review" | "plan_accepted" | "plan_failed" | "running" | "draft_ready" | "run_failed" | "approved" | "cancelled";
 
 interface Task {
   id: string;
@@ -24,6 +24,9 @@ interface Task {
   draft_sources: { n: number; doc_id: string; title: string; link: string | null; cited: boolean }[] | null;
   draft_route: string | null;
   run_error: string | null;
+  draft_hash: string | null;
+  approved_at: string | null;
+  exported_at: string | null;
 }
 
 const STATE_LABEL: Record<State, string> = {
@@ -35,6 +38,7 @@ const STATE_LABEL: Record<State, string> = {
   running: "Running",
   draft_ready: "Draft ready",
   run_failed: "Run failed",
+  approved: "Approved",
   cancelled: "Cancelled",
 };
 const ROUTE_LABEL: Record<string, string> = { local: "Local", private: "Private", cloud: "Cloud" };
@@ -126,6 +130,32 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const exportDraft = async () => {
+    setBusy("export");
+    setError(null);
+    try {
+      const res = await fetch(`${URL}/${task.id}/export`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ version: task.version }),
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(typeof data?.detail === "string" ? data.detail : `Export failed (HTTP ${res.status}).`);
+      const blob = new Blob([data.markdown], { type: "text/markdown" });
+      const href = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = href;
+      a.download = data.filename;
+      a.click();
+      window.URL.revokeObjectURL(href);
+      await onChange();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Export failed.");
+    } finally {
+      setBusy(null);
+    }
+  };
+
   const act = async (name: string, path: string, body: unknown) => {
     setBusy(name);
     setError(null);
@@ -185,7 +215,7 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
           </ol>
         </section>
       )}
-      {task.draft_text && task.state === "draft_ready" && (
+      {task.draft_text && (task.state === "draft_ready" || task.state === "approved") && (
         <section className="mt-5 border-t border-border-01 pt-4" aria-labelledby="draft-h" data-testid="task-draft">
           <h3 id="draft-h" className="mb-2 text-sm font-semibold text-text-05">
             Draft
@@ -211,7 +241,16 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
           ) : (
             <p className="mt-3 text-xs text-text-03">No permitted source was found for this request.</p>
           )}
-          <p className="mt-3 text-xs text-text-03">Only sources you can open were used. Review and approval of the draft come next.</p>
+          <p className="mt-3 text-xs text-text-03">
+            {task.state === "approved"
+              ? `You approved exactly this draft${task.approved_at ? ` on ${new Date(task.approved_at).toLocaleString()}` : ""}. Export checks your access to each cited source again.`
+              : "Only sources you can open were used. Approving covers exactly this draft; a new run needs a new approval."}
+          </p>
+          {task.exported_at && (
+            <p className="mt-1 text-xs text-text-03" data-testid="task-exported">
+              Last exported {new Date(task.exported_at).toLocaleString()}.
+            </p>
+          )}
         </section>
       )}
       {task.state === "run_failed" && task.run_error && (
@@ -240,6 +279,32 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
             </button>
           )}
           {(task.state === "plan_review" || task.state === "plan_failed") && (
+            <div className="flex w-full flex-wrap items-end gap-2">
+              <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm font-medium text-text-05">
+                What should change?
+                <input className={`${input} min-h-11`} value={note} maxLength={8000} onChange={(e) => setNote(e.target.value)} />
+              </label>
+              <button type="button" className={secondary} disabled={!!busy} onClick={() => act("revise", "/plan/revise", { version: task.version, note })}>
+                Revise
+              </button>
+            </div>
+          )}
+          {task.state === "draft_ready" && task.draft_hash && (
+            <button
+              type="button"
+              className={primary}
+              disabled={!!busy}
+              onClick={() => act("approve", "/approve", { version: task.version, draft_hash: task.draft_hash })}
+            >
+              {busy === "approve" ? "Approving…" : "Approve this draft"}
+            </button>
+          )}
+          {task.state === "approved" && (
+            <button type="button" className={primary} disabled={!!busy} onClick={exportDraft}>
+              {busy === "export" ? "Checking access…" : "Export as Markdown"}
+            </button>
+          )}
+          {task.state === "draft_ready" && (
             <div className="flex w-full flex-wrap items-end gap-2">
               <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm font-medium text-text-05">
                 What should change?

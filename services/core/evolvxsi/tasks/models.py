@@ -44,6 +44,12 @@ class EvolvXSITask(Base):
     draft_route: Mapped[str | None] = mapped_column(String, nullable=True)
     run_error: Mapped[str | None] = mapped_column(Text, nullable=True)
     drafted_at: Mapped[datetime.datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    # Fingerprint of the draft text and its sources. Approval names it, so an
+    # approval covers one exact draft and a new draft needs a new approval.
+    draft_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    approved_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    approved_at: Mapped[datetime.datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    exported_at: Mapped[datetime.datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     def as_dict(self) -> dict[str, Any]:
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
