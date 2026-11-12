@@ -6,7 +6,7 @@ import { errorHandlingFetcher } from "@/lib/fetcher";
 
 const URL = "/api/tasks";
 
-type State = "draft" | "planning" | "plan_review" | "plan_accepted" | "plan_failed" | "cancelled";
+type State = "draft" | "planning" | "plan_review" | "plan_accepted" | "plan_failed" | "running" | "draft_ready" | "run_failed" | "cancelled";
 
 interface Task {
   id: string;
@@ -20,6 +20,10 @@ interface Task {
   plan_error: string | null;
   revision_note: string | null;
   updated_at: string;
+  draft_text: string | null;
+  draft_sources: { n: number; doc_id: string; title: string; link: string | null; cited: boolean }[] | null;
+  draft_route: string | null;
+  run_error: string | null;
 }
 
 const STATE_LABEL: Record<State, string> = {
@@ -28,6 +32,9 @@ const STATE_LABEL: Record<State, string> = {
   plan_review: "Plan to review",
   plan_accepted: "Plan accepted",
   plan_failed: "Plan failed",
+  running: "Running",
+  draft_ready: "Draft ready",
+  run_failed: "Run failed",
   cancelled: "Cancelled",
 };
 const ROUTE_LABEL: Record<string, string> = { local: "Local", private: "Private", cloud: "Cloud" };
@@ -178,6 +185,38 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
           </ol>
         </section>
       )}
+      {task.draft_text && task.state === "draft_ready" && (
+        <section className="mt-5 border-t border-border-01 pt-4" aria-labelledby="draft-h" data-testid="task-draft">
+          <h3 id="draft-h" className="mb-2 text-sm font-semibold text-text-05">
+            Draft
+            {task.draft_route && (
+              <span className="ml-2 font-normal text-text-03">written on the {ROUTE_LABEL[task.draft_route] ?? task.draft_route} route</span>
+            )}
+          </h3>
+          <p className="whitespace-pre-wrap text-sm text-text-05">{task.draft_text}</p>
+          {task.draft_sources && task.draft_sources.length > 0 ? (
+            <ol className="mt-3 space-y-1 text-xs text-text-03" aria-label="Sources" data-testid="task-sources">
+              {task.draft_sources.map((src) => (
+                <li key={src.n}>
+                  [{src.n}]{" "}
+                  {src.link ? (
+                    <a className="underline" href={src.link} target="_blank" rel="noreferrer">{src.title}</a>
+                  ) : (
+                    src.title
+                  )}
+                  {!src.cited && <span className="ml-1">(found but not cited)</span>}
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <p className="mt-3 text-xs text-text-03">No permitted source was found for this request.</p>
+          )}
+          <p className="mt-3 text-xs text-text-03">Only sources you can open were used. Review and approval of the draft come next.</p>
+        </section>
+      )}
+      {task.state === "run_failed" && task.run_error && (
+        <p role="alert" className="mt-4 text-sm text-status-error-05">{task.run_error}</p>
+      )}
       {task.state === "plan_failed" && task.plan_error && (
         <p role="alert" className="mt-4 text-sm text-status-error-05">{task.plan_error}</p>
       )}
@@ -211,7 +250,12 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
               </button>
             </div>
           )}
-          {(task.state === "draft" || task.state === "plan_review" || task.state === "plan_failed") && (
+          {(task.state === "plan_accepted" || task.state === "run_failed") && (
+            <button type="button" className={primary} disabled={!!busy} onClick={() => act("run", "/run", { version: task.version })}>
+              {busy === "run" ? "Gathering sources and drafting…" : task.state === "run_failed" ? "Try again" : "Run plan"}
+            </button>
+          )}
+          {(task.state === "draft" || task.state === "plan_review" || task.state === "plan_failed" || task.state === "plan_accepted" || task.state === "run_failed" || task.state === "draft_ready") && (
             <button type="button" className={`${secondary} ml-auto`} disabled={!!busy} onClick={() => act("cancel", "/cancel", { version: task.version })}>
               Cancel task
             </button>
@@ -220,7 +264,7 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
       )}
       {task.state === "plan_accepted" && (
         <p className="mt-4 text-sm text-text-03">
-          Plan accepted. Running the plan, gathering evidence and drafting come in the next step of this feature.
+          Plan accepted. Run it to gather sources you can open and write a cited draft.
         </p>
       )}
     </article>

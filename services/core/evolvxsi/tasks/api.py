@@ -23,6 +23,8 @@ from evolvxsi.error_handling.error_codes import EvolvXSIErrorCode
 from evolvxsi.error_handling.exceptions import EvolvXSIError
 from evolvxsi.route_policy.audit import record_audit
 from evolvxsi.tasks.models import EvolvXSITask
+from evolvxsi.tasks.drafter import draft_answer
+from evolvxsi.tasks.evidence import gather_evidence
 from evolvxsi.tasks.planner import PlanError, draft_plan
 from evolvxsi.tasks.states import EDITABLE, InvalidTransition, TaskAction, TaskState, next_state
 from evolvxsi.utils.audit import AuditAction, AuditOutcome
@@ -49,6 +51,11 @@ class TaskView(BaseModel):
     created_at: datetime.datetime
     updated_at: datetime.datetime
     started_at: datetime.datetime | None
+    draft_text: str | None = None
+    draft_sources: list[dict] | None = None
+    draft_route: str | None = None
+    run_error: str | None = None
+    drafted_at: datetime.datetime | None = None
 
 
 class TaskDraft(BaseModel):
@@ -263,3 +270,36 @@ def cancel_task(
     task = _move(db_session, task_id, user, body.version, TaskAction.CANCEL)
     _audit(user, AuditAction.TASK_CANCEL, task, "Cancelled a task")
     return _view(task)
+
+
+@router.post("/{task_id}/run")
+def run_task(
+    task_id: UUID,
+    body: VersionOnly,
+    user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
+    db_session: Session = Depends(get_session),
+) -> TaskView:
+    """Run an accepted plan (or retry a failed run): gather evidence as the
+    owner, then draft a cited answer through the route policy. The move to
+    running is atomic, so the same run cannot start twice."""
+    task = _move(db_session, task_id, user, body.version, TaskAction.RUN, run_error=None)
+    _audit(user, AuditAction.TASK_RUN, task, "Started a task run")
+    try:
+        evidence = gather_evidence(db_session, user, f"{task.title}\n{task.request}")
+        result = draft_answer(db_session, user, task.title, task.request, task.plan or [], evidence)
+    except EvolvXSIError as e:
+        return _view(_move(db_session, task_id, user, task.version, TaskAction.RUN_FAILED, run_error=e.detail))
+    except Exception:
+        logger.exception("task run failed task_id=%s", task_id)
+        return _view(_move(db_session, task_id, user, task.version, TaskAction.RUN_FAILED,
+                           run_error="The run stopped before a draft was ready. Try again in a moment."))
+    by_n = {e.n: e for e in evidence}
+    sources = [
+        {"n": e.n, "doc_id": e.doc_id, "title": e.title, "link": e.link, "cited": e.n in result.cited}
+        for e in by_n.values()
+    ]
+    if result.removed_citations:
+        logger.info("task run removed %s citation(s) to sources not provided task_id=%s", result.removed_citations, task_id)
+    return _view(_move(db_session, task_id, user, task.version, TaskAction.DRAFT_DONE,
+                       draft_text=result.text, draft_sources=sources, draft_route=result.route_kind,
+                       drafted_at=func.now()))

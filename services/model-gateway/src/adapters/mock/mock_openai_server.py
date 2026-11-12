@@ -44,9 +44,28 @@ def plan_text(route, model, messages):
     ])
 
 
+def draft_text(route, model, messages):
+    """Fixture draft for drafting prompts: cites the first sources given, or
+    states the evidence gap when there are none. Labelled as a mock."""
+    said = last_user_text(messages)
+    sources = [l for l in said.splitlines() if l.startswith("[") and "]" in l]
+    head = f"(Mock draft from {route} / {model}, not a real model.)"
+    if not sources:
+        return f"{head} No permitted source covers this request, so there is nothing to cite yet."
+    lines = [head]
+    for l in sources[:2]:
+        n = l[1:l.index("]")]
+        name = l[l.index("]") + 1:].split(":", 1)[0].strip()
+        lines.append(f"The source {name} is relevant to the request [{n}].")
+    lines.append("Anything the sources do not cover is left open.")
+    return " ".join(lines)
+
+
 def reply_text(route, model, messages):
     if "numbered plan" in system_text(messages):
         return plan_text(route, model, messages)
+    if "Write a draft answer" in system_text(messages):
+        return draft_text(route, model, messages)
     said = last_user_text(messages).strip().replace("\n", " ")
     if len(said) > 300:
         said = said[:300] + "..."
