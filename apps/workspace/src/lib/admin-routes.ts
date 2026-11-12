@@ -417,6 +417,16 @@ export const ADMIN_ROUTES = {
     requiredTier: null,
     visibleWhen: null,
   },
+  PACKS: {
+    path: "/admin/packs",
+    icon: SvgPlug,
+    title: "Packs",
+    sidebarLabel: "Packs",
+    requiredPermission: Permission.MANAGE_CONNECTORS,
+    section: "Agents & Actions",
+    requiredTier: null,
+    visibleWhen: null,
+  },
   AUDIT_LOG: {
     path: "/admin/audit",
     icon: SvgShield,

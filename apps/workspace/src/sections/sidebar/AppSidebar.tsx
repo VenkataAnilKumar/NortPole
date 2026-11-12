@@ -84,6 +84,7 @@ import {
   SvgFiles,
   SvgClock,
   SvgListCheck,
+  SvgStackLine,
   SvgBell,
   SvgEditBig,
   SvgFolderPlus,
@@ -718,6 +719,13 @@ export default function AppSidebar() {
               </Disabled>
             </div>
           )}
+          <SidebarTab
+            icon={SvgStackLine}
+            {...navigation.linkTo("/app/packs", { scroll: false })}
+            selected={activeSidebarTab.isPacks()}
+          >
+            {t("appSidebar.packs.label")}
+          </SidebarTab>
           <SidebarTab
             icon={SvgListCheck}
             {...navigation.linkTo("/app/reviewed-tasks", { scroll: false })}

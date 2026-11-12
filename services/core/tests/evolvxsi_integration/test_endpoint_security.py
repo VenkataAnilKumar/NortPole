@@ -122,3 +122,18 @@ ADMIN_AUDIT = [("GET", "/admin/audit"), ("GET", "/admin/audit?outcome=denied"), 
 def test_the_audit_log_and_action_targets_are_admin_only(session, method: str, path: str) -> None:  # type: ignore[no-untyped-def]
     assert requests.request(method, f"{API}{path}", json={}, timeout=15).status_code in (401, 403)
     assert session.request(method, f"{API}{path}", json={}, timeout=15).status_code == 403
+
+
+ADMIN_PACKS = [("GET", "/admin/pack-signers"), ("POST", "/admin/pack-signers"), ("POST", "/admin/pack-signers/x/revoke"),
+               ("GET", "/admin/packs"), ("POST", "/admin/packs"), ("POST", "/admin/packs/x/1.0.0/activate"), ("POST", "/admin/packs/x/deactivate")]
+
+
+@pytest.mark.parametrize("method,path", ADMIN_PACKS)
+def test_pack_administration_is_admin_only(session, method: str, path: str) -> None:  # type: ignore[no-untyped-def]
+    assert requests.request(method, f"{API}{path}", json={}, timeout=15).status_code in (401, 403)
+    assert session.request(method, f"{API}{path}", json={}, timeout=15).status_code == 403
+
+
+@pytest.mark.parametrize("method,path", [("GET", "/packs"), ("POST", "/packs/x/templates/y/task")])
+def test_packs_for_people_need_sign_in(method: str, path: str) -> None:
+    assert requests.request(method, f"{API}{path}", json={}, timeout=15).status_code in (401, 403)

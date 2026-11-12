@@ -16842,6 +16842,9 @@
         },
         "auditLog": {
           "label": "Audit log"
+        },
+        "packsAdmin": {
+          "label": "Packs"
         }
       },
       "sections": {
@@ -16928,6 +16931,9 @@
       },
       "reviewedTasks": {
         "label": "Reviewed tasks"
+      },
+      "packs": {
+        "label": "Packs"
       },
       "inbox": {
         "label": "Inbox"
