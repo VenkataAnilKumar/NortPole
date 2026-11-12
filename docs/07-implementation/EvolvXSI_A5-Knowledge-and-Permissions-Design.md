@@ -131,3 +131,13 @@ Checked on the real database (42 integration checks pass, 5 new): the edit reads
 
 `PUT /admin/access-groups/sources/{id}` (added earlier) now calls these same functions, so the edit form and the admin endpoint share one set of rules.
 
+## Progress (2026-11-12): search quality with a real embedding model
+
+`services/core/tests/evolvxsi_integration/test_retrieval_quality.py` embeds a synthetic corpus (24 short invented policy passages, `retrieval_quality_set.json`) with `nomic-embed-text` served by Ollama, indexes it in OpenSearch with the core's own index code, and asks 24 reworded questions:
+
+- Meaning-based search found the expected document first for all 23 questions a staff viewer may see (recall@1 = recall@3 = 1.00).
+- Keyword search found it in the top 3 for 0.79 of the 24 questions; meaning-based search 1.00. This is the gap reworded questions open up.
+- The restricted board memo was never returned to a viewer without access, by either search, for any question; a board viewer found it.
+
+Limits: the corpus is small, short and easy, so this shows the pipeline works and that meaning-based search helps, not production-level quality; passages are one chunk each, with no long documents, noisy text or near-duplicates. The task evidence step still uses keyword search only; it does not yet embed the question. The test skips unless OpenSearch and Ollama are running.
+
