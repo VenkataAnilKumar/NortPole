@@ -1,0 +1,69 @@
+# Adds document retrieval to the base file: OpenSearch (the search index) and, under the
+# "workers" profile, the background workers that crawl sources and index documents.
+#   docker compose -f docker-compose.yml -f docker-compose.retrieval.yml up -d
+#   docker compose -f docker-compose.yml -f docker-compose.retrieval.yml --profile workers up -d
+# Retrieval also needs an embedding model: see README.md ("Retrieval").
+services:
+  opensearch:
+    image: opensearchproject/opensearch:3.6.0
+    environment:
+      discovery.type: single-node
+      DISABLE_SECURITY_PLUGIN: "true"        # reachable only on this compose network
+      DISABLE_INSTALL_DEMO_CONFIG: "true"
+      OPENSEARCH_JAVA_OPTS: -Xms1g -Xmx1g
+    volumes:
+      - osdata:/usr/share/opensearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+    restart: unless-stopped
+
+  api:
+    depends_on:
+      opensearch: {condition: service_healthy}
+    environment: &retrieval
+      DISABLE_VECTOR_DB: "false"
+      CACHE_BACKEND: redis
+      DISABLE_MODEL_SERVER: "true"
+      OPENSEARCH_HOST: opensearch
+      OPENSEARCH_USE_SSL: "false"
+      OPENSEARCH_VERIFY_CERTS: "false"
+
+  workers:
+    profiles: ["workers"]
+    image: evolvxsi-core:${EVOLVXSI_VERSION:-dev}
+    depends_on:
+      api: {condition: service_healthy}
+    environment:
+      <<: *retrieval
+      POSTGRES_HOST: db
+      POSTGRES_USER: evolvxsi
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      POSTGRES_DB: evolvxsi
+      REDIS_HOST: redis
+      USER_AUTH_SECRET: ${USER_AUTH_SECRET:?set USER_AUTH_SECRET}
+      AUTH_TYPE: basic
+      FILE_STORE_BACKEND: postgres
+      EVOLVXSI_OFFLINE_TOKENIZER: "true"
+      HF_HUB_OFFLINE: "1"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    # Five workers and the scheduler in one container: simple for one machine, not for scale.
+    command:
+      - bash
+      - -c
+      - |
+        A=evolvxsi.background.celery.versioned_apps
+        celery -A $$A.primary worker -Q celery -n primary@%h --concurrency=2 --loglevel=INFO &
+        celery -A $$A.light worker -Q vespa_metadata_sync,connector_deletion,doc_permissions_upsert,checkpoint_cleanup,index_attempt_cleanup,llm_model_update -n light@%h --concurrency=2 --loglevel=INFO &
+        celery -A $$A.heavy worker -Q connector_pruning,connector_doc_permissions_sync,connector_external_group_sync,csv_generation -n heavy@%h --concurrency=2 --loglevel=INFO &
+        celery -A $$A.docfetching worker -Q connector_doc_fetching -n docfetching@%h --concurrency=2 --loglevel=INFO &
+        celery -A $$A.docprocessing worker -Q docprocessing,port -n docprocessing@%h --concurrency=2 --loglevel=INFO &
+        celery -A $$A.beat beat -s /tmp/celerybeat-schedule --loglevel=INFO &
+        wait -n
+    restart: unless-stopped
+
+volumes:
+  osdata:
