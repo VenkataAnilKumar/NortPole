@@ -64,6 +64,12 @@ OPENCODE_DISABLED_TOOLS: list[str] = [
 SANDBOX_IDLE_TIMEOUT_SECONDS = int(
     os.environ.get("SANDBOX_IDLE_TIMEOUT_SECONDS", "3600")
 )
+# Governed default: one approval covers one exact action. "Approve for the
+# whole session" lets later, different requests through without review, so it
+# stays off unless an operator turns it on.
+APPROVAL_SESSION_GRANTS_ENABLED = (
+    os.environ.get("EVOLVXSI_APPROVAL_SESSION_GRANTS", "").lower() == "true"
+)
 SANDBOX_APPROVAL_WAIT_TIMEOUT_SECONDS = int(
     os.environ.get("SANDBOX_APPROVAL_WAIT_TIMEOUT_SECONDS", "180")
 )

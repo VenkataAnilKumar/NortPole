@@ -6,7 +6,7 @@ from uuid import UUID
 
 from fastapi import HTTPException
 from pydantic import BaseModel
-from sqlalchemy import Select, and_, delete, desc, false, func, or_, select, update
+from sqlalchemy import Select, and_, delete, desc, func, or_, select, update
 from sqlalchemy.orm import Session, aliased, joinedload, selectinload
 from sqlalchemy.sql.elements import ColumnElement
 
@@ -60,13 +60,12 @@ _CONNECTOR_STATE_QUERY_TIMEOUT = "7s"
 
 
 def _build_user_group_cc_pair_access_clause(
-    user_id: UUID,  # noqa: ARG001
+    user_id: UUID,
 ) -> ColumnElement[bool]:
-    """CE has no user groups. The EE version grants pairs where the user is in
-    a data-access group.
+    """EvolvXSI: grants pairs linked to a group the user belongs to."""
+    from evolvxsi.knowledge_access.groups import user_group_cc_pair_clause
 
-    NOTE: EE version in ee.evolvxsi.db.connector_credential_pair."""
-    return false()
+    return user_group_cc_pair_clause(user_id)
 
 
 def build_user_cc_pair_access_filter(user_id: UUID) -> ColumnElement[bool]:

@@ -70,6 +70,12 @@ import { ChatSession } from "@/app/app/types";
 import { useUser } from "@/providers/UserProvider";
 import { getFirstPermittedAdminRoute } from "@/lib/permissions/utils";
 import { useAppPosition } from "@/lib/navigation/hooks";
+import useSWR from "swr";
+import { errorHandlingFetcher } from "@/lib/fetcher";
+import { SWR_KEYS } from "@/lib/swr-keys";
+import { useUserPreferences } from "@/lib/userPreferences/hooks";
+import { inboxBadgeCount } from "@/lib/notifications/inbox";
+import type { Notification } from "@/lib/notifications/interfaces";
 import { useCreateModal } from "@opal/components";
 import { useModalContext } from "@/components/context/ModalContext";
 import {
@@ -223,6 +229,26 @@ export default function AppSidebar() {
   const moveChatErrorMessage = t("appSidebar.moveChatError.message");
   const { folded } = useSidebarState();
   const navigation = useNavigation();
+  const { data: userPrefs } = useUserPreferences();
+  const { data: inboxFeed } = useSWR<{ notifications: Notification[] }>(
+    SWR_KEYS.notificationsPage(0, 50),
+    errorHandlingFetcher,
+    { refreshInterval: 60_000 }
+  );
+  const { data: liveApprovals } = useSWR<{ items: unknown[] }>(
+    SWR_KEYS.myLiveApprovals,
+    errorHandlingFetcher,
+    { refreshInterval: 15_000, shouldRetryOnError: false }
+  );
+  const inboxCount =
+    userPrefs && inboxFeed
+      ? inboxBadgeCount(
+          inboxFeed.notifications,
+          userPrefs.notifications,
+          new Date(),
+          liveApprovals?.items.length ?? 0
+        )
+      : 0;
   const combinedSettingsData = useSettings();
   const { newTenantInfo, invitationInfo } = useModalContext();
   const { setAppMode, reset } = useQueryController();
@@ -709,6 +735,17 @@ export default function AppSidebar() {
             icon={SvgBell}
             {...navigation.linkTo("/app/inbox", { scroll: false })}
             selected={activeSidebarTab.isInbox()}
+            rightChildren={
+              inboxCount > 0 ? (
+                <span
+                  data-testid="inbox-badge"
+                  aria-label={`${inboxCount} in your inbox`}
+                  className="min-w-5 rounded-full bg-text-05 px-1.5 text-center text-xs font-semibold leading-5 text-background-neutral-00"
+                >
+                  {inboxCount > 99 ? "99+" : inboxCount}
+                </span>
+              ) : undefined
+            }
           >
             {t("appSidebar.inbox.label")}
           </SidebarTab>

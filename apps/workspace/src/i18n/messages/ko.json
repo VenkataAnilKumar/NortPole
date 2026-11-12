@@ -16525,6 +16525,9 @@
         },
         "models": {
           "label": "Models"
+        },
+        "notifications": {
+          "label": "Notifications"
         }
       }
     },
@@ -16830,6 +16833,9 @@
         },
         "routePolicy": {
           "label": "Route Policy"
+        },
+        "accessGroups": {
+          "label": "Groups"
         }
       },
       "sections": {

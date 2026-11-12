@@ -6,7 +6,7 @@ import { useRoutePolicy } from "@/lib/routePolicy/hooks";
 import type { RouteKind, RouteView } from "@/lib/routePolicy/types";
 import type { LLMProviderDescriptor } from "@/lib/languageModels/types";
 import type { SelectedModel } from "@/sections/model-selector/MultiModelSelector";
-import { getDefaultRoute } from "@/lib/routePolicy/preferences";
+import { useUserPreferences } from "@/lib/userPreferences/hooks";
 
 const KIND_LABEL: Record<RouteKind, string> = {
   local: "Local",
@@ -42,6 +42,7 @@ export default function RoutePicker({
   direction = "down",
 }: RoutePickerProps) {
   const { data: policy } = useRoutePolicy();
+  const { data: prefs } = useUserPreferences();
   const [open, setOpen] = useState(false);
   const [autoMode, setAutoMode] = useState(true);
   const appliedDefault = useRef(false);
@@ -100,9 +101,9 @@ export default function RoutePicker({
   // Honour the saved default route once, on the home screen only (a new task).
   // An open chat keeps the model it already uses.
   useEffect(() => {
-    if (direction !== "down" || appliedDefault.current || !policy || !providers?.length) return;
+    if (direction !== "down" || appliedDefault.current || !policy || !providers?.length || !prefs) return;
     appliedDefault.current = true;
-    const pref = getDefaultRoute();
+    const pref = prefs.default_route;
     const target =
       pref === "auto"
         ? policy.auto_provider_id
@@ -111,7 +112,7 @@ export default function RoutePicker({
     setAutoMode(pref === "auto");
     pick(target);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [policy, providers, direction]);
+  }, [policy, providers, direction, prefs]);
 
   if (!policy || policy.routes.length === 0) return null;
 

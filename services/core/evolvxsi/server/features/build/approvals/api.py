@@ -30,7 +30,13 @@ from evolvxsi.external_apps.matching.engine import (
 )
 from evolvxsi.external_apps.presentation.decode import decode_payload
 from evolvxsi.sandbox_proxy import approval_cache
-from evolvxsi.server.features.build.configs import SANDBOX_APPROVAL_WAIT_TIMEOUT_SECONDS
+from evolvxsi.action_binding.binding import action_fingerprint
+from evolvxsi.route_policy.audit import record_audit
+from evolvxsi.server.features.build.configs import (
+    APPROVAL_SESSION_GRANTS_ENABLED,
+    SANDBOX_APPROVAL_WAIT_TIMEOUT_SECONDS,
+)
+from evolvxsi.utils.audit import AuditAction, AuditOutcome
 from evolvxsi.server.features.build.db import action_approval
 from evolvxsi.server.features.build.db.build_session import get_build_session
 from evolvxsi.utils.logger import setup_logger
@@ -72,6 +78,8 @@ class ApprovalView(BaseModel):
     @computed_field
     @property
     def can_approve_for_session(self) -> bool:
+        if not APPROVAL_SESSION_GRANTS_ENABLED:
+            return False
         if self.target_kind is None or not actions_requiring_approval(self.actions):
             return False
         return not (
@@ -137,6 +145,25 @@ def _existing_decision_response(
     )
 
 
+def _audit_decision(row: ActionApproval, user: User) -> None:
+    """Record who decided which exact action. The fingerprint ties the record to
+    one action and payload; no payload text is stored."""
+    action_type = row.actions[0].get("action_type", "") if row.actions else ""
+    approved = row.decision == ApprovalDecision.APPROVED
+    record_audit(
+        AuditAction.APPROVAL_DECISION,
+        AuditOutcome.SUCCESS if approved else AuditOutcome.DENIED,
+        actor=user,
+        summary=f"{'Approved' if approved else 'Rejected'} {action_type or 'action'} on {row.app_name}",
+        resource_type="action_approval",
+        resource_id=str(row.approval_id),
+        details={
+            "fingerprint": action_fingerprint(action_type, row.app_name, row.payload),
+            "decided_via": row.decided_via.value if row.decided_via else None,
+        },
+    )
+
+
 @router.get("/sessions/{session_id}")
 def list_session_approvals(
     session_id: UUID,
@@ -181,6 +208,25 @@ def list_session_approval_status(
     ]
 
 
+@router.get("/live")
+def list_my_live_approvals(
+    user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
+    db_session: Session = Depends(get_session),
+) -> ApprovalListResponse:
+    """Every pending approval the caller may decide, across all of their sessions.
+
+    Only the caller's own sessions are searched, so nobody sees another
+    person's requests. Rows older than the proxy's wait window are excluded.
+    """
+    cutoff = datetime.now(timezone.utc) - timedelta(
+        seconds=SANDBOX_APPROVAL_WAIT_TIMEOUT_SECONDS
+    )
+    rows = action_approval.list_user_pending_action_approvals(
+        db_session, user.id, created_after=cutoff
+    )
+    return ApprovalListResponse(items=[ApprovalView.model_validate(r) for r in rows])
+
+
 @router.get("/sessions/{session_id}/live")
 def list_live_approvals(
     session_id: UUID,
@@ -218,6 +264,11 @@ def submit_decision(
         else ApprovalDecision.APPROVED
     )
     for_session = body.decision == ApprovalChoice.APPROVE_SESSION
+    if for_session and not APPROVAL_SESSION_GRANTS_ENABLED:
+        raise EvolvXSIError(
+            EvolvXSIErrorCode.INVALID_INPUT,
+            "approving for the whole session is turned off; approve this action only",
+        )
     current = action_approval.get_action_approval_for_user(
         db_session, approval_id, user.id, lock_session=for_session
     )
@@ -252,6 +303,8 @@ def submit_decision(
         if winner is None:
             raise EvolvXSIError(EvolvXSIErrorCode.NOT_FOUND, "approval request not found")
         return _existing_decision_response(winner, decision, for_session=for_session)
+
+    _audit_decision(decided, user)
 
     approved_ids = [approval_id]
     grant_source_rows: list[ActionApproval] = []
