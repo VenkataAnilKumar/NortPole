@@ -38,6 +38,9 @@ class EvolvXSIAuditEvent(Base):
     resource_id: Mapped[str | None] = mapped_column(String, nullable=True)
     summary: Mapped[str] = mapped_column(Text, nullable=False)
     details: Mapped[dict[str, Any] | None] = mapped_column(JSONB, nullable=True)
+    # The hash chain (see audit_log/chain.py). Null on rows written before the chain existed.
+    prev_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    row_hash: Mapped[str | None] = mapped_column(String(64), nullable=True, index=True)
 
 
 def describe_policy_change(old: RoutePolicy, new: RoutePolicy) -> tuple[str, dict[str, Any]]:
@@ -90,22 +93,40 @@ def record_audit(
         pass
     try:
         # Own session and commit: the row must survive the caller's failed request.
+        from sqlalchemy import text
+
+        from evolvxsi.audit_log.chain import GENESIS, LOCK_KEY, link
+
         with get_session_with_current_tenant() as db:
-            db.add(
-                EvolvXSIAuditEvent(
-                    action=action.value,
-                    outcome=outcome.value,
-                    actor_user_id=str(actor.id) if actor else None,
-                    actor_email=actor.email if actor else None,
-                    resource_type=resource_type,
-                    resource_id=str(resource_id) if resource_id is not None else None,
-                    summary=summary,
-                    details=details,
-                )
+            # One writer at a time extends the chain; the lock ends with this transaction.
+            db.execute(text("select pg_advisory_xact_lock(:k)"), {"k": LOCK_KEY})
+            prev = db.scalar(select(EvolvXSIAuditEvent.row_hash).where(EvolvXSIAuditEvent.row_hash.is_not(None)).order_by(EvolvXSIAuditEvent.id.desc()).limit(1))
+            row = EvolvXSIAuditEvent(
+                action=action.value,
+                outcome=outcome.value,
+                actor_user_id=str(actor.id) if actor else None,
+                actor_email=actor.email if actor else None,
+                resource_type=resource_type,
+                resource_id=str(resource_id) if resource_id is not None else None,
+                summary=summary,
+                details=details,
             )
+            db.add(row)
+            db.flush()
+            db.refresh(row)  # the stored id, time and details are what the hash covers
+            row.prev_hash = prev or _anchor_or_genesis(db, GENESIS)
+            row.row_hash = link(row.prev_hash, row)
             db.commit()
+            logger.info("audit chain head %s id=%s", row.row_hash, row.id)
     except Exception as exc:  # audit must never break the request
         logger.warning("Could not store audit event %s: %s", action.value, exc)
+
+
+def _anchor_or_genesis(db: Session, genesis: str) -> str:
+    """The hash to chain from when no hashed row exists: the one recorded by the last prune, else genesis."""
+    from evolvxsi.retention.anchor import load_anchor
+
+    return load_anchor() or genesis
 
 
 def list_audit(db: Session, limit: int = 50, action: str | None = None) -> list[EvolvXSIAuditEvent]:
