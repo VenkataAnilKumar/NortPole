@@ -55,3 +55,16 @@ Step 1 is done and part of step 2 exists without an index:
 Two rules the tests pin down: unknown access is visible to administrators only, and the administrator role does not open a document that has a known access list.
 
 Not done: nothing calls these functions yet. Retrieval, citations and export still use the upstream paths, and no answer quality has been tested because there is no index or real model here.
+
+## Progress (2026-11-12): permission harness on a real index
+
+Step 2 runs. `services/core/tests/evolvxsi_integration/test_retrieval_acl.py` writes the fixed test set into a throwaway OpenSearch 3.6.0 index with each document's real access list, then runs the core's own keyword and semantic retrieval as each test viewer (analyst, contractor, admin, anonymous):
+
+- Semantic retrieval returns exactly the documents each viewer may see.
+- Keyword retrieval never returns a hidden document, and finds the permitted one when it should.
+- A document with unknown access (stored as an empty access list) is returned to nobody, the administrator included. This is stricter than the rule in `decisions.py`, which lets an administrator see it; any administrator view of unsynced documents has to come from somewhere other than normal search.
+
+21 checks passed. A control run with the access filter switched off returned the restricted board memo, so the harness does catch a leak.
+
+Limits: embeddings are deterministic test vectors because the embedding model host is blocked here, so this checks access filtering only, not answer quality. Group access works because the harness builds the viewer's access list with groups (`viewer_acl`); the community user path (`_get_acl_for_user`) still adds only email addresses, so wiring `viewer_acl` into real search is the next step.
+

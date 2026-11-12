@@ -20,3 +20,26 @@ Runs the adapted backend and web app on one machine with no search index, no mod
 - On a fresh database the first account becomes an administrator (checked through the API on 2026-11-10). In the sandbox an unexplained extra registration took that slot first, and the next account landed in the Basic group. If nobody can reach the admin panel, run `PYTHONPATH=. python scripts/grant_admin.py <email>` in `services/core` with the same database settings. It moves an existing user into the Admin group and recomputes permissions; it never creates users, and running it requires database access.
 - The `xlsx` package is downloaded from a host a sandbox may block.
 - Without `EVOLVXSI_OFFLINE_TOKENIZER=true` the backend tries to download a tokenizer and chat fails if the download is blocked.
+
+## Retrieval index for the permission harness (sandbox)
+
+Lite mode has no index. To run the A5 permission harness, start a single-node OpenSearch 3.6.0 with security off (local testing only, never a shared host):
+
+```bash
+docker run -d --name evx-opensearch -p 9200:9200 -e discovery.type=single-node -e DISABLE_SECURITY_PLUGIN=true -e DISABLE_INSTALL_DEMO_CONFIG=true -e "OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g" opensearchproject/opensearch:3.6.0
+```
+
+If the host disk is over 90% full, OpenSearch blocks index creation. On a throwaway test container only, turn the disk check off:
+
+```bash
+curl -s -XPUT http://127.0.0.1:9200/_cluster/settings -H 'Content-Type: application/json' -d '{"persistent":{"cluster.routing.allocation.disk.threshold_enabled":false,"cluster.blocks.create_index":null}}'
+```
+
+Redis must be running (index creation takes a lock). Then, from `services/core`:
+
+```bash
+OPENSEARCH_HOST=127.0.0.1 OPENSEARCH_USE_SSL=false NO_PROXY=127.0.0.1,localhost PYTHONPATH=. pytest tests/evolvxsi_integration/test_retrieval_acl.py
+```
+
+The harness skips itself when no OpenSearch answers.
+
