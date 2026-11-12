@@ -417,6 +417,16 @@ export const ADMIN_ROUTES = {
     requiredTier: null,
     visibleWhen: null,
   },
+  AUDIT_LOG: {
+    path: "/admin/audit",
+    icon: SvgShield,
+    title: "Audit log",
+    sidebarLabel: "Audit log",
+    requiredPermission: Permission.FULL_ADMIN_PANEL_ACCESS,
+    section: "Usage",
+    requiredTier: null,
+    visibleWhen: null,
+  },
   ACTION_TARGETS: {
     path: "/admin/action-targets",
     icon: SvgPlug,
