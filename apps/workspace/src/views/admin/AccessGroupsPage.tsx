@@ -108,7 +108,11 @@ function GroupCard({ group, users, onDone }: { group: Group; users: Member[]; on
           <p className="text-sm text-text-03">
             {group.members.length} {group.members.length === 1 ? "member" : "members"}
             {" · "}
-            {readsSources ? `reads ${group.sources.map((s) => s.name ?? `source ${s.cc_pair_id}`).join(", ")}` : "reads no sources yet"}
+            {group.is_default
+              ? "decides roles, not source access"
+              : readsSources
+                ? `reads ${group.sources.map((s) => s.name ?? `source ${s.cc_pair_id}`).join(", ")}`
+                : "reads no sources yet"}
           </p>
         </div>
         {group.is_default ? (
