@@ -115,7 +115,7 @@ def test_no_audit_row_anywhere_holds_task_text(session) -> None:  # type: ignore
     assert leaked == 0
 
 
-ADMIN_AUDIT = [("GET", "/admin/audit"), ("GET", "/admin/audit?outcome=denied"), ("GET", "/admin/audit/export"), ("GET", "/admin/audit/export?format=csv"),
+ADMIN_AUDIT = [("GET", "/admin/audit"), ("GET", "/admin/audit?outcome=denied"), ("GET", "/admin/audit/export"), ("GET", "/admin/audit/export?format=csv"), ("GET", "/admin/audit/verify"),
                ("GET", "/admin/retention"), ("GET", "/admin/inventory"), ("GET", "/admin/extensions"), ("PUT", "/admin/extensions"), ("PUT", "/admin/retention"), ("POST", "/admin/retention/prune"), ("GET", "/admin/action-targets"), ("POST", "/admin/action-targets")]
 
 

@@ -83,7 +83,7 @@ def list_events(
 
 
 EXPORT_MAX_ROWS = 50_000
-_CSV_FIELDS = ["id", "created_at", "action", "outcome", "actor_email", "resource_type", "resource_id", "summary", "details"]
+_CSV_FIELDS = ["id", "created_at", "action", "outcome", "actor_email", "resource_type", "resource_id", "summary", "details", "prev_hash", "row_hash"]
 
 
 def _csv_cell(value: object) -> str:
@@ -109,7 +109,8 @@ def export_events(
         stmt = stmt.where(EvolvXSIAuditEvent.id <= until_id)
     rows = [
         {"id": e.id, "created_at": e.created_at.isoformat(), "action": e.action, "outcome": e.outcome, "actor_email": e.actor_email,
-         "resource_type": e.resource_type, "resource_id": e.resource_id, "summary": e.summary, "details": e.details}
+         "resource_type": e.resource_type, "resource_id": e.resource_id, "summary": e.summary, "details": e.details,
+         "prev_hash": e.prev_hash, "row_hash": e.row_hash}
         for e in db_session.scalars(stmt)
     ]
     record_audit(AuditAction.AUDIT_EXPORT, AuditOutcome.SUCCESS, actor=user, resource_type="audit",
@@ -125,3 +126,15 @@ def export_events(
     for r in rows:
         w.writerow([_csv_cell(json.dumps(r[f]) if f == "details" and r[f] is not None else r[f]) for f in _CSV_FIELDS])
     return Response(buf.getvalue(), media_type="text/csv", headers={"Content-Disposition": "attachment; filename=audit-export.csv"})
+
+
+@router.get("/verify")
+def verify_chain(
+    _: User = Depends(require_permission(Permission.FULL_ADMIN_PANEL_ACCESS)),
+    db_session: Session = Depends(get_session),
+) -> dict:
+    """Check the audit hash chain. Detects an edited row or one removed from the middle; it cannot detect
+    removal of the newest rows unless the head hash was kept elsewhere (every event's log line carries it)."""
+    from evolvxsi.audit_log.chain import verify
+
+    return verify(db_session)

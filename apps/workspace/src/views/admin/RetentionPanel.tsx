@@ -116,11 +116,23 @@ export default function RetentionPanel() {
         >
           Run the prune now
         </button>
+        <button
+          type="button"
+          className={secondary}
+          disabled={busy}
+          onClick={() => run(async () => {
+            const r = await call("/api/admin/audit/verify", "GET");
+            if (r.ok) return `The audit chain is intact: ${r.checked} events checked${r.unhashed_rows ? `; ${r.unhashed_rows} older events predate the chain and are not covered` : ""}. Latest hash ${String(r.head_hash).slice(0, 12)}…`;
+            throw new Error(`The audit chain is broken at event ${r.first_break.id}: ${r.first_break.reason}.`);
+          })}
+        >
+          Check audit integrity
+        </button>
         <a className={`${secondary} inline-flex items-center`} href="/api/admin/audit/export?format=csv" download>Download audit log (CSV)</a>
         <a className={`${secondary} inline-flex items-center`} href="/api/admin/audit/export?format=json" download>Download audit log (JSON)</a>
       </div>
       <p className="mt-2 text-xs text-text-03">
-        The prune also runs daily when the background workers are running. Exports hold up to 50,000 events and are themselves recorded in the audit log.
+        The prune also runs daily when the background workers are running. Exports hold up to 50,000 events (with their hashes) and are themselves recorded in the audit log. The integrity check finds an edited event or one removed from the middle; it cannot see the newest events being removed unless the latest hash was kept elsewhere (each event's log line carries it).
         {data.last_prune_summary ? ` Last prune: ${data.last_prune_summary}.` : ""}
       </p>
       {msg && <p role={msg.ok ? "status" : "alert"} className={`mt-2 text-sm ${msg.ok ? "text-text-05" : "text-status-error-05"}`} data-testid="retention-message">{msg.text}</p>}
