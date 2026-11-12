@@ -3,6 +3,7 @@
 import json
 import threading
 import uuid
+from types import SimpleNamespace
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 import pytest
@@ -215,3 +216,35 @@ def test_unsafe_target_urls_are_refused(url: str) -> None:
 
 def test_a_loopback_target_is_allowed_for_local_testing() -> None:
     check_target_url("http://127.0.0.1:9/x")
+
+
+def test_an_email_target_sends_the_approved_draft_to_its_fixed_recipients(world) -> None:  # type: ignore[no-untyped-def]
+    from unittest.mock import patch
+
+    from evolvxsi.configs import app_configs as cfg
+    from tests.unit.evolvxsi.actions.test_email import _Sink
+
+    admin = SimpleNamespace(id=uuid.uuid4(), email="mail-admin@example.com")
+    with get_session_with_current_tenant() as s:
+        for bad in ("mailto:nobody", "http://example.com/x"):
+            with pytest.raises(EvolvXSIError):
+                actions.create_target(actions.TargetIn(name=f"bad-{uuid.uuid4().hex[:6]}", kind="email", url=bad,
+                                                       allowed_data_classes=["confidential"]), user=admin, db_session=s)
+        view = actions.create_target(actions.TargetIn(name=f"mail-{uuid.uuid4().hex[:8]}", kind="email", url="mailto:finance@example.com",
+                                                      allowed_data_classes=["confidential", "internal", "public"]), user=admin, db_session=s)
+        assert view.kind == "email"
+        tid = view.id
+    smtp = _Sink()
+    try:
+        with get_session_with_current_tenant() as s:
+            u, t, a = _approved_action(s, world["u"], tid)
+            with patch.object(cfg, "SMTP_SERVER", "127.0.0.1"), patch.object(cfg, "SMTP_PORT", smtp.port), \
+                 patch.object(cfg, "SMTP_STARTTLS", False), patch.object(cfg, "SMTP_USER", ""), patch.object(cfg, "EMAIL_FROM", "noreply@example.com"):
+                done = actions.execute_action(a.id, actions.VersionOnly(version=a.version), user=u, db_session=s)
+            assert done.state == "succeeded"
+            assert smtp.rcpt == ["finance@example.com"] and "Receipts are due" in smtp.data
+    finally:
+        with get_session_with_current_tenant() as s:
+            s.query(EvolvXSIAction).filter_by(target_id=tid).delete()
+            s.query(EvolvXSIActionTarget).filter_by(id=tid).delete()
+            s.commit()

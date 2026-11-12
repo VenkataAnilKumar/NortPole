@@ -13,7 +13,10 @@
 from __future__ import annotations
 
 import ipaddress
+import re
+import smtplib
 import socket
+from email.message import EmailMessage
 from dataclasses import dataclass
 from typing import Any
 from urllib.parse import urlparse
@@ -118,3 +121,58 @@ def deliver(url: str, payload: dict[str, Any], idempotency_key: str) -> Delivery
     if 200 <= r.status_code < 300:
         return DeliveryResult(True, r.status_code, None)
     return DeliveryResult(False, r.status_code, f"The target answered with status {r.status_code}.")
+
+
+# ---- email -------------------------------------------------------------------
+# The recipients are fixed by the administrator when the target is registered
+# ("mailto:a@x.com,b@y.com"); an owner never types an address. The mail server is
+# the deployment's own (SMTP_* settings), not anything an owner or a draft names.
+
+_ADDRESS = re.compile(r"^[A-Za-z0-9._%+\-]+@[A-Za-z0-9\-]+(\.[A-Za-z0-9\-]+)+$")
+MAX_RECIPIENTS = 5
+
+
+def parse_mailto(value: str) -> list[str]:
+    """Return the recipient addresses, or raise UnsafeTarget. Control characters and
+    anything that is not a plain address are refused, so no header can be injected."""
+    if not value.startswith("mailto:"):
+        raise UnsafeTarget("An email target must look like mailto:name@example.com (several addresses separated by commas).")
+    addrs = [a.strip() for a in value[len("mailto:"):].split(",") if a.strip()]
+    if not addrs or len(addrs) > MAX_RECIPIENTS:
+        raise UnsafeTarget(f"An email target needs between 1 and {MAX_RECIPIENTS} addresses.")
+    bad = [a for a in addrs if not _ADDRESS.match(a) or len(a) > 254]
+    if bad:
+        raise UnsafeTarget(f"Not a valid email address: {bad[0][:60]}")
+    return addrs
+
+
+def _one_line(text: str, limit: int = 150) -> str:
+    return " ".join(text.split())[:limit]
+
+
+def deliver_email(value: str, payload: dict[str, Any], idempotency_key: str) -> DeliveryResult:
+    from evolvxsi.configs import app_configs as cfg
+
+    try:
+        recipients = parse_mailto(value)
+    except UnsafeTarget as e:
+        return DeliveryResult(False, None, str(e))
+    if not (cfg.SMTP_SERVER and cfg.EMAIL_FROM):
+        return DeliveryResult(False, None, "This deployment has no mail server configured (SMTP_SERVER and EMAIL_FROM).")
+    msg = EmailMessage()
+    msg["From"], msg["To"] = cfg.EMAIL_FROM, ", ".join(recipients)
+    msg["Subject"] = _one_line(str(payload.get("title") or "Reviewed draft"))
+    msg["Message-ID"] = f"<{idempotency_key}@evolvxsi.local>"
+    msg.set_content(str(payload.get("markdown") or ""))
+    try:
+        with smtplib.SMTP(cfg.SMTP_SERVER, cfg.SMTP_PORT, timeout=TIMEOUT_S) as smtp:
+            if cfg.SMTP_STARTTLS:
+                smtp.starttls()
+            if cfg.SMTP_USER:
+                smtp.login(cfg.SMTP_USER, cfg.SMTP_PASS)
+            smtp.send_message(msg)
+    except (smtplib.SMTPException, OSError):
+        # Nothing about the server's answer is stored. A retry reuses the Message-ID,
+        # but email has no way to refuse a duplicate, so the owner is told it may have arrived.
+        return DeliveryResult(False, None, "The mail server did not accept the message. It may or may not have been delivered; check before retrying.")
+    return DeliveryResult(True, 250, None)
