@@ -83,6 +83,7 @@ import {
   SvgPlug,
   SvgFiles,
   SvgClock,
+  SvgListCheck,
   SvgBell,
   SvgEditBig,
   SvgFolderPlus,
@@ -717,6 +718,13 @@ export default function AppSidebar() {
               </Disabled>
             </div>
           )}
+          <SidebarTab
+            icon={SvgListCheck}
+            {...navigation.linkTo("/app/reviewed-tasks", { scroll: false })}
+            selected={activeSidebarTab.isReviewedTasks()}
+          >
+            {t("appSidebar.reviewedTasks.label")}
+          </SidebarTab>
           <SidebarTab
             icon={SvgClock}
             {...navigation.linkTo("/app/automations", { scroll: false })}

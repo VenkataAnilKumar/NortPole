@@ -1,0 +1,307 @@
+"use client";
+
+import { useState } from "react";
+import useSWR from "swr";
+import { errorHandlingFetcher } from "@/lib/fetcher";
+
+const URL = "/api/tasks";
+
+type State = "draft" | "planning" | "plan_review" | "plan_accepted" | "plan_failed" | "cancelled";
+
+interface Task {
+  id: string;
+  title: string;
+  request: string;
+  desired_output: string;
+  state: State;
+  version: number;
+  plan: string[] | null;
+  plan_route: string | null;
+  plan_error: string | null;
+  revision_note: string | null;
+  updated_at: string;
+}
+
+const STATE_LABEL: Record<State, string> = {
+  draft: "Draft",
+  planning: "Planning",
+  plan_review: "Plan to review",
+  plan_accepted: "Plan accepted",
+  plan_failed: "Plan failed",
+  cancelled: "Cancelled",
+};
+const ROUTE_LABEL: Record<string, string> = { local: "Local", private: "Private", cloud: "Cloud" };
+
+const card = "rounded-2xl border border-border-01 bg-background-neutral-00 p-5 shadow-sm";
+const input = "w-full rounded-xl border border-border-02 bg-background-neutral-00 px-3 py-2 text-sm text-text-05";
+const primary = "min-h-11 rounded-xl bg-text-05 px-5 text-sm font-semibold text-background-neutral-00 disabled:opacity-50";
+const secondary = "min-h-11 rounded-xl border border-border-02 px-4 text-sm font-semibold text-text-05 disabled:opacity-50";
+
+async function call(path: string, method: string, body: unknown): Promise<Task> {
+  const res = await fetch(path, {
+    method,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    let detail = "";
+    try {
+      detail = (await res.json())?.detail ?? "";
+    } catch {
+      /* no body */
+    }
+    throw new Error(typeof detail === "string" && detail ? detail : `The change could not be saved (HTTP ${res.status}).`);
+  }
+  return res.json();
+}
+
+function DraftForm({
+  task,
+  onSaved,
+  onCancel,
+}: {
+  task: Task | null;
+  onSaved: (t: Task) => void;
+  onCancel?: () => void;
+}) {
+  const [title, setTitle] = useState(task?.title ?? "");
+  const [request, setRequest] = useState(task?.request ?? "");
+  const [output, setOutput] = useState(task?.desired_output ?? "");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const save = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      const body = { title, request, desired_output: output };
+      onSaved(task ? await call(`${URL}/${task.id}`, "PATCH", { ...body, version: task.version }) : await call(URL, "POST", body));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "The draft could not be saved.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-3">
+      <label className="flex flex-col gap-1 text-sm font-medium text-text-05">
+        Title
+        <input className={`${input} min-h-11`} value={title} maxLength={200} onChange={(e) => setTitle(e.target.value)} />
+      </label>
+      <label className="flex flex-col gap-1 text-sm font-medium text-text-05">
+        What should the task do?
+        <textarea className={input} rows={4} value={request} maxLength={8000} onChange={(e) => setRequest(e.target.value)} />
+      </label>
+      <label className="flex flex-col gap-1 text-sm font-medium text-text-05">
+        Desired output <span className="font-normal text-text-03">(optional)</span>
+        <input className={`${input} min-h-11`} value={output} maxLength={8000} onChange={(e) => setOutput(e.target.value)} />
+      </label>
+      {error && <p role="alert" className="text-sm text-status-error-05">{error}</p>}
+      <div className="flex flex-wrap gap-2">
+        <button type="button" className={primary} disabled={busy || !title.trim() || !request.trim()} onClick={save}>
+          {busy ? "Saving…" : "Save draft"}
+        </button>
+        {onCancel && (
+          <button type="button" className={secondary} disabled={busy} onClick={onCancel}>
+            Cancel
+          </button>
+        )}
+      </div>
+      <p className="text-xs text-text-03">Saving a draft runs nothing. Work begins only when you press Start.</p>
+    </div>
+  );
+}
+
+function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<unknown> }) {
+  const [editing, setEditing] = useState(false);
+  const [note, setNote] = useState("");
+  const [busy, setBusy] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const act = async (name: string, path: string, body: unknown) => {
+    setBusy(name);
+    setError(null);
+    try {
+      await call(`${URL}/${task.id}${path}`, "POST", body);
+      await onChange();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "The change could not be saved.");
+      await onChange();
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  return (
+    <article className={card} data-testid="task-detail" aria-labelledby="task-title">
+      <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
+        <h2 id="task-title" className="min-w-0 text-lg font-semibold text-text-05">{task.title}</h2>
+        <span data-testid="task-state" className="rounded-full border border-border-01 px-2.5 py-0.5 text-xs font-medium text-text-03">
+          {STATE_LABEL[task.state]}
+        </span>
+      </div>
+
+      {editing ? (
+        <DraftForm
+          task={task}
+          onSaved={async () => {
+            setEditing(false);
+            await onChange();
+          }}
+          onCancel={() => setEditing(false)}
+        />
+      ) : (
+        <>
+          <p className="whitespace-pre-wrap text-sm text-text-05">{task.request}</p>
+          {task.desired_output && <p className="mt-2 text-sm text-text-03">Desired output: {task.desired_output}</p>}
+          {task.revision_note && task.state === "draft" && (
+            <p className="mt-3 rounded-xl bg-background-neutral-01 px-3 py-2 text-sm text-text-05">
+              Your revision note: {task.revision_note}
+            </p>
+          )}
+        </>
+      )}
+
+      {task.plan && task.state !== "draft" && (
+        <section className="mt-4" aria-labelledby="plan-h">
+          <h3 id="plan-h" className="mb-2 text-sm font-semibold text-text-05">
+            Proposed plan
+            {task.plan_route && (
+              <span className="ml-2 font-normal text-text-03">drafted on the {ROUTE_LABEL[task.plan_route] ?? task.plan_route} route</span>
+            )}
+          </h3>
+          <ol className="list-decimal space-y-1 pl-5 text-sm text-text-05" data-testid="task-plan">
+            {task.plan.map((step, i) => (
+              <li key={i}>{step}</li>
+            ))}
+          </ol>
+        </section>
+      )}
+      {task.state === "plan_failed" && task.plan_error && (
+        <p role="alert" className="mt-4 text-sm text-status-error-05">{task.plan_error}</p>
+      )}
+      {error && <p role="alert" className="mt-3 text-sm text-status-error-05">{error}</p>}
+
+      {!editing && (
+        <div className="mt-4 flex flex-wrap gap-2">
+          {task.state === "draft" && (
+            <>
+              <button type="button" className={primary} disabled={!!busy} onClick={() => act("start", "/start", { version: task.version })}>
+                {busy === "start" ? "Drafting a plan…" : "Start"}
+              </button>
+              <button type="button" className={secondary} disabled={!!busy} onClick={() => setEditing(true)}>
+                Edit
+              </button>
+            </>
+          )}
+          {task.state === "plan_review" && (
+            <button type="button" className={primary} disabled={!!busy} onClick={() => act("accept", "/plan/accept", { version: task.version })}>
+              {busy === "accept" ? "Accepting…" : "Accept plan"}
+            </button>
+          )}
+          {(task.state === "plan_review" || task.state === "plan_failed") && (
+            <div className="flex w-full flex-wrap items-end gap-2">
+              <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm font-medium text-text-05">
+                What should change?
+                <input className={`${input} min-h-11`} value={note} maxLength={8000} onChange={(e) => setNote(e.target.value)} />
+              </label>
+              <button type="button" className={secondary} disabled={!!busy} onClick={() => act("revise", "/plan/revise", { version: task.version, note })}>
+                Revise
+              </button>
+            </div>
+          )}
+          {(task.state === "draft" || task.state === "plan_review" || task.state === "plan_failed") && (
+            <button type="button" className={`${secondary} ml-auto`} disabled={!!busy} onClick={() => act("cancel", "/cancel", { version: task.version })}>
+              Cancel task
+            </button>
+          )}
+        </div>
+      )}
+      {task.state === "plan_accepted" && (
+        <p className="mt-4 text-sm text-text-03">
+          Plan accepted. Running the plan, gathering evidence and drafting come in the next step of this feature.
+        </p>
+      )}
+    </article>
+  );
+}
+
+/**
+ * Reviewed tasks: write a draft, start it on purpose, review the proposed plan,
+ * then accept, revise or cancel. Nothing runs before Start, and the plan is
+ * drafted only on a route the administrator's policy allows.
+ */
+export default function ReviewedTasksPage() {
+  const { data, error, isLoading, mutate } = useSWR<Task[]>(URL, errorHandlingFetcher);
+  const [selected, setSelected] = useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
+  const tasks = data ?? [];
+  const current = tasks.find((t) => t.id === selected) ?? null;
+
+  return (
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 p-4 sm:p-8" data-testid="reviewed-tasks-page">
+      <header className="flex flex-wrap items-end justify-between gap-3">
+        <div className="flex flex-col gap-1">
+          <h1 className="font-[family-name:var(--font-serif)] text-3xl font-medium text-text-05">Reviewed tasks</h1>
+          <p className="text-sm text-text-03">Write the request, start it when ready, and approve the plan before any work runs.</p>
+        </div>
+        {!creating && (
+          <button type="button" className={primary} onClick={() => setCreating(true)}>
+            New task
+          </button>
+        )}
+      </header>
+
+      {creating && (
+        <section className={card} aria-labelledby="new-task">
+          <h2 id="new-task" className="mb-3 text-base font-semibold text-text-05">New task</h2>
+          <DraftForm
+            task={null}
+            onSaved={async (t) => {
+              setCreating(false);
+              setSelected(t.id);
+              await mutate();
+            }}
+            onCancel={() => setCreating(false)}
+          />
+        </section>
+      )}
+
+      <div className="grid gap-4 md:grid-cols-[18rem_1fr]">
+        <nav aria-label="Your tasks">
+          {isLoading ? (
+            <p className="text-sm text-text-03">Loading…</p>
+          ) : error ? (
+            <p role="alert" className="text-sm text-text-05">Tasks could not be loaded.</p>
+          ) : tasks.length === 0 ? (
+            <p className="text-sm text-text-03">No tasks yet.</p>
+          ) : (
+            <ul className="flex flex-col gap-2">
+              {tasks.map((t) => (
+                <li key={t.id}>
+                  <button
+                    type="button"
+                    onClick={() => setSelected(t.id)}
+                    aria-current={t.id === selected ? "true" : undefined}
+                    className={`flex min-h-11 w-full flex-col items-start rounded-xl border px-3 py-2 text-left ${t.id === selected ? "border-text-05 bg-background-neutral-01" : "border-border-01"}`}
+                  >
+                    <span className="w-full truncate text-sm font-semibold text-text-05">{t.title}</span>
+                    <span className="text-xs text-text-03">{STATE_LABEL[t.state]}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </nav>
+        <div>
+          {current ? (
+            <TaskDetail key={`${current.id}-${current.version}`} task={current} onChange={() => mutate()} />
+          ) : (
+            tasks.length > 0 && <p className="text-sm text-text-03">Pick a task to see it.</p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

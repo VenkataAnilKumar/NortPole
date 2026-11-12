@@ -31,6 +31,7 @@ type AppPositionType =
         | "plugins"
         | "libraries"
         | "automations"
+        | "reviewedTasks"
         | "inbox";
     };
 
@@ -70,6 +71,8 @@ function hrefFor(value: AppPositionType): Route {
       return "/app/libraries";
     case "automations":
       return "/app/automations";
+    case "reviewedTasks":
+      return "/app/reviewed-tasks";
     case "inbox":
       return "/app/inbox";
     case "user-settings":
@@ -202,6 +205,10 @@ class AppPosition {
     return this.value.location === "plugins";
   }
 
+  isReviewedTasks(): boolean {
+    return this.value.location === "reviewedTasks";
+  }
+
   isAutomations(): boolean {
     return this.value.location === "automations";
   }
@@ -285,6 +292,9 @@ export function useAppPosition(): AppPosition {
     }
     if (pathname === "/app/plugins" || pathname.startsWith("/app/plugins/")) {
       return new AppPosition({ location: "plugins" }, navigation);
+    }
+    if (pathname === "/app/reviewed-tasks" || pathname.startsWith("/app/reviewed-tasks/")) {
+      return new AppPosition({ location: "reviewedTasks" }, navigation);
     }
     if (
       pathname === "/app/automations" ||

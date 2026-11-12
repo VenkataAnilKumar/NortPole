@@ -562,10 +562,15 @@ def apply_access_change__no_commit(
     if data_access_group_ids and not has_data_access:
         raise ValueError(f"Access type {access_type} takes no data-access groups")
 
+    # EvolvXSI implementations; in the community copy these were no-ops, so a
+    # change of reading groups saved nothing.
+    from evolvxsi.knowledge_access.source_groups import (
+        assert_restricted_cc_pairs_keep_a_group,
+        set_cc_pair_data_access_groups__no_commit,
+    )
+
     def set_groups() -> None:
-        fetch_ee_implementation_or_noop(
-            "evolvxsi.db.cc_pair_data_access", "set_cc_pair_data_access_groups__no_commit"
-        )(
+        set_cc_pair_data_access_groups__no_commit(
             db_session,
             cc_pair_id=cc_pair_id,
             requested_group_ids=data_access_group_ids,
@@ -593,9 +598,7 @@ def apply_access_change__no_commit(
     db_session.flush()
     if has_data_access:
         set_groups()
-    fetch_ee_implementation_or_noop(
-        "evolvxsi.db.cc_pair_data_access", "assert_restricted_cc_pairs_keep_a_group"
-    )(db_session, [cc_pair_id])
+    assert_restricted_cc_pairs_keep_a_group(db_session, [cc_pair_id])
 
     if access_type != previous_access_type:
         # Rewrites the chunks' public field and group: entries.

@@ -93,6 +93,9 @@ class AuditAction(str, Enum):
     ROUTE_POLICY_CHANGE = "route_policy.change"
     ROUTE_BLOCKED = "route.blocked"
     APPROVAL_DECISION = "approval.decision"
+    TASK_START = "task.start"
+    TASK_PLAN_ACCEPT = "task.plan_accept"
+    TASK_CANCEL = "task.cancel"
     CONTEXTUAL_RAG_MODEL_UPDATE = "search_settings.contextual_rag_model_update"
     CC_PAIR_ACCESS_MODE_CHANGE = "search_settings.cc_pair_access_mode_change"
     LLM_PROVIDER_CREATE = "llm_provider.create"
@@ -145,6 +148,9 @@ _OCSF_CLASS_BY_ACTION: dict[AuditAction, OCSFEventClass] = {
     AuditAction.ROUTE_POLICY_CHANGE: OCSFEventClass.API_ACTIVITY,
     AuditAction.ROUTE_BLOCKED: OCSFEventClass.API_ACTIVITY,
     AuditAction.APPROVAL_DECISION: OCSFEventClass.API_ACTIVITY,
+    AuditAction.TASK_START: OCSFEventClass.API_ACTIVITY,
+    AuditAction.TASK_PLAN_ACCEPT: OCSFEventClass.API_ACTIVITY,
+    AuditAction.TASK_CANCEL: OCSFEventClass.API_ACTIVITY,
     AuditAction.CONTEXTUAL_RAG_MODEL_UPDATE: OCSFEventClass.API_ACTIVITY,
     AuditAction.CC_PAIR_ACCESS_MODE_CHANGE: OCSFEventClass.API_ACTIVITY,
     AuditAction.LLM_PROVIDER_CREATE: OCSFEventClass.API_ACTIVITY,

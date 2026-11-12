@@ -16920,6 +16920,9 @@
       "automations": {
         "label": "Automations"
       },
+      "reviewedTasks": {
+        "label": "Reviewed tasks"
+      },
       "inbox": {
         "label": "Inbox"
       }
