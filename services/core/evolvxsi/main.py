@@ -141,6 +141,7 @@ from evolvxsi.route_policy.api import router as route_policy_router
 from evolvxsi.user_preferences.api import router as user_preferences_router
 from evolvxsi.knowledge_access.group_admin import router as access_groups_router
 from evolvxsi.tasks.api import router as tasks_router
+from evolvxsi.actions.api import router as actions_router
 from evolvxsi.server.manage.llm.api import admin_router as llm_admin_router
 from evolvxsi.server.manage.llm.api import basic_router as llm_router
 from evolvxsi.server.manage.oauth_test import router as oauth_test_admin_router
@@ -642,6 +643,7 @@ def get_application(lifespan_override: Lifespan | None = None) -> FastAPI:
     include_router_with_global_prefix_prepended(application, user_preferences_router)
     include_router_with_global_prefix_prepended(application, access_groups_router)
     include_router_with_global_prefix_prepended(application, tasks_router)
+    include_router_with_global_prefix_prepended(application, actions_router)
     include_router_with_global_prefix_prepended(application, kg_admin_router)
     include_router_with_global_prefix_prepended(application, llm_router)
     include_router_with_global_prefix_prepended(
