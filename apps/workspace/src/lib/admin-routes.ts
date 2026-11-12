@@ -427,6 +427,16 @@ export const ADMIN_ROUTES = {
     requiredTier: null,
     visibleWhen: null,
   },
+  GOVERNANCE: {
+    path: "/admin/governance",
+    icon: SvgShield,
+    title: "Governance",
+    sidebarLabel: "Governance",
+    requiredPermission: Permission.FULL_ADMIN_PANEL_ACCESS,
+    section: "Organization",
+    requiredTier: null,
+    visibleWhen: null,
+  },
   INVENTORY: {
     path: "/admin/inventory",
     icon: SvgShield,

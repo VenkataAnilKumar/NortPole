@@ -16848,6 +16848,9 @@
         },
         "inventory": {
           "label": "Inventory"
+        },
+        "governance": {
+          "label": "Governance"
         }
       },
       "sections": {

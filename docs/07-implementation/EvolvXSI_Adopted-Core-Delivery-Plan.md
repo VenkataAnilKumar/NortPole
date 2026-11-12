@@ -16,7 +16,7 @@ Status as of 2026-11-12, from what is built and tested in the sandbox only (see 
 | A1 | Adopt and rebrand the core | Done | L | New |
 | A2 | Run, verify and restyle | Done | L | P01–P02 (partly) |
 | A3 | Hybrid routing and governance first slice | Done | M | P03, P08 (slice) |
-| A4 | Product shell and navigation | Mostly done (composer chips, My Files, Apps page, other locales open) | M | P06 (UI) |
+| A4 | Product shell and navigation | Mostly done (Settings and admin audited against the spec with gaps recorded; interface quality pass on ten pages; translations of the new pages, Privacy and Security settings, an admin Overview and Quality tab open) | M | P06 (UI) |
 | A5 | Knowledge, evidence and permissions | Built for one path (no real connector; synthetic corpus) | XL | P04 |
 | A6 | Reviewed task workflow and approvals | Built (web and email destinations; Craft set aside) | XL | P03, P06 |
 | A7 | Agents, skills, packs and extension levels | Partly built (signed packs and evaluation gating; no pack agents, skills or connectors) | L | P05, P07 |
