@@ -248,3 +248,63 @@ def test_an_email_target_sends_the_approved_draft_to_its_fixed_recipients(world)
             s.query(EvolvXSIAction).filter_by(target_id=tid).delete()
             s.query(EvolvXSIActionTarget).filter_by(id=tid).delete()
             s.commit()
+
+
+def _set_tier(tid: int, tier: str) -> None:
+    with get_session_with_current_tenant() as s:
+        s.query(EvolvXSIActionTarget).filter_by(id=tid).update({"tier": tier})
+        s.commit()
+
+
+def test_a_read_only_destination_refuses_proposals_and_audits_it(world, target) -> None:  # type: ignore[no-untyped-def]
+    _set_tier(target, "read_only")
+    with get_session_with_current_tenant() as s:
+        u, t = _approved_task(s, world["u"])
+        with pytest.raises(EvolvXSIError) as err:
+            actions.propose_action(t.id, actions.Propose(target_id=target), user=u, db_session=s)
+        assert "read-only" in err.value.detail
+        assert s.query(EvolvXSIAction).filter_by(target_id=target).count() == 0
+        last = s.execute(text("select outcome, summary from evolvxsi_audit_event where action='action.propose' order by id desc limit 1")).one()
+        assert last.outcome == "denied" and "read-only" in last.summary
+
+
+def test_a_draft_only_destination_prepares_but_cannot_approve_or_send(world, target, sink) -> None:  # type: ignore[no-untyped-def]
+    _set_tier(target, "draft_only")
+    with get_session_with_current_tenant() as s:
+        u, t = _approved_task(s, world["u"])
+        a = actions.propose_action(t.id, actions.Propose(target_id=target), user=u, db_session=s)
+        assert a.state == "proposed" and "Receipts are due" in a.payload["markdown"], "the exact content can be reviewed"
+        with pytest.raises(EvolvXSIError) as err:
+            actions.approve_action(a.id, actions.ApproveAction(version=a.version, fingerprint=a.fingerprint), user=u, db_session=s)
+        assert "draft-only" in err.value.detail
+        assert sink.requests == []
+
+
+def test_lowering_the_tier_after_approval_still_stops_the_send(world, target, sink) -> None:  # type: ignore[no-untyped-def]
+    with get_session_with_current_tenant() as s:
+        u, t, a = _approved_action(s, world["u"], target)
+        _set_tier(target, "draft_only")
+        with pytest.raises(EvolvXSIError):
+            actions.execute_action(a.id, actions.VersionOnly(version=a.version), user=u, db_session=s)
+        assert sink.requests == []
+        _set_tier(target, "act_with_approval")
+        assert actions.execute_action(a.id, actions.VersionOnly(version=a.version), user=u, db_session=s).state == "succeeded"
+
+
+def test_a_draft_only_pack_lowers_a_destination_that_would_allow_sending(world, target, sink) -> None:  # type: ignore[no-untyped-def]
+    from evolvxsi.actions.autonomy import effective_tier
+    from evolvxsi.packs.models import EvolvXSIPackVersion
+
+    pid = f"tier-{uuid.uuid4().hex[:6]}"
+    with get_session_with_current_tenant() as s:
+        s.add(EvolvXSIPackVersion(pack_id=pid, version="1.0.0", manifest={"autonomy": "draft_only"}, digest="d", signature="s",
+                                  signer_key_id="k", active=False))
+        s.commit()
+        try:
+            assert effective_tier(s, "act_with_approval", pid, "1.0.0") == "draft_only"
+            assert effective_tier(s, "read_only", pid, "1.0.0") == "read_only", "a pack never raises a destination's tier"
+            assert effective_tier(s, "act_with_approval", pid, "9.9.9") == "read_only", "a missing pack version fails closed"
+            assert effective_tier(s, "act_with_approval", None, None) == "act_with_approval"
+        finally:
+            s.query(EvolvXSIPackVersion).filter_by(pack_id=pid).delete()
+            s.commit()

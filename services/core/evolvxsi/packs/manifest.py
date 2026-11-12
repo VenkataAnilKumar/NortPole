@@ -102,6 +102,10 @@ class Manifest(_Strict):
     templates: list[Template] = Field(min_length=1, max_length=25)
     requires: Requirements
     requests: Requests = Requests()
+    # The most this pack's tasks may do with a result. "draft_only": a send can be
+    # prepared and reviewed but not approved or sent. It can only lower what a
+    # destination allows, never raise it.
+    autonomy: Literal["draft_only", "act_with_approval"] = "act_with_approval"
     evaluation_cases: list[EvalCase] = Field(default_factory=list, max_length=100)
 
     @field_validator("id")
