@@ -6,7 +6,7 @@ import { errorHandlingFetcher } from "@/lib/fetcher";
 
 const URL = "/api/tasks";
 
-type State = "draft" | "planning" | "plan_review" | "plan_accepted" | "plan_failed" | "running" | "draft_ready" | "run_failed" | "cancelled";
+type State = "draft" | "planning" | "plan_review" | "plan_accepted" | "plan_failed" | "running" | "draft_ready" | "run_failed" | "approved" | "cancelled";
 
 interface Task {
   id: string;
@@ -24,6 +24,12 @@ interface Task {
   draft_sources: { n: number; doc_id: string; title: string; link: string | null; cited: boolean }[] | null;
   draft_route: string | null;
   run_error: string | null;
+  draft_hash: string | null;
+  draft_version: number | null;
+  draft_versions: { v: number; by: "model" | "owner"; text: string; at: string }[] | null;
+  draft_claims: { i: number; text: string; cites: number[]; status: "supported" | "unsupported"; decision: "keep" | "remove" | null }[] | null;
+  approved_at: string | null;
+  exported_at: string | null;
 }
 
 const STATE_LABEL: Record<State, string> = {
@@ -35,6 +41,7 @@ const STATE_LABEL: Record<State, string> = {
   running: "Running",
   draft_ready: "Draft ready",
   run_failed: "Run failed",
+  approved: "Approved",
   cancelled: "Cancelled",
 };
 const ROUTE_LABEL: Record<string, string> = { local: "Local", private: "Private", cloud: "Cloud" };
@@ -126,6 +133,37 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const [editingDraft, setEditingDraft] = useState(false);
+  const [draftText, setDraftText] = useState(task.draft_text ?? "");
+  const latestBy = task.draft_versions?.[task.draft_versions.length - 1]?.by ?? "model";
+  const openClaims = (task.draft_claims ?? []).filter((c) => c.status === "unsupported" && c.decision === null).length;
+
+  const exportDraft = async () => {
+    setBusy("export");
+    setError(null);
+    try {
+      const res = await fetch(`${URL}/${task.id}/export`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ version: task.version }),
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(typeof data?.detail === "string" ? data.detail : `Export failed (HTTP ${res.status}).`);
+      const blob = new Blob([data.markdown], { type: "text/markdown" });
+      const href = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = href;
+      a.download = data.filename;
+      a.click();
+      window.URL.revokeObjectURL(href);
+      await onChange();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Export failed.");
+    } finally {
+      setBusy(null);
+    }
+  };
+
   const act = async (name: string, path: string, body: unknown) => {
     setBusy(name);
     setError(null);
@@ -185,15 +223,110 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
           </ol>
         </section>
       )}
-      {task.draft_text && task.state === "draft_ready" && (
+      {task.draft_text && (task.state === "draft_ready" || task.state === "approved") && (
         <section className="mt-5 border-t border-border-01 pt-4" aria-labelledby="draft-h" data-testid="task-draft">
           <h3 id="draft-h" className="mb-2 text-sm font-semibold text-text-05">
             Draft
-            {task.draft_route && (
-              <span className="ml-2 font-normal text-text-03">written on the {ROUTE_LABEL[task.draft_route] ?? task.draft_route} route</span>
-            )}
+            <span className="ml-2 font-normal text-text-03" data-testid="draft-version">
+              version {task.draft_version ?? 1}
+              {latestBy === "owner"
+                ? " · edited by you"
+                : task.draft_route
+                  ? ` · written on the ${ROUTE_LABEL[task.draft_route] ?? task.draft_route} route`
+                  : ""}
+            </span>
           </h3>
-          <p className="whitespace-pre-wrap text-sm text-text-05">{task.draft_text}</p>
+          {editingDraft ? (
+            <div className="flex flex-col gap-2">
+              <label className="flex flex-col gap-1 text-sm font-medium text-text-05">
+                Edit the draft. Cite only the numbered sources below, like [1].
+                <textarea
+                  className={input}
+                  rows={6}
+                  maxLength={20000}
+                  value={draftText}
+                  onChange={(e) => setDraftText(e.target.value)}
+                />
+              </label>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  className={primary}
+                  disabled={!!busy || !draftText.trim()}
+                  onClick={async () => {
+                    setBusy("save-draft");
+                    setError(null);
+                    try {
+                      const res = await fetch(`${URL}/${task.id}/draft`, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ version: task.version, text: draftText }),
+                      });
+                      const data = await res.json().catch(() => null);
+                      if (!res.ok) throw new Error(typeof data?.detail === "string" ? data.detail : `Save failed (HTTP ${res.status}).`);
+                      setEditingDraft(false);
+                      await onChange();
+                    } catch (e) {
+                      setError(e instanceof Error ? e.message : "Save failed.");
+                    } finally {
+                      setBusy(null);
+                    }
+                  }}
+                >
+                  {busy === "save-draft" ? "Saving…" : "Save as a new version"}
+                </button>
+                <button type="button" className={secondary} disabled={!!busy} onClick={() => setEditingDraft(false)}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : task.draft_claims && task.draft_claims.length > 0 ? (
+            <ul className="flex flex-col gap-2" data-testid="task-claims">
+              {task.draft_claims.map((c) => {
+                const removed = c.decision === "remove";
+                const needsDecision = c.status === "unsupported" && c.decision === null && task.state === "draft_ready";
+                return (
+                  <li
+                    key={c.i}
+                    className={`rounded-xl border px-3 py-2 text-sm ${c.status === "unsupported" ? "border-status-warning-02" : "border-border-01"}`}
+                  >
+                    <span className={removed ? "text-text-03 line-through" : "text-text-05"}>{c.text}</span>
+                    <span className="ml-2 text-xs text-text-03">
+                      {c.status === "supported"
+                        ? "supported"
+                        : removed
+                          ? "unsupported · removed"
+                          : c.decision === "keep"
+                            ? "unsupported · kept, labelled in the export"
+                            : "unsupported · needs your decision"}
+                    </span>
+                    {needsDecision && (
+                      <span className="ml-2 inline-flex gap-1">
+                        <button
+                          type="button"
+                          className="min-h-9 rounded-lg border border-border-02 px-3 text-xs font-semibold text-text-05 disabled:opacity-50"
+                          disabled={!!busy}
+                          onClick={() => act(`keep-${c.i}`, `/claims/${c.i}`, { version: task.version, decision: "keep" })}
+                        >
+                          Keep
+                        </button>
+                        <button
+                          type="button"
+                          className="min-h-9 rounded-lg border border-border-02 px-3 text-xs font-semibold text-text-05 disabled:opacity-50"
+                          disabled={!!busy}
+                          onClick={() => act(`remove-${c.i}`, `/claims/${c.i}`, { version: task.version, decision: "remove" })}
+                        >
+                          Remove
+                        </button>
+                      </span>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <p className="whitespace-pre-wrap text-sm text-text-05">{task.draft_text}</p>
+          )}
           {task.draft_sources && task.draft_sources.length > 0 ? (
             <ol className="mt-3 space-y-1 text-xs text-text-03" aria-label="Sources" data-testid="task-sources">
               {task.draft_sources.map((src) => (
@@ -211,7 +344,44 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
           ) : (
             <p className="mt-3 text-xs text-text-03">No permitted source was found for this request.</p>
           )}
-          <p className="mt-3 text-xs text-text-03">Only sources you can open were used. Review and approval of the draft come next.</p>
+          <p className="mt-3 text-xs text-text-03">
+            {task.state === "approved"
+              ? `You approved exactly this draft${task.approved_at ? ` on ${new Date(task.approved_at).toLocaleString()}` : ""}. Export checks your access to each cited source again.`
+              : "Only sources you can open were used. Approving covers exactly this draft; a new run needs a new approval."}
+          </p>
+          {task.state === "draft_ready" && !editingDraft && (
+            <button
+              type="button"
+              className={`${secondary} mt-3`}
+              disabled={!!busy}
+              onClick={() => {
+                setDraftText(task.draft_text ?? "");
+                setEditingDraft(true);
+              }}
+            >
+              Edit draft
+            </button>
+          )}
+          {task.draft_versions && task.draft_versions.length > 1 && (
+            <details className="mt-3 text-xs text-text-03" data-testid="draft-history">
+              <summary className="cursor-pointer">Previous versions ({task.draft_versions.length - 1})</summary>
+              <ol className="mt-2 space-y-2">
+                {task.draft_versions.slice(0, -1).reverse().map((v) => (
+                  <li key={v.v} className="rounded-lg border border-border-01 px-3 py-2">
+                    <div className="font-medium text-text-05">
+                      Version {v.v} · {v.by === "owner" ? "edited by you" : "written by the model"} · {new Date(v.at).toLocaleString()}
+                    </div>
+                    <p className="mt-1 whitespace-pre-wrap">{v.text}</p>
+                  </li>
+                ))}
+              </ol>
+            </details>
+          )}
+          {task.exported_at && (
+            <p className="mt-1 text-xs text-text-03" data-testid="task-exported">
+              Last exported {new Date(task.exported_at).toLocaleString()}.
+            </p>
+          )}
         </section>
       )}
       {task.state === "run_failed" && task.run_error && (
@@ -240,6 +410,33 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
             </button>
           )}
           {(task.state === "plan_review" || task.state === "plan_failed") && (
+            <div className="flex w-full flex-wrap items-end gap-2">
+              <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm font-medium text-text-05">
+                What should change?
+                <input className={`${input} min-h-11`} value={note} maxLength={8000} onChange={(e) => setNote(e.target.value)} />
+              </label>
+              <button type="button" className={secondary} disabled={!!busy} onClick={() => act("revise", "/plan/revise", { version: task.version, note })}>
+                Revise
+              </button>
+            </div>
+          )}
+          {task.state === "draft_ready" && task.draft_hash && (
+            <button
+              type="button"
+              className={primary}
+              disabled={!!busy || openClaims > 0}
+              title={openClaims > 0 ? `Decide on ${openClaims} unsupported claim(s) first` : undefined}
+              onClick={() => act("approve", "/approve", { version: task.version, draft_hash: task.draft_hash })}
+            >
+              {busy === "approve" ? "Approving…" : openClaims > 0 ? `Approve (${openClaims} claim${openClaims === 1 ? "" : "s"} to decide)` : "Approve this draft"}
+            </button>
+          )}
+          {task.state === "approved" && (
+            <button type="button" className={primary} disabled={!!busy} onClick={exportDraft}>
+              {busy === "export" ? "Checking access…" : "Export as Markdown"}
+            </button>
+          )}
+          {task.state === "draft_ready" && (
             <div className="flex w-full flex-wrap items-end gap-2">
               <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm font-medium text-text-05">
                 What should change?

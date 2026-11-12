@@ -12,6 +12,7 @@ class TaskState(str, Enum):
     RUNNING = "running"  # gathering evidence and drafting
     DRAFT_READY = "draft_ready"  # a cited draft waits for the owner
     RUN_FAILED = "run_failed"  # the run stopped; can be retried
+    APPROVED = "approved"  # the owner approved one exact draft; export is separate
     CANCELLED = "cancelled"
 
 
@@ -25,6 +26,7 @@ class TaskAction(str, Enum):
     RUN = "run"
     DRAFT_DONE = "draft_done"
     RUN_FAILED = "run_failed"
+    APPROVE = "approve"
 
 
 ALLOWED: dict[tuple[TaskState, TaskAction], TaskState] = {
@@ -44,6 +46,8 @@ ALLOWED: dict[tuple[TaskState, TaskAction], TaskState] = {
     (TaskState.RUN_FAILED, TaskAction.RUN): TaskState.RUNNING,
     (TaskState.RUN_FAILED, TaskAction.CANCEL): TaskState.CANCELLED,
     (TaskState.DRAFT_READY, TaskAction.CANCEL): TaskState.CANCELLED,
+    (TaskState.DRAFT_READY, TaskAction.APPROVE): TaskState.APPROVED,
+    (TaskState.DRAFT_READY, TaskAction.REVISE): TaskState.DRAFT,
 }
 
 EDITABLE = frozenset({TaskState.DRAFT})
