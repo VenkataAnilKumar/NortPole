@@ -48,7 +48,7 @@ def filter_relevant(db_session: Session, user: User, question: str, evidence: li
     if not evidence or not enabled():
         return evidence
     llm = get_default_llm()
-    enforce_route(db_session, llm.config.model_configuration_id, actor=user)
+    enforce_route(db_session, llm.config.model_configuration_id, actor=user, purpose="task_relevance")
     kept: list[Evidence] = []
     for e in evidence:
         prompt = f"Question: {neutralize_passage(question, 500)}\nPassage: {neutralize_passage(e.passage, 1200)}"

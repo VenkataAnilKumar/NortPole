@@ -179,3 +179,25 @@ def get_route_audit(
         )
         for e in list_audit(db_session, limit, action)
     ]
+
+
+class UsageRow(BaseModel):
+    route_kind: str
+    model_name: str
+    data_class: str
+    purpose: str
+    requests: int
+
+
+@router.get("/admin/route-usage")
+def get_route_usage(
+    days: int = 30,
+    _: User = Depends(require_permission(Permission.MANAGE_LLMS)),
+    db_session: Session = Depends(get_session),
+) -> list[UsageRow]:
+    """Allowed model requests over the last `days` days (1 to 365), by route, model,
+    data class and purpose. Request counts only; no people, text, tokens or cost."""
+    from evolvxsi.route_policy.usage import total
+
+    return [UsageRow(route_kind=r[0], model_name=r[1], data_class=r[2], purpose=r[3], requests=int(r[4]))
+            for r in total(db_session, min(max(days, 1), 365))]

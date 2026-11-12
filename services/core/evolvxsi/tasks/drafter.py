@@ -103,7 +103,7 @@ def draft_answer(
     if not evidence:
         return DraftResult(text=NO_SOURCE_TEXT, cited=[], removed_citations=0, route_kind=None)
     llm = get_default_llm()
-    decision = enforce_route(db_session, llm.config.model_configuration_id, actor=user)
+    decision = enforce_route(db_session, llm.config.model_configuration_id, actor=user, purpose="task_draft")
     reply = llm.invoke(
         GenerationRequest(
             system_prompt=DRAFT_SYSTEM_PROMPT + (" " + STYLE_RULE if style.strip() else ""),

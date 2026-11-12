@@ -207,7 +207,7 @@ def _select_models(
             policy_fn=incognito_policy_fn,
         )
         # EvolvXSI route policy: fail before any content reaches a blocked route.
-        enforce_route(db_session, llm.config.model_configuration_id, actor=user)
+        enforce_route(db_session, llm.config.model_configuration_id, actor=user, purpose="chat")
         check_llm_cost_limit_for_provider(
             db_session=db_session,
             tenant_id=get_current_tenant_id(),
