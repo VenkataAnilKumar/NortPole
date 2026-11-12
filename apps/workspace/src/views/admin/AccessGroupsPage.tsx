@@ -212,7 +212,7 @@ export default function AccessGroupsPage() {
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 p-8" data-testid="access-groups-page">
       <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold text-text-05">Groups</h1>
+        <h1 className="text-2xl font-semibold text-text-05">Access groups</h1>
         <p className="text-sm text-text-03">
           Named sets of people. Add a group to a source's settings to let its members read that source. Removing
           someone from a group takes effect on their next search.
