@@ -46,6 +46,18 @@ CLOUD_DOC_PERMISSION_SYNC_MULTIPLIER_DEFAULT = 1.0
 # tasks that run in either self-hosted on cloud
 beat_task_templates: list[dict] = [
     {
+        "name": "evolvxsi-retention-prune",
+        "task": EvolvXSICeleryTask.EVOLVXSI_RETENTION_PRUNE,
+        "schedule": timedelta(days=1),
+        "options": {
+            "queue": EvolvXSICeleryQueues.PRIMARY,
+            "priority": EvolvXSICeleryPriority.LOW,
+            "expires": BEAT_EXPIRES_DEFAULT,
+            "skip_gated": False,
+            "work_gated": False,
+        },
+    },
+    {
         "name": "cleanup-oauth-provider-grants",
         "task": EvolvXSICeleryTask.CLEANUP_OAUTH_PROVIDER_GRANTS,
         "schedule": timedelta(days=1),

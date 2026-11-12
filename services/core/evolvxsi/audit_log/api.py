@@ -1,6 +1,11 @@
 from __future__ import annotations
 
+import csv
+import io
+import json
+
 from fastapi import APIRouter, Depends, Query
+from fastapi.responses import Response
 from pydantic import BaseModel
 from sqlalchemy import distinct, func, or_, select
 from sqlalchemy.orm import Session
@@ -9,7 +14,8 @@ from evolvxsi.auth.permissions import require_permission
 from evolvxsi.db.engine.sql_engine import get_session
 from evolvxsi.db.enums import Permission
 from evolvxsi.db.models import User
-from evolvxsi.route_policy.audit import EvolvXSIAuditEvent
+from evolvxsi.route_policy.audit import EvolvXSIAuditEvent, record_audit
+from evolvxsi.utils.audit import AuditAction, AuditOutcome
 
 router = APIRouter(prefix="/admin/audit")
 MAX_PAGE = 200
@@ -74,3 +80,48 @@ def list_events(
         next_before_id=rows[-1].id if more and rows else None,
         actions=actions,
     )
+
+
+EXPORT_MAX_ROWS = 50_000
+_CSV_FIELDS = ["id", "created_at", "action", "outcome", "actor_email", "resource_type", "resource_id", "summary", "details"]
+
+
+def _csv_cell(value: object) -> str:
+    """A spreadsheet runs text that starts with = + - @ as a formula; a leading quote stops that."""
+    text = "" if value is None else str(value)
+    return "'" + text if text[:1] in ("=", "+", "-", "@", "\t", "\r") else text
+
+
+@router.get("/export")
+def export_events(
+    format: str = Query("json", pattern="^(json|csv)$"),
+    since_id: int | None = Query(None, ge=0),
+    until_id: int | None = Query(None, ge=1),
+    user: User = Depends(require_permission(Permission.FULL_ADMIN_PANEL_ACCESS)),
+    db_session: Session = Depends(get_session),
+) -> Response:
+    """Download audit events, oldest first, for up to 50,000 rows (use since_id to continue).
+    Administrators only; the export is itself written to the audit log (counts and range, not content)."""
+    stmt = select(EvolvXSIAuditEvent).order_by(EvolvXSIAuditEvent.id.asc()).limit(EXPORT_MAX_ROWS)
+    if since_id is not None:
+        stmt = stmt.where(EvolvXSIAuditEvent.id > since_id)
+    if until_id is not None:
+        stmt = stmt.where(EvolvXSIAuditEvent.id <= until_id)
+    rows = [
+        {"id": e.id, "created_at": e.created_at.isoformat(), "action": e.action, "outcome": e.outcome, "actor_email": e.actor_email,
+         "resource_type": e.resource_type, "resource_id": e.resource_id, "summary": e.summary, "details": e.details}
+        for e in db_session.scalars(stmt)
+    ]
+    record_audit(AuditAction.AUDIT_EXPORT, AuditOutcome.SUCCESS, actor=user, resource_type="audit",
+                 summary=f"Exported {len(rows)} audit events as {format}",
+                 details={"rows": len(rows), "first_id": rows[0]["id"] if rows else None, "last_id": rows[-1]["id"] if rows else None,
+                          "truncated": len(rows) == EXPORT_MAX_ROWS})
+    if format == "json":
+        return Response(json.dumps(rows, default=str), media_type="application/json",
+                        headers={"Content-Disposition": "attachment; filename=audit-export.json"})
+    buf = io.StringIO()
+    w = csv.writer(buf)
+    w.writerow(_CSV_FIELDS)
+    for r in rows:
+        w.writerow([_csv_cell(json.dumps(r[f]) if f == "details" and r[f] is not None else r[f]) for f in _CSV_FIELDS])
+    return Response(buf.getvalue(), media_type="text/csv", headers={"Content-Disposition": "attachment; filename=audit-export.csv"})

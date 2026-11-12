@@ -3,6 +3,7 @@
 import { useState } from "react";
 import useSWRInfinite from "swr/infinite";
 import { errorHandlingFetcher } from "@/lib/fetcher";
+import RetentionPanel from "@/views/admin/RetentionPanel";
 
 interface Row {
   id: number;
@@ -64,6 +65,7 @@ export default function AuditLogPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-4 sm:p-8" data-testid="audit-log-page">
+      <RetentionPanel />
       <header className="flex flex-col gap-1">
         <h1 className="text-2xl font-semibold text-text-05">Audit log</h1>
         <p className="text-sm text-text-03">
