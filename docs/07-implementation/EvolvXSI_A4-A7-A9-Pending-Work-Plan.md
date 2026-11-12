@@ -14,7 +14,7 @@ Status: Plan, written 2026-11-12, before any of this is built. It rests on what 
 | 1 | A9 | Sensitive-data redaction before model calls and traces (built 2026-11-12; exports follow item 3) | M | The main trust claim of a governed product; no dependencies. |
 | 2 | A9 | Autonomy tiers per destination and pack (built 2026-11-12) | S | Small, builds on the action layer; gives A7 a control to inherit. |
 | 3 | A9 | Retention, audit pruning, legal hold, audit export (built 2026-11-12; periods are placeholders) | M | Needed for any pilot's records policy; periods are placeholders until **you** set them. |
-| 4 | A7 | Agent and tool inventory (admin, read-only) | S | Gives A7 and A9 one place to see what is active. |
+| 4 | A7 | Agent and tool inventory (admin, read-only; built 2026-11-12) | S | Gives A7 and A9 one place to see what is active. |
 | 5 | A7 | Extension levels and MCP/plugin allowlists, signed plugin packages | L | Reuses the pack signing built already. |
 | 6 | A7 | Pack review rules (declarative checks on drafts) | M | The safe stand-in for pack-supplied agents. |
 | 7 | A4 | Interface quality pass: dark and narrow widths, keyboard, contrast, axe checks | M | Better done once the new pages from 1 to 6 exist. |

@@ -24,6 +24,7 @@ export type AdminNavItemId =
   | "actionTargets"
   | "auditLog"
   | "packsAdmin"
+  | "inventory"
   | "webSearch"
   | "imageGeneration"
   | "voice"
@@ -90,6 +91,7 @@ export const NAV_ITEM_IDS: Record<
   ACTION_TARGETS: "actionTargets",
   AUDIT_LOG: "auditLog",
   PACKS: "packsAdmin",
+  INVENTORY: "inventory",
   DECISION_MODELS: "decisionModels",
   WEB_SEARCH: "webSearch",
   IMAGE_GENERATION: "imageGeneration",

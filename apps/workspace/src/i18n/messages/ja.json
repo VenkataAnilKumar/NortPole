@@ -16845,6 +16845,9 @@
         },
         "packsAdmin": {
           "label": "Packs"
+        },
+        "inventory": {
+          "label": "Inventory"
         }
       },
       "sections": {

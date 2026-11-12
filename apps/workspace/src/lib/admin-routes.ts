@@ -427,6 +427,16 @@ export const ADMIN_ROUTES = {
     requiredTier: null,
     visibleWhen: null,
   },
+  INVENTORY: {
+    path: "/admin/inventory",
+    icon: SvgShield,
+    title: "Inventory",
+    sidebarLabel: "Inventory",
+    requiredPermission: Permission.FULL_ADMIN_PANEL_ACCESS,
+    section: "Agents & Actions",
+    requiredTier: null,
+    visibleWhen: null,
+  },
   AUDIT_LOG: {
     path: "/admin/audit",
     icon: SvgShield,
