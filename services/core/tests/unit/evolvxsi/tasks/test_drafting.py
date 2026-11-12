@@ -35,3 +35,12 @@ def test_evidence_is_one_entry_per_document_numbered_from_one() -> None:
     ev = chunks_to_evidence([_chunk("a", "1"), _chunk("a", "2"), _chunk("b", "3")])
     assert [(e.n, e.doc_id, e.passage) for e in ev] == [(1, "a", "1"), (2, "b", "3")]
     assert ev[0].link == "https://x/a"
+
+
+def test_semantic_hits_come_first_and_keyword_adds_only_new_documents() -> None:
+    from evolvxsi.tasks.evidence import _merge
+
+    sem = [_chunk("a", "1"), _chunk("b", "2")]
+    kw = [_chunk("b", "x"), _chunk("c", "3")]
+    assert [c.document_id for c in _merge(sem, kw)] == ["a", "b", "c"]
+    assert [c.document_id for c in _merge([], kw)] == ["b", "c"]

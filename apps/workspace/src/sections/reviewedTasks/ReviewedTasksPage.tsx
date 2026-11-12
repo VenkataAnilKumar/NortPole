@@ -21,13 +21,15 @@ interface Task {
   revision_note: string | null;
   updated_at: string;
   draft_text: string | null;
-  draft_sources: { n: number; doc_id: string; title: string; link: string | null; cited: boolean }[] | null;
+  draft_sources: { n: number; doc_id: string; title: string; link: string | null; cited: boolean; passage?: string; flagged?: boolean }[] | null;
   draft_route: string | null;
   run_error: string | null;
   draft_hash: string | null;
   draft_version: number | null;
   draft_versions: { v: number; by: "model" | "owner"; text: string; at: string }[] | null;
-  draft_claims: { i: number; text: string; cites: number[]; status: "supported" | "unsupported"; decision: "keep" | "remove" | null }[] | null;
+  withheld: boolean;
+  withheld_message: string | null;
+  draft_claims: { i: number; text: string; cites: number[]; status: "supported" | "unsupported" | "notice"; decision: "keep" | "remove" | null }[] | null;
   approved_at: string | null;
   exported_at: string | null;
 }
@@ -223,6 +225,11 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
           </ol>
         </section>
       )}
+      {task.withheld && (
+        <p role="alert" data-testid="task-withheld" className="mt-4 rounded-xl bg-background-neutral-01 px-3 py-2 text-sm text-text-05">
+          {task.withheld_message}
+        </p>
+      )}
       {task.draft_text && (task.state === "draft_ready" || task.state === "approved") && (
         <section className="mt-5 border-t border-border-01 pt-4" aria-labelledby="draft-h" data-testid="task-draft">
           <h3 id="draft-h" className="mb-2 text-sm font-semibold text-text-05">
@@ -292,7 +299,9 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
                   >
                     <span className={removed ? "text-text-03 line-through" : "text-text-05"}>{c.text}</span>
                     <span className="ml-2 text-xs text-text-03">
-                      {c.status === "supported"
+                      {c.status === "notice"
+                        ? "notice"
+                        : c.status === "supported"
                         ? "supported"
                         : removed
                           ? "unsupported · removed"
@@ -338,6 +347,17 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
                     src.title
                   )}
                   {!src.cited && <span className="ml-1">(found but not cited)</span>}
+                  {src.flagged && (
+                    <span className="ml-2 text-status-warning-05" data-testid="source-flagged">
+                      contains text that reads like an instruction to the model
+                    </span>
+                  )}
+                  {src.passage && (
+                    <details className="mt-1">
+                      <summary className="cursor-pointer">Passage the model saw</summary>
+                      <p className="mt-1 whitespace-pre-wrap rounded-lg bg-background-neutral-01 px-2 py-1">{src.passage}</p>
+                    </details>
+                  )}
                 </li>
               ))}
             </ol>
@@ -349,7 +369,7 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
               ? `You approved exactly this draft${task.approved_at ? ` on ${new Date(task.approved_at).toLocaleString()}` : ""}. Export checks your access to each cited source again.`
               : "Only sources you can open were used. Approving covers exactly this draft; a new run needs a new approval."}
           </p>
-          {task.state === "draft_ready" && !editingDraft && (
+          {task.state === "draft_ready" && !editingDraft && !task.withheld && (
             <button
               type="button"
               className={`${secondary} mt-3`}
@@ -420,7 +440,7 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
               </button>
             </div>
           )}
-          {task.state === "draft_ready" && task.draft_hash && (
+          {task.state === "draft_ready" && task.draft_hash && !task.withheld && (
             <button
               type="button"
               className={primary}

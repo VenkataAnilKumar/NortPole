@@ -1,0 +1,226 @@
+{
+ "description": "Synthetic retrieval-quality corpus. Invented content. Each query is a reworded question with one expected document.",
+ "restricted": [
+  "board-acquisition"
+ ],
+ "documents": [
+  {
+   "doc_id": "travel-receipts",
+   "title": "Travel Receipts",
+   "text": "Travel expense receipts must be submitted within 30 days of the end of the trip. Late submissions need a manager's note."
+  },
+  {
+   "doc_id": "travel-class",
+   "title": "Travel Class",
+   "text": "Employees fly economy class on flights shorter than six hours. Business class needs director approval."
+  },
+  {
+   "doc_id": "hotel-cap",
+   "title": "Hotel Cap",
+   "text": "Hotel stays are reimbursed up to 180 euros per night in major cities and 120 euros elsewhere."
+  },
+  {
+   "doc_id": "meal-allowance",
+   "title": "Meal Allowance",
+   "text": "A daily meal allowance of 45 euros applies on business trips. Alcohol is never reimbursed."
+  },
+  {
+   "doc_id": "annual-leave",
+   "title": "Annual Leave",
+   "text": "Full-time staff receive 25 days of paid annual leave per year. Unused days carry over until March."
+  },
+  {
+   "doc_id": "sick-leave",
+   "title": "Sick Leave",
+   "text": "Staff who are ill should notify their manager before 10:00. A medical certificate is required after three days."
+  },
+  {
+   "doc_id": "parental-leave",
+   "title": "Parental Leave",
+   "text": "Parents may take up to 16 weeks of paid parental leave, taken within the first year after the birth or adoption."
+  },
+  {
+   "doc_id": "remote-work",
+   "title": "Remote Work",
+   "text": "Employees may work remotely up to three days a week with their manager's agreement. Core hours are 10:00 to 15:00."
+  },
+  {
+   "doc_id": "password-policy",
+   "title": "Password Policy",
+   "text": "Passwords need at least 14 characters and are changed only if compromised. Multi-factor sign-in is mandatory for all systems."
+  },
+  {
+   "doc_id": "device-security",
+   "title": "Device Security",
+   "text": "Company laptops must use full-disk encryption and lock after five minutes of inactivity. Lost devices are reported to IT within 24 hours."
+  },
+  {
+   "doc_id": "phishing",
+   "title": "Phishing",
+   "text": "Suspicious emails are forwarded to the security mailbox and not opened. Never enter credentials on a page reached from an email link."
+  },
+  {
+   "doc_id": "data-classes",
+   "title": "Data Classes",
+   "text": "Documents are classed public, internal, confidential or restricted. Restricted documents may only be shared with named individuals."
+  },
+  {
+   "doc_id": "procurement-limit",
+   "title": "Procurement Limit",
+   "text": "Purchases above 5,000 euros need three quotes and finance approval. Purchases below 500 euros need no quote."
+  },
+  {
+   "doc_id": "vendor-onboarding",
+   "title": "Vendor Onboarding",
+   "text": "New vendors complete a security questionnaire and sign a data processing agreement before any personal data is shared."
+  },
+  {
+   "doc_id": "expense-approval",
+   "title": "Expense Approval",
+   "text": "Expense claims over 1,000 euros need approval from a director in addition to the line manager."
+  },
+  {
+   "doc_id": "fire-safety",
+   "title": "Fire Safety",
+   "text": "On hearing the fire alarm, leave the building by the nearest exit and gather at the assembly point in the car park."
+  },
+  {
+   "doc_id": "first-aid",
+   "title": "First Aid",
+   "text": "First aiders are listed at reception and on every floor. Report every workplace injury in the incident log the same day."
+  },
+  {
+   "doc_id": "visitor-policy",
+   "title": "Visitor Policy",
+   "text": "Visitors sign in at reception, wear a badge and are escorted at all times in secure areas."
+  },
+  {
+   "doc_id": "office-hours",
+   "title": "Office Hours",
+   "text": "The office is open from 08:00 to 18:00 on working days. Badge access outside these hours needs facilities approval."
+  },
+  {
+   "doc_id": "holiday-calendar",
+   "title": "Holiday Calendar",
+   "text": "Public holidays follow the national calendar. The office also closes between Christmas and New Year."
+  },
+  {
+   "doc_id": "code-review",
+   "title": "Code Review",
+   "text": "All changes to production code need a review by a second engineer and passing automated tests before release."
+  },
+  {
+   "doc_id": "incident-response",
+   "title": "Incident Response",
+   "text": "Security incidents are reported to the on-call engineer, who assigns a severity and opens an incident channel within 30 minutes."
+  },
+  {
+   "doc_id": "data-retention",
+   "title": "Data Retention",
+   "text": "Customer records are kept for seven years after the contract ends and then deleted. Backups are purged after 90 days."
+  },
+  {
+   "doc_id": "board-acquisition",
+   "title": "Board Acquisition",
+   "text": "The board approved exploratory talks with an acquisition target at a price ceiling of 40 million. Details are restricted to board members."
+  }
+ ],
+ "queries": [
+  {
+   "q": "How long do I have to hand in my trip receipts?",
+   "expect": "travel-receipts"
+  },
+  {
+   "q": "Can I fly business class to a conference?",
+   "expect": "travel-class"
+  },
+  {
+   "q": "What is the maximum I can claim for a hotel in a big city?",
+   "expect": "hotel-cap"
+  },
+  {
+   "q": "Do I get money for food when travelling for work?",
+   "expect": "meal-allowance"
+  },
+  {
+   "q": "How many vacation days do I get each year?",
+   "expect": "annual-leave"
+  },
+  {
+   "q": "What do I need to do if I am unwell and cannot come in?",
+   "expect": "sick-leave"
+  },
+  {
+   "q": "How much time off can new parents take?",
+   "expect": "parental-leave"
+  },
+  {
+   "q": "Am I allowed to work from home?",
+   "expect": "remote-work"
+  },
+  {
+   "q": "How long should my password be?",
+   "expect": "password-policy"
+  },
+  {
+   "q": "What must I do if my work laptop is stolen?",
+   "expect": "device-security"
+  },
+  {
+   "q": "I got a strange email asking for my login, what now?",
+   "expect": "phishing"
+  },
+  {
+   "q": "Who may I share a restricted file with?",
+   "expect": "data-classes"
+  },
+  {
+   "q": "What do I need before buying something expensive for the team?",
+   "expect": "procurement-limit"
+  },
+  {
+   "q": "What must a new supplier sign before we share customer data?",
+   "expect": "vendor-onboarding"
+  },
+  {
+   "q": "Who signs off a very large expense claim?",
+   "expect": "expense-approval"
+  },
+  {
+   "q": "What should I do when the alarm sounds?",
+   "expect": "fire-safety"
+  },
+  {
+   "q": "Where do I report an injury at work?",
+   "expect": "first-aid"
+  },
+  {
+   "q": "Can a guest walk around the building alone?",
+   "expect": "visitor-policy"
+  },
+  {
+   "q": "Can I get into the building at night?",
+   "expect": "office-hours"
+  },
+  {
+   "q": "Is the office closed over the winter holidays?",
+   "expect": "holiday-calendar"
+  },
+  {
+   "q": "Does my change need a second pair of eyes before it ships?",
+   "expect": "code-review"
+  },
+  {
+   "q": "Who do I call if our systems are being attacked?",
+   "expect": "incident-response"
+  },
+  {
+   "q": "How long do you keep a client's records after they leave?",
+   "expect": "data-retention"
+  },
+  {
+   "q": "What is the price limit the board set for the takeover?",
+   "expect": "board-acquisition"
+  }
+ ]
+}

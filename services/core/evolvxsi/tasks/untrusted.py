@@ -35,3 +35,19 @@ def neutralize_passage(text: str, limit: int) -> str:
 
 def neutralize_title(text: str) -> str:
     return neutralize_passage(text, 200)
+
+
+_INSTRUCTION_LIKE = re.compile(
+    r"(ignore|disregard|forget|override)\s+(all\s+|any\s+|the\s+)?(previous|prior|above|earlier|your)\s+(instructions?|rules?|prompts?)"
+    r"|you\s+are\s+now\b"
+    r"|\b(reveal|print|show|repeat)\s+(your\s+)?(system\s+)?(prompt|instructions)"
+    r"|\bsystem\s*:"
+    r"|do\s+not\s+follow\s+(the\s+)?(above|previous|earlier)",
+    re.IGNORECASE,
+)
+
+
+def looks_like_instructions(text: str) -> bool:
+    """A cheap signal, not a defence: text in a source that reads like an
+    instruction to a model. The reviewer is told; the source is not dropped."""
+    return bool(_INSTRUCTION_LIKE.search(text))

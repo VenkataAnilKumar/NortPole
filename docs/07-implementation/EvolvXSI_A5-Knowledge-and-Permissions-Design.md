@@ -131,3 +131,36 @@ Checked on the real database (42 integration checks pass, 5 new): the edit reads
 
 `PUT /admin/access-groups/sources/{id}` (added earlier) now calls these same functions, so the edit form and the admin endpoint share one set of rules.
 
+## Progress (2026-11-12): search quality with a real embedding model
+
+`services/core/tests/evolvxsi_integration/test_retrieval_quality.py` embeds a synthetic corpus (24 short invented policy passages, `retrieval_quality_set.json`) with `nomic-embed-text` served by Ollama, indexes it in OpenSearch with the core's own index code, and asks 24 reworded questions:
+
+- Meaning-based search found the expected document first for all 23 questions a staff viewer may see (recall@1 = recall@3 = 1.00).
+- Keyword search found it in the top 3 for 0.79 of the 24 questions; meaning-based search 1.00. This is the gap reworded questions open up.
+- The restricted board memo was never returned to a viewer without access, by either search, for any question; a board viewer found it.
+
+Limits: the corpus is small, short and easy, so this shows the pipeline works and that meaning-based search helps, not production-level quality; passages are one chunk each, with no long documents, noisy text or near-duplicates. The task evidence step still uses keyword search only; it does not yet embed the question. The test skips unless OpenSearch and Ollama are running.
+
+## Progress (2026-11-12): feeding the model only passages that answer the question
+
+End-to-end with real retrieval (nomic-embed-text, OpenSearch) and a real model, three questions on the synthetic corpus showed a gap that search scores cannot close: passages that answer the question score 0.79 to 0.92 and topically close passages that do not score up to 0.84, so no cutoff separates them. A staff member asking about the restricted board memo (which they cannot see) got the two nearest unrelated policies, and the 1.5B model confidently answered "the takeover price limit is 5,000 euros".
+
+Added a relevance check (`services/core/evolvxsi/tasks/relevance.py`, on by default, `EVOLVXSI_RELEVANCE_CHECK=false` turns it off): each candidate passage is judged yes or no by the default model through the route policy, and only "yes" passages reach drafting. A judge that fails, or says anything but yes, drops the passage. With nothing left, the run states that no source covers the request, without asking the model to draft.
+
+Measured on 24 questions with their top 3 retrieved passages (72 pairs, `/tmp`-style script, not yet a repo test because it needs a downloaded 7B model):
+
+| Judge | Accuracy | Wrong passages let through | Relevant passages kept | Unanswerable question |
+| --- | --- | --- | --- | --- |
+| qwen2.5 1.5B | 0.81 | 12 of 48 | 22 of 24 | kept an unrelated procurement policy |
+| qwen2.5 7B | 0.94 | 0 of 48 | 20 of 24 | kept nothing |
+
+End to end with the 7B model: the receipts question kept one of three retrieved passages and produced a cited answer; the board question for a staff viewer kept none and produced the no-source notice; for a board viewer it kept the memo and answered correctly (40 million) with its citation.
+
+Costs and limits: one extra model call per candidate passage (about 15 seconds on first load of a 7B model on this CPU, then faster); the 7B judge is cautious and dropped 4 of 24 relevant passages, so it trades some recall for no wrong evidence; a small corpus of short invented passages; the task evidence step now embeds the question too (see the next section), so this check and the task flow use the same retrieval. A passage that tells the judge to say yes can keep itself in, which retrieval had already done. Unit tests cover verdict parsing, renumbering, a failing judge, the off switch and a blocked route (48 task unit tests, 99 integration checks pass).
+
+## Progress (2026-11-12): the task evidence step uses meaning-based search
+
+`gather_evidence` (`services/core/evolvxsi/tasks/evidence.py`) now embeds the question with the deployment's own configured embedding model (the core's `get_query_embedding`, so the vector matches the index), runs meaning-based retrieval with the owner's access filters, adds keyword hits the first search missed, and passes up to four candidate documents to the relevance check. If embedding is unavailable it logs and falls back to keyword search alone, so a model-server outage lowers recall instead of failing runs.
+
+Checked (100 integration checks pass): with a real embedding model, a reworded question ("Can a guest walk around the building alone?") found the visitor policy through `gather_evidence`; a staff viewer never got the restricted board memo; a board viewer did; with no embedding model the step used keyword search. Not done: the full task flow in the browser with indexed sources (lite mode has no index and no background workers to index documents); the embedding model configured in this sandbox is Ollama's nomic-embed-text, used only by the tests, not by the core's own indexing.
+

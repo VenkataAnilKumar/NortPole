@@ -35,6 +35,15 @@ DRAFT_SYSTEM_PROMPT = (
 _CITE = re.compile(r"\[(\d{1,2})\]")
 
 
+# With no permitted source there is nothing to draft from. The model is not
+# asked: small models invent answers when told there are no sources, so the
+# gap is stated by code, not left to the model's obedience.
+NO_SOURCE_TEXT = (
+    "No source you are allowed to open covers this request, so there is nothing to cite yet. "
+    "Connect or request access to a relevant source, then run the task again."
+)
+
+
 @dataclass(frozen=True)
 class DraftResult:
     text: str
@@ -83,6 +92,8 @@ def keep_valid_citations(text: str, valid: set[int]) -> tuple[str, list[int], in
 def draft_answer(
     db_session: Session, user: User, title: str, request: str, plan: list[str], evidence: list[Evidence]
 ) -> DraftResult:
+    if not evidence:
+        return DraftResult(text=NO_SOURCE_TEXT, cited=[], removed_citations=0, route_kind=None)
     llm = get_default_llm()
     decision = enforce_route(db_session, llm.config.model_configuration_id, actor=user)
     reply = llm.invoke(

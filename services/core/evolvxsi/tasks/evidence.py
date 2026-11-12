@@ -16,8 +16,12 @@ from evolvxsi.configs.app_configs import DISABLE_VECTOR_DB
 from evolvxsi.context.search.models import IndexFilters, InferenceChunk
 from evolvxsi.context.search.preprocessing.access_filters import build_access_filters_for_user
 from evolvxsi.db.models import User
+from evolvxsi.utils.logger import setup_logger
 
-MAX_SOURCES = 6
+logger = setup_logger()
+
+# Candidates handed to the relevance judge: one model call each, so kept small.
+MAX_SOURCES = 4
 MAX_PASSAGE = 1200
 
 
@@ -30,7 +34,14 @@ class Evidence:
     passage: str
 
 
+def _merge(primary: list[InferenceChunk], backup: list[InferenceChunk]) -> list[InferenceChunk]:
+    """Meaning-based hits first, then keyword hits the first list missed."""
+    seen = {c.document_id for c in primary}
+    return primary + [c for c in backup if c.document_id not in seen]
+
+
 def _search(db_session: Session, user: User, query: str, limit: int) -> list[InferenceChunk]:
+    from evolvxsi.context.search.utils import get_query_embedding
     from evolvxsi.db.search_settings import get_active_search_settings
     from evolvxsi.document_index.factory import get_default_document_index
 
@@ -38,7 +49,15 @@ def _search(db_session: Session, user: User, query: str, limit: int) -> list[Inf
     index = get_default_document_index(settings.primary, settings.secondary)
     access = build_access_filters_for_user(user, db_session)
     filters = IndexFilters(access_control_list=access.access_control_list, cc_pair_access=access.cc_pair_access)
-    return index.keyword_retrieval(query=query, filters=filters, num_to_retrieve=limit * 3)
+    keyword = index.keyword_retrieval(query=query, filters=filters, num_to_retrieve=limit * 3)
+    try:
+        # The deployment's own embedding model, so the vector matches the index.
+        vector = get_query_embedding(query, db_session)
+        semantic = index.semantic_retrieval(query_embedding=vector, filters=filters, num_to_retrieve=limit * 3)
+    except Exception:
+        logger.exception("task evidence: embedding unavailable, using keyword search only")
+        return keyword
+    return _merge(semantic, keyword)
 
 
 def chunks_to_evidence(chunks: list[InferenceChunk], limit: int = MAX_SOURCES) -> list[Evidence]:

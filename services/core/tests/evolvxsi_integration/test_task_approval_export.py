@@ -201,3 +201,28 @@ def test_export_uses_the_edited_draft_and_updates_cited_sources(world) -> None: 
         out = api.export_draft(t.id, api.VersionOnly(version=a.version), user=u, db_session=s)
         assert "Receipts are due within a month. _(unsupported)_" in out.markdown
         assert "_No sources were cited._" in out.markdown
+
+
+def test_a_draft_is_hidden_once_access_to_a_cited_source_is_gone(world) -> None:  # type: ignore[no-untyped-def]
+    with get_session_with_current_tenant() as s:
+        u, t = _ready(s, world["u"])
+        assert t.draft_text and not t.withheld
+        s.query(User__UserGroup).filter_by(user_id=world["u"], user_group_id=world["g"]).delete()
+        s.commit()
+        try:
+            hidden = api.get_task(t.id, user=u, db_session=s)
+            assert hidden.withheld and "no longer open" in hidden.withheld_message
+            assert hidden.draft_text is None and hidden.draft_sources is None and hidden.draft_claims is None
+            assert hidden.title == t.title, "the owner still sees their own request"
+            assert all(x.draft_text is None for x in api.list_tasks(user=u, db_session=s) if x.id == t.id)
+            for call in (
+                lambda: api.approve_draft(t.id, api.Approve(version=t.version, draft_hash=t.draft_hash), user=u, db_session=s),
+                lambda: api.edit_ready_draft(t.id, api.DraftEdit(version=t.version, text="new text"), user=u, db_session=s),
+            ):
+                with pytest.raises(EvolvXSIError):
+                    call()
+        finally:
+            s.add(User__UserGroup(user_id=world["u"], user_group_id=world["g"]))
+            s.commit()
+        back = api.get_task(t.id, user=u, db_session=s)
+        assert not back.withheld and back.draft_text, "access restored, the draft is visible again"
