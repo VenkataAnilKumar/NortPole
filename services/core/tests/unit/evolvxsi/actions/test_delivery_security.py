@@ -149,3 +149,80 @@ def test_https_keeps_the_real_host_name_for_certificate_checks() -> None:
     adapter = _PinnedAdapter("hooks.example.test", "93.184.216.34", 443)
     kw = adapter.poolmanager.connection_pool_kw
     assert kw["server_hostname"] == "hooks.example.test" and kw["assert_hostname"] == "hooks.example.test"
+
+
+def _hook_test_is_loopback():  # type: ignore[no-untyped-def]
+    real = socket.getaddrinfo
+
+    def fake(host, port, *a, **kw):  # type: ignore[no-untyped-def]
+        return real("127.0.0.1" if host == "hook.test" else host, port, *a, **kw)
+
+    return patch.object(delivery.socket, "getaddrinfo", fake)
+
+
+def _cert(tmp_path, name: str):  # type: ignore[no-untyped-def]
+    import subprocess
+
+    crt, key = tmp_path / f"{name}.crt", tmp_path / f"{name}.key"
+    subprocess.run(["openssl", "req", "-x509", "-newkey", "rsa:2048", "-nodes", "-days", "1", "-subj", f"/CN={name}",
+                    "-addext", f"subjectAltName=DNS:{name}", "-keyout", str(key), "-out", str(crt)],
+                   check=True, capture_output=True)
+    return crt, key
+
+
+def _tls_server(crt, key):  # type: ignore[no-untyped-def]
+    import ssl
+
+    hits: list[str] = []
+
+    class H(BaseHTTPRequestHandler):
+        def do_POST(self):  # type: ignore[no-untyped-def]
+            self.rfile.read(int(self.headers.get("Content-Length", 0)))
+            hits.append(self.headers.get("Host", ""))
+            self.send_response(200)
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+
+        def log_message(self, *a):  # type: ignore[no-untyped-def]
+            pass
+
+    srv = HTTPServer(("127.0.0.1", 0), H)
+    ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    ctx.load_cert_chain(str(crt), str(key))
+    srv.socket = ctx.wrap_socket(srv.socket, server_side=True)
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    return srv, hits
+
+
+def test_https_is_verified_against_the_real_host_name_over_the_pinned_address(tmp_path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    """A live TLS handshake: the connection goes to the checked address, but the
+    certificate must still be valid for the name the administrator registered."""
+    crt, key = _cert(tmp_path, "hook.test")
+    srv, hits = _tls_server(crt, key)
+    url = f"https://hook.test:{srv.server_port}/x"
+    try:
+        with _hook_test_is_loopback():
+            monkeypatch.setenv("EVOLVXSI_ACTIONS_CA_BUNDLE", str(crt))
+            assert deliver(url, {"a": 1}, "k").ok and hits == [f"hook.test:{srv.server_port}"]
+
+            monkeypatch.delenv("EVOLVXSI_ACTIONS_CA_BUNDLE")
+            assert not deliver(url, {"a": 1}, "k").ok, "a certificate the system does not trust is refused"
+
+            other, _ = _cert(tmp_path, "other.test")
+            monkeypatch.setenv("EVOLVXSI_ACTIONS_CA_BUNDLE", str(other))
+            assert not deliver(url, {"a": 1}, "k").ok, "a certificate from a different authority is refused"
+        assert len(hits) == 1
+    finally:
+        srv.shutdown()
+
+
+def test_a_certificate_for_another_name_is_refused_even_if_trusted(tmp_path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    crt, key = _cert(tmp_path, "wrong.test")
+    srv, hits = _tls_server(crt, key)
+    try:
+        with _hook_test_is_loopback():
+            monkeypatch.setenv("EVOLVXSI_ACTIONS_CA_BUNDLE", str(crt))
+            r = deliver(f"https://hook.test:{srv.server_port}/x", {"a": 1}, "k")
+        assert not r.ok and hits == []
+    finally:
+        srv.shutdown()
