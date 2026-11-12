@@ -7,7 +7,6 @@ from evolvxsi.db.credentials import credential_usable_for_source, fetch_credenti
 from evolvxsi.db.models import Credential, User, UserGroup
 from evolvxsi.error_handling.error_codes import EvolvXSIErrorCode
 from evolvxsi.error_handling.exceptions import EvolvXSIError
-from evolvxsi.utils.variable_functionality import fetch_ee_implementation_or_noop
 
 
 def fetch_current_pair_state(db_session: Session, cc_pair_id: int) -> CurrentPairState:
@@ -25,11 +24,10 @@ def fetch_current_pair_state(db_session: Session, cc_pair_id: int) -> CurrentPai
             EvolvXSIErrorCode.CONNECTOR_NOT_FOUND,
             f"Connector-credential pair {cc_pair_id} does not exist.",
         )
-    data_access_groups: list[UserGroup] = fetch_ee_implementation_or_noop(
-        "evolvxsi.db.cc_pair_data_access",
-        "fetch_data_access_groups_for_cc_pair",
-        noop_return_value=[],
-    )(db_session, cc_pair_id)
+    # EvolvXSI: read the real groups (the community copy returned none).
+    from evolvxsi.knowledge_access.source_groups import fetch_data_access_groups_for_cc_pair
+
+    data_access_groups: list[UserGroup] = fetch_data_access_groups_for_cc_pair(db_session, cc_pair_id)
     connector = cc_pair.connector
     return CurrentPairState(
         cc_pair_id=cc_pair.id,

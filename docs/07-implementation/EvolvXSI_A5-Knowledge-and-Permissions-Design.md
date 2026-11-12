@@ -93,7 +93,7 @@ Checked: six integration tests on the real database pass (32 in the integration 
 
 ## Progress (2026-11-12): changing who reads a source
 
-Community code sets a source's reading groups only when the source is created; changing them later was enterprise-only. Added `PUT /admin/access-groups/sources/{cc_pair_id}` (in `group_admin.py`), which replaces a source's reading groups and marks every document from that source as modified. The core's existing background metadata sync then rewrites each document's access list in the index from the current groups, using the group-aware access functions added earlier.
+(Corrected 2026-11-12: community code does have an edit path for a source's reading groups, the connector edit form; see the next section. Its saving step was a no-op.) Added `PUT /admin/access-groups/sources/{cc_pair_id}` (in `group_admin.py`), which replaces a source's reading groups and marks every document from that source as modified. The core's existing background metadata sync then rewrites each document's access list in the index from the current groups, using the group-aware access functions added earlier.
 
 Rules: only private and permission-synced sources take reading groups; a permission-synced source needs at least one; built-in role groups and unknown groups are refused; setting the same groups again marks nothing. Each change is audited with the groups added and removed and the number of documents marked.
 
@@ -114,4 +114,20 @@ Checked against the real database and OpenSearch (`tests/evolvxsi_integration/te
 - Permission-synced source: visible only to someone who is both in a reading group and named on the document; being named alone, or in the group alone, is not enough.
 
 The rollout gate itself (flag plus backfill state) was stubbed in that test and covered by unit tests. The backfill task needs background workers, so it has not run in this sandbox.
+
+## Progress (2026-11-12): the connector edit form now saves reading groups
+
+Correction to an earlier note: the community copy does have a way to change a source's reading groups after creation, the connector edit form and its edit plan. But the three functions that path calls for groups were enterprise-only and fell back to no-ops in the community copy:
+
+- reading the source's current groups returned none, so the form compared against an empty list;
+- saving the new groups did nothing, while the edit reported success;
+- the check that a permission-synced source keeps at least one group was skipped.
+
+Documents were also re-synced only when the source's access type changed, not when only its groups changed.
+
+EvolvXSI now implements all three (`services/core/evolvxsi/knowledge_access/source_groups.py`), called directly from `connectors/edit_plan/state.py` and `db/connector_edit_requests.py`. Saving marks the source's documents for the access re-sync whenever the groups change. A scoped editor changes only the groups they can see, and the groups they cannot see are kept.
+
+Checked on the real database (42 integration checks pass, 5 new): the edit reads the real current groups; a scoped editor replaced one group while a group they could not see stayed; adding an unseen group was refused; a permission-synced source with no group was refused and left unchanged; making a source public removed its groups. The 234 existing unit tests for the edit flow pass. The edit form itself was not opened in a browser, because no source can be connected in the lite sandbox.
+
+`PUT /admin/access-groups/sources/{id}` (added earlier) does the same job with its own checks and duplicates part of this; it can be folded into this path later.
 
