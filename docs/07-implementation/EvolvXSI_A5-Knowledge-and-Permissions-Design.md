@@ -176,3 +176,12 @@ Found on the way: the ingestion endpoint returned 200 and the database marked do
 
 Limits: Craft and live approvals were not started; the search-time source check was in shadow mode (its backfill job was not run to completion); one source, one group and one question; indexing used the ingestion API, not a connector.
 
+
+## Progress (2026-11-12): the first real connector, checked
+
+The core's own web connector was run against a local three-page site (home page linking to two pages and to an outside address). It returned the three pages with their titles and text, and did not follow the outside link. By default it refuses a loopback address ("Non-global IP address detected"), and the browser fetch path has its own second check that refuses the same address; the check script (`services/core/scripts/sandbox_web_connector_check.py`) has to switch both off to crawl a local site. The documents it returns carry no per-document access list, so for a source like this the only access control is the source-level one we built: make the source private and give it reading groups.
+
+What this settles and what it does not:
+- Web pages and uploaded files are usable now as sources, with group-based access.
+- A shared-drive or wiki source with per-document sharing needs its own permission mapping. That source is still the first open decision (the customer's), and nothing here replaces it. Whichever is chosen, the work is: map the source's sharing to our groups and emails, add a test per sharing rule (inherited folders, link sharing, nested groups), and fail closed where the meaning is unclear.
+- Not checked: crawling with scrolling, sitemaps, sign-in pages, large sites, scheduled refresh through the workers in this sandbox.
