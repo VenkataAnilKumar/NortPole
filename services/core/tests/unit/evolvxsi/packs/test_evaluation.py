@@ -31,3 +31,49 @@ def test_a_model_failure_fails_the_case_instead_of_crashing() -> None:
     with patch.object(evaluation, "draft_answer", side_effect=RuntimeError("down")):
         r = evaluation._run_case(None, None, c, "Pack")  # type: ignore[arg-type]
     assert not r.passed and "RuntimeError" in r.reason
+
+
+def test_house_style_is_added_below_the_rules_and_only_when_present() -> None:
+    from evolvxsi.tasks.drafter import STYLE_RULE, build_prompt
+
+    plain = build_prompt("T", "R", ["a"], [])
+    styled = build_prompt("T", "R", ["a"], [], style="  Three   short\nsentences.  ")
+    assert "House style" not in plain
+    assert styled.endswith("House style: Three short sentences.")
+    assert "citation rules" in STYLE_RULE
+
+
+def test_a_style_longer_than_the_limit_is_refused() -> None:
+    import pytest
+    from pydantic import ValidationError
+
+    from evolvxsi.packs.manifest import Template
+
+    with pytest.raises(ValidationError):
+        Template(id="t", title="T", request="R", style="x" * 801)
+
+
+def test_a_case_runs_with_its_templates_style_and_must_name_a_real_template() -> None:
+    import json
+    from pathlib import Path
+
+    import pytest
+    from pydantic import ValidationError
+
+    from evolvxsi.packs.manifest import Manifest
+
+    raw = json.loads((Path(__file__).parents[4] / "scripts/sample_packs/finance-policy-review.json").read_text())
+    m = Manifest.model_validate(raw)
+    seen: list[str] = []
+
+    def fake(db, user, title, question, plan, ev, style=""):  # type: ignore[no-untyped-def]
+        seen.append(style)
+        return SimpleNamespace(text="30 days [1]. director. No source you are allowed to open", cited=[1])
+
+    with patch.object(evaluation, "draft_answer", fake):
+        evaluation.evaluate(None, None, m)  # type: ignore[arg-type]
+    assert seen[0].startswith("Answer in at most three") and seen[1:] == ["", ""]
+
+    raw["evaluation_cases"][0]["template"] = "nope"
+    with pytest.raises(ValidationError):
+        Manifest.model_validate(raw)

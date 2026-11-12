@@ -384,7 +384,10 @@ def run_task(
     try:
         question = f"{task.title}\n{task.request}"
         evidence = filter_relevant(db_session, user, task.request, gather_evidence(db_session, user, question))
-        result = draft_answer(db_session, user, task.title, task.request, task.plan or [], evidence)
+        from evolvxsi.packs.guidance import style_for
+
+        style = style_for(db_session, task.pack_id, task.pack_version, task.pack_template)
+        result = draft_answer(db_session, user, task.title, task.request, task.plan or [], evidence, style)
     except EvolvXSIError as e:
         return _view(_move(db_session, task_id, user, task.version, TaskAction.RUN_FAILED, run_error=e.detail))
     except Exception:

@@ -140,7 +140,7 @@ Delivered (PF-07.03 slice, PF-04.02 groundwork): route kinds (local, private, cl
 
 ## A7 — Agents, skills, packs and extension levels (planned, L)
 
-> Progress 2026-11-12: signed packs, install/activate/rollback, revocation and requirement checks are built, and a pack's evaluation cases must pass on the model in use before it runs (see REVIEW.md). Pack-supplied agents, skills and connectors are not built.
+> Progress 2026-11-12: signed packs, install/activate/rollback, revocation and requirement checks are built, and a pack's evaluation cases must pass on the model in use before it runs (see REVIEW.md). Template house style (text guidance) is built; pack-supplied agents, tools and connectors are not.
 
 **Goal:** a vertical can be packaged, evaluated, activated and governed (PF-02.01 to PF-02.06, PF-08.02 to PF-08.06, PF-03.02, PF-03.05).
 
