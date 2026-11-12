@@ -815,6 +815,7 @@ export default function AppSidebar() {
                     prominence="tertiary"
                     size="md"
                     tooltip={t("appSidebar.newProject.tooltip")}
+                    aria-label={t("appSidebar.newProject.tooltip")}
                     onClick={() => createProjectModal.toggle(true)}
                   />
                 }
