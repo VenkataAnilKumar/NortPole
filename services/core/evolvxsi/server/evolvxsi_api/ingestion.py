@@ -220,6 +220,18 @@ def upsert_ingestion_doc(
         written_search_settings_id=active_search_settings.primary.id,
     )
 
+    # EvolvXSI: the pipeline reports a document that could not be embedded or
+    # written in `failures` and still returns normally. Without this check the
+    # caller gets a success, and the document row is marked indexed with no
+    # chunks in the index, so it looks present and is never found.
+    if indexing_pipeline_result.failures:
+        raise EvolvXSIError(
+            EvolvXSIErrorCode.BAD_GATEWAY,
+            "The document could not be indexed (for example the embedding model is unreachable "
+            "or misconfigured). Nothing was added to the search index. Check the embedding "
+            "settings and try again.",
+        )
+
     # If there's a secondary index being built, index the doc but don't use it for return here
     sec_search_settings = active_search_settings.secondary
     if sec_search_settings is not None:

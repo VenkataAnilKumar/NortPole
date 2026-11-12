@@ -43,3 +43,15 @@ OPENSEARCH_HOST=127.0.0.1 OPENSEARCH_USE_SSL=false NO_PROXY=127.0.0.1,localhost 
 
 The harness skips itself when no OpenSearch answers.
 
+## Full-stack run in the sandbox (real indexing, workers and models)
+
+Verified 2026-11-12. Needs Postgres, Redis, OpenSearch (above) and Ollama with `nomic-embed-text` and a chat model (`qwen2.5:7b` was used). Ollama in Docker needs the sandbox proxy: run it with `--network host`, `-e HTTPS_PROXY=...`, the CA bundle mounted and `SSL_CERT_FILE` set; pull models with `POST /api/pull` (the CLI pull failed once, the API worked).
+
+1. Embedding provider: `PUT /admin/embedding/embedding-provider` with `provider_type: openai_compatible`, `api_url: http://127.0.0.1:11434/v1`, any key.
+2. Search settings (sandbox only, direct SQL on the `PRESENT` row): `model_name=nomic-embed-text`, `model_dim=768`, `provider_type=OPENAI_COMPATIBLE`, a new `index_name`, `vector_quantization=NONE`, and **empty** `query_prefix` and `passage_prefix` (cloud-style providers reject prefixes and every embed fails). Delete any `FUTURE` row.
+3. Start the API with the vector database on: `CACHE_BACKEND=redis FILE_STORE_BACKEND=postgres AUTH_TYPE=basic DISABLE_MODEL_SERVER=true OPENSEARCH_HOST=127.0.0.1 OPENSEARCH_USE_SSL=false OPENSEARCH_VERIFY_CERTS=false EVOLVXSI_OFFLINE_TOKENIZER=true HF_HUB_OFFLINE=1`. Without `DISABLE_MODEL_SERVER` startup retries for a minute against a model server on port 9000 and fails.
+4. Workers (`celery -A evolvxsi.background.celery.versioned_apps.<app> worker -Q ...`): primary (`celery`), light, docfetching (`connector_doc_fetching`), docprocessing (`docprocessing,port`), heavy; plus `beat`. Queue lists are in upstream's supervisor config.
+5. `services/core/scripts/sandbox_ingest_corpus.py <run-id>`, then `sandbox_task_e2e.py <run-id> <group-id>`.
+
+Not run here: Craft (sandbox tasks, live approvals), connectors against real sources, and the core's own model server (no torch in the environment).
+
