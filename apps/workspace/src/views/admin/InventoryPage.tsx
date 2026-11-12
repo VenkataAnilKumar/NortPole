@@ -2,6 +2,7 @@
 
 import useSWR from "swr";
 import { errorHandlingFetcher } from "@/lib/fetcher";
+import ExtensionRules from "@/views/admin/ExtensionRules";
 
 interface Item {
   kind: string;
@@ -47,6 +48,7 @@ export default function InventoryPage() {
           Everything active in this workspace: packs, send destinations, model routes, skills and MCP servers. It is read-only; change each in its own page.
         </p>
       </div>
+      <ExtensionRules />
       {error && <p role="alert" className="text-sm text-status-error-05">Could not load the inventory.</p>}
       {isLoading && <p className="text-sm text-text-03">Loading…</p>}
       {data &&

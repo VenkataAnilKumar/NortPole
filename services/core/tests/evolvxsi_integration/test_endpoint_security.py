@@ -116,7 +116,7 @@ def test_no_audit_row_anywhere_holds_task_text(session) -> None:  # type: ignore
 
 
 ADMIN_AUDIT = [("GET", "/admin/audit"), ("GET", "/admin/audit?outcome=denied"), ("GET", "/admin/audit/export"), ("GET", "/admin/audit/export?format=csv"),
-               ("GET", "/admin/retention"), ("GET", "/admin/inventory"), ("PUT", "/admin/retention"), ("POST", "/admin/retention/prune"), ("GET", "/admin/action-targets"), ("POST", "/admin/action-targets")]
+               ("GET", "/admin/retention"), ("GET", "/admin/inventory"), ("GET", "/admin/extensions"), ("PUT", "/admin/extensions"), ("PUT", "/admin/retention"), ("POST", "/admin/retention/prune"), ("GET", "/admin/action-targets"), ("POST", "/admin/action-targets")]
 
 
 @pytest.mark.parametrize("method,path", ADMIN_AUDIT)
@@ -138,3 +138,16 @@ def test_pack_administration_is_admin_only(session, method: str, path: str) -> N
 @pytest.mark.parametrize("method,path", [("GET", "/packs"), ("POST", "/packs/x/templates/y/task")])
 def test_packs_for_people_need_sign_in(method: str, path: str) -> None:
     assert requests.request(method, f"{API}{path}", json={}, timeout=15).status_code in (401, 403)
+
+
+def test_personal_skills_can_be_switched_off_for_ordinary_users(session) -> None:  # type: ignore[no-untyped-def]
+    from evolvxsi.extensions.policy import ExtensionPolicy, load, save
+
+    original = load()
+    try:
+        save(ExtensionPolicy(version=original.version + 1, personal_skills="off"))
+        for method, path in [("POST", "/skills/custom"), ("POST", "/skills/custom/batch"), ("POST", "/skills/github/import"), ("POST", "/skills/custom/editor")]:
+            r = session.request(method, f"{API}{path}", json={}, timeout=15)
+            assert r.status_code == 403 and "turned off" in r.text, (path, r.status_code, r.text[:120])
+    finally:
+        save(original)

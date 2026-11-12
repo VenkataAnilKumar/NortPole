@@ -13,6 +13,7 @@ from evolvxsi.auth.permissions import require_permission
 from evolvxsi.db.engine.sql_engine import get_session
 from evolvxsi.db.enums import Permission
 from evolvxsi.db.models import LLMProvider, MCPServer, Skill, User
+from evolvxsi.extensions.policy import host_allowed, load as load_extensions
 from evolvxsi.packs.api import current_model, passed_on_current_model
 from evolvxsi.packs.models import EvolvXSIPackSigner, EvolvXSIPackVersion
 from evolvxsi.route_policy.policy import kind_for, load_policy
@@ -99,10 +100,13 @@ def build(db: Session) -> Inventory:
         items.append(Item(kind="skill", name=sk.name, detail=(sk.description or "")[:120], status="invalid" if sk.is_valid is False else "active",
                           owner=None, version=None, last_use=NOT_RECORDED, uses=None,
                           notes=[f"installation policy: {getattr(sk.installation_policy, 'value', sk.installation_policy)}"]))
+    ext = load_extensions()
     for s in db.scalars(select(MCPServer).order_by(MCPServer.name)):
         host = host_only(s.server_url)
         items.append(Item(kind="mcp_server", name=s.name, detail=f"MCP server at {host}", status=str(getattr(s.status, "value", s.status)).lower(),
-                          owner=s.owner, version=None, last_use=NOT_RECORDED, uses=None, notes=[f"transport: {getattr(s.transport, 'value', s.transport)}"]))
+                          owner=s.owner, version=None, last_use=NOT_RECORDED, uses=None,
+                          notes=[f"transport: {getattr(s.transport, 'value', s.transport)}",
+                                 "allowlist: off" if not ext.mcp_allowlist_enabled else ("host allowed" if host_allowed(s.server_url, ext) else "NOT on the allowlist: calls are blocked")]))
 
     counts: dict[str, int] = {}
     for i in items:

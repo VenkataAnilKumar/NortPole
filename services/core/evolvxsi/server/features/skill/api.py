@@ -4,6 +4,7 @@ from collections.abc import Callable
 from typing import Annotated, NamedTuple
 from uuid import UUID
 
+from evolvxsi.extensions.enforce import personal_skills_allowed
 from fastapi import APIRouter, Depends, File, Form, UploadFile
 from pydantic import Field, ValidationError
 from sqlalchemy.orm import Session
@@ -370,7 +371,7 @@ def preview_skill_for_current_user(
     return skill_preview_response(skill, user, db_session)
 
 
-@user_router.post("/custom")
+@user_router.post("/custom", dependencies=[Depends(personal_skills_allowed)])
 def create_custom_skill(
     bundle: UploadFile = File(...),
     auto_enable: Annotated[bool, Form()] = True,
@@ -415,7 +416,7 @@ def create_custom_skill(
     )
 
 
-@user_router.post("/custom/batch")
+@user_router.post("/custom/batch", dependencies=[Depends(personal_skills_allowed)])
 def create_custom_skills_batch(
     bundles: Annotated[list[UploadFile], File()],
     auto_enable: Annotated[bool, Form()] = True,
@@ -474,7 +475,7 @@ def preview_github_skills(
     )
 
 
-@user_router.post("/github/import")
+@user_router.post("/github/import", dependencies=[Depends(personal_skills_allowed)])
 def import_github_skills(
     request: GitHubSkillsImportRequest,
     user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
@@ -536,7 +537,7 @@ def import_github_skills(
     )
 
 
-@user_router.post("/custom/editor")
+@user_router.post("/custom/editor", dependencies=[Depends(personal_skills_allowed)])
 def create_custom_skill_from_editor(
     name: Annotated[str, Form(min_length=1)],
     description: Annotated[str, Form(min_length=1)],
@@ -684,7 +685,7 @@ def inspect_custom_skill_bundle_upload(
     )
 
 
-@user_router.put("/custom/{skill_id}/bundle")
+@user_router.put("/custom/{skill_id}/bundle", dependencies=[Depends(personal_skills_allowed)])
 def replace_current_user_skill_bundle(
     skill_id: UUID,
     bundle: UploadFile = File(...),
@@ -729,7 +730,7 @@ def replace_current_user_skill_bundle(
     )
 
 
-@user_router.post("/custom/{skill_id}/files")
+@user_router.post("/custom/{skill_id}/files", dependencies=[Depends(personal_skills_allowed)])
 def upload_current_user_skill_files(
     skill_id: UUID,
     upload: UploadFile = File(...),
