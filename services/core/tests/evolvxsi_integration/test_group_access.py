@@ -86,7 +86,7 @@ def _source(s, tag: str, access_type: AccessType):  # type: ignore[no-untyped-de
 
 
 def _doc(s, doc_id: str, connector, credential) -> None:  # type: ignore[no-untyped-def]
-    s.add(Document(id=doc_id, semantic_id=doc_id, from_ingestion_api=False))
+    s.add(Document(id=doc_id, semantic_id=doc_id, from_ingestion_api=False, chunk_count=1))
     s.flush()
     s.add(DocumentByConnectorCredentialPair(id=doc_id, connector_id=connector.id, credential_id=credential.id, has_been_indexed=True))
 

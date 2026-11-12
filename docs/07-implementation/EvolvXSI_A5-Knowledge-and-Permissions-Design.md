@@ -129,5 +129,5 @@ EvolvXSI now implements all three (`services/core/evolvxsi/knowledge_access/sour
 
 Checked on the real database (42 integration checks pass, 5 new): the edit reads the real current groups; a scoped editor replaced one group while a group they could not see stayed; adding an unseen group was refused; a permission-synced source with no group was refused and left unchanged; making a source public removed its groups. The 234 existing unit tests for the edit flow pass. The edit form itself was not opened in a browser, because no source can be connected in the lite sandbox.
 
-`PUT /admin/access-groups/sources/{id}` (added earlier) does the same job with its own checks and duplicates part of this; it can be folded into this path later.
+`PUT /admin/access-groups/sources/{id}` (added earlier) now calls these same functions, so the edit form and the admin endpoint share one set of rules.
 
