@@ -214,10 +214,12 @@ export function FoldedProjectsPopover() {
         onOpenChange={setOpen}
       >
         <Dropdown.Trigger asChild>
-          <div data-testid="AppSidebar/projects" tabIndex={-1}>
+          <div data-testid="AppSidebar/projects" tabIndex={-1} aria-expanded={undefined} aria-haspopup={undefined} aria-controls={undefined}>
             <SidebarTab
               icon={SvgFolder}
               type="button"
+              aria-haspopup="menu"
+              aria-expanded={open}
               folded
               selected={open || appPosition.isProject()}
             >

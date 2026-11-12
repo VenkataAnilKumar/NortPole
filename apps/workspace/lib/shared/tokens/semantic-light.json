@@ -17,11 +17,11 @@
       "type": "color"
     },
     "text-03": {
-      "value": "{alpha-grey-100-55}",
+      "value": "{alpha-grey-100-70}",
       "type": "color"
     },
     "text-02": {
-      "value": "{alpha-grey-100-45}",
+      "value": "{alpha-grey-100-65}",
       "type": "color"
     },
     "text-01": {
@@ -333,7 +333,7 @@
       "type": "color"
     },
     "theme-blue-05": {
-      "value": "{blue-50}",
+      "value": "{blue-60}",
       "type": "color"
     },
     "theme-blue-02": {
@@ -505,7 +505,7 @@
       "type": "color"
     },
     "status-text-info-05": {
-      "value": "{blue-50}",
+      "value": "{blue-60}",
       "type": "color"
     },
     "status-text-warning-05": {
@@ -569,7 +569,7 @@
       "type": "color"
     },
     "action-text-link-05": {
-      "value": "{blue-50}",
+      "value": "{blue-60}",
       "type": "color"
     },
     "action-text-danger-05": {
