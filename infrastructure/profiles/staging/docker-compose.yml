@@ -1,5 +1,5 @@
-# EvolvXSI single-host profile, lite mode: API + PostgreSQL + Redis.
-# No search index, no model server, no web container yet (see README.md next to this file).
+# EvolvXSI single-host profile, lite mode: web + API + PostgreSQL + Redis.
+# No search index and no model server (see README.md next to this file).
 # Required environment (no defaults, so a missing secret stops the start):
 #   POSTGRES_PASSWORD, USER_AUTH_SECRET (random hex, e.g. `openssl rand -hex 32`)
 name: evolvxsi
@@ -50,8 +50,27 @@ services:
       EVOLVXSI_OFFLINE_TOKENIZER: "true"
       HF_HUB_OFFLINE: "1"
       EVOLVXSI_VERSION: ${EVOLVXSI_VERSION:-dev}
+    expose:
+      - "8080"   # reached through the proxy; not published
+    restart: unless-stopped
+
+  web:
+    image: evolvxsi-web:${EVOLVXSI_VERSION:-dev}
+    build:
+      context: ../../../apps/workspace
+      args:
+        INTERNAL_URL: http://api:8080   # fixed at build time
+    depends_on:
+      api: {condition: service_healthy}
+    restart: unless-stopped
+
+  proxy:
+    image: nginx:1.27-alpine
+    depends_on: [web, api]
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
     ports:
-      - "127.0.0.1:8080:8080"   # bound to this machine only; put a TLS proxy in front
+      - "127.0.0.1:3000:80"   # the only published web port; add TLS here
     restart: unless-stopped
 
 volumes:
