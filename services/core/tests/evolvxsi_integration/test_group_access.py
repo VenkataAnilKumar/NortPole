@@ -15,7 +15,9 @@ import uuid
 import pytest
 import requests
 
-from evolvxsi.access.access import _get_acl_for_user, get_access_for_documents
+from types import SimpleNamespace
+
+from evolvxsi.access.access import _get_acl_for_user, get_access_for_document, get_access_for_documents
 from evolvxsi.configs.constants import DocumentSource
 from evolvxsi.context.search.models import IndexFilters
 from evolvxsi.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant
@@ -37,7 +39,9 @@ from evolvxsi.db.models import (
     UserGroup__CCPairDataAccess,
     UserGroup__ConnectorCredentialPair,
 )
-from evolvxsi.document_index.interfaces import IndexingMetadata, TenantState
+from evolvxsi.document_index.interfaces import IndexingMetadata, MetadataUpdateRequest, TenantState
+from evolvxsi.error_handling.exceptions import EvolvXSIError
+from evolvxsi.knowledge_access.group_admin import SourceGroupsUpdate, set_source_groups
 from evolvxsi.document_index.opensearch.opensearch_document_index import (
     OpenSearchDocumentIndex,
 )
@@ -112,6 +116,7 @@ def world():  # type: ignore[no-untyped-def]
         _doc(s, SYNC_DOC_ID, c2, cr2)
         s.commit()
         ids = {**{k: u.id for k, u in users.items()}, "groups": [g.id for g in groups.values()],
+               "research": groups["research"].id, "managers": groups["managers"].id,
                "ccs": [private_cc.id, sync_cc.id], "connectors": [c1.id, c2.id], "credentials": [cr1.id, cr2.id]}
 
     with get_session_with_current_tenant() as s:
@@ -143,6 +148,7 @@ def world():  # type: ignore[no-untyped-def]
         s.query(Connector).filter(Connector.id.in_(ids["connectors"])).delete()
         s.query(UserGroup).filter(UserGroup.id.in_(ids["groups"])).delete()
         s.query(User).filter(User.id.in_([ids[k] for k in ("member", "outsider", "manager", "syncmember")])).delete()
+        s.execute(__import__("sqlalchemy").text("delete from evolvxsi_audit_event where actor_email = :e"), {"e": f"admin-{RUN}@example.com"})
         s.commit()
 
 
@@ -179,6 +185,66 @@ def test_member_finds_it_and_outsider_does_not(world) -> None:  # type: ignore[n
     ids, _access, idx = world
     assert DOC_ID in _search_as(idx, ids["member"])
     assert DOC_ID not in _search_as(idx, ids["outsider"])
+
+
+def _resync(idx, doc_id: str) -> None:  # type: ignore[no-untyped-def]
+    """What the background metadata sync does for one marked document."""
+    with get_session_with_current_tenant() as s:
+        access = get_access_for_document(doc_id, s)
+    idx.update([MetadataUpdateRequest(document_ids=[doc_id], doc_id_to_chunk_cnt={doc_id: 1}, access=access)])
+    host = os.environ.get("OPENSEARCH_HOST", "localhost")
+    requests.post(f"http://{host}:9200/{idx._index_name}/_refresh", timeout=10)
+
+
+def _dirty(doc_id: str) -> bool:
+    with get_session_with_current_tenant() as s:
+        d = s.get(Document, doc_id)
+        return d.last_modified is not None and (d.last_synced is None or d.last_modified > d.last_synced)
+
+
+def test_removing_a_group_from_a_source_reaches_the_index_after_resync(world) -> None:  # type: ignore[no-untyped-def]
+    ids, _access, idx = world
+    admin = SimpleNamespace(id=uuid.uuid4(), email=f"admin-{RUN}@example.com")
+    with get_session_with_current_tenant() as s:
+        s.query(Document).filter_by(id=DOC_ID).update({"last_synced": __import__("datetime").datetime.now(__import__("datetime").timezone.utc)})
+        s.commit()
+    assert not _dirty(DOC_ID)
+    with get_session_with_current_tenant() as s:
+        result = set_source_groups(ids["ccs"][0], SourceGroupsUpdate(group_ids=[]), user=admin, db_session=s)
+    assert result.documents_marked_for_resync == 1
+    assert _dirty(DOC_ID)
+    # Before the sync runs, the index still holds the old access list.
+    assert DOC_ID in _search_as(idx, ids["member"])
+    _resync(idx, DOC_ID)
+    assert DOC_ID not in _search_as(idx, ids["member"])
+
+    # Put it back for the remaining tests.
+    with get_session_with_current_tenant() as s:
+        set_source_groups(ids["ccs"][0], SourceGroupsUpdate(group_ids=[ids["research"]]), user=admin, db_session=s)
+    _resync(idx, DOC_ID)
+    assert DOC_ID in _search_as(idx, ids["member"])
+
+
+def test_source_group_rules(world) -> None:  # type: ignore[no-untyped-def]
+    ids, _access, _idx = world
+    admin = SimpleNamespace(id=uuid.uuid4(), email=f"admin-{RUN}@example.com")
+    with get_session_with_current_tenant() as s:
+        default_group = s.query(__import__("evolvxsi.db.models", fromlist=["UserGroup"]).UserGroup).filter_by(is_default=True).first()
+        # A permission-synced source needs at least one reading group.
+        with pytest.raises(EvolvXSIError):
+            set_source_groups(ids["ccs"][1], SourceGroupsUpdate(group_ids=[]), user=admin, db_session=s)
+        s.rollback()
+        # Unknown groups are refused.
+        with pytest.raises(EvolvXSIError):
+            set_source_groups(ids["ccs"][0], SourceGroupsUpdate(group_ids=[999999999]), user=admin, db_session=s)
+        s.rollback()
+        if default_group is not None:
+            with pytest.raises(EvolvXSIError):
+                set_source_groups(ids["ccs"][0], SourceGroupsUpdate(group_ids=[default_group.id]), user=admin, db_session=s)
+            s.rollback()
+        # Setting the same groups again marks nothing.
+        same = set_source_groups(ids["ccs"][0], SourceGroupsUpdate(group_ids=[ids["research"]]), user=admin, db_session=s)
+        assert same.documents_marked_for_resync == 0
 
 
 def test_removal_from_the_group_takes_effect_on_the_next_search(world) -> None:  # type: ignore[no-untyped-def]

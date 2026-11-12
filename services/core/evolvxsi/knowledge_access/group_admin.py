@@ -17,19 +17,24 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel, field_validator
-from sqlalchemy import delete, func, select
+from datetime import datetime, timezone
+
+from sqlalchemy import and_, delete, func, select, update
 from sqlalchemy.orm import Session
 
 from evolvxsi.auth.permissions import require_permission
 from evolvxsi.db.engine.sql_engine import get_session
-from evolvxsi.db.enums import Permission
+from evolvxsi.db.enums import AccessType, Permission
 from evolvxsi.db.models import (
     ConnectorCredentialPair,
+    Document,
+    DocumentByConnectorCredentialPair,
     User,
     User__UserGroup,
     UserGroup,
     UserGroup__CCPairDataAccess,
 )
+from evolvxsi.db.user_group import assert_not_shared_with_default_group
 from evolvxsi.error_handling.error_codes import EvolvXSIErrorCode
 from evolvxsi.error_handling.exceptions import EvolvXSIError
 from evolvxsi.route_policy.audit import record_audit
@@ -254,4 +259,117 @@ def delete_group(
         summary=f"Deleted group {name}",
         resource_type="user_group",
         resource_id=group_id,
+    )
+
+
+class SourceGroupsUpdate(BaseModel):
+    group_ids: list[int]
+
+
+class SourceGroupsView(BaseModel):
+    cc_pair_id: int
+    group_ids: list[int]
+    # Documents marked for a metadata re-sync, so their stored access lists
+    # catch up with the change.
+    documents_marked_for_resync: int
+
+
+def mark_source_documents_for_resync(db: Session, cc_pair: ConnectorCredentialPair) -> int:
+    """Mark every document from this source as modified. The background
+    metadata sync then rewrites each one's access list in the index from the
+    current groups. Until it runs, the index still holds the old list."""
+    doc_ids = select(DocumentByConnectorCredentialPair.id).where(
+        and_(
+            DocumentByConnectorCredentialPair.connector_id == cc_pair.connector_id,
+            DocumentByConnectorCredentialPair.credential_id == cc_pair.credential_id,
+        )
+    )
+    result = db.execute(
+        update(Document)
+        .where(Document.id.in_(doc_ids))
+        .values(last_modified=datetime.now(timezone.utc))
+        .execution_options(synchronize_session=False)
+    )
+    return int(result.rowcount or 0)
+
+
+@router.put("/sources/{cc_pair_id}")
+def set_source_groups(
+    cc_pair_id: int,
+    body: SourceGroupsUpdate,
+    user: User = Depends(require_permission(Permission.MANAGE_USER_GROUPS)),
+    db_session: Session = Depends(get_session),
+) -> SourceGroupsView:
+    """Replace the groups that may read a source.
+
+    Only PRIVATE and SYNC_RESTRICTED sources take reading groups. A
+    SYNC_RESTRICTED source needs at least one, or nobody could read it. Built-in
+    role groups are refused: sharing with everyone is what a public source is.
+    """
+    cc_pair = db_session.scalar(
+        select(ConnectorCredentialPair).where(ConnectorCredentialPair.id == cc_pair_id)
+    )
+    if cc_pair is None:
+        raise EvolvXSIError(EvolvXSIErrorCode.NOT_FOUND, "Source not found.")
+    if cc_pair.access_type not in (AccessType.PRIVATE, AccessType.SYNC_RESTRICTED):
+        raise EvolvXSIError(
+            EvolvXSIErrorCode.INVALID_INPUT,
+            "Only private and permission-synced sources take reading groups.",
+        )
+    wanted = set(body.group_ids)
+    if cc_pair.access_type == AccessType.SYNC_RESTRICTED and not wanted:
+        raise EvolvXSIError(
+            EvolvXSIErrorCode.INVALID_INPUT,
+            "A permission-synced source needs at least one reading group.",
+        )
+    assert_not_shared_with_default_group(db_session, wanted)
+    if wanted:
+        found = set(
+            db_session.scalars(
+                select(UserGroup.id).where(
+                    UserGroup.id.in_(wanted), UserGroup.is_up_for_deletion.is_(False)
+                )
+            )
+        )
+        if missing := wanted - found:
+            raise EvolvXSIError(
+                EvolvXSIErrorCode.INVALID_INPUT, f"Unknown group(s): {sorted(missing)}"
+            )
+    before = set(
+        db_session.scalars(
+            select(UserGroup__CCPairDataAccess.user_group_id).where(
+                UserGroup__CCPairDataAccess.cc_pair_id == cc_pair_id
+            )
+        )
+    )
+    marked = 0
+    if before != wanted:
+        db_session.execute(
+            delete(UserGroup__CCPairDataAccess).where(
+                UserGroup__CCPairDataAccess.cc_pair_id == cc_pair_id
+            )
+        )
+        for gid in wanted:
+            db_session.add(
+                UserGroup__CCPairDataAccess(
+                    cc_pair_id=cc_pair_id, user_group_id=gid, access_type=cc_pair.access_type
+                )
+            )
+        marked = mark_source_documents_for_resync(db_session, cc_pair)
+    db_session.commit()
+    if before != wanted:
+        record_audit(
+            AuditAction.USER_GROUP_CHANGE,
+            AuditOutcome.SUCCESS,
+            actor=user,
+            summary=(
+                f"Reading groups of source {cc_pair.name or cc_pair_id} changed: "
+                f"added {sorted(wanted - before)}, removed {sorted(before - wanted)}; "
+                f"{marked} document(s) marked for re-sync"
+            ),
+            resource_type="cc_pair",
+            resource_id=cc_pair_id,
+        )
+    return SourceGroupsView(
+        cc_pair_id=cc_pair_id, group_ids=sorted(wanted), documents_marked_for_resync=marked
     )

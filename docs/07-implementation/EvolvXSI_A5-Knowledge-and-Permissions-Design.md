@@ -91,3 +91,13 @@ The community code already lets an administrator add reading groups to a source 
 
 Checked: six integration tests on the real database pass (32 in the integration folder in total). The page had not been type-checked or opened in a browser when this was committed; see `docs/REVIEW.md` for the follow-up.
 
+## Progress (2026-11-12): changing who reads a source
+
+Community code sets a source's reading groups only when the source is created; changing them later was enterprise-only. Added `PUT /admin/access-groups/sources/{cc_pair_id}` (in `group_admin.py`), which replaces a source's reading groups and marks every document from that source as modified. The core's existing background metadata sync then rewrites each document's access list in the index from the current groups, using the group-aware access functions added earlier.
+
+Rules: only private and permission-synced sources take reading groups; a permission-synced source needs at least one; built-in role groups and unknown groups are refused; setting the same groups again marks nothing. Each change is audited with the groups added and removed and the number of documents marked.
+
+Checked on the sandbox database and OpenSearch (34 integration checks pass): removing the group marked the document, the member could still find it until the sync step ran, and after the sync step (run directly in the test, since background workers do not run in lite mode) the member could not.
+
+Known window: between the change and the background sync, the index still holds the old access list, so a removed group keeps reading for that time. The query-time source check (behind a rollout setting, not exercised here) would close that window. There is no screen for this yet; it is an API only.
+
