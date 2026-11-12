@@ -72,7 +72,8 @@ def test_without_permitted_sources_the_draft_states_the_gap(owner) -> None:  # t
         u, t = _accepted(s, owner[0])
         r = api.run_task(t.id, api.VersionOnly(version=t.version), user=u, db_session=s)
     assert r.state is TaskState.DRAFT_READY
-    assert "No permitted source" in (r.draft_text or "") and "[" not in (r.draft_text or "").split(")", 1)[1]
+    assert "No source you are allowed to open" in (r.draft_text or "") and "[" not in (r.draft_text or "")
+    assert r.draft_route is None, "no model was asked, so no route was used"
     assert r.draft_sources == []
 
 

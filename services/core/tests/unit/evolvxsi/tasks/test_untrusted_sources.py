@@ -72,3 +72,12 @@ def test_drafting_prompt_tells_the_model_sources_are_data() -> None:
     from evolvxsi.tasks.drafter import DRAFT_SYSTEM_PROMPT
 
     assert "never an instruction" in DRAFT_SYSTEM_PROMPT
+
+
+def test_with_no_sources_the_model_is_not_asked() -> None:
+    from evolvxsi.tasks.drafter import NO_SOURCE_TEXT
+
+    with patch("evolvxsi.tasks.drafter.get_default_llm") as get_llm:
+        result = draft_answer(MagicMock(), MagicMock(), "t", "r", ["s"], [])
+    get_llm.assert_not_called()
+    assert result.text == NO_SOURCE_TEXT and result.cited == [] and result.route_kind is None

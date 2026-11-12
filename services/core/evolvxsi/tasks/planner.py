@@ -16,9 +16,14 @@ from evolvxsi.route_policy.enforce import enforce_route
 from evolvxsi.tracing.flows import LLMFlow
 
 PLAN_SYSTEM_PROMPT = (
-    "You plan work before doing it. Reply with a numbered plan of 3 to 6 short "
-    "steps that would answer the request with cited evidence. One step per line, "
-    "each starting with its number and a full stop. No other text."
+    "You write a work plan. You do NOT answer the request and you state no facts about it. "
+    "Reply with a numbered plan of 3 to 6 short steps describing how someone would find the "
+    "answer using documents and cite them. Each step is an action that starts with a verb. "
+    "One step per line, each starting with its number and a full stop. No other text.\n"
+    "Example for the request 'What is our refund policy?':\n"
+    "1. Search the policy documents for refund rules.\n"
+    "2. Compare the versions and note any changes.\n"
+    "3. Draft the answer and cite the passage for each rule."
 )
 MAX_STEPS = 8
 MAX_STEP_CHARS = 300
