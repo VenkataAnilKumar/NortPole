@@ -164,3 +164,40 @@ def test_supported_claims_need_no_decision(world) -> None:  # type: ignore[no-un
         u, t = _ready(s, world["u"], MIXED)
         with pytest.raises(EvolvXSIError):
             api.decide_claim(t.id, 0, api.ClaimDecision(version=t.version, decision="keep"), user=u, db_session=s)
+
+
+def test_editing_a_draft_makes_a_new_version_and_keeps_history(world) -> None:  # type: ignore[no-untyped-def]
+    with get_session_with_current_tenant() as s:
+        u, t = _ready(s, world["u"], MIXED)
+        assert t.draft_version == 1 and len(t.draft_versions) == 1 and t.draft_versions[0]["by"] == "model"
+        t = api.decide_claim(t.id, 2, api.ClaimDecision(version=t.version, decision="keep"), user=u, db_session=s)
+        old_hash = t.draft_hash
+        edited = "Receipts are due in 30 days [1]. Late receipts need a manager's note. Ask finance if unsure."
+        t2 = api.edit_ready_draft(t.id, api.DraftEdit(version=t.version, text=edited), user=u, db_session=s)
+        assert t2.draft_version == 2 and [v["by"] for v in t2.draft_versions] == ["model", "owner"]
+        assert t2.draft_versions[0]["text"] == MIXED, "the first version stays readable"
+        decisions = {c["text"]: c["decision"] for c in t2.draft_claims}
+        assert decisions["Ask finance if unsure."] == "keep", "unchanged sentence keeps its decision"
+        assert decisions["Late receipts need a manager's note."] is None, "an edited sentence needs a new decision"
+        with pytest.raises(EvolvXSIError):
+            api.approve_draft(t.id, api.Approve(version=t2.version, draft_hash=old_hash), user=u, db_session=s)
+
+
+def test_an_edit_may_only_cite_this_runs_sources(world) -> None:  # type: ignore[no-untyped-def]
+    with get_session_with_current_tenant() as s:
+        u, t = _ready(s, world["u"])
+        with pytest.raises(EvolvXSIError) as err:
+            api.edit_ready_draft(t.id, api.DraftEdit(version=t.version, text="Something [4]."), user=u, db_session=s)
+        assert "[4]" in err.value.detail
+
+
+def test_export_uses_the_edited_draft_and_updates_cited_sources(world) -> None:  # type: ignore[no-untyped-def]
+    with get_session_with_current_tenant() as s:
+        u, t = _ready(s, world["u"])
+        t = api.edit_ready_draft(t.id, api.DraftEdit(version=t.version, text="Receipts are due within a month."), user=u, db_session=s)
+        assert not t.draft_sources[0]["cited"], "the edit no longer cites the source"
+        t = api.decide_claim(t.id, 0, api.ClaimDecision(version=t.version, decision="keep"), user=u, db_session=s)
+        a = api.approve_draft(t.id, api.Approve(version=t.version, draft_hash=t.draft_hash), user=u, db_session=s)
+        out = api.export_draft(t.id, api.VersionOnly(version=a.version), user=u, db_session=s)
+        assert "Receipts are due within a month. _(unsupported)_" in out.markdown
+        assert "_No sources were cited._" in out.markdown

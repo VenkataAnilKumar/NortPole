@@ -25,6 +25,8 @@ interface Task {
   draft_route: string | null;
   run_error: string | null;
   draft_hash: string | null;
+  draft_version: number | null;
+  draft_versions: { v: number; by: "model" | "owner"; text: string; at: string }[] | null;
   draft_claims: { i: number; text: string; cites: number[]; status: "supported" | "unsupported"; decision: "keep" | "remove" | null }[] | null;
   approved_at: string | null;
   exported_at: string | null;
@@ -131,6 +133,9 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const [editingDraft, setEditingDraft] = useState(false);
+  const [draftText, setDraftText] = useState(task.draft_text ?? "");
+  const latestBy = task.draft_versions?.[task.draft_versions.length - 1]?.by ?? "model";
   const openClaims = (task.draft_claims ?? []).filter((c) => c.status === "unsupported" && c.decision === null).length;
 
   const exportDraft = async () => {
@@ -222,11 +227,60 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
         <section className="mt-5 border-t border-border-01 pt-4" aria-labelledby="draft-h" data-testid="task-draft">
           <h3 id="draft-h" className="mb-2 text-sm font-semibold text-text-05">
             Draft
-            {task.draft_route && (
-              <span className="ml-2 font-normal text-text-03">written on the {ROUTE_LABEL[task.draft_route] ?? task.draft_route} route</span>
-            )}
+            <span className="ml-2 font-normal text-text-03" data-testid="draft-version">
+              version {task.draft_version ?? 1}
+              {latestBy === "owner"
+                ? " · edited by you"
+                : task.draft_route
+                  ? ` · written on the ${ROUTE_LABEL[task.draft_route] ?? task.draft_route} route`
+                  : ""}
+            </span>
           </h3>
-          {task.draft_claims && task.draft_claims.length > 0 ? (
+          {editingDraft ? (
+            <div className="flex flex-col gap-2">
+              <label className="flex flex-col gap-1 text-sm font-medium text-text-05">
+                Edit the draft. Cite only the numbered sources below, like [1].
+                <textarea
+                  className={input}
+                  rows={6}
+                  maxLength={20000}
+                  value={draftText}
+                  onChange={(e) => setDraftText(e.target.value)}
+                />
+              </label>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  className={primary}
+                  disabled={!!busy || !draftText.trim()}
+                  onClick={async () => {
+                    setBusy("save-draft");
+                    setError(null);
+                    try {
+                      const res = await fetch(`${URL}/${task.id}/draft`, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ version: task.version, text: draftText }),
+                      });
+                      const data = await res.json().catch(() => null);
+                      if (!res.ok) throw new Error(typeof data?.detail === "string" ? data.detail : `Save failed (HTTP ${res.status}).`);
+                      setEditingDraft(false);
+                      await onChange();
+                    } catch (e) {
+                      setError(e instanceof Error ? e.message : "Save failed.");
+                    } finally {
+                      setBusy(null);
+                    }
+                  }}
+                >
+                  {busy === "save-draft" ? "Saving…" : "Save as a new version"}
+                </button>
+                <button type="button" className={secondary} disabled={!!busy} onClick={() => setEditingDraft(false)}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : task.draft_claims && task.draft_claims.length > 0 ? (
             <ul className="flex flex-col gap-2" data-testid="task-claims">
               {task.draft_claims.map((c) => {
                 const removed = c.decision === "remove";
@@ -295,6 +349,34 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
               ? `You approved exactly this draft${task.approved_at ? ` on ${new Date(task.approved_at).toLocaleString()}` : ""}. Export checks your access to each cited source again.`
               : "Only sources you can open were used. Approving covers exactly this draft; a new run needs a new approval."}
           </p>
+          {task.state === "draft_ready" && !editingDraft && (
+            <button
+              type="button"
+              className={`${secondary} mt-3`}
+              disabled={!!busy}
+              onClick={() => {
+                setDraftText(task.draft_text ?? "");
+                setEditingDraft(true);
+              }}
+            >
+              Edit draft
+            </button>
+          )}
+          {task.draft_versions && task.draft_versions.length > 1 && (
+            <details className="mt-3 text-xs text-text-03" data-testid="draft-history">
+              <summary className="cursor-pointer">Previous versions ({task.draft_versions.length - 1})</summary>
+              <ol className="mt-2 space-y-2">
+                {task.draft_versions.slice(0, -1).reverse().map((v) => (
+                  <li key={v.v} className="rounded-lg border border-border-01 px-3 py-2">
+                    <div className="font-medium text-text-05">
+                      Version {v.v} · {v.by === "owner" ? "edited by you" : "written by the model"} · {new Date(v.at).toLocaleString()}
+                    </div>
+                    <p className="mt-1 whitespace-pre-wrap">{v.text}</p>
+                  </li>
+                ))}
+              </ol>
+            </details>
+          )}
           {task.exported_at && (
             <p className="mt-1 text-xs text-text-03" data-testid="task-exported">
               Last exported {new Date(task.exported_at).toLocaleString()}.

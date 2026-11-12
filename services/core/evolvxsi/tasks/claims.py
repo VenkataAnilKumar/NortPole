@@ -39,3 +39,17 @@ def visible_text(claims: list[dict[str, Any]] | None, label_unsupported: bool = 
             t = f"{t} _(unsupported)_"
         kept.append(t)
     return " ".join(kept)
+
+
+def carry_decisions(new: list[dict[str, Any]], old: list[dict[str, Any]] | None) -> list[dict[str, Any]]:
+    """Keep the owner's decision only for unsupported sentences whose text is
+    unchanged; any new or edited sentence needs a fresh decision."""
+    decided = {c["text"]: c.get("decision") for c in (old or []) if c["status"] == "unsupported" and c.get("decision")}
+    for c in new:
+        if c["status"] == "unsupported" and c["text"] in decided:
+            c["decision"] = decided[c["text"]]
+    return new
+
+
+def unknown_citations(text: str, valid: set[int]) -> list[int]:
+    return sorted({int(n) for n in _CITE.findall(text)} - valid)

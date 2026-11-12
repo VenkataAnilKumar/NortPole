@@ -49,6 +49,9 @@ class EvolvXSITask(Base):
     draft_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
     # One entry per sentence: {"i", "text", "cites", "status", "decision"}.
     draft_claims: Mapped[list[dict[str, Any]] | None] = mapped_column(JSONB, nullable=True)
+    # Current draft version and the history: [{"v", "by": "model"|"owner", "text", "hash", "at"}].
+    draft_version: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    draft_versions: Mapped[list[dict[str, Any]] | None] = mapped_column(JSONB, nullable=True)
     approved_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
     approved_at: Mapped[datetime.datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     exported_at: Mapped[datetime.datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
