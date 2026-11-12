@@ -19,6 +19,7 @@ The document names and numbered areas follow the convention used by the Qvora do
 | 05 Design | [EvolvXSI_UI-Spec.md](05-design/EvolvXSI_UI-Spec.md) | Draft | Screens, states, interactions, and accessibility details. |
 | 05 Design | [EvolvXSI_Design-System.md](05-design/EvolvXSI_Design-System.md) | Draft | Interaction rules and visual token categories; final brand pending. |
 | 06 Technical | [EvolvXSI_System-Architecture.md](06-technical/EvolvXSI_System-Architecture.md) | Draft | Capability boundaries, contracts, execution flow, and risks. |
+| 06 Technical | [EvolvXSI_Tech-Stack.md](06-technical/EvolvXSI_Tech-Stack.md) | Current | Frameworks, services and versions in use, EvolvXSI-owned parts, and choices still open. |
 | 06 Technical | [EvolvXSI_Deployment-Architecture.md](06-technical/EvolvXSI_Deployment-Architecture.md) | Draft | Deployable services, persistence, queues, network boundaries and scaling. |
 | 06 Technical | [EvolvXSI_Repo-Structure.md](06-technical/EvolvXSI_Repo-Structure.md) | Draft | Monorepo layout, module ownership and release rules. |
 | 06 Technical | [EvolvXSI_Feature-Architecture-Mapping.md](06-technical/EvolvXSI_Feature-Architecture-Mapping.md) | Draft | Complete PF module/phase mapping and first-workflow PRD traceability. |
