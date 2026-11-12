@@ -17,6 +17,7 @@ interface Action {
   executed_at: string | null;
 }
 interface Target {
+  tier?: string;
   id: number;
   name: string;
 }
@@ -91,7 +92,7 @@ export default function TaskActions({ taskId }: { taskId: string }) {
             >
               <option value="">Choose a destination…</option>
               {(targets ?? []).map((t) => (
-                <option key={t.id} value={t.id}>{t.name}</option>
+                <option key={t.id} value={t.id} disabled={t.tier === "read_only"}>{t.name}{t.tier === "draft_only" ? " (draft only: cannot be sent)" : t.tier === "read_only" ? " (read only)" : ""}</option>
               ))}
             </select>
           </label>

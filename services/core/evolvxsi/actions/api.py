@@ -14,6 +14,7 @@ from sqlalchemy import func, select, update
 from sqlalchemy.orm import Session
 
 from evolvxsi.action_binding.binding import Approval, Verdict, action_fingerprint, decide_execution
+from evolvxsi.actions.autonomy import LABEL, TIERS, at_least, effective_tier
 from evolvxsi.actions.delivery import UnsafeTarget, check_target_url, deliver, deliver_email, parse_mailto
 from evolvxsi.actions.models import EvolvXSIAction, EvolvXSIActionTarget
 from evolvxsi.auth.permissions import require_permission
@@ -46,6 +47,7 @@ def _check_target(kind: str, url: str) -> None:
 class TargetIn(BaseModel):
     name: str
     kind: Literal["webhook", "email"] = "webhook"
+    tier: Literal["read_only", "draft_only", "act_with_approval"] = "act_with_approval"
     url: str
     allowed_data_classes: list[str]
     enabled: bool = True
@@ -71,6 +73,7 @@ class TargetView(BaseModel):
     id: int
     name: str
     kind: str = "webhook"
+    tier: str = "act_with_approval"
     url: str
     allowed_data_classes: list[str]
     enabled: bool
@@ -79,6 +82,7 @@ class TargetView(BaseModel):
 class TargetChoice(BaseModel):
     id: int
     name: str
+    tier: str = "act_with_approval"
 
 
 class ActionView(BaseModel):
@@ -110,7 +114,7 @@ class ApproveAction(BaseModel):
 
 
 def _tview(t: EvolvXSIActionTarget) -> TargetView:
-    return TargetView(id=t.id, name=t.name, kind=t.kind, url=t.url, allowed_data_classes=list(t.allowed_data_classes or []), enabled=t.enabled)
+    return TargetView(id=t.id, name=t.name, kind=t.kind, tier=t.tier, url=t.url, allowed_data_classes=list(t.allowed_data_classes or []), enabled=t.enabled)
 
 
 def _aview(a: EvolvXSIAction) -> ActionView:
@@ -152,11 +156,11 @@ def create_target(
         raise EvolvXSIError(EvolvXSIErrorCode.INVALID_INPUT, str(e)) from e
     if db_session.scalar(select(EvolvXSIActionTarget.id).where(func.lower(EvolvXSIActionTarget.name) == body.name.lower())):
         raise EvolvXSIError(EvolvXSIErrorCode.CONFLICT, "A target with that name already exists.")
-    t = EvolvXSIActionTarget(name=body.name, kind=body.kind, url=body.url, allowed_data_classes=body.allowed_data_classes, enabled=body.enabled)
+    t = EvolvXSIActionTarget(name=body.name, kind=body.kind, tier=body.tier, url=body.url, allowed_data_classes=body.allowed_data_classes, enabled=body.enabled)
     db_session.add(t)
     db_session.commit()
     record_audit(AuditAction.ACTION_TARGET_CHANGE, AuditOutcome.SUCCESS, actor=user,
-                 summary=f"Registered action target {t.name} (classes: {', '.join(t.allowed_data_classes) or 'none'})",
+                 summary=f"Registered action target {t.name} (tier: {t.tier}; classes: {', '.join(t.allowed_data_classes) or 'none'})",
                  resource_type="action_target", resource_id=t.id)
     return _tview(t)
 
@@ -174,10 +178,10 @@ def update_target(
         _check_target(body.kind, body.url)
     except UnsafeTarget as e:
         raise EvolvXSIError(EvolvXSIErrorCode.INVALID_INPUT, str(e)) from e
-    t.name, t.kind, t.url, t.allowed_data_classes, t.enabled = body.name, body.kind, body.url, body.allowed_data_classes, body.enabled
+    t.name, t.kind, t.tier, t.url, t.allowed_data_classes, t.enabled = body.name, body.kind, body.tier, body.url, body.allowed_data_classes, body.enabled
     db_session.commit()
     record_audit(AuditAction.ACTION_TARGET_CHANGE, AuditOutcome.SUCCESS, actor=user,
-                 summary=f"Changed action target {t.name} (enabled: {t.enabled}; classes: {', '.join(t.allowed_data_classes) or 'none'})",
+                 summary=f"Changed action target {t.name} (tier: {t.tier}; enabled: {t.enabled}; classes: {', '.join(t.allowed_data_classes) or 'none'})",
                  resource_type="action_target", resource_id=t.id)
     return _tview(t)
 
@@ -191,7 +195,7 @@ def choose_targets(
 ) -> list[TargetChoice]:
     """The targets an owner may pick from. URLs are not shown."""
     rows = db_session.scalars(select(EvolvXSIActionTarget).where(EvolvXSIActionTarget.enabled.is_(True)).order_by(EvolvXSIActionTarget.name))
-    return [TargetChoice(id=t.id, name=t.name) for t in rows]
+    return [TargetChoice(id=t.id, name=t.name, tier=t.tier) for t in rows]
 
 
 def _payload_from(task: EvolvXSITask) -> dict:
@@ -231,6 +235,11 @@ def propose_action(
     target = db_session.get(EvolvXSIActionTarget, body.target_id)
     if target is None or not target.enabled:
         raise EvolvXSIError(EvolvXSIErrorCode.NOT_FOUND, "Target not found.")
+    tier = effective_tier(db_session, target.tier, task.pack_id, task.pack_version)
+    if not at_least(tier, "draft_only"):
+        record_audit(AuditAction.ACTION_PROPOSE, AuditOutcome.DENIED, actor=user, resource_type="task", resource_id=str(task.id),
+                     summary=f"Proposal to {target.name} refused: {LABEL[tier]}")
+        raise EvolvXSIError(EvolvXSIErrorCode.POLICY_BLOCKED, f"Nothing can be proposed to {target.name}: it is {LABEL[tier]}.")
     payload = _payload_from(task)
     a = EvolvXSIAction(
         task_id=task.id, owner_id=user.id, target_id=target.id, target_name=target.name, payload=payload,
@@ -261,6 +270,16 @@ def _move(db: Session, a: EvolvXSIAction, user: User, version: int, expect: set[
     return _own_action(db, a.id, user)
 
 
+def _require_act(db: Session, user: User, a: EvolvXSIAction) -> None:
+    """Approving and sending need the full tier, read now (not when proposed)."""
+    target = db.get(EvolvXSIActionTarget, a.target_id) if a.target_id else None
+    task = _own_task(db, a.task_id, user)
+    tier = effective_tier(db, target.tier if target else "read_only", task.pack_id, task.pack_version)
+    if not at_least(tier, "act_with_approval"):
+        _audit(user, AuditAction.ACTION_APPROVE, a, f"Approval to {a.target_name} refused: {LABEL[tier]}", AuditOutcome.DENIED)
+        raise EvolvXSIError(EvolvXSIErrorCode.POLICY_BLOCKED, f"This cannot be approved or sent: {a.target_name} is {LABEL[tier]}.")
+
+
 @router.post("/actions/{action_id}/approve")
 def approve_action(
     action_id: UUID, body: ApproveAction,
@@ -271,6 +290,7 @@ def approve_action(
     a = _own_action(db_session, action_id, user)
     if body.fingerprint != a.fingerprint or a.fingerprint != action_fingerprint(ACTION_NAME, a.target_name, a.payload):
         raise EvolvXSIError(EvolvXSIErrorCode.CONFLICT, "What will be sent changed since you read it. Reload and review it again.")
+    _require_act(db_session, user, a)
     a = _move(db_session, a, user, body.version, {"proposed"}, "approved", approved_at=func.now())
     _audit(user, AuditAction.ACTION_APPROVE, a, f"Approved sending to {a.target_name}")
     return _aview(a)
@@ -305,6 +325,7 @@ def execute_action(
     target = db_session.get(EvolvXSIActionTarget, a.target_id) if a.target_id else None
     task = _own_task(db_session, a.task_id, user)
 
+    _require_act(db_session, user, a)
     data_class = load_policy().default_data_class
     policy_ok = bool(target and target.enabled and data_class in (target.allowed_data_classes or []))
     approval = Approval(

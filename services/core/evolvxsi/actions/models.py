@@ -25,6 +25,8 @@ class EvolvXSIActionTarget(Base):
     # Data classes an action to this target may carry (public, internal, ...).
     allowed_data_classes: Mapped[list[str]] = mapped_column(JSONB, nullable=False, default=list)
     enabled: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    # How far the product may go with this destination (see autonomy.py).
+    tier: Mapped[str] = mapped_column(String(20), nullable=False, default="act_with_approval", server_default="act_with_approval")
     created_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
 
