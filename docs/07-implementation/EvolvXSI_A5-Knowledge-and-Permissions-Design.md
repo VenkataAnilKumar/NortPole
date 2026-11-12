@@ -164,3 +164,15 @@ Costs and limits: one extra model call per candidate passage (about 15 seconds o
 
 Checked (100 integration checks pass): with a real embedding model, a reworded question ("Can a guest walk around the building alone?") found the visitor policy through `gather_evidence`; a staff viewer never got the restricted board memo; a board viewer did; with no embedding model the step used keyword search. Not done: the full task flow in the browser with indexed sources (lite mode has no index and no background workers to index documents); the embedding model configured in this sandbox is Ollama's nomic-embed-text, used only by the tests, not by the core's own indexing.
 
+## Progress (2026-11-12): first end-to-end run on the real stack
+
+With the API in full mode (vector database on), Celery workers, OpenSearch, Redis, a real embedding model and a real 7B chat model (runbook: `infrastructure/profiles/local/README.md`), the core's own ingestion pipeline indexed the 24-passage synthetic corpus (24 chunks, access lists computed by EvolvXSI's group-aware code). Six finance passages sat in a PRIVATE source readable by a Finance group; the rest in the public source. Over HTTP:
+
+- A Finance member's task found the receipts passage through the real index; the relevance check kept it; the 7B draft cited it with both claims supported (21 seconds).
+- An outsider's identical task found nothing and got the no-source notice (3 seconds).
+- Removing the member from the group hid their draft at once (`withheld`, no draft text); restoring the membership showed it again.
+
+Found on the way: the ingestion endpoint returned 200 and the database marked documents indexed when every embed had failed (the pipeline reports failures in a list the endpoint never read), so documents looked present and were never found. The endpoint now answers 502 with a clear message when a document could not be indexed (two unit tests). Also found: a cloud-style embedding provider rejects text prefixes, so nomic's usual `search_document:` prefix cannot be set there; retrieval quality without the prefixes was not re-measured on the larger quality set.
+
+Limits: Craft and live approvals were not started; the search-time source check was in shadow mode (its backfill job was not run to completion); one source, one group and one question; indexing used the ingestion API, not a connector.
+

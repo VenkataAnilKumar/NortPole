@@ -11,3 +11,6 @@ __pycache__/
 node_modules/
 /dist/
 /build/
+
+# Celery beat runtime state
+celerybeat-schedule*
