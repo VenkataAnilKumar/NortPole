@@ -40,6 +40,7 @@ def _b64pub(k: Ed25519PrivateKey) -> str:
 def _manifest(version: str = "1.0.0", **over):  # type: ignore[no-untyped-def]
     m = copy.deepcopy(SAMPLE)
     m.update({"id": PACK_ID, "version": version})
+    m["evaluation_cases"] = []  # evaluation has its own tests; other tests need no model
     m.update(over)
     return m
 
@@ -217,3 +218,54 @@ def test_a_template_must_belong_to_the_active_pack(signer, person) -> None:  # t
             packs.start_from_template(PACK_ID, "no-such-template", user=u, db_session=s)
         with pytest.raises(EvolvXSIError):
             packs.start_from_template("no-such-pack", "receipt-rules", user=u, db_session=s)
+
+
+def _case(question: str, expect: str, evidence: list[str]) -> dict:
+    return {"question": question, "expect": expect, "evidence": evidence}
+
+
+def test_a_pack_with_evaluation_cases_runs_only_on_a_model_it_passed(signer, person) -> None:  # type: ignore[no-untyped-def]
+    from evolvxsi.packs.evaluation import CaseResult
+    from evolvxsi.packs.models import EvolvXSIPackEvaluation
+
+    key, key_id = signer
+    cases = [_case("How many days?", "30 days", ["Receipts are due within 30 days."])]
+    with get_session_with_current_tenant() as s:
+        u = s.get(User, person)
+        _install_active(s, key, key_id, "1.0.0", evaluation_cases=cases)
+        t = packs.start_from_template(PACK_ID, "receipt-rules", user=u, db_session=s)
+        ready = [p for p in packs.list_packs(_=u, db_session=s) if p.pack_id == PACK_ID][0]
+        assert not ready.ready_on_current_route and "not been evaluated" in ready.readiness_note
+
+        with pytest.raises(EvolvXSIError) as err, patch.object(tasks, "draft_plan", side_effect=AssertionError("no")):
+            tasks.start_task(t.id, tasks.VersionOnly(version=t.version), user=u, db_session=s)
+        assert "not passed its evaluation" in err.value.detail
+
+        with patch("evolvxsi.packs.api.evaluate", return_value=[CaseResult("q", False, "wrong")]):
+            v = packs.evaluate_version(PACK_ID, "1.0.0", user=ADMIN, db_session=s)
+        assert v.evaluations[0].passed is False and "wrong" in v.evaluations[0].failures[0]
+        with pytest.raises(EvolvXSIError) as err2:
+            tasks.start_task(t.id, tasks.VersionOnly(version=t.version), user=u, db_session=s)
+        assert "did not pass" in err2.value.detail
+
+        with patch("evolvxsi.packs.api.evaluate", return_value=[CaseResult("q", True, "passed")]):
+            v = packs.evaluate_version(PACK_ID, "1.0.0", user=ADMIN, db_session=s)
+        assert v.evaluations[0].passed and len(v.evaluations) == 1, "a re-run replaces the record for that model"
+        with patch.object(tasks, "draft_plan", return_value=PlanResult(["a", "b"], "local")):
+            assert tasks.start_task(t.id, tasks.VersionOnly(version=t.version), user=u, db_session=s).state.value == "plan_review"
+
+        # A different default model has no record, so the pack is not offered there.
+        row = s.query(EvolvXSIPackEvaluation).filter_by(pack_id=PACK_ID).one()
+        row.model_configuration_id = -1
+        s.commit()
+        again = [p for p in packs.list_packs(_=u, db_session=s) if p.pack_id == PACK_ID][0]
+        assert not again.ready_on_current_route
+
+
+def test_evaluation_needs_cases_and_an_admin_listing(signer) -> None:  # type: ignore[no-untyped-def]
+    key, key_id = signer
+    with get_session_with_current_tenant() as s:
+        _install_active(s, key, key_id, "1.0.0")
+        with pytest.raises(EvolvXSIError) as err:
+            packs.evaluate_version(PACK_ID, "1.0.0", user=ADMIN, db_session=s)
+        assert "no evaluation cases" in err.value.detail

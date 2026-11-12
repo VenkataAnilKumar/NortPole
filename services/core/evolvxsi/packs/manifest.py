@@ -68,8 +68,22 @@ class Requests(_Strict):
 
 
 class EvalCase(_Strict):
+    """One check a model must pass before the pack runs on it. The case carries
+    its own evidence passages, so it runs the same on any route. With no
+    evidence the case expects the "no source covers this" notice. `expect` must
+    appear in the draft (case-insensitive); with evidence, the draft must also
+    cite at least one of the passages."""
+
     question: str = Field(min_length=1, max_length=500)
     expect: str = Field(min_length=1, max_length=500)
+    evidence: list[str] = Field(default_factory=list, max_length=3)
+
+    @field_validator("evidence")
+    @classmethod
+    def _ev(cls, v: list[str]) -> list[str]:
+        if any(not p.strip() or len(p) > 1500 for p in v):
+            raise ValueError("evidence passages must be 1 to 1500 characters")
+        return v
 
 
 class Manifest(_Strict):

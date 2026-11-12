@@ -295,6 +295,12 @@ def _enforce_pack_requirements(db: Session, task: EvolvXSITask, user: User) -> N
         problem = f"this workspace's data class ({data_class}) is not one the pack supports"
     elif kind is None or kind not in req["route_kinds"]:
         problem = f"the model route in use ({kind or 'none'}) is not one the pack supports ({', '.join(req['route_kinds'])})"
+    if problem is None:
+        from evolvxsi.packs.api import passed_on_current_model
+
+        ok, why = passed_on_current_model(db, task.pack_id, task.pack_version or "", v.manifest)
+        if not ok:
+            problem = f"the pack has not passed its evaluation on the model in use ({why})"
     if problem:
         record_audit(AuditAction.ROUTE_BLOCKED, AuditOutcome.DENIED, actor=user,
                      summary=f"Pack {task.pack_id} {task.pack_version} cannot run: {problem}", resource_type="task", resource_id=str(task.id))
