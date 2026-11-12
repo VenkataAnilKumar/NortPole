@@ -1,0 +1,58 @@
+# EvolvXSI single-host profile, lite mode: API + PostgreSQL + Redis.
+# No search index, no model server, no web container yet (see README.md next to this file).
+# Required environment (no defaults, so a missing secret stops the start):
+#   POSTGRES_PASSWORD, USER_AUTH_SECRET (random hex, e.g. `openssl rand -hex 32`)
+name: evolvxsi
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      POSTGRES_USER: evolvxsi
+      POSTGRES_DB: evolvxsi
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U evolvxsi -d evolvxsi"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  api:
+    image: evolvxsi-core:${EVOLVXSI_VERSION:-dev}
+    build:
+      context: ../../../services/core
+    depends_on:
+      db: {condition: service_healthy}
+      redis: {condition: service_healthy}
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_USER: evolvxsi
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      POSTGRES_DB: evolvxsi
+      REDIS_HOST: redis
+      USER_AUTH_SECRET: ${USER_AUTH_SECRET:?set USER_AUTH_SECRET}
+      AUTH_TYPE: basic
+      DISABLE_VECTOR_DB: "true"
+      CACHE_BACKEND: postgres
+      FILE_STORE_BACKEND: postgres
+      EVOLVXSI_OFFLINE_TOKENIZER: "true"
+      HF_HUB_OFFLINE: "1"
+      EVOLVXSI_VERSION: ${EVOLVXSI_VERSION:-dev}
+    ports:
+      - "127.0.0.1:8080:8080"   # bound to this machine only; put a TLS proxy in front
+    restart: unless-stopped
+
+volumes:
+  dbdata:
