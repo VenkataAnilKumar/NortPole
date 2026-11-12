@@ -71,7 +71,7 @@ def test_saving_a_draft_starts_nothing(people) -> None:  # type: ignore[no-untyp
         assert t.state is TaskState.DRAFT and t.started_at is None and t.plan is None
 
 
-@pytest.mark.skipif(not _mock_model_up(), reason="needs the mock model route")
+@pytest.mark.skipif(not _mock_model_up(), reason="needs a model route (the default may be the mock or a real model)")
 def test_start_drafts_a_plan_through_the_routed_model_then_accept(people) -> None:  # type: ignore[no-untyped-def]
     with get_session_with_current_tenant() as s:
         u = _user(s, people[0])
@@ -79,7 +79,7 @@ def test_start_drafts_a_plan_through_the_routed_model_then_accept(people) -> Non
         started = api.start_task(t.id, api.VersionOnly(version=t.version), user=u, db_session=s)
         assert started.state is TaskState.PLAN_REVIEW, started.plan_error
         assert started.started_at is not None
-        assert len(started.plan or []) == 3 and "mock plan" in started.plan[0]
+        assert 2 <= len(started.plan or []) <= 8 and all(step.strip() for step in started.plan)
         assert started.plan_route in {"local", "private", "cloud"}
         accepted = api.accept_plan(t.id, api.VersionOnly(version=started.version), user=u, db_session=s)
         assert accepted.state is TaskState.PLAN_ACCEPTED

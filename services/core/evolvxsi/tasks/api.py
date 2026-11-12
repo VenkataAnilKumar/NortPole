@@ -36,6 +36,7 @@ from evolvxsi.tasks.claims import (
 )
 from evolvxsi.tasks.export import draft_fingerprint, recheck_cited_sources, to_markdown
 from evolvxsi.tasks.planner import PlanError, draft_plan
+from evolvxsi.tasks.untrusted import looks_like_instructions, neutralize_passage
 from evolvxsi.tasks.states import EDITABLE, InvalidTransition, TaskAction, TaskState, next_state
 from evolvxsi.utils.audit import AuditAction, AuditOutcome
 from evolvxsi.utils.logger import setup_logger
@@ -73,6 +74,10 @@ class TaskView(BaseModel):
     approved_hash: str | None = None
     approved_at: datetime.datetime | None = None
     exported_at: datetime.datetime | None = None
+    # True when the owner can no longer open a cited source: the draft text,
+    # claims, sources and versions are then not returned until it is redrafted.
+    withheld: bool = False
+    withheld_message: str | None = None
 
 
 class TaskDraft(BaseModel):
@@ -121,8 +126,42 @@ class Revise(BaseModel):
     note: str = ""
 
 
+WITHHELD_FIELDS = ("draft_text", "draft_claims", "draft_sources", "draft_versions", "draft_hash")
+
+
+def _withheld_count(t: EvolvXSITask) -> int:
+    """How many cited sources the owner can no longer open (0 when none, or when
+    the task has no draft). Checked from the database on every view."""
+    from sqlalchemy.orm import object_session
+
+    if TaskState(t.state) not in (TaskState.DRAFT_READY, TaskState.APPROVED) or not t.draft_sources:
+        return 0
+    db = object_session(t)
+    owner = db.get(User, t.owner_id) if db is not None else None
+    if db is None or owner is None:
+        return 0
+    return recheck_cited_sources(db, owner, t.draft_sources).withheld
+
+
 def _view(t: EvolvXSITask) -> TaskView:
-    return TaskView.model_validate(t.as_dict())
+    data = t.as_dict()
+    if (n := _withheld_count(t)):
+        for f in WITHHELD_FIELDS:
+            data[f] = None
+        data["withheld"] = True
+        data["withheld_message"] = (
+            f"You can no longer open {n} source(s) this draft cites, so the draft is hidden. "
+            "Ask for access again, or revise the task and run it again."
+        )
+    return TaskView.model_validate(data)
+
+
+def _refuse_if_withheld(t: EvolvXSITask) -> None:
+    if _withheld_count(t):
+        raise EvolvXSIError(
+            EvolvXSIErrorCode.INSUFFICIENT_PERMISSIONS,
+            "You can no longer open a source this draft cites, so it cannot be changed or approved.",
+        )
 
 
 def _own(db: Session, task_id: UUID, user: User) -> EvolvXSITask:
@@ -310,10 +349,17 @@ def run_task(
         logger.exception("task run failed task_id=%s", task_id)
         return _view(_move(db_session, task_id, user, task.version, TaskAction.RUN_FAILED,
                            run_error="The run stopped before a draft was ready. Try again in a moment."))
-    claims = split_claims(result.text)
+    if not evidence:
+        # The fixed "no source" message is the system's notice, not a claim the owner must rule on.
+        claims = [{"i": 0, "text": result.text, "cites": [], "status": "notice", "decision": None}]
+    else:
+        claims = split_claims(result.text)
     by_n = {e.n: e for e in evidence}
     sources = [
-        {"n": e.n, "doc_id": e.doc_id, "title": e.title, "link": e.link, "cited": e.n in result.cited}
+        {"n": e.n, "doc_id": e.doc_id, "title": e.title, "link": e.link, "cited": e.n in result.cited,
+         # The passage as the model saw it, so a reviewer can check a claim against it.
+         "passage": neutralize_passage(e.passage, 1200),
+         "flagged": looks_like_instructions(e.passage)}
         for e in by_n.values()
     ]
     if result.removed_citations:
@@ -350,6 +396,7 @@ def approve_draft(
     """Approve one exact draft. The approval names the draft's fingerprint, so
     a draft that changed since the owner read it cannot be approved by mistake."""
     task = _own(db_session, task_id, user)
+    _refuse_if_withheld(task)
     if (pending := open_unsupported(task.draft_claims)):
         raise EvolvXSIError(
             EvolvXSIErrorCode.CONFLICT,
@@ -423,6 +470,7 @@ def decide_claim(
     """Keep an unsupported claim (it is labelled unsupported in the export) or
     remove it from the draft. Either way the draft's fingerprint changes."""
     task = _own(db_session, task_id, user)
+    _refuse_if_withheld(task)
     if TaskState(task.state) is not TaskState.DRAFT_READY:
         raise EvolvXSIError(EvolvXSIErrorCode.CONFLICT, "Claims can only be reviewed on a draft that is ready.")
     claims = [dict(c) for c in (task.draft_claims or [])]
@@ -479,6 +527,7 @@ def edit_ready_draft(
     to unchanged sentences. Any earlier approval no longer applies, because the
     fingerprint changes."""
     task = _own(db_session, task_id, user)
+    _refuse_if_withheld(task)
     if TaskState(task.state) is not TaskState.DRAFT_READY:
         raise EvolvXSIError(EvolvXSIErrorCode.CONFLICT, "Only a draft that is ready can be edited.")
     sources = [dict(x) for x in (task.draft_sources or [])]
