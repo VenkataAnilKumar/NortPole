@@ -13,6 +13,7 @@
 from __future__ import annotations
 
 import ipaddress
+import os
 import re
 import smtplib
 import socket
@@ -100,6 +101,8 @@ def deliver(url: str, payload: dict[str, Any], idempotency_key: str) -> Delivery
         scheme, host, port, address = resolve_safe(url)
         session = requests.Session()
         session.trust_env = False  # no proxy settings: the connection goes where we checked
+        # Certificates are always verified. A deployment with a private CA names its bundle here.
+        session.verify = os.environ.get("EVOLVXSI_ACTIONS_CA_BUNDLE") or True
         session.mount(f"{scheme}://", _PinnedAdapter(host, address, port))
         r = session.post(
             url,
