@@ -82,6 +82,8 @@ class TaskView(BaseModel):
     pack_id: str | None = None
     pack_version: str | None = None
     pack_template: str | None = None
+    # Results of the pack's review rules on the current draft (empty without rules).
+    rule_results: list[dict] = []
 
 
 class TaskDraft(BaseModel):
@@ -157,6 +159,11 @@ def _view(t: EvolvXSITask) -> TaskView:
             f"You can no longer open {n} source(s) this draft cites, so the draft is hidden. "
             "Ask for access again, or revise the task and run it again."
         )
+    elif t.review_rules and t.state in (TaskState.DRAFT_READY.value, TaskState.APPROVED.value):
+        from evolvxsi.packs.review_rules import evaluate
+
+        data["rule_results"] = evaluate(t.review_rules, t.draft_text, t.draft_sources, t.draft_claims)
+    data.pop("review_rules", None)
     return TaskView.model_validate(data)
 
 
@@ -449,6 +456,14 @@ def approve_draft(
         )
     if not task.draft_hash or task.draft_hash != body.draft_hash:
         raise EvolvXSIError(EvolvXSIErrorCode.CONFLICT, "The draft changed since you read it. Reload and review it again.")
+    if task.review_rules:
+        from evolvxsi.packs.review_rules import blocking_failures, evaluate
+
+        failed = blocking_failures(evaluate(task.review_rules, task.draft_text, task.draft_sources, task.draft_claims))
+        if failed:
+            _audit(user, AuditAction.TASK_APPROVE, task, f"Approval refused: {len(failed)} pack review rule(s) not met", AuditOutcome.DENIED)
+            raise EvolvXSIError(EvolvXSIErrorCode.CONFLICT,
+                                "The pack's review rules are not met: " + "; ".join(f["message"] for f in failed))
     task = _move(db_session, task_id, user, body.version, TaskAction.APPROVE,
                  approved_hash=body.draft_hash, approved_at=func.now())
     _audit(user, AuditAction.TASK_APPROVE, task, f"Approved draft {body.draft_hash[:12]}")

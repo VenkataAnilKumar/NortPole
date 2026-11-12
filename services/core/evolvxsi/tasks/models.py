@@ -42,6 +42,8 @@ class EvolvXSITask(Base):
     pack_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
     pack_version: Mapped[str | None] = mapped_column(String(20), nullable=True)
     pack_template: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    # The review rules in force when the task started from a pack template (a snapshot).
+    review_rules: Mapped[list | None] = mapped_column(JSONB, nullable=True)
     # The latest run's draft. Sources are the passages the owner could see
     # when the run gathered them: [{"n", "doc_id", "title", "link"}].
     draft_text: Mapped[str | None] = mapped_column(Text, nullable=True)
