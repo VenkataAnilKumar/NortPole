@@ -7,13 +7,18 @@ makes a rename invisible to search. It is safe only because the address stops
 being an alias the moment another identity claims it.
 """
 
+from contextlib import nullcontext
 from types import SimpleNamespace
 from typing import cast
+from unittest.mock import patch
+from uuid import uuid4
+
+import pytest
 
 from sqlalchemy.orm import Session
 
 from evolvxsi.access.access import _get_acl_for_user
-from evolvxsi.access.utils import prefix_user_email
+from evolvxsi.access.utils import prefix_user_email, prefix_user_group
 from evolvxsi.configs.constants import PUBLIC_DOC_PAT
 from evolvxsi.db.models import User
 
@@ -22,13 +27,37 @@ def _user(email: str, prior_emails: list[str], is_anonymous: bool = False) -> Us
     return cast(
         User,
         SimpleNamespace(
-            email=email, prior_emails=prior_emails, is_anonymous=is_anonymous
+            id=uuid4(), email=email, prior_emails=prior_emails, is_anonymous=is_anonymous
         ),
     )
 
 
+GROUPS: set[str] = set()
+
+
+@pytest.fixture(autouse=True)
+def _no_database():  # type: ignore[no-untyped-def]
+    """These tests are about addresses; group membership is stubbed."""
+    GROUPS.clear()
+    with (
+        patch("evolvxsi.access.access.get_session_with_current_tenant_if_none", lambda s: nullcontext(s)),
+        patch("evolvxsi.access.access.group_names_for_user", lambda _s, _uid: set(GROUPS)),
+    ):
+        yield
+
+
 def _acl(user: User) -> set[str]:
     return _get_acl_for_user(user, cast(Session, None))
+
+
+def test_group_membership_is_on_the_access_list() -> None:
+    GROUPS.update({"research", "finance"})
+    assert _acl(_user("a@example.com", [])) == {
+        prefix_user_email("a@example.com"),
+        prefix_user_group("research"),
+        prefix_user_group("finance"),
+        PUBLIC_DOC_PAT,
+    }
 
 
 def test_the_current_address_always_matches() -> None:

@@ -13,6 +13,7 @@ from evolvxsi.access.utils import (
     EXTERNAL_GROUP_ACL_PREFIX,
     USER_EMAIL_ACL_PREFIX,
     prefix_user_email,
+    prefix_user_group,
 )
 from evolvxsi.configs.constants import (
     CHAT_SESSION_ID_FILE_METADATA_KEY,
@@ -45,6 +46,11 @@ from evolvxsi.db.models import (
     UserFile,
 )
 from evolvxsi.db.user_file import fetch_user_files_with_access_relationships
+from evolvxsi.db.engine.sql_engine import get_session_with_current_tenant_if_none
+from evolvxsi.knowledge_access.groups import (
+    group_names_for_documents,
+    group_names_for_user,
+)
 from evolvxsi.utils.variable_functionality import (
     fetch_ee_implementation_or_noop,
     fetch_versioned_implementation,
@@ -60,9 +66,10 @@ def _get_access_for_document(
         document_id=document_id,
     )
 
+    groups = group_names_for_documents(db_session, [document_id]).get(document_id, set())
     doc_access = DocumentAccess.build(
         user_emails=info[1] if info and info[1] else [],
-        user_groups=[],
+        user_groups=sorted(groups),
         external_user_emails=[],
         external_user_group_ids=[],
         is_public=info[2] if info else False,
@@ -99,12 +106,14 @@ def _get_access_for_documents(
         db_session=db_session,
         document_ids=document_ids,
     )
+    groups_by_doc = group_names_for_documents(db_session, document_ids)
     doc_access = {}
     for document_id, user_emails, is_public in document_access_info:
         doc_access[document_id] = DocumentAccess.build(
             user_emails=[email for email in user_emails if email],
-            # MIT version will wipe all groups and external groups on update
-            user_groups=[],
+            # EvolvXSI: groups linked to the document's sources. External
+            # groups still need a per-source permission sync.
+            user_groups=sorted(groups_by_doc.get(document_id, set())),
             is_public=is_public,
             external_user_emails=[],
             external_user_group_ids=[],
@@ -133,8 +142,8 @@ def get_access_for_documents(
 
 def _get_acl_for_user(
     user: User,
-    db_session: Session,  # noqa: ARG001
-) -> set[str]:  # noqa: ARG001
+    db_session: Session | None,
+) -> set[str]:
     """Returns a list of ACL entries that the user has access to. This is meant to be
     used downstream to filter out documents that the user does not have access to. The
     user should have access to a document if at least one entry in the document's ACL
@@ -148,9 +157,14 @@ def _get_acl_for_user(
     """
     if user.is_anonymous:
         return {PUBLIC_DOC_PAT}
+    # EvolvXSI: the user's groups, read on every request so a removal from a
+    # group takes effect on the next search.
+    with get_session_with_current_tenant_if_none(db_session) as session:
+        groups = group_names_for_user(session, user.id)
     return {
         prefix_user_email(user.email),
         *(prefix_user_email(email) for email in user.prior_emails),
+        *(prefix_user_group(name) for name in groups),
         PUBLIC_DOC_PAT,
     }
 

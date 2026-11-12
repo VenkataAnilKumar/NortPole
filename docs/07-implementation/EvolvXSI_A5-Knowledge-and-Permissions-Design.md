@@ -68,3 +68,16 @@ Step 2 runs. `services/core/tests/evolvxsi_integration/test_retrieval_acl.py` wr
 
 Limits: embeddings are deterministic test vectors because the embedding model host is blocked here, so this checks access filtering only, not answer quality. Group access works because the harness builds the viewer's access list with groups (`viewer_acl`); the community user path (`_get_acl_for_user`) still adds only email addresses, so wiring `viewer_acl` into real search is the next step.
 
+## Progress (2026-11-12): group access wired into real search
+
+The community code left groups out on both sides: users' access lists carried only email addresses, documents were indexed with no groups, and the query-time source check returned false for groups. EvolvXSI now fills all three (`services/core/evolvxsi/knowledge_access/groups.py`, used from `access/access.py` and `db/connector_credential_pair.py`):
+
+- A person's access list includes every group they belong to, read on each request.
+- A document's access list includes the data-access groups of the PRIVATE sources it came from (`UserGroup__CCPairDataAccess`).
+- Only data-access links grant reading. The other link table (`UserGroup__ConnectorCredentialPair`, roles editor and operator) decides who may manage a source and grants no reading.
+- SYNC_RESTRICTED sources grant nothing through groups. The core defines them as "group member and allowed by the source's own permissions", which a group entry cannot express, so they fail closed until a per-source permission sync exists.
+
+Checked end to end on the sandbox database and OpenSearch (`tests/evolvxsi_integration/test_group_access.py`): the member finds the document, an outsider does not, a group that only manages the source does not, a data-access group on a SYNC_RESTRICTED source does not, and removing the member from the group hides the document on the next search. With the earlier harness, 26 checks pass. A first version of this change used the management link table by mistake; the integration test exposed it before commit.
+
+Not done: removing a group from a source changes stored document access lists only on re-index (no re-sync job yet); the query-time source check is only active when its rollout flag is on and was not exercised here; there is still no screen or API to manage groups or link them to sources, since that was enterprise-only upstream.
+
