@@ -19,7 +19,7 @@ Status: Plan, written 2026-11-12, before any of this is built. It rests on what 
 | 6 | A7 | Pack review rules (declarative checks on drafts; built 2026-11-12) | M | The safe stand-in for pack-supplied agents. |
 | 7 | A4 | Interface quality pass: dark and narrow widths, keyboard, contrast, axe checks (built 2026-11-12 for ten pages; other pages not checked) | M | Better done once the new pages from 1 to 6 exist. |
 | 8 | A9 | Prompt-injection suite against the real local model (built 2026-11-12: the 7B obeyed in 31 percent of runs) | M | Needs the stable drafting path; reports a measured rate. |
-| 9 | A9 | Threat model, dependency and license scan, upstream-link cleanup | M | Closes the A9 review work. |
+| 9 | A9 | Threat model, dependency and license scan, upstream-link cleanup (done 2026-11-12; about 90 upstream references remain in comments and tests) | M | Closes the A9 review work. |
 | 10 | A4 | Settings and admin tab audit against the UI spec | S | Settings already has General, Chat preferences, Accounts, Connectors, Models, Notifications, Usage and a Memory component; this checks each works and fills gaps. |
 
 ## Items in detail

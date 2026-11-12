@@ -6947,11 +6947,11 @@
           "title": "اختر كيفية تطبيق نموذج LLM للاسترجاع السياقي"
         },
         "default": {
-          "description": "يتطلب تعديل إعدادات التضمين أو الاسترجاع إعادة فهرسة كاملة لجميع المستندات لتسري، وقد يستغرق ذلك **ساعات أو أيامًا** بحسب حجم المحتوى. [اعرف المزيد](https://docs.onyx.app/security/architecture/data_flows)",
+          "description": "يتطلب تعديل إعدادات التضمين أو الاسترجاع إعادة فهرسة كاملة لجميع المستندات لتسري، وقد يستغرق ذلك **ساعات أو أيامًا** بحسب حجم المحتوى.",
           "title": "تتطلب التغييرات إعادة فهرسة كاملة."
         },
         "doNotReindex": {
-          "description": "ستسري إعدادات معالجة الصور فقط على المستندات المفهرسة من الآن فصاعدًا. لن يتم تحديث المستندات الحالية ما لم تقم بإعادة فهرسة كاملة.\n\nقد تستغرق إعادة الفهرسة *ساعات أو أيامًا* حسب حجم المحتوى. [اعرف المزيد](https://docs.onyx.app/security/architecture/data_flows).",
+          "description": "ستسري إعدادات معالجة الصور فقط على المستندات المفهرسة من الآن فصاعدًا. لن يتم تحديث المستندات الحالية ما لم تقم بإعادة فهرسة كاملة.\n\nقد تستغرق إعادة الفهرسة *ساعات أو أيامًا* حسب حجم المحتوى..",
           "title": "تنطبق التغييرات على المحتوى المفهرس حديثًا فقط."
         },
         "orSeparator": {
@@ -6962,7 +6962,7 @@
           "title": "ستتم إعادة بناء الفهرس."
         },
         "reindex": {
-          "description": "قد تستغرق إعادة الفهرسة *ساعات أو أيامًا* حسب حجم المحتوى. [اعرف المزيد](https://docs.onyx.app/security/architecture/data_flows)",
+          "description": "قد تستغرق إعادة الفهرسة *ساعات أو أيامًا* حسب حجم المحتوى.",
           "title": "ستُجرى إعادة فهرسة كاملة."
         },
         "reindexModel": {
@@ -7711,7 +7711,7 @@
             "addButton": {
               "label": "إضافة سطر"
             },
-            "description": "أضف خصائص إضافية بحسب حاجة موفر النموذج. تُمرَّر هذه إلى استدعاء `completion()` في LiteLLM كـ[متغيرات بيئة](https://docs.litellm.ai/docs/set_keys#environment-variables). راجع [الوثائق](https://docs.onyx.app/admins/ai_models/custom_inference_provider) لمزيد من التعليمات.",
+            "description": "أضف خصائص إضافية بحسب حاجة موفر النموذج. تُمرَّر هذه إلى استدعاء `completion()` في LiteLLM كـ[متغيرات بيئة](https://docs.litellm.ai/docs/set_keys#environment-variables). راجع [الوثائق](https://docs.litellm.ai/docs/providers) لمزيد من التعليمات.",
             "keyInput": {
               "placeholder": "مثل OPENAI_ORGANIZATION"
             },
@@ -8631,7 +8631,7 @@
       },
       "authentication": {
         "allowedEmailDomains": {
-          "placeholder": "أضف نطاقًا (مثل onyx.app)",
+          "placeholder": "أضف نطاقًا (مثل example.com)",
           "subDescription": "لا يمكن للمستخدمين الجدد تسجيل حسابات جديدة إلا ببريد ضمن قائمة النطاقات هذه.",
           "title": "نطاقات البريد الإلكتروني المسموح بها"
         },
@@ -9431,7 +9431,7 @@
           "emailDomainsField": {
             "description": "لا يمكن تسجيل الدخول عبر هذا الموفر إلا لعناوين البريد ضمن هذه النطاقات.",
             "optionalDescription": "لا يمكن تسجيل الدخول عبر هذا الموفر إلا لعناوين البريد ضمن هذه النطاقات. موصى به، لكن يمكنك تركه فارغًا للسماح للجميع.",
-            "placeholder": "أضف نطاقًا (مثل onyx.app)",
+            "placeholder": "أضف نطاقًا (مثل example.com)",
             "recommendedTitle": "نطاقات البريد المسموح بها (موصى به)",
             "title": "نطاقات البريد المسموح بها"
           },
@@ -9888,7 +9888,7 @@
         }
       },
       "placeholders": {
-        "helpUrl": "https://docs.onyx.app"
+        "helpUrl": "https://docs.example.com"
       }
     },
     "tracing": {

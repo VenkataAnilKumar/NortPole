@@ -1,6 +1,8 @@
 from typing import Any
 from unittest.mock import patch
 
+import pytest
+
 from evolvxsi.configs.model_configs import GEN_AI_MODEL_FALLBACK_MAX_TOKENS
 from evolvxsi.llm import model_catalog
 from evolvxsi.llm.constants import LlmProviderNames
@@ -677,3 +679,28 @@ def test_latest_models_read_the_remote_supplement() -> None:
                 assert model_catalog.iter_latest_models("openai", mode="chat") is None
             finally:
                 model_catalog.reset_remote_cache()
+
+
+@pytest.fixture(autouse=True)
+def _allow_upstream_fetch():  # type: ignore[no-untyped-def]
+    """These tests exercise the remote catalog; EvolvXSI turns remote fetches off by default."""
+    with patch.object(model_catalog, "EVOLVXSI_AIRGAPPED", False):
+        yield
+
+
+def test_upstream_fetches_are_off_unless_explicitly_allowed() -> None:
+    """EvolvXSI does not call the upstream project's GitHub repository by default."""
+    import importlib
+    import os
+    from unittest.mock import patch as p
+
+    from shared_configs import configs
+
+    for value, expected in [(None, True), ("true", True), ("false", False)]:
+        env = {k: v for k, v in os.environ.items() if k != "EVOLVXSI_AIRGAPPED"}
+        if value is not None:
+            env["EVOLVXSI_AIRGAPPED"] = value
+        with p.dict(os.environ, env, clear=True):
+            importlib.reload(configs)
+            assert configs.EVOLVXSI_AIRGAPPED is expected
+    importlib.reload(configs)

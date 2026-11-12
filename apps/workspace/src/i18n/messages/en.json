@@ -6947,11 +6947,11 @@
           "title": "Choose how to apply this Contextual Retrieval LLM"
         },
         "default": {
-          "description": "Modifying embedding or retrieval settings requires a full re-index of all documents to take effect, which may take **hours or days** depending on corpus size. [Learn More](https://docs.onyx.app/security/architecture/data_flows)",
+          "description": "Modifying embedding or retrieval settings requires a full re-index of all documents to take effect, which may take **hours or days** depending on corpus size.",
           "title": "Changes require a full re-index."
         },
         "doNotReindex": {
-          "description": "Image processing settings will take effect only for documents indexed going forward. Existing documents will not be updated unless you run a full re-index.\n\nRe-indexing may take *hours or days* depending on corpus size. [Learn More](https://docs.onyx.app/security/architecture/data_flows).",
+          "description": "Image processing settings will take effect only for documents indexed going forward. Existing documents will not be updated unless you run a full re-index.\n\nRe-indexing may take *hours or days* depending on corpus size..",
           "title": "Changes apply to newly indexed content only."
         },
         "orSeparator": {
@@ -6962,7 +6962,7 @@
           "title": "The index will be rebuilt."
         },
         "reindex": {
-          "description": "Re-indexing may take *hours or days* depending on corpus size. [Learn More](https://docs.onyx.app/security/architecture/data_flows)",
+          "description": "Re-indexing may take *hours or days* depending on corpus size.",
           "title": "A full re-index will run."
         },
         "reindexModel": {
@@ -7711,7 +7711,7 @@
             "addButton": {
               "label": "Add Line"
             },
-            "description": "Add extra properties as needed by the model provider. These are passed to LiteLLM's `completion()` call as [environment variables](https://docs.litellm.ai/docs/set_keys#environment-variables). See [documentation](https://docs.onyx.app/admins/ai_models/custom_inference_provider) for more instructions.",
+            "description": "Add extra properties as needed by the model provider. These are passed to LiteLLM's `completion()` call as [environment variables](https://docs.litellm.ai/docs/set_keys#environment-variables). See [documentation](https://docs.litellm.ai/docs/providers) for more instructions.",
             "keyInput": {
               "placeholder": "e.g. OPENAI_ORGANIZATION"
             },
@@ -8631,7 +8631,7 @@
       },
       "authentication": {
         "allowedEmailDomains": {
-          "placeholder": "Add a domain (e.g. onyx.app)",
+          "placeholder": "Add a domain (e.g. example.com)",
           "subDescription": "New users can only register new accounts with emails in this domain list.",
           "title": "Allowed Email Domains"
         },
@@ -9431,7 +9431,7 @@
           "emailDomainsField": {
             "description": "Only emails in these domains may sign in through this provider.",
             "optionalDescription": "Only emails in these domains may sign in through this provider. Recommended, but you can leave it empty to allow any.",
-            "placeholder": "Add a domain (e.g. onyx.app)",
+            "placeholder": "Add a domain (e.g. example.com)",
             "recommendedTitle": "Allowed Email Domains (Recommended)",
             "title": "Allowed Email Domains"
           },
@@ -9888,7 +9888,7 @@
         }
       },
       "placeholders": {
-        "helpUrl": "https://docs.onyx.app"
+        "helpUrl": "https://docs.example.com"
       }
     },
     "tracing": {

@@ -6947,11 +6947,11 @@
           "title": "选择此上下文检索 LLM 的应用方式"
         },
         "default": {
-          "description": "修改 embedding 或检索设置后，需要对所有文档进行完整的重新索引才能生效，这可能需要**数小时或数天**，具体取决于语料库规模。[了解更多](https://docs.onyx.app/security/architecture/data_flows)",
+          "description": "修改 embedding 或检索设置后，需要对所有文档进行完整的重新索引才能生效，这可能需要**数小时或数天**，具体取决于语料库规模。",
           "title": "更改需要完整的重新索引。"
         },
         "doNotReindex": {
-          "description": "图片处理设置仅对今后索引的文档生效。除非运行完整的重新索引，否则现有文档不会更新。\n\n重新索引可能需要*数小时或数天*，具体取决于语料库大小。[了解更多](https://docs.onyx.app/security/architecture/data_flows)。",
+          "description": "图片处理设置仅对今后索引的文档生效。除非运行完整的重新索引，否则现有文档不会更新。\n\n重新索引可能需要*数小时或数天*，具体取决于语料库大小。。",
           "title": "更改仅适用于新索引的内容。"
         },
         "orSeparator": {
@@ -6962,7 +6962,7 @@
           "title": "将重建索引。"
         },
         "reindex": {
-          "description": "重新索引可能需要*数小时或数天*，具体取决于语料库大小。[了解更多](https://docs.onyx.app/security/architecture/data_flows)",
+          "description": "重新索引可能需要*数小时或数天*，具体取决于语料库大小。",
           "title": "将运行完整的重新索引。"
         },
         "reindexModel": {
@@ -7711,7 +7711,7 @@
             "addButton": {
               "label": "添加行"
             },
-            "description": "按模型提供商的要求添加额外属性。这些属性会作为[环境变量](https://docs.litellm.ai/docs/set_keys#environment-variables)传递给 LiteLLM 的 `completion()` 调用。更多说明请参见[文档](https://docs.onyx.app/admins/ai_models/custom_inference_provider)。",
+            "description": "按模型提供商的要求添加额外属性。这些属性会作为[环境变量](https://docs.litellm.ai/docs/set_keys#environment-variables)传递给 LiteLLM 的 `completion()` 调用。更多说明请参见[文档](https://docs.litellm.ai/docs/providers)。",
             "keyInput": {
               "placeholder": "例如 OPENAI_ORGANIZATION"
             },
@@ -8631,7 +8631,7 @@
       },
       "authentication": {
         "allowedEmailDomains": {
-          "placeholder": "添加域名（例如 onyx.app）",
+          "placeholder": "添加域名（例如 example.com）",
           "subDescription": "新用户只能使用此域名列表中的邮箱注册新账户。",
           "title": "允许的邮箱域名"
         },
@@ -9431,7 +9431,7 @@
           "emailDomainsField": {
             "description": "只有这些域名下的邮箱才能通过此提供商登录。",
             "optionalDescription": "只有这些域名下的邮箱才能通过此提供商登录。建议填写，也可以留空以允许任何域名。",
-            "placeholder": "添加域名（例如 onyx.app）",
+            "placeholder": "添加域名（例如 example.com）",
             "recommendedTitle": "允许的邮箱域名（推荐）",
             "title": "允许的邮箱域名"
           },
@@ -9888,7 +9888,7 @@
         }
       },
       "placeholders": {
-        "helpUrl": "https://docs.onyx.app"
+        "helpUrl": "https://docs.example.com"
       }
     },
     "tracing": {

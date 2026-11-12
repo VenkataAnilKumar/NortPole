@@ -6947,11 +6947,11 @@
           "title": "このコンテキスト検索 LLM の適用方法を選択してください"
         },
         "default": {
-          "description": "embedding または検索の設定を変更すると、反映するためにすべてのドキュメントの完全な再インデックスが必要です。コーパスの規模によっては **数時間から数日** かかることがあります。[詳細を見る](https://docs.onyx.app/security/architecture/data_flows)",
+          "description": "embedding または検索の設定を変更すると、反映するためにすべてのドキュメントの完全な再インデックスが必要です。コーパスの規模によっては **数時間から数日** かかることがあります。",
           "title": "変更には完全な再インデックスが必要です。"
         },
         "doNotReindex": {
-          "description": "画像処理設定は、今後インデックスされるドキュメントにのみ適用されます。既存のドキュメントは、完全な再インデックスを実行しない限り更新されません。\n\n再インデックスにはコーパスの規模に応じて*数時間から数日*かかることがあります。[詳細](https://docs.onyx.app/security/architecture/data_flows)。",
+          "description": "画像処理設定は、今後インデックスされるドキュメントにのみ適用されます。既存のドキュメントは、完全な再インデックスを実行しない限り更新されません。\n\n再インデックスにはコーパスの規模に応じて*数時間から数日*かかることがあります。。",
           "title": "変更は新しくインデックスされたコンテンツにのみ適用されます。"
         },
         "orSeparator": {
@@ -6962,7 +6962,7 @@
           "title": "インデックスを再構築します。"
         },
         "reindex": {
-          "description": "再インデックスにはコーパスの規模に応じて*数時間から数日*かかることがあります。[詳細](https://docs.onyx.app/security/architecture/data_flows)",
+          "description": "再インデックスにはコーパスの規模に応じて*数時間から数日*かかることがあります。",
           "title": "完全な再インデックスが実行されます。"
         },
         "reindexModel": {
@@ -7711,7 +7711,7 @@
             "addButton": {
               "label": "行を追加"
             },
-            "description": "モデルプロバイダーが必要とする追加のプロパティを指定します。これらは [環境変数](https://docs.litellm.ai/docs/set_keys#environment-variables) として LiteLLM の `completion()` 呼び出しに渡されます。詳しい手順は [ドキュメント](https://docs.onyx.app/admins/ai_models/custom_inference_provider) を参照してください。",
+            "description": "モデルプロバイダーが必要とする追加のプロパティを指定します。これらは [環境変数](https://docs.litellm.ai/docs/set_keys#environment-variables) として LiteLLM の `completion()` 呼び出しに渡されます。詳しい手順は [ドキュメント](https://docs.litellm.ai/docs/providers) を参照してください。",
             "keyInput": {
               "placeholder": "例: OPENAI_ORGANIZATION"
             },
@@ -8631,7 +8631,7 @@
       },
       "authentication": {
         "allowedEmailDomains": {
-          "placeholder": "ドメインを追加（例：onyx.app）",
+          "placeholder": "ドメインを追加（例：example.com）",
           "subDescription": "新規ユーザーは、このドメイン一覧に含まれるメールアドレスでのみアカウントを登録できます。",
           "title": "許可するメールドメイン"
         },
@@ -9431,7 +9431,7 @@
           "emailDomainsField": {
             "description": "これらのドメインのメールアドレスのみ、このプロバイダーでサインインできます。",
             "optionalDescription": "これらのドメインのメールアドレスのみ、このプロバイダーでサインインできます。設定を推奨しますが、空のままにするとすべてのドメインを許可します。",
-            "placeholder": "ドメインを追加(例: onyx.app)",
+            "placeholder": "ドメインを追加(例: example.com)",
             "recommendedTitle": "許可するメールドメイン(推奨)",
             "title": "許可するメールドメイン"
           },
@@ -9888,7 +9888,7 @@
         }
       },
       "placeholders": {
-        "helpUrl": "https://docs.onyx.app"
+        "helpUrl": "https://docs.example.com"
       }
     },
     "tracing": {
