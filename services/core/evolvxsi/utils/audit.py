@@ -97,6 +97,7 @@ class AuditAction(str, Enum):
     TASK_PLAN_ACCEPT = "task.plan_accept"
     TASK_CANCEL = "task.cancel"
     TASK_RUN = "task.run"
+    AGENT_RUN = "agent.run"
     TASK_APPROVE = "task.approve"
     TASK_EXPORT = "task.export"
     ACTION_PROPOSE = "action.propose"
@@ -171,6 +172,7 @@ _OCSF_CLASS_BY_ACTION: dict[AuditAction, OCSFEventClass] = {
     AuditAction.TASK_PLAN_ACCEPT: OCSFEventClass.API_ACTIVITY,
     AuditAction.TASK_CANCEL: OCSFEventClass.API_ACTIVITY,
     AuditAction.TASK_RUN: OCSFEventClass.API_ACTIVITY,
+    AuditAction.AGENT_RUN: OCSFEventClass.API_ACTIVITY,
     AuditAction.TASK_APPROVE: OCSFEventClass.API_ACTIVITY,
     AuditAction.TASK_EXPORT: OCSFEventClass.API_ACTIVITY,
     AuditAction.ACTION_PROPOSE: OCSFEventClass.API_ACTIVITY,

@@ -21,6 +21,7 @@ interface Version {
   evaluation_cases: number;
   evaluations: { model_name: string; route_kind: string; passed: boolean; cases_passed: number; cases_total: number; failures: string[] }[];
   guides?: { id: string; name: string; description: string; body: string; used_by: string[] }[];
+  agents?: { id: string; name: string; description: string; tool_labels: string[]; max_searches: number; guides: string[]; instructions: string; used_by: string[] }[];
 }
 
 const card = "rounded-2xl border border-border-01 bg-background-neutral-00 p-5 shadow-sm";
@@ -172,6 +173,19 @@ export default function PacksAdminPage() {
                     </li>
                   ))}
                 </ul>
+              )}
+              {(v.agents ?? []).length > 0 && (
+                <details className="mt-2 text-xs text-text-03" data-testid="admin-agents">
+                  <summary className="cursor-pointer">Agents in this version ({(v.agents ?? []).length}): read their instructions before activating</summary>
+                  <ul className="mt-1 flex flex-col gap-2">
+                    {(v.agents ?? []).map((a) => (
+                      <li key={a.id}>
+                        <span className="font-medium text-text-05">{a.name}</span> · {a.description} · may {a.tool_labels.join("; ").toLowerCase()} (up to {a.max_searches} searches) · runs {a.used_by.length ? a.used_by.join(", ") : "no workflow"}{a.guides.length ? ` · follows ${a.guides.join(", ")}` : ""} · cannot send
+                        <pre className="mt-1 whitespace-pre-wrap rounded-lg bg-background-neutral-01 px-2 py-1 text-text-05">{a.instructions}</pre>
+                      </li>
+                    ))}
+                  </ul>
+                </details>
               )}
               {(v.guides ?? []).length > 0 && (
                 <details className="mt-2 text-xs text-text-03" data-testid="admin-guides">

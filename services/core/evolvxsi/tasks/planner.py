@@ -77,3 +77,23 @@ def _GUIDE_RULE() -> str:  # noqa: N802 - the same rule as the drafter's, read l
     from evolvxsi.tasks.drafter import GUIDE_RULE
 
     return GUIDE_RULE
+
+
+def draft_agent_plan(db_session: Session, user: User, title: str, request: str, desired_output: str, agent) -> PlanResult:  # type: ignore[no-untyped-def]
+    """A workflow agent's plan: only named tool steps, within its limit (see packs/agents.py)."""
+    from evolvxsi.packs.agents import parse_agent_plan, plan_prompt, plan_system_prompt
+
+    llm = get_default_llm()
+    decision = enforce_route(db_session, llm.config.model_configuration_id, actor=user, purpose="task_plan")
+    reply = llm.invoke(
+        GenerationRequest(
+            system_prompt=plan_system_prompt(agent),
+            messages=[UserMessage(content=plan_prompt(title, request, desired_output, agent))],
+            options=GenerationOptions(max_tokens=300),
+        ),
+        context=GenerationContext(flow=LLMFlow.CHAT_RESPONSE),
+    )
+    steps = parse_agent_plan(reply.text or "", agent)
+    if not steps:
+        raise PlanError("The agent did not propose any search it is allowed to run. Edit the request and start again.")
+    return PlanResult(steps=steps, route_kind=decision.kind)

@@ -328,10 +328,17 @@ def start_task(
                  started_at=func.now(), plan=None, plan_error=None, plan_route=None)
     _audit(user, AuditAction.TASK_START, task, "Started a task")
     try:
+        from evolvxsi.packs.agents import agent_for
         from evolvxsi.packs.guidance import guides_for
 
-        guides = guides_for(db_session, task.pack_id, task.pack_version, task.pack_template)
-        result = draft_plan(db_session, user, task.title, task.request, task.desired_output, guides)
+        agent = agent_for(db_session, task.pack_id, task.pack_version, task.pack_template)
+        if agent is not None:
+            from evolvxsi.tasks.planner import draft_agent_plan
+
+            result = draft_agent_plan(db_session, user, task.title, task.request, task.desired_output, agent)
+        else:
+            guides = guides_for(db_session, task.pack_id, task.pack_version, task.pack_template)
+            result = draft_plan(db_session, user, task.title, task.request, task.desired_output, guides)
     except PlanError as e:
         return _view(_move(db_session, task_id, user, task.version, TaskAction.PLAN_FAILED, plan_error=str(e)))
     except EvolvXSIError as e:
@@ -392,14 +399,30 @@ def run_task(
     task = _move(db_session, task_id, user, body.version, TaskAction.RUN, run_error=None)
     _audit(user, AuditAction.TASK_RUN, task, "Started a task run")
     try:
-        question = f"{task.title}\n{task.request}"
-        evidence = filter_relevant(db_session, user, task.request, gather_evidence(db_session, user, question))
-        from evolvxsi.packs.guidance import style_for
+        from evolvxsi.packs.agents import agent_for, planned_searches, run_searches
+        from evolvxsi.packs.guidance import guides_for, style_for
 
+        agent = agent_for(db_session, task.pack_id, task.pack_version, task.pack_template)
+        if agent is not None:
+            # Plan-then-execute: run exactly the accepted search steps, as the owner, in code. The model is not asked
+            # what to do next; nothing it reads can add a step.
+            queries = planned_searches(task.plan, agent)
+            if not queries:
+                raise EvolvXSIError(EvolvXSIErrorCode.CONFLICT, "The accepted plan has no search the agent may run. Revise and start again.")
+            found = run_searches(db_session, user, queries)
+            evidence = filter_relevant(db_session, user, task.request, found)
+            guides = list(agent.guides) + [(f"Agent instructions ({agent.name})", agent.instructions)]
+            # Counts only: the queries come from the owner's request, so they stay out of the audit record.
+            record_audit(AuditAction.AGENT_RUN, AuditOutcome.SUCCESS, actor=user,
+                         summary=f"Agent {agent.name} ran {len(queries)} search(es) for the owner and found {len(found)} source(s)",
+                         details={"agent": agent.id, "pack": agent.pack_id, "version": agent.version, "searches": len(queries),
+                                  "sources_found": len(found), "sources_kept": len(evidence)},
+                         resource_type="task", resource_id=str(task.id))
+        else:
+            question = f"{task.title}\n{task.request}"
+            evidence = filter_relevant(db_session, user, task.request, gather_evidence(db_session, user, question))
+            guides = guides_for(db_session, task.pack_id, task.pack_version, task.pack_template)
         style = style_for(db_session, task.pack_id, task.pack_version, task.pack_template)
-        from evolvxsi.packs.guidance import guides_for
-
-        guides = guides_for(db_session, task.pack_id, task.pack_version, task.pack_template)
         result = draft_answer(db_session, user, task.title, task.request, task.plan or [], evidence, style, guides)
     except EvolvXSIError as e:
         return _view(_move(db_session, task_id, user, task.version, TaskAction.RUN_FAILED, run_error=e.detail))

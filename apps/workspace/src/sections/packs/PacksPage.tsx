@@ -13,6 +13,7 @@ interface Template {
   style?: string;
   review_rules?: Rule[];
   guides?: { id: string; name: string; description: string }[];
+  agent?: { id: string; name: string; description: string; tool_labels: string[]; max_searches: number; guides: string[]; may_send: boolean } | null;
 }
 interface Rule {
   kind: string;
@@ -105,6 +106,20 @@ function Details({ p }: { p: Pack }) {
           Version {p.version}, signed by {p.signer_key_id || "a trusted signer"}. A draft keeps the version it started from.
         </dd>
       </div>
+      {p.templates.some((t) => t.agent) && (
+        <div className="sm:col-span-2" data-testid="agent-card">
+          <dt className="font-semibold text-text-05">Run by an agent</dt>
+          <dd>
+            {p.templates.filter((t) => t.agent).map((t) => (
+              <div key={t.id} className="mt-1">
+                <span className="text-text-05">{t.title}:</span> <span className="text-text-05">{t.agent!.name}</span>. {t.agent!.description}{" "}
+                It may: {t.agent!.tool_labels.join("; ").toLowerCase().replace("the person can open", "you can open")} (up to {t.agent!.max_searches} searches, as you).
+                {t.agent!.guides.length > 0 ? ` It follows: ${t.agent!.guides.join(", ")}.` : ""} You accept its plan before it runs. It cannot send anything.
+              </div>
+            ))}
+          </dd>
+        </div>
+      )}
       {p.templates.some((t) => (t.guides ?? []).length > 0) && (
         <div className="sm:col-span-2" data-testid="pack-guides">
           <dt className="font-semibold text-text-05">Guides it follows</dt>
