@@ -38,13 +38,33 @@ In this profile PostgreSQL holds everything that must survive: accounts, drafts,
 
 Run both from this folder with the same `-f` files (or `COMPOSE_FILE`) and environment you start the stack with. The restore refuses a dump whose checksum does not match its manifest, stops the API and web app, recreates the database, loads the dump, starts them again (the API applies any newer migrations), and prints how to check the audit log chain afterwards. Copy the dump and manifest off the machine; the backups are not encrypted by these scripts, so store them with the same care as the database.
 
+To keep a bounded number of dumps, set `KEEP=14` (delete all but the newest 14 after each backup; only files named `evolvxsi-*.dump` and their manifests are touched). To run it daily, a cron entry such as the following works; set the secrets the same way you start the stack:
+
+```bash
+15 2 * * *  cd /opt/evolvxsi/infrastructure/profiles/staging && . /etc/evolvxsi/env && KEEP=14 ./backup.sh /var/backups/evolvxsi >> /var/log/evolvxsi-backup.log 2>&1
+```
+
+Scheduling is only an example here and was not run on a clock; the script itself and `KEEP` were run by hand.
+
 ## Upgrade and rollback
 
 Images are tagged with `EVOLVXSI_VERSION` (default `dev`). To upgrade: take a backup, build or pull the new images tagged with the new version, then `EVOLVXSI_VERSION=<new> docker compose up -d`; the API applies database migrations when it starts. `./release.sh manifest <version>` writes a small JSON record of the product commit, the two image IDs and the migration head for that version.
 
 To roll back, start the previous version tag **and restore the backup taken before the upgrade**: migrations are not assumed to be reversible, so older code may not run against a newer database. A rollback therefore loses anything written after that backup.
 
-Sharing images through a registry is not set up. By hand it is `docker tag evolvxsi-core:<version> <registry>/evolvxsi-core:<version>` and `docker push`, the same for the web image, then `docker pull` on the target machine before `up -d`; this has not been tried here.
+Sharing images through a registry: tag both images with the registry name, push, and pull on the target machine before `up -d`:
+
+```bash
+docker tag evolvxsi-core:<version> <registry>/evolvxsi-core:<version>   # and the same for evolvxsi-web
+docker push <registry>/evolvxsi-core:<version>
+docker pull <registry>/evolvxsi-core:<version>
+```
+
+Pull and tag the images back to the plain `evolvxsi-core:<version>` names (or change the `image:` lines) so the compose file finds them. Signing images and scanning them for vulnerabilities are not set up.
+
+## Building behind a proxy that re-signs HTTPS
+
+If your network inspects TLS, `pip install` inside the build fails with a certificate error. Build a small base image that trusts your CA and tag it `python:3.13-slim` on the build machine (`COPY` the CA certificate into `/usr/local/share/ca-certificates/`, run `update-ca-certificates`, and set `SSL_CERT_FILE`, `PIP_CERT` and `UV_NATIVE_TLS=true`), then build with the proxy address as `HTTPS_PROXY`/`HTTP_PROXY` build arguments and `--network host` (with `docker buildx build --allow network.host`). That image carries your CA, so keep it local and do not push it. The sandbox used this route.
 
 ## Retrieval (search index, embeddings, workers)
 
@@ -77,11 +97,15 @@ The API container can reach a model server on the host as `http://host.docker.in
 - `docker compose down` followed by `up` keeps accounts (named volume).
 - TLS overlay with a self-signed certificate on other ports (sandbox, 2026-11-13): HTTP redirected to HTTPS (301), `/api/health` answered on both, the login page loaded over HTTP/2 with a single set of security headers, a client that trusted the certificate verified it, a TLS 1.1 client was refused, and the plain port 3000 listener was gone.
 - Backup and restore drill (sandbox, 2026-11-13, on the older image already built here): an account and two drafts were created and backed up (524 KB dump, manifest with checksum); a third draft was added afterwards; a dump with one extra byte was refused; the restore then brought back exactly the two backed-up drafts, the account could sign in, and the API was healthy.
+- Rebuilt API image and the upgrade path (sandbox, 2026-11-13): the API image was rebuilt from the current source (about 2.5 GB). The older backup (database at migration `4e2a7c9d5b36`) was restored under the new image: the API applied the newer migrations on start and reached `8c6e1a4b9d70`, the account signed in, both drafts were present, and the audit chain check answered. After three audited changes, a new backup was restored: the chain check read intact over the 3 backed-up rows (a fourth change made after the backup was gone, as expected).
+- Clean-room start: with the volume deleted, `up -d` on the images alone gave a healthy API in about five seconds at migration head; the first registered account could reach admin endpoints; packs and the HTTPS login page answered.
+- Registry round trip against a local `registry:2`: both images were pushed, the local core tag removed, and the pulled image had the same ID as the built one.
+- `KEEP=2` kept the newest two of four backups, a non-numeric value was refused before any work, and unrelated files in the folder were left alone.
 - Version pinning: with `EVOLVXSI_VERSION=0.0.1` the API and web containers were recreated on the `0.0.1` images and `up -d` without it moved them back to `dev`. `release.sh manifest` printed the commit, image IDs and a migration head that matches `alembic heads`.
 - Building in the sandbox needed a proxy certificate and an HTTPS package mirror that a normal network does not; those sandbox-only steps are not in the file.
 
 ## Not covered
-- The drill ran on an API image built before the audit hash chain existed, because rebuilding the image failed in the sandbox (`pip install` could not reach its mirror). So restoring into a newer image (a migration upgrade inside containers) and the audit chain check after a restore were not exercised here.
+- The web image was not rebuilt in this pass (it is the one built earlier), so the clean-room start used an older web build.
 - The web image build skips the type check (errors exist only in test files whose shared setup folder is missing from the repo); the web build needs `cdn.sheetjs.com` (the `xlsx` package).
 - The model server of the core itself (embeddings and reranking inside the image) is not used; an external embedding server is required for retrieval.
-- Log shipping, secrets management, resource limits, certificate issuing and renewal, encrypted or scheduled backups, a registry, and upgrades without downtime.
+- Log shipping, secrets management, resource limits, certificate issuing and renewal, encrypted backups, a managed registry with signing and scanning, a backup run on a real schedule, CI, and upgrades without downtime.
