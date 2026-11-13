@@ -79,6 +79,8 @@ class TemplateView(BaseModel):
     title: str
     request: str
     desired_output: str
+    style: str = ""
+    review_rules: list[dict] = []
 
 
 class PackView(BaseModel):
@@ -91,6 +93,14 @@ class PackView(BaseModel):
     data_classes: list[str]
     route_kinds: list[str]
     requests_send_destinations: bool
+    # "everyday" for domain-neutral packs (vertical "general"), else "domain".
+    group: str = "domain"
+    autonomy: str = "act_with_approval"
+    review_rules: list[dict] = []
+    signer_key_id: str = ""
+    evaluation_cases: int = 0
+    # Models this exact version passed its evaluation cases on (empty when it has no cases or none passed).
+    passed_models: list[str] = []
     # False when the pack has evaluation cases and has not passed them on the
     # model route in use now; starting a task from it would be refused.
     ready_on_current_route: bool = True
@@ -337,7 +347,12 @@ def list_packs(
         ready, note = passed_on_current_model(db_session, v.pack_id, v.version, m)
         out.append(PackView(
             pack_id=v.pack_id, version=v.version, name=m["name"], vertical=m["vertical"], description=m.get("description", ""),
-            templates=[TemplateView(**{k: t.get(k, "") for k in ("id", "title", "request", "desired_output")}) for t in m["templates"]],
+            templates=[TemplateView(**{k: t.get(k, "") for k in ("id", "title", "request", "desired_output", "style")},
+                                    review_rules=list(t.get("review_rules", []))) for t in m["templates"]],
+            group="everyday" if str(m["vertical"]).lower() == "general" else "domain",
+            autonomy=m.get("autonomy", "act_with_approval"), review_rules=list(m.get("review_rules", [])),
+            signer_key_id=v.signer_key_id, evaluation_cases=len(m.get("evaluation_cases", [])),
+            passed_models=[e.model_name for e in _evals(db_session, v.pack_id, v.version) if e.passed],
             data_classes=m["requires"]["data_classes"], route_kinds=m["requires"]["route_kinds"],
             requests_send_destinations=bool(m.get("requests", {}).get("send_destinations")),
             ready_on_current_route=ready, readiness_note=None if ready else f"Not available on the current model: {note}.",

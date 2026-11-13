@@ -20,7 +20,7 @@ Settings: Profile · Appearance · Models · Notifications · Memory · Accounts
 | Stage | Scope | Size |
 | --- | --- | --- |
 | U1 | Sidebar order and names; Plugins hidden unless sandboxed tasks are on; page titles follow the new names (done 2026-11-13) | Small |
-| U2 | Workflows page grouped Everyday then domains; a pack detail view (workflows, routes and data classes, models passed, autonomy, review rules, version and signer); a reason on every unavailable pack | Medium |
+| U2 | Workflows page grouped Everyday then domains; a pack detail view (workflows, routes and data classes, models passed, autonomy, review rules, version and signer); a reason on every unavailable pack (done 2026-11-13) | Medium |
 | U3 | Admin console regrouped into the eight tabs; Governance gathers its pages (done 2026-11-13) | Medium |
 | U4 | Admin Overview: failed runs, refusals, packs that lost readiness, audit chain status | Medium |
 | U5 | "Turn into task" from a chat answer; workflow chips in the composer with built-in fallbacks | Medium |

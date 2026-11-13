@@ -348,7 +348,34 @@ def test_a_task_keeps_the_rules_of_the_version_it_started_from(signer, person) -
         u = s.get(User, person)
         _install_active(s, key, key_id, "1.0.0", review_rules=[_rule("min_citations", 2)])
         old = packs.start_from_template(PACK_ID, "receipt-rules", user=u, db_session=s)
-        packs.install_pack(_package(key, key_id, _manifest("1.1.0", review_rules=[])), user=ADMIN, db_session=s)
+        plain = [{k: v for k, v in t.items() if k != "review_rules"} for t in SAMPLE["templates"]]
+        packs.install_pack(_package(key, key_id, _manifest("1.1.0", review_rules=[], templates=plain)), user=ADMIN, db_session=s)
         packs.activate(PACK_ID, "1.1.0", user=ADMIN, db_session=s)
         new = packs.start_from_template(PACK_ID, "receipt-rules", user=u, db_session=s)
         assert s.get(EvolvXSITask, old.id).review_rules and s.get(EvolvXSITask, new.id).review_rules is None
+
+
+def test_the_people_listing_says_what_a_pack_is_and_may_do(signer, person) -> None:  # type: ignore[no-untyped-def]
+    from evolvxsi.packs.evaluation import CaseResult
+
+    key, key_id = signer
+    templates = copy.deepcopy(SAMPLE["templates"])
+    templates[0]["style"] = "Short."
+    templates[0]["review_rules"] = [_rule("max_words", 100, "warn", "Keep it short.")]
+    cases = [{"question": "Days?", "expect": "30 days", "evidence": ["Due in 30 days."]}]
+    with get_session_with_current_tenant() as s:
+        u = s.get(User, person)
+        _install_active(s, key, key_id, "4.0.0", templates=templates, autonomy="draft_only", evaluation_cases=cases,
+                        review_rules=[_rule("min_citations", 1, "block", "Cite one source.")])
+        p = [x for x in packs.list_packs(_=u, db_session=s) if x.pack_id == PACK_ID][0]
+        assert (p.group, p.autonomy, p.signer_key_id, p.evaluation_cases) == ("domain", "draft_only", key_id, 1)
+        assert p.review_rules[0]["message"] == "Cite one source." and p.templates[0].style == "Short."
+        assert p.templates[0].review_rules[0]["kind"] == "max_words" and p.passed_models == [] and not p.ready_on_current_route
+        with patch("evolvxsi.packs.api.evaluate", return_value=[CaseResult("q", True, "passed")]):
+            packs.evaluate_version(PACK_ID, "4.0.0", user=ADMIN, db_session=s)
+        p = [x for x in packs.list_packs(_=u, db_session=s) if x.pack_id == PACK_ID][0]
+        assert len(p.passed_models) == 1 and p.ready_on_current_route
+
+        packs.install_pack(_package(key, key_id, _manifest("5.0.0", vertical="general", name="Everyday brief")), user=ADMIN, db_session=s)
+        packs.activate(PACK_ID, "5.0.0", user=ADMIN, db_session=s)
+        assert [x for x in packs.list_packs(_=u, db_session=s) if x.pack_id == PACK_ID][0].group == "everyday"
