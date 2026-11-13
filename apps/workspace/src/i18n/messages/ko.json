@@ -16854,26 +16854,32 @@
         }
       },
       "sections": {
-        "agentsAndActions": {
-          "label": "에이전트 및 액션"
+        "overview": {
+          "label": "Overview"
+        },
+        "governance": {
+          "label": "Governance"
+        },
+        "people": {
+          "label": "People"
+        },
+        "models": {
+          "label": "Models"
+        },
+        "packs": {
+          "label": "Packs"
+        },
+        "agentsAndTools": {
+          "label": "Agents & tools"
         },
         "craft": {
           "label": "Craft"
         },
-        "documentsAndKnowledge": {
-          "label": "문서 및 지식"
+        "knowledge": {
+          "label": "Knowledge"
         },
-        "integrations": {
-          "label": "연동"
-        },
-        "organization": {
-          "label": "조직"
-        },
-        "permissions": {
-          "label": "권한"
-        },
-        "usage": {
-          "label": "사용량"
+        "platform": {
+          "label": "Platform"
         }
       }
     },
@@ -16936,10 +16942,10 @@
         "label": "Automations"
       },
       "reviewedTasks": {
-        "label": "Reviewed tasks"
+        "label": "Tasks"
       },
       "packs": {
-        "label": "Packs"
+        "label": "Workflows"
       },
       "inbox": {
         "label": "Inbox"

@@ -70,13 +70,15 @@ export type AdminNavItemId =
  * `sidebar.adminNav.sections.<id>.label` message.
  */
 export type AdminNavSectionId =
+  | "overview"
+  | "governance"
+  | "people"
+  | "models"
+  | "packs"
+  | "agentsAndTools"
   | "craft"
-  | "agentsAndActions"
-  | "documentsAndKnowledge"
-  | "integrations"
-  | "permissions"
-  | "organization"
-  | "usage";
+  | "knowledge"
+  | "platform";
 
 /**
  * Sidebar id per admin route. `null` marks a route that never renders in the
@@ -188,13 +190,17 @@ const NAV_SECTION_IDS: readonly (readonly [
   section: string,
   id: AdminNavSectionId,
 ])[] = [
+  // Sidebar order: health, then the controls that make the product governed, then who, models, packs,
+  // agents and tools, knowledge, and the platform settings that are set once.
+  ["Overview", "overview"],
+  ["Governance", "governance"],
+  ["People", "people"],
+  ["Models", "models"],
+  ["Packs", "packs"],
+  ["Agents & tools", "agentsAndTools"],
   ["Craft", "craft"],
-  ["Agents & Actions", "agentsAndActions"],
-  ["Documents & Knowledge", "documentsAndKnowledge"],
-  ["Integrations", "integrations"],
-  ["Permissions", "permissions"],
-  ["Organization", "organization"],
-  ["Usage", "usage"],
+  ["Knowledge", "knowledge"],
+  ["Platform", "platform"],
 ];
 
 /** Sections whose heading shows a Beta tag. */
@@ -261,6 +267,13 @@ export function buildItems(
 
     items.push(item);
   }
+
+  // Order the sidebar by section (stable within a section); unlabeled entries go last.
+  const rank = (id: AdminNavSectionId | null) => {
+    const i = NAV_SECTION_IDS.findIndex(([, sid]) => sid === id);
+    return i === -1 ? NAV_SECTION_IDS.length : i;
+  };
+  items.sort((a, b) => rank(a.sectionId) - rank(b.sectionId));
 
   if (
     userCanAccess(Permission.FULL_ADMIN_PANEL_ACCESS) &&

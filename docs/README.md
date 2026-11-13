@@ -18,6 +18,7 @@ The document names and numbered areas follow the convention used by the Qvora do
 | 04 Specs | [EvolvXSI_North-Feature-Mapping.md](04-specs/EvolvXSI_North-Feature-Mapping.md) | Draft | Cohere North capabilities mapped to the PF catalog, with gaps and suggested sequence; secondary sources only. |
 | 05 Design | [EvolvXSI_UI-Spec.md](05-design/EvolvXSI_UI-Spec.md) | Draft | Screens, states, interactions, and accessibility details. |
 | 05 Design | [EvolvXSI_Design-System.md](05-design/EvolvXSI_Design-System.md) | Draft | Interaction rules and visual token categories; final brand pending. |
+| 05 Design | [EvolvXSI_UI-Plan.md](05-design/EvolvXSI_UI-Plan.md) | Plan | Tab names, order and the staged UI work (U1 to U6). |
 | 06 Technical | [EvolvXSI_System-Architecture.md](06-technical/EvolvXSI_System-Architecture.md) | Draft | Capability boundaries, contracts, execution flow, and risks. |
 | 06 Technical | [EvolvXSI_Tech-Stack.md](06-technical/EvolvXSI_Tech-Stack.md) | Current | Frameworks, services and versions in use, EvolvXSI-owned parts, and choices still open. |
 | 06 Technical | [EvolvXSI_Deployment-Architecture.md](06-technical/EvolvXSI_Deployment-Architecture.md) | Draft | Deployable services, persistence, queues, network boundaries and scaling. |

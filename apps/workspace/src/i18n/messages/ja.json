@@ -16854,26 +16854,32 @@
         }
       },
       "sections": {
-        "agentsAndActions": {
-          "label": "エージェントとアクション"
+        "overview": {
+          "label": "Overview"
+        },
+        "governance": {
+          "label": "Governance"
+        },
+        "people": {
+          "label": "People"
+        },
+        "models": {
+          "label": "Models"
+        },
+        "packs": {
+          "label": "Packs"
+        },
+        "agentsAndTools": {
+          "label": "Agents & tools"
         },
         "craft": {
           "label": "Craft"
         },
-        "documentsAndKnowledge": {
-          "label": "ドキュメントとナレッジ"
+        "knowledge": {
+          "label": "Knowledge"
         },
-        "integrations": {
-          "label": "連携"
-        },
-        "organization": {
-          "label": "組織"
-        },
-        "permissions": {
-          "label": "権限"
-        },
-        "usage": {
-          "label": "使用状況"
+        "platform": {
+          "label": "Platform"
         }
       }
     },
@@ -16936,10 +16942,10 @@
         "label": "Automations"
       },
       "reviewedTasks": {
-        "label": "Reviewed tasks"
+        "label": "Tasks"
       },
       "packs": {
-        "label": "Packs"
+        "label": "Workflows"
       },
       "inbox": {
         "label": "Inbox"

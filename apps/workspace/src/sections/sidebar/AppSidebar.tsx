@@ -668,12 +668,62 @@ export default function AppSidebar() {
             )}
           />
           <SidebarTab
+            icon={SvgListCheck}
+            {...navigation.linkTo("/app/reviewed-tasks", { scroll: false })}
+            selected={activeSidebarTab.isReviewedTasks()}
+          >
+            {t("appSidebar.reviewedTasks.label")}
+          </SidebarTab>
+          <SidebarTab
+            icon={SvgBell}
+            {...navigation.linkTo("/app/inbox", { scroll: false })}
+            selected={activeSidebarTab.isInbox()}
+            rightChildren={
+              inboxCount > 0 ? (
+                <span
+                  data-testid="inbox-badge"
+                  aria-label={`${inboxCount} in your inbox`}
+                  className="min-w-5 rounded-full bg-text-05 px-1.5 text-center text-xs font-semibold leading-5 text-background-neutral-00"
+                >
+                  {inboxCount > 99 ? "99+" : inboxCount}
+                </span>
+              ) : undefined
+            }
+          >
+            {t("appSidebar.inbox.label")}
+          </SidebarTab>
+          <SidebarTab
+            icon={SvgStackLine}
+            {...navigation.linkTo("/app/packs", { scroll: false })}
+            selected={activeSidebarTab.isPacks()}
+          >
+            {t("appSidebar.packs.label")}
+          </SidebarTab>
+          <SidebarTab
             icon={SvgFiles}
             {...navigation.linkTo("/app/libraries", { scroll: false })}
             selected={activeSidebarTab.isLibraries()}
           >
             {t("appSidebar.libraries.label")}
           </SidebarTab>
+          <SidebarTab
+            icon={SvgClock}
+            {...navigation.linkTo("/app/automations", { scroll: false })}
+            selected={activeSidebarTab.isAutomations()}
+          >
+            {t("appSidebar.automations.label")}
+          </SidebarTab>
+          {isEvolvXSICraftEnabled && (
+            <>
+              <SidebarTab
+                icon={SvgPlug}
+                {...navigation.linkTo("/app/plugins", { scroll: false })}
+                selected={activeSidebarTab.isPlugins()}
+              >
+                {t("appSidebar.plugins.label")}
+              </SidebarTab>
+            </>
+          )}
           {(isEvolvXSICraftEnabled || isEvolvXSICraftUpsell) && (
             <div data-testid="AppSidebar/build">
               <Disabled
@@ -719,52 +769,6 @@ export default function AppSidebar() {
               </Disabled>
             </div>
           )}
-          <SidebarTab
-            icon={SvgStackLine}
-            {...navigation.linkTo("/app/packs", { scroll: false })}
-            selected={activeSidebarTab.isPacks()}
-          >
-            {t("appSidebar.packs.label")}
-          </SidebarTab>
-          <SidebarTab
-            icon={SvgListCheck}
-            {...navigation.linkTo("/app/reviewed-tasks", { scroll: false })}
-            selected={activeSidebarTab.isReviewedTasks()}
-          >
-            {t("appSidebar.reviewedTasks.label")}
-          </SidebarTab>
-          <SidebarTab
-            icon={SvgClock}
-            {...navigation.linkTo("/app/automations", { scroll: false })}
-            selected={activeSidebarTab.isAutomations()}
-          >
-            {t("appSidebar.automations.label")}
-          </SidebarTab>
-          <SidebarTab
-            icon={SvgPlug}
-            {...navigation.linkTo("/app/plugins", { scroll: false })}
-            selected={activeSidebarTab.isPlugins()}
-          >
-            {t("appSidebar.plugins.label")}
-          </SidebarTab>
-          <SidebarTab
-            icon={SvgBell}
-            {...navigation.linkTo("/app/inbox", { scroll: false })}
-            selected={activeSidebarTab.isInbox()}
-            rightChildren={
-              inboxCount > 0 ? (
-                <span
-                  data-testid="inbox-badge"
-                  aria-label={`${inboxCount} in your inbox`}
-                  className="min-w-5 rounded-full bg-text-05 px-1.5 text-center text-xs font-semibold leading-5 text-background-neutral-00"
-                >
-                  {inboxCount > 99 ? "99+" : inboxCount}
-                </span>
-              ) : undefined
-            }
-          >
-            {t("appSidebar.inbox.label")}
-          </SidebarTab>
           {/* Folded, the body's sections collapse into the header, in the
               unfolded order: Agents, then Projects. */}
           {folded && moreAgentsButton}

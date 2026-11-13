@@ -16854,26 +16854,32 @@
         }
       },
       "sections": {
-        "agentsAndActions": {
-          "label": "Agentes y acciones"
+        "overview": {
+          "label": "Overview"
+        },
+        "governance": {
+          "label": "Governance"
+        },
+        "people": {
+          "label": "People"
+        },
+        "models": {
+          "label": "Models"
+        },
+        "packs": {
+          "label": "Packs"
+        },
+        "agentsAndTools": {
+          "label": "Agents & tools"
         },
         "craft": {
           "label": "Craft"
         },
-        "documentsAndKnowledge": {
-          "label": "Documentos y conocimiento"
+        "knowledge": {
+          "label": "Knowledge"
         },
-        "integrations": {
-          "label": "Integraciones"
-        },
-        "organization": {
-          "label": "Organización"
-        },
-        "permissions": {
-          "label": "Permisos"
-        },
-        "usage": {
-          "label": "Uso"
+        "platform": {
+          "label": "Platform"
         }
       }
     },
@@ -16936,10 +16942,10 @@
         "label": "Automations"
       },
       "reviewedTasks": {
-        "label": "Reviewed tasks"
+        "label": "Tasks"
       },
       "packs": {
-        "label": "Packs"
+        "label": "Workflows"
       },
       "inbox": {
         "label": "Inbox"
