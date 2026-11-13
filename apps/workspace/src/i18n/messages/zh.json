@@ -16869,6 +16869,9 @@
         },
         "studio": {
           "label": "工作室"
+        },
+        "approvals": {
+          "label": "审批"
         }
       },
       "sections": {
@@ -16884,9 +16887,6 @@
         "models": {
           "label": "模型"
         },
-        "packs": {
-          "label": "包"
-        },
         "agentsAndTools": {
           "label": "智能体与工具"
         },
@@ -16901,6 +16901,9 @@
         },
         "quality": {
           "label": "质量"
+        },
+        "approvals": {
+          "label": "审批"
         }
       }
     },

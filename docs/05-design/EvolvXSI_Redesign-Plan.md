@@ -36,7 +36,7 @@ The group keeps the owner's name **Sources**, although Skills and Plugins are no
 | 8 | **Quality** | Evaluations per model, drafts accepted or rejected, review-rule hits, scheduled-run cost. |
 | 9 | **Platform** | Workspace name and brand, API keys, version, release manifest, SBOM, backup status. |
 
-Hidden for the pilot: Discord bot, SCIM, Hooks, Billing and other inherited screens without a pilot use.
+Hidden for the pilot (R2): Discord bot, SCIM, Hooks, Billing and the "Upgrade plan" entry. They are left out of the sidebar only; their addresses still work. Moving tokens and cost from Route policy to Models is left for a later stage.
 
 ## Addresses
 
@@ -55,8 +55,8 @@ The old addresses redirect (HTTP 307, set in `next.config.js`) because home card
 | Stage | Work | Size | State |
 |---|---|---|---|
 | R1 | Sidebar order and names, Workflows and Sources tabs, Knowledge rename, redirects, read-only Skills, Connectors and Plugins | Small | Done |
-| R2 | Admin console regroup, merged Approvals queue, hide inherited screens | Small to medium | Next |
-| R3 | Workflows Start cleanup ("Run by" card), Agent tab for chat assistants only | Medium | |
+| R2 | Admin console regroup, merged Approvals queue, hide inherited screens | Small to medium | Done |
+| R3 | Workflows Start cleanup ("Run by" card), Agent tab for chat assistants only | Medium | Next |
 | R4 | Request buttons on Sources (skill, connector, plugin), landing in Approvals | Medium | |
 | R5 | Inbox filters | Small | |
 | R6 | Scheduled workflows: scheduler, stop at the plan, auto-pause, cost on Quality | Medium | |

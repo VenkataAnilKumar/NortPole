@@ -16869,6 +16869,9 @@
         },
         "studio": {
           "label": "الاستوديو"
+        },
+        "approvals": {
+          "label": "الموافقات"
         }
       },
       "sections": {
@@ -16884,9 +16887,6 @@
         "models": {
           "label": "النماذج"
         },
-        "packs": {
-          "label": "الحزم"
-        },
         "agentsAndTools": {
           "label": "الوكلاء والأدوات"
         },
@@ -16901,6 +16901,9 @@
         },
         "quality": {
           "label": "الجودة"
+        },
+        "approvals": {
+          "label": "الموافقات"
         }
       }
     },
