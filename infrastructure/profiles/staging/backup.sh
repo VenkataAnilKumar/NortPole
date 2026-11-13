@@ -4,11 +4,14 @@
 # uploaded files, cache); Redis is rebuilt on start. With the retrieval overlay the search index is NOT backed up:
 # it is rebuilt by re-indexing, so it is not listed as protected.
 #   ./backup.sh [output-folder]        default: ./backups
+#   KEEP=14 ./backup.sh ...            after writing, delete all but the newest 14 dumps (and their manifests) in the folder
 # Run from this folder with the same -f files and environment you start the stack with (COMPOSE_FILE may be set).
 set -euo pipefail
 cd "$(dirname "$0")"
 out="${1:-./backups}"
 stamp="$(date -u +%Y%m%dT%H%M%SZ)"
+# Check KEEP before doing any work.
+case "${KEEP:-1}" in (*[!0-9]*|0) echo "KEEP must be a whole number of at least 1" >&2; exit 1;; esac
 mkdir -p "$out"
 umask 077
 dump="$out/evolvxsi-$stamp.dump"
@@ -31,4 +34,10 @@ MANIFEST
 sed -i "s/__SUM__/$sum/" "$dump.manifest"
 echo "wrote $dump ($size bytes)"
 echo "wrote $dump.manifest"
+if [ -n "${KEEP:-}" ]; then
+  # Newest first; everything after the first KEEP entries goes. Only files this script names are touched.
+  ls -1t "$out"/evolvxsi-*.dump 2>/dev/null | tail -n +"$((KEEP + 1))" | while read -r old; do
+    rm -f -- "$old" "$old.manifest" && echo "removed old backup $(basename "$old")"
+  done
+fi
 echo "Copy both files off this machine; a backup that lives only on the machine it protects is not a backup."
