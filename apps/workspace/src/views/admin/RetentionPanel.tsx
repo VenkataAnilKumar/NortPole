@@ -43,6 +43,7 @@ export default function RetentionPanel() {
   const [reason, setReason] = useState("");
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [busy, setBusy] = useState(false);
+  const [savedHead, setSavedHead] = useState("");
   if (!data) return null;
 
   const run = async (fn: () => Promise<string>) => {
@@ -128,11 +129,43 @@ export default function RetentionPanel() {
         >
           Check audit integrity
         </button>
+        <button
+          type="button"
+          className={secondary}
+          disabled={busy}
+          onClick={() => run(async () => {
+            const h = await call("/api/admin/audit/head", "GET");
+            if (!h.reference) return "The log has no hashed events yet.";
+            return `Latest head: ${h.reference} (${h.hashed_rows} events). Save this line somewhere outside this machine, such as another system or a ticket.`;
+          })}
+        >
+          Show the latest head to save
+        </button>
         <a className={`${secondary} inline-flex items-center`} href="/api/admin/audit/export?format=csv" download>Download audit log (CSV)</a>
         <a className={`${secondary} inline-flex items-center`} href="/api/admin/audit/export?format=json" download>Download audit log (JSON)</a>
       </div>
+      <div className="mt-3 flex flex-wrap items-end gap-2">
+        <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm text-text-04">
+          Compare with a head saved earlier
+          <input className={input} value={savedHead} onChange={(e) => setSavedHead(e.target.value)} placeholder="4526:0b066d53… (id:hash)" spellCheck={false} />
+        </label>
+        <button
+          type="button"
+          className={secondary}
+          disabled={busy || !savedHead.trim()}
+          onClick={() => run(async () => {
+            const r = await call(`/api/admin/audit/verify?anchor=${encodeURIComponent(savedHead.trim())}`, "GET");
+            const a = r.anchor_check;
+            if (!r.ok) throw new Error(`The audit chain is broken at event ${r.first_break?.id}: ${r.first_break?.reason}.`);
+            if (a?.ok === false) throw new Error(`The chain is intact, but the saved head does not match: ${a.message}`);
+            return a?.ok === true ? `The chain is intact and the saved head matches. ${a.message}` : `The chain is intact. ${a?.message ?? ""}`;
+          })}
+        >
+          Compare
+        </button>
+      </div>
       <p className="mt-2 text-xs text-text-03">
-        The prune also runs daily when the background workers are running. Exports hold up to 50,000 events (with their hashes) and are themselves recorded in the audit log. The integrity check finds an edited event or one removed from the middle; it cannot see the newest events being removed unless the latest hash was kept elsewhere (each event's log line carries it).
+        The prune also runs daily when the background workers are running. Exports hold up to 50,000 events (with their hashes) and are themselves recorded in the audit log. The integrity check finds an edited event or one removed from the middle; it cannot see the newest events being removed unless the latest head was kept elsewhere: save it with the button above (or the snapshot script) and compare later.
         {data.last_prune_summary ? ` Last prune: ${data.last_prune_summary}.` : ""}
       </p>
       {msg && <p role={msg.ok ? "status" : "alert"} className={`mt-2 text-sm ${msg.ok ? "text-text-05" : "text-status-text-error-05"}`} data-testid="retention-message">{msg.text}</p>}
