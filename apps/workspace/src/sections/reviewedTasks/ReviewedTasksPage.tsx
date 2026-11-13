@@ -109,7 +109,7 @@ function DraftForm({
         <input className={`${input} min-h-11`} value={title} maxLength={200} onChange={(e) => setTitle(e.target.value)} />
       </label>
       <label className="flex flex-col gap-1 text-sm font-medium text-text-05">
-        What should the task do?
+        What should this draft do?
         <textarea className={input} rows={4} value={request} maxLength={8000} onChange={(e) => setRequest(e.target.value)} />
       </label>
       <label className="flex flex-col gap-1 text-sm font-medium text-text-05">
@@ -486,7 +486,7 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
           )}
           {(task.state === "draft" || task.state === "plan_review" || task.state === "plan_failed" || task.state === "plan_accepted" || task.state === "run_failed" || task.state === "draft_ready") && (
             <button type="button" className={`${secondary} ml-auto`} disabled={!!busy} onClick={() => act("cancel", "/cancel", { version: task.version })}>
-              Cancel task
+              Cancel draft
             </button>
           )}
         </div>

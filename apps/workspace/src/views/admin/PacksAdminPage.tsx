@@ -72,7 +72,7 @@ export default function PacksAdminPage() {
       <header className="flex flex-col gap-1">
         <h1 className="text-2xl font-semibold text-text-05">Packs</h1>
         <p className="text-sm text-text-03">
-          Install signed packs and choose the active version. Activating an older version is a rollback; tasks already
+          Install signed packs and choose the active version. Activating an older version is a rollback; drafts already
           started keep the version they began with.
         </p>
       </header>

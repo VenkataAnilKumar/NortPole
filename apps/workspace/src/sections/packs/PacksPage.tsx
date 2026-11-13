@@ -101,7 +101,7 @@ function Details({ p }: { p: Pack }) {
       <div>
         <dt className="font-semibold text-text-05">Version and signer</dt>
         <dd>
-          Version {p.version}, signed by {p.signer_key_id || "a trusted signer"}. A task keeps the version it started from.
+          Version {p.version}, signed by {p.signer_key_id || "a trusted signer"}. A draft keeps the version it started from.
         </dd>
       </div>
       {((p.review_rules ?? []).length > 0 || templateRules.length > 0) && (
@@ -166,7 +166,7 @@ export default function PacksPage() {
       <header className="flex flex-col gap-1">
         <h1 className="font-[family-name:var(--font-serif)] text-3xl font-medium text-text-05">Workflows</h1>
         <p className="text-sm text-text-03">
-          Ready-made tasks, grouped in packs. Choosing one creates a task draft for you to edit; nothing runs until
+          Ready-made workflows, grouped in packs. Choosing one creates a draft for you to edit; nothing runs until
           you press Start.
         </p>
       </header>
