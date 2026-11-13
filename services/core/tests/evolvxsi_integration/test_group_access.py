@@ -148,7 +148,7 @@ def world():  # type: ignore[no-untyped-def]
         s.query(Connector).filter(Connector.id.in_(ids["connectors"])).delete()
         s.query(UserGroup).filter(UserGroup.id.in_(ids["groups"])).delete()
         s.query(User).filter(User.id.in_([ids[k] for k in ("member", "outsider", "manager", "syncmember")])).delete()
-        s.execute(__import__("sqlalchemy").text("delete from evolvxsi_audit_event where actor_email = :e"), {"e": f"admin-{RUN}@example.com"})
+        s.execute(__import__("sqlalchemy").text("delete from evolvxsi_audit_event where actor_email = :e and row_hash is null"), {"e": f"admin-{RUN}@example.com"})
         s.commit()
 
 

@@ -16832,57 +16832,57 @@
           "label": "支出上限"
         },
         "routePolicy": {
-          "label": "Route Policy"
+          "label": "ルーティングポリシー"
         },
         "accessGroups": {
-          "label": "Access groups"
+          "label": "アクセスグループ"
         },
         "actionTargets": {
-          "label": "Send destinations"
+          "label": "送信先"
         },
         "auditLog": {
-          "label": "Audit log"
+          "label": "監査ログ"
         },
         "packsAdmin": {
-          "label": "Packs"
+          "label": "パック"
         },
         "inventory": {
-          "label": "Inventory"
+          "label": "インベントリ"
         },
         "governance": {
-          "label": "Governance"
+          "label": "ガバナンス"
         },
         "overview": {
-          "label": "Overview"
+          "label": "概要"
         }
       },
       "sections": {
         "overview": {
-          "label": "Overview"
+          "label": "概要"
         },
         "governance": {
-          "label": "Governance"
+          "label": "ガバナンス"
         },
         "people": {
-          "label": "People"
+          "label": "ユーザー"
         },
         "models": {
-          "label": "Models"
+          "label": "モデル"
         },
         "packs": {
-          "label": "Packs"
+          "label": "パック"
         },
         "agentsAndTools": {
-          "label": "Agents & tools"
+          "label": "エージェントとツール"
         },
         "craft": {
           "label": "Craft"
         },
         "knowledge": {
-          "label": "Knowledge"
+          "label": "ナレッジ"
         },
         "platform": {
-          "label": "Platform"
+          "label": "プラットフォーム"
         }
       }
     },
@@ -16921,7 +16921,7 @@
         "tooltip": "新しいプロジェクト"
       },
       "newSession": {
-        "label": "新しいセッション"
+        "label": "新規"
       },
       "projects": {
         "title": "プロジェクト"
@@ -16930,7 +16930,7 @@
         "empty": {
           "text": "メッセージを送信してみましょう。チャット履歴がここに表示されます。"
         },
-        "title": "最近の項目"
+        "title": "チャット"
       },
       "searchChats": {
         "label": "チャットを検索"
@@ -16939,19 +16939,19 @@
         "label": "プラグイン"
       },
       "libraries": {
-        "label": "Libraries"
+        "label": "ライブラリ"
       },
       "automations": {
-        "label": "Automations"
+        "label": "自動化"
       },
       "reviewedTasks": {
-        "label": "Tasks"
+        "label": "タスク"
       },
       "packs": {
-        "label": "Workflows"
+        "label": "ワークフロー"
       },
       "inbox": {
-        "label": "Inbox"
+        "label": "受信トレイ"
       }
     },
     "chatButton": {

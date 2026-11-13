@@ -59,7 +59,7 @@ def signer():  # type: ignore[no-untyped-def]
         s.query(EvolvXSITask).filter_by(pack_id=PACK_ID).delete()
         s.query(EvolvXSIPackVersion).filter_by(pack_id=PACK_ID).delete()
         s.query(EvolvXSIPackSigner).filter_by(key_id=key_id).delete()
-        s.execute(text("delete from evolvxsi_audit_event where actor_email = :e"), {"e": ADMIN.email})
+        s.execute(text("delete from evolvxsi_audit_event where actor_email = :e and row_hash is null"), {"e": ADMIN.email})
         s.commit()
 
 

@@ -63,7 +63,7 @@ def session():  # type: ignore[no-untyped-def]
     yield s
     with get_session_with_current_tenant() as db:
         db.execute(text('delete from evolvxsi_task where owner_id in (select id from "user" where email = :e)'), {"e": EMAIL})
-        db.execute(text("delete from evolvxsi_audit_event where actor_email = :e"), {"e": EMAIL})
+        db.execute(text("delete from evolvxsi_audit_event where actor_email = :e and row_hash is null"), {"e": EMAIL})
         # Registration adds the user to the built-in group; remove the link first.
         db.execute(text('delete from user__user_group where user_id in (select id from "user" where email = :e)'), {"e": EMAIL})
         db.execute(text('delete from "user" where email = :e'), {"e": EMAIL})

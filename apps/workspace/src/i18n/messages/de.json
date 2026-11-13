@@ -16832,57 +16832,57 @@
           "label": "Ausgabenlimits"
         },
         "routePolicy": {
-          "label": "Route Policy"
+          "label": "Routing-Richtlinie"
         },
         "accessGroups": {
-          "label": "Access groups"
+          "label": "Zugriffsgruppen"
         },
         "actionTargets": {
-          "label": "Send destinations"
+          "label": "Versandziele"
         },
         "auditLog": {
-          "label": "Audit log"
+          "label": "Audit-Protokoll"
         },
         "packsAdmin": {
-          "label": "Packs"
+          "label": "Pakete"
         },
         "inventory": {
-          "label": "Inventory"
+          "label": "Bestand"
         },
         "governance": {
           "label": "Governance"
         },
         "overview": {
-          "label": "Overview"
+          "label": "Übersicht"
         }
       },
       "sections": {
         "overview": {
-          "label": "Overview"
+          "label": "Übersicht"
         },
         "governance": {
           "label": "Governance"
         },
         "people": {
-          "label": "People"
+          "label": "Personen"
         },
         "models": {
-          "label": "Models"
+          "label": "Modelle"
         },
         "packs": {
-          "label": "Packs"
+          "label": "Pakete"
         },
         "agentsAndTools": {
-          "label": "Agents & tools"
+          "label": "Agenten & Tools"
         },
         "craft": {
           "label": "Craft"
         },
         "knowledge": {
-          "label": "Knowledge"
+          "label": "Wissen"
         },
         "platform": {
-          "label": "Platform"
+          "label": "Plattform"
         }
       }
     },
@@ -16921,7 +16921,7 @@
         "tooltip": "Neues Projekt"
       },
       "newSession": {
-        "label": "Neue Sitzung"
+        "label": "Neu"
       },
       "projects": {
         "title": "Projekte"
@@ -16930,7 +16930,7 @@
         "empty": {
           "text": "Senden Sie eine Nachricht! Ihr Chat-Verlauf erscheint hier."
         },
-        "title": "Zuletzt verwendet"
+        "title": "Chats"
       },
       "searchChats": {
         "label": "Chats durchsuchen"
@@ -16939,19 +16939,19 @@
         "label": "Plugins"
       },
       "libraries": {
-        "label": "Libraries"
+        "label": "Bibliotheken"
       },
       "automations": {
-        "label": "Automations"
+        "label": "Automatisierungen"
       },
       "reviewedTasks": {
-        "label": "Tasks"
+        "label": "Aufgaben"
       },
       "packs": {
         "label": "Workflows"
       },
       "inbox": {
-        "label": "Inbox"
+        "label": "Posteingang"
       }
     },
     "chatButton": {

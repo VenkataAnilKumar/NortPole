@@ -135,6 +135,6 @@ def verify_chain(
 ) -> dict:
     """Check the audit hash chain. Detects an edited row or one removed from the middle; it cannot detect
     removal of the newest rows unless the head hash was kept elsewhere (every event's log line carries it)."""
-    from evolvxsi.audit_log.chain import verify
+    from evolvxsi.audit_log.chain import verify_full
 
-    return verify(db_session)
+    return verify_full(db_session)

@@ -16832,57 +16832,57 @@
           "label": "Limites de dépenses"
         },
         "routePolicy": {
-          "label": "Route Policy"
+          "label": "Politique de routage"
         },
         "accessGroups": {
-          "label": "Access groups"
+          "label": "Groupes d'accès"
         },
         "actionTargets": {
-          "label": "Send destinations"
+          "label": "Destinations d'envoi"
         },
         "auditLog": {
-          "label": "Audit log"
+          "label": "Journal d'audit"
         },
         "packsAdmin": {
           "label": "Packs"
         },
         "inventory": {
-          "label": "Inventory"
+          "label": "Inventaire"
         },
         "governance": {
-          "label": "Governance"
+          "label": "Gouvernance"
         },
         "overview": {
-          "label": "Overview"
+          "label": "Vue d'ensemble"
         }
       },
       "sections": {
         "overview": {
-          "label": "Overview"
+          "label": "Vue d'ensemble"
         },
         "governance": {
-          "label": "Governance"
+          "label": "Gouvernance"
         },
         "people": {
-          "label": "People"
+          "label": "Personnes"
         },
         "models": {
-          "label": "Models"
+          "label": "Modèles"
         },
         "packs": {
           "label": "Packs"
         },
         "agentsAndTools": {
-          "label": "Agents & tools"
+          "label": "Agents et outils"
         },
         "craft": {
           "label": "Craft"
         },
         "knowledge": {
-          "label": "Knowledge"
+          "label": "Connaissances"
         },
         "platform": {
-          "label": "Platform"
+          "label": "Plateforme"
         }
       }
     },
@@ -16921,7 +16921,7 @@
         "tooltip": "Nouveau projet"
       },
       "newSession": {
-        "label": "Nouvelle session"
+        "label": "Nouveau"
       },
       "projects": {
         "title": "Projets"
@@ -16930,7 +16930,7 @@
         "empty": {
           "text": "Essayez d'envoyer un message ! Votre historique de discussions apparaîtra ici."
         },
-        "title": "Récents"
+        "title": "Discussions"
       },
       "searchChats": {
         "label": "Rechercher des discussions"
@@ -16939,19 +16939,19 @@
         "label": "Extensions"
       },
       "libraries": {
-        "label": "Libraries"
+        "label": "Bibliothèques"
       },
       "automations": {
-        "label": "Automations"
+        "label": "Automatisations"
       },
       "reviewedTasks": {
-        "label": "Tasks"
+        "label": "Tâches"
       },
       "packs": {
         "label": "Workflows"
       },
       "inbox": {
-        "label": "Inbox"
+        "label": "Boîte de réception"
       }
     },
     "chatButton": {

@@ -16832,57 +16832,57 @@
           "label": "Límites de gasto"
         },
         "routePolicy": {
-          "label": "Route Policy"
+          "label": "Política de rutas"
         },
         "accessGroups": {
-          "label": "Access groups"
+          "label": "Grupos de acceso"
         },
         "actionTargets": {
-          "label": "Send destinations"
+          "label": "Destinos de envío"
         },
         "auditLog": {
-          "label": "Audit log"
+          "label": "Registro de auditoría"
         },
         "packsAdmin": {
-          "label": "Packs"
+          "label": "Paquetes"
         },
         "inventory": {
-          "label": "Inventory"
+          "label": "Inventario"
         },
         "governance": {
-          "label": "Governance"
+          "label": "Gobernanza"
         },
         "overview": {
-          "label": "Overview"
+          "label": "Resumen"
         }
       },
       "sections": {
         "overview": {
-          "label": "Overview"
+          "label": "Resumen"
         },
         "governance": {
-          "label": "Governance"
+          "label": "Gobernanza"
         },
         "people": {
-          "label": "People"
+          "label": "Personas"
         },
         "models": {
-          "label": "Models"
+          "label": "Modelos"
         },
         "packs": {
-          "label": "Packs"
+          "label": "Paquetes"
         },
         "agentsAndTools": {
-          "label": "Agents & tools"
+          "label": "Agentes y herramientas"
         },
         "craft": {
           "label": "Craft"
         },
         "knowledge": {
-          "label": "Knowledge"
+          "label": "Conocimiento"
         },
         "platform": {
-          "label": "Platform"
+          "label": "Plataforma"
         }
       }
     },
@@ -16921,7 +16921,7 @@
         "tooltip": "Nuevo proyecto"
       },
       "newSession": {
-        "label": "Nueva sesión"
+        "label": "Nuevo"
       },
       "projects": {
         "title": "Proyectos"
@@ -16930,7 +16930,7 @@
         "empty": {
           "text": "¡Prueba a enviar un mensaje! Tu historial de chats aparecerá aquí."
         },
-        "title": "Recientes"
+        "title": "Chats"
       },
       "searchChats": {
         "label": "Buscar chats"
@@ -16939,19 +16939,19 @@
         "label": "Complementos"
       },
       "libraries": {
-        "label": "Libraries"
+        "label": "Bibliotecas"
       },
       "automations": {
-        "label": "Automations"
+        "label": "Automatizaciones"
       },
       "reviewedTasks": {
-        "label": "Tasks"
+        "label": "Tareas"
       },
       "packs": {
-        "label": "Workflows"
+        "label": "Flujos de trabajo"
       },
       "inbox": {
-        "label": "Inbox"
+        "label": "Bandeja de entrada"
       }
     },
     "chatButton": {

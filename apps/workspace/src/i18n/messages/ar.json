@@ -16832,57 +16832,57 @@
           "label": "حدود الإنفاق"
         },
         "routePolicy": {
-          "label": "Route Policy"
+          "label": "سياسة التوجيه"
         },
         "accessGroups": {
-          "label": "Access groups"
+          "label": "مجموعات الوصول"
         },
         "actionTargets": {
-          "label": "Send destinations"
+          "label": "وجهات الإرسال"
         },
         "auditLog": {
-          "label": "Audit log"
+          "label": "سجل التدقيق"
         },
         "packsAdmin": {
-          "label": "Packs"
+          "label": "الحزم"
         },
         "inventory": {
-          "label": "Inventory"
+          "label": "الجرد"
         },
         "governance": {
-          "label": "Governance"
+          "label": "الحوكمة"
         },
         "overview": {
-          "label": "Overview"
+          "label": "نظرة عامة"
         }
       },
       "sections": {
         "overview": {
-          "label": "Overview"
+          "label": "نظرة عامة"
         },
         "governance": {
-          "label": "Governance"
+          "label": "الحوكمة"
         },
         "people": {
-          "label": "People"
+          "label": "الأشخاص"
         },
         "models": {
-          "label": "Models"
+          "label": "النماذج"
         },
         "packs": {
-          "label": "Packs"
+          "label": "الحزم"
         },
         "agentsAndTools": {
-          "label": "Agents & tools"
+          "label": "الوكلاء والأدوات"
         },
         "craft": {
           "label": "Craft"
         },
         "knowledge": {
-          "label": "Knowledge"
+          "label": "المعرفة"
         },
         "platform": {
-          "label": "Platform"
+          "label": "المنصة"
         }
       }
     },
@@ -16921,7 +16921,7 @@
         "tooltip": "مشروع جديد"
       },
       "newSession": {
-        "label": "جلسة جديدة"
+        "label": "جديد"
       },
       "projects": {
         "title": "المشاريع"
@@ -16930,7 +16930,7 @@
         "empty": {
           "text": "جرب إرسال رسالة! سيظهر سجل محادثاتك هنا."
         },
-        "title": "الأحدث"
+        "title": "المحادثات"
       },
       "searchChats": {
         "label": "البحث في المحادثات"
@@ -16939,19 +16939,19 @@
         "label": "الإضافات"
       },
       "libraries": {
-        "label": "Libraries"
+        "label": "المكتبات"
       },
       "automations": {
-        "label": "Automations"
+        "label": "الأتمتة"
       },
       "reviewedTasks": {
-        "label": "Tasks"
+        "label": "المهام"
       },
       "packs": {
-        "label": "Workflows"
+        "label": "سير العمل"
       },
       "inbox": {
-        "label": "Inbox"
+        "label": "البريد الوارد"
       }
     },
     "chatButton": {

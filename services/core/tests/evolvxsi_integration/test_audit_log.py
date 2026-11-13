@@ -26,7 +26,7 @@ def rows():  # type: ignore[no-untyped-def]
         s.commit()
     yield
     with get_session_with_current_tenant() as s:
-        s.execute(text("delete from evolvxsi_audit_event where actor_email in (:a, :b)"), {"a": ACTOR_A, "b": ACTOR_B})
+        s.execute(text("delete from evolvxsi_audit_event where actor_email in (:a, :b) and row_hash is null"), {"a": ACTOR_A, "b": ACTOR_B})
         s.commit()
 
 

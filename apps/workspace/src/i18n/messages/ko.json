@@ -16832,57 +16832,57 @@
           "label": "지출 한도"
         },
         "routePolicy": {
-          "label": "Route Policy"
+          "label": "라우팅 정책"
         },
         "accessGroups": {
-          "label": "Access groups"
+          "label": "액세스 그룹"
         },
         "actionTargets": {
-          "label": "Send destinations"
+          "label": "전송 대상"
         },
         "auditLog": {
-          "label": "Audit log"
+          "label": "감사 로그"
         },
         "packsAdmin": {
-          "label": "Packs"
+          "label": "팩"
         },
         "inventory": {
-          "label": "Inventory"
+          "label": "인벤토리"
         },
         "governance": {
-          "label": "Governance"
+          "label": "거버넌스"
         },
         "overview": {
-          "label": "Overview"
+          "label": "개요"
         }
       },
       "sections": {
         "overview": {
-          "label": "Overview"
+          "label": "개요"
         },
         "governance": {
-          "label": "Governance"
+          "label": "거버넌스"
         },
         "people": {
-          "label": "People"
+          "label": "사용자"
         },
         "models": {
-          "label": "Models"
+          "label": "모델"
         },
         "packs": {
-          "label": "Packs"
+          "label": "팩"
         },
         "agentsAndTools": {
-          "label": "Agents & tools"
+          "label": "에이전트 및 도구"
         },
         "craft": {
           "label": "Craft"
         },
         "knowledge": {
-          "label": "Knowledge"
+          "label": "지식"
         },
         "platform": {
-          "label": "Platform"
+          "label": "플랫폼"
         }
       }
     },
@@ -16921,7 +16921,7 @@
         "tooltip": "새 프로젝트"
       },
       "newSession": {
-        "label": "새 세션"
+        "label": "새로 만들기"
       },
       "projects": {
         "title": "프로젝트"
@@ -16930,7 +16930,7 @@
         "empty": {
           "text": "메시지를 보내 보세요! 채팅 기록이 여기에 표시됩니다."
         },
-        "title": "최근 항목"
+        "title": "채팅"
       },
       "searchChats": {
         "label": "채팅 검색"
@@ -16939,19 +16939,19 @@
         "label": "플러그인"
       },
       "libraries": {
-        "label": "Libraries"
+        "label": "라이브러리"
       },
       "automations": {
-        "label": "Automations"
+        "label": "자동화"
       },
       "reviewedTasks": {
-        "label": "Tasks"
+        "label": "작업"
       },
       "packs": {
-        "label": "Workflows"
+        "label": "워크플로"
       },
       "inbox": {
-        "label": "Inbox"
+        "label": "받은편지함"
       }
     },
     "chatButton": {

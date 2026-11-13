@@ -127,7 +127,7 @@ const card = "rounded-2xl border border-border-01 bg-background-neutral-00 p-5 s
 const secondary = "min-h-11 rounded-xl border border-border-02 px-4 text-sm font-semibold text-text-05 disabled:opacity-50";
 
 /**
- * Packs: bundles of task templates for one line of work. Picking a template
+ * Workflows page: packs of ready-made tasks (Everyday, then each domain). Picking one
  * makes a draft task you can edit; nothing runs until you press Start, and the
  * pack only runs on the model routes and data classes it lists.
  */
@@ -175,7 +175,7 @@ export default function PacksPage() {
       {isLoading ? (
         <p className="text-sm text-text-03">Loading…</p>
       ) : error ? (
-        <p role="alert" className="text-sm text-text-05">Packs could not be loaded.</p>
+        <p role="alert" className="text-sm text-text-05">Workflows could not be loaded.</p>
       ) : packs.length === 0 ? (
         <section className={card}>
           <h2 className="mb-1 text-base font-semibold text-text-05">No packs are active</h2>

@@ -83,3 +83,32 @@ def test_concurrent_writers_do_not_fork_the_chain() -> None:
         prevs = [r.prev_hash for r in rows]
         assert len(set(prevs)) == len(prevs), "no two events share a predecessor"
         assert _fresh_verify(s)["ok"]
+
+
+def test_the_quick_check_does_a_full_one_first_then_only_new_events_and_catches_a_changed_checkpoint() -> None:
+    from evolvxsi.audit_log import chain
+
+    saved = chain._load_checkpoint()
+    try:
+        _write(2)
+        with get_session_with_current_tenant() as s:
+            chain._save_checkpoint({"at": "2000-01-01T00:00:00+00:00", "ok": True, "checked": 0, "first_break": None, "last_id": 0, "last_hash": None})
+            first = chain.verify_quick(s)
+            assert first["mode"] == "full", "an old checkpoint forces a full check"
+        _write(2)
+        with get_session_with_current_tenant() as s:
+            s.expire_all()
+            second = chain.verify_quick(s)
+            assert second["mode"] == "since the last full check" and second["checked"] == first["checked"] + 2 or not first["ok"]
+            cp = chain._load_checkpoint()
+            row = s.get(EvolvXSIAuditEvent, cp["last_id"])
+            original = row.summary
+            s.execute(text("update evolvxsi_audit_event set summary='changed' where id=:i"), {"i": row.id}); s.commit()
+            try:
+                s.expire_all()
+                assert chain.verify_quick(s)["mode"] == "full", "a changed checkpoint row forces a full check"
+            finally:
+                s.execute(text("update evolvxsi_audit_event set summary=:x where id=:i"), {"x": original, "i": row.id}); s.commit()
+    finally:
+        if saved:
+            chain._save_checkpoint(saved)
