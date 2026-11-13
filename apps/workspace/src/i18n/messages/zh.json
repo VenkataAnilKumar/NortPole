@@ -16860,6 +16860,9 @@
         },
         "overview": {
           "label": "概览"
+        },
+        "quality": {
+          "label": "质量"
         }
       },
       "sections": {
@@ -16889,6 +16892,9 @@
         },
         "platform": {
           "label": "平台"
+        },
+        "quality": {
+          "label": "质量"
         }
       }
     },

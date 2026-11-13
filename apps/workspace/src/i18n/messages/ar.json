@@ -16860,6 +16860,9 @@
         },
         "overview": {
           "label": "نظرة عامة"
+        },
+        "quality": {
+          "label": "الجودة"
         }
       },
       "sections": {
@@ -16889,6 +16892,9 @@
         },
         "platform": {
           "label": "المنصة"
+        },
+        "quality": {
+          "label": "الجودة"
         }
       }
     },

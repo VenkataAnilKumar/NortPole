@@ -16860,6 +16860,9 @@
         },
         "overview": {
           "label": "개요"
+        },
+        "quality": {
+          "label": "품질"
         }
       },
       "sections": {
@@ -16889,6 +16892,9 @@
         },
         "platform": {
           "label": "플랫폼"
+        },
+        "quality": {
+          "label": "품질"
         }
       }
     },

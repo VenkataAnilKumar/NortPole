@@ -27,6 +27,7 @@ export type AdminNavItemId =
   | "inventory"
   | "governance"
   | "overview"
+  | "quality"
   | "webSearch"
   | "imageGeneration"
   | "voice"
@@ -79,6 +80,7 @@ export type AdminNavSectionId =
   | "agentsAndTools"
   | "craft"
   | "knowledge"
+  | "quality"
   | "platform";
 
 /**
@@ -98,6 +100,7 @@ export const NAV_ITEM_IDS: Record<
   INVENTORY: "inventory",
   GOVERNANCE: "governance",
   OVERVIEW: "overview",
+  QUALITY: "quality",
   DECISION_MODELS: "decisionModels",
   WEB_SEARCH: "webSearch",
   IMAGE_GENERATION: "imageGeneration",
@@ -202,6 +205,7 @@ const NAV_SECTION_IDS: readonly (readonly [
   ["Agents & tools", "agentsAndTools"],
   ["Craft", "craft"],
   ["Knowledge", "knowledge"],
+  ["Quality", "quality"],
   ["Platform", "platform"],
 ];
 
