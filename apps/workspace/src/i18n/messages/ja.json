@@ -11626,7 +11626,7 @@
         "item": "エージェント"
       },
       "header": {
-        "description": "あなたとチームのユースケースに合わせてAIの動作と知識をカスタマイズします。",
+        "description": "あなたとチームのためのチャットアシスタント。下書きを作成するワークフローエージェントは「ワークフロー」にあります。",
         "title": "エージェント"
       },
       "newAgent": {
@@ -16808,7 +16808,7 @@
           "label": "サービスアカウント"
         },
         "slackIntegration": {
-          "label": "Slack 連携"
+          "label": "チャネル"
         },
         "ssoProviders": {
           "label": "SSO プロバイダー"

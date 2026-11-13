@@ -11626,7 +11626,7 @@
         "item": "agentes"
       },
       "header": {
-        "description": "Personalize o comportamento e o conhecimento da IA para os casos de uso seus e da sua equipe.",
+        "description": "Assistentes de chat para você e sua equipe. Os agentes de fluxo de trabalho, que preparam rascunhos, ficam em Fluxos de trabalho.",
         "title": "Agentes"
       },
       "newAgent": {
@@ -16808,7 +16808,7 @@
           "label": "Contas de serviço"
         },
         "slackIntegration": {
-          "label": "Integração com Slack"
+          "label": "Canais"
         },
         "ssoProviders": {
           "label": "Provedores de SSO"

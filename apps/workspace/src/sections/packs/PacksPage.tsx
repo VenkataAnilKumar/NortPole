@@ -211,7 +211,7 @@ export default function PacksPage() {
       ) : packs.length === 0 ? (
         <section className={card}>
           <h2 className="mb-1 text-base font-semibold text-text-05">No packs are active</h2>
-          <p className="text-sm text-text-03">An administrator installs and activates signed packs. Until then, write your own under Drafts.</p>
+          <p className="text-sm text-text-03">An administrator installs and activates signed packs. Until then, write your own under My drafts.</p>
         </section>
       ) : (
         <div className="flex flex-col gap-8">
@@ -246,6 +246,11 @@ export default function PacksPage() {
                         <div>
                           <div className="text-sm font-semibold text-text-05">{t.title}</div>
                           <div className="mt-1 text-xs text-text-03">{t.request}</div>
+                          {t.agent && (
+                            <div className="mt-2 text-xs text-text-04" data-testid="run-by">
+                              <span className="font-semibold text-text-05">Run by {t.agent.name}</span> · you accept its plan first; up to {t.agent.max_searches} {t.agent.max_searches === 1 ? "search" : "searches"}, as you; it cannot send
+                            </div>
+                          )}
                         </div>
                         <button type="button" className={secondary} disabled={!!busy || !p.ready_on_current_route} onClick={() => use(p, t)}>
                           {busy === `${p.pack_id}/${t.id}` ? "Creating…" : "Start a draft"}

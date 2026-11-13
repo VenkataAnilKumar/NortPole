@@ -11626,7 +11626,7 @@
         "item": "智能体"
       },
       "header": {
-        "description": "为您和团队的使用场景定制 AI 的行为和知识。",
+        "description": "为你和团队提供的聊天助手。负责准备草稿的工作流代理位于“工作流”中。",
         "title": "智能体"
       },
       "newAgent": {
@@ -16808,7 +16808,7 @@
           "label": "服务账号"
         },
         "slackIntegration": {
-          "label": "Slack 集成"
+          "label": "渠道"
         },
         "ssoProviders": {
           "label": "SSO 提供商"

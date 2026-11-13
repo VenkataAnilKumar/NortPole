@@ -11626,7 +11626,7 @@
         "item": "agents"
       },
       "header": {
-        "description": "Personnalisez le comportement et les connaissances de l'IA pour vos cas d'usage et ceux de votre équipe.",
+        "description": "Des assistants de discussion pour vous et votre équipe. Les agents de workflow, qui préparent les brouillons, se trouvent dans Workflows.",
         "title": "Agents"
       },
       "newAgent": {
@@ -16808,7 +16808,7 @@
           "label": "Comptes de service"
         },
         "slackIntegration": {
-          "label": "Intégration Slack"
+          "label": "Canaux"
         },
         "ssoProviders": {
           "label": "Fournisseurs SSO"

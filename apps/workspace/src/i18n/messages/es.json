@@ -11626,7 +11626,7 @@
         "item": "agentes"
       },
       "header": {
-        "description": "Personaliza el comportamiento y el conocimiento de la IA para tus casos de uso y los de tu equipo.",
+        "description": "Asistentes de chat para ti y tu equipo. Los agentes de flujo de trabajo, que preparan borradores, están en Flujos de trabajo.",
         "title": "Agentes"
       },
       "newAgent": {
@@ -16808,7 +16808,7 @@
           "label": "Cuentas de servicio"
         },
         "slackIntegration": {
-          "label": "Integración con Slack"
+          "label": "Canales"
         },
         "ssoProviders": {
           "label": "Proveedores de SSO"
