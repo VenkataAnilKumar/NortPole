@@ -130,11 +130,27 @@ def export_events(
 
 @router.get("/verify")
 def verify_chain(
+    anchor: str | None = Query(None, max_length=100, description="A head saved earlier, as id:hash"),
     _: User = Depends(require_permission(Permission.FULL_ADMIN_PANEL_ACCESS)),
     db_session: Session = Depends(get_session),
 ) -> dict:
-    """Check the audit hash chain. Detects an edited row or one removed from the middle; it cannot detect
-    removal of the newest rows unless the head hash was kept elsewhere (every event's log line carries it)."""
-    from evolvxsi.audit_log.chain import verify_full
+    """Check the audit hash chain. Detects an edited row or one removed from the middle. It detects removal of the
+    newest rows only when `anchor` (a head saved earlier somewhere this machine's administrators cannot change) is given:
+    the answer then also says whether that event is still there."""
+    from evolvxsi.audit_log.chain import check_anchor, verify_full
 
-    return verify_full(db_session)
+    out = verify_full(db_session)
+    if anchor:
+        out["anchor_check"] = check_anchor(db_session, anchor)
+    return out
+
+
+@router.get("/head")
+def audit_head(
+    _: User = Depends(require_permission(Permission.FULL_ADMIN_PANEL_ACCESS)),
+    db_session: Session = Depends(get_session),
+) -> dict:
+    """The newest hashed event, as `reference` (id:hash). Keep it off this machine and pass it to /verify later."""
+    from evolvxsi.audit_log.chain import head
+
+    return head(db_session)

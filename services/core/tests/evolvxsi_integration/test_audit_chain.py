@@ -112,3 +112,45 @@ def test_the_quick_check_does_a_full_one_first_then_only_new_events_and_catches_
     finally:
         if saved:
             chain._save_checkpoint(saved)
+
+
+def test_a_saved_head_is_compared_with_the_stored_log() -> None:
+    """Non-destructive: it never removes a hashed row, so the shared chain stays intact."""
+    from sqlalchemy import func
+
+    from evolvxsi.audit_log.chain import check_anchor, head
+
+    # An unhashed row, then hashed events after it, then remove the unhashed one: a hole inside the hashed range
+    # that was never part of the chain.
+    with get_session_with_current_tenant() as s:
+        hole = EvolvXSIAuditEvent(action="retention.change", outcome="success", summary=f"{TAG} hole")
+        s.add(hole)
+        s.commit()
+        hole_id = hole.id
+    _write(2)
+    with get_session_with_current_tenant() as s:
+        s.delete(s.get(EvolvXSIAuditEvent, hole_id))
+        s.commit()
+        h = head(s)
+        assert h["reference"] == f"{h['head_id']}:{h['head_hash']}" and h["hashed_rows"] > 0
+
+        found = check_anchor(s, h["reference"])
+        assert found["ok"] is True and found["status"] == "found"
+
+        wrong = check_anchor(s, f"{h['head_id']}:{'0' * 64}")
+        assert wrong["ok"] is False and wrong["status"] == "changed"
+
+        ahead = check_anchor(s, f"{h['head_id'] + 1000}:{'a' * 64}")
+        assert ahead["ok"] is False and ahead["status"] == "newer_than_log", "a saved head newer than the log means events are gone"
+
+        gone = check_anchor(s, f"{hole_id}:{'b' * 64}")
+        assert gone["ok"] is False and gone["status"] == "missing", "an id inside the range that no longer exists means an event was removed"
+
+        lo = s.query(func.min(EvolvXSIAuditEvent.id)).filter(EvolvXSIAuditEvent.row_hash.is_not(None)).scalar()
+        if lo and lo > 1:
+            old = check_anchor(s, f"{lo - 1}:{'c' * 64}")
+            # Either the row is gone (pruned) or it is an old unhashed row (not chained): both cannot be compared.
+            assert old["ok"] is None and old["status"] in ("pruned", "not_chained"), "older than the oldest kept event cannot be compared"
+
+    for bad in ("", "abc", "12", "12:xyz", f"0:{'a' * 64}", f"-3:{'a' * 64}", f"5:{'A' * 64}", f"5:{'a' * 63}"):
+        assert check_anchor(s, bad)["status"] == "invalid", bad
