@@ -1,6 +1,6 @@
 # EvolvXSI — A7 design proposal: agents, skills and connectors in packs
 
-Status: **Proposal, 2026-11-13. Nothing here is built.** It is for review; the decisions in section 8 need an answer before any build starts. It covers checklist item 6 (A7) and the open question of horizontal and vertical packs.
+Status: **Proposal, 2026-11-13, reviewed the same day (section 9). Nothing here is built.** The review changes the execution model, adds a step before A7a and reorders the phases; read section 9 before section 6. The decisions in section 8, as revised in section 9, need an answer before any build starts. It covers checklist item 6 (A7) and the open question of horizontal and vertical packs.
 
 ## 1. In plain words
 
@@ -56,7 +56,7 @@ Most sources below are vendor pages or trade press; where a claim rests on one s
 - Loaded in levels, like the market format: only the name and description are in the planner's view; the body loads when the planner or a template selects the skill; reference files load when named.
 - A skill's text is **pack-signer content**, not source content: it is trusted as far as the pack's signature is, and it can never add tools, widen access or change a route. It is shown to the reviewer in full at install.
 - Skills inherit the existing style and review-rule mechanism: a template may name skills; the drafter includes their text under the same size caps.
-- Personal skills stay as today (the extension level `personal_skills`), instruction-only.
+- ~~Personal skills stay as today, instruction-only.~~ **Corrected in review (section 9):** today's personal skills are the inherited core's skill bundles: zip files of up to 100 MB with any files, mounted into the sandboxed task (Craft) workspace, so they can carry scripts. They are not instruction-only. Pack skills are a separate, text-only kind.
 
 ### 4.2 Agents in packs (declarative specs)
 
@@ -168,6 +168,48 @@ A7a to A7d are what the pilot needs. Nothing here needs a cloud model, but the i
 6. **Interop (A2A card, EvolvXSI as an MCP server)?** Recommended: not now.
 7. **Agent identity** is a label in the log and inventory, not a credential, until your identity provider is chosen. Confirm.
 
-## 9. Not covered
+## 9. Review, 2026-11-13 (by the author, against the code)
+
+The direction holds: declarative packs, administrator-owned tools, the asking person's access, proposals instead of sends, evaluation per model. Three problems must be fixed before A7a, and several smaller ones should be.
+
+### Must fix
+
+**R1. The execution model contradicts a security property we already rely on.** Section 4.2 says agents "run through the reviewed-task engine" with tools. But that engine has no tool loop: evidence is gathered by code (`tasks/evidence.py`, the owner's access filters, at most 4 passages), and planning and drafting requests carry **no tools at all**. The A9 work and the threat model (T1) count on that: "no tools on planning and drafting, so source text cannot trigger an action". The injection suite measured the 7B model obeying hostile text in 31% of runs; a tool loop would turn some of those into tool calls.
+**Correction: plan-then-execute, with the platform running the tools.** The agent's plan step outputs structured steps that name catalog tools and their arguments (`search(library, query)`, `open(source)`, `propose_send(destination)`), validated against the agent's tool list and limits. The person accepts the plan, as they accept plans today, so they see which tools will run before anything runs. The executor (code, not the model) runs the steps; tool results go to the drafter as **data**, quoted like sources. The drafter still has no tools. A model that obeys injected text can at most write a bad draft, which the reviewer and the claim checks see; it cannot call anything. Follow-up steps that depend on results (search again with a better query) are a second, separately accepted plan, not an open loop. This is slower and less flexible than an agent loop, and that is the point for the pilot.
+
+**R2. The inherited core already has agents, skills and tools, and the design ignores them.**
+- *Skills:* the core's custom skills are zip bundles mounted into the Craft sandbox; they can hold scripts (correction to 4.1 above). The `personal_skills` switch governs these. The design must name two kinds: **pack skills** (text, signed, used by drafts) and **sandbox skills** (bundles, Craft only, which stays off unless Craft is on).
+- *Agents:* the core's chat "agents" (the Agents page, custom assistants) can be given MCP and OpenAPI tools that the model calls **directly in chat**, with no plan acceptance, no tier and no approval. The MCP host allowlist limits where, not what. This path was outside the threat model ("the chat path ... not assessed"). Pack agents would be governed while chat agents with tools are not.
+- **Correction:** add a step before A7a, **A7-0**: list every tool a chat agent can call today, decide which may stay (read-only built-ins), and put tool-calling chat agents behind an administrator switch (default off) until the catalog and pinning (A7e) cover them. Rename in the interface so people can tell a chat assistant from a pack agent.
+
+**R3. The phase order builds a schema before anything uses it.** A7a (catalog and manifest v2, no runs) would fix a format with no feedback from a working agent.
+**Correction:** A7b (text-only pack skills) first, since it is small and useful on its own; then one **thin end-to-end slice**: one agent spec, two read-only tools (search, open), plan-then-execute, agent card, audit label, one evaluation case set; then generalise the catalog and manifest v2 from what that slice needed.
+
+### Should fix
+
+- **Mental model in the interface.** Users already have Workflows (pack templates), chat assistants (the core's Agents page) and Drafts. A fourth noun, "pack agent", will confuse. Proposal: present a pack agent as a **workflow that can look things up**: it appears in Workflows, starts a Draft, and its agent card is the workflow's detail panel. "Agents" stays the chat-assistant page.
+- **Manifest compatibility.** Installed packs are schema 1, signed over canonical bytes. Version 2 must accept and keep verifying version 1 packs unchanged, and a version 1 pack must never gain agent features by reinterpretation.
+- **Skill text is trusted too much.** "Trusted as far as the pack's signature" means a signer can put instructions into every draft prompt. Keep the trust, but give skills the same caps as `style`, keep them below the system rules in the prompt, show them in the install review, and include a "skill tries to widen scope" case in evaluation.
+- **Cross-signer `extends`.** A vertical signed by A that extends a horizontal signed by B: both signers must be trusted, revoking B disables the vertical, and the install review shows both. Not in section 4.7.
+- **Per-agent budgets.** The token and cost counters (A8) exist; an agent spec should carry a token ceiling per run, enforced by the executor, and the Quality tab should show cost per agent.
+- **Kill switch per agent**, not only per pack: an administrator can disable one agent version without deactivating the pack.
+- **Research gaps.** Amazon (Bedrock AgentCore) and the code-first frameworks (LangGraph, CrewAI, OpenAI's and Google's agent SDKs) were not looked at, and only one source was read in full. Plan-then-execute is a known pattern in the prompt-injection literature; the design should cite primary work for it before relying on it, which this review has not done.
+
+### Decisions, revised
+Decisions 1, 2, 4, 5, 6 and 7 stand. Decision 3 (manifest v2 now) becomes "after the thin slice" (R3). Two decisions are added:
+
+8. **Plan-then-execute instead of a tool loop for the pilot** (R1). Recommended: yes.
+9. **Turn off tool-calling for the core's chat agents until A7e covers them** (R2). Recommended: yes. This removes a capability people may already use in the sandbox; nobody uses the product in production yet.
+
+### Phases, revised
+| Phase | Work |
+| --- | --- |
+| A7-0 | List the core's chat-agent tools; administrator switch for tool-calling chat agents (default off); name the two skill kinds in the interface. |
+| A7b | Text-only pack skills (as in section 6). |
+| A7c-thin | One agent end to end: plan-then-execute with search and open, agent card in Workflows, audit label, evaluation cases including injection and refusal. |
+| A7a | Catalog and manifest v2, generalised from the slice; v1 packs unchanged. |
+| A7d, A7e, A7f | As in section 6, with A7e also covering chat-agent tools. |
+
+## 10. Not covered
 
 A cost model for agent runs beyond the token counts already collected; a visual flow builder; marketplaces; agents that run unattended; agents that hold their own credentials; a review by someone who did not write this proposal.
