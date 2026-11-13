@@ -231,6 +231,11 @@ class Tool(abc.ABC):
                 )
 
                 observation.tool_started(is_search=isinstance(self, SearchTool))
+            # EvolvXSI: every call to an outside tool (MCP, OpenAPI) is logged, without its arguments or result.
+            from evolvxsi.tool_catalog.calls import is_outside, logged
+
+            if is_outside(self):
+                return logged(self, getattr(invocation, "arguments", None), lambda: self._run(invocation, context))
             return self._run(invocation, context)
 
         return _invoke_tool(self.name, invocation, execute)

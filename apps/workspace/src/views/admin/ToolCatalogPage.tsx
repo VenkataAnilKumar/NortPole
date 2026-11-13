@@ -8,6 +8,7 @@ interface Kind { kind: string; label: string; on: boolean; default: boolean }
 interface ToolRow {
   id: number; name: string; kind: string; source: string; host: string | null; core_enabled: boolean;
   allowed: boolean; override: boolean | null; personal: boolean; agents: number; agent_names: string[];
+  approval: string | null; server_id: number | null; description: string; definition_preview: string;
 }
 interface Catalog { version: number; kinds: Kind[]; tools: ToolRow[]; code_mode_switched_on: boolean }
 
@@ -22,7 +23,7 @@ const RISK: Record<string, string> = {
   generate: "Sends the prompt to the image model.",
   personal: "Writes only to the person's own memory.",
   code: "Code the model writes is run, and its results come back into the chat.",
-  outside: "Calls systems outside the product, as set up by whoever added the tool.",
+  outside: "Calls systems outside the product. Each tool also needs its own approval below, which records its definition; a changed definition stops it until approved again.",
 };
 
 async function put(body: unknown): Promise<Catalog> {
@@ -41,11 +42,11 @@ export default function ToolCatalogPage() {
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
-  const save = async (kinds: Record<string, boolean>, tools: Record<string, boolean>) => {
+  const save = async (kinds: Record<string, boolean>, tools: Record<string, boolean>, approve: string[] = []) => {
     setBusy(true);
     setMsg(null);
     try {
-      await mutate(await put({ kinds, tools }), { revalidate: false });
+      await mutate(await put({ kinds, tools, approve }), { revalidate: false });
       setMsg({ ok: true, text: "Saved. It applies to the next message in every chat." });
     } catch (e) {
       setMsg({ ok: false, text: e instanceof Error ? e.message : "The change could not be saved." });
@@ -109,6 +110,49 @@ export default function ToolCatalogPage() {
                         {t.name}
                         {t.personal && <span className="block text-xs font-normal text-text-03">Added by one person for themselves</span>}
                         {!t.core_enabled && <span className="block text-xs font-normal text-text-03">Switched off in its own settings too</span>}
+                        {t.approval && (
+                          <span className={`block text-xs font-normal ${t.approval === "approved" ? "text-text-03" : "text-status-text-error-05"}`} data-testid="tc-approval">
+                            Definition: {t.approval}
+                          </span>
+                        )}
+                        {t.approval && (
+                          <details className="mt-1 text-xs font-normal text-text-03">
+                            <summary className="cursor-pointer">What the model is told, and the arguments it sends</summary>
+                            <p className="mt-1 whitespace-pre-wrap text-text-05">{t.description || "(no description)"}</p>
+                            {t.definition_preview && <pre className="mt-1 max-h-48 overflow-auto whitespace-pre-wrap rounded bg-background-neutral-01 px-2 py-1 text-text-05">{t.definition_preview}</pre>}
+                          </details>
+                        )}
+                        {t.approval && t.approval !== "approved" && (
+                          <button
+                            type="button" className={`${secondary} mt-1`} disabled={busy}
+                            onClick={() => save(kindMap(data), { ...overrides(data), [String(t.id)]: true }, [String(t.id)])}
+                          >
+                            {t.approval === "not approved" ? "Approve this definition" : "Approve the new definition"}
+                          </button>
+                        )}
+                        {t.server_id !== null && (
+                          <button
+                            type="button" className={`${secondary} mt-1 ml-2`} disabled={busy}
+                            onClick={async () => {
+                              setBusy(true);
+                              setMsg(null);
+                              try {
+                                const res = await fetch(`${URL}/check/${t.server_id}`, { method: "POST" });
+                                const body = await res.json().catch(() => null);
+                                if (!res.ok) throw new Error(typeof body?.detail === "string" ? body.detail : `The check failed (HTTP ${res.status}).`);
+                                const changed = (body as { name: string; status: string }[]).filter((r) => r.status !== "unchanged");
+                                setMsg({ ok: changed.length === 0, text: changed.length ? `Differences: ${changed.map((r) => `${r.name} (${r.status})`).join("; ")}` : "The server's tools match what was approved." });
+                                await mutate();
+                              } catch (e) {
+                                setMsg({ ok: false, text: e instanceof Error ? e.message : "The check failed." });
+                              } finally {
+                                setBusy(false);
+                              }
+                            }}
+                          >
+                            Check the server now
+                          </button>
+                        )}
                       </th>
                       <td className={td}>{t.kind}</td>
                       <td className={td}>{t.source}{t.host ? ` (${t.host})` : ""}</td>

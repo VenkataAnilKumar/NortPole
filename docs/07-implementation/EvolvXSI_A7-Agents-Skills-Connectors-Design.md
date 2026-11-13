@@ -1,6 +1,6 @@
 # EvolvXSI — A7 design proposal: agents, skills and connectors in packs
 
-Status: **Proposal, 2026-11-13, reviewed the same day (section 9), and the direction agreed the same day (section 11: govern the core's agents, skills, tools and connectors instead of building new ones). Steps 1 to 3 are built (step 3 with search only); the rest is not.** The review changes the execution model, adds a step before A7a and reorders the phases; read section 9 before section 6. The decisions in section 8, as revised in section 9, need an answer before any build starts. It covers checklist item 6 (A7) and the open question of horizontal and vertical packs.
+Status: **Proposal, 2026-11-13, reviewed the same day (section 9), and the direction agreed the same day (section 11: govern the core's agents, skills, tools and connectors instead of building new ones). Steps 1 to 4 are built (step 3 with search only, step 4 for chat); the rest is not.** The review changes the execution model, adds a step before A7a and reorders the phases; read section 9 before section 6. The decisions in section 8, as revised in section 9, need an answer before any build starts. It covers checklist item 6 (A7) and the open question of horizontal and vertical packs.
 
 ## 1. In plain words
 
@@ -230,7 +230,7 @@ After looking at what the inherited core already contains (chat agents and their
 | 1 | Tool catalog: inventory, kinds, administrator switch, enforcement where chat tools are built | **Built 2026-11-13** (see REVIEW) |
 | 2 | Guides (text-only skills) in packs, used by Workflows and drafts | **Built 2026-11-13** (see REVIEW) |
 | 3 | One workflow agent end to end (plan-then-execute with search and open; agent card; tests incl. injection and refusal) | **Built 2026-11-13 with search only** (see REVIEW): "open" (read more of a found document) is not built; an agent's `libraries` limit is not built (it searches whatever the person can open); evaluation does not yet run through the agent's plan |
-| 4 | Pinning for MCP and OpenAPI tools; call log; pinned tools as workflow steps | |
+| 4 | Pinning for MCP and OpenAPI tools; call log; pinned tools as workflow steps | **Built 2026-11-13 for chat** (see REVIEW): pinned approval, change detection, a server check, a call log. Not built: pinned tools as workflow steps; not tried against a live MCP server (blocked by the SSRF guard in the sandbox, by design) |
 | 5 | The pilot connector, tested with permissions | Needs the source system |
 | 6 | Administrator editor for agent specs; manifest version 2 shaped by steps 2 to 4 | |
 
