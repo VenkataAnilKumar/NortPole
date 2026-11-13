@@ -457,6 +457,16 @@ export const ADMIN_ROUTES = {
     requiredTier: null,
     visibleWhen: null,
   },
+  TOOL_CATALOG: {
+    path: "/admin/tool-catalog",
+    icon: SvgShield,
+    title: "Tools",
+    sidebarLabel: "Tools",
+    requiredPermission: Permission.FULL_ADMIN_PANEL_ACCESS,
+    section: "Agents & tools",
+    requiredTier: null,
+    visibleWhen: null,
+  },
   INVENTORY: {
     path: "/admin/inventory",
     icon: SvgShield,

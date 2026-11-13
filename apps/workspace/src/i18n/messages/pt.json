@@ -16863,6 +16863,9 @@
         },
         "quality": {
           "label": "Qualidade"
+        },
+        "toolCatalog": {
+          "label": "Ferramentas"
         }
       },
       "sections": {

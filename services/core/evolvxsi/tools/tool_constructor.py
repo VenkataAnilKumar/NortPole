@@ -173,8 +173,10 @@ def construct_tools(
     selection_llm_factory: Callable[[], LLM] | None = None,
 ) -> dict[int, list[Tool]]:
     """Build tools from captured settings; resolve current service credentials."""
+    from evolvxsi.tool_catalog.catalog import filter_tools
+
     with get_session_with_current_tenant_if_none(db_session) as db_session:
-        return _construct_tools_impl(
+        tools = _construct_tools_impl(
             configuration=configuration,
             db_session=db_session,
             user=user,
@@ -186,6 +188,8 @@ def construct_tools(
             allowed_tool_ids=allowed_tool_ids,
             search_usage_forcing_setting=search_usage_forcing_setting,
         )
+        # EvolvXSI: the tool catalog decides which of these a chat may use (see tool_catalog/catalog.py).
+        return filter_tools(tools, db_session)
 
 
 def _construct_tools_impl(
