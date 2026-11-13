@@ -16854,26 +16854,32 @@
         }
       },
       "sections": {
-        "agentsAndActions": {
-          "label": "智能体与操作"
+        "overview": {
+          "label": "Overview"
+        },
+        "governance": {
+          "label": "Governance"
+        },
+        "people": {
+          "label": "People"
+        },
+        "models": {
+          "label": "Models"
+        },
+        "packs": {
+          "label": "Packs"
+        },
+        "agentsAndTools": {
+          "label": "Agents & tools"
         },
         "craft": {
           "label": "Craft"
         },
-        "documentsAndKnowledge": {
-          "label": "文档与知识"
+        "knowledge": {
+          "label": "Knowledge"
         },
-        "integrations": {
-          "label": "集成"
-        },
-        "organization": {
-          "label": "组织"
-        },
-        "permissions": {
-          "label": "权限"
-        },
-        "usage": {
-          "label": "用量"
+        "platform": {
+          "label": "Platform"
         }
       }
     },
@@ -16936,10 +16942,10 @@
         "label": "Automations"
       },
       "reviewedTasks": {
-        "label": "Reviewed tasks"
+        "label": "Tasks"
       },
       "packs": {
-        "label": "Packs"
+        "label": "Workflows"
       },
       "inbox": {
         "label": "Inbox"

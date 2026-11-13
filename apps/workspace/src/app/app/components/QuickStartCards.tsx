@@ -6,6 +6,8 @@ interface QuickStart {
   id: string;
   label: string;
   prompt: string;
+  // When set, the card opens this page instead of filling the composer.
+  href?: string;
   icon: ReactNode;
 }
 
@@ -53,9 +55,10 @@ const QUICK_STARTS: QuickStart[] = [
     ),
   },
   {
-    id: "pack",
-    label: "Use a vertical pack",
-    prompt: "Use the vertical pack to help with: ",
+    id: "workflows",
+    label: "Browse workflows",
+    prompt: "",
+    href: "/app/packs",
     icon: (
       <svg {...ICON_PROPS} stroke="#e89a1a">
         <path d="M3 7l9-4 9 4-9 4zM3 12l9 4 9-4M3 17l9 4 9-4" />
@@ -66,7 +69,8 @@ const QUICK_STARTS: QuickStart[] = [
 
 /**
  * Quick-start cards under the home greeting. Picking one puts a starter
- * prompt in the composer; nothing is sent until the user submits it.
+ * prompt in the composer (nothing is sent until the user submits it), or
+ * opens the Workflows page.
  */
 export default function QuickStartCards({
   onPick,
@@ -78,17 +82,24 @@ export default function QuickStartCards({
       data-testid="quick-start-cards"
       className="grid w-full grid-cols-2 gap-3 pt-4 sm:grid-cols-4 sm:pt-6"
     >
-      {QUICK_STARTS.map((q) => (
-        <button
-          key={q.id}
-          type="button"
-          onClick={() => onPick(q.prompt)}
-          className="flex min-h-14 flex-row items-center gap-3 rounded-2xl border border-border-01 bg-background-neutral-00 p-3 sm:min-h-28 sm:flex-col sm:items-start sm:justify-between sm:gap-6 sm:p-4 text-left text-sm font-medium text-text-05 shadow-sm transition-colors hover:bg-background-neutral-01"
-        >
-          {q.icon}
-          {q.label}
-        </button>
-      ))}
+      {QUICK_STARTS.map((q) =>
+        q.href ? (
+          <a key={q.id} href={q.href} className="flex min-h-14 flex-row items-center gap-3 rounded-2xl border border-border-01 bg-background-neutral-00 p-3 sm:min-h-28 sm:flex-col sm:items-start sm:justify-between sm:gap-6 sm:p-4 text-left text-sm font-medium text-text-05 shadow-sm transition-colors hover:bg-background-neutral-01">
+            {q.icon}
+            {q.label}
+          </a>
+        ) : (
+          <button
+            key={q.id}
+            type="button"
+            onClick={() => onPick(q.prompt)}
+            className="flex min-h-14 flex-row items-center gap-3 rounded-2xl border border-border-01 bg-background-neutral-00 p-3 sm:min-h-28 sm:flex-col sm:items-start sm:justify-between sm:gap-6 sm:p-4 text-left text-sm font-medium text-text-05 shadow-sm transition-colors hover:bg-background-neutral-01"
+          >
+            {q.icon}
+            {q.label}
+          </button>
+        )
+      )}
     </div>
   );
 }

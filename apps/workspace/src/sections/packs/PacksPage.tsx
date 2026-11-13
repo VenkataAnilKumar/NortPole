@@ -65,10 +65,10 @@ export default function PacksPage() {
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 p-4 sm:p-8" data-testid="packs-page">
       <header className="flex flex-col gap-1">
-        <h1 className="font-[family-name:var(--font-serif)] text-3xl font-medium text-text-05">Packs</h1>
+        <h1 className="font-[family-name:var(--font-serif)] text-3xl font-medium text-text-05">Workflows</h1>
         <p className="text-sm text-text-03">
-          Ready-made task templates for a line of work. Choosing one creates a draft for you to edit; nothing runs
-          until you press Start.
+          Ready-made tasks, grouped in packs. Choosing one creates a task draft for you to edit; nothing runs until
+          you press Start.
         </p>
       </header>
       {failed && <p role="alert" className="text-sm text-status-error-05">{failed}</p>}

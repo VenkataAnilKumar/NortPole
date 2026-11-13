@@ -16854,26 +16854,32 @@
         }
       },
       "sections": {
-        "agentsAndActions": {
-          "label": "Agents"
+        "overview": {
+          "label": "Overview"
+        },
+        "governance": {
+          "label": "Governance"
+        },
+        "people": {
+          "label": "People"
+        },
+        "models": {
+          "label": "Models"
+        },
+        "packs": {
+          "label": "Packs"
+        },
+        "agentsAndTools": {
+          "label": "Agents & tools"
         },
         "craft": {
           "label": "Craft"
         },
-        "documentsAndKnowledge": {
+        "knowledge": {
           "label": "Knowledge"
         },
-        "integrations": {
-          "label": "Connectors"
-        },
-        "organization": {
-          "label": "Workspace"
-        },
-        "permissions": {
-          "label": "People"
-        },
-        "usage": {
-          "label": "Usage"
+        "platform": {
+          "label": "Platform"
         }
       }
     },
@@ -16912,7 +16918,7 @@
         "tooltip": "New Project"
       },
       "newSession": {
-        "label": "New task"
+        "label": "New"
       },
       "projects": {
         "title": "Projects"
@@ -16921,7 +16927,7 @@
         "empty": {
           "text": "Try sending a message! Your chat history will appear here."
         },
-        "title": "Tasks"
+        "title": "Chats"
       },
       "searchChats": {
         "label": "Search"
@@ -16936,10 +16942,10 @@
         "label": "Automations"
       },
       "reviewedTasks": {
-        "label": "Reviewed tasks"
+        "label": "Tasks"
       },
       "packs": {
-        "label": "Packs"
+        "label": "Workflows"
       },
       "inbox": {
         "label": "Inbox"
@@ -17011,7 +17017,7 @@
         "label": "New Project"
       },
       "newSession": {
-        "label": "New task"
+        "label": "New"
       },
       "noMoreResults": {
         "text": "No more results"
