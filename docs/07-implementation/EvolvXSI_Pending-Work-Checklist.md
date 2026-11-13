@@ -1,6 +1,6 @@
 # EvolvXSI — pending work checklist
 
-Status: Working list, 2026-11-13. Followed one item at a time, in the order below. The phase definitions are in the [delivery plan](EvolvXSI_Adopted-Core-Delivery-Plan.md); what each finished piece checked and did not check is in [REVIEW](../REVIEW.md). All testing so far is sandbox-only, with stand-in models.
+Status: Working list, 2026-11-13 (pending-work list below saved 2026-11-13 after the A7 steps and the Google Drive discussion). Followed one item at a time, in the order below. The phase definitions are in the [delivery plan](EvolvXSI_Adopted-Core-Delivery-Plan.md); what each finished piece checked and did not check is in [REVIEW](../REVIEW.md). All testing so far is sandbox-only, with stand-in models.
 
 ## Phase status
 
@@ -26,7 +26,44 @@ Status: Working list, 2026-11-13. Followed one item at a time, in the order belo
 - [x] 4. **A8, tokens and cost per route** (done 2026-11-13): tokens and an estimated cost are counted by day, route type and model, shown on the Route policy page and at `GET /admin/route-tokens`. Not built: spend limits or budgets, cost by person or team, cost by pack or purpose, and a reconciliation against a provider invoice (the figure is an estimate from the price list).
 - [x] 5. **A9, hardening that needs no decision from you** (done 2026-11-13): the off-box audit head (5), an optional second approver for sends (5b), and a software bill of materials plus a CI workflow (5c; the workflow's first two jobs were run locally, the third has not run on GitHub). Blocked on you: administrator MFA and single sign-on (identity provider), a secrets manager (hosting target), an outside review before real data; The optional two-administrator rule for route policy and retention changes is built (5d, 2026-11-13); signers, destinations and other administrator actions are not covered.
 - [~] 6. **A7, agents, skills and connectors**: direction agreed 2026-11-13: govern the core's agents, tools, skills and connectors instead of building new ones ([A7 design](EvolvXSI_A7-Agents-Skills-Connectors-Design.md), section 11). Steps 1 (tool catalog), 2 (guides), 3 (a workflow agent, plan-then-execute, search only) and 4 (outside-tool approval with pinned definitions, change check, call log) built; and 6 (Studio, an administrator editor that publishes through the normal pack path; no manifest version 2 needed) built; the pilot connector needs your source system.
-- [ ] 7. **A5:** a real connector (needs the source system, item 11).
+- [ ] 7. **A5 and A7 step 5, a real connector:** **Google Drive chosen** (2026-11-13; the owner has Gmail and Microsoft personal accounts, no Workspace or Microsoft 365 tenant). **Paused at the owner's request.** Plan when resumed: (a) build Drive permission reading and syncing in the repo, tested on recorded Google responses (needs nothing from the owner); (b) start the sandbox search index; (c) a live test against the owner's Drive with three Gmail accounts, six shared test documents and a read-only OAuth refresh token (attached as a file, never pasted), plus approval of sandbox network access to `oauth2.googleapis.com` and `www.googleapis.com`; (d) groups cannot be tested with personal Gmail and wait for a Workspace or Microsoft 365 customer or test tenant. Open question: should "anyone with the link" files be hidden except to people named on them (recommended)?
+
+## More work that needs no decision from the owner (saved 2026-11-13)
+
+**Agents (A7)**
+- [ ] 17. An "open a document" step for workflow agents.
+- [ ] 18. Let workflow agents use approved outside tools as plan steps.
+- [ ] 19. A per-agent library limit, cost limit and on/off switch.
+- [ ] 20. Run a pack's tests through the agent's own plan.
+- [ ] 21. Studio form: edit review rules, house style and test cases.
+
+**Security (A9)**
+- [ ] 22. Close the pack takeover gap: any trusted signer can publish a new version of another signer's pack; needs a key-change flow that keeps rotation working.
+- [ ] 23. A second administrator for the remaining admin actions: pack publish and activate, send destinations, tool approvals, signers.
+- [ ] 24. A scheduled job that saves the audit-log head off the machine.
+
+**Operations (A10)**
+- [ ] 25. Check the first CI runs on GitHub, make the core-test job required, add a vulnerability scan.
+- [ ] 26. Encrypted backups.
+- [ ] 27. Rebuild the web image and repeat the clean-room start with it.
+
+**Quality (A4)**
+- [ ] 28. Quality tab: details of a single run, regression alerts, test history.
+
+**Retrieval**
+- [ ] 29. Start the search index in the sandbox (retrieval is tested only in code tests so far).
+
+**Suggested order if work continues:** 7(a), 29, 22, 25; decisions 10, 12 and 13 unblock the most.
+
+## Known issues (saved 2026-11-13)
+
+- The local 7B model obeyed hostile text in 31% of injection tests; guides' effect on a real model is not measured.
+- No real document source has been connected; retrieval, agent search results and connectors are tested only in code tests.
+- Tools that are switched on still run in chat with no approval step; web tools can carry text out in a web address.
+- Not tried live: an MCP server (the safety system blocked turning off the SSRF check), a real OpenAPI tool, the Slack bot path, CI on GitHub.
+- The web unit tests cannot run in this copy (the Jest setup file is missing).
+- Sandbox leftovers (test accounts, demo packs) are listed in `docs/REVIEW.md`.
+- All testing is sandbox-only, with the local 7B model or stand-in models.
 
 ## Waiting for the owner's yes
 
