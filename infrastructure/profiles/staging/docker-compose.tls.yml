@@ -1,0 +1,14 @@
+# TLS overlay for the single-host profile: serves HTTPS on port 443 and redirects HTTP.
+#   TLS_CERT_DIR  folder holding tls.crt (certificate chain) and tls.key (private key); required
+#   HTTP_PORT, HTTPS_PORT  published ports (default 80 and 443); bind address defaults to all interfaces
+#                          because this overlay is meant to be reached from outside; set BIND_ADDRESS to narrow it
+# Start:  docker compose -f docker-compose.yml -f docker-compose.tls.yml up -d
+name: evolvxsi
+services:
+  proxy:
+    volumes:
+      - ./nginx-tls.conf:/etc/nginx/conf.d/default.conf:ro
+      - ${TLS_CERT_DIR:?set TLS_CERT_DIR to a folder with tls.crt and tls.key}:/etc/nginx/tls:ro
+    ports: !override
+      - "${BIND_ADDRESS:-0.0.0.0}:${HTTP_PORT:-80}:80"
+      - "${BIND_ADDRESS:-0.0.0.0}:${HTTPS_PORT:-443}:443"

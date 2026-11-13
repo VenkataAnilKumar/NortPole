@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Back up the single-host profile: one compressed PostgreSQL dump plus a small manifest.
+# In this profile PostgreSQL holds everything that must survive (accounts, drafts, packs, settings, audit log,
+# uploaded files, cache); Redis is rebuilt on start. With the retrieval overlay the search index is NOT backed up:
+# it is rebuilt by re-indexing, so it is not listed as protected.
+#   ./backup.sh [output-folder]        default: ./backups
+# Run from this folder with the same -f files and environment you start the stack with (COMPOSE_FILE may be set).
+set -euo pipefail
+cd "$(dirname "$0")"
+out="${1:-./backups}"
+stamp="$(date -u +%Y%m%dT%H%M%SZ)"
+mkdir -p "$out"
+umask 077
+dump="$out/evolvxsi-$stamp.dump"
+# -Fc: compressed custom format; --no-owner so a restore works with a different database role.
+docker compose exec -T db pg_dump -U evolvxsi -d evolvxsi -Fc --no-owner > "$dump"
+size=$(wc -c < "$dump")
+[ "$size" -gt 1000 ] || { echo "backup looks empty ($size bytes); removed" >&2; rm -f "$dump"; exit 1; }
+sum=$(sha256sum "$dump" | cut -d' ' -f1)
+head_rev=$(docker compose exec -T db psql -U evolvxsi -d evolvxsi -Atc "select version_num from alembic_version" 2>/dev/null | tr -d '\r' | paste -sd, - || true)
+audit_rows=$(docker compose exec -T db psql -U evolvxsi -d evolvxsi -Atc "select count(*) from evolvxsi_audit_event" 2>/dev/null | tr -d '\r' || echo unknown)
+cat > "$dump.manifest" <<MANIFEST
+created_utc=$stamp
+file=$(basename "$dump")
+bytes=$size
+sha256=__SUM__
+migration_revision=$head_rev
+audit_rows=$audit_rows
+product_version=${EVOLVXSI_VERSION:-dev}
+MANIFEST
+sed -i "s/__SUM__/$sum/" "$dump.manifest"
+echo "wrote $dump ($size bytes)"
+echo "wrote $dump.manifest"
+echo "Copy both files off this machine; a backup that lives only on the machine it protects is not a backup."
