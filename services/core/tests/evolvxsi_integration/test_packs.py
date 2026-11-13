@@ -379,3 +379,57 @@ def test_the_people_listing_says_what_a_pack_is_and_may_do(signer, person) -> No
         packs.install_pack(_package(key, key_id, _manifest("5.0.0", vertical="general", name="Everyday brief")), user=ADMIN, db_session=s)
         packs.activate(PACK_ID, "5.0.0", user=ADMIN, db_session=s)
         assert [x for x in packs.list_packs(_=u, db_session=s) if x.pack_id == PACK_ID][0].group == "everyday"
+
+
+GUIDES = [
+    {"id": "receipt-check", "name": "Checking receipts", "description": "Use when a request is about receipts.", "body": "Start with the submission deadline."},
+    {"id": "unused", "name": "Unused guide", "description": "Not named by any template.", "body": "This text must never be loaded."},
+]
+
+
+def test_a_task_plans_and_drafts_with_its_templates_guides_from_its_version(signer, person) -> None:  # type: ignore[no-untyped-def]
+    from unittest.mock import patch
+
+    from evolvxsi.packs.guidance import guides_for
+    from evolvxsi.tasks.drafter import DraftResult
+
+    key, key_id = signer
+    templates = copy.deepcopy(SAMPLE["templates"])
+    for t in templates:
+        t["guides"] = []  # this test brings its own guides, so the sample's are not named
+    templates[0]["guides"] = ["receipt-check"]
+    seen: dict = {}
+
+    def fake_plan(db, user, title, request, desired_output, guides=()):  # type: ignore[no-untyped-def]
+        seen["plan"] = list(guides)
+        return PlanResult(["Find the rule", "Draft with a citation"], "local")
+
+    def fake_draft(db, user, title, request, plan, evidence, style="", guides=()):  # type: ignore[no-untyped-def]
+        seen["draft"] = list(guides)
+        return DraftResult(text="No source covers this.", cited=[], removed_citations=0, route_kind="local")
+
+    with get_session_with_current_tenant() as s:
+        u = s.get(User, person)
+        _install_active(s, key, key_id, "1.0.0", templates=templates, guides=GUIDES)
+        listing = next(p for p in packs.list_packs(_=u, db_session=s) if p.pack_id == PACK_ID)
+        first = next(t for t in listing.templates if t.id == "receipt-rules")
+        assert [g.name for g in first.guides] == ["Checking receipts"], "people see which guides a workflow uses"
+        admin_view = next(v for v in packs.list_versions(_=ADMIN, db_session=s) if v.pack_id == PACK_ID and v.version == "1.0.0")
+        assert {g.id: g.used_by for g in admin_view.guides} == {"receipt-check": ["receipt-rules"], "unused": []}
+        assert admin_view.guides[0].body == "Start with the submission deadline.", "the reviewer sees the full text"
+
+        t = packs.start_from_template(PACK_ID, "receipt-rules", user=u, db_session=s)
+        with patch.object(tasks, "draft_plan", fake_plan), patch.object(tasks, "draft_answer", fake_draft):
+            t = tasks.start_task(t.id, tasks.VersionOnly(version=t.version), user=u, db_session=s)
+            t = tasks.accept_plan(t.id, tasks.VersionOnly(version=t.version), user=u, db_session=s)
+            tasks.run_task(t.id, tasks.VersionOnly(version=t.version), user=u, db_session=s)
+        assert seen["plan"] == [("Checking receipts", "Start with the submission deadline.")]
+        assert seen["draft"] == seen["plan"], "the plan and the draft use the same guides; the unused one is never loaded"
+
+        newer = copy.deepcopy(GUIDES)
+        newer[0]["body"] = "Start with who approves."
+        packs.install_pack(_package(key, key_id, _manifest("1.1.0", templates=templates, guides=newer)), user=ADMIN, db_session=s)
+        packs.activate(PACK_ID, "1.1.0", user=ADMIN, db_session=s)
+        row = s.get(EvolvXSITask, t.id)
+        assert guides_for(s, row.pack_id, row.pack_version, row.pack_template) == [("Checking receipts", "Start with the submission deadline.")], \
+            "a task keeps the guides of the version it started from"

@@ -66,7 +66,7 @@ def test_a_case_runs_with_its_templates_style_and_must_name_a_real_template() ->
     m = Manifest.model_validate(raw)
     seen: list[str] = []
 
-    def fake(db, user, title, question, plan, ev, style=""):  # type: ignore[no-untyped-def]
+    def fake(db, user, title, question, plan, ev, style="", guides=()):  # type: ignore[no-untyped-def]
         seen.append(style)
         return SimpleNamespace(text="30 days [1]. director. No source you are allowed to open", cited=[1])
 

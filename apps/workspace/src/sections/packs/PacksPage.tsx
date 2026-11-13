@@ -12,6 +12,7 @@ interface Template {
   desired_output: string;
   style?: string;
   review_rules?: Rule[];
+  guides?: { id: string; name: string; description: string }[];
 }
 interface Rule {
   kind: string;
@@ -104,6 +105,22 @@ function Details({ p }: { p: Pack }) {
           Version {p.version}, signed by {p.signer_key_id || "a trusted signer"}. A draft keeps the version it started from.
         </dd>
       </div>
+      {p.templates.some((t) => (t.guides ?? []).length > 0) && (
+        <div className="sm:col-span-2" data-testid="pack-guides">
+          <dt className="font-semibold text-text-05">Guides it follows</dt>
+          <dd>
+            Written know-how from the pack. A guide shapes how the work is done; it is not a source and cannot change the citation rules.
+            {p.templates.filter((t) => (t.guides ?? []).length > 0).map((t) => (
+              <div key={t.id} className="mt-1">
+                <span className="text-text-05">{t.title}:</span>{" "}
+                {(t.guides ?? []).map((g, i) => (
+                  <span key={g.id}>{i > 0 ? "; " : ""}<span className="text-text-05">{g.name}</span> ({g.description})</span>
+                ))}
+              </div>
+            ))}
+          </dd>
+        </div>
+      )}
       {((p.review_rules ?? []).length > 0 || templateRules.length > 0) && (
         <div className="sm:col-span-2">
           <dt className="font-semibold text-text-05">What it checks before you approve</dt>

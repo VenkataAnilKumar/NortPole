@@ -26,6 +26,8 @@ python services/core/scripts/sign_pack.py sign pack.json <private-key> acme-2026
 
 Paste the package into **Install**. A tampered package, an unknown signer, an invalid manifest, or a version that already exists is refused with the reason. An installed version is inactive until an administrator activates it. If the pack lists evaluation cases, **Evaluate on current model** must pass before the pack runs.
 
+Before activating, read what the pack will put in front of the model: each template's house style, its review rules, and its **guides** (open "Guides in this version" on the Packs page; every guide is shown in full, with the workflows that use it). A guide is text the signer wrote; it shapes how plans and drafts are written and cannot add a source, run anything or change the citation rules, but it is instruction text all the same, so treat it like any other content you approve.
+
 ## 4. Rotate a key
 
 Rotation has to keep packs available, because revoking a signer stops every version it signed, everywhere, at once.

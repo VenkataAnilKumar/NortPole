@@ -45,21 +45,24 @@ def parse_plan(text: str) -> list[str]:
     return steps[:MAX_STEPS]
 
 
-def _prompt(title: str, request: str, desired_output: str) -> str:
+def _prompt(title: str, request: str, desired_output: str, guides: "list[tuple[str, str]] | tuple" = ()) -> str:
+    from evolvxsi.tasks.drafter import guide_lines
+
     parts = [f"Title: {title}", f"Request: {request}"]
     if desired_output.strip():
         parts.append(f"Desired output: {desired_output}")
+    parts += guide_lines(guides)
     return "\n".join(parts)
 
 
-def draft_plan(db_session: Session, user: User, title: str, request: str, desired_output: str) -> PlanResult:
+def draft_plan(db_session: Session, user: User, title: str, request: str, desired_output: str, guides: "list[tuple[str, str]] | tuple" = ()) -> PlanResult:
     llm = get_default_llm()
     # Raises POLICY_BLOCKED (and records it) before anything is sent.
     decision = enforce_route(db_session, llm.config.model_configuration_id, actor=user, purpose="task_plan")
     reply = llm.invoke(
         GenerationRequest(
-            system_prompt=PLAN_SYSTEM_PROMPT,
-            messages=[UserMessage(content=_prompt(title, request, desired_output))],
+            system_prompt=PLAN_SYSTEM_PROMPT + (" " + _GUIDE_RULE() if guides else ""),
+            messages=[UserMessage(content=_prompt(title, request, desired_output, guides))],
             options=GenerationOptions(max_tokens=400),
         ),
         context=GenerationContext(flow=LLMFlow.CHAT_RESPONSE),
@@ -68,3 +71,9 @@ def draft_plan(db_session: Session, user: User, title: str, request: str, desire
     if not steps:
         raise PlanError("The model did not return a numbered plan. Edit the request and start again.")
     return PlanResult(steps=steps, route_kind=decision.kind)
+
+
+def _GUIDE_RULE() -> str:  # noqa: N802 - the same rule as the drafter's, read lazily to avoid an import cycle
+    from evolvxsi.tasks.drafter import GUIDE_RULE
+
+    return GUIDE_RULE

@@ -24,10 +24,10 @@ class CaseResult:
     reason: str
 
 
-def _run_case(db: Session, user: User, case, title: str, style: str = "") -> CaseResult:  # type: ignore[no-untyped-def]
+def _run_case(db: Session, user: User, case, title: str, style: str = "", guides: "list[tuple[str, str]] | tuple" = ()) -> CaseResult:  # type: ignore[no-untyped-def]
     ev = [Evidence(n=i, doc_id=f"case-{i}", title=f"Evidence {i}", link=None, passage=p) for i, p in enumerate(case.evidence, start=1)]
     try:
-        result = draft_answer(db, user, title, case.question, ["Find sources", "Draft with citations"], ev, style)
+        result = draft_answer(db, user, title, case.question, ["Find sources", "Draft with citations"], ev, style, guides)
     except Exception as e:  # a blocked route or a model failure is a failed case, not a crash
         return CaseResult(case.question, False, f"The model could not answer: {getattr(e, 'detail', None) or type(e).__name__}")
     text = result.text
@@ -43,4 +43,8 @@ def _run_case(db: Session, user: User, case, title: str, style: str = "") -> Cas
 
 def evaluate(db: Session, user: User, manifest: Manifest) -> list[CaseResult]:
     styles = {t.id: t.style for t in manifest.templates}
-    return [_run_case(db, user, c, manifest.name, styles.get(c.template or "", "")) for c in manifest.evaluation_cases]
+    # A case runs with its template's guides too, so a pack is evaluated as it will be used.
+    by_id = {g.id: (g.name, g.body) for g in manifest.guides}
+    guides = {t.id: [by_id[g] for g in t.guides] for t in manifest.templates}
+    return [_run_case(db, user, c, manifest.name, styles.get(c.template or "", ""), guides.get(c.template or "", []))
+            for c in manifest.evaluation_cases]

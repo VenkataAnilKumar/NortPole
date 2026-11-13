@@ -328,7 +328,10 @@ def start_task(
                  started_at=func.now(), plan=None, plan_error=None, plan_route=None)
     _audit(user, AuditAction.TASK_START, task, "Started a task")
     try:
-        result = draft_plan(db_session, user, task.title, task.request, task.desired_output)
+        from evolvxsi.packs.guidance import guides_for
+
+        guides = guides_for(db_session, task.pack_id, task.pack_version, task.pack_template)
+        result = draft_plan(db_session, user, task.title, task.request, task.desired_output, guides)
     except PlanError as e:
         return _view(_move(db_session, task_id, user, task.version, TaskAction.PLAN_FAILED, plan_error=str(e)))
     except EvolvXSIError as e:
@@ -394,7 +397,10 @@ def run_task(
         from evolvxsi.packs.guidance import style_for
 
         style = style_for(db_session, task.pack_id, task.pack_version, task.pack_template)
-        result = draft_answer(db_session, user, task.title, task.request, task.plan or [], evidence, style)
+        from evolvxsi.packs.guidance import guides_for
+
+        guides = guides_for(db_session, task.pack_id, task.pack_version, task.pack_template)
+        result = draft_answer(db_session, user, task.title, task.request, task.plan or [], evidence, style, guides)
     except EvolvXSIError as e:
         return _view(_move(db_session, task_id, user, task.version, TaskAction.RUN_FAILED, run_error=e.detail))
     except Exception:
