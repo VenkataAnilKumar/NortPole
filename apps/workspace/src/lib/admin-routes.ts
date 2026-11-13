@@ -437,6 +437,16 @@ export const ADMIN_ROUTES = {
     requiredTier: null,
     visibleWhen: null,
   },
+  QUALITY: {
+    path: "/admin/quality",
+    icon: SvgShield,
+    title: "Quality",
+    sidebarLabel: "Quality",
+    requiredPermission: Permission.FULL_ADMIN_PANEL_ACCESS,
+    section: "Quality",
+    requiredTier: null,
+    visibleWhen: null,
+  },
   GOVERNANCE: {
     path: "/admin/governance",
     icon: SvgShield,

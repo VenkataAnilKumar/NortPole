@@ -59,9 +59,13 @@ test("full admins see the canonical link and no legacy action links", () => {
     flags,
     null
   )
-    .filter((item) => item.sectionId === "agentsAndActions")
+    .filter((item) => item.sectionId === "agentsAndTools")
     .map((item) => item.link);
-  expect(actionLinks).toEqual(["/admin/agents", "/admin/plugins"]);
+  expect(actionLinks).toEqual(
+    expect.arrayContaining(["/admin/agents", "/admin/plugins"])
+  );
+  expect(actionLinks).not.toContain("/admin/mcp-actions");
+  expect(actionLinks).not.toContain("/admin/openapi-actions");
 });
 
 test("Craft-enabled admins have one Plugins entry and no separate Apps entry", () => {

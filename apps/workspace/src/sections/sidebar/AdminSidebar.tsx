@@ -105,6 +105,7 @@ export default function AdminSidebar() {
       agentsAndTools: t("adminNav.sections.agentsAndTools.label"),
       craft: t("adminNav.sections.craft.label"),
       knowledge: t("adminNav.sections.knowledge.label"),
+      quality: t("adminNav.sections.quality.label"),
       platform: t("adminNav.sections.platform.label"),
     }),
     [t]
