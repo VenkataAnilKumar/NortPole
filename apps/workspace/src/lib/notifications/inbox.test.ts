@@ -56,6 +56,11 @@ describe("inboxBadgeCount", () => {
     const quiet = prefs({ quiet_hours: { enabled: true, start: "22:00", end: "07:00" } });
     expect(inboxBadgeCount(items, prefs(), at(12), 2)).toBe(5);
     expect(inboxBadgeCount(items, quiet, at(23), 2)).toBe(4);
+    // The person's own plans to accept and drafts to review count as action items: shown in quiet hours, hidden
+    // when approvals are switched off.
+    expect(inboxBadgeCount(items, prefs(), at(12), 0, 3)).toBe(6);
+    expect(inboxBadgeCount(items, quiet, at(23), 0, 3)).toBe(5);
+    expect(inboxBadgeCount(items, prefs({ approvals: false }), at(12), 0, 3)).toBe(1);
     expect(inboxBadgeCount(items, prefs({ approvals: false }), at(12), 2)).toBe(1);
   });
 });

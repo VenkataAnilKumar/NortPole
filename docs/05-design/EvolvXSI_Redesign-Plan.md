@@ -11,7 +11,7 @@ The user side is for using things and asking for them. The admin console is for 
 | # | Tab | Features | Status |
 |---|---|---|---|
 | 1 | **New** | Chat box and assistant picker, attachments, choose which knowledge to use, a badge for where the message goes (local, private, cloud), and "Make it a draft". | Exists; knowledge picker new |
-| 2 | **Inbox** | Filters **To approve** (second-approver sends, scheduled plans), **To review** (drafts ready), **Updates**. A count on the tab. A newer scheduled plan replaces the older one. | Exists; filters R5 |
+| 2 | **Inbox** | Filters **To approve** (the person's plans to accept, approvals asked of them, scheduled plans from R6, and for administrators one line pointing to admin Approvals), **To review** (drafts ready), **Updates** (runs, decisions on their Discover requests, announcements; dismissed items on request). The sidebar count includes the person's own plans and drafts. A newer scheduled plan replaces the older one (R6). | **R5 done** |
 | 3 | **Search** | One search over company knowledge and the person's uploads, filtered by domain, source and date. Each result shows its source and who can see it. | Exists; domain filter R7 |
 | 4 | **Agent** | Chat assistants only, each card showing what it reads and which tools it may use. Workflow agents live in Workflows. | Exists (sidebar Agents section); cleanup R3 |
 | 5 | **Workflows** | Tabs **Start** (packs; a "Run by" card shows the agent's plan), **Scheduled** (each run stops at the plan and waits in Inbox; a schedule pauses after 3 plans in a row go unaccepted), **My drafts**. | **R1 done** (tabs, addresses); scheduler R6 |
@@ -58,8 +58,8 @@ The old addresses redirect (HTTP 307, set in `next.config.js`) because home card
 | R2 | Admin console regroup, merged Approvals queue, hide inherited screens | Small to medium | Done |
 | R3 | "Run by" line on Start, Agent tab for chat assistants, Channels rename, Sources order | Medium | Done |
 | R4 | **Discover** (first tab of Sources) with requests for connectors, skills and plugins, landing in Approvals | Medium | Done |
-| R5 | Inbox filters | Small | Next |
-| R6 | Scheduled workflows: scheduler, stop at the plan, auto-pause, cost on Quality | Medium | |
+| R5 | Inbox filters | Small | Done |
+| R6 | Scheduled workflows: scheduler, stop at the plan, auto-pause, cost on Quality | Medium | Next |
 | R7 | Knowledge domains, uploads by domain, request and approve, domain filter in search | Large | After the Google Drive connector |
 | R8 | Quality pass of each stage | Small per stage | Ongoing |
 
@@ -71,4 +71,5 @@ New page text is in English first; sidebar labels are translated into all nine l
 - **A request** records the kind, the item and an optional reason (up to 500 characters). One waiting request per person per item, and at most 20 waiting per person. A person can withdraw their own waiting request.
 - **Deciding** happens in admin Approvals, with an optional note the person sees. **Approving turns nothing on**: it records the decision, and the administrator sets the item up on Connectors, Packs or Tools (each request links there).
 - **Audit:** `source.request` (asked, withdrawn) and `source.request_decide`, with the kind and item only; the person's reason is not copied into the audit log.
-- **Not yet:** telling the person in Inbox when a request is decided (R5); closing an approved request automatically once the item is on.
+- **The person is told** under Inbox Updates when their request is approved or declined, with the administrator's note (R5).
+- **Not yet:** closing an approved request automatically once the item is on.
