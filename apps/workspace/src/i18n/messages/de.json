@@ -16956,20 +16956,17 @@
       "plugins": {
         "label": "Plugins"
       },
-      "libraries": {
-        "label": "Bibliotheken"
-      },
-      "automations": {
-        "label": "Automatisierungen"
-      },
-      "reviewedTasks": {
-        "label": "Entwürfe"
-      },
-      "packs": {
-        "label": "Workflows"
-      },
       "inbox": {
         "label": "Posteingang"
+      },
+      "workflows": {
+        "label": "Workflows"
+      },
+      "knowledge": {
+        "label": "Wissen"
+      },
+      "sources": {
+        "label": "Quellen"
       }
     },
     "chatButton": {

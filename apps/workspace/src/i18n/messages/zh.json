@@ -16956,20 +16956,17 @@
       "plugins": {
         "label": "插件"
       },
-      "libraries": {
-        "label": "资料库"
-      },
-      "automations": {
-        "label": "自动化"
-      },
-      "reviewedTasks": {
-        "label": "草稿"
-      },
-      "packs": {
-        "label": "工作流"
-      },
       "inbox": {
         "label": "收件箱"
+      },
+      "workflows": {
+        "label": "工作流"
+      },
+      "knowledge": {
+        "label": "知识"
+      },
+      "sources": {
+        "label": "来源"
       }
     },
     "chatButton": {

@@ -341,7 +341,7 @@ export default function MessageToolbar({
                     return;
                   }
                   const created = (await res.json()) as { id: string };
-                  window.location.assign(`/app/reviewed-tasks?task=${encodeURIComponent(created.id)}`);
+                  window.location.assign(`/app/workflows/drafts?task=${encodeURIComponent(created.id)}`);
                 }}
               />
             )}

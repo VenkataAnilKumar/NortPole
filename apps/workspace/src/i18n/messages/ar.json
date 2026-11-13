@@ -16956,20 +16956,17 @@
       "plugins": {
         "label": "الإضافات"
       },
-      "libraries": {
-        "label": "المكتبات"
-      },
-      "automations": {
-        "label": "الأتمتة"
-      },
-      "reviewedTasks": {
-        "label": "المسودات"
-      },
-      "packs": {
-        "label": "سير العمل"
-      },
       "inbox": {
         "label": "البريد الوارد"
+      },
+      "workflows": {
+        "label": "سير العمل"
+      },
+      "knowledge": {
+        "label": "المعرفة"
+      },
+      "sources": {
+        "label": "المصادر"
       }
     },
     "chatButton": {

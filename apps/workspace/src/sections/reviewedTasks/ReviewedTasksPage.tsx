@@ -524,7 +524,7 @@ export default function ReviewedTasksPage() {
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 p-4 sm:p-8" data-testid="reviewed-tasks-page">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div className="flex flex-col gap-1">
-          <h1 className="font-[family-name:var(--font-serif)] text-3xl font-medium text-text-05">Drafts</h1>
+          <h1 className="font-[family-name:var(--font-serif)] text-3xl font-medium text-text-05">My drafts</h1>
           <p className="text-sm text-text-03">Write the request, start it when ready, and approve the plan before any work runs.</p>
         </div>
         {!creating && (

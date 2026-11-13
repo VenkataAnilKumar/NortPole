@@ -26,20 +26,20 @@ export default function AutomationsPage() {
   const tasks = Array.isArray(data) ? data : [];
 
   return (
-    <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 p-8" data-testid="automations-page">
+    <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 p-4 sm:p-8" data-testid="automations-page">
       <header className="flex flex-col gap-1">
-        <h1 className="font-[family-name:var(--font-serif)] text-3xl font-medium text-text-05">Automations</h1>
+        <h1 className="font-[family-name:var(--font-serif)] text-3xl font-medium text-text-05">Scheduled</h1>
         <p className="text-sm text-text-03">
-          Tasks that run on a schedule. Anything that needs approval waits in your Inbox.
+          Workflows that run on a schedule. Anything that needs approval waits in your Inbox.
         </p>
       </header>
 
       {isLoading ? (
-        <p className="text-sm text-text-03">Loading automations…</p>
+        <p className="text-sm text-text-03">Loading scheduled workflows…</p>
       ) : error ? (
         <section className={card} role="alert" aria-labelledby="auto-unavailable">
           <h2 id="auto-unavailable" className="mb-1 text-base font-semibold text-text-05">
-            Automations are not available here
+            Scheduled workflows are not available here
           </h2>
           <p className="text-sm text-text-03">
             Scheduled tasks run in a sandbox that this build does not start. They appear here once that service is
@@ -48,7 +48,7 @@ export default function AutomationsPage() {
         </section>
       ) : tasks.length === 0 ? (
         <section className={card} aria-labelledby="auto-empty">
-          <h2 id="auto-empty" className="mb-1 text-base font-semibold text-text-05">No automations yet</h2>
+          <h2 id="auto-empty" className="mb-1 text-base font-semibold text-text-05">No scheduled workflows yet</h2>
           <p className="text-sm text-text-03">
             When you schedule a task it is listed here with its next run, its last result and whether it is paused.
           </p>

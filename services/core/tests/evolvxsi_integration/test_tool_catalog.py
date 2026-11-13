@@ -161,3 +161,29 @@ def test_check_now_finds_a_tool_changed_on_its_server_and_withholds_it(world) ->
         n = s.execute(text("select count(*) from evolvxsi_audit_event where resource_type='tool_catalog' and actor_email=:e and summary like 'Checked MCP server%'"),
                       {"e": admin.email}).scalar()
         assert n == 3
+
+
+def test_the_member_view_shows_names_and_status_only_and_hides_other_peoples_personal_tools(world) -> None:  # type: ignore[no-untyped-def]
+    with get_session_with_current_tenant() as s:
+        other = User(id=uuid.uuid4(), email=f"cat-other-{TAG}@example.com", hashed_password="x", is_active=True, is_verified=True)
+        s.add(other)
+        s.flush()
+        personal = Tool(name=f"personal_{TAG}", description="mine", user_id=other.id, enabled=True,
+                        openapi_schema={"openapi": "3.0.0", "info": {"title": "t", "version": "1"}, "paths": {}})
+        s.add(personal)
+        s.commit()
+        try:
+            admin = s.get(User, world["admin"])
+            seen = cat_api.get_member_catalog(user=admin, db_session=s)
+            names = {t.name for t in seen.tools}
+            assert f"mcp_tool_{TAG}" in names and f"personal_{TAG}" not in names
+            row = next(t for t in seen.tools if t.name == f"mcp_tool_{TAG}")
+            assert (row.allowed, row.mine) == (False, False)
+            dumped = seen.model_dump_json()
+            assert f"tools-{TAG}.example.com" not in dumped and f"secret-{TAG}" not in dumped, "no hosts or definitions"
+            owner_view = cat_api.get_member_catalog(user=other, db_session=s)
+            assert next(t for t in owner_view.tools if t.name == f"personal_{TAG}").mine
+        finally:
+            s.delete(personal)
+            s.delete(other)
+            s.commit()

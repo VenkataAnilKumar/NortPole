@@ -186,7 +186,7 @@ export default function PacksPage() {
         throw new Error(typeof detail === "string" && detail ? detail : `Could not create the draft (HTTP ${res.status}).`);
       }
       const created = (await res.json()) as { id: string };
-      router.push(`/app/reviewed-tasks?task=${encodeURIComponent(created.id)}`);
+      router.push(`/app/workflows/drafts?task=${encodeURIComponent(created.id)}`);
     } catch (e) {
       setFailed(e instanceof Error ? e.message : "Could not create the draft.");
       setBusy(null);
@@ -196,7 +196,7 @@ export default function PacksPage() {
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 p-4 sm:p-8" data-testid="packs-page">
       <header className="flex flex-col gap-1">
-        <h1 className="font-[family-name:var(--font-serif)] text-3xl font-medium text-text-05">Workflows</h1>
+        <h1 className="font-[family-name:var(--font-serif)] text-3xl font-medium text-text-05">Start a workflow</h1>
         <p className="text-sm text-text-03">
           Ready-made workflows, grouped in packs. Choosing one creates a draft for you to edit; nothing runs until
           you press Start.

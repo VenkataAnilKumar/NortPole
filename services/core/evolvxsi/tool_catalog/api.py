@@ -200,3 +200,36 @@ def check_server(
                  resource_type="tool_catalog", resource_id=server_id,
                  summary=f"Checked MCP server {server_id}: {len(out)} tool(s), " + (f"differences: {', '.join(changed)[:300]}" if changed else "no differences"))
     return out
+
+
+member_router = APIRouter(prefix="/tool-catalog")
+
+
+class MemberToolView(BaseModel):
+    name: str
+    kind_label: str
+    allowed: bool
+    mine: bool  # a personal tool this person added
+
+
+class MemberCatalogView(BaseModel):
+    kinds: list[KindView]
+    tools: list[MemberToolView]
+
+
+@member_router.get("")
+def get_member_catalog(
+    user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
+    db_session: Session = Depends(get_session),
+) -> MemberCatalogView:
+    """What chat assistants may use, for anyone signed in: names, kinds and whether each is allowed. No hosts,
+    definitions or agent names, and only this person's own personal tools."""
+    view = build(db_session)
+    rows = {t.id: t for t in db_session.scalars(select(Tool))}
+    tools = []
+    for t in view.tools:
+        owner = rows[t.id].user_id if t.id in rows else None
+        if owner is not None and owner != user.id:
+            continue
+        tools.append(MemberToolView(name=t.name, kind_label=catalog.LABEL[t.kind], allowed=t.allowed and t.core_enabled, mine=owner is not None))
+    return MemberCatalogView(kinds=view.kinds, tools=tools)
