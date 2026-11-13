@@ -19,7 +19,7 @@ WINDOW_DAYS = 7
 
 
 def build(db: Session, now: datetime.datetime | None = None) -> dict:
-    from evolvxsi.audit_log.chain import verify
+    from evolvxsi.audit_log.chain import verify_quick
     from evolvxsi.configs.app_configs import DISABLE_VECTOR_DB
     from evolvxsi.extensions.policy import load as load_ext
     from evolvxsi.packs.api import _active_versions, current_model, passed_on_current_model
@@ -64,7 +64,7 @@ def build(db: Session, now: datetime.datetime | None = None) -> dict:
             unavailable.append({"pack_id": v.pack_id, "name": v.manifest.get("name", v.pack_id), "version": v.version, "reason": why})
     packs = {"active": len(active), "unavailable": unavailable}
 
-    chain = verify(db)
+    chain = verify_quick(db)
 
     model = current_model(db)
     policy, ret, ext = load_policy(), load_ret(), load_ext()

@@ -34,8 +34,8 @@ def _restore():  # type: ignore[no-untyped-def]
     yield
     save(original)
     with get_session_with_current_tenant() as s:
-        s.query(EvolvXSIAuditEvent).filter(EvolvXSIAuditEvent.actor_email == ADMIN.email).delete()
-        s.query(EvolvXSIAuditEvent).filter(EvolvXSIAuditEvent.actor_email == f"old-{TAG}").delete()
+        s.query(EvolvXSIAuditEvent).filter(EvolvXSIAuditEvent.actor_email == ADMIN.email, EvolvXSIAuditEvent.row_hash.is_(None)).delete()
+        s.query(EvolvXSIAuditEvent).filter(EvolvXSIAuditEvent.actor_email == f"old-{TAG}", EvolvXSIAuditEvent.row_hash.is_(None)).delete()
         s.query(EvolvXSIRouteUsage).filter(EvolvXSIRouteUsage.model_name == TAG).delete()
         s.query(EvolvXSIRedactionCount).filter(EvolvXSIRedactionCount.data_kind == "TEST").delete()
         s.commit()

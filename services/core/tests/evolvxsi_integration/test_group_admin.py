@@ -56,7 +56,7 @@ def people():  # type: ignore[no-untyped-def]
         s.execute(text("delete from user__user_group where user_id = any(:ids)"), {"ids": ids})
         s.execute(text("delete from user_group where name like :p"), {"p": f"%{RUN}%"})
         s.query(User).filter(User.id.in_(ids)).delete()
-        s.execute(text("delete from evolvxsi_audit_event where actor_email = :e"), {"e": ADMIN.email})
+        s.execute(text("delete from evolvxsi_audit_event where actor_email = :e and row_hash is null"), {"e": ADMIN.email})
         s.commit()
 
 

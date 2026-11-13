@@ -16832,57 +16832,57 @@
           "label": "支出上限"
         },
         "routePolicy": {
-          "label": "Route Policy"
+          "label": "路由策略"
         },
         "accessGroups": {
-          "label": "Access groups"
+          "label": "访问组"
         },
         "actionTargets": {
-          "label": "Send destinations"
+          "label": "发送目标"
         },
         "auditLog": {
-          "label": "Audit log"
+          "label": "审计日志"
         },
         "packsAdmin": {
-          "label": "Packs"
+          "label": "包"
         },
         "inventory": {
-          "label": "Inventory"
+          "label": "清单"
         },
         "governance": {
-          "label": "Governance"
+          "label": "治理"
         },
         "overview": {
-          "label": "Overview"
+          "label": "概览"
         }
       },
       "sections": {
         "overview": {
-          "label": "Overview"
+          "label": "概览"
         },
         "governance": {
-          "label": "Governance"
+          "label": "治理"
         },
         "people": {
-          "label": "People"
+          "label": "人员"
         },
         "models": {
-          "label": "Models"
+          "label": "模型"
         },
         "packs": {
-          "label": "Packs"
+          "label": "包"
         },
         "agentsAndTools": {
-          "label": "Agents & tools"
+          "label": "智能体与工具"
         },
         "craft": {
           "label": "Craft"
         },
         "knowledge": {
-          "label": "Knowledge"
+          "label": "知识"
         },
         "platform": {
-          "label": "Platform"
+          "label": "平台"
         }
       }
     },
@@ -16921,7 +16921,7 @@
         "tooltip": "新建项目"
       },
       "newSession": {
-        "label": "新建会话"
+        "label": "新建"
       },
       "projects": {
         "title": "项目"
@@ -16930,7 +16930,7 @@
         "empty": {
           "text": "试着发送一条消息吧！您的对话历史将显示在这里。"
         },
-        "title": "最近"
+        "title": "聊天"
       },
       "searchChats": {
         "label": "搜索对话"
@@ -16939,19 +16939,19 @@
         "label": "插件"
       },
       "libraries": {
-        "label": "Libraries"
+        "label": "资料库"
       },
       "automations": {
-        "label": "Automations"
+        "label": "自动化"
       },
       "reviewedTasks": {
-        "label": "Tasks"
+        "label": "任务"
       },
       "packs": {
-        "label": "Workflows"
+        "label": "工作流"
       },
       "inbox": {
-        "label": "Inbox"
+        "label": "收件箱"
       }
     },
     "chatButton": {

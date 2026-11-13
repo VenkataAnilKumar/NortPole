@@ -59,7 +59,7 @@ def world():  # type: ignore[no-untyped-def]
         s.query(Credential).filter_by(id=ids["cr"]).delete()
         s.query(Connector).filter_by(id=ids["c"]).delete()
         s.query(UserGroup).filter_by(id=ids["g"]).delete()
-        s.execute(text("delete from evolvxsi_audit_event where actor_email = :e"), {"e": f"approver-{RUN}@example.com"})
+        s.execute(text("delete from evolvxsi_audit_event where actor_email = :e and row_hash is null"), {"e": f"approver-{RUN}@example.com"})
         s.query(User).filter_by(id=ids["u"]).delete()
         s.commit()
 
@@ -72,7 +72,8 @@ def _ready(s, uid, draft="Receipts are due in 30 days [1]."):  # type: ignore[no
         t = api.start_task(t.id, api.VersionOnly(version=t.version), user=u, db_session=s)
     t = api.accept_plan(t.id, api.VersionOnly(version=t.version), user=u, db_session=s)
     ev = [Evidence(n=1, doc_id=DOC, title="Receipt rules doc", link="https://example.com/r", passage="Due in 30 days.")]
-    with patch.object(api, "gather_evidence", return_value=ev), \
+    # The relevance check asks the live model; these tests are about approval and export, so it is left out.
+    with patch.object(api, "gather_evidence", return_value=ev), patch.object(api, "filter_relevant", side_effect=lambda *a, **k: a[-1]), \
          patch.object(api, "draft_answer", return_value=DraftResult(draft, [1], 0, "local")):
         t = api.run_task(t.id, api.VersionOnly(version=t.version), user=u, db_session=s)
     assert t.state is TaskState.DRAFT_READY and t.draft_hash

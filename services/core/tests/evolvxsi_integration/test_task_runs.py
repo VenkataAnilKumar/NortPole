@@ -43,7 +43,7 @@ def owner():  # type: ignore[no-untyped-def]
     yield ids
     with get_session_with_current_tenant() as s:
         s.query(EvolvXSITask).filter(EvolvXSITask.owner_id.in_(ids)).delete()
-        s.execute(text("delete from evolvxsi_audit_event where actor_email like :p"), {"p": f"%-{RUN}@example.com"})
+        s.execute(text("delete from evolvxsi_audit_event where actor_email like :p and row_hash is null"), {"p": f"%-{RUN}@example.com"})
         s.query(User).filter(User.id.in_(ids)).delete()
         s.commit()
 

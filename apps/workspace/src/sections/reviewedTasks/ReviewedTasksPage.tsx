@@ -502,7 +502,7 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
 }
 
 /**
- * Reviewed tasks: write a draft, start it on purpose, review the proposed plan,
+ * Tasks (reviewed work): write a draft, start it on purpose, review the proposed plan,
  * then accept, revise or cancel. Nothing runs before Start, and the plan is
  * drafted only on a route the administrator's policy allows.
  */
