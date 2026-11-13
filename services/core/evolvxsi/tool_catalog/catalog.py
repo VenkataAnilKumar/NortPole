@@ -13,6 +13,8 @@ Kinds and their defaults:
 
 from __future__ import annotations
 
+import hashlib
+import json
 from typing import Any, Literal
 
 from pydantic import BaseModel, Field
@@ -57,6 +59,11 @@ class CatalogPolicy(BaseModel):
     kinds: dict[str, bool] = Field(default_factory=lambda: dict(DEFAULTS))
     # Per tool, by the tool's database id: True or False overrides its kind.
     tools: dict[str, bool] = Field(default_factory=dict)
+    # Outside tools (MCP, OpenAPI) need their own approval, which records a hash of the tool's definition: its name,
+    # description and schemas, i.e. everything the model is shown and the server is called with. A tool whose stored
+    # definition no longer matches, or that a check found changed on its server, is withheld until approved again.
+    pins: dict[str, str] = Field(default_factory=dict)
+    drift: dict[str, str] = Field(default_factory=dict)
 
     def kind_on(self, kind: str) -> bool:
         return bool(self.kinds.get(kind, DEFAULTS.get(kind, False)))
@@ -79,6 +86,25 @@ def load() -> CatalogPolicy:
 
 def save(p: CatalogPolicy) -> None:
     get_kv_store().store(KV_KEY, p.model_dump())
+
+
+def definition_hash(name: str | None, description: str | None, mcp_input_schema: Any, mcp_output_schema: Any, openapi_schema: Any) -> str:
+    """A stable hash of what the model is shown and what the server is called with."""
+    body = {"name": name or "", "description": description or "", "input": mcp_input_schema, "output": mcp_output_schema, "openapi": openapi_schema}
+    return hashlib.sha256(json.dumps(body, sort_keys=True, separators=(",", ":"), default=str).encode()).hexdigest()
+
+
+def outside_status(policy: "CatalogPolicy", tool_id: int, current_hash: str) -> str:
+    """For an outside tool: approved, not approved, changed since approved, or changed on its server."""
+    key = str(tool_id)
+    if key in policy.drift:
+        return "changed on its server"
+    pin = policy.pins.get(key)
+    if pin is None or policy.tools.get(key) is not True:
+        return "not approved"
+    if pin != current_hash:
+        return "changed since approved"
+    return "approved"
 
 
 def kind_of_row(in_code_tool_id: str | None, mcp_server_id: Any, openapi_schema: Any) -> Kind:
@@ -105,21 +131,31 @@ def filter_tools(tools_by_id: dict[int, list[Any]], db_session: Any, policy: Cat
     policy = policy or load()
     try:
         ids = [i for i in tools_by_id if i is not None]
-        rows = {r.id: (r.in_code_tool_id, r.mcp_server_id, r.openapi_schema)
-                for r in db_session.query(ToolRow.id, ToolRow.in_code_tool_id, ToolRow.mcp_server_id, ToolRow.openapi_schema).filter(ToolRow.id.in_(ids))} if ids else {}
+        found = db_session.query(ToolRow.id, ToolRow.in_code_tool_id, ToolRow.mcp_server_id, ToolRow.openapi_schema, ToolRow.name,
+                                 ToolRow.description, ToolRow.mcp_input_schema, ToolRow.mcp_output_schema).filter(ToolRow.id.in_(ids)).all() if ids else []
+        rows = {r.id: (r.in_code_tool_id, r.mcp_server_id, r.openapi_schema) for r in found}
+        hashes = {r.id: definition_hash(r.name, r.description, r.mcp_input_schema, r.mcp_output_schema, r.openapi_schema) for r in found}
     except Exception:  # noqa: BLE001
         logger.warning("tool catalog check failed; keeping only read tools for this chat", exc_info=True)
-        rows, policy = {}, CatalogPolicy(kinds={k: k == "read" for k in KINDS})
+        rows, hashes, policy = {}, {}, CatalogPolicy(kinds={k: k == "read" for k in KINDS})
     out: dict[int, list[Any]] = {}
     dropped: list[str] = []
     for tool_id, tools in tools_by_id.items():
         kept = []
         for t in tools:
             kind = kind_of_tool(t, rows)
-            if policy.allows(getattr(t, "id", None), kind):
+            tid = getattr(t, "id", None)
+            if kind == "outside":
+                # The outside switch must be on AND this tool approved with its current definition.
+                status = outside_status(policy, tid, hashes.get(tid, "")) if tid is not None else "not approved"
+                ok = policy.kind_on("outside") and status == "approved"
+                reason = f"outside, {status}" if policy.kind_on("outside") else "outside, switched off"
+            else:
+                ok, reason = policy.allows(tid, kind), kind
+            if ok:
                 kept.append(t)
             else:
-                dropped.append(f"{getattr(t, 'name', type(t).__name__)} ({kind})")
+                dropped.append(f"{getattr(t, 'name', type(t).__name__)} ({reason})")
         if kept:
             out[tool_id] = kept
     if dropped:
