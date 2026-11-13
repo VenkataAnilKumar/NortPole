@@ -45,7 +45,7 @@ export default function LiveApprovals() {
         Waiting for your decision
       </h2>
       {failed && (
-        <p role="alert" className="text-sm text-status-error-05">{failed}</p>
+        <p role="alert" className="text-sm text-status-text-error-05">{failed}</p>
       )}
       {items.map((a) => {
         const first = a.actions[0];

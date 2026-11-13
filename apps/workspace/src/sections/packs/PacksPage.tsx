@@ -170,7 +170,7 @@ export default function PacksPage() {
           you press Start.
         </p>
       </header>
-      {failed && <p role="alert" className="text-sm text-status-error-05">{failed}</p>}
+      {failed && <p role="alert" className="text-sm text-status-text-error-05">{failed}</p>}
 
       {isLoading ? (
         <p className="text-sm text-text-03">Loading…</p>
@@ -207,7 +207,7 @@ export default function PacksPage() {
                   </div>
                   {p.description && <p className="mt-2 text-sm text-text-03">{p.description}</p>}
                   {open === p.pack_id && <div id={`details-${p.pack_id}`}><Details p={p} /></div>}
-                  {!p.ready_on_current_route && <p role="status" className="mt-2 text-xs text-status-warning-05" data-testid="not-ready">{p.readiness_note}</p>}
+                  {!p.ready_on_current_route && <p role="status" className="mt-2 text-xs text-status-text-warning-05" data-testid="not-ready">{p.readiness_note}</p>}
                   <ul className="mt-3 grid gap-2 sm:grid-cols-2">
                     {p.templates.map((t) => (
                       <li key={t.id} className="flex flex-col justify-between gap-2 rounded-xl border border-border-01 p-3">

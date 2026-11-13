@@ -76,7 +76,7 @@ export default function PacksAdminPage() {
           started keep the version they began with.
         </p>
       </header>
-      {message && <p role="alert" data-testid="packs-message" className="text-sm text-status-error-05">{message}</p>}
+      {message && <p role="alert" data-testid="packs-message" className="text-sm text-status-text-error-05">{message}</p>}
 
       <section className={card} aria-labelledby="signers-h">
         <h2 id="signers-h" className="mb-2 text-base font-semibold text-text-05">Trusted signers</h2>
@@ -142,7 +142,7 @@ export default function PacksAdminPage() {
                 <div className="min-w-0">
                   <h3 className="truncate text-base font-semibold text-text-05">{v.name} <span className="font-normal text-text-03">{v.version}</span></h3>
                   <p className="text-xs text-text-03">{v.pack_id} · {v.vertical} · signed by {v.signer_key_id} · digest {v.digest.slice(0, 12)}</p>
-                  {v.signer_revoked && <p role="alert" className="mt-1 text-xs text-status-error-05">The signer was revoked: this pack is not offered and cannot be activated.</p>}
+                  {v.signer_revoked && <p role="alert" className="mt-1 text-xs text-status-text-error-05">The signer was revoked: this pack is not offered and cannot be activated.</p>}
                 </div>
                 <div className="flex gap-2">
                   {v.evaluation_cases > 0 && (
@@ -165,7 +165,7 @@ export default function PacksAdminPage() {
                 <ul className="mt-2 text-xs text-text-03" data-testid="evaluations">
                   {v.evaluations.length === 0 && <li>Not evaluated yet. It will not run until it passes its {v.evaluation_cases} cases on the model in use.</li>}
                   {v.evaluations.map((e) => (
-                    <li key={e.model_name} className={e.passed ? "" : "text-status-error-05"}>
+                    <li key={e.model_name} className={e.passed ? "" : "text-status-text-error-05"}>
                       {e.model_name} ({e.route_kind}): {e.passed ? "passed" : "failed"}, {e.cases_passed} of {e.cases_total} cases
                       {e.failures.map((f) => <div key={f}>{f}</div>)}
                     </li>

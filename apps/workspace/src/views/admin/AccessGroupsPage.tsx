@@ -139,7 +139,7 @@ function GroupCard({ group, users, onDone }: { group: Group; users: Member[]; on
           )}
           <div className="text-sm font-medium text-text-05">Members</div>
           <MemberPicker users={users} selected={selected} onChange={setSelected} idPrefix={`g${group.id}`} />
-          {error && <p role="alert" className="text-sm text-status-error-05">{error}</p>}
+          {error && <p role="alert" className="text-sm text-status-text-error-05">{error}</p>}
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
@@ -228,7 +228,7 @@ export default function AccessGroupsPage() {
           </label>
           <div className="text-sm font-medium text-text-05">Members</div>
           <MemberPicker users={people} selected={selected} onChange={setSelected} idPrefix="new" />
-          {createError && <p role="alert" className="text-sm text-status-error-05">{createError}</p>}
+          {createError && <p role="alert" className="text-sm text-status-text-error-05">{createError}</p>}
           <div>
             <button type="button" className={primary} disabled={busy || !name.trim()} onClick={create}>
               {busy ? "Creating…" : "Create group"}

@@ -114,7 +114,7 @@ function ProbeStage({ stage, state, label, value }: ProbeStageProps) {
             <SvgCheck className="size-4 text-status-success-05" />
           </span>
           <span data-icon="error">
-            <SvgX className="size-4 text-status-error-05" />
+            <SvgX className="size-4 text-status-text-error-05" />
           </span>
         </span>
         <Text font="secondary-body" color="text-04">

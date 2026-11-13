@@ -49,7 +49,7 @@ export default function InventoryPage() {
         </p>
       </div>
       <ExtensionRules />
-      {error && <p role="alert" className="text-sm text-status-error-05">Could not load the inventory.</p>}
+      {error && <p role="alert" className="text-sm text-status-text-error-05">Could not load the inventory.</p>}
       {isLoading && <p className="text-sm text-text-03">Loading…</p>}
       {data &&
         SECTIONS.map(({ kind, title }) => {

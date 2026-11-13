@@ -398,7 +398,7 @@ function StatusBar({
             onClick={onResume}
             className={cn(
               "rounded-full px-2 py-0.5 text-xs font-medium nowrap",
-              "bg-status-warning-01 text-status-warning-05",
+              "bg-status-warning-01 text-status-text-warning-05",
               "hover:bg-status-warning-02 transition-colors"
             )}
           >
@@ -484,9 +484,9 @@ function LogRow({ line }: { line: LogLine }) {
   // user's eye is only pulled toward WARN/ERROR.
   const colorClass =
     line.severity === "error"
-      ? "text-status-error-05"
+      ? "text-status-text-error-05"
       : line.severity === "warn"
-        ? "text-status-warning-05"
+        ? "text-status-text-warning-05"
         : "text-text-04";
   return (
     <div className={cn("whitespace-pre-wrap break-all", colorClass)}>

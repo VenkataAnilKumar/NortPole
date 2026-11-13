@@ -184,10 +184,10 @@ export const PythonToolRenderer: MessageRenderer<PythonToolPacket, {}> = ({
       {/* Error */}
       {stderr && (
         <div className="rounded-md bg-status-error-01 p-3 border border-status-error-02">
-          <div className="text-xs font-semibold mb-1 text-status-error-05">
+          <div className="text-xs font-semibold mb-1 text-status-text-error-05">
             {t("python.error.label")}
           </div>
-          <pre className="text-sm whitespace-pre-wrap font-mono text-status-error-05 overflow-x-auto">
+          <pre className="text-sm whitespace-pre-wrap font-mono text-status-text-error-05 overflow-x-auto">
             {stderr}
           </pre>
         </div>

@@ -81,7 +81,7 @@ export default function NotificationsSettings() {
       </section>
 
       {status === "saved" && <p role="status" className="text-sm text-status-success-05">Saved.</p>}
-      {status === "error" && <p role="alert" className="text-sm text-status-error-05">Could not save. Try again in a moment.</p>}
+      {status === "error" && <p role="alert" className="text-sm text-status-text-error-05">Could not save. Try again in a moment.</p>}
       <p className="text-xs text-text-03">
         These choices are saved to your account and set the number shown on the Inbox tab. The Inbox page itself
         still lists everything. Quiet hours hold task updates from that number, never items that need your action.

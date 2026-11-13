@@ -116,7 +116,7 @@ function DraftForm({
         Desired output <span className="font-normal text-text-03">(optional)</span>
         <input className={`${input} min-h-11`} value={output} maxLength={8000} onChange={(e) => setOutput(e.target.value)} />
       </label>
-      {error && <p role="alert" className="text-sm text-status-error-05">{error}</p>}
+      {error && <p role="alert" className="text-sm text-status-text-error-05">{error}</p>}
       <div className="flex flex-wrap gap-2">
         <button type="button" className={primary} disabled={busy || !title.trim() || !request.trim()} onClick={save}>
           {busy ? "Saving…" : "Save draft"}
@@ -351,7 +351,7 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
                   )}
                   {!src.cited && <span className="ml-1">(found but not cited)</span>}
                   {src.flagged && (
-                    <span className="ml-2 text-status-warning-05" data-testid="source-flagged">
+                    <span className="ml-2 text-status-text-warning-05" data-testid="source-flagged">
                       contains text that reads like an instruction to the model
                     </span>
                   )}
@@ -408,12 +408,12 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
         </section>
       )}
       {task.state === "run_failed" && task.run_error && (
-        <p role="alert" className="mt-4 text-sm text-status-error-05">{task.run_error}</p>
+        <p role="alert" className="mt-4 text-sm text-status-text-error-05">{task.run_error}</p>
       )}
       {task.state === "plan_failed" && task.plan_error && (
-        <p role="alert" className="mt-4 text-sm text-status-error-05">{task.plan_error}</p>
+        <p role="alert" className="mt-4 text-sm text-status-text-error-05">{task.plan_error}</p>
       )}
-      {error && <p role="alert" className="mt-3 text-sm text-status-error-05">{error}</p>}
+      {error && <p role="alert" className="mt-3 text-sm text-status-text-error-05">{error}</p>}
 
       {!editing && (
         <div className="mt-4 flex flex-wrap gap-2">
@@ -446,7 +446,7 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
           {(task.rule_results ?? []).length > 0 && (
             <ul className="w-full text-sm" data-testid="rule-results" aria-label="Pack review rules">
               {(task.rule_results ?? []).map((r, i) => (
-                <li key={i} className={r.passed ? "text-text-03" : r.severity === "block" ? "text-status-error-05" : "text-status-warning-05"}>
+                <li key={i} className={r.passed ? "text-text-03" : r.severity === "block" ? "text-status-text-error-05" : "text-status-text-warning-05"}>
                   {r.passed ? "Met" : r.severity === "block" ? "Not met (must be fixed to approve)" : "Warning"}: {r.message} <span className="text-xs">({r.detail})</span>
                 </li>
               ))}

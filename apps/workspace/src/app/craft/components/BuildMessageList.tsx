@@ -303,7 +303,7 @@ export default function BuildMessageList({
               key={item.id}
               className={cn(
                 topMargin,
-                "flex items-start gap-2 rounded-08 border border-status-error-02 bg-status-error-00 px-3 py-2 text-sm text-status-error-05"
+                "flex items-start gap-2 rounded-08 border border-status-error-02 bg-status-error-00 px-3 py-2 text-sm text-status-text-error-05"
               )}
               role="alert"
             >

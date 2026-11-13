@@ -82,7 +82,7 @@ export default function ExtensionRules() {
           Save rules
         </button>
       </div>
-      {msg && <p role={msg.ok ? "status" : "alert"} className={`mt-2 text-sm ${msg.ok ? "text-text-05" : "text-status-error-05"}`} data-testid="extension-message">{msg.text}</p>}
+      {msg && <p role={msg.ok ? "status" : "alert"} className={`mt-2 text-sm ${msg.ok ? "text-text-05" : "text-status-text-error-05"}`} data-testid="extension-message">{msg.text}</p>}
     </section>
   );
 }

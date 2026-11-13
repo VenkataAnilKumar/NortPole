@@ -119,7 +119,7 @@ export default function ActionTargetsPage() {
             </select>
           </label>
           <ClassPicker value={classes} onChange={setClasses} />
-          {message && <p role="alert" className="text-sm text-status-error-05">{message}</p>}
+          {message && <p role="alert" className="text-sm text-status-text-error-05">{message}</p>}
           <div>
             <button
               type="button"

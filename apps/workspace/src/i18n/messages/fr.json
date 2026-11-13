@@ -16851,6 +16851,9 @@
         },
         "governance": {
           "label": "Governance"
+        },
+        "overview": {
+          "label": "Overview"
         }
       },
       "sections": {

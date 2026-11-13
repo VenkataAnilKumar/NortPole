@@ -106,7 +106,7 @@ export default function TaskActions({ taskId }: { taskId: string }) {
           </button>
         </div>
       )}
-      {error && <p role="alert" className="mt-2 text-sm text-status-error-05">{error}</p>}
+      {error && <p role="alert" className="mt-2 text-sm text-status-text-error-05">{error}</p>}
 
       {list.length > 0 && (
         <ul className="mt-3 flex flex-col gap-3" data-testid="action-list">
@@ -126,7 +126,7 @@ export default function TaskActions({ taskId }: { taskId: string }) {
                     <pre className="mt-1 max-h-60 overflow-auto whitespace-pre-wrap rounded-lg bg-background-neutral-01 px-2 py-1 text-text-05">{a.payload.markdown}</pre>
                   </details>
                 )}
-                {a.error && <p role="alert" className="mt-2 text-xs text-status-error-05">{a.error}</p>}
+                {a.error && <p role="alert" className="mt-2 text-xs text-status-text-error-05">{a.error}</p>}
                 {a.state === "succeeded" && (
                   <p className="mt-2 text-xs text-text-03">
                     Delivered{a.executed_at ? ` on ${new Date(a.executed_at).toLocaleString()}` : ""} (status {a.result_status}).

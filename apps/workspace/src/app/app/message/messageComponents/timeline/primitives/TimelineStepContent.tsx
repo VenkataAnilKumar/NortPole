@@ -73,7 +73,7 @@ export function TimelineStepContent({
               )
             ) : surfaceBackground === "error" ? (
               <div className="p-1.5">
-                <SvgXOctagon className="h-4 w-4 text-status-error-05" />
+                <SvgXOctagon className="h-4 w-4 text-status-text-error-05" />
               </div>
             ) : null}
           </div>
