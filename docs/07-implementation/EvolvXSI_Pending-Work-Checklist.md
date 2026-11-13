@@ -20,7 +20,8 @@ Status: Working list, 2026-11-13. Followed one item at a time, in the order belo
 ## Order of work (no decision needed from the owner)
 
 - [x] 1. **U6, UI quality pass** (done 2026-11-13) on changed screens: home cards, "Turn into a draft", Drafts, Recents, Workflows, admin Overview. Light and dark, 1280 and 390 wide, axe at 0 violations, keyboard.
-- [ ] 2. **A4 leftovers:** translations of the new pages, Privacy and Security settings, admin Overview and Quality tab, the wording inside a Draft that still says "task", native-speaker review of translations.
+- [x] 2. **A4 wording pass** (done 2026-11-13): the visible "task" wording on Drafts, Workflows and the Packs admin page now says draft or workflow; the home message box placeholder reads "Ask a question or type / for more". The rest of the old item 2 moved out: translations of the new pages stay deferred until a customer's language is known (an earlier decision), the user Privacy and Security settings depend on the retention and identity decisions (items 14 and 16), and the admin Quality tab is item 2b.
+- [ ] 2b. **Admin Quality tab** (Runs, Evals, Feedback, Trends; see the UI specification): a medium build. Do it after item 3 unless you want it earlier.
 - [ ] 3. **A10:** TLS, backups, upgrade path, container registry.
 - [ ] 4. **A8:** token and cost tracking per route (today only request counts).
 - [ ] 5. **A9:** remaining hardening items (check the A4/A7/A9 plan for the exact list before starting).
@@ -40,6 +41,7 @@ Status: Working list, 2026-11-13. Followed one item at a time, in the order belo
 - [ ] 13. Hosting target (A10 depends on it).
 - [ ] 14. Real retention periods (365 days is a placeholder).
 - [ ] 15. Trademark and legal licence review.
+- [ ] 16. Identity decisions (sign-in provider, MFA), needed for the user Security settings.
 
 ## Done recently
 
