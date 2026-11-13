@@ -16934,7 +16934,7 @@
         "empty": {
           "text": "Try sending a message! Your chat history will appear here."
         },
-        "title": "Chats"
+        "title": "Recents"
       },
       "searchChats": {
         "label": "Search"
