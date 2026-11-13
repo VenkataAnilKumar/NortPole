@@ -959,6 +959,21 @@ class LitellmLLM(LLM):
         2. The API key is one of EvolvXSI's managed default keys
         """
 
+        # EvolvXSI's own counter of tokens and estimated cost by route. It never raises and runs for every
+        # key, unlike the usage-limit tracking below, which only covers EvolvXSI-managed keys.
+        from evolvxsi.route_policy.usage import record_tokens
+
+        record_tokens(
+            model_configuration_id=self._model_configuration_id,
+            model_version=self._model_version,
+            provider=self._custom_llm_provider or self._model_provider,
+            served_model=routed_model,
+            prompt_tokens=usage.prompt_tokens,
+            completion_tokens=usage.completion_tokens,
+            cache_read_tokens=usage.cache_read_input_tokens,
+            cache_creation_tokens=usage.cache_creation_input_tokens,
+        )
+
         from evolvxsi.server.usage_limits import is_usage_limits_enabled
 
         if not is_usage_limits_enabled():

@@ -205,3 +205,32 @@ def get_route_usage(
 
     return [UsageRow(route_kind=r[0], model_name=r[1], data_class=r[2], purpose=r[3], requests=int(r[4]))
             for r in total(db_session, min(max(days, 1), 365))]
+
+
+class TokenRow(BaseModel):
+    route_kind: str
+    model_name: str
+    calls: int
+    prompt_tokens: int
+    completion_tokens: int
+    estimated_cost_cents: float | None  # None when no call on this row had a known price
+    unpriced_calls: int
+
+
+@router.get("/admin/route-tokens")
+def get_route_tokens(
+    days: int = 30,
+    _: User = Depends(require_permission(Permission.MANAGE_LLMS)),
+    db_session: Session = Depends(get_session),
+) -> list[TokenRow]:
+    """Tokens the models reported using over the last `days` days (1 to 365), by route type and model, with an
+    estimated cost in cents from the price list. The cost counts only calls whose price is known; `unpriced_calls`
+    says how many were left out. Counters only: no people and no text."""
+    from evolvxsi.route_policy.usage import total_tokens
+
+    out = []
+    for kind, model, calls, prompt, completion, cost, unpriced in total_tokens(db_session, min(max(days, 1), 365)):
+        calls, unpriced = int(calls), int(unpriced)
+        out.append(TokenRow(route_kind=kind, model_name=model, calls=calls, prompt_tokens=int(prompt), completion_tokens=int(completion),
+                            estimated_cost_cents=round(float(cost), 4) if calls > unpriced else None, unpriced_calls=unpriced))
+    return out

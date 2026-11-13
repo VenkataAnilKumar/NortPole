@@ -42,12 +42,12 @@ ANON_ENDPOINTS = [
     ("POST", f"/tasks/{uuid.uuid4()}/start"), ("POST", f"/tasks/{uuid.uuid4()}/run"),
     ("POST", f"/tasks/{uuid.uuid4()}/approve"), ("POST", f"/tasks/{uuid.uuid4()}/export"),
     ("GET", "/user-preferences"), ("PUT", "/user-preferences"),
-    ("GET", "/route-policy"), ("PUT", "/admin/route-policy"), ("GET", "/admin/route-policy/audit"),
+    ("GET", "/route-policy"), ("PUT", "/admin/route-policy"), ("GET", "/admin/route-policy/audit"), ("GET", "/admin/route-tokens"),
     ("GET", "/admin/access-groups"), ("POST", "/admin/access-groups"),
     ("PUT", "/admin/access-groups/sources/1"), ("GET", "/build/approvals/live"),
 ]
 ADMIN_ONLY = [
-    ("GET", "/admin/route-policy/audit"), ("PUT", "/admin/route-policy"),
+    ("GET", "/admin/route-policy/audit"), ("GET", "/admin/route-tokens"), ("PUT", "/admin/route-policy"),
     ("GET", "/admin/access-groups"), ("POST", "/admin/access-groups"),
     ("PUT", "/admin/access-groups/sources/1"),
 ]
