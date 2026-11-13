@@ -118,3 +118,25 @@ test("shows Skills only to full admins when Craft is available", () => {
     )
   ).not.toContain("/admin/skills");
 });
+
+test("pilot: Discord bot, SCIM, Hooks, Billing and Upgrade plan are not in the sidebar", () => {
+  const items = buildItems(
+    [Permission.FULL_ADMIN_PANEL_ACCESS],
+    { ...flags, hooksEnabled: true, hasSubscription: false },
+    null
+  );
+  const links = items.map((item) => item.link);
+  for (const hidden of ["/admin/discord-bot", "/admin/scim", "/admin/hooks", "/admin/billing"]) {
+    expect(links).not.toContain(hidden);
+  }
+  expect(items.map((item) => item.nameId)).not.toContain("upgradePlan");
+});
+
+test("redesign order: Overview, then Approvals, with packs under Agents & tools", () => {
+  const items = buildItems([Permission.FULL_ADMIN_PANEL_ACCESS], flags, null);
+  const sections = [...new Set(items.map((item) => item.sectionId))];
+  expect(sections.slice(0, 2)).toEqual(["overview", "approvals"]);
+  expect(sections.indexOf("agentsAndTools")).toBeLessThan(sections.indexOf("governance"));
+  const packs = items.find((item) => item.link === "/admin/packs");
+  expect(packs?.sectionId).toBe("agentsAndTools");
+});

@@ -2,7 +2,6 @@
 
 import useSWR from "swr";
 import { errorHandlingFetcher } from "@/lib/fetcher";
-import AdminApprovals from "@/views/admin/AdminApprovals";
 
 interface RoutePolicy { default_data_class: string; redact_route_kinds?: string[]; allowed: Record<string, string[]> }
 interface Extensions { personal_skills: string; mcp_allowlist_enabled: boolean; mcp_allowed_hosts: string[] }
@@ -63,11 +62,13 @@ export default function GovernancePage() {
         <Row title="Signed packs and who signs them" where="Packs" href="/admin/packs">
           Packs install only if signed by a trusted signer, and run only on models they passed evaluation on.
         </Row>
+        <Row title="Changes that need a second administrator" where="Approvals" href="/admin/approvals">
+          Which kinds of change need a second administrator, and the changes waiting for one.
+        </Row>
         <Row title="Who did what" where="Audit log" href="/admin/audit">
           Refusals, policy changes, approvals, sends and exports are written to the audit log.
         </Row>
       </ul>
-      <AdminApprovals />
     </div>
   );
 }

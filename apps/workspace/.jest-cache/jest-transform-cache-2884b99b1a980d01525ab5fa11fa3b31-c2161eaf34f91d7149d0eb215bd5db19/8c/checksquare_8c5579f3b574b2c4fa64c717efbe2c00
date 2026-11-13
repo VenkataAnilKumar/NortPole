@@ -1,0 +1,45 @@
+280b351933cdaa2625ad50846ee4d8e9
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "default", {
+    enumerable: true,
+    get: function() {
+        return _default;
+    }
+});
+const _jsxruntime = require("react/jsx-runtime");
+const SvgCheckSquare = ({ size, ...props })=>/*#__PURE__*/ (0, _jsxruntime.jsxs)("svg", {
+        width: size,
+        height: size,
+        viewBox: "0 0 16 16",
+        fill: "none",
+        xmlns: "http://www.w3.org/2000/svg",
+        stroke: "currentColor",
+        ...props,
+        children: [
+            /*#__PURE__*/ (0, _jsxruntime.jsx)("g", {
+                clipPath: "url(#clip0_604_4473)",
+                children: /*#__PURE__*/ (0, _jsxruntime.jsx)("path", {
+                    d: "M6 7.33333L8 9.33333L14.6667 2.66667M14 8V12.6667C14 13.0203 13.8595 13.3594 13.6095 13.6095C13.3594 13.8595 13.0203 14 12.6667 14H3.33333C2.97971 14 2.64057 13.8595 2.39052 13.6095C2.14048 13.3594 2 13.0203 2 12.6667V3.33333C2 2.97971 2.14048 2.64057 2.39052 2.39052C2.64057 2.14048 2.97971 2 3.33333 2H10.6667",
+                    strokeWidth: 1.5,
+                    strokeLinecap: "round",
+                    strokeLinejoin: "round"
+                })
+            }),
+            /*#__PURE__*/ (0, _jsxruntime.jsx)("defs", {
+                children: /*#__PURE__*/ (0, _jsxruntime.jsx)("clipPath", {
+                    id: "clip0_604_4473",
+                    children: /*#__PURE__*/ (0, _jsxruntime.jsx)("rect", {
+                        width: 16,
+                        height: 16,
+                        fill: "white"
+                    })
+                })
+            })
+        ]
+    });
+const _default = SvgCheckSquare;
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9ob21lL3VzZXIvRXZvbHZYU0kvYXBwcy93b3Jrc3BhY2UvbGliL29wYWwvc3JjL2ljb25zL2NoZWNrLXNxdWFyZS50c3giXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHR5cGUgeyBJY29uUHJvcHMgfSBmcm9tIFwiQG9wYWwvdHlwZXNcIjtcblxuY29uc3QgU3ZnQ2hlY2tTcXVhcmUgPSAoeyBzaXplLCAuLi5wcm9wcyB9OiBJY29uUHJvcHMpID0+IChcbiAgPHN2Z1xuICAgIHdpZHRoPXtzaXplfVxuICAgIGhlaWdodD17c2l6ZX1cbiAgICB2aWV3Qm94PVwiMCAwIDE2IDE2XCJcbiAgICBmaWxsPVwibm9uZVwiXG4gICAgeG1sbnM9XCJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Z1wiXG4gICAgc3Ryb2tlPVwiY3VycmVudENvbG9yXCJcbiAgICB7Li4ucHJvcHN9XG4gID5cbiAgICA8ZyBjbGlwUGF0aD1cInVybCgjY2xpcDBfNjA0XzQ0NzMpXCI+XG4gICAgICA8cGF0aFxuICAgICAgICBkPVwiTTYgNy4zMzMzM0w4IDkuMzMzMzNMMTQuNjY2NyAyLjY2NjY3TTE0IDhWMTIuNjY2N0MxNCAxMy4wMjAzIDEzLjg1OTUgMTMuMzU5NCAxMy42MDk1IDEzLjYwOTVDMTMuMzU5NCAxMy44NTk1IDEzLjAyMDMgMTQgMTIuNjY2NyAxNEgzLjMzMzMzQzIuOTc5NzEgMTQgMi42NDA1NyAxMy44NTk1IDIuMzkwNTIgMTMuNjA5NUMyLjE0MDQ4IDEzLjM1OTQgMiAxMy4wMjAzIDIgMTIuNjY2N1YzLjMzMzMzQzIgMi45Nzk3MSAyLjE0MDQ4IDIuNjQwNTcgMi4zOTA1MiAyLjM5MDUyQzIuNjQwNTcgMi4xNDA0OCAyLjk3OTcxIDIgMy4zMzMzMyAySDEwLjY2NjdcIlxuICAgICAgICBzdHJva2VXaWR0aD17MS41fVxuICAgICAgICBzdHJva2VMaW5lY2FwPVwicm91bmRcIlxuICAgICAgICBzdHJva2VMaW5lam9pbj1cInJvdW5kXCJcbiAgICAgIC8+XG4gICAgPC9nPlxuICAgIDxkZWZzPlxuICAgICAgPGNsaXBQYXRoIGlkPVwiY2xpcDBfNjA0XzQ0NzNcIj5cbiAgICAgICAgPHJlY3Qgd2lkdGg9ezE2fSBoZWlnaHQ9ezE2fSBmaWxsPVwid2hpdGVcIiAvPlxuICAgICAgPC9jbGlwUGF0aD5cbiAgICA8L2RlZnM+XG4gIDwvc3ZnPlxuKTtcblxuZXhwb3J0IGRlZmF1bHQgU3ZnQ2hlY2tTcXVhcmU7XG4iXSwibmFtZXMiOlsiU3ZnQ2hlY2tTcXVhcmUiLCJzaXplIiwicHJvcHMiLCJzdmciLCJ3aWR0aCIsImhlaWdodCIsInZpZXdCb3giLCJmaWxsIiwieG1sbnMiLCJzdHJva2UiLCJnIiwiY2xpcFBhdGgiLCJwYXRoIiwiZCIsInN0cm9rZVdpZHRoIiwic3Ryb2tlTGluZWNhcCIsInN0cm9rZUxpbmVqb2luIiwiZGVmcyIsImlkIiwicmVjdCJdLCJtYXBwaW5ncyI6Ijs7OzsrQkE0QkE7OztlQUFBOzs7O0FBMUJBLE1BQU1BLGlCQUFpQixDQUFDLEVBQUVDLElBQUksRUFBRSxHQUFHQyxPQUFrQixpQkFDbkQsc0JBQUNDO1FBQ0NDLE9BQU9IO1FBQ1BJLFFBQVFKO1FBQ1JLLFNBQVE7UUFDUkMsTUFBSztRQUNMQyxPQUFNO1FBQ05DLFFBQU87UUFDTixHQUFHUCxLQUFLOzswQkFFVCxxQkFBQ1E7Z0JBQUVDLFVBQVM7MEJBQ1YsY0FBQSxxQkFBQ0M7b0JBQ0NDLEdBQUU7b0JBQ0ZDLGFBQWE7b0JBQ2JDLGVBQWM7b0JBQ2RDLGdCQUFlOzs7MEJBR25CLHFCQUFDQzswQkFDQyxjQUFBLHFCQUFDTjtvQkFBU08sSUFBRzs4QkFDWCxjQUFBLHFCQUFDQzt3QkFBS2YsT0FBTzt3QkFBSUMsUUFBUTt3QkFBSUUsTUFBSzs7Ozs7O01BTTFDLFdBQWVQIn0=

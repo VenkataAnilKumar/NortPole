@@ -1,0 +1,45 @@
+95152c228dee4792718e0db12917f153
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "default", {
+    enumerable: true,
+    get: function() {
+        return _default;
+    }
+});
+const _jsxruntime = require("react/jsx-runtime");
+const SvgCpu = ({ size, ...props })=>/*#__PURE__*/ (0, _jsxruntime.jsxs)("svg", {
+        width: size,
+        height: size,
+        viewBox: "0 0 16 16",
+        fill: "none",
+        xmlns: "http://www.w3.org/2000/svg",
+        stroke: "currentColor",
+        ...props,
+        children: [
+            /*#__PURE__*/ (0, _jsxruntime.jsx)("g", {
+                clipPath: "url(#clip0_16_2615)",
+                children: /*#__PURE__*/ (0, _jsxruntime.jsx)("path", {
+                    d: "M6.09091 1V2.90909M9.90909 1V2.90909M6.09091 13.0909V15M9.90909 13.0909V15M13.0909 6.09091H15M13.0909 9.27273H15M1 6.09091H2.90909M1 9.27273H2.90909M4.18182 2.90909H11.8182C12.5211 2.90909 13.0909 3.47891 13.0909 4.18182V11.8182C13.0909 12.5211 12.5211 13.0909 11.8182 13.0909H4.18182C3.47891 13.0909 2.90909 12.5211 2.90909 11.8182V4.18182C2.90909 3.47891 3.47891 2.90909 4.18182 2.90909ZM6 6H10V10H6V6Z",
+                    strokeWidth: 1.5,
+                    strokeLinecap: "round",
+                    strokeLinejoin: "round"
+                })
+            }),
+            /*#__PURE__*/ (0, _jsxruntime.jsx)("defs", {
+                children: /*#__PURE__*/ (0, _jsxruntime.jsx)("clipPath", {
+                    id: "clip0_16_2615",
+                    children: /*#__PURE__*/ (0, _jsxruntime.jsx)("rect", {
+                        width: 16,
+                        height: 16,
+                        fill: "white"
+                    })
+                })
+            })
+        ]
+    });
+const _default = SvgCpu;
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9ob21lL3VzZXIvRXZvbHZYU0kvYXBwcy93b3Jrc3BhY2UvbGliL29wYWwvc3JjL2ljb25zL2NwdS50c3giXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHR5cGUgeyBJY29uUHJvcHMgfSBmcm9tIFwiQG9wYWwvdHlwZXNcIjtcblxuY29uc3QgU3ZnQ3B1ID0gKHsgc2l6ZSwgLi4ucHJvcHMgfTogSWNvblByb3BzKSA9PiAoXG4gIDxzdmdcbiAgICB3aWR0aD17c2l6ZX1cbiAgICBoZWlnaHQ9e3NpemV9XG4gICAgdmlld0JveD1cIjAgMCAxNiAxNlwiXG4gICAgZmlsbD1cIm5vbmVcIlxuICAgIHhtbG5zPVwiaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmdcIlxuICAgIHN0cm9rZT1cImN1cnJlbnRDb2xvclwiXG4gICAgey4uLnByb3BzfVxuICA+XG4gICAgPGcgY2xpcFBhdGg9XCJ1cmwoI2NsaXAwXzE2XzI2MTUpXCI+XG4gICAgICA8cGF0aFxuICAgICAgICBkPVwiTTYuMDkwOTEgMVYyLjkwOTA5TTkuOTA5MDkgMVYyLjkwOTA5TTYuMDkwOTEgMTMuMDkwOVYxNU05LjkwOTA5IDEzLjA5MDlWMTVNMTMuMDkwOSA2LjA5MDkxSDE1TTEzLjA5MDkgOS4yNzI3M0gxNU0xIDYuMDkwOTFIMi45MDkwOU0xIDkuMjcyNzNIMi45MDkwOU00LjE4MTgyIDIuOTA5MDlIMTEuODE4MkMxMi41MjExIDIuOTA5MDkgMTMuMDkwOSAzLjQ3ODkxIDEzLjA5MDkgNC4xODE4MlYxMS44MTgyQzEzLjA5MDkgMTIuNTIxMSAxMi41MjExIDEzLjA5MDkgMTEuODE4MiAxMy4wOTA5SDQuMTgxODJDMy40Nzg5MSAxMy4wOTA5IDIuOTA5MDkgMTIuNTIxMSAyLjkwOTA5IDExLjgxODJWNC4xODE4MkMyLjkwOTA5IDMuNDc4OTEgMy40Nzg5MSAyLjkwOTA5IDQuMTgxODIgMi45MDkwOVpNNiA2SDEwVjEwSDZWNlpcIlxuICAgICAgICBzdHJva2VXaWR0aD17MS41fVxuICAgICAgICBzdHJva2VMaW5lY2FwPVwicm91bmRcIlxuICAgICAgICBzdHJva2VMaW5lam9pbj1cInJvdW5kXCJcbiAgICAgIC8+XG4gICAgPC9nPlxuICAgIDxkZWZzPlxuICAgICAgPGNsaXBQYXRoIGlkPVwiY2xpcDBfMTZfMjYxNVwiPlxuICAgICAgICA8cmVjdCB3aWR0aD17MTZ9IGhlaWdodD17MTZ9IGZpbGw9XCJ3aGl0ZVwiIC8+XG4gICAgICA8L2NsaXBQYXRoPlxuICAgIDwvZGVmcz5cbiAgPC9zdmc+XG4pO1xuZXhwb3J0IGRlZmF1bHQgU3ZnQ3B1O1xuIl0sIm5hbWVzIjpbIlN2Z0NwdSIsInNpemUiLCJwcm9wcyIsInN2ZyIsIndpZHRoIiwiaGVpZ2h0Iiwidmlld0JveCIsImZpbGwiLCJ4bWxucyIsInN0cm9rZSIsImciLCJjbGlwUGF0aCIsInBhdGgiLCJkIiwic3Ryb2tlV2lkdGgiLCJzdHJva2VMaW5lY2FwIiwic3Ryb2tlTGluZWpvaW4iLCJkZWZzIiwiaWQiLCJyZWN0Il0sIm1hcHBpbmdzIjoiOzs7OytCQTJCQTs7O2VBQUE7Ozs7QUF6QkEsTUFBTUEsU0FBUyxDQUFDLEVBQUVDLElBQUksRUFBRSxHQUFHQyxPQUFrQixpQkFDM0Msc0JBQUNDO1FBQ0NDLE9BQU9IO1FBQ1BJLFFBQVFKO1FBQ1JLLFNBQVE7UUFDUkMsTUFBSztRQUNMQyxPQUFNO1FBQ05DLFFBQU87UUFDTixHQUFHUCxLQUFLOzswQkFFVCxxQkFBQ1E7Z0JBQUVDLFVBQVM7MEJBQ1YsY0FBQSxxQkFBQ0M7b0JBQ0NDLEdBQUU7b0JBQ0ZDLGFBQWE7b0JBQ2JDLGVBQWM7b0JBQ2RDLGdCQUFlOzs7MEJBR25CLHFCQUFDQzswQkFDQyxjQUFBLHFCQUFDTjtvQkFBU08sSUFBRzs4QkFDWCxjQUFBLHFCQUFDQzt3QkFBS2YsT0FBTzt3QkFBSUMsUUFBUTt3QkFBSUUsTUFBSzs7Ozs7O01BSzFDLFdBQWVQIn0=

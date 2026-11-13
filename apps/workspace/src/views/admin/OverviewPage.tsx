@@ -2,6 +2,7 @@
 
 import useSWR from "swr";
 import { errorHandlingFetcher } from "@/lib/fetcher";
+import { useApprovalCounts } from "@/lib/approvals";
 
 interface Overview {
   window_days: number;
@@ -27,6 +28,7 @@ function Stat({ label, value, warn }: { label: string; value: number; warn?: boo
 /** What needs an administrator's attention now. Counts, reasons and system messages only: never the title or text of anyone's task. */
 export default function OverviewPage() {
   const { data, error, isLoading } = useSWR<Overview>("/api/admin/overview", errorHandlingFetcher, { refreshInterval: 60000 });
+  const approvals = useApprovalCounts();
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-5 p-4 sm:p-8" data-testid="overview-page">
       <div>
@@ -37,6 +39,19 @@ export default function OverviewPage() {
       </div>
       {error && <p role="alert" className="text-sm text-status-text-error-05">The overview could not be loaded.</p>}
       {isLoading && <p className="text-sm text-text-03">Loading…</p>}
+      {approvals.loaded && (
+        <section className={card} aria-labelledby="ov-approvals" data-testid="overview-approvals">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 id="ov-approvals" className="text-base font-semibold text-text-05">Waiting for an administrator</h2>
+            <a href="/admin/approvals" className="text-sm font-semibold text-text-05 underline">Open Approvals</a>
+          </div>
+          <p className="mt-1 text-sm text-text-04">
+            {approvals.total === 0
+              ? "Nothing is waiting."
+              : `${approvals.sends} ${approvals.sends === 1 ? "send" : "sends"}, ${approvals.changes} administrator ${approvals.changes === 1 ? "change" : "changes"}, ${approvals.tools} tool ${approvals.tools === 1 ? "definition" : "definitions"}.`}
+          </p>
+        </section>
+      )}
       {data && (
         <>
           <section className={card} aria-labelledby="ov-runs">

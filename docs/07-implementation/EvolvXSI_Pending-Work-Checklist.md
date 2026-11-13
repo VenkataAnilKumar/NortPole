@@ -58,7 +58,7 @@ Status: Working list, 2026-11-13 (pending-work list below saved 2026-11-13 after
 ## UI and admin console redesign (agreed 2026-11-13; plan in `docs/05-design/EvolvXSI_Redesign-Plan.md`)
 
 - [x] R1. Sidebar order and names, Workflows and Sources tabs, Knowledge rename, redirects, read-only Skills, Connectors and Plugins.
-- [ ] R2. Admin console regroup, merged Approvals queue, hide inherited screens.
+- [x] R2. Admin console regroup, merged Approvals queue, hide inherited screens.
 - [ ] R3. Workflows Start cleanup and the Agent tab for chat assistants only.
 - [ ] R4. Request buttons on Sources, landing in Approvals.
 - [ ] R5. Inbox filters.

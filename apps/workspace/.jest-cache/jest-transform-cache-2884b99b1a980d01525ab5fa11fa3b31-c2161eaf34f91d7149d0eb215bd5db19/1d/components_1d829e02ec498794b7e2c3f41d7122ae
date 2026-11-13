@@ -1,0 +1,38 @@
+bb62a770088aca1fe2a28c39135e6c9a
+"use client";
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "IconLoader", {
+    enumerable: true,
+    get: function() {
+        return IconLoader;
+    }
+});
+const _jsxruntime = require("react/jsx-runtime");
+const _loader = /*#__PURE__*/ _interop_require_default(require("@opal/icons/loader"));
+const _strings = require("@opal/strings");
+const _utils = require("@opal/utils");
+function _interop_require_default(obj) {
+    return obj && obj.__esModule ? obj : {
+        default: obj
+    };
+}
+/**
+ * The spinner: the static `SvgLoader` ring, spun, at 16px unless told
+ * otherwise. Takes the same props as any icon, so it can be invoked on its
+ * own or passed as an `icon` (a Button or Content then sets its own size).
+ * Colour follows `currentColor`. Holds still under `prefers-reduced-motion`.
+ */ function IconLoader({ size = 16, className, ...props }) {
+    const strings = (0, _strings.useOpalStrings)();
+    return /*#__PURE__*/ (0, _jsxruntime.jsx)(_loader.default, {
+        size: size,
+        role: "status",
+        "aria-label": strings.loading,
+        ...props,
+        className: (0, _utils.cn)("shrink-0 motion-safe:animate-spin", className)
+    });
+}
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9ob21lL3VzZXIvRXZvbHZYU0kvYXBwcy93b3Jrc3BhY2UvbGliL29wYWwvc3JjL2xvYWRlcnMvaWNvbi1sb2FkZXIvY29tcG9uZW50cy50c3giXSwic291cmNlc0NvbnRlbnQiOlsiXCJ1c2UgY2xpZW50XCI7XG5cbi8vIE5vdCB0aGUgQG9wYWwvaWNvbnMgaW5kZXg6IFN2Z1Byb2dyZXNzUmluZyBpbXBvcnRzIHRoaXMgZmlsZS5cbmltcG9ydCBTdmdMb2FkZXIgZnJvbSBcIkBvcGFsL2ljb25zL2xvYWRlclwiO1xuaW1wb3J0IHsgdXNlT3BhbFN0cmluZ3MgfSBmcm9tIFwiQG9wYWwvc3RyaW5nc1wiO1xuaW1wb3J0IHR5cGUgeyBJY29uUHJvcHMgfSBmcm9tIFwiQG9wYWwvdHlwZXNcIjtcbmltcG9ydCB7IGNuIH0gZnJvbSBcIkBvcGFsL3V0aWxzXCI7XG5cbnR5cGUgSWNvbkxvYWRlclByb3BzID0gSWNvblByb3BzO1xuXG4vKipcbiAqIFRoZSBzcGlubmVyOiB0aGUgc3RhdGljIGBTdmdMb2FkZXJgIHJpbmcsIHNwdW4sIGF0IDE2cHggdW5sZXNzIHRvbGRcbiAqIG90aGVyd2lzZS4gVGFrZXMgdGhlIHNhbWUgcHJvcHMgYXMgYW55IGljb24sIHNvIGl0IGNhbiBiZSBpbnZva2VkIG9uIGl0c1xuICogb3duIG9yIHBhc3NlZCBhcyBhbiBgaWNvbmAgKGEgQnV0dG9uIG9yIENvbnRlbnQgdGhlbiBzZXRzIGl0cyBvd24gc2l6ZSkuXG4gKiBDb2xvdXIgZm9sbG93cyBgY3VycmVudENvbG9yYC4gSG9sZHMgc3RpbGwgdW5kZXIgYHByZWZlcnMtcmVkdWNlZC1tb3Rpb25gLlxuICovXG5mdW5jdGlvbiBJY29uTG9hZGVyKHsgc2l6ZSA9IDE2LCBjbGFzc05hbWUsIC4uLnByb3BzIH06IEljb25Mb2FkZXJQcm9wcykge1xuICBjb25zdCBzdHJpbmdzID0gdXNlT3BhbFN0cmluZ3MoKTtcbiAgcmV0dXJuIChcbiAgICA8U3ZnTG9hZGVyXG4gICAgICBzaXplPXtzaXplfVxuICAgICAgcm9sZT1cInN0YXR1c1wiXG4gICAgICBhcmlhLWxhYmVsPXtzdHJpbmdzLmxvYWRpbmd9XG4gICAgICB7Li4ucHJvcHN9XG4gICAgICBjbGFzc05hbWU9e2NuKFwic2hyaW5rLTAgbW90aW9uLXNhZmU6YW5pbWF0ZS1zcGluXCIsIGNsYXNzTmFtZSl9XG4gICAgLz5cbiAgKTtcbn1cblxuZXhwb3J0IHsgSWNvbkxvYWRlciwgdHlwZSBJY29uTG9hZGVyUHJvcHMgfTtcbiJdLCJuYW1lcyI6WyJJY29uTG9hZGVyIiwic2l6ZSIsImNsYXNzTmFtZSIsInByb3BzIiwic3RyaW5ncyIsInVzZU9wYWxTdHJpbmdzIiwiU3ZnTG9hZGVyIiwicm9sZSIsImFyaWEtbGFiZWwiLCJsb2FkaW5nIiwiY24iXSwibWFwcGluZ3MiOiJBQUFBOzs7OzsrQkE2QlNBOzs7ZUFBQUE7Ozs7K0RBMUJhO3lCQUNTO3VCQUVaOzs7Ozs7QUFJbkI7Ozs7O0NBS0MsR0FDRCxTQUFTQSxXQUFXLEVBQUVDLE9BQU8sRUFBRSxFQUFFQyxTQUFTLEVBQUUsR0FBR0MsT0FBd0I7SUFDckUsTUFBTUMsVUFBVUMsSUFBQUEsdUJBQWM7SUFDOUIscUJBQ0UscUJBQUNDLGVBQVM7UUFDUkwsTUFBTUE7UUFDTk0sTUFBSztRQUNMQyxjQUFZSixRQUFRSyxPQUFPO1FBQzFCLEdBQUdOLEtBQUs7UUFDVEQsV0FBV1EsSUFBQUEsU0FBRSxFQUFDLHFDQUFxQ1I7O0FBR3pEIn0=

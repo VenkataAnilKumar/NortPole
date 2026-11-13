@@ -1,0 +1,85 @@
+b3edcea075a0d35314e182a875a0d917
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+function _export(target, all) {
+    for(var name in all)Object.defineProperty(target, name, {
+        enumerable: true,
+        get: Object.getOwnPropertyDescriptor(all, name).get
+    });
+}
+_export(exports, {
+    get SvgArrowLeft () {
+        return SvgArrowLeft;
+    },
+    get SvgArrowLeftDot () {
+        return SvgArrowLeftDot;
+    },
+    get SvgArrowRight () {
+        return SvgArrowRight;
+    },
+    get SvgArrowRightCircle () {
+        return SvgArrowRightCircle;
+    },
+    get SvgArrowRightDot () {
+        return SvgArrowRightDot;
+    },
+    get SvgArrowUpRight () {
+        return SvgArrowUpRight;
+    },
+    get SvgArrowWallLeft () {
+        return SvgArrowWallLeft;
+    },
+    get SvgArrowWallRight () {
+        return SvgArrowWallRight;
+    },
+    get SvgChevronLeft () {
+        return SvgChevronLeft;
+    },
+    get SvgChevronRight () {
+        return SvgChevronRight;
+    }
+});
+const _jsxruntime = require("react/jsx-runtime");
+const _utils = require("@opal/utils");
+const _arrowleft = /*#__PURE__*/ _interop_require_default(require("@opal/icons/arrow-left"));
+const _arrowleftdot = /*#__PURE__*/ _interop_require_default(require("@opal/icons/arrow-left-dot"));
+const _arrowright = /*#__PURE__*/ _interop_require_default(require("@opal/icons/arrow-right"));
+const _arrowrightcircle = /*#__PURE__*/ _interop_require_default(require("@opal/icons/arrow-right-circle"));
+const _arrowrightdot = /*#__PURE__*/ _interop_require_default(require("@opal/icons/arrow-right-dot"));
+const _arrowupright = /*#__PURE__*/ _interop_require_default(require("@opal/icons/arrow-up-right"));
+const _arrowwallleft = /*#__PURE__*/ _interop_require_default(require("@opal/icons/arrow-wall-left"));
+const _arrowwallright = /*#__PURE__*/ _interop_require_default(require("@opal/icons/arrow-wall-right"));
+const _chevronleft = /*#__PURE__*/ _interop_require_default(require("@opal/icons/chevron-left"));
+const _chevronright = /*#__PURE__*/ _interop_require_default(require("@opal/icons/chevron-right"));
+function _interop_require_default(obj) {
+    return obj && obj.__esModule ? obj : {
+        default: obj
+    };
+}
+// Navigation icons mirror under RTL (Material bidirectionality), wrapped
+// here so generated icon files stay untouched and every barrel consumer
+// inherits it. Media, clock, and refresh icons never mirror.
+function mirrored(Icon) {
+    function MirroredIcon({ className, ...props }) {
+        return /*#__PURE__*/ (0, _jsxruntime.jsx)(Icon, {
+            className: (0, _utils.cn)("rtl:-scale-x-100", className),
+            ...props
+        });
+    }
+    MirroredIcon.displayName = `Mirrored(${Icon.name})`;
+    return MirroredIcon;
+}
+const SvgArrowLeft = mirrored(_arrowleft.default);
+const SvgArrowLeftDot = mirrored(_arrowleftdot.default);
+const SvgArrowRight = mirrored(_arrowright.default);
+const SvgArrowRightCircle = mirrored(_arrowrightcircle.default);
+const SvgArrowRightDot = mirrored(_arrowrightdot.default);
+const SvgArrowUpRight = mirrored(_arrowupright.default);
+const SvgArrowWallLeft = mirrored(_arrowwallleft.default);
+const SvgArrowWallRight = mirrored(_arrowwallright.default);
+const SvgChevronLeft = mirrored(_chevronleft.default);
+const SvgChevronRight = mirrored(_chevronright.default);
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9ob21lL3VzZXIvRXZvbHZYU0kvYXBwcy93b3Jrc3BhY2UvbGliL29wYWwvc3JjL2ljb25zL2RpcmVjdGlvbmFsLnRzeCJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgdHlwZSB7IEljb25GdW5jdGlvbkNvbXBvbmVudCwgSWNvblByb3BzIH0gZnJvbSBcIkBvcGFsL3R5cGVzXCI7XG5pbXBvcnQgeyBjbiB9IGZyb20gXCJAb3BhbC91dGlsc1wiO1xuaW1wb3J0IFN2Z0Fycm93TGVmdFJhdyBmcm9tIFwiQG9wYWwvaWNvbnMvYXJyb3ctbGVmdFwiO1xuaW1wb3J0IFN2Z0Fycm93TGVmdERvdFJhdyBmcm9tIFwiQG9wYWwvaWNvbnMvYXJyb3ctbGVmdC1kb3RcIjtcbmltcG9ydCBTdmdBcnJvd1JpZ2h0UmF3IGZyb20gXCJAb3BhbC9pY29ucy9hcnJvdy1yaWdodFwiO1xuaW1wb3J0IFN2Z0Fycm93UmlnaHRDaXJjbGVSYXcgZnJvbSBcIkBvcGFsL2ljb25zL2Fycm93LXJpZ2h0LWNpcmNsZVwiO1xuaW1wb3J0IFN2Z0Fycm93UmlnaHREb3RSYXcgZnJvbSBcIkBvcGFsL2ljb25zL2Fycm93LXJpZ2h0LWRvdFwiO1xuaW1wb3J0IFN2Z0Fycm93VXBSaWdodFJhdyBmcm9tIFwiQG9wYWwvaWNvbnMvYXJyb3ctdXAtcmlnaHRcIjtcbmltcG9ydCBTdmdBcnJvd1dhbGxMZWZ0UmF3IGZyb20gXCJAb3BhbC9pY29ucy9hcnJvdy13YWxsLWxlZnRcIjtcbmltcG9ydCBTdmdBcnJvd1dhbGxSaWdodFJhdyBmcm9tIFwiQG9wYWwvaWNvbnMvYXJyb3ctd2FsbC1yaWdodFwiO1xuaW1wb3J0IFN2Z0NoZXZyb25MZWZ0UmF3IGZyb20gXCJAb3BhbC9pY29ucy9jaGV2cm9uLWxlZnRcIjtcbmltcG9ydCBTdmdDaGV2cm9uUmlnaHRSYXcgZnJvbSBcIkBvcGFsL2ljb25zL2NoZXZyb24tcmlnaHRcIjtcblxuLy8gTmF2aWdhdGlvbiBpY29ucyBtaXJyb3IgdW5kZXIgUlRMIChNYXRlcmlhbCBiaWRpcmVjdGlvbmFsaXR5KSwgd3JhcHBlZFxuLy8gaGVyZSBzbyBnZW5lcmF0ZWQgaWNvbiBmaWxlcyBzdGF5IHVudG91Y2hlZCBhbmQgZXZlcnkgYmFycmVsIGNvbnN1bWVyXG4vLyBpbmhlcml0cyBpdC4gTWVkaWEsIGNsb2NrLCBhbmQgcmVmcmVzaCBpY29ucyBuZXZlciBtaXJyb3IuXG5mdW5jdGlvbiBtaXJyb3JlZChJY29uOiBJY29uRnVuY3Rpb25Db21wb25lbnQpOiBJY29uRnVuY3Rpb25Db21wb25lbnQge1xuICBmdW5jdGlvbiBNaXJyb3JlZEljb24oeyBjbGFzc05hbWUsIC4uLnByb3BzIH06IEljb25Qcm9wcykge1xuICAgIHJldHVybiA8SWNvbiBjbGFzc05hbWU9e2NuKFwicnRsOi1zY2FsZS14LTEwMFwiLCBjbGFzc05hbWUpfSB7Li4ucHJvcHN9IC8+O1xuICB9XG4gIE1pcnJvcmVkSWNvbi5kaXNwbGF5TmFtZSA9IGBNaXJyb3JlZCgke0ljb24ubmFtZX0pYDtcbiAgcmV0dXJuIE1pcnJvcmVkSWNvbjtcbn1cblxuZXhwb3J0IGNvbnN0IFN2Z0Fycm93TGVmdCA9IG1pcnJvcmVkKFN2Z0Fycm93TGVmdFJhdyk7XG5leHBvcnQgY29uc3QgU3ZnQXJyb3dMZWZ0RG90ID0gbWlycm9yZWQoU3ZnQXJyb3dMZWZ0RG90UmF3KTtcbmV4cG9ydCBjb25zdCBTdmdBcnJvd1JpZ2h0ID0gbWlycm9yZWQoU3ZnQXJyb3dSaWdodFJhdyk7XG5leHBvcnQgY29uc3QgU3ZnQXJyb3dSaWdodENpcmNsZSA9IG1pcnJvcmVkKFN2Z0Fycm93UmlnaHRDaXJjbGVSYXcpO1xuZXhwb3J0IGNvbnN0IFN2Z0Fycm93UmlnaHREb3QgPSBtaXJyb3JlZChTdmdBcnJvd1JpZ2h0RG90UmF3KTtcbmV4cG9ydCBjb25zdCBTdmdBcnJvd1VwUmlnaHQgPSBtaXJyb3JlZChTdmdBcnJvd1VwUmlnaHRSYXcpO1xuZXhwb3J0IGNvbnN0IFN2Z0Fycm93V2FsbExlZnQgPSBtaXJyb3JlZChTdmdBcnJvd1dhbGxMZWZ0UmF3KTtcbmV4cG9ydCBjb25zdCBTdmdBcnJvd1dhbGxSaWdodCA9IG1pcnJvcmVkKFN2Z0Fycm93V2FsbFJpZ2h0UmF3KTtcbmV4cG9ydCBjb25zdCBTdmdDaGV2cm9uTGVmdCA9IG1pcnJvcmVkKFN2Z0NoZXZyb25MZWZ0UmF3KTtcbmV4cG9ydCBjb25zdCBTdmdDaGV2cm9uUmlnaHQgPSBtaXJyb3JlZChTdmdDaGV2cm9uUmlnaHRSYXcpO1xuIl0sIm5hbWVzIjpbIlN2Z0Fycm93TGVmdCIsIlN2Z0Fycm93TGVmdERvdCIsIlN2Z0Fycm93UmlnaHQiLCJTdmdBcnJvd1JpZ2h0Q2lyY2xlIiwiU3ZnQXJyb3dSaWdodERvdCIsIlN2Z0Fycm93VXBSaWdodCIsIlN2Z0Fycm93V2FsbExlZnQiLCJTdmdBcnJvd1dhbGxSaWdodCIsIlN2Z0NoZXZyb25MZWZ0IiwiU3ZnQ2hldnJvblJpZ2h0IiwibWlycm9yZWQiLCJJY29uIiwiTWlycm9yZWRJY29uIiwiY2xhc3NOYW1lIiwicHJvcHMiLCJjbiIsImRpc3BsYXlOYW1lIiwibmFtZSIsIlN2Z0Fycm93TGVmdFJhdyIsIlN2Z0Fycm93TGVmdERvdFJhdyIsIlN2Z0Fycm93UmlnaHRSYXciLCJTdmdBcnJvd1JpZ2h0Q2lyY2xlUmF3IiwiU3ZnQXJyb3dSaWdodERvdFJhdyIsIlN2Z0Fycm93VXBSaWdodFJhdyIsIlN2Z0Fycm93V2FsbExlZnRSYXciLCJTdmdBcnJvd1dhbGxSaWdodFJhdyIsIlN2Z0NoZXZyb25MZWZ0UmF3IiwiU3ZnQ2hldnJvblJpZ2h0UmF3Il0sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7OztRQXdCYUE7ZUFBQUE7O1FBQ0FDO2VBQUFBOztRQUNBQztlQUFBQTs7UUFDQUM7ZUFBQUE7O1FBQ0FDO2VBQUFBOztRQUNBQztlQUFBQTs7UUFDQUM7ZUFBQUE7O1FBQ0FDO2VBQUFBOztRQUNBQztlQUFBQTs7UUFDQUM7ZUFBQUE7Ozs7dUJBaENNO2tFQUNTO3FFQUNHO21FQUNGO3lFQUNNO3NFQUNIO3FFQUNEO3NFQUNDO3VFQUNDO29FQUNIO3FFQUNDOzs7Ozs7QUFFL0IseUVBQXlFO0FBQ3pFLHdFQUF3RTtBQUN4RSw2REFBNkQ7QUFDN0QsU0FBU0MsU0FBU0MsSUFBMkI7SUFDM0MsU0FBU0MsYUFBYSxFQUFFQyxTQUFTLEVBQUUsR0FBR0MsT0FBa0I7UUFDdEQscUJBQU8scUJBQUNIO1lBQUtFLFdBQVdFLElBQUFBLFNBQUUsRUFBQyxvQkFBb0JGO1lBQWEsR0FBR0MsS0FBSzs7SUFDdEU7SUFDQUYsYUFBYUksV0FBVyxHQUFHLENBQUMsU0FBUyxFQUFFTCxLQUFLTSxJQUFJLENBQUMsQ0FBQyxDQUFDO0lBQ25ELE9BQU9MO0FBQ1Q7QUFFTyxNQUFNWixlQUFlVSxTQUFTUSxrQkFBZTtBQUM3QyxNQUFNakIsa0JBQWtCUyxTQUFTUyxxQkFBa0I7QUFDbkQsTUFBTWpCLGdCQUFnQlEsU0FBU1UsbUJBQWdCO0FBQy9DLE1BQU1qQixzQkFBc0JPLFNBQVNXLHlCQUFzQjtBQUMzRCxNQUFNakIsbUJBQW1CTSxTQUFTWSxzQkFBbUI7QUFDckQsTUFBTWpCLGtCQUFrQkssU0FBU2EscUJBQWtCO0FBQ25ELE1BQU1qQixtQkFBbUJJLFNBQVNjLHNCQUFtQjtBQUNyRCxNQUFNakIsb0JBQW9CRyxTQUFTZSx1QkFBb0I7QUFDdkQsTUFBTWpCLGlCQUFpQkUsU0FBU2dCLG9CQUFpQjtBQUNqRCxNQUFNakIsa0JBQWtCQyxTQUFTaUIscUJBQWtCIn0=

@@ -1,0 +1,30 @@
+da6550823e991b2a9c9a6f72b3c60c78
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "default", {
+    enumerable: true,
+    get: function() {
+        return _default;
+    }
+});
+const _jsxruntime = require("react/jsx-runtime");
+const SvgCurate = ({ size, ...props })=>/*#__PURE__*/ (0, _jsxruntime.jsx)("svg", {
+        width: size,
+        height: size,
+        viewBox: "0 0 16 16",
+        fill: "none",
+        xmlns: "http://www.w3.org/2000/svg",
+        stroke: "currentColor",
+        ...props,
+        children: /*#__PURE__*/ (0, _jsxruntime.jsx)("path", {
+            d: "M8 9L8 14.5M8 9C7.35971 8.35971 6.9055 8 6 8H2.5L2.5 13.5H6C6.9055 13.5 7.35971 13.8597 8 14.5M8 9C8.64029 8.35971 9.09449 8 10 8H13.5L13.5 13.5H10C9.09449 13.5 8.64029 13.8597 8 14.5M10.25 3.75C10.25 4.99264 9.24264 6 8 6C6.75736 6 5.75 4.99264 5.75 3.75C5.75 2.50736 6.75736 1.5 8 1.5C9.24264 1.5 10.25 2.50736 10.25 3.75Z",
+            strokeWidth: 1.5,
+            strokeLinecap: "round",
+            strokeLinejoin: "round"
+        })
+    });
+const _default = SvgCurate;
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9ob21lL3VzZXIvRXZvbHZYU0kvYXBwcy93b3Jrc3BhY2UvbGliL29wYWwvc3JjL2ljb25zL2N1cmF0ZS50c3giXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHR5cGUgeyBJY29uUHJvcHMgfSBmcm9tIFwiQG9wYWwvdHlwZXNcIjtcbmNvbnN0IFN2Z0N1cmF0ZSA9ICh7IHNpemUsIC4uLnByb3BzIH06IEljb25Qcm9wcykgPT4gKFxuICA8c3ZnXG4gICAgd2lkdGg9e3NpemV9XG4gICAgaGVpZ2h0PXtzaXplfVxuICAgIHZpZXdCb3g9XCIwIDAgMTYgMTZcIlxuICAgIGZpbGw9XCJub25lXCJcbiAgICB4bWxucz1cImh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnXCJcbiAgICBzdHJva2U9XCJjdXJyZW50Q29sb3JcIlxuICAgIHsuLi5wcm9wc31cbiAgPlxuICAgIDxwYXRoXG4gICAgICBkPVwiTTggOUw4IDE0LjVNOCA5QzcuMzU5NzEgOC4zNTk3MSA2LjkwNTUgOCA2IDhIMi41TDIuNSAxMy41SDZDNi45MDU1IDEzLjUgNy4zNTk3MSAxMy44NTk3IDggMTQuNU04IDlDOC42NDAyOSA4LjM1OTcxIDkuMDk0NDkgOCAxMCA4SDEzLjVMMTMuNSAxMy41SDEwQzkuMDk0NDkgMTMuNSA4LjY0MDI5IDEzLjg1OTcgOCAxNC41TTEwLjI1IDMuNzVDMTAuMjUgNC45OTI2NCA5LjI0MjY0IDYgOCA2QzYuNzU3MzYgNiA1Ljc1IDQuOTkyNjQgNS43NSAzLjc1QzUuNzUgMi41MDczNiA2Ljc1NzM2IDEuNSA4IDEuNUM5LjI0MjY0IDEuNSAxMC4yNSAyLjUwNzM2IDEwLjI1IDMuNzVaXCJcbiAgICAgIHN0cm9rZVdpZHRoPXsxLjV9XG4gICAgICBzdHJva2VMaW5lY2FwPVwicm91bmRcIlxuICAgICAgc3Ryb2tlTGluZWpvaW49XCJyb3VuZFwiXG4gICAgLz5cbiAgPC9zdmc+XG4pO1xuZXhwb3J0IGRlZmF1bHQgU3ZnQ3VyYXRlO1xuIl0sIm5hbWVzIjpbIlN2Z0N1cmF0ZSIsInNpemUiLCJwcm9wcyIsInN2ZyIsIndpZHRoIiwiaGVpZ2h0Iiwidmlld0JveCIsImZpbGwiLCJ4bWxucyIsInN0cm9rZSIsInBhdGgiLCJkIiwic3Ryb2tlV2lkdGgiLCJzdHJva2VMaW5lY2FwIiwic3Ryb2tlTGluZWpvaW4iXSwibWFwcGluZ3MiOiI7Ozs7K0JBbUJBOzs7ZUFBQTs7OztBQWxCQSxNQUFNQSxZQUFZLENBQUMsRUFBRUMsSUFBSSxFQUFFLEdBQUdDLE9BQWtCLGlCQUM5QyxxQkFBQ0M7UUFDQ0MsT0FBT0g7UUFDUEksUUFBUUo7UUFDUkssU0FBUTtRQUNSQyxNQUFLO1FBQ0xDLE9BQU07UUFDTkMsUUFBTztRQUNOLEdBQUdQLEtBQUs7a0JBRVQsY0FBQSxxQkFBQ1E7WUFDQ0MsR0FBRTtZQUNGQyxhQUFhO1lBQ2JDLGVBQWM7WUFDZEMsZ0JBQWU7OztNQUlyQixXQUFlZCJ9

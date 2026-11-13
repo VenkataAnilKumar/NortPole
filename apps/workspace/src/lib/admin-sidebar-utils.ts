@@ -1,12 +1,10 @@
 import { IconFunctionComponent } from "@opal/types";
-import { SvgArrowUpCircle } from "@opal/icons";
 import {
   ADMIN_ROUTES,
   AdminRouteEntry,
   FeatureFlags,
 } from "@/lib/admin-routes";
 import { hasPermission } from "@/lib/permissions/utils";
-import { Permission } from "@/lib/types";
 import { Settings } from "@/lib/settings/types";
 import { Tier } from "@/lib/tiers/types";
 import { tierAtLeast } from "@/lib/tiers/utils";
@@ -30,6 +28,7 @@ export type AdminNavItemId =
   | "governance"
   | "overview"
   | "quality"
+  | "approvals"
   | "webSearch"
   | "imageGeneration"
   | "voice"
@@ -75,10 +74,10 @@ export type AdminNavItemId =
  */
 export type AdminNavSectionId =
   | "overview"
+  | "approvals"
   | "governance"
   | "people"
   | "models"
-  | "packs"
   | "agentsAndTools"
   | "craft"
   | "knowledge"
@@ -105,6 +104,7 @@ export const NAV_ITEM_IDS: Record<
   GOVERNANCE: "governance",
   OVERVIEW: "overview",
   QUALITY: "quality",
+  APPROVALS: "approvals",
   DECISION_MODELS: "decisionModels",
   WEB_SEARCH: "webSearch",
   IMAGE_GENERATION: "imageGeneration",
@@ -199,16 +199,16 @@ const NAV_SECTION_IDS: readonly (readonly [
   section: string,
   id: AdminNavSectionId,
 ])[] = [
-  // Sidebar order: health, then the controls that make the product governed, then who, models, packs,
-  // agents and tools, knowledge, and the platform settings that are set once.
+  // Sidebar order (redesign R2): health, what is waiting, then what people use (knowledge, agents and tools), the
+  // controls, who, models, quality, and the platform settings that are set once.
   ["Overview", "overview"],
+  ["Approvals", "approvals"],
+  ["Knowledge", "knowledge"],
+  ["Agents & tools", "agentsAndTools"],
+  ["Craft", "craft"],
   ["Governance", "governance"],
   ["People", "people"],
   ["Models", "models"],
-  ["Packs", "packs"],
-  ["Agents & tools", "agentsAndTools"],
-  ["Craft", "craft"],
-  ["Knowledge", "knowledge"],
   ["Quality", "quality"],
   ["Platform", "platform"],
 ];
@@ -222,6 +222,17 @@ export const BETA_SECTION_IDS: ReadonlySet<AdminNavSectionId> = new Set([
 function sectionIdFor(section: string): AdminNavSectionId | null {
   return NAV_SECTION_IDS.find(([label]) => label === section)?.[1] ?? null;
 }
+
+/**
+ * Inherited screens with no use in the pilot. They stay reachable by address (and keep their titles) but are not in
+ * the sidebar: Discord bot, SCIM provisioning, hook extensions, and plans and billing.
+ */
+const HIDDEN_FOR_PILOT: ReadonlySet<keyof typeof ADMIN_ROUTES> = new Set([
+  "DISCORD_BOTS",
+  "SCIM",
+  "HOOKS",
+  "BILLING",
+]);
 
 export interface SidebarItemEntry {
   /** `null` places the entry in the unlabeled (default) section. */
@@ -253,6 +264,7 @@ export function buildItems(
   for (const [routeKey, route] of routes) {
     const nameId = NAV_ITEM_IDS[routeKey];
     if (nameId === null) continue;
+    if (HIDDEN_FOR_PILOT.has(routeKey)) continue;
     if (!userCanAccess(route.requiredPermission)) continue;
     if (route.visibleWhen && !route.visibleWhen(flags)) continue;
 
@@ -285,18 +297,7 @@ export function buildItems(
   };
   items.sort((a, b) => rank(a.sectionId) - rank(b.sectionId));
 
-  if (
-    userCanAccess(Permission.FULL_ADMIN_PANEL_ACCESS) &&
-    !flags.hasSubscription
-  ) {
-    items.push({
-      sectionId: null,
-      nameId: "upgradePlan",
-      icon: SvgArrowUpCircle,
-      link: ADMIN_ROUTES.BILLING.path,
-    });
-  }
-
+  // No "Upgrade plan" entry: plans and billing are hidden for the pilot.
   return items;
 }
 

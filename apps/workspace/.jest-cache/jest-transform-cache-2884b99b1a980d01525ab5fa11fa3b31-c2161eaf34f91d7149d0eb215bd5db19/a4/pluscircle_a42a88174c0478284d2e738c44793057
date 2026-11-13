@@ -1,0 +1,45 @@
+d503486ab29022ea4a83e53a56e558c7
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "default", {
+    enumerable: true,
+    get: function() {
+        return _default;
+    }
+});
+const _jsxruntime = require("react/jsx-runtime");
+const SvgPlusCircle = ({ size, ...props })=>/*#__PURE__*/ (0, _jsxruntime.jsxs)("svg", {
+        width: size,
+        height: size,
+        viewBox: "0 0 16 16",
+        fill: "none",
+        xmlns: "http://www.w3.org/2000/svg",
+        stroke: "currentColor",
+        ...props,
+        children: [
+            /*#__PURE__*/ (0, _jsxruntime.jsx)("g", {
+                clipPath: "url(#clip0_16_2625)",
+                children: /*#__PURE__*/ (0, _jsxruntime.jsx)("path", {
+                    d: "M7.99999 5.33333V10.6667M5.33333 7.99999H10.6667M14.6667 7.99999C14.6667 11.6819 11.6819 14.6667 7.99999 14.6667C4.3181 14.6667 1.33333 11.6819 1.33333 7.99999C1.33333 4.3181 4.3181 1.33333 7.99999 1.33333C11.6819 1.33333 14.6667 4.3181 14.6667 7.99999Z",
+                    strokeWidth: 1.5,
+                    strokeLinecap: "round",
+                    strokeLinejoin: "round"
+                })
+            }),
+            /*#__PURE__*/ (0, _jsxruntime.jsx)("defs", {
+                children: /*#__PURE__*/ (0, _jsxruntime.jsx)("clipPath", {
+                    id: "clip0_16_2625",
+                    children: /*#__PURE__*/ (0, _jsxruntime.jsx)("rect", {
+                        width: 16,
+                        height: 16,
+                        fill: "white"
+                    })
+                })
+            })
+        ]
+    });
+const _default = SvgPlusCircle;
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9ob21lL3VzZXIvRXZvbHZYU0kvYXBwcy93b3Jrc3BhY2UvbGliL29wYWwvc3JjL2ljb25zL3BsdXMtY2lyY2xlLnRzeCJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgdHlwZSB7IEljb25Qcm9wcyB9IGZyb20gXCJAb3BhbC90eXBlc1wiO1xuXG5jb25zdCBTdmdQbHVzQ2lyY2xlID0gKHsgc2l6ZSwgLi4ucHJvcHMgfTogSWNvblByb3BzKSA9PiAoXG4gIDxzdmdcbiAgICB3aWR0aD17c2l6ZX1cbiAgICBoZWlnaHQ9e3NpemV9XG4gICAgdmlld0JveD1cIjAgMCAxNiAxNlwiXG4gICAgZmlsbD1cIm5vbmVcIlxuICAgIHhtbG5zPVwiaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmdcIlxuICAgIHN0cm9rZT1cImN1cnJlbnRDb2xvclwiXG4gICAgey4uLnByb3BzfVxuICA+XG4gICAgPGcgY2xpcFBhdGg9XCJ1cmwoI2NsaXAwXzE2XzI2MjUpXCI+XG4gICAgICA8cGF0aFxuICAgICAgICBkPVwiTTcuOTk5OTkgNS4zMzMzM1YxMC42NjY3TTUuMzMzMzMgNy45OTk5OUgxMC42NjY3TTE0LjY2NjcgNy45OTk5OUMxNC42NjY3IDExLjY4MTkgMTEuNjgxOSAxNC42NjY3IDcuOTk5OTkgMTQuNjY2N0M0LjMxODEgMTQuNjY2NyAxLjMzMzMzIDExLjY4MTkgMS4zMzMzMyA3Ljk5OTk5QzEuMzMzMzMgNC4zMTgxIDQuMzE4MSAxLjMzMzMzIDcuOTk5OTkgMS4zMzMzM0MxMS42ODE5IDEuMzMzMzMgMTQuNjY2NyA0LjMxODEgMTQuNjY2NyA3Ljk5OTk5WlwiXG4gICAgICAgIHN0cm9rZVdpZHRoPXsxLjV9XG4gICAgICAgIHN0cm9rZUxpbmVjYXA9XCJyb3VuZFwiXG4gICAgICAgIHN0cm9rZUxpbmVqb2luPVwicm91bmRcIlxuICAgICAgLz5cbiAgICA8L2c+XG4gICAgPGRlZnM+XG4gICAgICA8Y2xpcFBhdGggaWQ9XCJjbGlwMF8xNl8yNjI1XCI+XG4gICAgICAgIDxyZWN0IHdpZHRoPXsxNn0gaGVpZ2h0PXsxNn0gZmlsbD1cIndoaXRlXCIgLz5cbiAgICAgIDwvY2xpcFBhdGg+XG4gICAgPC9kZWZzPlxuICA8L3N2Zz5cbik7XG5leHBvcnQgZGVmYXVsdCBTdmdQbHVzQ2lyY2xlO1xuIl0sIm5hbWVzIjpbIlN2Z1BsdXNDaXJjbGUiLCJzaXplIiwicHJvcHMiLCJzdmciLCJ3aWR0aCIsImhlaWdodCIsInZpZXdCb3giLCJmaWxsIiwieG1sbnMiLCJzdHJva2UiLCJnIiwiY2xpcFBhdGgiLCJwYXRoIiwiZCIsInN0cm9rZVdpZHRoIiwic3Ryb2tlTGluZWNhcCIsInN0cm9rZUxpbmVqb2luIiwiZGVmcyIsImlkIiwicmVjdCJdLCJtYXBwaW5ncyI6Ijs7OzsrQkEyQkE7OztlQUFBOzs7O0FBekJBLE1BQU1BLGdCQUFnQixDQUFDLEVBQUVDLElBQUksRUFBRSxHQUFHQyxPQUFrQixpQkFDbEQsc0JBQUNDO1FBQ0NDLE9BQU9IO1FBQ1BJLFFBQVFKO1FBQ1JLLFNBQVE7UUFDUkMsTUFBSztRQUNMQyxPQUFNO1FBQ05DLFFBQU87UUFDTixHQUFHUCxLQUFLOzswQkFFVCxxQkFBQ1E7Z0JBQUVDLFVBQVM7MEJBQ1YsY0FBQSxxQkFBQ0M7b0JBQ0NDLEdBQUU7b0JBQ0ZDLGFBQWE7b0JBQ2JDLGVBQWM7b0JBQ2RDLGdCQUFlOzs7MEJBR25CLHFCQUFDQzswQkFDQyxjQUFBLHFCQUFDTjtvQkFBU08sSUFBRzs4QkFDWCxjQUFBLHFCQUFDQzt3QkFBS2YsT0FBTzt3QkFBSUMsUUFBUTt3QkFBSUUsTUFBSzs7Ozs7O01BSzFDLFdBQWVQIn0=

@@ -101,7 +101,7 @@ export default function AdminSidebar() {
       governance: t("adminNav.sections.governance.label"),
       people: t("adminNav.sections.people.label"),
       models: t("adminNav.sections.models.label"),
-      packs: t("adminNav.sections.packs.label"),
+      approvals: t("adminNav.sections.approvals.label"),
       agentsAndTools: t("adminNav.sections.agentsAndTools.label"),
       craft: t("adminNav.sections.craft.label"),
       knowledge: t("adminNav.sections.knowledge.label"),

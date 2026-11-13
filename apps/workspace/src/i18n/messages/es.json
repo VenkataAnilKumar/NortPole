@@ -16869,6 +16869,9 @@
         },
         "studio": {
           "label": "Estudio"
+        },
+        "approvals": {
+          "label": "Aprobaciones"
         }
       },
       "sections": {
@@ -16884,9 +16887,6 @@
         "models": {
           "label": "Modelos"
         },
-        "packs": {
-          "label": "Paquetes"
-        },
         "agentsAndTools": {
           "label": "Agentes y herramientas"
         },
@@ -16901,6 +16901,9 @@
         },
         "quality": {
           "label": "Calidad"
+        },
+        "approvals": {
+          "label": "Aprobaciones"
         }
       }
     },

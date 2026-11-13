@@ -16869,6 +16869,9 @@
         },
         "studio": {
           "label": "스튜디오"
+        },
+        "approvals": {
+          "label": "승인"
         }
       },
       "sections": {
@@ -16884,9 +16887,6 @@
         "models": {
           "label": "모델"
         },
-        "packs": {
-          "label": "팩"
-        },
         "agentsAndTools": {
           "label": "에이전트 및 도구"
         },
@@ -16901,6 +16901,9 @@
         },
         "quality": {
           "label": "품질"
+        },
+        "approvals": {
+          "label": "승인"
         }
       }
     },
