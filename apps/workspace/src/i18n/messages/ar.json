@@ -13167,6 +13167,10 @@
         },
         "sourcesTag": {
           "label": "المصادر"
+        },
+        "turnIntoTask": {
+          "tooltip": "تحويل إلى مهمة",
+          "error": "تعذّر إنشاء المهمة."
         }
       },
       "tts": {

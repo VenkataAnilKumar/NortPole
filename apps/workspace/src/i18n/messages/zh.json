@@ -13167,6 +13167,10 @@
         },
         "sourcesTag": {
           "label": "来源"
+        },
+        "turnIntoTask": {
+          "tooltip": "转为任务",
+          "error": "无法创建任务。"
         }
       },
       "tts": {

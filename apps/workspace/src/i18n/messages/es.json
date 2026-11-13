@@ -13167,6 +13167,10 @@
         },
         "sourcesTag": {
           "label": "Fuentes"
+        },
+        "turnIntoTask": {
+          "tooltip": "Convertir en tarea",
+          "error": "No se pudo crear la tarea."
         }
       },
       "tts": {

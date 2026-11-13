@@ -13167,6 +13167,10 @@
         },
         "sourcesTag": {
           "label": "출처"
+        },
+        "turnIntoTask": {
+          "tooltip": "작업으로 전환",
+          "error": "작업을 만들 수 없습니다."
         }
       },
       "tts": {

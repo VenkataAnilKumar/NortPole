@@ -23,7 +23,7 @@ import SourceTag from "@/refresh-components/buttons/source-tag/SourceTag";
 import { citationsToSourceInfoArray } from "@/refresh-components/buttons/source-tag/sourceTagUtils";
 import { CopyButton, SelectButton } from "@opal/components";
 import ModelSelector from "@/sections/model-selector/ModelSelector";
-import { SvgRefreshCw, SvgThumbsDown, SvgThumbsUp } from "@opal/icons";
+import { SvgListCheck, SvgRefreshCw, SvgThumbsDown, SvgThumbsUp } from "@opal/icons";
 import { LlmManager } from "@/lib/hooks";
 import { RegenerationFactory } from "@/app/app/message/messageComponents/AgentMessage";
 import useFeedbackController from "@/hooks/useFeedbackController";
@@ -319,6 +319,31 @@ export default function MessageToolbar({
                   data-testid="AgentMessage/dislike-button"
                 />
               </>
+            )}
+            {!incognitoEnabled && parentMessage?.message && (
+              <SelectButton
+                icon={SvgListCheck}
+                variant="select-light"
+                state="empty"
+                tooltip={t("toolbar.turnIntoTask.tooltip")}
+                aria-label={t("toolbar.turnIntoTask.tooltip")}
+                data-testid="AgentMessage/turn-into-task"
+                onClick={async () => {
+                  // The question becomes a draft task: nothing runs until its owner presses Start on the Tasks page.
+                  const question = (parentMessage?.message ?? "").trim();
+                  const res = await fetch("/api/tasks", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ title: (question.split("\n")[0] ?? question).slice(0, 80), request: question.slice(0, 4000), desired_output: "" }),
+                  });
+                  if (!res.ok) {
+                    window.alert(t("toolbar.turnIntoTask.error"));
+                    return;
+                  }
+                  const created = (await res.json()) as { id: string };
+                  window.location.assign(`/app/reviewed-tasks?task=${encodeURIComponent(created.id)}`);
+                }}
+              />
             )}
             {ttsEnabled && (
               <TTSButton

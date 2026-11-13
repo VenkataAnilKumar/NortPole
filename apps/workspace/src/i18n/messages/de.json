@@ -13167,6 +13167,10 @@
         },
         "sourcesTag": {
           "label": "Quellen"
+        },
+        "turnIntoTask": {
+          "tooltip": "In eine Aufgabe umwandeln",
+          "error": "Die Aufgabe konnte nicht erstellt werden."
         }
       },
       "tts": {

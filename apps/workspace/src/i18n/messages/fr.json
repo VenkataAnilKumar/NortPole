@@ -13167,6 +13167,10 @@
         },
         "sourcesTag": {
           "label": "Sources"
+        },
+        "turnIntoTask": {
+          "tooltip": "Transformer en tâche",
+          "error": "Impossible de créer la tâche."
         }
       },
       "tts": {

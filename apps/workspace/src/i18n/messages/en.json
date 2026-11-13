@@ -13167,6 +13167,10 @@
         },
         "sourcesTag": {
           "label": "Sources"
+        },
+        "turnIntoTask": {
+          "tooltip": "Turn into a task",
+          "error": "Could not create the task."
         }
       },
       "tts": {

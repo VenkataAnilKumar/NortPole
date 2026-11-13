@@ -13167,6 +13167,10 @@
         },
         "sourcesTag": {
           "label": "ソース"
+        },
+        "turnIntoTask": {
+          "tooltip": "タスクにする",
+          "error": "タスクを作成できませんでした。"
         }
       },
       "tts": {
