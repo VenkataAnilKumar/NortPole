@@ -27,6 +27,8 @@ class EvolvXSIActionTarget(Base):
     enabled: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     # How far the product may go with this destination (see autonomy.py).
     tier: Mapped[str] = mapped_column(String(20), nullable=False, default="act_with_approval", server_default="act_with_approval")
+    # When on, a send to this destination also needs a second person (not the owner) to approve the same payload.
+    require_second_approval: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
     created_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
 
@@ -46,6 +48,9 @@ class EvolvXSIAction(Base):
     state: Mapped[str] = mapped_column(String(20), nullable=False, default="proposed")
     version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     approved_at: Mapped[datetime.datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    # Set when a second person approved this exact payload (see EvolvXSIActionTarget.require_second_approval).
+    second_approver_id: Mapped[uuid.UUID | None] = mapped_column(PGUUID(as_uuid=True), ForeignKey("user.id", ondelete="SET NULL"), nullable=True)
+    second_approved_at: Mapped[datetime.datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     idempotency_key: Mapped[str | None] = mapped_column(String(64), nullable=True)
     attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     result_status: Mapped[int | None] = mapped_column(Integer, nullable=True)

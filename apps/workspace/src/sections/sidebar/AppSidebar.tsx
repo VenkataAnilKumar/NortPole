@@ -192,7 +192,7 @@ function RecentsSection({
           <SidebarLoader count={5} />
         ) : chatSessions.length === 0 ? (
           <div className="px-3">
-            <Text as="p" color="text-01">
+            <Text as="p" color="text-03">
               {t("appSidebar.recents.empty.text")}
             </Text>
           </div>
