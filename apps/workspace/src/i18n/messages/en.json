@@ -11626,7 +11626,7 @@
         "item": "agents"
       },
       "header": {
-        "description": "Customize AI behavior and knowledge for you and your team's use cases.",
+        "description": "Chat assistants for you and your team. Workflow agents, which prepare drafts, are under Workflows.",
         "title": "Agents"
       },
       "newAgent": {
@@ -16808,7 +16808,7 @@
           "label": "Service Accounts"
         },
         "slackIntegration": {
-          "label": "Slack Integration"
+          "label": "Channels"
         },
         "ssoProviders": {
           "label": "SSO Providers"

@@ -699,7 +699,7 @@ export default function AppSidebar() {
           </SidebarTab>
           <SidebarTab
             icon={SvgPlug}
-            {...navigation.linkTo("/app/sources/skills", { scroll: false })}
+            {...navigation.linkTo("/app/sources/connectors", { scroll: false })}
             selected={activeSidebarTab.isSources()}
           >
             {t("appSidebar.sources.label")}

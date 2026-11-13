@@ -16,11 +16,11 @@ The user side is for using things and asking for them. The admin console is for 
 | 4 | **Agent** | Chat assistants only, each card showing what it reads and which tools it may use. Workflow agents live in Workflows. | Exists (sidebar Agents section); cleanup R3 |
 | 5 | **Workflows** | Tabs **Start** (packs; a "Run by" card shows the agent's plan), **Scheduled** (each run stops at the plan and waits in Inbox; a schedule pauses after 3 plans in a row go unaccepted), **My drafts**. | **R1 done** (tabs, addresses); scheduler R6 |
 | 6 | **Knowledge** | **Company knowledge** by domain (read-only; source and freshness) and **Uploaded data** by domain (projects become optional folders), with "Request to add to company knowledge". | **R1 done** (renamed, company knowledge); domains and uploads R7 |
-| 7 | **Sources** | Tabs **Skills** (what installed packs know: guides, review rules, house style, workflow agents), **Connectors** (connected systems), **Plugins** (tools assistants may use and whether each is allowed). Request buttons come later. | **R1 done** (read-only); requests R4 |
+| 7 | **Sources** | Tabs in this order (owner's decision): **Discover** (what is not on yet: supported connector types, uploaded but inactive packs, tools not allowed, each with a Request button and its status), **Connectors** (systems connected now), **Skills** (what installed packs know: guides, review rules, house style, workflow agents), **Plugins** (tools assistants may use and whether each is allowed). People request; only an administrator turns anything on. | Connectors, Skills, Plugins done (R1, R3 order); Discover R4 |
 | 8 | **Recent** | Chats, drafts and workflows opened recently. Pin, rename, delete. | Exists |
 | 9 | **Settings** | Profile, theme, language, memory, personal tools, notifications; Admin link for administrators. | Exists |
 
-The group keeps the owner's name **Sources**, although Skills and Plugins are not strictly sources.
+The group keeps the owner's name **Sources**, although Skills and Plugins are not strictly sources. Connectors (knowledge coming in) and Plugins (tools an assistant calls during a chat) stay separate tabs rather than one "Integrations" tab: they answer different questions, carry different risks, and drafts use connectors but never plugins. "Libraries" is not used: that is Knowledge.
 
 ## Admin console
 
@@ -29,7 +29,7 @@ The group keeps the owner's name **Sources**, although Skills and Plugins are no
 | 1 | **Overview** | Health, usage and cost, approvals waiting, audit chain status, sync problems. |
 | 2 | **Approvals** | One queue: second-approver sends, two-administrator changes, knowledge, connector, tool and assistant requests, outside-tool definitions. |
 | 3 | **Knowledge** | Domains, connectors (setup, sync, permission sync), company knowledge, upload requests, index status. |
-| 4 | **Agents & tools** | Chat assistants, workflow agents, packs and signers, Studio, tool catalog, outside tools with pinned definitions, action targets. |
+| 4 | **Agents & tools** | Chat assistants, workflow agents, packs and signers, Studio, tool catalog, outside tools with pinned definitions, **Channels** (Slack now; where people ask the assistant from another app). Send destinations stay under Governance. |
 | 5 | **Governance** | Route policy and redaction, retention and legal hold, audit log, saved head and export, two-administrator rules. |
 | 6 | **People** | Users, groups, roles, invitations. |
 | 7 | **Models** | Providers, default task model, prices, tokens and cost. |
@@ -46,7 +46,7 @@ Hidden for the pilot (R2): Discord bot, SCIM, Hooks, Billing and the "Upgrade pl
 | `/app/automations` | `/app/workflows/scheduled` |
 | `/app/reviewed-tasks` | `/app/workflows/drafts` (the `?task=` query is kept) |
 | `/app/libraries` | `/app/knowledge` |
-| `/app/sources` | `/app/sources/skills` |
+| `/app/sources` | `/app/sources/connectors` (`/app/sources/discover` from R4) |
 
 The old addresses redirect (HTTP 307, set in `next.config.js`) because home cards, bookmarks and audit records use them. `/app/plugins` (a person's own plugins, and its OAuth callback) is unchanged and shows under Sources.
 
@@ -56,8 +56,8 @@ The old addresses redirect (HTTP 307, set in `next.config.js`) because home card
 |---|---|---|---|
 | R1 | Sidebar order and names, Workflows and Sources tabs, Knowledge rename, redirects, read-only Skills, Connectors and Plugins | Small | Done |
 | R2 | Admin console regroup, merged Approvals queue, hide inherited screens | Small to medium | Done |
-| R3 | Workflows Start cleanup ("Run by" card), Agent tab for chat assistants only | Medium | Next |
-| R4 | Request buttons on Sources (skill, connector, plugin), landing in Approvals | Medium | |
+| R3 | "Run by" line on Start, Agent tab for chat assistants, Channels rename, Sources order | Medium | Done |
+| R4 | **Discover** (first tab of Sources) with requests for connectors, skills and plugins, landing in Approvals | Medium | Next |
 | R5 | Inbox filters | Small | |
 | R6 | Scheduled workflows: scheduler, stop at the plan, auto-pause, cost on Quality | Medium | |
 | R7 | Knowledge domains, uploads by domain, request and approve, domain filter in search | Large | After the Google Drive connector |

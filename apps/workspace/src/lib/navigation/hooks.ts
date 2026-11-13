@@ -72,7 +72,7 @@ function hrefFor(value: AppPositionType): Route {
     case "knowledge":
       return "/app/knowledge";
     case "sources":
-      return "/app/sources/skills";
+      return "/app/sources/connectors";
     case "inbox":
       return "/app/inbox";
     case "user-settings":

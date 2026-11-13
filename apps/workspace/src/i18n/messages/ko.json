@@ -11626,7 +11626,7 @@
         "item": "에이전트"
       },
       "header": {
-        "description": "나와 팀의 사용 사례에 맞게 AI의 동작과 지식을 맞춤 설정하세요.",
+        "description": "나와 팀을 위한 채팅 어시스턴트입니다. 초안을 준비하는 워크플로 에이전트는 워크플로에 있습니다.",
         "title": "에이전트"
       },
       "newAgent": {
@@ -16808,7 +16808,7 @@
           "label": "서비스 계정"
         },
         "slackIntegration": {
-          "label": "Slack 연동"
+          "label": "채널"
         },
         "ssoProviders": {
           "label": "SSO 제공자"

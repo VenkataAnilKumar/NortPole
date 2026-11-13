@@ -103,7 +103,7 @@ export const SlackTokensForm = ({
               {t.rich("tokensForm.docsPrompt.text", {
                 link: (chunks) => (
                   <a
-                    className="text-blue-500 hover:underline"
+                    className="font-semibold text-text-05 underline"
                     href={`${DOCS_ADMINS_PATH}/getting_started/slack_bot_setup`}
                     target="_blank"
                     rel="noopener noreferrer"

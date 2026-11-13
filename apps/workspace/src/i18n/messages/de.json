@@ -11626,7 +11626,7 @@
         "item": "Agenten"
       },
       "header": {
-        "description": "Passen Sie das Verhalten und Wissen der KI für Ihre Anwendungsfälle und die Ihres Teams an.",
+        "description": "Chat-Assistenten für Sie und Ihr Team. Workflow-Agenten, die Entwürfe vorbereiten, finden Sie unter Workflows.",
         "title": "Agenten"
       },
       "newAgent": {
@@ -16808,7 +16808,7 @@
           "label": "Dienstkonten"
         },
         "slackIntegration": {
-          "label": "Slack-Integration"
+          "label": "Kanäle"
         },
         "ssoProviders": {
           "label": "SSO-Anbieter"

@@ -184,6 +184,14 @@ export default function AgentsCatalogPage() {
                     {t("navigation.tabs.your.label")}
                   </Tabs.Trigger>
                 </Tabs.List>
+                {/* The list below is filtered by these tabs; each tab gets a panel so its aria-controls points at
+                    something real. The panel only names what the list shows. */}
+                <Tabs.Content value="all" keepMounted>
+                  <span className="sr-only">{t("navigation.tabs.all.label")}</span>
+                </Tabs.Content>
+                <Tabs.Content value="your" keepMounted>
+                  <span className="sr-only">{t("navigation.tabs.your.label")}</span>
+                </Tabs.Content>
               </Tabs>
             </div>
           </div>
