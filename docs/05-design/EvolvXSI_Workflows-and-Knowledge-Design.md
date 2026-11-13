@@ -61,15 +61,18 @@ Written 2026-11-14 after a review of Microsoft Copilot Studio, Google Gemini Ent
 
 `evolvxsi_workflow_run`: id, schedule_id, task_id (nullable when skipped), fired_at, outcome (`plan_ready`, `plan_failed`, `skipped`, `superseded`, `accepted`, `draft_ready`, `approved`, `cancelled`), reason, route_kind, input_tokens, output_tokens.
 
-`evolvxsi_task` gains `schedule_id` (nullable) and the new state `superseded`.
+`evolvxsi_task` gains `schedule_id` (nullable) and the new state `superseded` (a transition from `plan_review` only, shown in My drafts as "Replaced by a newer run"; it counts as ended for retention).
 
 Settings in the key-value store `evolvxsi_schedule_controls`: `enabled` (default **false**), `group_ids` (empty = everyone once enabled), `max_per_person` (default 10), `min_cadence` (default `daily`; no hourly schedules in the pilot), `two_admin` (whether changing these needs a second administrator, using the existing admin-changes flow).
 
 ### 3.3 Running
 
-- A Celery beat entry `evolvxsi-workflow-schedules` runs **every 5 minutes**. It claims due schedules with `SELECT … FOR UPDATE SKIP LOCKED`, so two workers never fire the same one.
-- For each: check scheduling is on and the owner is still in an allowed group (if not: pause, reason `scheduling_off`); supersede a waiting plan; create the draft; draft the plan with the same code as Start (`draft_plan` or `draft_agent_plan`, the owner's permissions, the route policy); record the run and tokens; compute `next_run_at`.
-- A run never accepts a plan, runs searches beyond planning, or sends anything. The plan's searches (for agent plans) are the only reads, as today.
+- A Celery beat entry `evolvxsi-workflow-schedules` runs **every 5 minutes**. It **claims** due schedules in a short transaction (`SELECT … FOR UPDATE SKIP LOCKED`, then set `next_run_at` to the next time and commit), so two workers never fire the same one, and the slow planning call happens **after** the claim, holding no lock.
+- **Missed runs are not caught up.** After downtime a schedule fires once and moves on to its next time.
+- **Load:** at most 20 runs per tick; the rest wait for the next tick. The schedule form spreads start times by a few minutes after the chosen time, so ten 08:30 schedules do not hit the model at once.
+- For each: check scheduling is on, the owner is still **active** and still in an allowed group (if not: pause, reason `scheduling_off` or `owner_inactive`); supersede a waiting plan **with the same version check people use**, so if the owner accepted it a moment earlier the accept wins and the run is recorded as `accepted`; create the draft; draft the plan with the same code as Start (`draft_plan` or `draft_agent_plan`, the owner's permissions, the route policy); record the run and tokens; compute `next_run_at`.
+- A run never accepts a plan or sends anything, and **reads no knowledge**: agent plans only list the searches they will make, and those run after the owner accepts.
+- **Tokens per run:** today tokens are counted per day and model only. The planner will return the call's token counts so the run row can store them; Quality sums them with the existing price rules.
 - Failures are recorded on the run and shown in history; they never retry in a loop (the next fire is the retry).
 
 ### 3.4 Screens
@@ -84,7 +87,11 @@ Settings in the key-value store `evolvxsi_schedule_controls`: `enabled` (default
 
 ### 3.5 Sharing
 
-The owner can share a schedule with groups. People in those groups see it under "Shared with you" and **copy** it: the copy is theirs, runs as them, and is independent. No one runs work as someone else, and the original owner sees no one's drafts.
+The owner can share a schedule with groups. People in those groups see it under "Shared with you" and **copy** it: the copy is theirs, runs as them, and is independent. No one runs work as someone else, and the original owner sees no one's drafts. The copy is checked at copy time and at every run against the copier's own access (pack requirements, route policy, scheduling group); a copy the copier may not run is refused with the reason.
+
+### 3.5a Lifecycle
+
+Deleting a person deletes their schedules (cascade). Deactivating a person pauses them. Run rows follow the retention period for usage counts.
 
 ### 3.6 Audit
 
@@ -111,23 +118,27 @@ Unit: next-run computation across time zones, daylight-saving changes, month end
 ### 4.1 Concepts
 
 - **Domain:** a named area of knowledge (Finance, HR, Legal…). Each domain is backed by one core **document set** (the sources and folders in it) and has:
-  - **open** or **restricted** access. Open: everyone in the workspace. Restricted: members (groups or people).
+  - **open** or **restricted** access. Open: everyone in the workspace. Restricted: members (groups).
   - **owners**, who may verify documents and approve additions.
+- **How restriction is enforced (review fix):** a document set's own visibility only hides the set in pickers; its documents would still appear in an "all knowledge" search. So a restricted domain is enforced through the **reading groups of its sources** (the A5 per-source data-access groups that feed every document's access list): each source in a restricted domain gets the domain's member groups as its reading groups. Search, chat and agent searches then exclude the documents for non-members everywhere, not only in the picker.
+- **One restricted domain per source.** A source may sit in several open domains but in at most one restricted domain, so two domains never disagree about who may read a document. The admin page refuses a second restricted domain for the same source.
 - **Company knowledge** is the default open domain; it cannot be removed or restricted.
 - **Uploaded data:** a person's files. They live in **My files** (private, the core's user files and projects as folders) or in a **restricted domain** the person belongs to. Moving files into an open domain or Company knowledge is a request that a domain owner or administrator approves. Uploads never become visible to others silently.
 - **Who can use what:** an assistant or workflow bound to a restricted domain can be used only by that domain's members (Dust's rule). Search and answers only include documents the person can open in the source system, as now.
-- **Verification:** a domain owner marks a document **verified** (with a re-check date) or **deprecated**. Badges show who and when. Deprecated documents rank lower and a draft that cites one gets a warning. When a re-check is due, the owner gets an Inbox item.
+- **Verification:** an owner of any domain that holds the document marks it **verified** (with a re-check date) or **deprecated**. Verification is **per document**, not per domain, so a document never shows two different badges. Badges show who and when. Deprecated documents rank lower and a draft that cites one gets a warning. When a re-check is due, the owner gets an Inbox item.
 - **Freshness:** every result and citation shows when the document last changed in its source; each domain shows when each source last synced.
 
 ### 4.2 Data
 
 `evolvxsi_domain`: id, slug, name, description, document_set_id, access (`open`, `restricted`), member_group_ids, member_user_ids, owner_user_ids, is_default, created_at.
 
-`evolvxsi_doc_verification`: document_id, domain_id, state (`verified`, `deprecated`), by_email, at, recheck_at, note. One current row per document and domain; history in the audit log.
+`evolvxsi_doc_verification`: document_id (unique), state (`verified`, `deprecated`), by_email, at, recheck_at, note. One current row per document and domain; history in the audit log.
 
-`evolvxsi_source_request` gains the kind `knowledge` (move files into a domain), reusing the R4 request and decision flow; the decision is made by a domain owner or an administrator, and **approving performs the move** (an internal change between spaces the approver controls), recorded in the audit log.
+`evolvxsi_source_request` gains the kind `knowledge` (add files to a domain), reusing the R4 request and decision flow; the decision is made by a domain owner or an administrator. **A deliberate exception to R4's "approving turns nothing on":** here approving performs the addition, because it is a change inside the workspace that the approver owns and it widens nothing beyond the domain's members; it is recorded in the audit log. The files are **copied** into a file source that belongs to the domain (so they take the domain's reading groups); the person's private copy stays private.
 
 Packs may declare domains for a template or workflow agent (`Template.domains`); the agent's searches are limited to those domains.
+
+**Assistants bound to a restricted domain:** when a chat assistant uses a restricted domain's document set, it may only be shared with that domain's member groups (checked when sharing) and is refused to anyone else at use time. Even without this check the reading groups would keep the documents out; the check stops people seeing an assistant that cannot help them.
 
 ### 4.3 Screens
 
@@ -144,7 +155,8 @@ Packs may declare domains for a template or workflow agent (`Template.domains`);
 
 - **A search index and a real source.** The sandbox runs without a vector index (`DISABLE_VECTOR_DB=true`). R7 needs the index on and at least one connector: the paused **Google Drive** connector, or the core's file connector for a first test.
 - **Permission sync for restricted domains.** Restricted access narrows what the source already allows; it never widens it.
-- **Ranking change for deprecated documents** must be tested on recorded queries so verified content does not crowd out relevant content.
+- **Ranking change for deprecated documents** is applied after retrieval (a lower score for deprecated documents, no index change) and must be tested on recorded queries so verified content does not crowd out relevant content.
+- **Moving a source into or out of a restricted domain changes its reading groups**, which re-syncs every document's access list; on a large source this takes time, and until it finishes the old access applies. The admin page shows the sync state.
 
 ### 4.6 Tests
 
@@ -160,7 +172,28 @@ Integration: open and restricted domains filter search; a non-member cannot use 
 
 R7 starts after the search index is on in the sandbox and the Google Drive connector (A5) is resumed.
 
-## 5. Decisions taken (owner may change them)
+## 5. Review, 2026-11-14
+
+A review of this design against the code found one flaw and several gaps; all are fixed above.
+
+| Finding | Severity | Fix |
+|---|---|---|
+| A restricted domain built only on document-set visibility would still let its documents appear in an "all knowledge" search | **Critical** | Enforce through the sources' reading groups (A5), which feed every document's access list (§4.1) |
+| A source in two restricted domains would have two answers to "who may read this" | High | At most one restricted domain per source (§4.1) |
+| Planning under a row lock would hold locks for the length of a model call | High | Claim and commit first, plan afterwards (§3.3) |
+| A runner superseding a plan the owner is accepting at that moment | High | Same version check as people; the accept wins (§3.3) |
+| After downtime, catch-up could fire many runs at once; many schedules at one time spike the model | Medium | No catch-up; at most 20 per tick; start times spread (§3.3) |
+| Per-run cost was promised, but tokens are counted per day and model only | Medium | The planner returns token counts; stored per run (§3.3) |
+| A deactivated or deleted person's schedules kept running | Medium | Pause on deactivation, delete with the person (§3.5a) |
+| A copied schedule the copier may not run | Medium | Checked at copy and at each run (§3.5) |
+| Verification per document and domain could show two badges | Medium | One verification per document (§4.1, §4.2) |
+| "Approving performs the move" contradicted R4's rule | Medium | Stated as a deliberate, bounded exception; files are copied into a domain source (§4.2) |
+| Assistants tied to a restricted domain could still be shared with others | Low | Share-time and use-time check (§4.2) |
+| The `superseded` state had no place in My drafts or retention | Low | Defined (§3.2) |
+
+Not changed: research caveats remain (vendor and third-party sources; several 2026 features in preview). Email or push notice for a ready plan is out of scope; the Inbox badge covers it.
+
+## 6. Decisions taken (owner may change them)
 
 1. Minimum cadence daily; no hourly schedules in the pilot.
 2. Auto-pause after 3 unaccepted plans or 3 skips in a row.
@@ -169,7 +202,7 @@ R7 starts after the search index is on in the sandbox and the Google Drive conne
 5. Deprecated documents are ranked lower and flagged, not hidden.
 6. Uploads are private by default; nothing moves to a shared domain without approval.
 
-## 6. Order
+## 7. Order
 
 R6a → R6b → R8 pass for R1–R6 → (Google Drive connector and search index) → R7a → R7b → R7c → R6c.
 
