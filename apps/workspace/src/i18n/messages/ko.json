@@ -16866,6 +16866,9 @@
         },
         "toolCatalog": {
           "label": "도구"
+        },
+        "studio": {
+          "label": "스튜디오"
         }
       },
       "sections": {

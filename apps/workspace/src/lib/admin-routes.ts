@@ -427,6 +427,16 @@ export const ADMIN_ROUTES = {
     requiredTier: null,
     visibleWhen: null,
   },
+  STUDIO: {
+    path: "/admin/studio",
+    icon: SvgPlug,
+    title: "Studio",
+    sidebarLabel: "Studio",
+    requiredPermission: Permission.FULL_ADMIN_PANEL_ACCESS,
+    section: "Packs",
+    requiredTier: null,
+    visibleWhen: null,
+  },
   OVERVIEW: {
     path: "/admin/overview",
     icon: SvgShield,

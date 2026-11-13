@@ -16866,6 +16866,9 @@
         },
         "toolCatalog": {
           "label": "Ferramentas"
+        },
+        "studio": {
+          "label": "Estúdio"
         }
       },
       "sections": {
