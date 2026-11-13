@@ -179,7 +179,7 @@ export default function PacksPage() {
       ) : packs.length === 0 ? (
         <section className={card}>
           <h2 className="mb-1 text-base font-semibold text-text-05">No packs are active</h2>
-          <p className="text-sm text-text-03">An administrator installs and activates signed packs. Until then, write your own task under Tasks.</p>
+          <p className="text-sm text-text-03">An administrator installs and activates signed packs. Until then, write your own under Drafts.</p>
         </section>
       ) : (
         <div className="flex flex-col gap-8">

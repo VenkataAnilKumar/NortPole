@@ -13169,8 +13169,8 @@
           "label": "Fuentes"
         },
         "turnIntoTask": {
-          "tooltip": "Convertir en tarea",
-          "error": "No se pudo crear la tarea."
+          "tooltip": "Convertir en borrador",
+          "error": "No se pudo crear el borrador."
         }
       },
       "tts": {
@@ -16949,7 +16949,7 @@
         "label": "Automatizaciones"
       },
       "reviewedTasks": {
-        "label": "Tareas"
+        "label": "Borradores"
       },
       "packs": {
         "label": "Flujos de trabajo"

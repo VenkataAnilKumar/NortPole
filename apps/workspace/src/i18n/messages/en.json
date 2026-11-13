@@ -13169,8 +13169,8 @@
           "label": "Sources"
         },
         "turnIntoTask": {
-          "tooltip": "Turn into a task",
-          "error": "Could not create the task."
+          "tooltip": "Turn into a draft",
+          "error": "Could not create the draft."
         }
       },
       "tts": {
@@ -16949,7 +16949,7 @@
         "label": "Automations"
       },
       "reviewedTasks": {
-        "label": "Tasks"
+        "label": "Drafts"
       },
       "packs": {
         "label": "Workflows"
