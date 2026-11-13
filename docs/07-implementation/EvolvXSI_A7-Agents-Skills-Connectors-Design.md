@@ -1,6 +1,6 @@
 # EvolvXSI — A7 design proposal: agents, skills and connectors in packs
 
-Status: **Proposal, 2026-11-13, reviewed the same day (section 9). Nothing here is built.** The review changes the execution model, adds a step before A7a and reorders the phases; read section 9 before section 6. The decisions in section 8, as revised in section 9, need an answer before any build starts. It covers checklist item 6 (A7) and the open question of horizontal and vertical packs.
+Status: **Proposal, 2026-11-13, reviewed the same day (section 9), and the direction agreed the same day (section 11: govern the core's agents, skills, tools and connectors instead of building new ones). Step 1 is built; the rest is not.** The review changes the execution model, adds a step before A7a and reorders the phases; read section 9 before section 6. The decisions in section 8, as revised in section 9, need an answer before any build starts. It covers checklist item 6 (A7) and the open question of horizontal and vertical packs.
 
 ## 1. In plain words
 
@@ -213,3 +213,24 @@ Decisions 1, 2, 4, 5, 6 and 7 stand. Decision 3 (manifest v2 now) becomes "after
 ## 10. Not covered
 
 A cost model for agent runs beyond the token counts already collected; a visual flow builder; marketplaces; agents that run unattended; agents that hold their own credentials; a review by someone who did not write this proposal.
+
+## 11. Agreed direction, 2026-11-13: govern the core, do not rebuild it
+
+After looking at what the inherited core already contains (chat agents and their runtime, 13 kinds of chat tools, MCP and OpenAPI tools, a skills system with 14 built-in skills, 63 source connectors), the owner agreed to this shape. It replaces the phase plan in sections 6 and 9; the principles in section 3 and the risks in section 7 stand.
+
+- **One agent concept, two modes.** *Assistant* (the core's chat agents): read-only tools in chat, write and code tools off unless an administrator turns them on. *Workflow agent* (from a pack): plan-then-execute as in section 9 R1, producing a reviewed Draft; sends only proposed.
+- **A tool catalog around the core's tools, not new tools.** Every tool has a kind (read, web, generate, personal, code, outside) and is allowed or not; the check sits where the core builds a chat's tools.
+- **Two kinds of skill:** *guides* (text only, in packs) and *sandbox skills* (the core's bundles, Craft only).
+- **Connectors are reused**, not written: the pilot's one connector is chosen from the 63 and tested with permissions (A5).
+- **Outside tools only once pinned** (definitions recorded at approval; a change blocks the tool).
+- **Decisions agreed:** govern rather than rebuild; write and code tools off in chat by default; no code in packs; pack authors and administrators write agents. Open: the pilot's source system.
+
+| Step | Work | State |
+| --- | --- | --- |
+| 1 | Tool catalog: inventory, kinds, administrator switch, enforcement where chat tools are built | **Built 2026-11-13** (see REVIEW) |
+| 2 | Guides (text-only skills) in packs, used by Workflows and drafts | Next |
+| 3 | One workflow agent end to end (plan-then-execute with search and open; agent card; tests incl. injection and refusal) | |
+| 4 | Pinning for MCP and OpenAPI tools; call log; pinned tools as workflow steps | |
+| 5 | The pilot connector, tested with permissions | Needs the source system |
+| 6 | Administrator editor for agent specs; manifest version 2 shaped by steps 2 to 4 | |
+

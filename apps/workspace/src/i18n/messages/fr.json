@@ -16863,6 +16863,9 @@
         },
         "quality": {
           "label": "Qualité"
+        },
+        "toolCatalog": {
+          "label": "Outils"
         }
       },
       "sections": {

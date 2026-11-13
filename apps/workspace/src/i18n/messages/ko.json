@@ -16863,6 +16863,9 @@
         },
         "quality": {
           "label": "품질"
+        },
+        "toolCatalog": {
+          "label": "도구"
         }
       },
       "sections": {

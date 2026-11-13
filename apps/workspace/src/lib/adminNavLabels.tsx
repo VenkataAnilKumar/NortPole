@@ -22,6 +22,7 @@ export function useAdminNavLabels(): Record<AdminNavItemId, string> {
       auditLog: t("adminNav.items.auditLog.label"),
       packsAdmin: t("adminNav.items.packsAdmin.label"),
       inventory: t("adminNav.items.inventory.label"),
+      toolCatalog: t("adminNav.items.toolCatalog.label"),
       governance: t("adminNav.items.governance.label"),
       overview: t("adminNav.items.overview.label"),
       quality: t("adminNav.items.quality.label"),

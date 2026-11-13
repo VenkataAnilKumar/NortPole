@@ -65,6 +65,7 @@ from evolvxsi.server.query_and_chat.streaming_models import (
     StreamingError,
 )
 from evolvxsi.server.settings.store import load_settings
+from evolvxsi.tool_catalog.catalog import code_allowed
 from evolvxsi.tools.tool_constructor import (
     CustomToolConfig,
     FileReaderToolConfig,
@@ -725,7 +726,8 @@ def create_chat_agent(
             agent_id=agent_id,
             messages=list(setup.messages),
             tools=tools,
-            code_mode=CODE_MODE_ENABLED,
+            # EvolvXSI: code mode runs code, so it also needs the catalog's "code" kind on.
+            code_mode=CODE_MODE_ENABLED and code_allowed(),
             custom_agent_prompt=setup.custom_agent_prompt,
             additional_context=setup.additional_context,
             context_files=setup.extracted_context_files,
