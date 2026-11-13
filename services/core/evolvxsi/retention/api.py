@@ -49,11 +49,8 @@ def get_retention(_: User = Depends(require_permission(Permission.FULL_ADMIN_PAN
     return _view(load())
 
 
-@router.put("")
-def put_retention(
-    body: RetentionUpdate,
-    user: User = Depends(require_permission(Permission.FULL_ADMIN_PANEL_ACCESS)),
-) -> RetentionView:
+def plan_retention_update(body: RetentionUpdate, proposer_email: str | None) -> tuple[Retention, Retention]:
+    """The settings as they are now and as they would be after this update. Raises if the update is not valid."""
     if body.legal_hold and not body.hold_reason.strip():
         raise EvolvXSIError(EvolvXSIErrorCode.INVALID_INPUT, "A legal hold needs a reason.")
     old = load()
@@ -63,17 +60,48 @@ def put_retention(
         "usage_days": None if body.keep_usage_forever else (body.usage_days or old.usage_days),
         "legal_hold": body.legal_hold,
         "hold_reason": body.hold_reason.strip() if body.legal_hold else "",
-        "hold_set_by": (getattr(user, "email", None) if body.legal_hold and not old.legal_hold else (old.hold_set_by if body.legal_hold else None)),
+        "hold_set_by": (proposer_email if body.legal_hold and not old.legal_hold else (old.hold_set_by if body.legal_hold else None)),
     })
-    save(new)
+    return old, new
+
+
+def retention_summary(old: Retention, new: Retention) -> str:
     bits = []
     if (old.audit_days, old.usage_days) != (new.audit_days, new.usage_days):
         bits.append(f"periods audit {old.audit_days} to {new.audit_days} days, usage {old.usage_days} to {new.usage_days} days")
     if old.legal_hold != new.legal_hold:
         bits.append("legal hold placed: " + new.hold_reason if new.legal_hold else "legal hold lifted")
-    record_audit(AuditAction.RETENTION_CHANGE, AuditOutcome.SUCCESS, actor=user,
-                 summary="Retention changed: " + ("; ".join(bits) or "no change"), resource_type="retention")
-    return _view(new)
+    return "Retention changed: " + ("; ".join(bits) or "no change")
+
+
+def apply_retention_update(
+    body: RetentionUpdate, actor: User | None, *, proposer_email: str | None = None,
+    approver_email: str | None = None, expect_version: int | None = None,
+) -> Retention:
+    """Save the update and audit it. `expect_version` refuses it if the settings changed since it was proposed."""
+    old, new = plan_retention_update(body, proposer_email or getattr(actor, "email", None))
+    if expect_version is not None and old.version != expect_version:
+        raise EvolvXSIError(EvolvXSIErrorCode.CONFLICT, "The retention settings changed after this was proposed. Propose it again.")
+    save(new)
+    summary = retention_summary(old, new)
+    details = {"proposed_by": proposer_email or getattr(actor, "email", None), "approved_by": approver_email} if approver_email else None
+    record_audit(AuditAction.RETENTION_CHANGE, AuditOutcome.SUCCESS, actor=actor, summary=summary, details=details, resource_type="retention")
+    return new
+
+
+@router.put("")
+def put_retention(
+    body: RetentionUpdate,
+    user: User = Depends(require_permission(Permission.FULL_ADMIN_PANEL_ACCESS)),
+    db_session: Session = Depends(get_session),
+) -> RetentionView:
+    from evolvxsi.admin_changes import controls
+    from evolvxsi.admin_changes.service import propose, pending_response
+
+    if controls.required("retention"):
+        old, new = plan_retention_update(body, getattr(user, "email", None))
+        return pending_response(propose(db_session, user, "retention", body.model_dump(), old.version, retention_summary(old, new)))  # type: ignore[return-value]
+    return _view(apply_retention_update(body, user))
 
 
 @router.post("/prune")

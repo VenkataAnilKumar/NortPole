@@ -2,6 +2,7 @@
 
 import useSWR from "swr";
 import { errorHandlingFetcher } from "@/lib/fetcher";
+import AdminApprovals from "@/views/admin/AdminApprovals";
 
 interface RoutePolicy { default_data_class: string; redact_route_kinds?: string[]; allowed: Record<string, string[]> }
 interface Extensions { personal_skills: string; mcp_allowlist_enabled: boolean; mcp_allowed_hosts: string[] }
@@ -66,6 +67,7 @@ export default function GovernancePage() {
           Refusals, policy changes, approvals, sends and exports are written to the audit log.
         </Row>
       </ul>
+      <AdminApprovals />
     </div>
   );
 }

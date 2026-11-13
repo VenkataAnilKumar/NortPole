@@ -65,7 +65,7 @@ export default function RetentionPanel() {
           throw new Error(`Periods must be whole numbers of days from ${data.min_days} to ${data.max_days}.`);
         }
       }
-      await call(URL, "PUT", {
+      const saved = await call(URL, "PUT", {
         audit_days: auditDays ? Number(auditDays) : data.audit_days,
         usage_days: usageDays ? Number(usageDays) : data.usage_days,
         legal_hold: hold,
@@ -73,6 +73,8 @@ export default function RetentionPanel() {
         keep_audit_forever: data.audit_days === null && !auditDays,
         keep_usage_forever: data.usage_days === null && !usageDays,
       });
+      await mutate("/api/admin/changes");
+      if (saved?.pending_approval) return "Not applied yet: a second administrator has to approve this change. You can follow it on the Governance page.";
       return hold ? "Legal hold is on: nothing is deleted." : "Saved.";
     });
 

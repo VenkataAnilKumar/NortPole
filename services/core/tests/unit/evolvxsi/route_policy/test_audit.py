@@ -38,3 +38,13 @@ def test_route_kind_and_default_class_changes() -> None:
     assert "provider 1 local to private" in summary
     assert "provider 3 unset to local" in summary
     assert details["changes"]["route_kinds"]["3"] == {"from": None, "to": "local"}
+
+
+def test_a_change_to_redaction_is_described_not_reported_as_no_changes() -> None:
+    old = RoutePolicy(version=3, redact_route_kinds=["cloud"])
+    new = RoutePolicy(version=4, redact_route_kinds=["private"])
+    summary, details = describe_policy_change(old, new)
+    assert "no changes" not in summary and "redaction before sending to: +private -cloud" in summary
+    assert details["changes"]["redact_route_kinds"] == {"added": ["private"], "removed": ["cloud"]}
+    same, _ = describe_policy_change(old, RoutePolicy(version=4, redact_route_kinds=["cloud"]))
+    assert same.endswith("no changes"), "an unchanged redaction list is still reported as no change"

@@ -64,6 +64,11 @@ def describe_policy_change(old: RoutePolicy, new: RoutePolicy) -> tuple[str, dic
         if b != a:
             changes.setdefault("route_kinds", {})[pid] = {"from": b, "to": a}
             parts.append(f"provider {pid} {b or 'unset'} to {a or 'unset'}")
+    redact_before, redact_after = set(old.redact_route_kinds), set(new.redact_route_kinds)
+    if redact_before != redact_after:
+        changes["redact_route_kinds"] = {"added": sorted(redact_after - redact_before), "removed": sorted(redact_before - redact_after)}
+        bits = [f"+{k}" for k in sorted(redact_after - redact_before)] + [f"-{k}" for k in sorted(redact_before - redact_after)]
+        parts.append(f"redaction before sending to: {' '.join(bits)}")
     head = f"Policy v{old.version} to v{new.version}"
     summary = head + (": " + "; ".join(parts) if parts else ": no changes")
     return summary, {"from_version": old.version, "to_version": new.version, "changes": changes}
