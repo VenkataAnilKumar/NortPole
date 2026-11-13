@@ -44,6 +44,29 @@ class ReviewRule(_Strict):
         return self
 
 
+GUIDE_BODY_MAX = 4000
+GUIDES_PER_TEMPLATE_MAX = 3
+GUIDE_TEXT_PER_TEMPLATE_MAX = 6000
+
+
+class Guide(_Strict):
+    """Written know-how a template can use: how to do this kind of work. Text only: a guide cannot run anything,
+    add a source, widen access or change a rule. It is shown in full when the pack is reviewed."""
+
+    id: str
+    name: str = Field(min_length=1, max_length=80)
+    # What it is for and when to use it; shown to people and to the planner.
+    description: str = Field(min_length=1, max_length=300)
+    body: str = Field(min_length=1, max_length=GUIDE_BODY_MAX)
+
+    @field_validator("id")
+    @classmethod
+    def _id(cls, v: str) -> str:
+        if not SLUG.match(v):
+            raise ValueError("guide id must be a lower-case slug")
+        return v
+
+
 class Template(_Strict):
     id: str
     title: str = Field(min_length=1, max_length=200)
@@ -53,6 +76,8 @@ class Template(_Strict):
     # prompt below the citation rules and cannot change them.
     style: str = Field(default="", max_length=800)
     review_rules: list[ReviewRule] = Field(default_factory=list, max_length=10)
+    # Ids of this pack's guides that drafts from this template use; only these are loaded.
+    guides: list[str] = Field(default_factory=list, max_length=GUIDES_PER_TEMPLATE_MAX)
 
     @field_validator("id")
     @classmethod
@@ -134,6 +159,7 @@ class Manifest(_Strict):
     # Checks every draft from this pack must pass (in addition to each template's own).
     review_rules: list[ReviewRule] = Field(default_factory=list, max_length=10)
     evaluation_cases: list[EvalCase] = Field(default_factory=list, max_length=100)
+    guides: list[Guide] = Field(default_factory=list, max_length=20)
 
     @field_validator("id")
     @classmethod
@@ -155,6 +181,21 @@ class Manifest(_Strict):
         bad = [c.template for c in self.evaluation_cases if c.template and c.template not in ids]
         if bad:
             raise ValueError(f"evaluation case names a template that does not exist: {bad[0]}")
+        return self
+
+    @model_validator(mode="after")
+    def _guides_exist_and_fit(self) -> "Manifest":
+        by_id = {g.id: g for g in self.guides}
+        if len(by_id) != len(self.guides):
+            raise ValueError("guide ids must be unique")
+        for t in self.templates:
+            missing = [g for g in t.guides if g not in by_id]
+            if missing:
+                raise ValueError(f"template {t.id} names a guide that does not exist: {missing[0]}")
+            if len(set(t.guides)) != len(t.guides):
+                raise ValueError(f"template {t.id} names the same guide twice")
+            if sum(len(by_id[g].body) for g in t.guides) > GUIDE_TEXT_PER_TEMPLATE_MAX:
+                raise ValueError(f"template {t.id}: its guides are longer than {GUIDE_TEXT_PER_TEMPLATE_MAX} characters together")
         return self
 
     @field_validator("templates")

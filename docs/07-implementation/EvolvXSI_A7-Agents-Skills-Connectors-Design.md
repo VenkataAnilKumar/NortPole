@@ -1,6 +1,6 @@
 # EvolvXSI — A7 design proposal: agents, skills and connectors in packs
 
-Status: **Proposal, 2026-11-13, reviewed the same day (section 9), and the direction agreed the same day (section 11: govern the core's agents, skills, tools and connectors instead of building new ones). Step 1 is built; the rest is not.** The review changes the execution model, adds a step before A7a and reorders the phases; read section 9 before section 6. The decisions in section 8, as revised in section 9, need an answer before any build starts. It covers checklist item 6 (A7) and the open question of horizontal and vertical packs.
+Status: **Proposal, 2026-11-13, reviewed the same day (section 9), and the direction agreed the same day (section 11: govern the core's agents, skills, tools and connectors instead of building new ones). Steps 1 and 2 are built; the rest is not.** The review changes the execution model, adds a step before A7a and reorders the phases; read section 9 before section 6. The decisions in section 8, as revised in section 9, need an answer before any build starts. It covers checklist item 6 (A7) and the open question of horizontal and vertical packs.
 
 ## 1. In plain words
 
@@ -228,7 +228,7 @@ After looking at what the inherited core already contains (chat agents and their
 | Step | Work | State |
 | --- | --- | --- |
 | 1 | Tool catalog: inventory, kinds, administrator switch, enforcement where chat tools are built | **Built 2026-11-13** (see REVIEW) |
-| 2 | Guides (text-only skills) in packs, used by Workflows and drafts | Next |
+| 2 | Guides (text-only skills) in packs, used by Workflows and drafts | **Built 2026-11-13** (see REVIEW) |
 | 3 | One workflow agent end to end (plan-then-execute with search and open; agent card; tests incl. injection and refusal) | |
 | 4 | Pinning for MCP and OpenAPI tools; call log; pinned tools as workflow steps | |
 | 5 | The pilot connector, tested with permissions | Needs the source system |

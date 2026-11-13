@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": "finance-policy-review",
   "name": "Finance policy review",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "vertical": "finance",
   "description": "Task templates for finance teams reviewing internal policies. Answers cite only documents the person may open.",
   "templates": [
@@ -19,19 +19,29 @@
           "severity": "warn",
           "message": "Keep the answer under 120 words."
         }
+      ],
+      "guides": [
+        "cite-the-rule"
       ]
     },
     {
       "id": "approval-limits",
       "title": "Expense approval limits",
       "request": "Who must approve expense claims above the standard limit, and what are the thresholds?",
-      "desired_output": "A table of thresholds and approvers"
+      "desired_output": "A table of thresholds and approvers",
+      "guides": [
+        "cite-the-rule"
+      ]
     },
     {
       "id": "policy-changes",
       "title": "What changed in the policy",
       "request": "Which parts of the finance policies changed between the two latest versions, and what should the team review?",
-      "desired_output": "A list of changes with the old and new wording cited"
+      "desired_output": "A list of changes with the old and new wording cited",
+      "guides": [
+        "cite-the-rule",
+        "compare-versions"
+      ]
     }
   ],
   "requires": {
@@ -78,6 +88,20 @@
       "value": 1,
       "severity": "block",
       "message": "Cite at least one source."
+    }
+  ],
+  "guides": [
+    {
+      "id": "cite-the-rule",
+      "name": "Citing a policy rule",
+      "description": "Use when an answer states a rule from a finance policy.",
+      "body": "State the rule in one sentence, then cite the passage it comes from. If two passages disagree, say so and cite both. Give amounts and deadlines exactly as written; do not round them. If no passage states the rule, say that the policy does not cover it."
+    },
+    {
+      "id": "compare-versions",
+      "name": "Comparing policy versions",
+      "description": "Use when a request asks what changed between versions of a policy.",
+      "body": "List each change as before, after and the date it applies from, each with its citation. Say which version is current. Leave out wording changes that do not change a rule."
     }
   ]
 }

@@ -60,6 +60,20 @@ class EvalView(BaseModel):
     failures: list[str]
 
 
+class GuideView(BaseModel):
+    id: str
+    name: str
+    description: str
+    body: str = ""  # the full text, for administrators reviewing a pack
+    used_by: list[str] = []  # template ids
+
+
+class GuideRef(BaseModel):
+    id: str
+    name: str
+    description: str
+
+
 class VersionView(BaseModel):
     pack_id: str
     version: str
@@ -72,6 +86,7 @@ class VersionView(BaseModel):
     installed_at: datetime.datetime
     evaluation_cases: int = 0
     evaluations: list[EvalView] = []
+    guides: list[GuideView] = []
 
 
 class TemplateView(BaseModel):
@@ -81,6 +96,7 @@ class TemplateView(BaseModel):
     desired_output: str
     style: str = ""
     review_rules: list[dict] = []
+    guides: list[GuideRef] = []
 
 
 class PackView(BaseModel):
@@ -130,6 +146,8 @@ def _vview(db: Session, v: EvolvXSIPackVersion) -> VersionView:
         pack_id=v.pack_id, version=v.version, name=m["name"], vertical=m["vertical"], active=v.active,
         signer_key_id=v.signer_key_id, signer_revoked=_revoked(db, v.signer_key_id), digest=v.digest, installed_at=v.installed_at,
         evaluation_cases=len(m.get("evaluation_cases", [])), evaluations=_evals(db, v.pack_id, v.version),
+        guides=[GuideView(id=g["id"], name=g["name"], description=g["description"], body=g["body"],
+                          used_by=[t["id"] for t in m["templates"] if g["id"] in t.get("guides", [])]) for g in m.get("guides", [])],
     )
 
 
@@ -348,7 +366,9 @@ def list_packs(
         out.append(PackView(
             pack_id=v.pack_id, version=v.version, name=m["name"], vertical=m["vertical"], description=m.get("description", ""),
             templates=[TemplateView(**{k: t.get(k, "") for k in ("id", "title", "request", "desired_output", "style")},
-                                    review_rules=list(t.get("review_rules", []))) for t in m["templates"]],
+                                    review_rules=list(t.get("review_rules", [])),
+                                    guides=[GuideRef(id=g["id"], name=g["name"], description=g["description"])
+                                            for g in m.get("guides", []) if g["id"] in t.get("guides", [])]) for t in m["templates"]],
             group="everyday" if str(m["vertical"]).lower() == "general" else "domain",
             autonomy=m.get("autonomy", "act_with_approval"), review_rules=list(m.get("review_rules", [])),
             signer_key_id=v.signer_key_id, evaluation_cases=len(m.get("evaluation_cases", [])),

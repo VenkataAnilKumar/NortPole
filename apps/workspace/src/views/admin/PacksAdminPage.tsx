@@ -20,6 +20,7 @@ interface Version {
   digest: string;
   evaluation_cases: number;
   evaluations: { model_name: string; route_kind: string; passed: boolean; cases_passed: number; cases_total: number; failures: string[] }[];
+  guides?: { id: string; name: string; description: string; body: string; used_by: string[] }[];
 }
 
 const card = "rounded-2xl border border-border-01 bg-background-neutral-00 p-5 shadow-sm";
@@ -171,6 +172,19 @@ export default function PacksAdminPage() {
                     </li>
                   ))}
                 </ul>
+              )}
+              {(v.guides ?? []).length > 0 && (
+                <details className="mt-2 text-xs text-text-03" data-testid="admin-guides">
+                  <summary className="cursor-pointer">Guides in this version ({(v.guides ?? []).length}): read them before activating</summary>
+                  <ul className="mt-1 flex flex-col gap-2">
+                    {(v.guides ?? []).map((g) => (
+                      <li key={g.id}>
+                        <span className="font-medium text-text-05">{g.name}</span> · {g.description} · used by {g.used_by.length ? g.used_by.join(", ") : "no workflow"}
+                        <pre className="mt-1 whitespace-pre-wrap rounded-lg bg-background-neutral-01 px-2 py-1 text-text-05">{g.body}</pre>
+                      </li>
+                    ))}
+                  </ul>
+                </details>
               )}
               {v.active && <p className="mt-2 text-xs text-text-03" data-testid="active-flag">Active: people see this version.</p>}
             </li>
