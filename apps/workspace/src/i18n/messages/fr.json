@@ -12451,7 +12451,9 @@
         "sendButton": {
           "processingFilesTooltip": "En attente de la fin du traitement des fichiers joints",
           "stoppingLabel": "Arrêt en cours…",
-          "reloadLabel": "Vérifier à nouveau"
+          "reloadLabel": "Vérifier à nouveau",
+          "sendLabel": "Envoyer",
+          "stopLabel": "Arrêter"
         },
         "tabReadingButton": {
           "readLabel": "Lire cet onglet",

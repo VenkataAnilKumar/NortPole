@@ -12451,7 +12451,9 @@
         "sendButton": {
           "processingFilesTooltip": "Aguardando o processamento dos arquivos anexados",
           "stoppingLabel": "Parando…",
-          "reloadLabel": "Verificar novamente"
+          "reloadLabel": "Verificar novamente",
+          "sendLabel": "Enviar",
+          "stopLabel": "Parar"
         },
         "tabReadingButton": {
           "readLabel": "Ler esta aba",

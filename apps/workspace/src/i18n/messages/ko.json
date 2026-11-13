@@ -12451,7 +12451,9 @@
         "sendButton": {
           "processingFilesTooltip": "첨부 파일 처리가 끝나기를 기다리는 중",
           "stoppingLabel": "중지 중…",
-          "reloadLabel": "다시 확인"
+          "reloadLabel": "다시 확인",
+          "sendLabel": "보내기",
+          "stopLabel": "중지"
         },
         "tabReadingButton": {
           "readLabel": "이 탭 읽기",

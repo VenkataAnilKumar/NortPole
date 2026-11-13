@@ -1,6 +1,6 @@
 /*
  * Page quality check (sandbox tool): for each page, in light and dark at 1280 and 390 pixels wide, records
- * horizontal overflow and WCAG 2.0/2.1 A and AA violations found by axe-core, and saves a screenshot.
+ * horizontal overflow, boxes that end past the right edge (clipped), and WCAG 2.0/2.1 A and AA violations found by axe-core, and saves a screenshot.
  *   AXE_JS=/path/to/axe-core/axe.min.js BASE_URL=http://localhost:3100 NODE_PATH=<playwright> node page-quality.check.cjs <outdir>
  * Signs in as admin@example.com (a sandbox account). It does not check keyboard order or screen-reader output.
  */
@@ -8,7 +8,7 @@ const { chromium } = require('playwright');
 const fs = require('fs');
 const AXE = fs.readFileSync(process.env.AXE_JS, 'utf8'); // path to axe-core/axe.min.js (npm install axe-core)
 const OUT = process.argv[2];
-const PAGES = ['/app/packs', '/app/reviewed-tasks', '/app/inbox', '/app/libraries', '/admin/access-groups', '/admin/action-targets', '/admin/audit', '/admin/packs', '/admin/inventory', '/admin/route-policy'];
+const PAGES = ['/app', '/admin/overview', '/admin/governance', '/app/packs', '/app/reviewed-tasks', '/app/inbox', '/app/libraries', '/admin/access-groups', '/admin/action-targets', '/admin/audit', '/admin/packs', '/admin/inventory', '/admin/route-policy'];
 const MODES = [['light', 1280], ['dark', 1280], ['light', 390], ['dark', 390]];
 (async () => {
   const b = await chromium.launch();
@@ -27,11 +27,13 @@ const MODES = [['light', 1280], ['dark', 1280], ['light', 390], ['dark', 390]];
       await p.waitForTimeout(4500);
       const isDark = await p.evaluate(() => document.documentElement.classList.contains('dark') || document.documentElement.getAttribute('data-theme') === 'dark');
       const overflow = await p.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+      // Content wider than the screen can be clipped by a parent without scrolling, so count visible boxes that end past the right edge (a table inside its own `overflow-x-auto` box is allowed to scroll).
+      const clipped = await p.evaluate(() => [...document.querySelectorAll('main *, [data-testid] *')].filter((e) => { const r = e.getBoundingClientRect(); return r.width > 0 && r.height > 0 && r.right > window.innerWidth + 1 && getComputedStyle(e).visibility !== 'hidden' && !e.closest('[aria-hidden="true"], [hidden], nav[aria-label="Sidebar"], .overflow-x-auto'); }).length);
       await p.evaluate(AXE);
       const ax = await p.evaluate(async () => { const r = await window.axe.run(document, { runOnly: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'] }); return r.violations.map(v => ({ id: v.id, impact: v.impact, n: v.nodes.length, sample: (v.nodes[0] && v.nodes[0].target.join(' ')).slice(0, 80) })); });
       const name = `${path.replace(/\//g, '_')}-${theme}-${width}`;
       await p.screenshot({ path: `${OUT}/${name}.png`, fullPage: false });
-      results.push({ path, theme, width, isDark, overflow, ax });
+      results.push({ path, theme, width, isDark, overflow, clipped, ax });
     }
     await ctx.close();
   }

@@ -130,8 +130,8 @@ export default function ToolsPopover({
           }
         }}
       >
-        <Popover.Trigger asChild>
-          <div data-testid="action-management-toggle">
+        <div data-testid="action-management-toggle">
+          <Popover.Trigger asChild>
             <Button
               disabled={disabled}
               icon={SvgSliders}
@@ -140,8 +140,8 @@ export default function ToolsPopover({
               tooltip={t("toolsPopover.manageActions.tooltip")}
               aria-label={t("toolsPopover.manageActions.tooltip")}
             />
-          </div>
-        </Popover.Trigger>
+          </Popover.Trigger>
+        </div>
         <Popover.Content side="bottom" align="start" width={60}>
           <div data-testid="tool-options">
             {showSources ? (

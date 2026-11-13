@@ -19,7 +19,7 @@ Status: Working list, 2026-11-13. Followed one item at a time, in the order belo
 
 ## Order of work (no decision needed from the owner)
 
-- [ ] 1. **U6, UI quality pass** on changed screens: home cards, "Turn into a draft", Drafts, Recents, Workflows, admin Overview. Light and dark, 1280 and 390 wide, axe at 0 violations, keyboard.
+- [x] 1. **U6, UI quality pass** (done 2026-11-13) on changed screens: home cards, "Turn into a draft", Drafts, Recents, Workflows, admin Overview. Light and dark, 1280 and 390 wide, axe at 0 violations, keyboard.
 - [ ] 2. **A4 leftovers:** translations of the new pages, Privacy and Security settings, admin Overview and Quality tab, the wording inside a Draft that still says "task", native-speaker review of translations.
 - [ ] 3. **A10:** TLS, backups, upgrade path, container registry.
 - [ ] 4. **A8:** token and cost tracking per route (today only request counts).

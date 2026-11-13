@@ -157,6 +157,7 @@ export default function RoutePolicyPage() {
         {policy.routes.length === 0 ? (
           <p className="text-sm text-text-03">No model providers are registered yet.</p>
         ) : (
+          <div className="overflow-x-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2" role="region" aria-label="Model routes" tabIndex={0}>
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-text-03">
@@ -190,6 +191,7 @@ export default function RoutePolicyPage() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </section>
 
@@ -219,6 +221,7 @@ export default function RoutePolicyPage() {
       <section aria-labelledby="rp-matrix" className={card}>
         <h2 id="rp-matrix" className="mb-1 text-base font-semibold text-text-05">Allowed routes by data class</h2>
         <p className="mb-4 text-sm text-text-03">Tick the route types that may process each class of data.</p>
+        <div className="overflow-x-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2" role="region" aria-label="Allowed routes by data class" tabIndex={0}>
         <table className="w-full text-sm">
           <thead>
             <tr className="text-left text-text-03">
@@ -253,6 +256,7 @@ export default function RoutePolicyPage() {
             ))}
           </tbody>
         </table>
+        </div>
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <label htmlFor="rp-default" className="text-sm font-medium text-text-05">This workspace's data class</label>
           <select
@@ -342,6 +346,7 @@ export default function RoutePolicyPage() {
         {!usage || usage.length === 0 ? (
           <p className="mt-3 text-sm text-text-03">No model requests have been counted yet.</p>
         ) : (
+          <div className="overflow-x-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2" role="region" aria-label="Requests by route" tabIndex={0}>
           <table className="mt-3 w-full text-left text-sm">
             <thead>
               <tr className="text-text-03">
@@ -364,6 +369,7 @@ export default function RoutePolicyPage() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </section>
 
@@ -377,6 +383,7 @@ export default function RoutePolicyPage() {
         ) : audit.length === 0 ? (
           <p className="text-sm text-text-03">Nothing recorded yet.</p>
         ) : (
+          <div className="overflow-x-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2" role="region" aria-label="Recent activity" tabIndex={0}>
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-text-03">
@@ -403,6 +410,7 @@ export default function RoutePolicyPage() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </section>
     </div>

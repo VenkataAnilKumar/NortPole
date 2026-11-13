@@ -12451,7 +12451,9 @@
         "sendButton": {
           "processingFilesTooltip": "في انتظار انتهاء معالجة الملفات المرفقة",
           "stoppingLabel": "جارٍ الإيقاف…",
-          "reloadLabel": "تحقق مجددًا"
+          "reloadLabel": "تحقق مجددًا",
+          "sendLabel": "إرسال",
+          "stopLabel": "إيقاف"
         },
         "tabReadingButton": {
           "readLabel": "قراءة هذا التبويب",

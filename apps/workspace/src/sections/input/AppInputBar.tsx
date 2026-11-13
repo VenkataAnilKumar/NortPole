@@ -653,6 +653,7 @@ const AppInputBar = React.memo(
                 disabled={disabled}
                 icon={SvgPaperclip}
                 tooltip={t("appInputBar.attachFilesButton.tooltip")}
+                aria-label={t("appInputBar.attachFilesButton.tooltip")}
                 interaction={open ? "hover" : "rest"}
                 prominence="tertiary"
               />
@@ -800,6 +801,17 @@ const AppInputBar = React.memo(
                   : undefined
             }
             id="evolvxsi-chat-input-send-button"
+            aria-label={
+              chatState === "unconfirmed"
+                ? t("appInputBar.sendButton.reloadLabel")
+                : chatState === "cancelling"
+                  ? t("appInputBar.sendButton.stoppingLabel")
+                  : chatState !== "input" && message.trim()
+                    ? t("appInputBar.sendButton.sendLabel")
+                    : canStopGeneration || isVoicePlaybackControllable
+                      ? t("appInputBar.sendButton.stopLabel")
+                      : t("appInputBar.sendButton.sendLabel")
+            }
             icon={
               isCheckingCompletion && chatState === "unconfirmed"
                 ? IconLoader
@@ -1102,6 +1114,7 @@ const AppInputBar = React.memo(
                       chatState === "unconfirmed"
                     }
                     id="evolvxsi-chat-input-send-button"
+                    aria-label={t("appInputBar.sendButton.sendLabel")}
                     icon={isClassifying ? IconLoader : SvgSearch}
                     onClick={() => {
                       if (chatState == "streaming") {
