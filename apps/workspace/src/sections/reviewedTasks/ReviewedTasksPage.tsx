@@ -221,6 +221,12 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
               <span className="ml-2 font-normal text-text-03">drafted on the {ROUTE_LABEL[task.plan_route] ?? task.plan_route} route</span>
             )}
           </h3>
+          {task.plan.some((s) => s.startsWith("Search: ")) && (
+            <p className="mb-2 text-xs text-text-03" data-testid="agent-plan-note">
+              This workflow is run by an agent. After you accept, the product runs exactly these searches, as you, over the libraries you can open.
+              Nothing else is called, and nothing is sent.
+            </p>
+          )}
           <ol className="list-decimal space-y-1 pl-5 text-sm text-text-05" data-testid="task-plan">
             {task.plan.map((step, i) => (
               <li key={i}>{step}</li>

@@ -74,6 +74,31 @@ class GuideRef(BaseModel):
     description: str
 
 
+class AgentCard(BaseModel):
+    """What a workflow agent is and may do. Instructions are included for administrators reviewing a pack."""
+
+    id: str
+    name: str
+    description: str
+    tools: list[str]
+    tool_labels: list[str]
+    max_searches: int
+    guides: list[str] = []
+    instructions: str = ""
+    may_send: bool = False  # never: an agent can only propose a send, which the person approves
+    used_by: list[str] = []
+
+
+def _card(m: dict, a: dict, with_instructions: bool) -> AgentCard:
+    from evolvxsi.packs.manifest import WORKFLOW_TOOLS
+
+    names = {g["id"]: g["name"] for g in m.get("guides", [])}
+    return AgentCard(id=a["id"], name=a["name"], description=a["description"], tools=list(a.get("tools", [])),
+                     tool_labels=[WORKFLOW_TOOLS.get(t, t) for t in a.get("tools", [])], max_searches=int(a.get("max_searches", 3)),
+                     guides=[names.get(g, g) for g in a.get("guides", [])], instructions=a["instructions"] if with_instructions else "",
+                     used_by=[t["id"] for t in m["templates"] if t.get("agent") == a["id"]])
+
+
 class VersionView(BaseModel):
     pack_id: str
     version: str
@@ -87,6 +112,7 @@ class VersionView(BaseModel):
     evaluation_cases: int = 0
     evaluations: list[EvalView] = []
     guides: list[GuideView] = []
+    agents: list[AgentCard] = []
 
 
 class TemplateView(BaseModel):
@@ -97,6 +123,7 @@ class TemplateView(BaseModel):
     style: str = ""
     review_rules: list[dict] = []
     guides: list[GuideRef] = []
+    agent: AgentCard | None = None
 
 
 class PackView(BaseModel):
@@ -148,6 +175,7 @@ def _vview(db: Session, v: EvolvXSIPackVersion) -> VersionView:
         evaluation_cases=len(m.get("evaluation_cases", [])), evaluations=_evals(db, v.pack_id, v.version),
         guides=[GuideView(id=g["id"], name=g["name"], description=g["description"], body=g["body"],
                           used_by=[t["id"] for t in m["templates"] if g["id"] in t.get("guides", [])]) for g in m.get("guides", [])],
+        agents=[_card(m, a, True) for a in m.get("agents", [])],
     )
 
 
@@ -368,7 +396,9 @@ def list_packs(
             templates=[TemplateView(**{k: t.get(k, "") for k in ("id", "title", "request", "desired_output", "style")},
                                     review_rules=list(t.get("review_rules", [])),
                                     guides=[GuideRef(id=g["id"], name=g["name"], description=g["description"])
-                                            for g in m.get("guides", []) if g["id"] in t.get("guides", [])]) for t in m["templates"]],
+                                            for g in m.get("guides", []) if g["id"] in t.get("guides", [])],
+                                    agent=next((_card(m, a, False) for a in m.get("agents", []) if a["id"] == t.get("agent")), None))
+                       for t in m["templates"]],
             group="everyday" if str(m["vertical"]).lower() == "general" else "domain",
             autonomy=m.get("autonomy", "act_with_approval"), review_rules=list(m.get("review_rules", [])),
             signer_key_id=v.signer_key_id, evaluation_cases=len(m.get("evaluation_cases", [])),

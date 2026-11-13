@@ -67,6 +67,42 @@ class Guide(_Strict):
         return v
 
 
+# The tools a workflow agent may name. Code runs them; the model only proposes steps that use them.
+WORKFLOW_TOOLS = {"search": "Search the libraries the person can open"}
+MAX_SEARCHES_LIMIT = 4
+
+
+class AgentSpec(_Strict):
+    """A workflow agent: a planner with instructions that proposes tool steps, which the person accepts and code runs.
+    It acts as the person asking, can only propose sends, and never calls anything itself."""
+
+    id: str
+    name: str = Field(min_length=1, max_length=80)
+    # The agent card: what it does, in plain words.
+    description: str = Field(min_length=1, max_length=500)
+    instructions: str = Field(min_length=1, max_length=2000)
+    guides: list[str] = Field(default_factory=list, max_length=GUIDES_PER_TEMPLATE_MAX)
+    tools: list[str] = Field(min_length=1, max_length=len(WORKFLOW_TOOLS))
+    max_searches: int = Field(default=3, ge=1, le=MAX_SEARCHES_LIMIT)
+
+    @field_validator("id")
+    @classmethod
+    def _id(cls, v: str) -> str:
+        if not SLUG.match(v):
+            raise ValueError("agent id must be a lower-case slug")
+        return v
+
+    @field_validator("tools")
+    @classmethod
+    def _tools(cls, v: list[str]) -> list[str]:
+        bad = [t for t in v if t not in WORKFLOW_TOOLS]
+        if bad:
+            raise ValueError(f"unknown workflow tool: {bad[0]} (known: {', '.join(WORKFLOW_TOOLS)})")
+        if len(set(v)) != len(v):
+            raise ValueError("a tool is listed twice")
+        return v
+
+
 class Template(_Strict):
     id: str
     title: str = Field(min_length=1, max_length=200)
@@ -78,6 +114,8 @@ class Template(_Strict):
     review_rules: list[ReviewRule] = Field(default_factory=list, max_length=10)
     # Ids of this pack's guides that drafts from this template use; only these are loaded.
     guides: list[str] = Field(default_factory=list, max_length=GUIDES_PER_TEMPLATE_MAX)
+    # The id of this pack's agent that runs drafts from this template, if any.
+    agent: str | None = None
 
     @field_validator("id")
     @classmethod
@@ -160,6 +198,7 @@ class Manifest(_Strict):
     review_rules: list[ReviewRule] = Field(default_factory=list, max_length=10)
     evaluation_cases: list[EvalCase] = Field(default_factory=list, max_length=100)
     guides: list[Guide] = Field(default_factory=list, max_length=20)
+    agents: list[AgentSpec] = Field(default_factory=list, max_length=10)
 
     @field_validator("id")
     @classmethod
@@ -196,6 +235,21 @@ class Manifest(_Strict):
                 raise ValueError(f"template {t.id} names the same guide twice")
             if sum(len(by_id[g].body) for g in t.guides) > GUIDE_TEXT_PER_TEMPLATE_MAX:
                 raise ValueError(f"template {t.id}: its guides are longer than {GUIDE_TEXT_PER_TEMPLATE_MAX} characters together")
+        return self
+
+    @model_validator(mode="after")
+    def _agents_exist_and_fit(self) -> "Manifest":
+        agents = {a.id: a for a in self.agents}
+        if len(agents) != len(self.agents):
+            raise ValueError("agent ids must be unique")
+        guides = {g.id for g in self.guides}
+        for a in self.agents:
+            missing = [g for g in a.guides if g not in guides]
+            if missing:
+                raise ValueError(f"agent {a.id} names a guide that does not exist: {missing[0]}")
+        for t in self.templates:
+            if t.agent is not None and t.agent not in agents:
+                raise ValueError(f"template {t.id} names an agent that does not exist: {t.agent}")
         return self
 
     @field_validator("templates")
