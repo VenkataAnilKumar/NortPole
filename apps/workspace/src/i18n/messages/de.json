@@ -13169,8 +13169,8 @@
           "label": "Quellen"
         },
         "turnIntoTask": {
-          "tooltip": "In eine Aufgabe umwandeln",
-          "error": "Die Aufgabe konnte nicht erstellt werden."
+          "tooltip": "In einen Entwurf umwandeln",
+          "error": "Der Entwurf konnte nicht erstellt werden."
         }
       },
       "tts": {
@@ -16949,7 +16949,7 @@
         "label": "Automatisierungen"
       },
       "reviewedTasks": {
-        "label": "Aufgaben"
+        "label": "Entwürfe"
       },
       "packs": {
         "label": "Workflows"

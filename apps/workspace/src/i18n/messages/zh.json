@@ -13169,8 +13169,8 @@
           "label": "来源"
         },
         "turnIntoTask": {
-          "tooltip": "转为任务",
-          "error": "无法创建任务。"
+          "tooltip": "转为草稿",
+          "error": "无法创建草稿。"
         }
       },
       "tts": {
@@ -16949,7 +16949,7 @@
         "label": "自动化"
       },
       "reviewedTasks": {
-        "label": "任务"
+        "label": "草稿"
       },
       "packs": {
         "label": "工作流"

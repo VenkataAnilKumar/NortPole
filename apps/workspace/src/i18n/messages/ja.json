@@ -13169,8 +13169,8 @@
           "label": "ソース"
         },
         "turnIntoTask": {
-          "tooltip": "タスクにする",
-          "error": "タスクを作成できませんでした。"
+          "tooltip": "下書きにする",
+          "error": "下書きを作成できませんでした。"
         }
       },
       "tts": {
@@ -16949,7 +16949,7 @@
         "label": "自動化"
       },
       "reviewedTasks": {
-        "label": "タスク"
+        "label": "下書き"
       },
       "packs": {
         "label": "ワークフロー"

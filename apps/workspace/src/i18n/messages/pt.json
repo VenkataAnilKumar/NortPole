@@ -13169,8 +13169,8 @@
           "label": "Fontes"
         },
         "turnIntoTask": {
-          "tooltip": "Transformar em tarefa",
-          "error": "Não foi possível criar a tarefa."
+          "tooltip": "Transformar em rascunho",
+          "error": "Não foi possível criar o rascunho."
         }
       },
       "tts": {
@@ -16949,7 +16949,7 @@
         "label": "Automações"
       },
       "reviewedTasks": {
-        "label": "Tarefas"
+        "label": "Rascunhos"
       },
       "packs": {
         "label": "Fluxos de trabalho"

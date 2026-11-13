@@ -502,7 +502,7 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
 }
 
 /**
- * Tasks (reviewed work): write a draft, start it on purpose, review the proposed plan,
+ * Drafts (reviewed work; the API and code still call them tasks): write a draft, start it on purpose, review the proposed plan,
  * then accept, revise or cancel. Nothing runs before Start, and the plan is
  * drafted only on a route the administrator's policy allows.
  */
@@ -518,19 +518,19 @@ export default function ReviewedTasksPage() {
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 p-4 sm:p-8" data-testid="reviewed-tasks-page">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div className="flex flex-col gap-1">
-          <h1 className="font-[family-name:var(--font-serif)] text-3xl font-medium text-text-05">Tasks</h1>
+          <h1 className="font-[family-name:var(--font-serif)] text-3xl font-medium text-text-05">Drafts</h1>
           <p className="text-sm text-text-03">Write the request, start it when ready, and approve the plan before any work runs.</p>
         </div>
         {!creating && (
           <button type="button" className={primary} onClick={() => setCreating(true)}>
-            New task
+            New draft
           </button>
         )}
       </header>
 
       {creating && (
         <section className={card} aria-labelledby="new-task">
-          <h2 id="new-task" className="mb-3 text-base font-semibold text-text-05">New task</h2>
+          <h2 id="new-task" className="mb-3 text-base font-semibold text-text-05">New draft</h2>
           <DraftForm
             task={null}
             onSaved={async (t) => {
@@ -544,13 +544,13 @@ export default function ReviewedTasksPage() {
       )}
 
       <div className="grid gap-4 md:grid-cols-[18rem_1fr]">
-        <nav aria-label="Your tasks">
+        <nav aria-label="Your drafts">
           {isLoading ? (
             <p className="text-sm text-text-03">Loading…</p>
           ) : error ? (
-            <p role="alert" className="text-sm text-text-05">Tasks could not be loaded.</p>
+            <p role="alert" className="text-sm text-text-05">Drafts could not be loaded.</p>
           ) : tasks.length === 0 ? (
-            <p className="text-sm text-text-03">No tasks yet.</p>
+            <p className="text-sm text-text-03">No drafts yet.</p>
           ) : (
             <ul className="flex flex-col gap-2">
               {tasks.map((t) => (
@@ -573,7 +573,7 @@ export default function ReviewedTasksPage() {
           {current ? (
             <TaskDetail key={`${current.id}-${current.version}`} task={current} onChange={() => mutate()} />
           ) : (
-            tasks.length > 0 && <p className="text-sm text-text-03">Pick a task to see it.</p>
+            tasks.length > 0 && <p className="text-sm text-text-03">Pick a draft to see it.</p>
           )}
         </div>
       </div>

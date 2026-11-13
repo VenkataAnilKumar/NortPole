@@ -13169,8 +13169,8 @@
           "label": "Sources"
         },
         "turnIntoTask": {
-          "tooltip": "Transformer en tâche",
-          "error": "Impossible de créer la tâche."
+          "tooltip": "Transformer en brouillon",
+          "error": "Impossible de créer le brouillon."
         }
       },
       "tts": {
@@ -16949,7 +16949,7 @@
         "label": "Automatisations"
       },
       "reviewedTasks": {
-        "label": "Tâches"
+        "label": "Brouillons"
       },
       "packs": {
         "label": "Workflows"
