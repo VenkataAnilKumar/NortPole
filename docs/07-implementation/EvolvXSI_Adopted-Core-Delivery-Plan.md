@@ -16,10 +16,10 @@ Status as of 2026-11-12, from what is built and tested in the sandbox only (see 
 | A1 | Adopt and rebrand the core | Done | L | New |
 | A2 | Run, verify and restyle | Done | L | P01–P02 (partly) |
 | A3 | Hybrid routing and governance first slice | Done | M | P03, P08 (slice) |
-| A4 | Product shell and navigation | Mostly done (Settings and admin audited against the spec with gaps recorded; interface quality pass on ten pages; translations of the new pages, Privacy and Security settings, an admin Overview and Quality tab open) | M | P06 (UI) |
+| A4 | Product shell and navigation | Mostly done (UI plan U1 to U6 done; admin Overview and Quality tabs built; translations of the new pages wait for a customer's language; user Privacy and Security settings wait for retention and identity decisions) | M | P06 (UI) |
 | A5 | Knowledge, evidence and permissions | Built for one path (no real connector; synthetic corpus) | XL | P04 |
 | A6 | Reviewed task workflow and approvals | Built (web and email destinations; Craft set aside) | XL | P03, P06 |
-| A7 | Agents, skills, packs and extension levels | Partly built (signed packs and evaluation gating; no pack agents, skills or connectors) | L | P05, P07 |
+| A7 | Agents, skills, packs and extension levels | Mostly built (signed packs, evaluation gating, a tool catalog for chat agents, text-only guides, a workflow agent with plan-then-execute (search only), outside-tool approval with pinned definitions, and the Studio editor; the pilot connector waits for the source system) | L | P05, P07 |
 | A8 | Real model routes, evaluation and spend | Started (local 7B and embeddings; request counts and token counts with an estimated cost by route; no cloud model, no budgets or per-person cost); needs model access | L | P02 live, P08 |
 | A9 | Security and trust hardening | Partly built (address safety, endpoint checks, audit log with a hash chain, redaction, autonomy tiers, retention and export, injection suite, threat model and scans) | L | P03, P10 |
 | A10 | Deployment, operations and upstream upkeep | Started (API and web images, nginx entry point, and a retrieval overlay (OpenSearch, workers) checked in the sandbox; a TLS overlay, backup and restore with a drill, version pinning and a release manifest checked in the sandbox; a registry round trip, a clean-room start and an upgrade restore also checked; no CI, log shipping or dashboards) | L | P10 |

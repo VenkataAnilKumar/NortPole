@@ -7,10 +7,10 @@ Status: Working list, 2026-11-13. Followed one item at a time, in the order belo
 | Phase | Name | State |
 | --- | --- | --- |
 | A0–A3 | Direction, adopt and rebrand, run and restyle, first routing slice | Done |
-| A4 | Product shell and navigation | Mostly done |
+| A4 | Product shell and navigation | Mostly done (translations and user Privacy/Security settings wait on you) |
 | A5 | Knowledge, evidence, permissions | Built for one path (synthetic corpus) |
 | A6 | Reviewed task workflow and approvals | Built |
-| A7 | Agents, skills, packs | Partly built |
+| A7 | Agents, skills, packs | Mostly built (steps 1 to 4 and 6; the connector waits for the source system) |
 | A8 | Real model routes, evaluation, spend | Started |
 | A9 | Security and trust hardening | Partly built |
 | A10 | Deployment and operations | Started |
