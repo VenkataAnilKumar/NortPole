@@ -1,0 +1,30 @@
+ab3853c9686eafc92438e2d2f6505e53
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "default", {
+    enumerable: true,
+    get: function() {
+        return _default;
+    }
+});
+const _jsxruntime = require("react/jsx-runtime");
+const SvgThermometer = ({ size, ...props })=>/*#__PURE__*/ (0, _jsxruntime.jsx)("svg", {
+        width: size,
+        height: size,
+        viewBox: "0 0 16 16",
+        fill: "none",
+        xmlns: "http://www.w3.org/2000/svg",
+        stroke: "currentColor",
+        ...props,
+        children: /*#__PURE__*/ (0, _jsxruntime.jsx)("path", {
+            d: "M8 1C8.9078 1 9.6667 1.7589 9.6667 2.6667L9.6667 8.4215C10.7586 9.0139 11.5 10.1704 11.5 11.5C11.5 13.433 9.933 15 8 15C6.067 15 4.5 13.433 4.5 11.5C4.5 10.1704 5.2414 9.0139 6.3333 8.4215L6.3333 2.6667C6.3333 1.7589 7.0922 1 8 1Z",
+            strokeWidth: 1.5,
+            strokeLinecap: "round",
+            strokeLinejoin: "round"
+        })
+    });
+const _default = SvgThermometer;
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9ob21lL3VzZXIvRXZvbHZYU0kvYXBwcy93b3Jrc3BhY2UvbGliL29wYWwvc3JjL2ljb25zL3RoZXJtb21ldGVyLnRzeCJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgdHlwZSB7IEljb25Qcm9wcyB9IGZyb20gXCJAb3BhbC90eXBlc1wiO1xuXG5jb25zdCBTdmdUaGVybW9tZXRlciA9ICh7IHNpemUsIC4uLnByb3BzIH06IEljb25Qcm9wcykgPT4gKFxuICA8c3ZnXG4gICAgd2lkdGg9e3NpemV9XG4gICAgaGVpZ2h0PXtzaXplfVxuICAgIHZpZXdCb3g9XCIwIDAgMTYgMTZcIlxuICAgIGZpbGw9XCJub25lXCJcbiAgICB4bWxucz1cImh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnXCJcbiAgICBzdHJva2U9XCJjdXJyZW50Q29sb3JcIlxuICAgIHsuLi5wcm9wc31cbiAgPlxuICAgIDxwYXRoXG4gICAgICBkPVwiTTggMUM4LjkwNzggMSA5LjY2NjcgMS43NTg5IDkuNjY2NyAyLjY2NjdMOS42NjY3IDguNDIxNUMxMC43NTg2IDkuMDEzOSAxMS41IDEwLjE3MDQgMTEuNSAxMS41QzExLjUgMTMuNDMzIDkuOTMzIDE1IDggMTVDNi4wNjcgMTUgNC41IDEzLjQzMyA0LjUgMTEuNUM0LjUgMTAuMTcwNCA1LjI0MTQgOS4wMTM5IDYuMzMzMyA4LjQyMTVMNi4zMzMzIDIuNjY2N0M2LjMzMzMgMS43NTg5IDcuMDkyMiAxIDggMVpcIlxuICAgICAgc3Ryb2tlV2lkdGg9ezEuNX1cbiAgICAgIHN0cm9rZUxpbmVjYXA9XCJyb3VuZFwiXG4gICAgICBzdHJva2VMaW5lam9pbj1cInJvdW5kXCJcbiAgICAvPlxuICA8L3N2Zz5cbik7XG5leHBvcnQgZGVmYXVsdCBTdmdUaGVybW9tZXRlcjtcbiJdLCJuYW1lcyI6WyJTdmdUaGVybW9tZXRlciIsInNpemUiLCJwcm9wcyIsInN2ZyIsIndpZHRoIiwiaGVpZ2h0Iiwidmlld0JveCIsImZpbGwiLCJ4bWxucyIsInN0cm9rZSIsInBhdGgiLCJkIiwic3Ryb2tlV2lkdGgiLCJzdHJva2VMaW5lY2FwIiwic3Ryb2tlTGluZWpvaW4iXSwibWFwcGluZ3MiOiI7Ozs7K0JBb0JBOzs7ZUFBQTs7OztBQWxCQSxNQUFNQSxpQkFBaUIsQ0FBQyxFQUFFQyxJQUFJLEVBQUUsR0FBR0MsT0FBa0IsaUJBQ25ELHFCQUFDQztRQUNDQyxPQUFPSDtRQUNQSSxRQUFRSjtRQUNSSyxTQUFRO1FBQ1JDLE1BQUs7UUFDTEMsT0FBTTtRQUNOQyxRQUFPO1FBQ04sR0FBR1AsS0FBSztrQkFFVCxjQUFBLHFCQUFDUTtZQUNDQyxHQUFFO1lBQ0ZDLGFBQWE7WUFDYkMsZUFBYztZQUNkQyxnQkFBZTs7O01BSXJCLFdBQWVkIn0=

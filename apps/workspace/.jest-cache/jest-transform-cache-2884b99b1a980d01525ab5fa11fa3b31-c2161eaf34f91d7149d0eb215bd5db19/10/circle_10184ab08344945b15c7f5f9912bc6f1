@@ -1,0 +1,30 @@
+694249c7a01ad353b7812beee638f74a
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "default", {
+    enumerable: true,
+    get: function() {
+        return _default;
+    }
+});
+const _jsxruntime = require("react/jsx-runtime");
+const SvgCircle = ({ size, ...props })=>/*#__PURE__*/ (0, _jsxruntime.jsx)("svg", {
+        width: size,
+        height: size,
+        viewBox: "0 0 16 16",
+        fill: "none",
+        xmlns: "http://www.w3.org/2000/svg",
+        stroke: "currentColor",
+        ...props,
+        children: /*#__PURE__*/ (0, _jsxruntime.jsx)("circle", {
+            cx: "8",
+            cy: "8",
+            r: "4",
+            strokeWidth: 1.5
+        })
+    });
+const _default = SvgCircle;
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9ob21lL3VzZXIvRXZvbHZYU0kvYXBwcy93b3Jrc3BhY2UvbGliL29wYWwvc3JjL2ljb25zL2NpcmNsZS50c3giXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHR5cGUgeyBJY29uUHJvcHMgfSBmcm9tIFwiQG9wYWwvdHlwZXNcIjtcblxuY29uc3QgU3ZnQ2lyY2xlID0gKHsgc2l6ZSwgLi4ucHJvcHMgfTogSWNvblByb3BzKSA9PiAoXG4gIDxzdmdcbiAgICB3aWR0aD17c2l6ZX1cbiAgICBoZWlnaHQ9e3NpemV9XG4gICAgdmlld0JveD1cIjAgMCAxNiAxNlwiXG4gICAgZmlsbD1cIm5vbmVcIlxuICAgIHhtbG5zPVwiaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmdcIlxuICAgIHN0cm9rZT1cImN1cnJlbnRDb2xvclwiXG4gICAgey4uLnByb3BzfVxuICA+XG4gICAgPGNpcmNsZSBjeD1cIjhcIiBjeT1cIjhcIiByPVwiNFwiIHN0cm9rZVdpZHRoPXsxLjV9IC8+XG4gIDwvc3ZnPlxuKTtcbmV4cG9ydCBkZWZhdWx0IFN2Z0NpcmNsZTtcbiJdLCJuYW1lcyI6WyJTdmdDaXJjbGUiLCJzaXplIiwicHJvcHMiLCJzdmciLCJ3aWR0aCIsImhlaWdodCIsInZpZXdCb3giLCJmaWxsIiwieG1sbnMiLCJzdHJva2UiLCJjaXJjbGUiLCJjeCIsImN5IiwiciIsInN0cm9rZVdpZHRoIl0sIm1hcHBpbmdzIjoiOzs7OytCQWVBOzs7ZUFBQTs7OztBQWJBLE1BQU1BLFlBQVksQ0FBQyxFQUFFQyxJQUFJLEVBQUUsR0FBR0MsT0FBa0IsaUJBQzlDLHFCQUFDQztRQUNDQyxPQUFPSDtRQUNQSSxRQUFRSjtRQUNSSyxTQUFRO1FBQ1JDLE1BQUs7UUFDTEMsT0FBTTtRQUNOQyxRQUFPO1FBQ04sR0FBR1AsS0FBSztrQkFFVCxjQUFBLHFCQUFDUTtZQUFPQyxJQUFHO1lBQUlDLElBQUc7WUFBSUMsR0FBRTtZQUFJQyxhQUFhOzs7TUFHN0MsV0FBZWQifQ==

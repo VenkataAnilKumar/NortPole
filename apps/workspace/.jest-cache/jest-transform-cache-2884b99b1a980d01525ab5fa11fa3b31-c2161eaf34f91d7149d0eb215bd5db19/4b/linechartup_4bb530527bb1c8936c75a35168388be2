@@ -1,0 +1,30 @@
+bf7ed1eeb5db1e8315c9c3b0261a26f2
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "default", {
+    enumerable: true,
+    get: function() {
+        return _default;
+    }
+});
+const _jsxruntime = require("react/jsx-runtime");
+const SvgLineChartUp = ({ size, ...props })=>/*#__PURE__*/ (0, _jsxruntime.jsx)("svg", {
+        width: size,
+        height: size,
+        viewBox: "0 0 16 16",
+        fill: "none",
+        xmlns: "http://www.w3.org/2000/svg",
+        stroke: "currentColor",
+        ...props,
+        children: /*#__PURE__*/ (0, _jsxruntime.jsx)("path", {
+            d: "M13 6.5L13 3M13 3H9.5M13 3L7.99999 8L6.49999 6.5L3 10M3 13H13",
+            strokeWidth: 1.5,
+            strokeLinecap: "round",
+            strokeLinejoin: "round"
+        })
+    });
+const _default = SvgLineChartUp;
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9ob21lL3VzZXIvRXZvbHZYU0kvYXBwcy93b3Jrc3BhY2UvbGliL29wYWwvc3JjL2ljb25zL2xpbmUtY2hhcnQtdXAudHN4Il0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB0eXBlIHsgSWNvblByb3BzIH0gZnJvbSBcIkBvcGFsL3R5cGVzXCI7XG5cbmNvbnN0IFN2Z0xpbmVDaGFydFVwID0gKHsgc2l6ZSwgLi4ucHJvcHMgfTogSWNvblByb3BzKSA9PiAoXG4gIDxzdmdcbiAgICB3aWR0aD17c2l6ZX1cbiAgICBoZWlnaHQ9e3NpemV9XG4gICAgdmlld0JveD1cIjAgMCAxNiAxNlwiXG4gICAgZmlsbD1cIm5vbmVcIlxuICAgIHhtbG5zPVwiaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmdcIlxuICAgIHN0cm9rZT1cImN1cnJlbnRDb2xvclwiXG4gICAgey4uLnByb3BzfVxuICA+XG4gICAgPHBhdGhcbiAgICAgIGQ9XCJNMTMgNi41TDEzIDNNMTMgM0g5LjVNMTMgM0w3Ljk5OTk5IDhMNi40OTk5OSA2LjVMMyAxME0zIDEzSDEzXCJcbiAgICAgIHN0cm9rZVdpZHRoPXsxLjV9XG4gICAgICBzdHJva2VMaW5lY2FwPVwicm91bmRcIlxuICAgICAgc3Ryb2tlTGluZWpvaW49XCJyb3VuZFwiXG4gICAgLz5cbiAgPC9zdmc+XG4pO1xuZXhwb3J0IGRlZmF1bHQgU3ZnTGluZUNoYXJ0VXA7XG4iXSwibmFtZXMiOlsiU3ZnTGluZUNoYXJ0VXAiLCJzaXplIiwicHJvcHMiLCJzdmciLCJ3aWR0aCIsImhlaWdodCIsInZpZXdCb3giLCJmaWxsIiwieG1sbnMiLCJzdHJva2UiLCJwYXRoIiwiZCIsInN0cm9rZVdpZHRoIiwic3Ryb2tlTGluZWNhcCIsInN0cm9rZUxpbmVqb2luIl0sIm1hcHBpbmdzIjoiOzs7OytCQW9CQTs7O2VBQUE7Ozs7QUFsQkEsTUFBTUEsaUJBQWlCLENBQUMsRUFBRUMsSUFBSSxFQUFFLEdBQUdDLE9BQWtCLGlCQUNuRCxxQkFBQ0M7UUFDQ0MsT0FBT0g7UUFDUEksUUFBUUo7UUFDUkssU0FBUTtRQUNSQyxNQUFLO1FBQ0xDLE9BQU07UUFDTkMsUUFBTztRQUNOLEdBQUdQLEtBQUs7a0JBRVQsY0FBQSxxQkFBQ1E7WUFDQ0MsR0FBRTtZQUNGQyxhQUFhO1lBQ2JDLGVBQWM7WUFDZEMsZ0JBQWU7OztNQUlyQixXQUFlZCJ9

@@ -1,0 +1,29 @@
+3bfaafd81c359743e5147a8b6ad91d91
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "default", {
+    enumerable: true,
+    get: function() {
+        return _default;
+    }
+});
+const _jsxruntime = require("react/jsx-runtime");
+const SvgMinus = ({ size, ...props })=>/*#__PURE__*/ (0, _jsxruntime.jsx)("svg", {
+        width: size,
+        height: size,
+        viewBox: "0 0 16 16",
+        fill: "none",
+        xmlns: "http://www.w3.org/2000/svg",
+        stroke: "currentColor",
+        strokeWidth: 2.5,
+        ...props,
+        children: /*#__PURE__*/ (0, _jsxruntime.jsx)("path", {
+            d: "M4 8H12",
+            strokeLinecap: "round"
+        })
+    });
+const _default = SvgMinus;
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9ob21lL3VzZXIvRXZvbHZYU0kvYXBwcy93b3Jrc3BhY2UvbGliL29wYWwvc3JjL2ljb25zL21pbnVzLnRzeCJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgdHlwZSB7IEljb25Qcm9wcyB9IGZyb20gXCJAb3BhbC90eXBlc1wiO1xuXG5jb25zdCBTdmdNaW51cyA9ICh7IHNpemUsIC4uLnByb3BzIH06IEljb25Qcm9wcykgPT4gKFxuICA8c3ZnXG4gICAgd2lkdGg9e3NpemV9XG4gICAgaGVpZ2h0PXtzaXplfVxuICAgIHZpZXdCb3g9XCIwIDAgMTYgMTZcIlxuICAgIGZpbGw9XCJub25lXCJcbiAgICB4bWxucz1cImh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnXCJcbiAgICBzdHJva2U9XCJjdXJyZW50Q29sb3JcIlxuICAgIHN0cm9rZVdpZHRoPXsyLjV9XG4gICAgey4uLnByb3BzfVxuICA+XG4gICAgPHBhdGggZD1cIk00IDhIMTJcIiBzdHJva2VMaW5lY2FwPVwicm91bmRcIiAvPlxuICA8L3N2Zz5cbik7XG5cbmV4cG9ydCBkZWZhdWx0IFN2Z01pbnVzO1xuIl0sIm5hbWVzIjpbIlN2Z01pbnVzIiwic2l6ZSIsInByb3BzIiwic3ZnIiwid2lkdGgiLCJoZWlnaHQiLCJ2aWV3Qm94IiwiZmlsbCIsInhtbG5zIiwic3Ryb2tlIiwic3Ryb2tlV2lkdGgiLCJwYXRoIiwiZCIsInN0cm9rZUxpbmVjYXAiXSwibWFwcGluZ3MiOiI7Ozs7K0JBaUJBOzs7ZUFBQTs7OztBQWZBLE1BQU1BLFdBQVcsQ0FBQyxFQUFFQyxJQUFJLEVBQUUsR0FBR0MsT0FBa0IsaUJBQzdDLHFCQUFDQztRQUNDQyxPQUFPSDtRQUNQSSxRQUFRSjtRQUNSSyxTQUFRO1FBQ1JDLE1BQUs7UUFDTEMsT0FBTTtRQUNOQyxRQUFPO1FBQ1BDLGFBQWE7UUFDWixHQUFHUixLQUFLO2tCQUVULGNBQUEscUJBQUNTO1lBQUtDLEdBQUU7WUFBVUMsZUFBYzs7O01BSXBDLFdBQWViIn0=

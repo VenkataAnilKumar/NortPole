@@ -1,0 +1,47 @@
+2c18d6696233c20efaa2e871f01c6157
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+function _export(target, all) {
+    for(var name in all)Object.defineProperty(target, name, {
+        enumerable: true,
+        get: Object.getOwnPropertyDescriptor(all, name).get
+    });
+}
+_export(exports, {
+    get getFirstPermittedAdminRoute () {
+        return getFirstPermittedAdminRoute;
+    },
+    get hasAnyAdminPermission () {
+        return hasAnyAdminPermission;
+    },
+    get hasPermission () {
+        return hasPermission;
+    }
+});
+const _adminroutes = require("@/lib/admin-routes");
+const _types = require("@/lib/types");
+// Derived from ADMIN_ROUTES — no hardcoded list to maintain.
+// FULL_ADMIN_PANEL_ACCESS is the full-access override token, not a regular permission.
+const ADMIN_ROUTE_PERMISSIONS = new Set(Object.values(_adminroutes.ADMIN_ROUTES).map((r)=>r.requiredPermission).filter((p)=>p !== _types.Permission.FULL_ADMIN_PANEL_ACCESS));
+function hasAnyAdminPermission(permissions) {
+    if (permissions.includes(_types.Permission.FULL_ADMIN_PANEL_ACCESS)) return true;
+    return permissions.some((p)=>ADMIN_ROUTE_PERMISSIONS.has(p));
+}
+function hasPermission(permissions, ...required) {
+    if (permissions.includes(_types.Permission.FULL_ADMIN_PANEL_ACCESS)) return true;
+    return required.some((r)=>permissions.includes(r));
+}
+function getFirstPermittedAdminRoute(permissions) {
+    for (const route of Object.values(_adminroutes.ADMIN_ROUTES)){
+        if (!route.sidebarLabel) continue;
+        if (permissions.includes(_types.Permission.FULL_ADMIN_PANEL_ACCESS) || permissions.includes(route.requiredPermission)) {
+            return route.path;
+        }
+    }
+    // Fallback — should not be reached if hasAdminAccess is checked first
+    return _adminroutes.ADMIN_ROUTES.AGENTS.path;
+}
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9ob21lL3VzZXIvRXZvbHZYU0kvYXBwcy93b3Jrc3BhY2Uvc3JjL2xpYi9wZXJtaXNzaW9ucy91dGlscy50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBBRE1JTl9ST1VURVMgfSBmcm9tIFwiQC9saWIvYWRtaW4tcm91dGVzXCI7XG5pbXBvcnQgeyBQZXJtaXNzaW9uIH0gZnJvbSBcIkAvbGliL3R5cGVzXCI7XG5cbi8vIERlcml2ZWQgZnJvbSBBRE1JTl9ST1VURVMg4oCUIG5vIGhhcmRjb2RlZCBsaXN0IHRvIG1haW50YWluLlxuLy8gRlVMTF9BRE1JTl9QQU5FTF9BQ0NFU1MgaXMgdGhlIGZ1bGwtYWNjZXNzIG92ZXJyaWRlIHRva2VuLCBub3QgYSByZWd1bGFyIHBlcm1pc3Npb24uXG5jb25zdCBBRE1JTl9ST1VURV9QRVJNSVNTSU9OUzogU2V0PHN0cmluZz4gPSBuZXcgU2V0KFxuICBPYmplY3QudmFsdWVzKEFETUlOX1JPVVRFUylcbiAgICAubWFwKChyKSA9PiByLnJlcXVpcmVkUGVybWlzc2lvbilcbiAgICAuZmlsdGVyKChwKSA9PiBwICE9PSBQZXJtaXNzaW9uLkZVTExfQURNSU5fUEFORUxfQUNDRVNTKVxuKTtcblxuZXhwb3J0IGZ1bmN0aW9uIGhhc0FueUFkbWluUGVybWlzc2lvbihwZXJtaXNzaW9uczogc3RyaW5nW10pOiBib29sZWFuIHtcbiAgaWYgKHBlcm1pc3Npb25zLmluY2x1ZGVzKFBlcm1pc3Npb24uRlVMTF9BRE1JTl9QQU5FTF9BQ0NFU1MpKSByZXR1cm4gdHJ1ZTtcbiAgcmV0dXJuIHBlcm1pc3Npb25zLnNvbWUoKHApID0+IEFETUlOX1JPVVRFX1BFUk1JU1NJT05TLmhhcyhwKSk7XG59XG5cbmV4cG9ydCBmdW5jdGlvbiBoYXNQZXJtaXNzaW9uKFxuICBwZXJtaXNzaW9uczogc3RyaW5nW10sXG4gIC4uLnJlcXVpcmVkOiBzdHJpbmdbXVxuKTogYm9vbGVhbiB7XG4gIGlmIChwZXJtaXNzaW9ucy5pbmNsdWRlcyhQZXJtaXNzaW9uLkZVTExfQURNSU5fUEFORUxfQUNDRVNTKSkgcmV0dXJuIHRydWU7XG4gIHJldHVybiByZXF1aXJlZC5zb21lKChyKSA9PiBwZXJtaXNzaW9ucy5pbmNsdWRlcyhyKSk7XG59XG5cbmV4cG9ydCBmdW5jdGlvbiBnZXRGaXJzdFBlcm1pdHRlZEFkbWluUm91dGUocGVybWlzc2lvbnM6IHN0cmluZ1tdKTogc3RyaW5nIHtcbiAgZm9yIChjb25zdCByb3V0ZSBvZiBPYmplY3QudmFsdWVzKEFETUlOX1JPVVRFUykpIHtcbiAgICBpZiAoIXJvdXRlLnNpZGViYXJMYWJlbCkgY29udGludWU7XG4gICAgaWYgKFxuICAgICAgcGVybWlzc2lvbnMuaW5jbHVkZXMoUGVybWlzc2lvbi5GVUxMX0FETUlOX1BBTkVMX0FDQ0VTUykgfHxcbiAgICAgIHBlcm1pc3Npb25zLmluY2x1ZGVzKHJvdXRlLnJlcXVpcmVkUGVybWlzc2lvbilcbiAgICApIHtcbiAgICAgIHJldHVybiByb3V0ZS5wYXRoO1xuICAgIH1cbiAgfVxuICAvLyBGYWxsYmFjayDigJQgc2hvdWxkIG5vdCBiZSByZWFjaGVkIGlmIGhhc0FkbWluQWNjZXNzIGlzIGNoZWNrZWQgZmlyc3RcbiAgcmV0dXJuIEFETUlOX1JPVVRFUy5BR0VOVFMucGF0aDtcbn1cbiJdLCJuYW1lcyI6WyJnZXRGaXJzdFBlcm1pdHRlZEFkbWluUm91dGUiLCJoYXNBbnlBZG1pblBlcm1pc3Npb24iLCJoYXNQZXJtaXNzaW9uIiwiQURNSU5fUk9VVEVfUEVSTUlTU0lPTlMiLCJTZXQiLCJPYmplY3QiLCJ2YWx1ZXMiLCJBRE1JTl9ST1VURVMiLCJtYXAiLCJyIiwicmVxdWlyZWRQZXJtaXNzaW9uIiwiZmlsdGVyIiwicCIsIlBlcm1pc3Npb24iLCJGVUxMX0FETUlOX1BBTkVMX0FDQ0VTUyIsInBlcm1pc3Npb25zIiwiaW5jbHVkZXMiLCJzb21lIiwiaGFzIiwicmVxdWlyZWQiLCJyb3V0ZSIsInNpZGViYXJMYWJlbCIsInBhdGgiLCJBR0VOVFMiXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7O1FBd0JnQkE7ZUFBQUE7O1FBYkFDO2VBQUFBOztRQUtBQztlQUFBQTs7OzZCQWhCYTt1QkFDRjtBQUUzQiw2REFBNkQ7QUFDN0QsdUZBQXVGO0FBQ3ZGLE1BQU1DLDBCQUF1QyxJQUFJQyxJQUMvQ0MsT0FBT0MsTUFBTSxDQUFDQyx5QkFBWSxFQUN2QkMsR0FBRyxDQUFDLENBQUNDLElBQU1BLEVBQUVDLGtCQUFrQixFQUMvQkMsTUFBTSxDQUFDLENBQUNDLElBQU1BLE1BQU1DLGlCQUFVLENBQUNDLHVCQUF1QjtBQUdwRCxTQUFTYixzQkFBc0JjLFdBQXFCO0lBQ3pELElBQUlBLFlBQVlDLFFBQVEsQ0FBQ0gsaUJBQVUsQ0FBQ0MsdUJBQXVCLEdBQUcsT0FBTztJQUNyRSxPQUFPQyxZQUFZRSxJQUFJLENBQUMsQ0FBQ0wsSUFBTVQsd0JBQXdCZSxHQUFHLENBQUNOO0FBQzdEO0FBRU8sU0FBU1YsY0FDZGEsV0FBcUIsRUFDckIsR0FBR0ksUUFBa0I7SUFFckIsSUFBSUosWUFBWUMsUUFBUSxDQUFDSCxpQkFBVSxDQUFDQyx1QkFBdUIsR0FBRyxPQUFPO0lBQ3JFLE9BQU9LLFNBQVNGLElBQUksQ0FBQyxDQUFDUixJQUFNTSxZQUFZQyxRQUFRLENBQUNQO0FBQ25EO0FBRU8sU0FBU1QsNEJBQTRCZSxXQUFxQjtJQUMvRCxLQUFLLE1BQU1LLFNBQVNmLE9BQU9DLE1BQU0sQ0FBQ0MseUJBQVksRUFBRztRQUMvQyxJQUFJLENBQUNhLE1BQU1DLFlBQVksRUFBRTtRQUN6QixJQUNFTixZQUFZQyxRQUFRLENBQUNILGlCQUFVLENBQUNDLHVCQUF1QixLQUN2REMsWUFBWUMsUUFBUSxDQUFDSSxNQUFNVixrQkFBa0IsR0FDN0M7WUFDQSxPQUFPVSxNQUFNRSxJQUFJO1FBQ25CO0lBQ0Y7SUFDQSxzRUFBc0U7SUFDdEUsT0FBT2YseUJBQVksQ0FBQ2dCLE1BQU0sQ0FBQ0QsSUFBSTtBQUNqQyJ9

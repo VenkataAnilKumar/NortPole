@@ -1,0 +1,30 @@
+2917737d842baa74b8e6a8214c971ef8
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "default", {
+    enumerable: true,
+    get: function() {
+        return _default;
+    }
+});
+const _jsxruntime = require("react/jsx-runtime");
+const SvgAddLines = ({ size, ...props })=>/*#__PURE__*/ (0, _jsxruntime.jsx)("svg", {
+        width: size,
+        height: size,
+        xmlns: "http://www.w3.org/2000/svg",
+        viewBox: "0 0 16 16",
+        fill: "none",
+        stroke: "currentColor",
+        ...props,
+        children: /*#__PURE__*/ (0, _jsxruntime.jsx)("path", {
+            d: "M14 6H2M14 3H2M6 12H2M11.5 9.5V12M11.5 12V14.5M11.5 12H9M11.5 12H14M8.5 9H2",
+            strokeWidth: 1.5,
+            strokeLinecap: "round",
+            strokeLinejoin: "round"
+        })
+    });
+const _default = SvgAddLines;
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9ob21lL3VzZXIvRXZvbHZYU0kvYXBwcy93b3Jrc3BhY2UvbGliL29wYWwvc3JjL2ljb25zL2FkZC1saW5lcy50c3giXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHR5cGUgeyBJY29uUHJvcHMgfSBmcm9tIFwiQG9wYWwvdHlwZXNcIjtcblxuY29uc3QgU3ZnQWRkTGluZXMgPSAoeyBzaXplLCAuLi5wcm9wcyB9OiBJY29uUHJvcHMpID0+IChcbiAgPHN2Z1xuICAgIHdpZHRoPXtzaXplfVxuICAgIGhlaWdodD17c2l6ZX1cbiAgICB4bWxucz1cImh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnXCJcbiAgICB2aWV3Qm94PVwiMCAwIDE2IDE2XCJcbiAgICBmaWxsPVwibm9uZVwiXG4gICAgc3Ryb2tlPVwiY3VycmVudENvbG9yXCJcbiAgICB7Li4ucHJvcHN9XG4gID5cbiAgICA8cGF0aFxuICAgICAgZD1cIk0xNCA2SDJNMTQgM0gyTTYgMTJIMk0xMS41IDkuNVYxMk0xMS41IDEyVjE0LjVNMTEuNSAxMkg5TTExLjUgMTJIMTRNOC41IDlIMlwiXG4gICAgICBzdHJva2VXaWR0aD17MS41fVxuICAgICAgc3Ryb2tlTGluZWNhcD1cInJvdW5kXCJcbiAgICAgIHN0cm9rZUxpbmVqb2luPVwicm91bmRcIlxuICAgIC8+XG4gIDwvc3ZnPlxuKTtcbmV4cG9ydCBkZWZhdWx0IFN2Z0FkZExpbmVzO1xuIl0sIm5hbWVzIjpbIlN2Z0FkZExpbmVzIiwic2l6ZSIsInByb3BzIiwic3ZnIiwid2lkdGgiLCJoZWlnaHQiLCJ4bWxucyIsInZpZXdCb3giLCJmaWxsIiwic3Ryb2tlIiwicGF0aCIsImQiLCJzdHJva2VXaWR0aCIsInN0cm9rZUxpbmVjYXAiLCJzdHJva2VMaW5lam9pbiJdLCJtYXBwaW5ncyI6Ijs7OzsrQkFvQkE7OztlQUFBOzs7O0FBbEJBLE1BQU1BLGNBQWMsQ0FBQyxFQUFFQyxJQUFJLEVBQUUsR0FBR0MsT0FBa0IsaUJBQ2hELHFCQUFDQztRQUNDQyxPQUFPSDtRQUNQSSxRQUFRSjtRQUNSSyxPQUFNO1FBQ05DLFNBQVE7UUFDUkMsTUFBSztRQUNMQyxRQUFPO1FBQ04sR0FBR1AsS0FBSztrQkFFVCxjQUFBLHFCQUFDUTtZQUNDQyxHQUFFO1lBQ0ZDLGFBQWE7WUFDYkMsZUFBYztZQUNkQyxnQkFBZTs7O01BSXJCLFdBQWVkIn0=

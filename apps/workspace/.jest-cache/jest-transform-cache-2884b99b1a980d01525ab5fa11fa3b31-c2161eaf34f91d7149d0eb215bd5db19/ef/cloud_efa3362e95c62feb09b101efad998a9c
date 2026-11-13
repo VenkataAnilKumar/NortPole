@@ -1,0 +1,45 @@
+e46cc77adfb3a01c13e4c79bac394a8c
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "default", {
+    enumerable: true,
+    get: function() {
+        return _default;
+    }
+});
+const _jsxruntime = require("react/jsx-runtime");
+const SvgCloud = ({ size, ...props })=>/*#__PURE__*/ (0, _jsxruntime.jsxs)("svg", {
+        width: size,
+        height: size,
+        viewBox: "0 0 16 16",
+        fill: "none",
+        xmlns: "http://www.w3.org/2000/svg",
+        stroke: "currentColor",
+        ...props,
+        children: [
+            /*#__PURE__*/ (0, _jsxruntime.jsx)("g", {
+                clipPath: "url(#clip0_170_23)",
+                children: /*#__PURE__*/ (0, _jsxruntime.jsx)("path", {
+                    d: "M12 6.66669H11.16C10.9106 5.70069 10.3952 4.82401 9.67243 4.13628C8.94966 3.44856 8.04848 2.97735 7.07128 2.7762C6.09409 2.57506 5.08007 2.65205 4.14444 2.99842C3.20881 3.34478 2.3891 3.94664 1.77844 4.73561C1.16778 5.52457 0.790662 6.469 0.689941 7.46159C0.589219 8.45417 0.76893 9.45511 1.20865 10.3507C1.64838 11.2462 2.33048 12.0005 3.17746 12.5277C4.02443 13.055 5.00232 13.3341 6 13.3334H12C12.8841 13.3334 13.7319 12.9822 14.357 12.357C14.9821 11.7319 15.3333 10.8841 15.3333 10C15.3333 9.11597 14.9821 8.26812 14.357 7.643C13.7319 7.01788 12.8841 6.66669 12 6.66669Z",
+                    strokeWidth: 1.5,
+                    strokeLinecap: "round",
+                    strokeLinejoin: "round"
+                })
+            }),
+            /*#__PURE__*/ (0, _jsxruntime.jsx)("defs", {
+                children: /*#__PURE__*/ (0, _jsxruntime.jsx)("clipPath", {
+                    id: "clip0_170_23",
+                    children: /*#__PURE__*/ (0, _jsxruntime.jsx)("rect", {
+                        width: 16,
+                        height: 16,
+                        fill: "white"
+                    })
+                })
+            })
+        ]
+    });
+const _default = SvgCloud;
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9ob21lL3VzZXIvRXZvbHZYU0kvYXBwcy93b3Jrc3BhY2UvbGliL29wYWwvc3JjL2ljb25zL2Nsb3VkLnRzeCJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgdHlwZSB7IEljb25Qcm9wcyB9IGZyb20gXCJAb3BhbC90eXBlc1wiO1xuXG5jb25zdCBTdmdDbG91ZCA9ICh7IHNpemUsIC4uLnByb3BzIH06IEljb25Qcm9wcykgPT4gKFxuICA8c3ZnXG4gICAgd2lkdGg9e3NpemV9XG4gICAgaGVpZ2h0PXtzaXplfVxuICAgIHZpZXdCb3g9XCIwIDAgMTYgMTZcIlxuICAgIGZpbGw9XCJub25lXCJcbiAgICB4bWxucz1cImh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnXCJcbiAgICBzdHJva2U9XCJjdXJyZW50Q29sb3JcIlxuICAgIHsuLi5wcm9wc31cbiAgPlxuICAgIDxnIGNsaXBQYXRoPVwidXJsKCNjbGlwMF8xNzBfMjMpXCI+XG4gICAgICA8cGF0aFxuICAgICAgICBkPVwiTTEyIDYuNjY2NjlIMTEuMTZDMTAuOTEwNiA1LjcwMDY5IDEwLjM5NTIgNC44MjQwMSA5LjY3MjQzIDQuMTM2MjhDOC45NDk2NiAzLjQ0ODU2IDguMDQ4NDggMi45NzczNSA3LjA3MTI4IDIuNzc2MkM2LjA5NDA5IDIuNTc1MDYgNS4wODAwNyAyLjY1MjA1IDQuMTQ0NDQgMi45OTg0MkMzLjIwODgxIDMuMzQ0NzggMi4zODkxIDMuOTQ2NjQgMS43Nzg0NCA0LjczNTYxQzEuMTY3NzggNS41MjQ1NyAwLjc5MDY2MiA2LjQ2OSAwLjY4OTk0MSA3LjQ2MTU5QzAuNTg5MjE5IDguNDU0MTcgMC43Njg5MyA5LjQ1NTExIDEuMjA4NjUgMTAuMzUwN0MxLjY0ODM4IDExLjI0NjIgMi4zMzA0OCAxMi4wMDA1IDMuMTc3NDYgMTIuNTI3N0M0LjAyNDQzIDEzLjA1NSA1LjAwMjMyIDEzLjMzNDEgNiAxMy4zMzM0SDEyQzEyLjg4NDEgMTMuMzMzNCAxMy43MzE5IDEyLjk4MjIgMTQuMzU3IDEyLjM1N0MxNC45ODIxIDExLjczMTkgMTUuMzMzMyAxMC44ODQxIDE1LjMzMzMgMTBDMTUuMzMzMyA5LjExNTk3IDE0Ljk4MjEgOC4yNjgxMiAxNC4zNTcgNy42NDNDMTMuNzMxOSA3LjAxNzg4IDEyLjg4NDEgNi42NjY2OSAxMiA2LjY2NjY5WlwiXG4gICAgICAgIHN0cm9rZVdpZHRoPXsxLjV9XG4gICAgICAgIHN0cm9rZUxpbmVjYXA9XCJyb3VuZFwiXG4gICAgICAgIHN0cm9rZUxpbmVqb2luPVwicm91bmRcIlxuICAgICAgLz5cbiAgICA8L2c+XG4gICAgPGRlZnM+XG4gICAgICA8Y2xpcFBhdGggaWQ9XCJjbGlwMF8xNzBfMjNcIj5cbiAgICAgICAgPHJlY3Qgd2lkdGg9ezE2fSBoZWlnaHQ9ezE2fSBmaWxsPVwid2hpdGVcIiAvPlxuICAgICAgPC9jbGlwUGF0aD5cbiAgICA8L2RlZnM+XG4gIDwvc3ZnPlxuKTtcbmV4cG9ydCBkZWZhdWx0IFN2Z0Nsb3VkO1xuIl0sIm5hbWVzIjpbIlN2Z0Nsb3VkIiwic2l6ZSIsInByb3BzIiwic3ZnIiwid2lkdGgiLCJoZWlnaHQiLCJ2aWV3Qm94IiwiZmlsbCIsInhtbG5zIiwic3Ryb2tlIiwiZyIsImNsaXBQYXRoIiwicGF0aCIsImQiLCJzdHJva2VXaWR0aCIsInN0cm9rZUxpbmVjYXAiLCJzdHJva2VMaW5lam9pbiIsImRlZnMiLCJpZCIsInJlY3QiXSwibWFwcGluZ3MiOiI7Ozs7K0JBMkJBOzs7ZUFBQTs7OztBQXpCQSxNQUFNQSxXQUFXLENBQUMsRUFBRUMsSUFBSSxFQUFFLEdBQUdDLE9BQWtCLGlCQUM3QyxzQkFBQ0M7UUFDQ0MsT0FBT0g7UUFDUEksUUFBUUo7UUFDUkssU0FBUTtRQUNSQyxNQUFLO1FBQ0xDLE9BQU07UUFDTkMsUUFBTztRQUNOLEdBQUdQLEtBQUs7OzBCQUVULHFCQUFDUTtnQkFBRUMsVUFBUzswQkFDVixjQUFBLHFCQUFDQztvQkFDQ0MsR0FBRTtvQkFDRkMsYUFBYTtvQkFDYkMsZUFBYztvQkFDZEMsZ0JBQWU7OzswQkFHbkIscUJBQUNDOzBCQUNDLGNBQUEscUJBQUNOO29CQUFTTyxJQUFHOzhCQUNYLGNBQUEscUJBQUNDO3dCQUFLZixPQUFPO3dCQUFJQyxRQUFRO3dCQUFJRSxNQUFLOzs7Ozs7TUFLMUMsV0FBZVAifQ==

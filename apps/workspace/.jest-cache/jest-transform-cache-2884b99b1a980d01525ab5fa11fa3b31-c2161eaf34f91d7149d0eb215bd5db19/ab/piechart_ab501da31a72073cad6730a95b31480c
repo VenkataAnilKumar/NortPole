@@ -1,0 +1,45 @@
+6de347cf93ff53ff5940ef4a4ec3bca7
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "default", {
+    enumerable: true,
+    get: function() {
+        return _default;
+    }
+});
+const _jsxruntime = require("react/jsx-runtime");
+const SvgPieChart = ({ size, ...props })=>/*#__PURE__*/ (0, _jsxruntime.jsxs)("svg", {
+        width: size,
+        height: size,
+        viewBox: "0 0 16 16",
+        fill: "none",
+        xmlns: "http://www.w3.org/2000/svg",
+        stroke: "currentColor",
+        ...props,
+        children: [
+            /*#__PURE__*/ (0, _jsxruntime.jsx)("g", {
+                clipPath: "url(#clip0_76_2931)",
+                children: /*#__PURE__*/ (0, _jsxruntime.jsx)("path", {
+                    d: "M14.14 10.5933C13.7159 11.5963 13.0525 12.4802 12.2079 13.1675C11.3633 13.8549 10.3632 14.325 9.29496 14.5365C8.22674 14.7481 7.12295 14.6948 6.0801 14.3812C5.03725 14.0676 4.08709 13.5034 3.31268 12.7378C2.53828 11.9722 1.96321 11.0285 1.63776 9.98931C1.31231 8.95011 1.24638 7.847 1.44574 6.77643C1.64509 5.70586 2.10367 4.70043 2.78137 3.84803C3.45907 2.99563 4.33526 2.32222 5.33334 1.88668M14.6667 8.00001C14.6667 7.12453 14.4942 6.25762 14.1592 5.44879C13.8242 4.63995 13.3331 3.90502 12.7141 3.28597C12.095 2.66691 11.3601 2.17584 10.5512 1.84081C9.74239 1.50578 8.87548 1.33334 8 1.33334V8.00001H14.6667Z",
+                    strokeWidth: 1.5,
+                    strokeLinecap: "round",
+                    strokeLinejoin: "round"
+                })
+            }),
+            /*#__PURE__*/ (0, _jsxruntime.jsx)("defs", {
+                children: /*#__PURE__*/ (0, _jsxruntime.jsx)("clipPath", {
+                    id: "clip0_76_2931",
+                    children: /*#__PURE__*/ (0, _jsxruntime.jsx)("rect", {
+                        width: 16,
+                        height: 16,
+                        fill: "white"
+                    })
+                })
+            })
+        ]
+    });
+const _default = SvgPieChart;
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9ob21lL3VzZXIvRXZvbHZYU0kvYXBwcy93b3Jrc3BhY2UvbGliL29wYWwvc3JjL2ljb25zL3BpZS1jaGFydC50c3giXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHR5cGUgeyBJY29uUHJvcHMgfSBmcm9tIFwiQG9wYWwvdHlwZXNcIjtcblxuY29uc3QgU3ZnUGllQ2hhcnQgPSAoeyBzaXplLCAuLi5wcm9wcyB9OiBJY29uUHJvcHMpID0+IChcbiAgPHN2Z1xuICAgIHdpZHRoPXtzaXplfVxuICAgIGhlaWdodD17c2l6ZX1cbiAgICB2aWV3Qm94PVwiMCAwIDE2IDE2XCJcbiAgICBmaWxsPVwibm9uZVwiXG4gICAgeG1sbnM9XCJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Z1wiXG4gICAgc3Ryb2tlPVwiY3VycmVudENvbG9yXCJcbiAgICB7Li4ucHJvcHN9XG4gID5cbiAgICA8ZyBjbGlwUGF0aD1cInVybCgjY2xpcDBfNzZfMjkzMSlcIj5cbiAgICAgIDxwYXRoXG4gICAgICAgIGQ9XCJNMTQuMTQgMTAuNTkzM0MxMy43MTU5IDExLjU5NjMgMTMuMDUyNSAxMi40ODAyIDEyLjIwNzkgMTMuMTY3NUMxMS4zNjMzIDEzLjg1NDkgMTAuMzYzMiAxNC4zMjUgOS4yOTQ5NiAxNC41MzY1QzguMjI2NzQgMTQuNzQ4MSA3LjEyMjk1IDE0LjY5NDggNi4wODAxIDE0LjM4MTJDNS4wMzcyNSAxNC4wNjc2IDQuMDg3MDkgMTMuNTAzNCAzLjMxMjY4IDEyLjczNzhDMi41MzgyOCAxMS45NzIyIDEuOTYzMjEgMTEuMDI4NSAxLjYzNzc2IDkuOTg5MzFDMS4zMTIzMSA4Ljk1MDExIDEuMjQ2MzggNy44NDcgMS40NDU3NCA2Ljc3NjQzQzEuNjQ1MDkgNS43MDU4NiAyLjEwMzY3IDQuNzAwNDMgMi43ODEzNyAzLjg0ODAzQzMuNDU5MDcgMi45OTU2MyA0LjMzNTI2IDIuMzIyMjIgNS4zMzMzNCAxLjg4NjY4TTE0LjY2NjcgOC4wMDAwMUMxNC42NjY3IDcuMTI0NTMgMTQuNDk0MiA2LjI1NzYyIDE0LjE1OTIgNS40NDg3OUMxMy44MjQyIDQuNjM5OTUgMTMuMzMzMSAzLjkwNTAyIDEyLjcxNDEgMy4yODU5N0MxMi4wOTUgMi42NjY5MSAxMS4zNjAxIDIuMTc1ODQgMTAuNTUxMiAxLjg0MDgxQzkuNzQyMzkgMS41MDU3OCA4Ljg3NTQ4IDEuMzMzMzQgOCAxLjMzMzM0VjguMDAwMDFIMTQuNjY2N1pcIlxuICAgICAgICBzdHJva2VXaWR0aD17MS41fVxuICAgICAgICBzdHJva2VMaW5lY2FwPVwicm91bmRcIlxuICAgICAgICBzdHJva2VMaW5lam9pbj1cInJvdW5kXCJcbiAgICAgIC8+XG4gICAgPC9nPlxuICAgIDxkZWZzPlxuICAgICAgPGNsaXBQYXRoIGlkPVwiY2xpcDBfNzZfMjkzMVwiPlxuICAgICAgICA8cmVjdCB3aWR0aD17MTZ9IGhlaWdodD17MTZ9IGZpbGw9XCJ3aGl0ZVwiIC8+XG4gICAgICA8L2NsaXBQYXRoPlxuICAgIDwvZGVmcz5cbiAgPC9zdmc+XG4pO1xuZXhwb3J0IGRlZmF1bHQgU3ZnUGllQ2hhcnQ7XG4iXSwibmFtZXMiOlsiU3ZnUGllQ2hhcnQiLCJzaXplIiwicHJvcHMiLCJzdmciLCJ3aWR0aCIsImhlaWdodCIsInZpZXdCb3giLCJmaWxsIiwieG1sbnMiLCJzdHJva2UiLCJnIiwiY2xpcFBhdGgiLCJwYXRoIiwiZCIsInN0cm9rZVdpZHRoIiwic3Ryb2tlTGluZWNhcCIsInN0cm9rZUxpbmVqb2luIiwiZGVmcyIsImlkIiwicmVjdCJdLCJtYXBwaW5ncyI6Ijs7OzsrQkEyQkE7OztlQUFBOzs7O0FBekJBLE1BQU1BLGNBQWMsQ0FBQyxFQUFFQyxJQUFJLEVBQUUsR0FBR0MsT0FBa0IsaUJBQ2hELHNCQUFDQztRQUNDQyxPQUFPSDtRQUNQSSxRQUFRSjtRQUNSSyxTQUFRO1FBQ1JDLE1BQUs7UUFDTEMsT0FBTTtRQUNOQyxRQUFPO1FBQ04sR0FBR1AsS0FBSzs7MEJBRVQscUJBQUNRO2dCQUFFQyxVQUFTOzBCQUNWLGNBQUEscUJBQUNDO29CQUNDQyxHQUFFO29CQUNGQyxhQUFhO29CQUNiQyxlQUFjO29CQUNkQyxnQkFBZTs7OzBCQUduQixxQkFBQ0M7MEJBQ0MsY0FBQSxxQkFBQ047b0JBQVNPLElBQUc7OEJBQ1gsY0FBQSxxQkFBQ0M7d0JBQUtmLE9BQU87d0JBQUlDLFFBQVE7d0JBQUlFLE1BQUs7Ozs7OztNQUsxQyxXQUFlUCJ9

@@ -1,0 +1,45 @@
+3978c0eee808aa3d723f1efe539403b8
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "default", {
+    enumerable: true,
+    get: function() {
+        return _default;
+    }
+});
+const _jsxruntime = require("react/jsx-runtime");
+const SvgSun = ({ size, ...props })=>/*#__PURE__*/ (0, _jsxruntime.jsxs)("svg", {
+        width: size,
+        height: size,
+        viewBox: "0 0 16 16",
+        fill: "none",
+        xmlns: "http://www.w3.org/2000/svg",
+        stroke: "currentColor",
+        ...props,
+        children: [
+            /*#__PURE__*/ (0, _jsxruntime.jsx)("g", {
+                clipPath: "url(#clip0_2458_12738)",
+                children: /*#__PURE__*/ (0, _jsxruntime.jsx)("path", {
+                    d: "M8 1L8 2.5M8 13.5V15M3.04909 3.04909L4.11091 4.11091M11.8891 11.8891L12.9509 12.9509M1 8L2.5 8M13.5 8L15 8M3.04909 12.9509L4.11091 11.8891M11.8891 4.11091L12.9509 3.04909M11 8C11 9.65685 9.65685 11 8 11C6.34315 11 5 9.65685 5 8C5 6.34315 6.34315 5 8 5C9.65685 5 11 6.34315 11 8Z",
+                    strokeWidth: 1.5,
+                    strokeLinecap: "round",
+                    strokeLinejoin: "round"
+                })
+            }),
+            /*#__PURE__*/ (0, _jsxruntime.jsx)("defs", {
+                children: /*#__PURE__*/ (0, _jsxruntime.jsx)("clipPath", {
+                    id: "clip0_2458_12738",
+                    children: /*#__PURE__*/ (0, _jsxruntime.jsx)("rect", {
+                        width: 16,
+                        height: 16,
+                        fill: "white"
+                    })
+                })
+            })
+        ]
+    });
+const _default = SvgSun;
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9ob21lL3VzZXIvRXZvbHZYU0kvYXBwcy93b3Jrc3BhY2UvbGliL29wYWwvc3JjL2ljb25zL3N1bi50c3giXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHR5cGUgeyBJY29uUHJvcHMgfSBmcm9tIFwiQG9wYWwvdHlwZXNcIjtcblxuY29uc3QgU3ZnU3VuID0gKHsgc2l6ZSwgLi4ucHJvcHMgfTogSWNvblByb3BzKSA9PiAoXG4gIDxzdmdcbiAgICB3aWR0aD17c2l6ZX1cbiAgICBoZWlnaHQ9e3NpemV9XG4gICAgdmlld0JveD1cIjAgMCAxNiAxNlwiXG4gICAgZmlsbD1cIm5vbmVcIlxuICAgIHhtbG5zPVwiaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmdcIlxuICAgIHN0cm9rZT1cImN1cnJlbnRDb2xvclwiXG4gICAgey4uLnByb3BzfVxuICA+XG4gICAgPGcgY2xpcFBhdGg9XCJ1cmwoI2NsaXAwXzI0NThfMTI3MzgpXCI+XG4gICAgICA8cGF0aFxuICAgICAgICBkPVwiTTggMUw4IDIuNU04IDEzLjVWMTVNMy4wNDkwOSAzLjA0OTA5TDQuMTEwOTEgNC4xMTA5MU0xMS44ODkxIDExLjg4OTFMMTIuOTUwOSAxMi45NTA5TTEgOEwyLjUgOE0xMy41IDhMMTUgOE0zLjA0OTA5IDEyLjk1MDlMNC4xMTA5MSAxMS44ODkxTTExLjg4OTEgNC4xMTA5MUwxMi45NTA5IDMuMDQ5MDlNMTEgOEMxMSA5LjY1Njg1IDkuNjU2ODUgMTEgOCAxMUM2LjM0MzE1IDExIDUgOS42NTY4NSA1IDhDNSA2LjM0MzE1IDYuMzQzMTUgNSA4IDVDOS42NTY4NSA1IDExIDYuMzQzMTUgMTEgOFpcIlxuICAgICAgICBzdHJva2VXaWR0aD17MS41fVxuICAgICAgICBzdHJva2VMaW5lY2FwPVwicm91bmRcIlxuICAgICAgICBzdHJva2VMaW5lam9pbj1cInJvdW5kXCJcbiAgICAgIC8+XG4gICAgPC9nPlxuICAgIDxkZWZzPlxuICAgICAgPGNsaXBQYXRoIGlkPVwiY2xpcDBfMjQ1OF8xMjczOFwiPlxuICAgICAgICA8cmVjdCB3aWR0aD17MTZ9IGhlaWdodD17MTZ9IGZpbGw9XCJ3aGl0ZVwiIC8+XG4gICAgICA8L2NsaXBQYXRoPlxuICAgIDwvZGVmcz5cbiAgPC9zdmc+XG4pO1xuZXhwb3J0IGRlZmF1bHQgU3ZnU3VuO1xuIl0sIm5hbWVzIjpbIlN2Z1N1biIsInNpemUiLCJwcm9wcyIsInN2ZyIsIndpZHRoIiwiaGVpZ2h0Iiwidmlld0JveCIsImZpbGwiLCJ4bWxucyIsInN0cm9rZSIsImciLCJjbGlwUGF0aCIsInBhdGgiLCJkIiwic3Ryb2tlV2lkdGgiLCJzdHJva2VMaW5lY2FwIiwic3Ryb2tlTGluZWpvaW4iLCJkZWZzIiwiaWQiLCJyZWN0Il0sIm1hcHBpbmdzIjoiOzs7OytCQTJCQTs7O2VBQUE7Ozs7QUF6QkEsTUFBTUEsU0FBUyxDQUFDLEVBQUVDLElBQUksRUFBRSxHQUFHQyxPQUFrQixpQkFDM0Msc0JBQUNDO1FBQ0NDLE9BQU9IO1FBQ1BJLFFBQVFKO1FBQ1JLLFNBQVE7UUFDUkMsTUFBSztRQUNMQyxPQUFNO1FBQ05DLFFBQU87UUFDTixHQUFHUCxLQUFLOzswQkFFVCxxQkFBQ1E7Z0JBQUVDLFVBQVM7MEJBQ1YsY0FBQSxxQkFBQ0M7b0JBQ0NDLEdBQUU7b0JBQ0ZDLGFBQWE7b0JBQ2JDLGVBQWM7b0JBQ2RDLGdCQUFlOzs7MEJBR25CLHFCQUFDQzswQkFDQyxjQUFBLHFCQUFDTjtvQkFBU08sSUFBRzs4QkFDWCxjQUFBLHFCQUFDQzt3QkFBS2YsT0FBTzt3QkFBSUMsUUFBUTt3QkFBSUUsTUFBSzs7Ozs7O01BSzFDLFdBQWVQIn0=
