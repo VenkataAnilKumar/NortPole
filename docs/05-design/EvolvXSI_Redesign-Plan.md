@@ -59,8 +59,8 @@ The old addresses redirect (HTTP 307, set in `next.config.js`) because home card
 | R3 | "Run by" line on Start, Agent tab for chat assistants, Channels rename, Sources order | Medium | Done |
 | R4 | **Discover** (first tab of Sources) with requests for connectors, skills and plugins, landing in Approvals | Medium | Done |
 | R5 | Inbox filters | Small | Done |
-| R6 | Scheduled workflows: scheduler, stop at the plan, auto-pause, cost on Quality | Medium | Next |
-| R7 | Knowledge domains, uploads by domain, request and approve, domain filter in search | Large | After the Google Drive connector |
+| R6 | Scheduled workflows (design: `EvolvXSI_Workflows-and-Knowledge-Design.md` §3): R6a runner and rules, R6b screens and sharing, R6c event triggers later | Medium | Next (R6a) |
+| R7 | Knowledge (design §4): R7a domains, R7b My files and requests, R7c verification and freshness | Large | After the search index and the Google Drive connector |
 | R8 | Quality pass of each stage | Small per stage | Ongoing |
 
 New page text is in English first; sidebar labels are translated into all nine languages in the same stage.
