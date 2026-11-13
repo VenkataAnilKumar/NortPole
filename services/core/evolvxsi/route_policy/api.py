@@ -116,12 +116,8 @@ def check_route_policy(
     return decide(load_policy(), request.provider_id, request.data_class)
 
 
-@router.put("/admin/route-policy")
-def put_route_policy(
-    update: RoutePolicyUpdate,
-    user: User = Depends(require_permission(Permission.MANAGE_LLMS)),
-    db_session: Session = Depends(get_session),
-) -> RoutePolicyView:
+def plan_policy_update(update: RoutePolicyUpdate, db_session: Session) -> tuple[RoutePolicy, RoutePolicy]:
+    """The policy as it is now and as it would be after this update. Raises if the update is not valid."""
     current = load_policy()
     try:
         new = RoutePolicy(
@@ -140,17 +136,48 @@ def put_route_policy(
             EvolvXSIErrorCode.VALIDATION_ERROR,
             f"Unknown provider id(s): {', '.join(sorted(unknown))}",
         )
+    return current, new
+
+
+def apply_policy_update(
+    update: RoutePolicyUpdate, db_session: Session, actor: User | None, *,
+    approver_email: str | None = None, expect_version: int | None = None,
+) -> RoutePolicy:
+    """Save the update and audit it. `expect_version` refuses it if the policy changed since it was proposed."""
+    current, new = plan_policy_update(update, db_session)
+    if expect_version is not None and current.version != expect_version:
+        raise EvolvXSIError(EvolvXSIErrorCode.CONFLICT, "The route policy changed after this was proposed. Propose it again.")
     save_policy(new)
     summary, details = describe_policy_change(current, new)
+    if approver_email:
+        details = {**(details or {}), "proposed_by": getattr(actor, "email", None), "approved_by": approver_email}
     record_audit(
         AuditAction.ROUTE_POLICY_CHANGE,
         AuditOutcome.SUCCESS,
-        actor=user,
+        actor=actor,
         summary=summary,
         details=details,
         resource_type="route_policy",
         resource_id=new.version,
     )
+    return new
+
+
+@router.put("/admin/route-policy")
+def put_route_policy(
+    update: RoutePolicyUpdate,
+    user: User = Depends(require_permission(Permission.MANAGE_LLMS)),
+    db_session: Session = Depends(get_session),
+) -> RoutePolicyView:
+    from evolvxsi.admin_changes import controls
+    from evolvxsi.admin_changes.service import propose, pending_response
+
+    if controls.required("route_policy"):
+        # Checked now so the proposer learns of a mistake at once; applied only when a second administrator approves.
+        current, new = plan_policy_update(update, db_session)
+        summary, _ = describe_policy_change(current, new)
+        return pending_response(propose(db_session, user, "route_policy", update.model_dump(), current.version, summary))  # type: ignore[return-value]
+    new = apply_policy_update(update, db_session, user)
     return _view(new, db_session, None)
 
 

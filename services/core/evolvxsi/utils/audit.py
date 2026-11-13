@@ -110,6 +110,8 @@ class AuditAction(str, Enum):
     PACK_EVALUATE = "pack.evaluate"
     RETENTION_PRUNE = "retention.prune"
     RETENTION_CHANGE = "retention.change"
+    ADMIN_CHANGE_PROPOSE = "admin.change_propose"
+    ADMIN_CHANGE_DECIDE = "admin.change_decide"
     AUDIT_EXPORT = "audit.export"
     EXTENSION_CHANGE = "extension.change"
     EXTENSION_BLOCKED = "extension.blocked"
@@ -182,6 +184,8 @@ _OCSF_CLASS_BY_ACTION: dict[AuditAction, OCSFEventClass] = {
     AuditAction.PACK_EVALUATE: OCSFEventClass.API_ACTIVITY,
     AuditAction.RETENTION_PRUNE: OCSFEventClass.API_ACTIVITY,
     AuditAction.RETENTION_CHANGE: OCSFEventClass.API_ACTIVITY,
+    AuditAction.ADMIN_CHANGE_PROPOSE: OCSFEventClass.API_ACTIVITY,
+    AuditAction.ADMIN_CHANGE_DECIDE: OCSFEventClass.API_ACTIVITY,
     AuditAction.AUDIT_EXPORT: OCSFEventClass.API_ACTIVITY,
     AuditAction.EXTENSION_CHANGE: OCSFEventClass.API_ACTIVITY,
     AuditAction.EXTENSION_BLOCKED: OCSFEventClass.API_ACTIVITY,

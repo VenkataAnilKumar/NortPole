@@ -116,7 +116,7 @@ export default function RoutePolicyPage() {
     try {
       const route_kinds: Record<string, RouteKind> = {};
       Object.entries(draft.kinds).forEach(([id, k]) => (route_kinds[id] = k));
-      await callJson("/api/admin/route-policy", "PUT", {
+      const saved = await callJson("/api/admin/route-policy", "PUT", {
         default_data_class: draft.defaultClass,
         allowed: draft.allowed,
         route_kinds,
@@ -124,7 +124,12 @@ export default function RoutePolicyPage() {
       });
       await mutate(ROUTE_POLICY_URL);
       await mutate(AUDIT_URL);
-      setStatus({ ok: true, text: "Policy saved. It applies to new requests; past runs keep the version they used." });
+      await mutate("/api/admin/changes");
+      if (saved?.pending_approval) {
+        setStatus({ ok: true, text: "Not applied yet: a second administrator has to approve this change. You can follow it on the Governance page." });
+      } else {
+        setStatus({ ok: true, text: "Policy saved. It applies to new requests; past runs keep the version they used." });
+      }
     } catch (e) {
       setStatus({ ok: false, text: e instanceof Error ? e.message : "Could not save." });
     } finally {
