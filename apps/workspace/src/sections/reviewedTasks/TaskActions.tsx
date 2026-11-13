@@ -7,7 +7,7 @@ import { errorHandlingFetcher } from "@/lib/fetcher";
 interface Action {
   id: string;
   target_name: string;
-  state: "proposed" | "approved" | "executing" | "succeeded" | "failed" | "cancelled";
+  state: "proposed" | "awaiting_second" | "approved" | "executing" | "succeeded" | "failed" | "cancelled";
   version: number;
   fingerprint: string;
   payload: { title: string; markdown: string };
@@ -15,15 +15,18 @@ interface Action {
   result_status: number | null;
   error: string | null;
   executed_at: string | null;
+  needs_second_approval?: boolean;
 }
 interface Target {
   tier?: string;
+  needs_second_approval?: boolean;
   id: number;
   name: string;
 }
 
 const STATE_LABEL: Record<Action["state"], string> = {
   proposed: "Waiting for your approval",
+  awaiting_second: "Waiting for a second person to approve",
   approved: "Approved, ready to send",
   executing: "Sending",
   succeeded: "Sent",
@@ -92,7 +95,7 @@ export default function TaskActions({ taskId }: { taskId: string }) {
             >
               <option value="">Choose a destination…</option>
               {(targets ?? []).map((t) => (
-                <option key={t.id} value={t.id} disabled={t.tier === "read_only"}>{t.name}{t.tier === "draft_only" ? " (draft only: cannot be sent)" : t.tier === "read_only" ? " (read only)" : ""}</option>
+                <option key={t.id} value={t.id} disabled={t.tier === "read_only"}>{t.name}{t.tier === "draft_only" ? " (draft only: cannot be sent)" : t.tier === "read_only" ? " (read only)" : t.needs_second_approval ? " (needs a second person to approve)" : ""}</option>
               ))}
             </select>
           </label>
@@ -111,7 +114,7 @@ export default function TaskActions({ taskId }: { taskId: string }) {
       {list.length > 0 && (
         <ul className="mt-3 flex flex-col gap-3" data-testid="action-list">
           {list.map((a) => {
-            const open = a.state === "proposed" || a.state === "approved" || a.state === "failed";
+            const open = a.state === "proposed" || a.state === "awaiting_second" || a.state === "approved" || a.state === "failed";
             return (
               <li key={a.id} className={card} data-testid="action-item">
                 <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
@@ -125,6 +128,11 @@ export default function TaskActions({ taskId }: { taskId: string }) {
                     <summary className="cursor-pointer">The exact content that will be sent</summary>
                     <pre className="mt-1 max-h-60 overflow-auto whitespace-pre-wrap rounded-lg bg-background-neutral-01 px-2 py-1 text-text-05">{a.payload.markdown}</pre>
                   </details>
+                )}
+                {a.state === "awaiting_second" && (
+                  <p className="mt-2 text-xs text-text-03" data-testid="awaiting-second">
+                    You approved this content. {a.target_name} also needs a second person, who is not you, to approve the same content before it can be sent. Nothing has been sent.
+                  </p>
                 )}
                 {a.error && <p role="alert" className="mt-2 text-xs text-status-text-error-05">{a.error}</p>}
                 {a.state === "succeeded" && (
@@ -141,7 +149,7 @@ export default function TaskActions({ taskId }: { taskId: string }) {
                       disabled={!!busy}
                       onClick={() => run(`approve-${a.id}`, () => post(`/api/actions/${a.id}/approve`, { version: a.version, fingerprint: a.fingerprint }))}
                     >
-                      Approve this exact content
+                      {a.needs_second_approval ? "Approve (a second person must also approve)" : "Approve this exact content"}
                     </button>
                   )}
                   {(a.state === "approved" || a.state === "failed") && (

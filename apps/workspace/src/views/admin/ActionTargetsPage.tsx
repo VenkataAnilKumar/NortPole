@@ -15,7 +15,31 @@ interface Target {
   tier?: string;
   allowed_data_classes: string[];
   enabled: boolean;
+  require_second_approval?: boolean;
 }
+
+interface QueueItem {
+  id: string;
+  target_name: string;
+  owner_email: string;
+  version: number;
+  fingerprint: string;
+  created_at: string;
+}
+
+interface Review {
+  id: string;
+  version: number;
+  fingerprint: string;
+  target_name: string;
+  payload: { title: string; markdown: string };
+}
+
+/** The body the server expects when a destination is changed; every field is sent so none is reset by accident. */
+const patchBody = (t: Target, changes: Partial<Target>) => ({
+  name: t.name, kind: t.kind ?? "webhook", tier: t.tier ?? "act_with_approval", url: t.url,
+  allowed_data_classes: t.allowed_data_classes, enabled: t.enabled, require_second_approval: !!t.require_second_approval, ...changes,
+});
 
 const card = "rounded-2xl border border-border-01 bg-background-neutral-00 p-5 shadow-sm";
 const input = "min-h-11 w-full rounded-xl border border-border-02 bg-background-neutral-00 px-3 text-sm text-text-05";
@@ -66,6 +90,9 @@ export default function ActionTargetsPage() {
   const [kind, setKind] = useState<"webhook" | "email">("webhook");
   const [tier, setTier] = useState("act_with_approval");
   const [classes, setClasses] = useState<string[]>([]);
+  const [second, setSecond] = useState(false);
+  const { data: queue, mutate: mutateQueue } = useSWR<QueueItem[]>("/api/admin/actions/awaiting-second", errorHandlingFetcher, { refreshInterval: 30000 });
+  const [review, setReview] = useState<Review | null>(null);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
@@ -75,6 +102,7 @@ export default function ActionTargetsPage() {
     try {
       await fn();
       await mutate();
+      await mutateQueue();
     } catch (e) {
       setMessage(e instanceof Error ? e.message : "The change could not be saved.");
     } finally {
@@ -119,6 +147,10 @@ export default function ActionTargetsPage() {
             </select>
           </label>
           <ClassPicker value={classes} onChange={setClasses} />
+          <label className="flex min-h-11 items-center gap-2 text-sm text-text-05">
+            <input type="checkbox" className="h-4 w-4" checked={second} onChange={(e) => setSecond(e.target.checked)} />
+            A second person must approve before anything is sent here
+          </label>
           {message && <p role="alert" className="text-sm text-status-text-error-05">{message}</p>}
           <div>
             <button
@@ -127,7 +159,8 @@ export default function ActionTargetsPage() {
               disabled={busy || !name.trim() || !url.trim()}
               onClick={() =>
                 run(async () => {
-                  await send(URL, "POST", { name, kind, tier, url, allowed_data_classes: classes, enabled: true });
+                  await send(URL, "POST", { name, kind, tier, url, allowed_data_classes: classes, enabled: true, require_second_approval: second });
+                  setSecond(false);
                   setName("");
                   setUrl("");
                   setClasses([]);
@@ -138,6 +171,64 @@ export default function ActionTargetsPage() {
             </button>
           </div>
         </div>
+      </section>
+
+      <section className={card} aria-labelledby="second-q" data-testid="second-queue">
+        <h2 id="second-q" className="text-base font-semibold text-text-05">Waiting for a second approver</h2>
+        <p className="mt-1 text-sm text-text-03">
+          Sends the owner has approved that need someone else to approve too. You do not see the owner&apos;s own here. Opening one shows you the draft and is recorded in the audit log;
+          you can only open it if you could open every source it cites.
+        </p>
+        {!queue || queue.length === 0 ? (
+          <p className="mt-3 text-sm text-text-03">Nothing is waiting.</p>
+        ) : (
+          <ul className="mt-3 flex flex-col gap-3">
+            {queue.map((q) => (
+              <li key={q.id} className="rounded-xl border border-border-01 px-3 py-3" data-testid="second-item">
+                <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
+                  <span className="text-text-05">To <span className="font-medium">{q.target_name}</span> · from {q.owner_email} · {new Date(q.created_at).toLocaleString()}</span>
+                  <button
+                    type="button"
+                    className={secondary}
+                    disabled={busy}
+                    onClick={() => run(async () => {
+                      const res = await fetch(`/api/admin/actions/${q.id}/second-review`);
+                      const body = await res.json().catch(() => null);
+                      if (!res.ok) throw new Error(typeof body?.detail === "string" ? body.detail : `Could not open it (HTTP ${res.status}).`);
+                      setReview(body as Review);
+                    })}
+                  >
+                    Open to review
+                  </button>
+                </div>
+                {review && review.id === q.id && (
+                  <div className="mt-3" data-testid="second-review">
+                    <p className="text-xs text-text-03">The exact content that will be sent. Your approval covers this content and nothing else.</p>
+                    <pre className="mt-1 max-h-72 overflow-auto whitespace-pre-wrap rounded-lg bg-background-neutral-01 px-2 py-1 text-xs text-text-05">{review.payload.markdown}</pre>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        className={primary}
+                        disabled={busy}
+                        onClick={() => run(async () => { await send(`/api/admin/actions/${review.id}/second-approve`, "POST", { version: review.version, fingerprint: review.fingerprint }); setReview(null); })}
+                      >
+                        Approve this exact content
+                      </button>
+                      <button
+                        type="button"
+                        className={secondary}
+                        disabled={busy}
+                        onClick={() => run(async () => { await send(`/api/admin/actions/${review.id}/second-decline`, "POST", { version: review.version }); setReview(null); })}
+                      >
+                        Decline
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
 
       {isLoading ? (
@@ -156,15 +247,28 @@ export default function ActionTargetsPage() {
                   <p className="text-sm text-text-03">
                     May receive: {t.allowed_data_classes.length ? t.allowed_data_classes.join(", ") : "nothing"}
                   </p>
+                  <p className="text-sm text-text-03" data-testid="second-note">
+                    {t.require_second_approval ? "A second person must approve each send." : "One approval (the owner's) is enough."}
+                  </p>
                 </div>
-                <button
-                  type="button"
-                  className={secondary}
-                  disabled={busy}
-                  onClick={() => run(() => send(`${URL}/${t.id}`, "PATCH", { name: t.name, kind: t.kind ?? "webhook", tier: t.tier ?? "act_with_approval", url: t.url, allowed_data_classes: t.allowed_data_classes, enabled: !t.enabled }))}
-                >
-                  {t.enabled ? "Disable" : "Enable"}
-                </button>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    className={secondary}
+                    disabled={busy}
+                    onClick={() => run(() => send(`${URL}/${t.id}`, "PATCH", patchBody(t, { require_second_approval: !t.require_second_approval })))}
+                  >
+                    {t.require_second_approval ? "Stop requiring a second approver" : "Require a second approver"}
+                  </button>
+                  <button
+                    type="button"
+                    className={secondary}
+                    disabled={busy}
+                    onClick={() => run(() => send(`${URL}/${t.id}`, "PATCH", patchBody(t, { enabled: !t.enabled })))}
+                  >
+                    {t.enabled ? "Disable" : "Enable"}
+                  </button>
+                </div>
               </div>
               {!t.enabled && <p className="mt-2 text-xs text-text-03">Disabled: nothing can be sent here.</p>}
             </li>
