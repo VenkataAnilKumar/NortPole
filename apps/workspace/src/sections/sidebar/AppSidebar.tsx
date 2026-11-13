@@ -74,6 +74,7 @@ import useSWR from "swr";
 import { errorHandlingFetcher } from "@/lib/fetcher";
 import { SWR_KEYS } from "@/lib/swr-keys";
 import { useUserPreferences } from "@/lib/userPreferences/hooks";
+import { useOwnWork } from "@/lib/inboxWork";
 import { inboxBadgeCount } from "@/lib/notifications/inbox";
 import type { Notification } from "@/lib/notifications/interfaces";
 import { useCreateModal } from "@opal/components";
@@ -240,13 +241,15 @@ export default function AppSidebar() {
     errorHandlingFetcher,
     { refreshInterval: 15_000, shouldRetryOnError: false }
   );
+  const ownWork = useOwnWork();
   const inboxCount =
     userPrefs && inboxFeed
       ? inboxBadgeCount(
           inboxFeed.notifications,
           userPrefs.notifications,
           new Date(),
-          liveApprovals?.items.length ?? 0
+          liveApprovals?.items.length ?? 0,
+          ownWork.plans.length + ownWork.drafts.length
         )
       : 0;
   const combinedSettingsData = useSettings();

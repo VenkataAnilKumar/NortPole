@@ -373,6 +373,7 @@ class NotificationType(str, Enum):
     SCHEDULED_TASK_AWAITING_APPROVAL = "scheduled_task_awaiting_approval"
     SCHEDULED_TASK_PRE_APPROVED_ACTION = "scheduled_task_pre_approved_action"
     APPROVAL_REQUESTED = "approval_requested"
+    SOURCE_REQUEST_DECIDED = "source_request_decided"  # a Discover request was approved or declined
 
 
 class BlobType(str, Enum):

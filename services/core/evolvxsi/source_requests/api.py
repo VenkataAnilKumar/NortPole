@@ -12,6 +12,8 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from evolvxsi.auth.permissions import require_permission
+from evolvxsi.configs.constants import NotificationType
+from evolvxsi.db.notification import create_notification
 from evolvxsi.db.engine.sql_engine import get_session
 from evolvxsi.db.enums import Permission
 from evolvxsi.db.models import User
@@ -21,6 +23,9 @@ from evolvxsi.route_policy.audit import record_audit
 from evolvxsi.source_requests import catalog
 from evolvxsi.source_requests.models import EvolvXSISourceRequest
 from evolvxsi.utils.audit import AuditAction, AuditOutcome
+from evolvxsi.utils.logger import setup_logger
+
+logger = setup_logger()
 
 router = APIRouter()
 
@@ -175,6 +180,18 @@ def decide_request(
     r.decided_by_email, r.decision_note = user.email, body.note.strip()
     r.decided_at = datetime.datetime.now(datetime.timezone.utc)
     db_session.commit()
+    if r.requested_by_id is not None:
+        # Tell the person in their Inbox (Updates). Best effort: the decision stands even if this fails.
+        try:
+            verdict = "approved" if body.approve else "declined"
+            what = "An administrator will set it up." if body.approve else "It was not added."
+            create_notification(user_id=r.requested_by_id, notif_type=NotificationType.SOURCE_REQUEST_DECIDED, db_session=db_session,
+                                title=f"Your request for {r.item_name} was {verdict}",
+                                description=f"{what}{' Note: ' + r.decision_note if r.decision_note else ''}",
+                                additional_data={"request_id": str(r.id)})
+        except Exception:
+            logger.exception("Could not notify the requester of a decided source request %s", r.id)
+            db_session.rollback()
     record_audit(AuditAction.SOURCE_REQUEST_DECIDE, AuditOutcome.SUCCESS, actor=user,
                  summary=f"{'Approved' if body.approve else 'Declined'} request for {r.kind} {r.item_name} from {r.requested_by_email}",
                  details={"kind": r.kind, "item": r.item_key, "state": r.state}, resource_type="source_request", resource_id=str(r.id))

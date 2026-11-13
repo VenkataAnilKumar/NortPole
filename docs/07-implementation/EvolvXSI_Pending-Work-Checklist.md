@@ -61,7 +61,7 @@ Status: Working list, 2026-11-13 (pending-work list below saved 2026-11-13 after
 - [x] R2. Admin console regroup, merged Approvals queue, hide inherited screens.
 - [x] R3. "Run by" line on Start, Agent tab for chat assistants, Channels rename, Sources order.
 - [x] R4. Discover as the first Sources tab, with requests landing in Approvals.
-- [ ] R5. Inbox filters.
+- [x] R5. Inbox filters.
 - [ ] R6. Scheduled workflows with stop at the plan and auto-pause.
 - [ ] R7. Knowledge domains and uploads (after the Google Drive connector).
 - [ ] R8. Quality pass of each stage.

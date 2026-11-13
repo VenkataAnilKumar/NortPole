@@ -7,6 +7,7 @@ export enum NotificationType {
   CONNECTOR_INVALID = "connector_invalid",
   SCHEDULED_TASK_PRE_APPROVED_ACTION = "scheduled_task_pre_approved_action",
   APPROVAL_REQUESTED = "approval_requested",
+  SOURCE_REQUEST_DECIDED = "source_request_decided",
 
   // SvgAlertTriangle
   TRIAL_ENDS_TWO_DAYS = "two_day_trial_ending",
