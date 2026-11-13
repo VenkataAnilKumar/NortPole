@@ -48,7 +48,7 @@ export default function OverviewPage() {
           <p className="mt-1 text-sm text-text-04">
             {approvals.total === 0
               ? "Nothing is waiting."
-              : `${approvals.sends} ${approvals.sends === 1 ? "send" : "sends"}, ${approvals.changes} administrator ${approvals.changes === 1 ? "change" : "changes"}, ${approvals.tools} tool ${approvals.tools === 1 ? "definition" : "definitions"}.`}
+              : `${approvals.sends} ${approvals.sends === 1 ? "send" : "sends"}, ${approvals.changes} administrator ${approvals.changes === 1 ? "change" : "changes"}, ${approvals.tools} tool ${approvals.tools === 1 ? "definition" : "definitions"}, ${approvals.requests} ${approvals.requests === 1 ? "request" : "requests"} from people.`}
           </p>
         </section>
       )}

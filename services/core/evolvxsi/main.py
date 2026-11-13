@@ -147,6 +147,7 @@ from evolvxsi.retention.api import router as retention_router
 from evolvxsi.inventory.api import router as inventory_router
 from evolvxsi.extensions.api import router as extensions_router
 from evolvxsi.admin_changes.api import router as admin_changes_router
+from evolvxsi.source_requests.api import router as source_requests_router
 from evolvxsi.overview.api import router as overview_router
 from evolvxsi.packs.studio import router as studio_router
 from evolvxsi.tool_catalog.api import member_router as tool_catalog_member_router
@@ -664,6 +665,7 @@ def get_application(lifespan_override: Lifespan | None = None) -> FastAPI:
     include_router_with_global_prefix_prepended(application, tool_catalog_router)
     include_router_with_global_prefix_prepended(application, tool_catalog_member_router)
     include_router_with_global_prefix_prepended(application, admin_changes_router)
+    include_router_with_global_prefix_prepended(application, source_requests_router)
     include_router_with_global_prefix_prepended(application, quality_router)
     include_router_with_global_prefix_prepended(application, packs_router)
     include_router_with_global_prefix_prepended(application, kg_admin_router)
