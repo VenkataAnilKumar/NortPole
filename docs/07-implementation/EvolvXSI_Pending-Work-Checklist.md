@@ -55,6 +55,17 @@ Status: Working list, 2026-11-13 (pending-work list below saved 2026-11-13 after
 
 **Suggested order if work continues:** 7(a), 29, 22, 25; decisions 10, 12 and 13 unblock the most.
 
+## UI and admin console redesign (agreed 2026-11-13; plan in `docs/05-design/EvolvXSI_Redesign-Plan.md`)
+
+- [x] R1. Sidebar order and names, Workflows and Sources tabs, Knowledge rename, redirects, read-only Skills, Connectors and Plugins.
+- [ ] R2. Admin console regroup, merged Approvals queue, hide inherited screens.
+- [ ] R3. Workflows Start cleanup and the Agent tab for chat assistants only.
+- [ ] R4. Request buttons on Sources, landing in Approvals.
+- [ ] R5. Inbox filters.
+- [ ] R6. Scheduled workflows with stop at the plan and auto-pause.
+- [ ] R7. Knowledge domains and uploads (after the Google Drive connector).
+- [ ] R8. Quality pass of each stage.
+
 ## Known issues (saved 2026-11-13)
 
 - The local 7B model obeyed hostile text in 31% of injection tests; guides' effect on a real model is not measured.

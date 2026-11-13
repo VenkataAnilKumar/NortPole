@@ -16956,20 +16956,17 @@
       "plugins": {
         "label": "플러그인"
       },
-      "libraries": {
-        "label": "라이브러리"
-      },
-      "automations": {
-        "label": "자동화"
-      },
-      "reviewedTasks": {
-        "label": "초안"
-      },
-      "packs": {
-        "label": "워크플로"
-      },
       "inbox": {
         "label": "받은편지함"
+      },
+      "workflows": {
+        "label": "워크플로"
+      },
+      "knowledge": {
+        "label": "지식"
+      },
+      "sources": {
+        "label": "소스"
       }
     },
     "chatButton": {

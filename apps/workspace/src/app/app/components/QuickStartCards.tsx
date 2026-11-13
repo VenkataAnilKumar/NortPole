@@ -62,7 +62,7 @@ const QUICK_STARTS: QuickStart[] = [
     id: "workflows",
     label: "Browse workflows",
     prompt: "",
-    href: "/app/packs",
+    href: "/app/workflows",
     icon: (
       <svg {...ICON_PROPS} stroke="#e89a1a">
         <path d="M3 7l9-4 9 4-9 4zM3 12l9 4 9-4M3 17l9 4 9-4" />
@@ -131,7 +131,7 @@ export default function QuickStartCards({
       return;
     }
     const created = (await res.json()) as { id: string };
-    window.location.assign(`/app/reviewed-tasks?task=${encodeURIComponent(created.id)}`);
+    window.location.assign(`/app/workflows/drafts?task=${encodeURIComponent(created.id)}`);
   };
 
   const cls =

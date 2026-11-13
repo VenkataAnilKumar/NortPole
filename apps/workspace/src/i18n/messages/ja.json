@@ -16956,20 +16956,17 @@
       "plugins": {
         "label": "プラグイン"
       },
-      "libraries": {
-        "label": "ライブラリ"
-      },
-      "automations": {
-        "label": "自動化"
-      },
-      "reviewedTasks": {
-        "label": "下書き"
-      },
-      "packs": {
-        "label": "ワークフロー"
-      },
       "inbox": {
         "label": "受信トレイ"
+      },
+      "workflows": {
+        "label": "ワークフロー"
+      },
+      "knowledge": {
+        "label": "ナレッジ"
+      },
+      "sources": {
+        "label": "ソース"
       }
     },
     "chatButton": {

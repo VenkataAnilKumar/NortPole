@@ -82,8 +82,6 @@ import {
   SvgDevKit,
   SvgPlug,
   SvgFiles,
-  SvgClock,
-  SvgListCheck,
   SvgStackLine,
   SvgBell,
   SvgEditBig,
@@ -660,20 +658,6 @@ export default function AppSidebar() {
               {t("appSidebar.newSession.label")}
             </SidebarTab>
           </div>
-          <ChatSearchCommandMenu
-            trigger={(open, isOpen) => (
-              <SidebarTab icon={SvgSearchMenu} selected={isOpen} onClick={open}>
-                {t("appSidebar.searchChats.label")}
-              </SidebarTab>
-            )}
-          />
-          <SidebarTab
-            icon={SvgListCheck}
-            {...navigation.linkTo("/app/reviewed-tasks", { scroll: false })}
-            selected={activeSidebarTab.isReviewedTasks()}
-          >
-            {t("appSidebar.reviewedTasks.label")}
-          </SidebarTab>
           <SidebarTab
             icon={SvgBell}
             {...navigation.linkTo("/app/inbox", { scroll: false })}
@@ -692,38 +676,34 @@ export default function AppSidebar() {
           >
             {t("appSidebar.inbox.label")}
           </SidebarTab>
+          <ChatSearchCommandMenu
+            trigger={(open, isOpen) => (
+              <SidebarTab icon={SvgSearchMenu} selected={isOpen} onClick={open}>
+                {t("appSidebar.searchChats.label")}
+              </SidebarTab>
+            )}
+          />
           <SidebarTab
             icon={SvgStackLine}
-            {...navigation.linkTo("/app/packs", { scroll: false })}
-            selected={activeSidebarTab.isPacks()}
+            {...navigation.linkTo("/app/workflows", { scroll: false })}
+            selected={activeSidebarTab.isWorkflows()}
           >
-            {t("appSidebar.packs.label")}
+            {t("appSidebar.workflows.label")}
           </SidebarTab>
           <SidebarTab
             icon={SvgFiles}
-            {...navigation.linkTo("/app/libraries", { scroll: false })}
-            selected={activeSidebarTab.isLibraries()}
+            {...navigation.linkTo("/app/knowledge", { scroll: false })}
+            selected={activeSidebarTab.isKnowledge()}
           >
-            {t("appSidebar.libraries.label")}
+            {t("appSidebar.knowledge.label")}
           </SidebarTab>
           <SidebarTab
-            icon={SvgClock}
-            {...navigation.linkTo("/app/automations", { scroll: false })}
-            selected={activeSidebarTab.isAutomations()}
+            icon={SvgPlug}
+            {...navigation.linkTo("/app/sources/skills", { scroll: false })}
+            selected={activeSidebarTab.isSources()}
           >
-            {t("appSidebar.automations.label")}
+            {t("appSidebar.sources.label")}
           </SidebarTab>
-          {isEvolvXSICraftEnabled && (
-            <>
-              <SidebarTab
-                icon={SvgPlug}
-                {...navigation.linkTo("/app/plugins", { scroll: false })}
-                selected={activeSidebarTab.isPlugins()}
-              >
-                {t("appSidebar.plugins.label")}
-              </SidebarTab>
-            </>
-          )}
           {(isEvolvXSICraftEnabled || isEvolvXSICraftUpsell) && (
             <div data-testid="AppSidebar/build">
               <Disabled

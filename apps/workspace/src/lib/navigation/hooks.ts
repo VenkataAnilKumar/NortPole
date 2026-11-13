@@ -29,10 +29,9 @@ type AppPositionType =
         | "user-settings"
         | "shared-chat"
         | "plugins"
-        | "libraries"
-        | "automations"
-        | "reviewedTasks"
-        | "packs"
+        | "workflows"
+        | "knowledge"
+        | "sources"
         | "inbox";
     };
 
@@ -68,14 +67,12 @@ function hrefFor(value: AppPositionType): Route {
       return "/app/agents";
     case "plugins":
       return "/app/plugins";
-    case "libraries":
-      return "/app/libraries";
-    case "automations":
-      return "/app/automations";
-    case "reviewedTasks":
-      return "/app/reviewed-tasks";
-    case "packs":
-      return "/app/packs";
+    case "workflows":
+      return "/app/workflows";
+    case "knowledge":
+      return "/app/knowledge";
+    case "sources":
+      return "/app/sources/skills";
     case "inbox":
       return "/app/inbox";
     case "user-settings":
@@ -208,20 +205,18 @@ class AppPosition {
     return this.value.location === "plugins";
   }
 
-  isPacks(): boolean {
-    return this.value.location === "packs";
+  /** Start, Scheduled and My drafts are tabs of one Workflows section. */
+  isWorkflows(): boolean {
+    return this.value.location === "workflows";
   }
 
-  isReviewedTasks(): boolean {
-    return this.value.location === "reviewedTasks";
+  isKnowledge(): boolean {
+    return this.value.location === "knowledge";
   }
 
-  isAutomations(): boolean {
-    return this.value.location === "automations";
-  }
-
-  isLibraries(): boolean {
-    return this.value.location === "libraries";
+  /** Skills, Connectors and Plugins; a person's own plugins page sits under Sources too. */
+  isSources(): boolean {
+    return this.value.location === "sources" || this.value.location === "plugins";
   }
 
   isInbox(): boolean {
@@ -300,20 +295,14 @@ export function useAppPosition(): AppPosition {
     if (pathname === "/app/plugins" || pathname.startsWith("/app/plugins/")) {
       return new AppPosition({ location: "plugins" }, navigation);
     }
-    if (pathname === "/app/packs" || pathname.startsWith("/app/packs/")) {
-      return new AppPosition({ location: "packs" }, navigation);
+    if (pathname === "/app/workflows" || pathname.startsWith("/app/workflows/")) {
+      return new AppPosition({ location: "workflows" }, navigation);
     }
-    if (pathname === "/app/reviewed-tasks" || pathname.startsWith("/app/reviewed-tasks/")) {
-      return new AppPosition({ location: "reviewedTasks" }, navigation);
+    if (pathname === "/app/knowledge" || pathname.startsWith("/app/knowledge/")) {
+      return new AppPosition({ location: "knowledge" }, navigation);
     }
-    if (
-      pathname === "/app/automations" ||
-      pathname.startsWith("/app/automations/")
-    ) {
-      return new AppPosition({ location: "automations" }, navigation);
-    }
-    if (pathname === "/app/libraries" || pathname.startsWith("/app/libraries/")) {
-      return new AppPosition({ location: "libraries" }, navigation);
+    if (pathname === "/app/sources" || pathname.startsWith("/app/sources/")) {
+      return new AppPosition({ location: "sources" }, navigation);
     }
     if (pathname === "/app/inbox" || pathname.startsWith("/app/inbox/")) {
       return new AppPosition({ location: "inbox" }, navigation);

@@ -111,6 +111,13 @@ const nextConfig = {
   },
   async redirects() {
     return [
+      // EvolvXSI redesign (R1): old addresses still work. Temporary (307) while the redesign settles; the query
+      // (for example ?task= on a draft link) is kept.
+      { source: "/app/packs", destination: "/app/workflows", permanent: false },
+      { source: "/app/reviewed-tasks", destination: "/app/workflows/drafts", permanent: false },
+      { source: "/app/automations", destination: "/app/workflows/scheduled", permanent: false },
+      { source: "/app/libraries", destination: "/app/knowledge", permanent: false },
+      { source: "/app/sources", destination: "/app/sources/skills", permanent: false },
       {
         source: "/chat",
         destination: "/app",
