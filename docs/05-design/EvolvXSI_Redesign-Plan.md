@@ -16,7 +16,7 @@ The user side is for using things and asking for them. The admin console is for 
 | 4 | **Agent** | Chat assistants only, each card showing what it reads and which tools it may use. Workflow agents live in Workflows. | Exists (sidebar Agents section); cleanup R3 |
 | 5 | **Workflows** | Tabs **Start** (packs; a "Run by" card shows the agent's plan), **Scheduled** (each run stops at the plan and waits in Inbox; a schedule pauses after 3 plans in a row go unaccepted), **My drafts**. | **R1 done** (tabs, addresses); scheduler R6 |
 | 6 | **Knowledge** | **Company knowledge** by domain (read-only; source and freshness) and **Uploaded data** by domain (projects become optional folders), with "Request to add to company knowledge". | **R1 done** (renamed, company knowledge); domains and uploads R7 |
-| 7 | **Sources** | Tabs in this order (owner's decision): **Discover** (what is not on yet: supported connector types, uploaded but inactive packs, tools not allowed, each with a Request button and its status), **Connectors** (systems connected now), **Skills** (what installed packs know: guides, review rules, house style, workflow agents), **Plugins** (tools assistants may use and whether each is allowed). People request; only an administrator turns anything on. | Connectors, Skills, Plugins done (R1, R3 order); Discover R4 |
+| 7 | **Sources** | Tabs in this order (owner's decision): **Discover** (what is not on yet: supported connector types, uploaded but inactive packs, tools not allowed, each with a Request button and its status), **Connectors** (systems connected now), **Skills** (what installed packs know: guides, review rules, house style, workflow agents), **Plugins** (tools assistants may use and whether each is allowed). People request; only an administrator turns anything on. | Done (R1, R3, R4) |
 | 8 | **Recent** | Chats, drafts and workflows opened recently. Pin, rename, delete. | Exists |
 | 9 | **Settings** | Profile, theme, language, memory, personal tools, notifications; Admin link for administrators. | Exists |
 
@@ -46,7 +46,7 @@ Hidden for the pilot (R2): Discord bot, SCIM, Hooks, Billing and the "Upgrade pl
 | `/app/automations` | `/app/workflows/scheduled` |
 | `/app/reviewed-tasks` | `/app/workflows/drafts` (the `?task=` query is kept) |
 | `/app/libraries` | `/app/knowledge` |
-| `/app/sources` | `/app/sources/connectors` (`/app/sources/discover` from R4) |
+| `/app/sources` | `/app/sources/discover` |
 
 The old addresses redirect (HTTP 307, set in `next.config.js`) because home cards, bookmarks and audit records use them. `/app/plugins` (a person's own plugins, and its OAuth callback) is unchanged and shows under Sources.
 
@@ -57,10 +57,18 @@ The old addresses redirect (HTTP 307, set in `next.config.js`) because home card
 | R1 | Sidebar order and names, Workflows and Sources tabs, Knowledge rename, redirects, read-only Skills, Connectors and Plugins | Small | Done |
 | R2 | Admin console regroup, merged Approvals queue, hide inherited screens | Small to medium | Done |
 | R3 | "Run by" line on Start, Agent tab for chat assistants, Channels rename, Sources order | Medium | Done |
-| R4 | **Discover** (first tab of Sources) with requests for connectors, skills and plugins, landing in Approvals | Medium | Next |
-| R5 | Inbox filters | Small | |
+| R4 | **Discover** (first tab of Sources) with requests for connectors, skills and plugins, landing in Approvals | Medium | Done |
+| R5 | Inbox filters | Small | Next |
 | R6 | Scheduled workflows: scheduler, stop at the plan, auto-pause, cost on Quality | Medium | |
 | R7 | Knowledge domains, uploads by domain, request and approve, domain filter in search | Large | After the Google Drive connector |
 | R8 | Quality pass of each stage | Small per stage | Ongoing |
 
 New page text is in English first; sidebar labels are translated into all nine languages in the same stage.
+
+## Discover and requests (R4)
+
+- **What is offered:** a reviewed list of 17 common connector types not yet set up; packs an administrator uploaded with no active version; tools that exist but are not allowed (personal tools are never offered). Nothing unknown or outside the workspace is listed.
+- **A request** records the kind, the item and an optional reason (up to 500 characters). One waiting request per person per item, and at most 20 waiting per person. A person can withdraw their own waiting request.
+- **Deciding** happens in admin Approvals, with an optional note the person sees. **Approving turns nothing on**: it records the decision, and the administrator sets the item up on Connectors, Packs or Tools (each request links there).
+- **Audit:** `source.request` (asked, withdrawn) and `source.request_decide`, with the kind and item only; the person's reason is not copied into the audit log.
+- **Not yet:** telling the person in Inbox when a request is decided (R5); closing an approved request automatically once the item is on.

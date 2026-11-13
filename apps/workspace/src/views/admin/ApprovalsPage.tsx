@@ -3,6 +3,7 @@
 import { useApprovalCounts } from "@/lib/approvals";
 import AdminApprovals from "@/views/admin/AdminApprovals";
 import SecondApproverQueue from "@/views/admin/SecondApproverQueue";
+import SourceRequestsQueue from "@/views/admin/SourceRequestsQueue";
 
 const card = "rounded-2xl border border-border-01 bg-background-neutral-00 p-5 shadow-sm";
 const STATUS: Record<string, string> = {
@@ -12,7 +13,7 @@ const STATUS: Record<string, string> = {
 };
 
 /**
- * Everything waiting for an administrator, in one place: sends that need a second approver, administrator changes
+ * Everything waiting for an administrator, in one place: sends that need a second approver, requests from Discover, administrator changes
  * that need a second administrator, and outside tools whose definition needs approving. Each item is decided where
  * it is shown, except tool definitions, which are reviewed on the Tools page next to what the model is told.
  */
@@ -26,6 +27,7 @@ export default function ApprovalsPage() {
           c.sends && `${c.sends} ${c.sends === 1 ? "send" : "sends"}`,
           c.changes && `${c.changes} administrator ${c.changes === 1 ? "change" : "changes"}`,
           c.tools && `${c.tools} tool ${c.tools === 1 ? "definition" : "definitions"}`,
+          c.requests && `${c.requests} ${c.requests === 1 ? "request" : "requests"} from people`,
         ].filter(Boolean).join(", ") + " waiting.";
 
   return (
@@ -37,6 +39,8 @@ export default function ApprovalsPage() {
       </div>
 
       <SecondApproverQueue />
+
+      <SourceRequestsQueue />
 
       <AdminApprovals />
 

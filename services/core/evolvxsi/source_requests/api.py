@@ -1,0 +1,181 @@
+"""Discover and requests. Anyone signed in sees what could be added and asks for it; an administrator decides. A
+decision is a record only: approving does not connect, activate or allow anything by itself."""
+
+from __future__ import annotations
+
+import datetime
+from uuid import UUID
+
+from fastapi import APIRouter, Depends
+from pydantic import BaseModel, Field
+from sqlalchemy import func, select
+from sqlalchemy.orm import Session
+
+from evolvxsi.auth.permissions import require_permission
+from evolvxsi.db.engine.sql_engine import get_session
+from evolvxsi.db.enums import Permission
+from evolvxsi.db.models import User
+from evolvxsi.error_handling.error_codes import EvolvXSIErrorCode
+from evolvxsi.error_handling.exceptions import EvolvXSIError
+from evolvxsi.route_policy.audit import record_audit
+from evolvxsi.source_requests import catalog
+from evolvxsi.source_requests.models import EvolvXSISourceRequest
+from evolvxsi.utils.audit import AuditAction, AuditOutcome
+
+router = APIRouter()
+
+MAX_PENDING_PER_PERSON = 20
+# Where an administrator turns each kind on after approving.
+WHERE = {"connector": "/admin/connectors", "skill": "/admin/packs", "plugin": "/admin/tool-catalog"}
+
+
+class RequestView(BaseModel):
+    id: UUID
+    kind: str
+    item_key: str
+    item_name: str
+    reason: str
+    state: str
+    requested_by_email: str
+    decided_by_email: str | None
+    decision_note: str
+    created_at: datetime.datetime
+    decided_at: datetime.datetime | None
+    manage_at: str
+
+
+class DiscoverItem(BaseModel):
+    kind: str
+    key: str
+    name: str
+    description: str
+    why_approval: str
+    my_request: RequestView | None = None
+
+
+class DiscoverView(BaseModel):
+    items: list[DiscoverItem]
+    my_requests: list[RequestView]
+
+
+class NewRequest(BaseModel):
+    kind: str
+    item_key: str = Field(max_length=120)
+    reason: str = Field(default="", max_length=500)
+
+
+class Decision(BaseModel):
+    approve: bool
+    note: str = Field(default="", max_length=500)
+
+
+def _view(r: EvolvXSISourceRequest) -> RequestView:
+    return RequestView(id=r.id, kind=r.kind, item_key=r.item_key, item_name=r.item_name, reason=r.reason, state=r.state,
+                       requested_by_email=r.requested_by_email, decided_by_email=r.decided_by_email, decision_note=r.decision_note,
+                       created_at=r.created_at, decided_at=r.decided_at, manage_at=WHERE.get(r.kind, "/admin/approvals"))
+
+
+def _mine(db: Session, user: User) -> list[EvolvXSISourceRequest]:
+    return list(db.scalars(select(EvolvXSISourceRequest).where(EvolvXSISourceRequest.requested_by_id == user.id)
+                           .order_by(EvolvXSISourceRequest.created_at.desc()).limit(100)))
+
+
+@router.get("/sources/discover")
+def get_discover(
+    user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
+    db_session: Session = Depends(get_session),
+) -> DiscoverView:
+    mine = _mine(db_session, user)
+    latest: dict[tuple[str, str], EvolvXSISourceRequest] = {}
+    for r in mine:  # newest first, so the first seen is the latest
+        latest.setdefault((r.kind, r.item_key), r)
+    items = []
+    for i in catalog.discover(db_session):
+        r = latest.get((i.kind, i.key))
+        items.append(DiscoverItem(kind=i.kind, key=i.key, name=i.name, description=i.description, why_approval=i.why_approval,
+                                  my_request=_view(r) if r and r.state != "withdrawn" else None))
+    return DiscoverView(items=items, my_requests=[_view(r) for r in mine[:20]])
+
+
+@router.post("/sources/requests")
+def create_request(
+    body: NewRequest,
+    user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
+    db_session: Session = Depends(get_session),
+) -> RequestView:
+    if body.kind not in catalog.KINDS:
+        raise EvolvXSIError(EvolvXSIErrorCode.INVALID_INPUT, "Unknown kind of request.")
+    item = catalog.find(db_session, body.kind, body.item_key)
+    if item is None:
+        raise EvolvXSIError(EvolvXSIErrorCode.NOT_FOUND, "That is not on the Discover page: it may already be on.")
+    pending = select(EvolvXSISourceRequest).where(EvolvXSISourceRequest.requested_by_id == user.id, EvolvXSISourceRequest.state == "pending")
+    if db_session.scalar(pending.where(EvolvXSISourceRequest.kind == body.kind, EvolvXSISourceRequest.item_key == body.item_key)):
+        raise EvolvXSIError(EvolvXSIErrorCode.CONFLICT, "You have already asked for this; it is waiting for an administrator.")
+    if (db_session.scalar(select(func.count()).select_from(pending.subquery())) or 0) >= MAX_PENDING_PER_PERSON:
+        raise EvolvXSIError(EvolvXSIErrorCode.CONFLICT, "Too many of your requests are waiting. Withdraw one or wait for a decision.")
+    r = EvolvXSISourceRequest(kind=body.kind, item_key=item.key, item_name=item.name, reason=body.reason.strip(),
+                              requested_by_id=user.id, requested_by_email=user.email)
+    db_session.add(r)
+    db_session.commit()
+    db_session.refresh(r)
+    # The reason is the person's own text; the audit records what was asked for, not why.
+    record_audit(AuditAction.SOURCE_REQUEST, AuditOutcome.SUCCESS, actor=user, summary=f"Asked for {item.kind} {item.name}",
+                 details={"kind": item.kind, "item": item.key, "state": "pending"}, resource_type="source_request", resource_id=str(r.id))
+    return _view(r)
+
+
+@router.post("/sources/requests/{request_id}/withdraw")
+def withdraw_request(
+    request_id: UUID,
+    user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
+    db_session: Session = Depends(get_session),
+) -> RequestView:
+    r = db_session.get(EvolvXSISourceRequest, request_id)
+    if r is None or r.requested_by_id != user.id:
+        raise EvolvXSIError(EvolvXSIErrorCode.NOT_FOUND, "Request not found.")
+    if r.state != "pending":
+        raise EvolvXSIError(EvolvXSIErrorCode.CONFLICT, "Only a waiting request can be withdrawn.")
+    r.state, r.decided_at = "withdrawn", datetime.datetime.now(datetime.timezone.utc)
+    db_session.commit()
+    record_audit(AuditAction.SOURCE_REQUEST, AuditOutcome.SUCCESS, actor=user, summary=f"Withdrew request for {r.kind} {r.item_name}",
+                 details={"kind": r.kind, "item": r.item_key, "state": "withdrawn"}, resource_type="source_request", resource_id=str(r.id))
+    return _view(r)
+
+
+class AdminRequests(BaseModel):
+    pending: list[RequestView]
+    recent: list[RequestView]
+
+
+@router.get("/admin/source-requests")
+def list_requests(
+    _: User = Depends(require_permission(Permission.FULL_ADMIN_PANEL_ACCESS)),
+    db_session: Session = Depends(get_session),
+) -> AdminRequests:
+    q = select(EvolvXSISourceRequest)
+    pending = db_session.scalars(q.where(EvolvXSISourceRequest.state == "pending").order_by(EvolvXSISourceRequest.created_at)).all()
+    recent = db_session.scalars(q.where(EvolvXSISourceRequest.state.in_(("approved", "declined")))
+                                .order_by(EvolvXSISourceRequest.decided_at.desc()).limit(10)).all()
+    return AdminRequests(pending=[_view(r) for r in pending], recent=[_view(r) for r in recent])
+
+
+@router.post("/admin/source-requests/{request_id}/decide")
+def decide_request(
+    request_id: UUID,
+    body: Decision,
+    user: User = Depends(require_permission(Permission.FULL_ADMIN_PANEL_ACCESS)),
+    db_session: Session = Depends(get_session),
+) -> RequestView:
+    r = db_session.get(EvolvXSISourceRequest, request_id)
+    if r is None:
+        raise EvolvXSIError(EvolvXSIErrorCode.NOT_FOUND, "Request not found.")
+    if r.state != "pending":
+        raise EvolvXSIError(EvolvXSIErrorCode.CONFLICT, "This request has already been decided or withdrawn.")
+    r.state = "approved" if body.approve else "declined"
+    r.decided_by_email, r.decision_note = user.email, body.note.strip()
+    r.decided_at = datetime.datetime.now(datetime.timezone.utc)
+    db_session.commit()
+    record_audit(AuditAction.SOURCE_REQUEST_DECIDE, AuditOutcome.SUCCESS, actor=user,
+                 summary=f"{'Approved' if body.approve else 'Declined'} request for {r.kind} {r.item_name} from {r.requested_by_email}",
+                 details={"kind": r.kind, "item": r.item_key, "state": r.state}, resource_type="source_request", resource_id=str(r.id))
+    return _view(r)

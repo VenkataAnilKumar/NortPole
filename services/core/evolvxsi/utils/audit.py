@@ -114,6 +114,8 @@ class AuditAction(str, Enum):
     RETENTION_CHANGE = "retention.change"
     ADMIN_CHANGE_PROPOSE = "admin.change_propose"
     ADMIN_CHANGE_DECIDE = "admin.change_decide"
+    SOURCE_REQUEST = "source.request"
+    SOURCE_REQUEST_DECIDE = "source.request_decide"
     AUDIT_EXPORT = "audit.export"
     EXTENSION_CHANGE = "extension.change"
     EXTENSION_BLOCKED = "extension.blocked"
@@ -190,6 +192,8 @@ _OCSF_CLASS_BY_ACTION: dict[AuditAction, OCSFEventClass] = {
     AuditAction.RETENTION_CHANGE: OCSFEventClass.API_ACTIVITY,
     AuditAction.ADMIN_CHANGE_PROPOSE: OCSFEventClass.API_ACTIVITY,
     AuditAction.ADMIN_CHANGE_DECIDE: OCSFEventClass.API_ACTIVITY,
+    AuditAction.SOURCE_REQUEST: OCSFEventClass.API_ACTIVITY,
+    AuditAction.SOURCE_REQUEST_DECIDE: OCSFEventClass.API_ACTIVITY,
     AuditAction.AUDIT_EXPORT: OCSFEventClass.API_ACTIVITY,
     AuditAction.EXTENSION_CHANGE: OCSFEventClass.API_ACTIVITY,
     AuditAction.EXTENSION_BLOCKED: OCSFEventClass.API_ACTIVITY,
