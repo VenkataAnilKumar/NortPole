@@ -16866,6 +16866,9 @@
         },
         "toolCatalog": {
           "label": "ツール"
+        },
+        "studio": {
+          "label": "スタジオ"
         }
       },
       "sections": {

@@ -28,6 +28,10 @@ Paste the package into **Install**. A tampered package, an unknown signer, an in
 
 Before activating, read what the pack will put in front of the model: each template's house style, its review rules, and its **guides** (open "Guides in this version" on the Packs page; every guide is shown in full, with the workflows that use it). A guide is text the signer wrote; it shapes how plans and drafts are written and cannot add a source, run anything or change the citation rules, but it is instruction text all the same, so treat it like any other content you approve.
 
+## 3b. Packs written in Studio
+
+Administrators can also write a pack in the product (Admin > Packs > Studio). Publishing checks it with the same rules, signs it with a workspace key the product creates on first use and trusts as the signer `workspace-studio`, and installs it inactive; review and activate it as above. That key is stored in this product's database, so a Studio pack shows only that an administrator here published it. Studio cannot publish a pack id that another signer already publishes. Revoking `workspace-studio` stops every Studio pack at once.
+
 ## 4. Rotate a key
 
 Rotation has to keep packs available, because revoking a signer stops every version it signed, everywhere, at once.
