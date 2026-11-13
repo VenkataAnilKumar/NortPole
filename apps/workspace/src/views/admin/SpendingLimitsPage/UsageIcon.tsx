@@ -20,7 +20,7 @@ export default function UsageIcon({ percent }: UsageIconProps) {
       height={1.25}
       // The ring fills its 18px with a 1px inset, as in the mock.
       padding={atLimit ? 0.5 : 0.25}
-      className={atLimit ? "text-status-error-05" : undefined}
+      className={atLimit ? "text-status-text-error-05" : undefined}
     >
       {atLimit ? (
         <SvgAlertCircle size={16} aria-hidden />

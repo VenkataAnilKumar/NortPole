@@ -288,7 +288,7 @@ export default function RoutePolicyPage() {
           </button>
         )}
         {status && (
-          <p role="status" className={`text-sm ${status.ok ? "text-status-success-05" : "text-status-error-05"}`}>
+          <p role="status" className={`text-sm ${status.ok ? "text-status-success-05" : "text-status-text-error-05"}`}>
             {status.text}
           </p>
         )}
@@ -325,7 +325,7 @@ export default function RoutePolicyPage() {
         {testResult && (
           <p
             role="status"
-            className={`mt-4 rounded-xl px-4 py-3 text-sm ${testResult.allowed ? "bg-status-success-01 text-status-success-05" : "bg-status-error-01 text-status-error-05"}`}
+            className={`mt-4 rounded-xl px-4 py-3 text-sm ${testResult.allowed ? "bg-status-success-01 text-status-success-05" : "bg-status-error-01 text-status-text-error-05"}`}
           >
             {testResult.allowed
               ? `Allowed: ${testResult.kind} routes may process this data class.`
@@ -392,7 +392,7 @@ export default function RoutePolicyPage() {
                   <td className="whitespace-nowrap py-2 pr-3 text-text-03">{new Date(e.created_at).toLocaleString()}</td>
                   <td className="py-2 pr-3">
                     <span
-                      className={`whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium ${e.outcome === "denied" ? "bg-status-error-01 text-status-error-05" : "bg-background-neutral-02 text-text-05"}`}
+                      className={`whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium ${e.outcome === "denied" ? "bg-status-error-01 text-status-text-error-05" : "bg-background-neutral-02 text-text-05"}`}
                     >
                       {ACTION_LABEL[e.action] ?? e.action}
                     </span>

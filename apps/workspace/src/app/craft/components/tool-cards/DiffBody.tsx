@@ -179,7 +179,7 @@ function lineRowClass(type: DiffLineType): string {
 
 function linePrefix(type: DiffLineType): { glyph: string; color: string } {
   if (type === "added") return { glyph: "+", color: "text-status-success-05" };
-  if (type === "removed") return { glyph: "-", color: "text-status-error-05" };
+  if (type === "removed") return { glyph: "-", color: "text-status-text-error-05" };
   return { glyph: BLANK, color: "text-text-03" };
 }
 
@@ -334,7 +334,7 @@ export default function DiffBody({ toolCall }: ToolCardBodyProps) {
             </span>
           )}
           {stats.removed > 0 && (
-            <span className="text-status-error-05">
+            <span className="text-status-text-error-05">
               <Text font="figure-small-value" color="inherit">
                 {`-${stats.removed}`}
               </Text>

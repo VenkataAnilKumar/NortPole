@@ -32,8 +32,8 @@ const AREAS: { label: string; prefix: string }[] = [
 ];
 const OUTCOME_STYLE: Record<Row["outcome"], string> = {
   success: "text-text-03",
-  failure: "text-status-error-05",
-  denied: "text-status-warning-05",
+  failure: "text-status-text-error-05",
+  denied: "text-status-text-warning-05",
 };
 
 const card = "rounded-2xl border border-border-01 bg-background-neutral-00 shadow-sm";

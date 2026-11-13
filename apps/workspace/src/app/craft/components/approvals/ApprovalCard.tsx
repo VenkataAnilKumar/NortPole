@@ -132,7 +132,7 @@ export default function ApprovalCard({
       </div>
       <PayloadView payload={approval.display_payload} />
       {errorMessage && (
-        <div className="text-status-error-05">
+        <div className="text-status-text-error-05">
           <Text font="secondary-body" color="inherit">
             {errorMessage}
           </Text>

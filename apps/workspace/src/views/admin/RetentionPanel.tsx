@@ -135,7 +135,7 @@ export default function RetentionPanel() {
         The prune also runs daily when the background workers are running. Exports hold up to 50,000 events (with their hashes) and are themselves recorded in the audit log. The integrity check finds an edited event or one removed from the middle; it cannot see the newest events being removed unless the latest hash was kept elsewhere (each event's log line carries it).
         {data.last_prune_summary ? ` Last prune: ${data.last_prune_summary}.` : ""}
       </p>
-      {msg && <p role={msg.ok ? "status" : "alert"} className={`mt-2 text-sm ${msg.ok ? "text-text-05" : "text-status-error-05"}`} data-testid="retention-message">{msg.text}</p>}
+      {msg && <p role={msg.ok ? "status" : "alert"} className={`mt-2 text-sm ${msg.ok ? "text-text-05" : "text-status-text-error-05"}`} data-testid="retention-message">{msg.text}</p>}
     </section>
   );
 }

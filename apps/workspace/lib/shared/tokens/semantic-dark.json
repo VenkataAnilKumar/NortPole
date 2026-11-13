@@ -509,11 +509,11 @@
       "type": "color"
     },
     "status-text-warning-05": {
-      "value": "{orange-50}",
+      "value": "{orange-20}",
       "type": "color"
     },
     "status-text-error-05": {
-      "value": "{red-45}",
+      "value": "{red-20}",
       "type": "color"
     },
     "action-selection-06": {

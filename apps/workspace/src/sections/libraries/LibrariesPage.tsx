@@ -82,7 +82,7 @@ export default function LibrariesPage() {
               <div className="flex items-start justify-between gap-3">
                 <h2 className="text-base font-semibold text-text-05">{l.name}</h2>
                 <span
-                  className={`whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium ${l.is_up_to_date ? "bg-status-success-01 text-status-success-05" : "bg-status-warning-01 text-status-warning-05"}`}
+                  className={`whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium ${l.is_up_to_date ? "bg-status-success-01 text-status-success-05" : "bg-status-warning-01 text-status-text-warning-05"}`}
                 >
                   {l.is_up_to_date ? "Up to date" : "Syncing"}
                 </span>

@@ -151,7 +151,7 @@ export default function RoutePicker({
         <span className="text-text-03">Run on</span>
         <span>{label}</span>
         {blockedNow && (
-          <span className="rounded-full bg-status-error-01 px-2 text-xs text-status-error-05">
+          <span className="rounded-full bg-status-error-01 px-2 text-xs text-status-text-error-05">
             Blocked
           </span>
         )}
@@ -219,7 +219,7 @@ export default function RoutePicker({
                     <span className="rounded-full bg-status-success-01 px-2 py-0.5 text-xs text-status-success-05">Allowed</span>
                   )
                 ) : (
-                  <span className="rounded-full bg-status-error-01 px-2 py-0.5 text-xs text-status-error-05">Blocked</span>
+                  <span className="rounded-full bg-status-error-01 px-2 py-0.5 text-xs text-status-text-error-05">Blocked</span>
                 )}
               </button>
             );

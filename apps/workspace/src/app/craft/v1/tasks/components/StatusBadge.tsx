@@ -75,7 +75,7 @@ function getRunStatusDisplay(status: ScheduledTaskRunStatus): RunStatusDisplay {
         label: "Failed",
         icon: SvgAlertCircle,
         className: "bg-status-error-01",
-        iconClassName: "text-status-error-05",
+        iconClassName: "text-status-text-error-05",
       };
     case "RUNNING":
       return {
@@ -103,7 +103,7 @@ function getRunStatusDisplay(status: ScheduledTaskRunStatus): RunStatusDisplay {
         label: "Awaiting approval",
         icon: SvgClock,
         className: "bg-status-warning-01",
-        iconClassName: "text-status-warning-05",
+        iconClassName: "text-status-text-warning-05",
       };
   }
 }

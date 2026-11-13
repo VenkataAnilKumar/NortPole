@@ -72,10 +72,10 @@ export default function ModelsSettings() {
           <p role="status" className="mt-3 text-sm text-status-success-05">Saved.</p>
         )}
         {status === "error" && (
-          <p role="alert" className="mt-3 text-sm text-status-error-05">Could not save. Try again in a moment.</p>
+          <p role="alert" className="mt-3 text-sm text-status-text-error-05">Could not save. Try again in a moment.</p>
         )}
         {blockedPref && (
-          <p role="status" className="mt-3 text-sm text-status-error-05">
+          <p role="status" className="mt-3 text-sm text-status-text-error-05">
             Your administrator's policy does not currently allow {KIND_LABEL[pref as RouteKind]} routes for this workspace's
             data, so Auto is used instead.
           </p>
@@ -101,7 +101,7 @@ export default function ModelsSettings() {
                 <div className="text-xs text-text-03">{r.allowed ? KIND_HELP[r.kind] : (r.reason ?? "Not allowed by policy")}</div>
               </div>
               <span
-                className={`whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium ${r.allowed ? "bg-status-success-01 text-status-success-05" : "bg-status-error-01 text-status-error-05"}`}
+                className={`whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium ${r.allowed ? "bg-status-success-01 text-status-success-05" : "bg-status-error-01 text-status-text-error-05"}`}
               >
                 {r.allowed ? "Allowed" : "Blocked"}
               </span>
