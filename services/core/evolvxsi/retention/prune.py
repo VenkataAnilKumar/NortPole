@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from evolvxsi.redaction.request import EvolvXSIRedactionCount
 from evolvxsi.retention.settings import Retention, load, save
 from evolvxsi.route_policy.audit import EvolvXSIAuditEvent, record_audit
-from evolvxsi.route_policy.usage import EvolvXSIRouteUsage
+from evolvxsi.route_policy.usage import EvolvXSIRouteTokens, EvolvXSIRouteUsage
 from evolvxsi.utils.audit import AuditAction, AuditOutcome
 
 
@@ -30,7 +30,9 @@ def prune(db: Session, *, now: datetime.datetime | None = None, actor=None, sett
         out["audit_events"] = db.execute(delete(EvolvXSIAuditEvent).where(EvolvXSIAuditEvent.created_at < cutoff)).rowcount or 0
     if r.usage_days:
         day = (now - datetime.timedelta(days=r.usage_days)).date()
-        out["usage_rows"] = db.execute(delete(EvolvXSIRouteUsage).where(EvolvXSIRouteUsage.day < day)).rowcount or 0
+        # Token and cost counters follow the same period as the request counters and count in the same total.
+        out["usage_rows"] = (db.execute(delete(EvolvXSIRouteUsage).where(EvolvXSIRouteUsage.day < day)).rowcount or 0) + (
+            db.execute(delete(EvolvXSIRouteTokens).where(EvolvXSIRouteTokens.day < day)).rowcount or 0)
         out["redaction_rows"] = db.execute(delete(EvolvXSIRedactionCount).where(EvolvXSIRedactionCount.day < day)).rowcount or 0
     db.commit()
     if not r.legal_hold and r.audit_days and out["audit_events"] and last_gone:
