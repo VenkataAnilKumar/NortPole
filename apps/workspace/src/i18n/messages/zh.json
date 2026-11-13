@@ -12451,7 +12451,9 @@
         "sendButton": {
           "processingFilesTooltip": "正在等待附件处理完成",
           "stoppingLabel": "正在停止…",
-          "reloadLabel": "再次检查"
+          "reloadLabel": "再次检查",
+          "sendLabel": "发送",
+          "stopLabel": "停止"
         },
         "tabReadingButton": {
           "readLabel": "读取此标签页",

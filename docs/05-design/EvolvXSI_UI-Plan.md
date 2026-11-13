@@ -24,6 +24,6 @@ Settings: Profile · Appearance · Models · Notifications · Memory · Accounts
 | U3 | Admin console regrouped into the eight tabs; Governance gathers its pages (done 2026-11-13) | Medium |
 | U4 | Admin Overview: failed runs, refusals, packs that lost readiness, audit chain status (done 2026-11-13) | Medium |
 | U5 | "Turn into task" from a chat answer; Everyday workflows as the home start cards (built as cards above the composer rather than chips inside it), with built-in fallbacks (done 2026-11-13) | Medium |
-| U6 | Quality pass on every changed screen (light and dark, 1280 and 390 wide, axe at 0 violations, keyboard) | Small, per stage |
+| U6 | Quality pass on every changed screen (light and dark, 1280 and 390 wide, axe at 0 violations, keyboard) (done 2026-11-13) | Small, per stage |
 
 Each stage ends with a browser check and a note in [REVIEW.md](../REVIEW.md).

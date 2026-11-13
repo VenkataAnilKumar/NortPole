@@ -94,6 +94,9 @@ function Button({
       type={type}
       disabled={disabled}
       interaction={resolvedInteraction}
+      // An icon-only button has no text of its own, so its tooltip names it
+      // for screen readers unless the caller gave an explicit name.
+      aria-label={!children && tooltip ? tooltip : undefined}
       {...interactiveProps}
     >
       <Interactive.Container

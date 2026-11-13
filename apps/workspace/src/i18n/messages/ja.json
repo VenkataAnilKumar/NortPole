@@ -12451,7 +12451,9 @@
         "sendButton": {
           "processingFilesTooltip": "添付ファイルの処理が完了するのを待っています",
           "stoppingLabel": "停止中…",
-          "reloadLabel": "もう一度確認"
+          "reloadLabel": "もう一度確認",
+          "sendLabel": "送信",
+          "stopLabel": "停止"
         },
         "tabReadingButton": {
           "readLabel": "このタブを読み取る",
