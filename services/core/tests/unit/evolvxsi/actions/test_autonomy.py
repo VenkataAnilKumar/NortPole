@@ -28,7 +28,7 @@ def test_a_pack_declares_autonomy_and_the_default_is_unchanged() -> None:
     import json
     from pathlib import Path
 
-    raw = json.loads((Path(__file__).parents[4] / "scripts/sample_packs/finance-policy-review.json").read_text())
+    raw = json.loads((Path(__file__).parents[4] / "tests/common/fixtures/finance-policy-review-1.1.0.json").read_text())
     assert Manifest.model_validate(raw).autonomy == "act_with_approval"
     raw["autonomy"] = "draft_only"
     assert Manifest.model_validate(raw).autonomy == "draft_only"

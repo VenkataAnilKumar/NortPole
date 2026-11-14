@@ -21,7 +21,7 @@ pytestmark = pytest.mark.skipif(not _up(), reason="needs Postgres")
 
 TAG = uuid.uuid4().hex[:8]
 PACK = f"studio-{TAG}"
-SAMPLE = json.loads((Path(__file__).parents[2] / "scripts/sample_packs/finance-policy-review.json").read_text())
+SAMPLE = json.loads((Path(__file__).parents[2] / "tests/common/fixtures/finance-policy-review-1.1.0.json").read_text())
 
 
 def _kv(key):  # type: ignore[no-untyped-def]

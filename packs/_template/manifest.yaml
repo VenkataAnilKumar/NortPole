@@ -1,0 +1,25 @@
+# Copy this folder to packs/horizontal/<pack-id>/ or packs/vertical/<industry>/<pack-id>/ and edit.
+# The folder name must equal `id`; `vertical` is "general" for horizontal packs, or the industry folder's name.
+schema_version: 1
+id: my-pack
+name: My pack
+version: 0.1.0
+vertical: general
+description: One or two sentences on what this pack is for.
+autonomy: act_with_approval
+requires:
+  route_kinds: [local, private]
+  data_classes: [public, internal]
+requests:
+  send_destinations: false
+  personal_connectors: false
+review_rules:
+  - kind: min_citations
+    value: 1
+    message: Cite at least one source.
+    severity: block
+templates:
+  - id: first-workflow
+    title: First workflow
+    request: The question or task a person starts with.
+    desired_output: What a good answer looks like.

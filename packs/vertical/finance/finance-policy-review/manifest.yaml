@@ -1,0 +1,83 @@
+# Finance policy review 1.5.0: workflow pack source. Validate with the core's pack tests; build and sign with the pack SDK (decision 0006).
+schema_version: 1
+id: finance-policy-review
+name: Finance policy review
+version: 1.5.0
+vertical: finance
+description: Task templates for finance teams reviewing internal policies. Answers cite only documents the person
+  may open.
+autonomy: act_with_approval
+requires:
+  route_kinds:
+  - local
+  - private
+  data_classes:
+  - confidential
+  - internal
+  - public
+requests:
+  send_destinations: false
+  personal_connectors: false
+review_rules:
+- kind: min_citations
+  value: 1
+  message: Cite at least one source.
+  severity: block
+guides:
+- id: cite-the-rule
+  body: State the rule in one sentence, then cite the passage it comes from. If two passages disagree, say so and
+    cite both. Give amounts and deadlines exactly as written; do not round them. If no passage states the rule,
+    say that the policy does not cover it.
+  name: Citing a policy rule
+  description: Use when an answer states a rule from a finance policy.
+- id: compare-versions
+  body: List each change as before, after and the date it applies from, each with its citation. Say which version
+    is current. Leave out wording changes that do not change a rule.
+  name: Comparing policy versions
+  description: Use when a request asks what changed between versions of a policy.
+agents:
+- id: researcher
+  name: Policy researcher
+  tools:
+  - search
+  guides:
+  - cite-the-rule
+  description: Finds the rule in the policies you can open and cites it.
+  instructions: Look for the current version of the policy first. Search for the exact rule the person asks about,
+    then for who approves exceptions.
+  max_searches: 3
+templates:
+- id: receipt-rules
+  agent: researcher
+  style: Answer in at most three short sentences, plain language, no headings.
+  title: Travel receipt rules
+  guides:
+  - cite-the-rule
+  request: When are travel expense receipts due, and what happens if they are late?
+  review_rules:
+  - kind: max_words
+    value: 120
+    message: Keep the answer under 120 words.
+    severity: warn
+  desired_output: A short answer for staff, with citations
+- id: approval-limits
+  agent: null
+  style: ''
+  title: Expense approval limits
+  guides:
+  - cite-the-rule
+  request: Who must approve expense claims above the standard limit, and what are the thresholds?
+  review_rules: []
+  desired_output: A table of thresholds and approvers
+- id: policy-changes
+  agent: null
+  style: ''
+  title: What changed in the policy
+  guides:
+  - cite-the-rule
+  - compare-versions
+  request: Which parts of the finance policies changed between the two latest versions, and what should the team
+    review?
+  review_rules: []
+  desired_output: A list of changes with the old and new wording cited
+evaluation_cases: []

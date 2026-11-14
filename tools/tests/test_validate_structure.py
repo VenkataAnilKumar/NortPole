@@ -88,6 +88,17 @@ class StructureChecks(unittest.TestCase):
         (self.root / 'services/execution').mkdir(parents=True)
         self.assertTrue(any('Obsolete directory: services/execution' in e for e in self.check()))
 
+    def test_edition_must_name_active_packs(self):
+        pack = self.root / 'packs/horizontal/brief'
+        pack.mkdir(parents=True)
+        (pack / 'manifest.yaml').write_text('id: brief\n')
+        self.data['packs']['active'] = ['packs/horizontal/brief']
+        (self.root / 'packs/editions').mkdir(parents=True)
+        (self.root / 'packs/editions/finance.json').write_text(json.dumps({'edition': 'finance', 'packs': ['brief', 'missing']}))
+        errors = self.check()
+        self.assertEqual(len(errors), 1)
+        self.assertIn("names a pack that is not active: 'missing'", errors[0])
+
     def test_invalid_inventory_reports_error(self):
         (self.root / 'modules.json').write_text('{')
         self.assertTrue(validate(self.root)[0].startswith('Invalid module inventory'))

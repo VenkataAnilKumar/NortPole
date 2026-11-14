@@ -37,12 +37,16 @@
   "structure": "modular-monorepo (decision 0006)",
   "packs": {
     "template": "packs/_template",
-    "active": [],
+    "active": [
+      "packs/horizontal/everyday-brief",
+      "packs/vertical/finance/finance-policy-review"
+    ],
     "namespaces": [
       "packs/horizontal",
       "packs/vertical"
     ],
-    "manifest_file": "manifest.yaml"
+    "manifest_file": "manifest.yaml",
+    "editions": "packs/editions"
   },
   "references": {
     "policy": "reference-only",
