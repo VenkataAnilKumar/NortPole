@@ -42,6 +42,11 @@ def test_an_sdk_signed_pack_installs_and_activates(tmp_path: Path) -> None:
             assert installed.signer_key_id == key["key_id"]
             stored = s.query(EvolvXSIPackVersion).filter_by(pack_id=pack_id).one()
             assert stored.digest == sdk.digest(package["manifest"])
+            # everyday-brief leaves defaults out: the stored signed bytes are the SDK's, and they re-verify.
+            assert stored.signed_manifest.encode("utf-8") == sdk.canonical_bytes(package["manifest"])
+            assert sdk.digest(stored.manifest) != stored.digest, "the normalized copy alone could not be re-verified"
+            check = next(c for c in packs.verify_versions(_=None, db_session=s).versions if c.pack_id == pack_id)
+            assert check.status == "verified", check.problems
             assert packs.activate(pack_id, source["version"], user=ADMIN, db_session=s).active
     finally:
         with get_session_with_current_tenant() as s:

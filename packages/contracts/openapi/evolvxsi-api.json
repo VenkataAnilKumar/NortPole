@@ -1130,6 +1130,54 @@
         "title": "HTTPValidationError",
         "type": "object"
       },
+      "IntegrityReport": {
+        "properties": {
+          "checked": {
+            "title": "Checked",
+            "type": "integer"
+          },
+          "failed": {
+            "title": "Failed",
+            "type": "integer"
+          },
+          "ok": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ok"
+          },
+          "unverifiable": {
+            "title": "Unverifiable",
+            "type": "integer"
+          },
+          "verified": {
+            "title": "Verified",
+            "type": "integer"
+          },
+          "versions": {
+            "items": {
+              "$ref": "#/components/schemas/VersionCheck"
+            },
+            "title": "Versions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "ok",
+          "checked",
+          "verified",
+          "failed",
+          "unverifiable",
+          "versions"
+        ],
+        "title": "IntegrityReport",
+        "type": "object"
+      },
       "Inventory": {
         "properties": {
           "counts": {
@@ -3678,6 +3726,47 @@
         "title": "ValidationError",
         "type": "object"
       },
+      "VersionCheck": {
+        "properties": {
+          "pack_id": {
+            "title": "Pack Id",
+            "type": "string"
+          },
+          "problems": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Problems",
+            "type": "array"
+          },
+          "signer_key_id": {
+            "title": "Signer Key Id",
+            "type": "string"
+          },
+          "signer_revoked": {
+            "default": false,
+            "title": "Signer Revoked",
+            "type": "boolean"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "pack_id",
+          "version",
+          "status",
+          "signer_key_id"
+        ],
+        "title": "VersionCheck",
+        "type": "object"
+      },
       "VersionOnly": {
         "properties": {
           "version": {
@@ -3742,6 +3831,11 @@
           "pack_id": {
             "title": "Pack Id",
             "type": "string"
+          },
+          "signed_bytes_kept": {
+            "default": true,
+            "title": "Signed Bytes Kept",
+            "type": "boolean"
           },
           "signer_key_id": {
             "title": "Signer Key Id",
@@ -6111,6 +6205,61 @@
           }
         ],
         "summary": "Install Pack"
+      }
+    },
+    "/admin/packs/verify": {
+      "get": {
+        "description": "Re-check every installed version from the database: the signed bytes hash to the stored digest, the stored\nsignature verifies with the signer's registered key, and the manifest people are offered is the signed one with\ndefaults filled in. Versions installed before the signed bytes were kept, and not recovered, are reported as\nunverifiable.",
+        "operationId": "verify_versions",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "tenant_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Tenant Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntegrityReport"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "APIKeyCookie": []
+          },
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Verify Versions"
       }
     },
     "/admin/packs/{pack_id}/deactivate": {
