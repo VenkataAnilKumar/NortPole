@@ -34,13 +34,13 @@ What the product runs on today, read from the repository (`apps/workspace/packag
 
 | Part | Where | What it does |
 | --- | --- | --- |
-| Route policy | `services/core/evolvxsi/route_policy/` | Which model route (local, private, cloud) may process which data class; refuses before sending; audited |
-| Knowledge access | `services/core/evolvxsi/knowledge_access/` | Group access for people and documents, source reading groups, group management; search-time source check enforced by default |
-| Reviewed tasks | `services/core/evolvxsi/tasks/` | Draft, explicit start, plan drafted through the route policy, plan review |
-| Packs | `services/core/evolvxsi/packs/` | Signed (Ed25519) vertical packs: task templates plus the data classes and route kinds each may run on; install, activate, upgrade, rollback, revoke |
-| Actions | `services/core/evolvxsi/actions/` | Send an approved draft to an administrator-registered destination; exact-payload approval, policy and access re-checks, idempotent and address-pinned delivery |
-| Audit log | `services/core/evolvxsi/audit_log/` | Administrator view of the audit trail with filters and paging |
-| Action binding | `services/core/evolvxsi/action_binding/` | Approval tied to one exact action and payload; single use; policy block wins |
+| Route policy | `services/core/evolvxsi/governance/route_policy/` | Which model route (local, private, cloud) may process which data class; refuses before sending; audited |
+| Knowledge access | `services/core/evolvxsi/knowledge/knowledge_access/` | Group access for people and documents, source reading groups, group management; search-time source check enforced by default |
+| Reviewed tasks | `services/core/evolvxsi/work/tasks/` | Draft, explicit start, plan drafted through the route policy, plan review |
+| Packs | `services/core/evolvxsi/work/packs/` | Signed (Ed25519) vertical packs: task templates plus the data classes and route kinds each may run on; install, activate, upgrade, rollback, revoke |
+| Actions | `services/core/evolvxsi/work/actions/` | Send an approved draft to an administrator-registered destination; exact-payload approval, policy and access re-checks, idempotent and address-pinned delivery |
+| Audit log | `services/core/evolvxsi/governance/audit_log/` | Administrator view of the audit trail with filters and paging |
+| Action binding | `services/core/evolvxsi/governance/action_binding/` | Approval tied to one exact action and payload; single use; policy block wins |
 | User preferences | `services/core/evolvxsi/user_preferences/` | Default route and notification choices per person |
 | Mock model routes | `services/model-gateway/src/adapters/mock/` | OpenAI-compatible test server standing in for local and cloud models |
 

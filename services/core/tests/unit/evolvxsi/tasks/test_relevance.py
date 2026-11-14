@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock, patch
 
-from evolvxsi.tasks.evidence import Evidence
-from evolvxsi.tasks.relevance import filter_relevant, parse_verdict
+from evolvxsi.work.tasks.evidence import Evidence
+from evolvxsi.work.tasks.relevance import filter_relevant, parse_verdict
 
 
 def _ev(n: int, doc: str, text: str = "x") -> Evidence:
@@ -26,8 +26,8 @@ def _llm(verdicts):  # type: ignore[no-untyped-def]
 
 
 def _run(verdicts, ev):  # type: ignore[no-untyped-def]
-    with patch("evolvxsi.tasks.relevance.get_default_llm", return_value=_llm(verdicts)), \
-         patch("evolvxsi.tasks.relevance.enforce_route"):
+    with patch("evolvxsi.work.tasks.relevance.get_default_llm", return_value=_llm(verdicts)), \
+         patch("evolvxsi.work.tasks.relevance.enforce_route"):
         return filter_relevant(MagicMock(), MagicMock(), "q", ev)
 
 
@@ -51,7 +51,7 @@ def test_a_judge_that_fails_does_not_vouch_for_the_passage() -> None:
 
 
 def test_no_candidates_means_no_calls_and_the_switch_turns_it_off(monkeypatch) -> None:  # type: ignore[no-untyped-def]
-    with patch("evolvxsi.tasks.relevance.get_default_llm") as g:
+    with patch("evolvxsi.work.tasks.relevance.get_default_llm") as g:
         assert filter_relevant(MagicMock(), MagicMock(), "q", []) == []
         g.assert_not_called()
         monkeypatch.setenv("EVOLVXSI_RELEVANCE_CHECK", "false")
@@ -66,8 +66,8 @@ def test_a_blocked_route_stops_before_any_passage_is_sent() -> None:
     import pytest
 
     llm = _llm([])
-    with patch("evolvxsi.tasks.relevance.get_default_llm", return_value=llm), \
-         patch("evolvxsi.tasks.relevance.enforce_route", side_effect=EvolvXSIError(EvolvXSIErrorCode.POLICY_BLOCKED, "blocked")):
+    with patch("evolvxsi.work.tasks.relevance.get_default_llm", return_value=llm), \
+         patch("evolvxsi.work.tasks.relevance.enforce_route", side_effect=EvolvXSIError(EvolvXSIErrorCode.POLICY_BLOCKED, "blocked")):
         with pytest.raises(EvolvXSIError):
             filter_relevant(MagicMock(), MagicMock(), "q", [_ev(1, "a")])
     llm.invoke.assert_not_called()

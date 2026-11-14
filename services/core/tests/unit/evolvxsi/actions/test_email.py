@@ -6,8 +6,8 @@ from unittest.mock import patch
 
 import pytest
 
-from evolvxsi.actions import delivery
-from evolvxsi.actions.delivery import UnsafeTarget, deliver_email, parse_mailto
+from evolvxsi.work.actions import delivery
+from evolvxsi.work.actions.delivery import UnsafeTarget, deliver_email, parse_mailto
 from evolvxsi.configs import app_configs as cfg
 
 

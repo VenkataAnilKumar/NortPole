@@ -5,7 +5,7 @@ Counts per (case, kind): a hit is a true positive, a wrong kind a false positive
 import json
 from pathlib import Path
 
-from evolvxsi.redaction.redact import redact_text
+from evolvxsi.governance.redaction.redact import redact_text
 
 SET = Path(__file__).resolve().parents[1] / "tests/unit/evolvxsi/redaction/redaction_set.json"
 

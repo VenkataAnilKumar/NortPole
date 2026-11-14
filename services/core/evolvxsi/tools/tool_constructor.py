@@ -173,7 +173,7 @@ def construct_tools(
     selection_llm_factory: Callable[[], LLM] | None = None,
 ) -> dict[int, list[Tool]]:
     """Build tools from captured settings; resolve current service credentials."""
-    from evolvxsi.tool_catalog.catalog import filter_tools
+    from evolvxsi.governance.tool_catalog.catalog import filter_tools
 
     with get_session_with_current_tenant_if_none(db_session) as db_session:
         tools = _construct_tools_impl(

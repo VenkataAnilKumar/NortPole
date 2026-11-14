@@ -208,7 +208,7 @@ class MCPTool(Tool):
         from evolvxsi.extensions.policy import host_allowed
 
         if not host_allowed(self.mcp_server.server_url):
-            from evolvxsi.route_policy.audit import record_audit
+            from evolvxsi.governance.route_policy.audit import record_audit
             from evolvxsi.utils.audit import AuditAction, AuditOutcome
 
             record_audit(AuditAction.EXTENSION_BLOCKED, AuditOutcome.DENIED, actor=None, resource_type="mcp_server",

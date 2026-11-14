@@ -1,7 +1,7 @@
 from types import SimpleNamespace
 
-from evolvxsi.tasks.drafter import build_prompt, keep_valid_citations
-from evolvxsi.tasks.evidence import Evidence, chunks_to_evidence
+from evolvxsi.work.tasks.drafter import build_prompt, keep_valid_citations
+from evolvxsi.work.tasks.evidence import Evidence, chunks_to_evidence
 
 
 def test_citations_to_unknown_sources_are_removed() -> None:
@@ -38,7 +38,7 @@ def test_evidence_is_one_entry_per_document_numbered_from_one() -> None:
 
 
 def test_semantic_hits_come_first_and_keyword_adds_only_new_documents() -> None:
-    from evolvxsi.tasks.evidence import _merge
+    from evolvxsi.work.tasks.evidence import _merge
 
     sem = [_chunk("a", "1"), _chunk("b", "2")]
     kw = [_chunk("b", "x"), _chunk("c", "3")]

@@ -24,7 +24,7 @@ from evolvxsi.db.enums import VectorQuantization
 from evolvxsi.document_index.interfaces import IndexingMetadata, TenantState
 from evolvxsi.document_index.opensearch.opensearch_document_index import OpenSearchDocumentIndex
 from evolvxsi.indexing.models import ChunkEmbedding
-from evolvxsi.knowledge_access.decisions import Viewer, viewer_acl
+from evolvxsi.knowledge.knowledge_access.decisions import Viewer, viewer_acl
 from tests.evolvxsi_integration.test_retrieval_acl import TENANT, _chunk, _opensearch_up
 
 OLLAMA = os.environ.get("OLLAMA_URL", "http://127.0.0.1:11434")
@@ -137,14 +137,14 @@ def test_the_task_evidence_step_uses_meaning_based_search_and_access(index) -> N
     keyword matching would miss, and a restricted document stays hidden."""
     from unittest.mock import MagicMock, patch
 
-    from evolvxsi.tasks import evidence
+    from evolvxsi.work.tasks import evidence
 
     def run(viewer: Viewer, question: str) -> list[str]:
         user = MagicMock()
         with patch.object(evidence, "DISABLE_VECTOR_DB", False), \
              patch("evolvxsi.db.search_settings.get_active_search_settings", return_value=MagicMock(primary=None, secondary=None)), \
              patch("evolvxsi.document_index.factory.get_default_document_index", return_value=index), \
-             patch("evolvxsi.tasks.evidence.build_access_filters_for_user",
+             patch("evolvxsi.work.tasks.evidence.build_access_filters_for_user",
                    return_value=MagicMock(access_control_list=sorted(viewer_acl(viewer)), cc_pair_access=None)), \
              patch("evolvxsi.context.search.utils.get_query_embedding", side_effect=lambda q, db=None: _embed([q], "search_query")[0]):
             return [e.doc_id for e in evidence.gather_evidence(MagicMock(), user, question)]

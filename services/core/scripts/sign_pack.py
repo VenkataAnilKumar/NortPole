@@ -19,7 +19,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from cryptography.hazmat.primitives import serialization  # noqa: E402
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey  # noqa: E402
 
-from evolvxsi.packs.manifest import Manifest, canonical_bytes, digest  # noqa: E402
+from evolvxsi.work.packs.manifest import Manifest, canonical_bytes, digest  # noqa: E402
 
 
 def keygen(key_id: str) -> None:

@@ -1,7 +1,7 @@
 from dataclasses import replace
 from datetime import datetime, timedelta, timezone
 
-from evolvxsi.action_binding.binding import (
+from evolvxsi.governance.action_binding.binding import (
     Approval,
     Verdict,
     action_fingerprint,

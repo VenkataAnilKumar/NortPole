@@ -4,7 +4,7 @@ import datetime
 
 import pytest
 
-from evolvxsi.workflow_schedules import cadence
+from evolvxsi.work.workflow_schedules import cadence
 
 UTC = datetime.timezone.utc
 

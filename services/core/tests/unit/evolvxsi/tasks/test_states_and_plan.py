@@ -1,7 +1,7 @@
 import pytest
 
-from evolvxsi.tasks.planner import parse_plan
-from evolvxsi.tasks.states import ALLOWED, InvalidTransition, TaskAction, TaskState, next_state
+from evolvxsi.work.tasks.planner import parse_plan
+from evolvxsi.work.tasks.states import ALLOWED, InvalidTransition, TaskAction, TaskState, next_state
 
 
 def test_happy_path() -> None:

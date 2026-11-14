@@ -10,15 +10,15 @@ from types import SimpleNamespace
 import pytest
 from sqlalchemy import text
 
-from evolvxsi.audit_log import api as audit_api
+from evolvxsi.governance.audit_log import api as audit_api
 from evolvxsi.db.engine.sql_engine import get_session_with_current_tenant
 from evolvxsi.error_handling.exceptions import EvolvXSIError
-from evolvxsi.redaction.request import EvolvXSIRedactionCount
-from evolvxsi.retention import api as ret_api
-from evolvxsi.retention.prune import prune
-from evolvxsi.retention.settings import Retention, load, save
-from evolvxsi.route_policy.audit import EvolvXSIAuditEvent
-from evolvxsi.route_policy.usage import EvolvXSIRouteUsage
+from evolvxsi.governance.redaction.request import EvolvXSIRedactionCount
+from evolvxsi.governance.retention import api as ret_api
+from evolvxsi.governance.retention.prune import prune
+from evolvxsi.governance.retention.settings import Retention, load, save
+from evolvxsi.governance.route_policy.audit import EvolvXSIAuditEvent
+from evolvxsi.governance.route_policy.usage import EvolvXSIRouteUsage
 from tests.evolvxsi_integration.test_tasks_flow import _up
 
 pytestmark = pytest.mark.skipif(not _up(), reason="needs Postgres with the retention tables")

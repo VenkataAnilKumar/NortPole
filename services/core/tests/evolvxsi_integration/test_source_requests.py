@@ -9,11 +9,11 @@ from sqlalchemy import text
 from evolvxsi.db.engine.sql_engine import get_session_with_current_tenant
 from evolvxsi.db.models import MCPServer, Notification, Tool, User
 from evolvxsi.error_handling.exceptions import EvolvXSIError
-from evolvxsi.packs.models import EvolvXSIPackVersion
-from evolvxsi.source_requests import api
-from evolvxsi.source_requests.models import EvolvXSISourceRequest
-from evolvxsi.tool_catalog import api as cat_api
-from evolvxsi.tool_catalog import catalog as cat
+from evolvxsi.work.packs.models import EvolvXSIPackVersion
+from evolvxsi.knowledge.source_requests import api
+from evolvxsi.knowledge.source_requests.models import EvolvXSISourceRequest
+from evolvxsi.governance.tool_catalog import api as cat_api
+from evolvxsi.governance.tool_catalog import catalog as cat
 from tests.evolvxsi_integration.test_tasks_flow import _up
 
 pytestmark = pytest.mark.skipif(not _up(), reason="needs Postgres")

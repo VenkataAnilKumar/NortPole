@@ -8,7 +8,7 @@ from evolvxsi.db.models import User
 from evolvxsi.error_handling.error_codes import EvolvXSIErrorCode
 from evolvxsi.error_handling.exceptions import EvolvXSIError
 from evolvxsi.extensions.policy import host_allowed, host_of, load
-from evolvxsi.route_policy.audit import record_audit
+from evolvxsi.governance.route_policy.audit import record_audit
 from evolvxsi.utils.audit import AuditAction, AuditOutcome
 
 

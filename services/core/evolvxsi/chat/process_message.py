@@ -92,7 +92,7 @@ from evolvxsi.llm.factory import (
 from evolvxsi.llm.interfaces import LLM, LLMUserIdentity
 from evolvxsi.llm.models import ReasoningEffort
 from evolvxsi.llm.override_models import LLMOverride
-from evolvxsi.route_policy.enforce import enforce_route
+from evolvxsi.governance.route_policy.enforce import enforce_route
 from evolvxsi.natural_language_processing.utils import get_tokenizer
 from evolvxsi.evolvxsibot.slack.models import SlackContext
 from evolvxsi.prompts.prompt_utils import substitute_user_placeholders

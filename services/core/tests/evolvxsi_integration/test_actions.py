@@ -9,13 +9,13 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 import pytest
 from sqlalchemy import text
 
-from evolvxsi.actions import api as actions
-from evolvxsi.actions.delivery import UnsafeTarget, check_target_url
-from evolvxsi.actions.models import EvolvXSIAction, EvolvXSIActionTarget
+from evolvxsi.work.actions import api as actions
+from evolvxsi.work.actions.delivery import UnsafeTarget, check_target_url
+from evolvxsi.work.actions.models import EvolvXSIAction, EvolvXSIActionTarget
 from evolvxsi.db.engine.sql_engine import get_session_with_current_tenant
 from evolvxsi.db.models import User, User__UserGroup
 from evolvxsi.error_handling.exceptions import EvolvXSIError
-from evolvxsi.tasks import api as tasks
+from evolvxsi.work.tasks import api as tasks
 from tests.evolvxsi_integration.test_task_approval_export import _ready, world  # noqa: F401  (fixture)
 from tests.evolvxsi_integration.test_tasks_flow import _up
 
@@ -292,8 +292,8 @@ def test_lowering_the_tier_after_approval_still_stops_the_send(world, target, si
 
 
 def test_a_draft_only_pack_lowers_a_destination_that_would_allow_sending(world, target, sink) -> None:  # type: ignore[no-untyped-def]
-    from evolvxsi.actions.autonomy import effective_tier
-    from evolvxsi.packs.models import EvolvXSIPackVersion
+    from evolvxsi.work.actions.autonomy import effective_tier
+    from evolvxsi.work.packs.models import EvolvXSIPackVersion
 
     pid = f"tier-{uuid.uuid4().hex[:6]}"
     with get_session_with_current_tenant() as s:

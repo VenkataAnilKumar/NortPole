@@ -8,8 +8,8 @@ from sqlalchemy import text
 from evolvxsi.db.engine.sql_engine import get_session_with_current_tenant
 from evolvxsi.db.models import MCPServer, Tool, User
 from evolvxsi.error_handling.exceptions import EvolvXSIError
-from evolvxsi.tool_catalog import api as cat_api
-from evolvxsi.tool_catalog import catalog
+from evolvxsi.governance.tool_catalog import api as cat_api
+from evolvxsi.governance.tool_catalog import catalog
 from tests.evolvxsi_integration.test_tasks_flow import _up
 
 pytestmark = pytest.mark.skipif(not _up(), reason="needs Postgres")
@@ -108,7 +108,7 @@ def test_a_changed_definition_is_withheld_until_approved_again_and_other_saves_d
 def test_a_call_to_an_outside_tool_is_logged_without_its_arguments(world) -> None:  # type: ignore[no-untyped-def]
     from types import SimpleNamespace
 
-    from evolvxsi.tool_catalog.calls import logged
+    from evolvxsi.governance.tool_catalog.calls import logged
 
     tool = _T(world["tool"], "MCPTool")
     tool.mcp_server = SimpleNamespace(server_url=f"https://tools-{TAG}.example.com/mcp?token=secret-{TAG}")

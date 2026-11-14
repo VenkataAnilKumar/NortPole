@@ -11,11 +11,11 @@ from sqlalchemy import text
 from evolvxsi.db.engine.sql_engine import get_session_with_current_tenant
 from evolvxsi.db.models import Notification, User
 from evolvxsi.error_handling.exceptions import EvolvXSIError
-from evolvxsi.tasks import api as tasks_api
-from evolvxsi.tasks.models import EvolvXSITask
-from evolvxsi.tasks.planner import PlanError, PlanResult
-from evolvxsi.workflow_schedules import api, controls, runner
-from evolvxsi.workflow_schedules.models import EvolvXSIWorkflowRun, EvolvXSIWorkflowSchedule
+from evolvxsi.work.tasks import api as tasks_api
+from evolvxsi.work.tasks.models import EvolvXSITask
+from evolvxsi.work.tasks.planner import PlanError, PlanResult
+from evolvxsi.work.workflow_schedules import api, controls, runner
+from evolvxsi.work.workflow_schedules.models import EvolvXSIWorkflowRun, EvolvXSIWorkflowSchedule
 from tests.evolvxsi_integration.test_tasks_flow import _up
 
 pytestmark = pytest.mark.skipif(not _up(), reason="needs Postgres")
@@ -225,7 +225,7 @@ def test_sharing_with_own_groups_and_copying_runs_as_the_copier(world) -> None: 
 
 
 def test_quality_counts_scheduled_runs_and_acceptances(world) -> None:  # type: ignore[no-untyped-def]
-    from evolvxsi.quality.api import _scheduled
+    from evolvxsi.insight.quality.api import _scheduled
 
     with get_session_with_current_tenant() as s:
         ann = s.get(User, world["ann"])

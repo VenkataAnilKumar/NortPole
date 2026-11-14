@@ -18,8 +18,8 @@ from evolvxsi.db.models import (
     UserGroup__CCPairDataAccess,
 )
 from evolvxsi.error_handling.exceptions import EvolvXSIError
-from evolvxsi.knowledge_access import group_admin as ga
-from evolvxsi.knowledge_access.groups import group_names_for_user
+from evolvxsi.knowledge.knowledge_access import group_admin as ga
+from evolvxsi.knowledge.knowledge_access.groups import group_names_for_user
 
 
 def _up() -> bool:

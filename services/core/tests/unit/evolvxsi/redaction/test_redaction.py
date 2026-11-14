@@ -7,9 +7,9 @@ from unittest.mock import patch
 import pytest
 
 from evolvxsi.llm.models import AssistantMessage, GenerationRequest, SystemMessage, TextContent, TextContentPart, ToolResultMessage, UserMessage
-from evolvxsi.redaction import request as req
-from evolvxsi.redaction.redact import redact_text
-from evolvxsi.route_policy.policy import RoutePolicy
+from evolvxsi.governance.redaction import request as req
+from evolvxsi.governance.redaction.redact import redact_text
+from evolvxsi.governance.route_policy.policy import RoutePolicy
 
 _spec = importlib.util.spec_from_file_location("redaction_report", Path(__file__).parents[4] / "scripts/redaction_report.py")
 report = importlib.util.module_from_spec(_spec)  # type: ignore[arg-type]
@@ -86,7 +86,7 @@ def test_the_policy_can_redact_local_routes_too() -> None:
 
 
 def test_an_unknown_route_is_treated_as_cloud() -> None:
-    from evolvxsi.route_policy import enforce
+    from evolvxsi.governance.route_policy import enforce
 
     with patch.object(enforce, "check_route", side_effect=RuntimeError("db down")), patch.object(req, "get_session_with_current_tenant"):
         assert req._route_kind(1) == "cloud"

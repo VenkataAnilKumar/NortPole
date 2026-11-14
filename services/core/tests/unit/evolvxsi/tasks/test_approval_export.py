@@ -1,5 +1,5 @@
-from evolvxsi.tasks.export import draft_fingerprint, to_markdown
-from evolvxsi.tasks.states import TaskAction, TaskState, next_state
+from evolvxsi.work.tasks.export import draft_fingerprint, to_markdown
+from evolvxsi.work.tasks.states import TaskAction, TaskState, next_state
 
 SRC = [{"n": 1, "doc_id": "a", "title": "Travel policy", "link": "https://x/a", "cited": True},
        {"n": 2, "doc_id": "b", "title": "Handbook", "link": None, "cited": False}]

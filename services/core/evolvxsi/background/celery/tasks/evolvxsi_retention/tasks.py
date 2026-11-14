@@ -2,7 +2,7 @@ from celery import shared_task
 
 from evolvxsi.configs.constants import EvolvXSICeleryTask
 from evolvxsi.db.engine.sql_engine import get_session_with_current_tenant
-from evolvxsi.retention.prune import prune
+from evolvxsi.governance.retention.prune import prune
 from evolvxsi.utils.logger import setup_logger
 
 logger = setup_logger()

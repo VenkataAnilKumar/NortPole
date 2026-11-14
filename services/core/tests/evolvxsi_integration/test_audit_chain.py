@@ -6,9 +6,9 @@ import uuid
 import pytest
 from sqlalchemy import text
 
-from evolvxsi.audit_log.chain import check_rows, verify
+from evolvxsi.governance.audit_log.chain import check_rows, verify
 from evolvxsi.db.engine.sql_engine import get_session_with_current_tenant
-from evolvxsi.route_policy.audit import EvolvXSIAuditEvent, record_audit
+from evolvxsi.governance.route_policy.audit import EvolvXSIAuditEvent, record_audit
 from evolvxsi.utils.audit import AuditAction, AuditOutcome
 from tests.evolvxsi_integration.test_tasks_flow import _up
 
@@ -86,7 +86,7 @@ def test_concurrent_writers_do_not_fork_the_chain() -> None:
 
 
 def test_the_quick_check_does_a_full_one_first_then_only_new_events_and_catches_a_changed_checkpoint() -> None:
-    from evolvxsi.audit_log import chain
+    from evolvxsi.governance.audit_log import chain
 
     saved = chain._load_checkpoint()
     try:
@@ -118,7 +118,7 @@ def test_a_saved_head_is_compared_with_the_stored_log() -> None:
     """Non-destructive: it never removes a hashed row, so the shared chain stays intact."""
     from sqlalchemy import func
 
-    from evolvxsi.audit_log.chain import check_anchor, head
+    from evolvxsi.governance.audit_log.chain import check_anchor, head
 
     # An unhashed row, then hashed events after it, then remove the unhashed one: a hole inside the hashed range
     # that was never part of the chain.

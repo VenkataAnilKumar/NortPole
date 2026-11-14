@@ -7,8 +7,8 @@ import pytest
 from sqlalchemy import text
 
 from evolvxsi.db.engine.sql_engine import get_session_with_current_tenant
-from evolvxsi.route_policy import api as route_api
-from evolvxsi.route_policy.usage import EvolvXSIRouteTokens, is_priced, record_tokens
+from evolvxsi.governance.route_policy import api as route_api
+from evolvxsi.governance.route_policy.usage import EvolvXSIRouteTokens, is_priced, record_tokens
 from tests.evolvxsi_integration.test_tasks_flow import _up
 
 pytestmark = pytest.mark.skipif(not _up(), reason="needs Postgres with the tokens table")
@@ -63,7 +63,7 @@ def test_the_table_holds_no_person_or_text_column() -> None:
 
 
 def test_a_failure_to_count_never_stops_the_request(monkeypatch) -> None:  # type: ignore[no-untyped-def]
-    from evolvxsi.route_policy import usage
+    from evolvxsi.governance.route_policy import usage
 
     monkeypatch.setattr(usage, "get_session_with_current_tenant", lambda: (_ for _ in ()).throw(RuntimeError("db down")))
     record_tokens(model_configuration_id=None, model_version=UNPRICED, provider="openai", served_model=None,
@@ -71,8 +71,8 @@ def test_a_failure_to_count_never_stops_the_request(monkeypatch) -> None:  # typ
 
 
 def test_retention_prunes_old_token_rows_with_the_usage_rows() -> None:
-    from evolvxsi.retention.prune import prune
-    from evolvxsi.retention.settings import Retention
+    from evolvxsi.governance.retention.prune import prune
+    from evolvxsi.governance.retention.settings import Retention
 
     now = datetime.datetime.now(datetime.timezone.utc)
     old = (now - datetime.timedelta(days=100)).date()

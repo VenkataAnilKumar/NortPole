@@ -87,6 +87,7 @@ jobs:
           tests/unit/evolvxsi/packs tests/unit/evolvxsi/redaction tests/unit/evolvxsi/route_policy
           tests/unit/evolvxsi/tasks tests/unit/evolvxsi/tool_catalog tests/unit/evolvxsi/user_preferences
           tests/unit/evolvxsi/test_schedule_cadence.py tests/unit/evolvxsi/skills/test_bundled_skill_scripts.py
+          tests/unit/evolvxsi/test_domain_boundaries.py
 
   core-unit-tests-full:
     name: Core unit tests (whole suite, nightly)
@@ -104,18 +105,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
-      - name: Install the locked backend dependencies
+      - name: Install the locked backend and test dependencies
         run: |
-          uv sync --frozen --no-dev --no-install-project --group backend
-          uv pip install pytest pytest-xdist
+          uv sync --frozen --no-install-project --group backend --group dev
+          uv pip install pexpect
       - name: Every backend unit test
+        # Only PYTHONPATH: some inherited tests check the defaults that the lite-mode settings would override.
         env:
           PYTHONPATH: .
-          DISABLE_VECTOR_DB: "true"
-          CACHE_BACKEND: postgres
-          AUTH_TYPE: basic
-          FILE_STORE_BACKEND: postgres
-          EVOLVXSI_OFFLINE_TOKENIZER: "true"
         # The model-server tests need the separate model-server dependencies (torch); they are not part of this suite.
         run: uv run --no-sync python -m pytest -q -n auto tests/unit --ignore=tests/unit/model_server
 

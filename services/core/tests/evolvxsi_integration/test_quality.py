@@ -8,9 +8,9 @@ import pytest
 
 from evolvxsi.db.engine.sql_engine import get_session_with_current_tenant
 from evolvxsi.db.models import User
-from evolvxsi.packs.models import EvolvXSIPackEvaluation
-from evolvxsi.quality.api import MAX_DAYS, build
-from evolvxsi.tasks.models import EvolvXSITask
+from evolvxsi.work.packs.models import EvolvXSIPackEvaluation
+from evolvxsi.insight.quality.api import MAX_DAYS, build
+from evolvxsi.work.tasks.models import EvolvXSITask
 from tests.evolvxsi_integration.test_tasks_flow import _up
 
 pytestmark = pytest.mark.skipif(not _up(), reason="needs Postgres")

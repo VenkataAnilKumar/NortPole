@@ -2,7 +2,7 @@ from celery import shared_task
 
 from evolvxsi.configs.constants import EvolvXSICeleryTask
 from evolvxsi.utils.logger import setup_logger
-from evolvxsi.workflow_schedules.runner import run_due
+from evolvxsi.work.workflow_schedules.runner import run_due
 
 logger = setup_logger()
 

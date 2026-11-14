@@ -7,7 +7,7 @@ CORE_ENV = PYTHONPATH=. DISABLE_VECTOR_DB=true CACHE_BACKEND=postgres AUTH_TYPE=
 help:
 	@echo "make check          structure, links and tool tests"
 	@echo "make core-test      EvolvXSI unit tests (services/core/tests/unit/evolvxsi)"
-	@echo "make core-test-all  every backend unit test"
+	@echo "make core-test-all  every backend unit test (needs the dev dependency group)"
 	@echo "make core-run       start the API on port 8080 (needs Postgres; see infrastructure/profiles/local)"
 	@echo "make web-install    install the web app's dependencies"
 	@echo "make web-typecheck  type-check the web app"
@@ -21,7 +21,7 @@ core-test:
 	cd services/core && $(CORE_ENV) uv run --no-sync python -m pytest -q tests/unit/evolvxsi
 
 core-test-all:
-	cd services/core && $(CORE_ENV) uv run --no-sync python -m pytest -q -n auto tests/unit
+	cd services/core && PYTHONPATH=. uv run --no-sync python -m pytest -q -n auto tests/unit --ignore=tests/unit/model_server
 
 core-run:
 	cd services/core && $(CORE_ENV) uv run --no-sync uvicorn evolvxsi.main:app --port 8080

@@ -24,7 +24,7 @@ from evolvxsi.db.models import (
     UserGroup__CCPairDataAccess,
 )
 from evolvxsi.error_handling.exceptions import EvolvXSIError
-from evolvxsi.knowledge_access.source_groups import fetch_data_access_groups_for_cc_pair
+from evolvxsi.knowledge.knowledge_access.source_groups import fetch_data_access_groups_for_cc_pair
 from tests.evolvxsi_integration.test_group_access import _doc, _source, _up
 
 pytestmark = pytest.mark.skipif(not _up(), reason="needs Postgres and OpenSearch")

@@ -21,12 +21,12 @@ from evolvxsi.db.models import (
     UserGroup__CCPairDataAccess,
 )
 from evolvxsi.error_handling.exceptions import EvolvXSIError
-from evolvxsi.tasks import api
-from evolvxsi.tasks.drafter import DraftResult
-from evolvxsi.tasks.evidence import Evidence
-from evolvxsi.tasks.models import EvolvXSITask
-from evolvxsi.tasks.planner import PlanResult
-from evolvxsi.tasks.states import TaskState
+from evolvxsi.work.tasks import api
+from evolvxsi.work.tasks.drafter import DraftResult
+from evolvxsi.work.tasks.evidence import Evidence
+from evolvxsi.work.tasks.models import EvolvXSITask
+from evolvxsi.work.tasks.planner import PlanResult
+from evolvxsi.work.tasks.states import TaskState
 from tests.evolvxsi_integration.test_group_access import _doc, _source
 from tests.evolvxsi_integration.test_tasks_flow import _up
 

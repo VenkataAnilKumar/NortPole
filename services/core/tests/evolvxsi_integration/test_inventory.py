@@ -4,10 +4,10 @@ import uuid
 
 import pytest
 
-from evolvxsi.actions.models import EvolvXSIAction, EvolvXSIActionTarget
+from evolvxsi.work.actions.models import EvolvXSIAction, EvolvXSIActionTarget
 from evolvxsi.db.engine.sql_engine import get_session_with_current_tenant
-from evolvxsi.inventory.api import build, host_only
-from evolvxsi.packs.models import EvolvXSIPackSigner, EvolvXSIPackVersion
+from evolvxsi.insight.inventory.api import build, host_only
+from evolvxsi.work.packs.models import EvolvXSIPackSigner, EvolvXSIPackVersion
 from tests.evolvxsi_integration.test_tasks_flow import _up
 
 pytestmark = pytest.mark.skipif(not _up(), reason="needs Postgres")
