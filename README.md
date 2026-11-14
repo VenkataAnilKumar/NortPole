@@ -43,6 +43,21 @@ One place to ask, search and get work done over your company's knowledge:
 | | Inbox and Discover | One place for plans to approve, drafts to review and updates; see what connectors, skills and tools exist and request them. |
 | **Insight** | Quality and cost | Draft and approval rates, unsupported-claim share, evaluation results per model, scheduled runs, and tokens and estimated cost per route. |
 
+<table>
+<tr>
+<td width="50%" valign="top"><img src="docs/assets/readme/audit.png" alt="Audit log: retention, legal hold, integrity checks, a head to save, export, and a searchable record of who did what."><br><b>Audit log</b>: retention, legal hold, integrity checks, a head to save, export, and a searchable record of who did what.</td>
+<td width="50%" valign="top"><img src="docs/assets/readme/approvals.png" alt="Approvals: one queue for second-approver sends, requests from people, and changes that need a second administrator."><br><b>Approvals</b>: one queue for second-approver sends, requests from people, and changes that need a second administrator.</td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="docs/assets/readme/tools.png" alt="Tool governance: what assistants may use; running code and outside systems start off."><br><b>Tool governance</b>: what assistants may use; running code and outside systems start off.</td>
+<td width="50%" valign="top"><img src="docs/assets/readme/scheduled.png" alt="Scheduled workflows: recurring runs that prepare a plan and wait for your yes."><br><b>Scheduled workflows</b>: recurring runs that prepare a plan and wait for your yes.</td>
+</tr>
+<tr>
+<td width="50%" valign="top"><img src="docs/assets/readme/discover.png" alt="Discover: what the workspace supports but has not turned on, with a Request button."><br><b>Discover</b>: what the workspace supports but has not turned on, with a Request button.</td>
+<td width="50%" valign="top"><img src="docs/assets/readme/quality.png" alt="Quality and cost: runs, drafts, approvals and unsupported claims per pack."><br><b>Quality and cost</b>: runs, drafts, approvals and unsupported claims per pack.</td>
+</tr>
+</table>
+
 ## Why EvolvXSI
 
 Most AI assistants are built to be helpful first and safe second. In finance, legal, HR, compliance and operations that order is backwards: an invented answer, a leaked document or an unreviewed email costs more than the time AI saves.
