@@ -15,7 +15,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.ref }}
+  # Nightly and manual runs get their own group, so a push to main does not cancel the long full-suite run.
+  group: ci-${{ github.event_name == 'schedule' && 'nightly' || github.event_name == 'workflow_dispatch' && 'manual' || 'push-pr' }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
