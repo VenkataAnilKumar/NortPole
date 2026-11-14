@@ -2,12 +2,12 @@
 
 # GitHub source: docs/live holds the docs of the latest stable release (docs-publish.yml)
 GITHUB_RAW_BASE_URL = (
-    "https://raw.githubusercontent.com/onyx-dot-app/evolvxsi/docs/live/documentation"
+    "https://raw.githubusercontent.com/VenkataAnilKumar/EvolvXSI/main/docs/release-notes"
 )
 GITHUB_CHANGELOG_RAW_URL = f"{GITHUB_RAW_BASE_URL}/changelog.mdx"
 
 # Base URL for changelog documentation (used for notification links)
-DOCS_CHANGELOG_BASE_URL = "https://docs.onyx.app/changelog"
+DOCS_CHANGELOG_BASE_URL = "/help/changelog"
 
 FETCH_TIMEOUT = 60.0
 

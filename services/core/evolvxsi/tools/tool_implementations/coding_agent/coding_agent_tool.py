@@ -98,8 +98,8 @@ class CodingAgentTool(Tool):
                         "description": (
                             "GitHub repository URL or 'owner/repo' "
                             "identifier (e.g. "
-                            "'https://github.com/onyx-dot-app/evolvxsi' "
-                            "or 'onyx-dot-app/evolvxsi')."
+                            "'https://github.com/acme-corp/project' "
+                            "or 'acme-corp/project')."
                         ),
                     },
                 },

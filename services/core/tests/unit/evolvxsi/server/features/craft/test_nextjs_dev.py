@@ -49,10 +49,10 @@ _TEMPLATE_AGENTS_MD = _TEMPLATE_PACKAGE_JSON.parent / "AGENTS.md"
 
 
 def test_start_script_exports_allowed_dev_origins() -> None:
-    with patch.object(nextjs_dev, "WEB_DOMAIN", "https://cloud.onyx.app"):
+    with patch.object(nextjs_dev, "WEB_DOMAIN", "https://cloud.example.com"):
         script = build_nextjs_start_script(_SESSION_PATH, 3010)
 
-    assert 'export EVOLVXSI_WEBAPP_ALLOWED_DEV_ORIGINS="cloud.onyx.app"' in script
+    assert 'export EVOLVXSI_WEBAPP_ALLOWED_DEV_ORIGINS="cloud.example.com"' in script
     assert (
         'export EVOLVXSI_WEBAPP_BASE_PATH="/api/build/sessions/'
         f'$(basename {_SESSION_PATH})/webapp"' in script

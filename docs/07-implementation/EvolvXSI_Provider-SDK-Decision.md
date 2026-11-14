@@ -25,7 +25,7 @@ Start with the official API client and an EvolvXSI provider interface. Implement
 | packages/agents | EvolvXSI-owned definitions; no imports from third-party agent definitions. |
 | packages/skills | EvolvXSI skill contracts; existing skill repositories are examples, not implicit dependencies. |
 | services/model-gateway | Official provider clients, capability-aware adapters and EvolvXSI placement policy. |
-| services/knowledge | EvolvXSI retrieval/memory boundary using selected storage infrastructure; no mandatory Agno or Onyx service. |
+| services/knowledge | EvolvXSI retrieval/memory boundary using selected storage infrastructure; no mandatory Agno or upstream-core service. |
 | evaluations | EvolvXSI quality suites and release gates. |
 | Other product modules | EvolvXSI-owned implementation; downloaded application platforms remain references unless the owner later selects explicit reuse. |
 

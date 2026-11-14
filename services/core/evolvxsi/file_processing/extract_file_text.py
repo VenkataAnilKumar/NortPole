@@ -310,7 +310,7 @@ def read_pdf_file(
             # Try the explicit password first, then fall back to an empty
             # string.  Owner-password-only PDFs (permission restrictions but
             # no open password) decrypt successfully with "".
-            # See https://github.com/onyx-dot-app/evolvxsi/issues/9754
+            # See upstream issue 9754
             passwords = [p for p in [pdf_pass, ""] if p is not None]
             decrypt_success = False
             for pw in passwords:

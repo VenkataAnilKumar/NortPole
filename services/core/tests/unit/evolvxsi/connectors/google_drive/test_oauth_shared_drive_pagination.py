@@ -5,7 +5,7 @@ checkpoint span, then emits a page token so the next span can continue.
 A regression here silently truncates large shared drives: the token is
 dropped, the stage machine advances to FOLDER_FILES, and the folder crawl
 skips everything because the drive and its folders are already marked
-traversed (https://github.com/onyx-dot-app/evolvxsi/issues/14165).
+traversed (upstream issue 14165).
 
 Also covers the pause-before-first-file case: a span can emit a page token
 before the current drive yields any file (empty pages, or leading files all

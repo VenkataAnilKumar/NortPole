@@ -91,7 +91,7 @@ from evolvxsi.connectors.outlook.source_operations import OutlookSourceOperation
 
 T = TypeVar("T")
 
-_OUTLOOK_DOCS_LINK = "https://docs.onyx.app/admins/connectors/official/outlook"
+_OUTLOOK_DOCS_LINK = "/help/admins/connectors/official/outlook"
 _TIMEOUT_TEXT = CheckRowText(
     summary="Timed out",
     description="The check did not finish within its time limit.\nRe-run the checks.",

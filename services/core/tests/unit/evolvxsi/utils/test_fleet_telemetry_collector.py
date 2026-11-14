@@ -413,12 +413,12 @@ def test_local_error_text_maps_to_a_fixed_category(
 @pytest.mark.parametrize(
     "domain, expected",
     [
-        ("Onyx.App", "onyx.app"),
+        ("Example.Com", "example.com"),
         ("bücher.example", "xn--bcher-kva.example"),
-        ("http://onyx.app", None),
+        ("http://example.com", None),
         ("127.0.0.1", None),
         ("localhost", None),
-        ("onyx.app@other.app", None),
+        ("example.com@other.app", None),
     ],
 )
 def test_signup_domains_are_normalized_or_dropped(

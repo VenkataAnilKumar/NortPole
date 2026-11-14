@@ -334,7 +334,7 @@ class TestProxyRequestWiring:
             "X-Forwarded-Email": "victim@example.com",
             "X-Forwarded-Preferred-Username": "victim",
             # Browser context — Next dev blocks /_next/* on unlisted Origins.
-            "Origin": "https://cloud.onyx.app",
+            "Origin": "https://cloud.example.com",
             # sec-fetch-* prefix matcher (not literal deny-list entries).
             "Sec-Fetch-Mode": "cors",
             "Sec-Fetch-Site": "same-origin",

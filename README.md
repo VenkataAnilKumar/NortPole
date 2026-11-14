@@ -106,4 +106,4 @@ Run `python tools/validate_structure.py` to check the repository layout and docu
 
 ## Credits and licence
 
-EvolvXSI's core and workspace are adapted from the [Onyx Community Edition](https://github.com/onyx-dot-app/onyx) (MIT licence); see [services/core/NOTICE](services/core/NOTICE) and [services/core/UPSTREAM.md](services/core/UPSTREAM.md) for what was taken, what was left out and what changed. EvolvXSI's own additions — governance, workflows, packs, agents, scheduling and permission sync — are developed in this repository. The EvolvXSI name and licensing for EvolvXSI's own code are pending legal review.
+EvolvXSI's core and workspace build on MIT-licensed open-source code; see [services/core/NOTICE](services/core/NOTICE) and [services/core/UPSTREAM.md](services/core/UPSTREAM.md) for what was taken, what was left out and what changed. EvolvXSI's own additions — governance, workflows, packs, agents, scheduling and permission sync — are developed in this repository. The EvolvXSI name and licensing for EvolvXSI's own code are pending legal review.

@@ -72,13 +72,13 @@ describe("document sanitization", () => {
 
   it("preserves https hyperlinks and basic document formatting", async () => {
     const dirty =
-      '<a href="https://onyx.app">EvolvXSI</a>' +
+      '<a href="https://example.com">EvolvXSI</a>' +
       "<table><tr><td><b>bold</b> <i>italic</i></td></tr></table>" +
       "<h1>Heading</h1>";
     const doc = parse(await renderHtml(dirty));
 
     expect(doc.querySelector("a")?.getAttribute("href")).toBe(
-      "https://onyx.app"
+      "https://example.com"
     );
     expect(doc.querySelector("table")).not.toBeNull();
     expect(doc.querySelector("td b")?.textContent).toBe("bold");

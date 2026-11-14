@@ -372,8 +372,8 @@ _LOCAL_PROVIDERS = frozenset({"ollama_chat", "lm_studio"})
 # ---------------------------------------------------------------------------
 
 _REMOTE_CATALOG_URL = (
-    "https://raw.githubusercontent.com/onyx-dot-app/evolvxsi/main/"
-    "backend/evolvxsi/llm/price_table"
+    "https://raw.githubusercontent.com/VenkataAnilKumar/EvolvXSI/main/"
+    "services/core/evolvxsi/llm/price_table"
 )
 _REMOTE_FETCH_TIMEOUT_SECONDS = 5.0
 # provider -> (fetched_at epoch, section or None). None negative-caches

@@ -30,9 +30,9 @@ export function getWebVersion(): string {
 }
 
 /** Where the About page's version links. */
-export const CHANGELOG_URL = "https://docs.onyx.app/changelog";
+export const CHANGELOG_URL = "/help/changelog";
 
 /** The GitHub page of a commit of the EvolvXSI repo. */
 export function commitUrl(commit: string): string {
-  return `https://github.com/onyx-dot-app/evolvxsi/commit/${commit}`;
+  return `https://github.com/VenkataAnilKumar/EvolvXSI/commit/${commit}`;
 }

@@ -54,7 +54,7 @@ class DocumentPushPayload(BaseModel):
     source: str = Field(
         description=(
             "Connector source type (e.g. confluence, slack, google_drive). "
-            "Full list: https://github.com/onyx-dot-app/evolvxsi/blob/main/backend/evolvxsi/configs/constants.py#L195"
+            "Full list: https://github.com/VenkataAnilKumar/EvolvXSI/blob/main/services/core/evolvxsi/configs/constants.py"
         )
     )
     url: str | None = Field(

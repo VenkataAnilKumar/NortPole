@@ -68,7 +68,7 @@ class QueryProcessingSpec(HookPointSpec):
     )
     default_fail_strategy = HookFailStrategy.HARD
     docs_url = (
-        "https://docs.onyx.app/admins/advanced_configs/hook_extensions#query-processing"
+        "/help/admins/advanced_configs/hook_extensions#query-processing"
     )
 
     payload_model = QueryProcessingPayload

@@ -80,7 +80,7 @@ from evolvxsi.utils.logger import setup_logger
 
 logger = setup_logger()
 
-_DOCS_LINK = "https://docs.onyx.app/admins/connectors/official/jira"
+_DOCS_LINK = "/help/admins/connectors/official/jira"
 _TIMEOUT_TEXT = CheckRowText(
     summary="Timed out",
     description=(

@@ -40,7 +40,7 @@ def test_verify_email_domain_allows_plus_for_evolvxsi_app(
 ) -> None:
     monkeypatch.setattr(users, "MULTI_TENANT", True, raising=False)
 
-    # Should not raise for onyx.app domain
+    # Should not raise for example.com domain
     verify_email_domain("user+tag@evolvxsi.local", valid_email_domains=[])
 
 

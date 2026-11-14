@@ -1,28 +1,28 @@
 # Upstream source
 
-Adapted from the Onyx Community Edition, commit `919578e0408a2d739a16215c09844c6762793891` (shallow clone, taken 2026-11-10).
+Adapted from the upstream open-source core, commit `919578e0408a2d739a16215c09844c6762793891` (shallow clone, taken 2026-11-10).
 
 ## What was copied
 
-- Backend `onyx`, `alembic`, `alembic_tenants`, `model_server`, `shared_configs`, `requirements`, `pyproject.toml`, `uv.lock` and unit tests.
+- Backend package (renamed `evolvxsi`), `alembic`, `alembic_tenants`, `model_server`, `shared_configs`, `requirements`, `pyproject.toml`, `uv.lock` and unit tests.
 - The web app source into `apps/workspace`.
 
 ## What was left out
 
-- All `ee` directories (Onyx Enterprise License), including external permission sync and enterprise search.
+- All `ee` directories (upstream enterprise licence), including external permission sync and enterprise search.
 - Deployment files (Docker, Helm, Terraform, CI), desktop, mobile, extensions, widget, CLI, documentation, markdown docs and integration and end-to-end tests.
 - The license public key and multi-tenant migration scripts that import `ee`.
 
 ## Changes after copying
 
-- Rebranded with `tools/rebrand_onyx.py` (Onyx to EvolvXSI). Re-run it on a fresh copy when taking a newer upstream commit.
+- Rebranded by a one-time script that renamed the upstream product name to EvolvXSI. The script was removed afterwards; recover it from git history (commit 7cabc08, `tools/`) and re-run it on a fresh copy when taking a newer upstream commit.
 - Community stubs replace `ee` imports in the web app: `src/lib/community/*`, `src/sections/SearchUI.tsx` and the hooks admin page.
 
 ## Restored later from the same commit (2026-11-14)
 
 The first copy left out every markdown file and the integration tests, which also dropped some files the product or
 its unit tests need. These were taken from the same upstream commit (`919578e`) and rebranded with
-`tools/rebrand_onyx.py`; none comes from an `ee` directory:
+the same one-time script; none comes from an `ee` directory:
 
 - Craft runtime templates: `evolvxsi/server/features/build/AGENTS.template.md` and
   `evolvxsi/server/features/build/sandbox/image/templates/outputs/web/AGENTS.md` (without them Craft wrote empty
@@ -66,13 +66,13 @@ Tests that switch on Enterprise mode are skipped with a stated reason.
 
 ## Clean-up of upstream leftovers (done 2026-11-10)
 
-- Seeded and placeholder users now use `evolvxsi.local` addresses (code and migrations); all other `@onyx.app` addresses, including a named person's, were replaced or removed.
+- Seeded and placeholder users now use `evolvxsi.local` addresses (code and migrations); all other upstream-domain addresses, including a named person's, were replaced or removed.
 - The connector-request email is sent only when `CONNECTOR_REQUEST_EMAIL` is set; it no longer goes to an upstream address.
 - The `HTTP-Referer` header for model providers now uses the app's own `WEB_DOMAIN`; the web crawler user agent no longer links to an upstream site; the evaluation CLI default points to localhost.
-- Sandbox label keys moved from `onyx.app/...` to `evolvxsi.local/...`.
+- Sandbox label keys moved from the upstream domain to `evolvxsi.local/...`.
 - The Craft background video no longer loads from an upstream CDN (and the content security policy no longer allows it); the footer link and slogan are now neutral ("Governed agent workspace", English in every locale until translated); the contact-sales link is `NEXT_PUBLIC_SALES_URL` or `#`.
 - The enterprise-only agent statistics links were removed, because that page was part of `ee`.
-- **Still to review:** about 290 references to the upstream documentation site (`docs.onyx.app`) remain as help links and in a few skill and migration text strings; none sends data.
+- Upstream names removed from code, tests and documents (2026-11-14). Help links go to the in-product Help page (`/help`); data files the product fetches (recommended models, price tables, Slack source icons, release notes) are read from this repository; the built-in skill that pointed the agent at the upstream documentation site was removed (migration `e5a7c9d1f346`). The upstream name remains only in the two `NOTICE` files, which the MIT licence requires, and in the Craft sandbox's command-line package name (`initial-requirements.in`), which is the published package's real name.
 - The web dev server accepts only the `localhost` origin in development.
 
 ## EvolvXSI-owned additions (kept apart from the adapted upstream files)

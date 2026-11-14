@@ -47,7 +47,7 @@ from evolvxsi.connectors.notion.source_operations import (
 )
 from evolvxsi.connectors.source_operations import SourceOperations
 
-_DOCS_LINK = "https://docs.onyx.app/admins/connectors/official/notion"
+_DOCS_LINK = "/help/admins/connectors/official/notion"
 _TIMEOUT_TEXT = CheckRowText(
     summary="Timed out",
     description=(

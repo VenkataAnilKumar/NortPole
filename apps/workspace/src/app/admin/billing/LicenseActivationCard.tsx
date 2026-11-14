@@ -12,7 +12,7 @@ import { LicenseStatus } from "@/lib/billing/types";
 import { formatDateShort } from "@/lib/dateUtils";
 import { useSettings } from "@/lib/settings/hooks";
 
-const BILLING_HELP_URL = "https://docs.onyx.app/admins/billing/overview";
+const BILLING_HELP_URL = "/help/admins/billing/overview";
 
 interface LicenseActivationCardProps {
   isOpen: boolean;

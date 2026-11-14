@@ -52,7 +52,7 @@ Tools: `pip-audit` (PyPI advisories) on the 349 packages pinned by the lockfile'
 
 ## 5. Findings changed in this pass
 - Upstream fetches off by default (`EVOLVXSI_AIRGAPPED` now defaults on; set it to `false` to allow them).
-- Seven admin screen strings pointed to the upstream project's documentation or used its domain as an example; they now carry no upstream link (docs link removed, LiteLLM's own docs linked for the custom-provider help, example.com in placeholders). About 90 further references to the upstream project remain in code comments, tests, a skill, an MCP server note and file headers; none is shown to people or fetched at run time; the `cloud.onyx.app` address sits in an MCP client configuration template (`mcp_server/mcp.json.template`) that a person would copy, and still points to the upstream project's hosted service.
+- Seven admin screen strings pointed to the upstream project's documentation or used its domain as an example; they now carry no upstream link (docs link removed, LiteLLM's own docs linked for the custom-provider help, example.com in placeholders). The remaining references to the upstream project (help links, code comments, tests, skills, the MCP client configuration template) were removed on 2026-11-14; see `services/core/UPSTREAM.md`.
 - Dependency pins raised (section 4).
 
 ## 6. Not assessed

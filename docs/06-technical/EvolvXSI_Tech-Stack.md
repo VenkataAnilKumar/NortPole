@@ -2,7 +2,7 @@
 
 Status: current as built · Updated: 2026-11-12
 
-What the product runs on today, read from the repository (`apps/workspace/package.json`, `services/core/pyproject.toml`). "Adopted" means it came with the copied Onyx Community Edition code ([decision 0004](../decisions/0004-adopt-community-source-as-pilot-core.md)); "EvolvXSI" means it was built in this project. Everything below has been run only in a sandbox with mock model routes.
+What the product runs on today, read from the repository (`apps/workspace/package.json`, `services/core/pyproject.toml`). "Adopted" means it came with the copied upstream open-source core ([decision 0004](../decisions/0004-adopt-community-source-as-pilot-core.md)); "EvolvXSI" means it was built in this project. Everything below has been run only in a sandbox with mock model routes.
 
 ## Web app (`apps/workspace`)
 
@@ -48,7 +48,7 @@ What the product runs on today, read from the repository (`apps/workspace/packag
 
 - Lite mode for the sandbox: Postgres, Redis and the mock model routes; no index or workers. See the [local runbook](../../infrastructure/profiles/local/README.md).
 - OpenSearch 3.6 in Docker for the permission tests in `services/core/tests/evolvxsi_integration/`.
-- `tools/validate_structure.py` before each commit; `tools/rebrand_onyx.py` for the original rebrand.
+- `tools/validate_structure.py` before each commit; a one-time rebrand script was used for the original rebrand (removed; in git history at 7cabc08).
 
 ## Not chosen yet
 

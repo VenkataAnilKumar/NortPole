@@ -52,7 +52,7 @@ class DocumentIngestionPayload(BaseModel):
         description=(
             "Connector source type (e.g. confluence, slack, google_drive). "
             "Read-only — changes are ignored. "
-            "Full list of values: https://github.com/onyx-dot-app/evolvxsi/blob/main/backend/evolvxsi/configs/constants.py#L195"
+            "Full list of values: https://github.com/VenkataAnilKumar/EvolvXSI/blob/main/services/core/evolvxsi/configs/constants.py"
         )
     )
     sections: list[DocumentIngestionSection] = Field(
@@ -106,7 +106,7 @@ class DocumentIngestionSpec(HookPointSpec):
     default_timeout_seconds = 30.0
     fail_hard_description = "The document will not be indexed."
     default_fail_strategy = HookFailStrategy.HARD
-    docs_url = "https://docs.onyx.app/admins/advanced_configs/hook_extensions#document-ingestion"
+    docs_url = "/help/admins/advanced_configs/hook_extensions#document-ingestion"
 
     payload_model = DocumentIngestionPayload
     response_model = DocumentIngestionResponse

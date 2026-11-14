@@ -34,7 +34,7 @@ INDEXING_MODEL_SERVER_PORT = int(
 # EvolvXSI custom Deep Learning Models
 CONNECTOR_CLASSIFIER_MODEL_REPO = "Danswer/filter-extraction-model"
 CONNECTOR_CLASSIFIER_MODEL_TAG = "1.0.0"
-INTENT_MODEL_VERSION = "onyx-dot-app/hybrid-intent-token-classifier"
+INTENT_MODEL_VERSION = "acme-corp/hybrid-intent-token-classifier"
 # Fresh-install default self-hosted model, baked into the model-server image.
 DEFAULT_DOCUMENT_ENCODER_MODEL = "ibm-granite/granite-embedding-97m-multilingual-r2"
 # INTENT_MODEL_TAG = "v1.0.3"

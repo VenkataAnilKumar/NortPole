@@ -160,7 +160,7 @@ function useSettingsItems({
           id: "help-faq",
           icon: SvgHelpCircle,
           title: t("helpFaq.label"),
-          href: "https://docs.onyx.app",
+          href: "/help",
           target: "_blank",
         },
         ...(enterpriseSettings?.custom_help_link_url

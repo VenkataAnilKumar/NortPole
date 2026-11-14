@@ -197,7 +197,7 @@ def test_private_helpers_and_data_attrs_are_allowed() -> None:
     class _TidyOperations(SourceOperations):
         source = DocumentSource.SLACK
         sdk_modules = ()
-        docs_link = "https://docs.onyx.app/connectors/slack"
+        docs_link = "/help/connectors/slack"
 
         def _build_client(self) -> None:
             return None

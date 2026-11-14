@@ -90,7 +90,7 @@ from evolvxsi.connectors.slack.source_operations import (
 from evolvxsi.connectors.source_operations import SourceOperations
 
 _SLACK_DOCS_LINK = (
-    "https://docs.onyx.app/admins/connectors/official/slack/slack_indexed"
+    "/help/admins/connectors/official/slack/slack_indexed"
 )
 _TIMEOUT_TEXT = CheckRowText(
     summary="Timed out",

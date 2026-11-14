@@ -21,7 +21,7 @@ from evolvxsi.server.features.build.sandbox.labels import (
 )
 
 ResourceKind = Literal["pod", "service", "secret"]
-TEST_FINALIZER = "cleanup.tests.onyx.app/hold"
+TEST_FINALIZER = "cleanup.tests.example.com/hold"
 
 
 @dataclass(frozen=True)

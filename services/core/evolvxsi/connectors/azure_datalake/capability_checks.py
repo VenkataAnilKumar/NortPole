@@ -55,7 +55,7 @@ CONTAINER_CHECK_ID = "adls_container"
 PATH_PREFIX_CHECK_ID = "adls_path_prefix"
 FILE_READ_CHECK_ID = "adls_file_read"
 
-DOCS_LINK = "https://docs.onyx.app/admins/connectors/official/azure_datalake"
+DOCS_LINK = "/help/admins/connectors/official/azure_datalake"
 ACCOUNT_LABELS = MicrosoftAccountLabels.with_prefix(
     "Azure Data Lake", private_key="Azure Data Lake Certificate"
 )

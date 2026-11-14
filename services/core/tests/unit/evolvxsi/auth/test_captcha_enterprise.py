@@ -35,7 +35,7 @@ def _assessment(
     valid: bool = True,
     invalid_reason: str | None = None,
     action: str = "signup",
-    hostname: str = "cloud.onyx.app",
+    hostname: str = "cloud.example.com",
     create_time: str | None = None,
     score: float = 0.9,
     reasons: list[str] | None = None,
@@ -67,7 +67,7 @@ def _test_env() -> Iterator[None]:
         patch.object(
             captcha_module,
             "RECAPTCHA_HOSTNAME_ALLOWLIST",
-            frozenset({"cloud.onyx.app"}),
+            frozenset({"cloud.example.com"}),
         ),
         patch.object(captcha_module, "RECAPTCHA_SCORE_THRESHOLD", 0.8),
     ):
