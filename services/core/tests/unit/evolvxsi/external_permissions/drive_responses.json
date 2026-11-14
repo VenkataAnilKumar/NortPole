@@ -1,0 +1,50 @@
+{
+  "_note": "Shapes of Google Drive API v3 responses (files.list with permissions, permissions.list), with made-up ids and addresses.",
+  "my_drive_file": {
+    "id": "1AbcMyDriveDoc",
+    "name": "Travel policy 2026",
+    "mimeType": "application/vnd.google-apps.document",
+    "webViewLink": "https://docs.google.com/document/d/1AbcMyDriveDoc/edit",
+    "permissions": [
+      {"id": "01", "type": "user", "role": "owner", "emailAddress": "Ann.Owner@gmail.com"},
+      {"id": "02", "type": "user", "role": "reader", "emailAddress": "bob.reader@gmail.com"},
+      {"id": "03", "type": "user", "role": "commenter", "emailAddress": "cara@gmail.com"},
+      {"id": "04", "type": "group", "role": "reader", "emailAddress": "Finance-Team@example.com"},
+      {"id": "05", "type": "domain", "role": "reader", "domain": "example.com", "allowFileDiscovery": true},
+      {"id": "anyoneWithLink", "type": "anyone", "role": "reader", "allowFileDiscovery": false},
+      {"id": "06", "type": "user", "role": "reader", "emailAddress": "removed@gmail.com", "deleted": true}
+    ]
+  },
+  "shared_drive_file": {
+    "id": "1XyzSharedDriveSheet",
+    "name": "Budget",
+    "driveId": "0AShared",
+    "mimeType": "application/vnd.google-apps.spreadsheet",
+    "permissionIds": ["11", "12", "13"]
+  },
+  "shared_drive_permission_pages": [
+    {"permissions": [
+      {"id": "11", "type": "user", "role": "organizer", "emailAddress": "dana@gmail.com",
+       "permissionDetails": [{"permissionType": "member", "role": "organizer", "inherited": true, "inheritedFrom": "0AShared"}]}
+    ], "nextPageToken": "p2"},
+    {"permissions": [
+      {"id": "12", "type": "user", "role": "writer", "emailAddress": "eve@gmail.com"},
+      {"id": "13", "type": "anyone", "role": "reader", "allowFileDiscovery": true}
+    ]}
+  ],
+  "public_on_the_web_file": {
+    "id": "1PublicWeb",
+    "name": "Public handbook",
+    "mimeType": "application/pdf",
+    "permissions": [
+      {"id": "01", "type": "user", "role": "owner", "emailAddress": "ann.owner@gmail.com"},
+      {"id": "anyone", "type": "anyone", "role": "reader", "allowFileDiscovery": true}
+    ]
+  },
+  "externally_owned_file": {
+    "id": "1ExternalOwner",
+    "name": "Shared with me by someone outside",
+    "mimeType": "application/vnd.google-apps.document",
+    "permissionIds": ["21"]
+  }
+}
