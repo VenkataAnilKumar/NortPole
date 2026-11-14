@@ -29,6 +29,7 @@ export type AdminNavItemId =
   | "overview"
   | "quality"
   | "approvals"
+  | "scheduling"
   | "webSearch"
   | "imageGeneration"
   | "voice"
@@ -105,6 +106,7 @@ export const NAV_ITEM_IDS: Record<
   OVERVIEW: "overview",
   QUALITY: "quality",
   APPROVALS: "approvals",
+  SCHEDULING: "scheduling",
   DECISION_MODELS: "decisionModels",
   WEB_SEARCH: "webSearch",
   IMAGE_GENERATION: "imageGeneration",

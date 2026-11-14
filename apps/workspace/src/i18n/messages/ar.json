@@ -16872,6 +16872,9 @@
         },
         "approvals": {
           "label": "الموافقات"
+        },
+        "scheduling": {
+          "label": "الجدولة"
         }
       },
       "sections": {

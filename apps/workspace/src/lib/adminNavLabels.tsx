@@ -28,6 +28,7 @@ export function useAdminNavLabels(): Record<AdminNavItemId, string> {
       overview: t("adminNav.items.overview.label"),
       quality: t("adminNav.items.quality.label"),
       approvals: t("adminNav.items.approvals.label"),
+      scheduling: t("adminNav.items.scheduling.label"),
       webSearch: t("adminNav.items.webSearch.label"),
       imageGeneration: t("adminNav.items.imageGeneration.label"),
       voice: t("adminNav.items.voice.label"),

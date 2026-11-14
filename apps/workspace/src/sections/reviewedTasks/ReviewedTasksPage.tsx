@@ -475,6 +475,11 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
               {busy === "export" ? "Checking access…" : "Export as Markdown"}
             </button>
           )}
+          {(task.state === "approved" || task.state === "draft_ready") && (
+            <a href={`/app/workflows/scheduled?task=${encodeURIComponent(task.id)}`} className={`${secondary} inline-flex items-center`} data-testid="repeat-on-schedule">
+              Repeat on a schedule…
+            </a>
+          )}
           {task.state === "draft_ready" && (
             <div className="flex w-full flex-wrap items-end gap-2">
               <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm font-medium text-text-05">

@@ -131,12 +131,38 @@ def _trends(db: Session, since: datetime.datetime, now: datetime.datetime, days:
     return out
 
 
+def _scheduled(db: Session, since: datetime.datetime) -> dict:
+    """Scheduled workflows in the period: how many runs, how many plans were accepted, what paused, and tokens.
+    Counts only; no request text."""
+    from evolvxsi.tasks.models import EvolvXSITask
+    from evolvxsi.workflow_schedules.models import EvolvXSIWorkflowRun, EvolvXSIWorkflowSchedule
+    from evolvxsi.workflow_schedules.runner import ACCEPTED
+
+    runs = db.execute(select(EvolvXSIWorkflowRun.outcome, EvolvXSIWorkflowRun.input_tokens, EvolvXSIWorkflowRun.output_tokens,
+                             EvolvXSITask.state)
+                      .outerjoin(EvolvXSITask, EvolvXSITask.id == EvolvXSIWorkflowRun.task_id)
+                      .where(EvolvXSIWorkflowRun.fired_at >= since)).all()
+    plans = [r for r in runs if r.outcome == "plan_ready"]
+    accepted = sum(1 for r in plans if r.state in ACCEPTED)
+    paused = db.scalar(select(func.count()).select_from(EvolvXSIWorkflowSchedule)
+                       .where(EvolvXSIWorkflowSchedule.state == "paused",
+                              EvolvXSIWorkflowSchedule.pause_reason.in_(("unaccepted", "skipped")))) or 0
+    return {
+        "runs": len(runs), "plans": len(plans), "accepted": accepted, "accepted_rate": _rate(accepted, len(plans)),
+        "failed_or_skipped": sum(1 for r in runs if r.outcome in ("plan_failed", "skipped")),
+        "auto_paused_schedules": paused,
+        "input_tokens": sum(r.input_tokens for r in runs), "output_tokens": sum(r.output_tokens for r in runs),
+        "active_schedules": db.scalar(select(func.count()).select_from(EvolvXSIWorkflowSchedule)
+                                      .where(EvolvXSIWorkflowSchedule.state == "active")) or 0,
+    }
+
+
 def build(db: Session, days: int = DEFAULT_DAYS, now: datetime.datetime | None = None) -> dict:
     days = max(1, min(int(days), MAX_DAYS))
     now = now or datetime.datetime.now(datetime.timezone.utc)
     since = now - datetime.timedelta(days=days)
     return {"generated_at": now.isoformat(), "window_days": days, "runs": _runs(db, since), "evals": _evals(db),
-            "feedback": _feedback(db, since), "trends": _trends(db, since, now, days)}
+            "feedback": _feedback(db, since), "trends": _trends(db, since, now, days), "scheduled": _scheduled(db, since)}
 
 
 @router.get("")

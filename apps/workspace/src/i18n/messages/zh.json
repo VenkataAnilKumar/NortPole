@@ -16872,6 +16872,9 @@
         },
         "approvals": {
           "label": "审批"
+        },
+        "scheduling": {
+          "label": "计划任务"
         }
       },
       "sections": {

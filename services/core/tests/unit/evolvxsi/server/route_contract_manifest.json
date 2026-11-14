@@ -353,6 +353,7 @@
   "GET /versions": "none",
   "GET /voice/status": "basic",
   "GET /workflow-schedules": "basic",
+  "GET /workflow-schedules/shared": "basic",
   "GET /workflow-schedules/{schedule_id}/runs": "basic",
   "HEAD /federated/{id}/entities/validate": "manage:connectors",
   "OPTIONS /oauth-provider/metadata": "none",
@@ -666,6 +667,7 @@
   "POST /web-search/search": "read:search",
   "POST /web-search/search-lite": "read:search",
   "POST /workflow-schedules": "basic",
+  "POST /workflow-schedules/{schedule_id}/copy": "basic",
   "POST /workflow-schedules/{schedule_id}/pause": "basic",
   "POST /workflow-schedules/{schedule_id}/resume": "basic",
   "PUT /admin/access-groups/sources/{cc_pair_id}": "manage:user_groups",
@@ -715,6 +717,7 @@
   "PUT /skills/{skill_id}/enabled": "basic",
   "PUT /tasks/{task_id}/draft": "basic",
   "PUT /user-preferences": "basic",
+  "PUT /workflow-schedules/{schedule_id}/share": "basic",
   "WS /build/sessions/{session_id}/webapp/_next/{hmr_endpoint}": "current_user_from_websocket_cookie",
   "WS /voice/synthesize/stream": "current_user_from_websocket",
   "WS /voice/transcribe/stream": "current_user_from_websocket"

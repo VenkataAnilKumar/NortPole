@@ -187,3 +187,56 @@ def test_limits_and_validation(world) -> None:  # type: ignore[no-untyped-def]
         _new(s, ann)
         with pytest.raises(EvolvXSIError):
             _new(s, ann)
+
+
+def test_sharing_with_own_groups_and_copying_runs_as_the_copier(world) -> None:  # type: ignore[no-untyped-def]
+    from evolvxsi.db.models import User__UserGroup, UserGroup
+
+    with get_session_with_current_tenant() as s:
+        ann, bob, admin = s.get(User, world["ann"]), s.get(User, world["bob"]), s.get(User, world["admin"])
+        team, other = UserGroup(name=f"sched-team-{TAG}", is_up_to_date=True), UserGroup(name=f"sched-other-{TAG}", is_up_to_date=True)
+        s.add_all([team, other])
+        s.flush()
+        s.add_all([User__UserGroup(user_id=ann.id, user_group_id=team.id), User__UserGroup(user_id=bob.id, user_group_id=team.id)])
+        s.commit()
+        try:
+            v = _new(s, ann)
+            assert api.list_mine(user=ann, db_session=s).my_groups == [team.name]
+            with pytest.raises(EvolvXSIError):
+                api.share_schedule(v.id, api.ShareBody(version=v.version, groups=[other.name]), user=ann, db_session=s)
+            shared = api.share_schedule(v.id, api.ShareBody(version=v.version, groups=[team.name]), user=ann, db_session=s)
+            assert shared.shared_with_groups == [team.name]
+            seen = api.list_shared(user=bob, db_session=s)
+            assert [x.id for x in seen] == [v.id] and seen[0].owner_email == ann.email and not seen[0].already_copied
+            assert not api.list_shared(user=admin, db_session=s), "only members of a shared group see it"
+            with pytest.raises(EvolvXSIError):
+                api.copy_schedule(v.id, user=admin, db_session=s)
+            copy = api.copy_schedule(v.id, user=bob, db_session=s)
+            assert copy.copied_from_id == v.id and copy.when == v.when and copy.shared_with_groups == []
+            assert api.list_shared(user=bob, db_session=s)[0].already_copied
+            run = _fire(s, copy.id)
+            task = s.get(EvolvXSITask, run.task_id)
+            assert task.owner_id == bob.id, "a copy runs as the person who copied it"
+            assert not s.query(EvolvXSITask).filter_by(owner_id=ann.id).count(), "the original owner gets nothing"
+        finally:
+            s.query(User__UserGroup).filter(User__UserGroup.user_group_id.in_([team.id, other.id])).delete(synchronize_session=False)
+            s.query(UserGroup).filter(UserGroup.id.in_([team.id, other.id])).delete(synchronize_session=False)
+            s.commit()
+
+
+def test_quality_counts_scheduled_runs_and_acceptances(world) -> None:  # type: ignore[no-untyped-def]
+    from evolvxsi.quality.api import _scheduled
+
+    with get_session_with_current_tenant() as s:
+        ann = s.get(User, world["ann"])
+        since = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(minutes=5)
+        before = _scheduled(s, since)
+        v = _new(s, ann)
+        r1 = _fire(s, v.id)
+        t1 = s.get(EvolvXSITask, r1.task_id)
+        tasks_api.accept_plan(t1.id, tasks_api.VersionOnly(version=t1.version), user=ann, db_session=s)
+        _fire(s, v.id)
+        after = _scheduled(s, since)
+        assert after["runs"] - before["runs"] == 2 and after["plans"] - before["plans"] == 2
+        assert after["accepted"] - before["accepted"] == 1
+        assert after["input_tokens"] - before["input_tokens"] == 240 and after["output_tokens"] - before["output_tokens"] == 60
