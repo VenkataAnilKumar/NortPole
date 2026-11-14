@@ -9,6 +9,8 @@ Updated: 2026-11-14. Status: current layout, per [decision 0006](../decisions/00
 apps/workspace/                 Web app: the user workspace and the admin console (Next.js)
 services/core/                  API and background workers (FastAPI, Celery): one deployable
 services/model-gateway/         Mock model server for tests and the local profile
+packages/contracts/             Generated: pack manifest JSON Schema, OpenAPI of EvolvXSI routes
+packages/pack-sdk/              Validate, build and sign packs without the server
 packs/                          Workflow packs as source: horizontal/, vertical/<industry>/, editions/, _template/
 infrastructure/profiles/        local runbook; staging profile (Compose, TLS, retrieval, backup, restore, release)
 tools/                          Structure and link check, licence screen, software bill of materials
@@ -30,7 +32,8 @@ modules.json                    Existing and planned modules, with maturity
 4. **Packs are source**: `packs/horizontal/<pack>/` and `packs/vertical/<industry>/<pack>/`, each with `manifest.yaml`,
    bundled per industry by `packs/editions/<industry>.json`. See the [packs README](../../packs/README.md) for the rules
    and their tests.
-5. **Contracts are generated** into `packages/contracts` and checked for drift (phase 4).
+5. **Contracts are generated** into `packages/contracts` (`make contracts`) and a test fails when they drift; the
+   [pack SDK](../../packages/pack-sdk/README.md) validates and signs packs against them (`make packs`).
 
 ## EvolvXSI domains in `services/core/evolvxsi`
 
@@ -52,7 +55,7 @@ The design documents name logical owners. This is where each one is implemented:
 | `services/execution` (runs, jobs, scheduling, exports) | `services/core`: `work/` and the background workers |
 | `services/knowledge` (ingestion, permissions, retrieval, citations) | `services/core`: inherited connectors, indexing and search, `knowledge/`, `external_permissions` |
 | `services/model-gateway` (routing, budgets, usage) | `services/core`: inherited `llm`, `governance/route_policy` (routing, redaction, usage); the folder holds the mock server |
-| `packages/contracts`, `packages/pack-sdk` | planned (phase 4) |
+| `packages/contracts`, `packages/pack-sdk` | `packages/contracts` (generated) and `packages/pack-sdk` |
 | `packages/agents`, `packages/skills` | `services/core`: inherited agents and skills; pack agents and guides in pack manifests |
 | `packages/integrations` | `services/core`: inherited connectors, tools and MCP |
 | `packages/identity-policy`, `packages/ui`, `evaluations` | `services/core` auth and policy; `apps/workspace` components; the pack evaluation gate. Separate packages are planned when needed |

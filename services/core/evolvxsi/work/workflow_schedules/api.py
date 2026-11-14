@@ -398,12 +398,12 @@ class AdminScheduleView(BaseModel):
 
 
 @router.get("/admin/workflow-schedules/controls")
-def get_controls(_: User = Depends(require_permission(Permission.FULL_ADMIN_PANEL_ACCESS))) -> controls.ScheduleControls:
+def get_schedule_controls(_: User = Depends(require_permission(Permission.FULL_ADMIN_PANEL_ACCESS))) -> controls.ScheduleControls:
     return controls.load()
 
 
 @router.put("/admin/workflow-schedules/controls")
-def put_controls(
+def put_schedule_controls(
     body: ControlsUpdate,
     user: User = Depends(require_permission(Permission.FULL_ADMIN_PANEL_ACCESS)),
 ) -> controls.ScheduleControls:

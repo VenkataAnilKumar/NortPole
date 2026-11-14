@@ -91,8 +91,9 @@ Status: Working list, updated 2026-11-14 (after the redesign stages R1–R6b and
 - [x] Phase 1: placeholders removed, `modules.json` true, structure check updated, `CODEOWNERS`, `Makefile`, CI for the web app and a nightly full suite.
 - [x] Phase 2: EvolvXSI modules grouped by domain in `services/core/evolvxsi`, with an import-boundary test.
 - [x] Phase 3: first-party packs as source in `packs/horizontal` and `packs/vertical/<industry>`, editions.
-- [ ] Phase 4: generated contracts in `packages/contracts` and `packages/pack-sdk`.
+- [x] Phase 4: generated contracts in `packages/contracts` and `packages/pack-sdk`.
 - [ ] Phase 5 (when needed): tenancy decision, Kubernetes and cloud profiles, service splits, connector SDK.
+- [ ] Pack signatures cannot be re-checked from the database: the server signs and hashes the manifest as uploaded but stores a copy with defaults filled in (`install_pack`). Store the signed bytes and add an integrity check; existing rows keep only the normalized copy.
 
 ## Waiting for the owner's yes
 
