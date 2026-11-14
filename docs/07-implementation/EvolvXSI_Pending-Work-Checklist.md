@@ -68,12 +68,9 @@ Status: Working list, 2026-11-13 (pending-work list below saved 2026-11-13 after
 
 ## Inherited test suite (2026-11-14)
 
-- [ ] **Box web links have no access list** (threat T18): the connector relies on removed Enterprise code. Fix before connecting Box; check other connectors for the same fallback.
-- [ ] **Owner decision: inherited tests for parts this repository does not contain.** They fail because the files were never brought into the monorepo, not because of EvolvXSI changes. Choose per group: restore the part, or delete the tests together with the feature.
-  - Craft (build in a sandbox, off in the pilot): `AGENTS.template.md` and the web template's `AGENTS.md` are missing, so the feature writes empty agent instructions (7 tests); `docker-compose.craft.yml` (1 test file).
-  - Upstream deployment files: `supervisord.conf`, `deployment/docker_compose/docker-compose.template.yml`, `Dockerfile.model_server` (4 tests).
-  - Upstream helper scripts and test helpers: `scripts.env_inventory`, `scripts.sync_price_table` and five more scripts, `scripts.generate_credential_bound_fields`, `source_operation_harnesses`, `tests.external_dependency_unit`, `tests.integration` (13 test files).
-- Sandbox-only (pass on a normal machine, nothing to fix): IPv6 `::1` binding in the sandbox proxy tests (41), DNS for `example.com` (1), the model server needs `torch` (3 test files).
+- [x] Fixed: neutral governance settings for unit tests, missing fixtures and test helpers, monorepo paths, the route contract (with three GET handlers that wrote), files the upstream copy dropped (Craft agent templates, dev scripts, test helpers), tests pointed at EvolvXSI's own deployment, and tokenizers baked into the API image.
+- Not a gap (checked 2026-11-14): Box web links. A failing test suggested they had no access list, but that test switches on Enterprise mode; in the community edition every Box document takes the source's own access setting.
+- Sandbox-only (pass on a normal machine): IPv6 `::1` binding in the sandbox proxy tests, DNS for `example.com`, the model server needs `torch`, and one Hugging Face download host blocked (the Docker image bake was therefore not run here).
 
 ## Known issues (saved 2026-11-13)
 

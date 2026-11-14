@@ -10,11 +10,6 @@ from shared_configs.embedding_models import get_local_model_spec
 
 _BACKEND_DIR = Path(__file__).resolve().parents[3]
 _NOMIC = "nomic-ai/nomic-embed-text-v1"
-_BAKED_NAME_PATTERN = re.compile(r"model_name_or_path='(?P<name>[^']+)'")
-_BAKE_PATTERN = re.compile(
-    r"SentenceTransformer\(model_name_or_path='(?P<name>[^']+)',\s*\\?\s*"
-    r"revision='(?P<revision>[^']+)',\s*trust_remote_code=False\)"
-)
 _TOKENIZER_BAKE_PATTERN = re.compile(
     r"Tokenizer\.from_pretrained\('(?P<name>[^']+)'"
     r"(?:,\s*revision='(?P<revision>[^']+)')?\)"
@@ -27,17 +22,8 @@ def _default_model_revision() -> str:
     return spec.hf_revision
 
 
-def test_model_server_image_bakes_only_the_default_model() -> None:
-    text = (_BACKEND_DIR / "Dockerfile.model_server").read_text()
-
-    baked = {
-        match.group("name"): match.group("revision")
-        for match in _BAKE_PATTERN.finditer(text)
-    }
-    assert baked == {DEFAULT_DOCUMENT_ENCODER_MODEL: _default_model_revision()}
-    # No other model (e.g. nomic-ai/nomic-embed-text-v1) is baked.
-    all_baked_names = {m.group("name") for m in _BAKED_NAME_PATTERN.finditer(text)}
-    assert all_baked_names == set(baked)
+# EvolvXSI does not build or deploy a model-server image (upstream's Dockerfile.model_server is not part of this
+# repository), so only the API image is checked here.
 
 
 def test_api_image_bakes_the_tokenizers_it_loads() -> None:

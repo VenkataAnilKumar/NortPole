@@ -11,39 +11,28 @@ or `-Q` entry would silently break with every other test still green:
 """
 
 import re
-from pathlib import Path
 
 from evolvxsi.background.celery.tasks.beat_schedule import beat_task_templates
 from evolvxsi.configs.app_configs import DISABLE_VECTOR_DB
 from evolvxsi.configs.constants import EvolvXSICeleryQueues, EvolvXSICeleryTask
+from tests.common.paths import find_ancestor_containing
 
 
-def _find_supervisord_conf() -> Path:
-    for parent in Path(__file__).resolve().parents:
-        candidate = parent / "supervisord.conf"
-        if candidate.is_file():
-            return candidate
-    raise AssertionError("supervisord.conf not found above this test")
+# EvolvXSI deploys the workers from its own compose profile (upstream used supervisord): the retrieval profile
+# starts each worker with a `celery -A ...<app> worker -Q a,b,c` line.
+_RETRIEVAL_COMPOSE = (
+    find_ancestor_containing("infrastructure/profiles/staging")
+    / "infrastructure/profiles/staging/docker-compose.retrieval.yml"
+)
 
 
-def _worker_queues(program: str) -> set[str]:
-    """The `-Q` queue set a supervisord worker program consumes.
-
-    Reads the queues from anywhere in the `[program:*]` block, so it survives the
-    `command=celery ... -Q a,b,c` being on one line or wrapped across several.
-    """
-    conf = _find_supervisord_conf().read_text()
-    block = re.search(
-        rf"^\[program:{re.escape(program)}\]\n(.*?)(?=^\[|\Z)",
-        conf,
-        re.DOTALL | re.MULTILINE,
-    )
-    if block is None:
-        raise AssertionError(f"no [program:{program}] block found")
-    queues = re.search(r"-Q\s+(\S+)", block.group(1))
-    if queues is None:
-        raise AssertionError(f"no -Q queues found in [program:{program}]")
-    return set(queues.group(1).split(","))
+def _worker_queues(app: str) -> set[str]:
+    """The `-Q` queue set the compose profile's worker for celery app `app` consumes."""
+    text = _RETRIEVAL_COMPOSE.read_text()
+    match = re.search(rf"celery -A \S*\.{re.escape(app)} worker -Q\s+(\S+)", text)
+    if match is None:
+        raise AssertionError(f"no `{app}` worker with -Q queues in {_RETRIEVAL_COMPOSE.name}")
+    return set(match.group(1).split(","))
 
 
 def test_check_for_port_scheduled_in_beat() -> None:
@@ -60,7 +49,7 @@ def test_check_for_port_scheduled_in_beat() -> None:
 def test_docprocessing_worker_consumes_port_queue() -> None:
     # run_port_attempt is enqueued to the PORT queue; the docprocessing worker is its
     # only consumer. Dropping `port` from this `-Q` list strands every port task.
-    assert EvolvXSICeleryQueues.PORT in _worker_queues("celery_worker_docprocessing")
+    assert EvolvXSICeleryQueues.PORT in _worker_queues("docprocessing")
 
 
 def test_docprocessing_worker_registers_port_tasks() -> None:

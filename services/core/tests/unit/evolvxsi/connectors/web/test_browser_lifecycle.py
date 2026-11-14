@@ -25,6 +25,22 @@ def _skip_web_connector_ssrf_check(monkeypatch: pytest.MonkeyPatch) -> None:
     )
 
 
+@pytest.fixture(autouse=True)
+def _no_network_fetch(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Keeps these tests off the network: the connector's pre-browser fetch answers like the zip download the
+    tests describe, so they reach the browser step they are about (the fetch itself is tested elsewhere)."""
+    from contextlib import contextmanager
+
+    @contextmanager
+    def _fake_get(*_args: Any, **_kwargs: Any) -> Any:
+        response = MagicMock()
+        response.status_code = 200
+        response.headers = {"content-type": "application/zip"}
+        yield response
+
+    monkeypatch.setattr("evolvxsi.connectors.web.connector.ssrf_safe_get", _fake_get)
+
+
 def _download_context_mock() -> MagicMock:
     """A BrowserContext whose pages always turn navigation into a download."""
     context = MagicMock()
