@@ -2,7 +2,7 @@ from collections.abc import Mapping
 
 from evolvxsi.configs.constants import DocumentSource
 
-_PUBLIC_SOURCE_IMAGE_BASE_URL = "https://raw.githubusercontent.com/onyx-dot-app/evolvxsi/main/web/public/slackbot-source-icons"
+_PUBLIC_SOURCE_IMAGE_BASE_URL = "https://raw.githubusercontent.com/VenkataAnilKumar/EvolvXSI/main/apps/workspace/public/slackbot-source-icons"
 _DEFAULT_SOURCE_IMAGE_FILENAME = "File.png"
 
 _SOURCE_IMAGE_FILENAMES: Mapping[DocumentSource, str] = {

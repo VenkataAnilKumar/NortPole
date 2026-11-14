@@ -16,9 +16,9 @@ This document maps source snapshots to EvolvXSI modules. The external reference 
 | packages/agents | Agno agent/team definitions and Mini-Agent examples | Reference only |
 | packages/skills | MiniMax skills | Reference only |
 | services/model-gateway | Sim providers and Agno model adapters | Reference only |
-| services/knowledge | Onyx knowledge backend | Reference only |
+| services/knowledge | Upstream-core knowledge backend | Reference only |
 | packages/integrations | Sim tools/connectors and Opengeni gateway | Reference only |
-| evaluations | Agno/Onyx evaluation code and Sim testing helpers | Reference only |
+| evaluations | Agno/upstream-core evaluation code and Sim testing helpers | Reference only |
 | packages/pack-sdk | MiniApps plugin and Busabase package patterns | Reference only |
 | packages/contracts | Existing workflow/event contracts | Reference only |
 | infrastructure | Sim deployment assets plus service-specific upstream deployment | Reference only |
@@ -63,7 +63,7 @@ EvolvXSI must own data-placement decisions, policy-preserving fallback, budgets 
 
 ### services/knowledge
 
-[onyx/backend/onyx/indexing](https://github.com/onyx-dot-app/onyx/tree/332b908f4a05090882ffaf7219d904c467bb7ce1/backend/onyx/indexing) · [onyx/backend/onyx/document_index](https://github.com/onyx-dot-app/onyx/tree/332b908f4a05090882ffaf7219d904c467bb7ce1/backend/onyx/document_index) · [onyx/backend/onyx/file_processing](https://github.com/onyx-dot-app/onyx/tree/332b908f4a05090882ffaf7219d904c467bb7ce1/backend/onyx/file_processing) · [agno/libs/agno/agno/memory](https://github.com/agno-agi/agno/tree/b21807bb6d86d2a62efeb42d492c04e566ee7f90/libs/agno/agno/memory) · [busabase/packages/busabase-core](https://github.com/busabase/busabase/tree/a525be9c5e3d74a21eec022469f9973378a49448/packages/busabase-core)
+`upstream/backend/upstream/indexing` · `upstream/backend/upstream/document_index` · `upstream/backend/upstream/file_processing` · [agno/libs/agno/agno/memory](https://github.com/agno-agi/agno/tree/b21807bb6d86d2a62efeb42d492c04e566ee7f90/libs/agno/agno/memory) · [busabase/packages/busabase-core](https://github.com/busabase/busabase/tree/a525be9c5e3d74a21eec022469f9973378a49448/packages/busabase-core)
 
 Validate edition-specific source ACLs and derived-content access. Choose one scoped-memory owner; Busabase is an optional work-product data reference, not an extra mandatory store.
 
@@ -75,7 +75,7 @@ Adapt credentials, actor identity, approval binding, idempotency and provider ra
 
 ### evaluations
 
-[agno/libs/agno/agno/eval](https://github.com/agno-agi/agno/tree/b21807bb6d86d2a62efeb42d492c04e566ee7f90/libs/agno/agno/eval) · [onyx/backend/onyx/evals](https://github.com/onyx-dot-app/onyx/tree/332b908f4a05090882ffaf7219d904c467bb7ce1/backend/onyx/evals) · [sim/packages/testing](https://github.com/simstudioai/sim/tree/093ea9ddb2f3e47facbc2dc42d4e523ba050dedb/packages/testing)
+[agno/libs/agno/agno/eval](https://github.com/agno-agi/agno/tree/b21807bb6d86d2a62efeb42d492c04e566ee7f90/libs/agno/agno/eval) · `upstream/backend/upstream/evals` · [sim/packages/testing](https://github.com/simstudioai/sim/tree/093ea9ddb2f3e47facbc2dc42d4e523ba050dedb/packages/testing)
 
 Author pilot-specific cases and cross-service gates; framework unit tests do not prove EvolvXSI outcomes.
 
@@ -93,7 +93,7 @@ Define stable tenant-aware API/events and agent/skill/pack manifests. Compatibil
 
 ### infrastructure
 
-[sim/docker](https://github.com/simstudioai/sim/tree/093ea9ddb2f3e47facbc2dc42d4e523ba050dedb/docker) · [sim/helm](https://github.com/simstudioai/sim/tree/093ea9ddb2f3e47facbc2dc42d4e523ba050dedb/helm) · [opengeni/deploy](https://github.com/Cloudgeni-ai/opengeni/tree/6af476612385066db6919c176809705017976d52/deploy) · [onyx/deployment](https://github.com/onyx-dot-app/onyx/tree/332b908f4a05090882ffaf7219d904c467bb7ce1/deployment)
+[sim/docker](https://github.com/simstudioai/sim/tree/093ea9ddb2f3e47facbc2dc42d4e523ba050dedb/docker) · [sim/helm](https://github.com/simstudioai/sim/tree/093ea9ddb2f3e47facbc2dc42d4e523ba050dedb/helm) · [opengeni/deploy](https://github.com/Cloudgeni-ai/opengeni/tree/6af476612385066db6919c176809705017976d52/deploy) · `upstream/deployment`
 
 Create a compatible deployment set, migration order, resource/network boundaries and recovery procedures. Compose files from unrelated products cannot simply be merged.
 
@@ -110,7 +110,7 @@ Create a compatible deployment set, migration order, resource/network boundaries
 | [minimax-miniapps](https://github.com/MiniMax-AI/MiniMax-Code-MiniApps/tree/0f2183f14dd8b8ebffcd08ba42ad719a53a5f5b8) | Vertical interactive workspace and plugin-host reference. |
 | [minimax-openroom](https://github.com/MiniMax-AI/OpenRoom/tree/02468154c4d99f8925916425bf444d672454fb3d) | Structured app actions and browser-local interface reference. |
 | [minimax-skills](https://github.com/MiniMax-AI/skills/tree/60aaae52bb2af8162732751a4332f62a5fef518b) | Report, office-document and multimodal skill-design references only. |
-| [onyx](https://github.com/onyx-dot-app/onyx/tree/332b908f4a05090882ffaf7219d904c467bb7ce1) | Knowledge/retrieval design reference only. |
+| `upstream` | Knowledge/retrieval design reference only. |
 | [openagents](https://github.com/OpenAgentsInc/openagents/tree/1e3a10fa8eb36856063769dbce311bd953491c4b) | Different OpenAgents project; retained but excluded from the collaboration mapping. |
 | [opengeni](https://github.com/Cloudgeni-ai/opengeni/tree/6af476612385066db6919c176809705017976d52) | Durable execution, approval and tool-gateway design reference only. |
 | [rerun](https://github.com/rerun-build/rerun/tree/a6d63a4b542674ddd002e51b39ba0df6e0807bcc) | Coworker/task-review UX reference; no core-service assignment. |
@@ -140,4 +140,4 @@ Targets are modules within the [ten-layer architecture](../06-technical/EvolvXSI
 
 ## Confirmed implementation disposition
 
-The owner reconfirmed reference-only implementation on 2026-11-05. All historical candidate/runtime/extraction descriptions are superseded. Sim and Onyx are primary local product references under the selected evidence approach; remaining snapshots retain supplemental status until the commercial-evidence gate is met. Existence in this table is not commercial certification or permission to integrate code. Follow the [phase reference workstream](EvolvXSI_Implementation-Phases.md#reference-only-implementation-workstream); preserve local snapshot provenance separately from current upstream research.
+The owner reconfirmed reference-only implementation on 2026-11-05. All historical candidate/runtime/extraction descriptions are superseded. Sim and the upstream core are primary local product references under the selected evidence approach; remaining snapshots retain supplemental status until the commercial-evidence gate is met. Existence in this table is not commercial certification or permission to integrate code. Follow the [phase reference workstream](EvolvXSI_Implementation-Phases.md#reference-only-implementation-workstream); preserve local snapshot provenance separately from current upstream research.

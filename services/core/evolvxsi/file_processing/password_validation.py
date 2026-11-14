@@ -37,7 +37,7 @@ def is_pdf_protected(file: IO[Any]) -> bool:
         # PDFs with only an owner password (permission restrictions like
         # print/copy disabled) use an empty user password — any viewer can open
         # them without prompting.  decrypt("") returns 0 only when a real user
-        # password is required.  See https://github.com/onyx-dot-app/evolvxsi/issues/9754
+        # password is required.  See upstream issue 9754
         try:
             return reader.decrypt("") == 0
         except Exception:

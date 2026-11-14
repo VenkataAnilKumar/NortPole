@@ -38,7 +38,7 @@ _DOMAIN_RULE_ID = "KtK6lLjFQp24UqYxdYQQuA"
 _ANY_ZOOM_USER_RULE_ID = "enforce_login_GB7nutLVSz-Aoi3nrsxZrw"
 _EVERYONE = RuleGrant(public=True, domains=frozenset())
 _OWNER_ONLY = RuleGrant(public=False, domains=frozenset())
-_DOMAINS = RuleGrant(public=False, domains=frozenset({"onyx.app", "partner.com"}))
+_DOMAINS = RuleGrant(public=False, domains=frozenset({"example.com", "partner.com"}))
 _RULE_GRANTS = {
     ACCOUNT_RULE_ID: _EVERYONE,
     _ANY_ZOOM_USER_RULE_ID: _EVERYONE,
@@ -63,7 +63,7 @@ ANYONE_SIGNED_IN_TO_ZOOM = recording_settings(
 _LINK_ACCESS_ROWS = [
     (PRIVATE_TO_ME, False, set()),
     (ONLY_PEOPLE_WITH_ACCESS, False, set()),
-    (ANYONE_IN_DOMAIN_RULE, False, {"zoom_domain:onyx.app", "zoom_domain:partner.com"}),
+    (ANYONE_IN_DOMAIN_RULE, False, {"zoom_domain:example.com", "zoom_domain:partner.com"}),
     (ANYONE_IN_MY_ACCOUNT, True, set()),
     (ANYONE_SIGNED_IN_TO_ZOOM, True, set()),
     (ANYONE_WITH_THE_LINK, True, set()),
@@ -124,7 +124,7 @@ class TestTheLinkAccessTable:
         access = _resolve(_client(ANYONE_IN_DOMAIN_RULE), add_prefix=False)
 
         assert access.external_user_group_ids == {
-            "domain:onyx.app",
+            "domain:example.com",
             "domain:partner.com",
         }
 
@@ -313,7 +313,7 @@ class TestLoadRuleGrants:
                 recording_authentication_rule(
                     id=_DOMAIN_RULE_ID,
                     type="enforce_login_with_domains",
-                    domains="Onyx.app, partner.com",
+                    domains="Example.com, partner.com",
                 ),
                 _DOMAINS,
             ),

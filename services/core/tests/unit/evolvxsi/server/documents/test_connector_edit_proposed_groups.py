@@ -20,7 +20,7 @@ _CURRENT = CurrentPairState(
     status=ConnectorCredentialPairStatus.ACTIVE,
     source=DocumentSource.GITHUB,
     input_type=InputType.POLL,
-    connector_specific_config={"repo_owner": "onyx-dot-app"},
+    connector_specific_config={"repo_owner": "acme-corp"},
     access_type=AccessType.PRIVATE,
     data_access_group_ids=[2, 5],
     credential_id=7,
@@ -30,7 +30,7 @@ _CURRENT = CurrentPairState(
 
 def _proposal(data_access_group_ids: list[int] | None) -> ConnectorEditProposal:
     return ConnectorEditProposal(
-        connector_specific_config={"repo_owner": "onyx-dot-app"},
+        connector_specific_config={"repo_owner": "acme-corp"},
         access_type=AccessType.PRIVATE,
         data_access_group_ids=data_access_group_ids,
         credential_id=7,

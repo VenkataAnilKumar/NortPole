@@ -63,7 +63,7 @@ from evolvxsi.utils.logger import setup_logger
 
 logger = setup_logger()
 
-_DOCS_LINK = "https://docs.onyx.app/admins/connectors/official/hubspot"
+_DOCS_LINK = "/help/admins/connectors/official/hubspot"
 _TIMEOUT_TEXT = CheckRowText(
     summary="Timed out",
     description=(

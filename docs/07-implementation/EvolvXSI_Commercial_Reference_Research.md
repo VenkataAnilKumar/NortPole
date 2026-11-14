@@ -110,7 +110,7 @@ Evidence and reading — [customer cases](https://airbyte.com/success-stories), 
 | --- | --- | --- |
 | Workspace and Agent Studio | Dify, existing Sim reference | Draft, publish, run and review journey with version visibility |
 | Automation Studio | n8n, Temporal | Trigger, retry, disable and reconciliation semantics |
-| Knowledge and libraries | Existing Onyx, Qdrant, Airbyte | Source/version/permission contract and revocation behavior |
+| Knowledge and libraries | Existing upstream core, Qdrant, Airbyte | Source/version/permission contract and revocation behavior |
 | Hybrid gateway | LiteLLM | Destination policy, capability matrix and usage contract |
 | Secure execution | Temporal, E2B | Run state machine and isolated-tool boundary |
 | Enterprise admin | Infisical, Appsmith | Actor/credential scope and inspectable policy decisions |

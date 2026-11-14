@@ -18,7 +18,7 @@ def ensure_permissions_migration_notification(user: User, db_session: Session) -
         description="Roles are moving to group-based permissions. Click for details.",
         additional_data={
             "feature": "permissions_migration_v1",
-            "link": "https://docs.onyx.app/admins/permissions/whats_changing",
+            "link": "/help/admins/permissions/whats_changing",
         },
         refresh_existing=False,
     )

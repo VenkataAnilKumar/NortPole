@@ -220,7 +220,7 @@ def test_config_fields_must_include_the_required_fields() -> None:
 
 def test_github_cache_keys_follow_only_the_fields_each_check_reads() -> None:
     base = {
-        "repo_owner": "onyx-dot-app",
+        "repo_owner": "acme-corp",
         "repositories": None,
         "state_filter": "all",
         "include_prs": True,

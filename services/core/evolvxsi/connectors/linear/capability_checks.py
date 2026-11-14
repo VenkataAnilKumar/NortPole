@@ -64,7 +64,7 @@ from evolvxsi.connectors.models import (
 
 T = TypeVar("T")
 
-DOCS_LINK: str = "https://docs.onyx.app/admins/connectors/official/linear"
+DOCS_LINK: str = "/help/admins/connectors/official/linear"
 PROBE_PAGE_SIZE: int = 1
 SIGN_IN_CHECK_ID: str = "linear_token"
 ISSUES_CHECK_ID: str = "linear_issues"

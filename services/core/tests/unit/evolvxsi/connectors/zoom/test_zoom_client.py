@@ -1547,7 +1547,7 @@ class TestGetRecordingAuthenticationRules:
                 "type": "enforce_login_with_domains",
                 "default_option": False,
                 "visible": True,
-                "domains": "onyx.app",
+                "domains": "example.com",
             },
         ],
     }
@@ -1568,7 +1568,7 @@ class TestGetRecordingAuthenticationRules:
         assert rules.recording_authentication is True
         assert [(r.id, r.type, r.domains) for r in rules.authentication_options] == [
             ("internally_GB7nutLVSz-Aoi3nrsxZrw", "internally", ""),
-            ("KtK6lLjFQp24UqYxdYQQuA", "enforce_login_with_domains", "onyx.app"),
+            ("KtK6lLjFQp24UqYxdYQQuA", "enforce_login_with_domains", "example.com"),
         ]
 
     def test_a_rule_type_zoom_adds_later_does_not_fail_the_catalogue(self) -> None:

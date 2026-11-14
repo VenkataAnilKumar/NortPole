@@ -17,7 +17,7 @@ describe("toPlainString", () => {
   it("strips link syntax, keeping the label", () => {
     expect(
       toPlainString(
-        markdown("[EvolvXSI 0.0.0-dev](https://docs.onyx.app/changelog)")
+        markdown("[EvolvXSI 0.0.0-dev](/help/changelog)")
       )
     ).toBe("EvolvXSI 0.0.0-dev");
   });
@@ -67,7 +67,7 @@ describe("toPlainString", () => {
   });
 
   it("strips link with bold label", () => {
-    expect(toPlainString(markdown("[**bold link**](https://onyx.app)"))).toBe(
+    expect(toPlainString(markdown("[**bold link**](https://example.com)"))).toBe(
       "bold link"
     );
   });

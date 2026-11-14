@@ -34,7 +34,7 @@ from evolvxsi.connectors.models import CheckRowText, fit_summary
 
 T = TypeVar("T")
 
-DOCS_LINK: str = "https://docs.onyx.app/admins/connectors/official/asana"
+DOCS_LINK: str = "/help/admins/connectors/official/asana"
 SIGN_IN_CHECK_ID: str = "asana_token"
 _WORKSPACE_CHECK_ID: str = "asana_workspace"
 _TEAM_CHECK_ID: str = "asana_team"

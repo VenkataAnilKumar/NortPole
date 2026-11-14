@@ -32,7 +32,7 @@ class DocumentPushSpec(HookPointSpec):
     fail_hard_description = "The indexing batch will fail."
     default_fail_strategy = HookFailStrategy.SOFT
     docs_url = (
-        "https://docs.onyx.app/admins/advanced_configs/hook_extensions#document-push"
+        "/help/admins/advanced_configs/hook_extensions#document-push"
     )
 
     payload_model = DocumentPushPayload

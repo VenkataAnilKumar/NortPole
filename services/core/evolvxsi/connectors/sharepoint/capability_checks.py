@@ -122,7 +122,7 @@ from evolvxsi.utils.logger import setup_logger
 
 logger = setup_logger()
 
-_DOCS_LINK: str = "https://docs.onyx.app/admins/connectors/official/sharepoint"
+_DOCS_LINK: str = "/help/admins/connectors/official/sharepoint"
 _TIMEOUT_TEXT = CheckRowText(
     summary="Timed out",
     description="The check did not finish within its time limit.\nRe-run the checks.",

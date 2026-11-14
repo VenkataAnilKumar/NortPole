@@ -68,7 +68,7 @@ from evolvxsi.connectors.models import (
 )
 from evolvxsi.connectors.source_operations import SourceOperations
 
-_DOCS_LINK = "https://docs.onyx.app/admins/connectors/official/github"
+_DOCS_LINK = "/help/admins/connectors/official/github"
 _TIMEOUT_TEXT = CheckRowText(
     summary="Timed out",
     description="The check ran past its time limit.\nRe-run the checks later.",

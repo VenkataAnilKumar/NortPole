@@ -64,7 +64,7 @@ from evolvxsi.connectors.onedrive.source_operations import (
     OneDriveSourceOperations,
 )
 
-_DOCS_LINK = "https://docs.onyx.app/admins/connectors/official/onedrive"
+_DOCS_LINK = "/help/admins/connectors/official/onedrive"
 _TIMEOUT_TEXT = CheckRowText(
     summary="Timed out",
     description="The check did not finish within its time limit.\nRe-run the checks.",

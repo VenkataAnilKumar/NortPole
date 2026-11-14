@@ -44,7 +44,7 @@ describe("OneDrive connector metadata", () => {
       "OneDrive"
     );
     expect(getSourceDocLink(ValidSources.OneDrive)).toBe(
-      "https://docs.onyx.app/admins/connectors/official/onedrive"
+      "/help/admins/connectors/official/onedrive"
     );
     expect(getCredentialFileType("onedrive_private_key")).toBe(
       FileTypeCategory.ONEDRIVE_PFX_FILE

@@ -721,7 +721,7 @@ class NotionConnector(LoadConnector, PollConnector, SlimConnector):
                 logger.warning(
                     "Skipping 'ai_block' ('%s') for base block '%s': "
                     "Notion API does not currently support reading AI blocks (as of 24/02/09) "
-                    "(discussion: https://github.com/onyx-dot-app/evolvxsi/issues/1053)",
+                    "(discussion: upstream issue 1053)",
                     result_block_id,
                     parent_block_id,
                 )
@@ -731,7 +731,7 @@ class NotionConnector(LoadConnector, PollConnector, SlimConnector):
                 logger.warning(
                     "Skipping unsupported block type '%s' "
                     "('%s') for base block '%s': "
-                    "(discussion: https://github.com/onyx-dot-app/evolvxsi/issues/1230)",
+                    "(discussion: upstream issue 1230)",
                     result_type,
                     result_block_id,
                     parent_block_id,
@@ -742,7 +742,7 @@ class NotionConnector(LoadConnector, PollConnector, SlimConnector):
                 logger.warning(
                     "Skipping 'external_object_instance_page' ('%s') for base block '%s': "
                     "Notion API does not currently support reading external blocks (as of 24/07/03) "
-                    "(discussion: https://github.com/onyx-dot-app/evolvxsi/issues/1761)",
+                    "(discussion: upstream issue 1761)",
                     result_block_id,
                     parent_block_id,
                 )

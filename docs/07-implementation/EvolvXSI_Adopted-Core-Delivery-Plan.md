@@ -2,7 +2,7 @@
 
 Status: **proposed; supersedes the sequencing (not the scope) of the fixture-first plan** · Updated: 2026-11-11
 
-This plan rebuilds the delivery sequence around [decision 0004](../decisions/0004-adopt-community-source-as-pilot-core.md): the pilot runs on adapted Onyx Community Edition source in `services/core` and `apps/workspace`, with EvolvXSI-owned governance added in separate modules. The earlier [P00–P11 plan](EvolvXSI_Implementation-Phases.md) stays valid as the scope reference and the source of acceptance wording; this document records what is actually done and the order of what remains. It commits no dates, no staffing and no customer.
+This plan rebuilds the delivery sequence around [decision 0004](../decisions/0004-adopt-community-source-as-pilot-core.md): the pilot runs on the adapted upstream open-source core in `services/core` and `apps/workspace`, with EvolvXSI-owned governance added in separate modules. The earlier [P00–P11 plan](EvolvXSI_Implementation-Phases.md) stays valid as the scope reference and the source of acceptance wording; this document records what is actually done and the order of what remains. It commits no dates, no staffing and no customer.
 
 How to read it: **Done** means verified in a sandbox on 2026-11-10 (not production). **Sizes** are relative (S, M, L, XL), not time estimates. **PF IDs** refer to the [feature catalog](../04-specs/EvolvXSI_Feature-Spec.md#full-platform-feature-catalog). Every phase ends with evidence a reviewer can check.
 
@@ -46,7 +46,7 @@ Delivered: product definition, PRD, feature catalog (PF-01 to PF-10), architectu
 
 **Goal:** a working product base without rebuilding commodity parts.
 
-Delivered: MIT-licensed parts of Onyx Community Edition (commit `919578e`) copied into `services/core` and `apps/workspace`; all `ee` code, deployment files and documentation excluded; repeatable rebrand script (`tools/rebrand_onyx.py`); notices in `NOTICE` and `UPSTREAM.md`; upstream telemetry off by default; upstream addresses, CDN video and enterprise-only links removed; new logos, icons and backgrounds; licensed font removed.
+Delivered: MIT-licensed parts of the upstream open-source core (commit `919578e`) copied into `services/core` and `apps/workspace`; all `ee` code, deployment files and documentation excluded; a one-time rebrand script (now removed; in git history at 7cabc08); notices in `NOTICE` and `UPSTREAM.md`; upstream telemetry off by default; upstream addresses, CDN video and enterprise-only links removed; new logos, icons and backgrounds; licensed font removed.
 
 **Exit evidence:** `UPSTREAM.md` lists what was copied, left out and changed. About 290 documentation links to the upstream site remain by design and are tracked for review.
 
@@ -220,7 +220,7 @@ Checked: unit tests for each control, and a run with a hostile passage (asks to 
 | Observability | Structured events, correlation IDs, dashboards, alerts; the stored audit trail feeds this. |
 | Backup and recovery | Backups, restore drill, rollback to a pinned release set. |
 | Release manifest | Product commit, service and package versions, documentation commit and approval record. |
-| Upstream upkeep | A rule for taking new upstream commits: fresh copy, re-run `tools/rebrand_onyx.py`, re-apply EvolvXSI modules, re-run tests; decide how often. |
+| Upstream upkeep | A rule for taking new upstream commits: fresh copy, re-run the rebrand script from git history (7cabc08), re-apply EvolvXSI modules, re-run tests; decide how often. |
 
 **Exit evidence:** a clean-room deployment from the manifest, a restore drill and a rollback, each recorded.
 

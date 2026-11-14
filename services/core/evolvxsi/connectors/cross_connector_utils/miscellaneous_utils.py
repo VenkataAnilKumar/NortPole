@@ -142,7 +142,7 @@ def process_evolvxsi_metadata(
     metadata: dict[str, Any],
 ) -> tuple[EvolvXSIMetadata, dict[str, Any]]:
     """
-    Users may set EvolvXSI metadata and custom tags in text files. https://docs.onyx.app/admins/connectors/official/file
+    Users may set EvolvXSI metadata and custom tags in text files. /help/admins/connectors/official/file
     Any unrecognized fields are treated as custom tags.
     """
     p_owners = experts_from_stores_representations(metadata.get("primary_owners"))

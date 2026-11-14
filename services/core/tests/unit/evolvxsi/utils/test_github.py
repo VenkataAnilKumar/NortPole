@@ -14,36 +14,36 @@ from evolvxsi.utils.github import (
     parse_github_source,
 )
 
-_SOURCE = GitHubSource(owner="onyx-dot-app", repo="evolvxsi")
+_SOURCE = GitHubSource(owner="acme-corp", repo="evolvxsi")
 
 
 class TestParseGithubSource:
     def test_preserves_unsplit_tree_tail_for_revision_resolution(self) -> None:
         source = parse_github_source(
-            "https://github.com/onyx-dot-app/evolvxsi/tree/feature/foo/backend/evolvxsi",
+            "https://github.com/acme-corp/evolvxsi/tree/feature/foo/backend/evolvxsi",
             allow_tree_path=True,
         )
 
-        assert source.owner == "onyx-dot-app"
+        assert source.owner == "acme-corp"
         assert source.repo == "evolvxsi"
         assert source.tree_tail == ("feature", "foo", "backend", "evolvxsi")
 
     def test_coding_agent_can_accept_ssh_clone_url(self) -> None:
         parsed = parse_github_source(
-            "git@github.com:onyx-dot-app/evolvxsi.git",
+            "git@github.com:acme-corp/evolvxsi.git",
             allow_ssh=True,
         )
 
-        assert parsed.owner == "onyx-dot-app"
+        assert parsed.owner == "acme-corp"
         assert parsed.repo == "evolvxsi"
 
     @pytest.mark.parametrize(
         "source",
         [
-            "https://github.com/onyx-dot-app/evolvxsi/tree/main",
-            "https://github.com/onyx-dot-app/evolvxsi/issues/123",
-            "https://github.com/onyx-dot-app/evolvxsi/pull/123",
-            "https://github.com/onyx-dot-app/evolvxsi/blob/main/README.md",
+            "https://github.com/acme-corp/evolvxsi/tree/main",
+            "https://github.com/acme-corp/evolvxsi/issues/123",
+            "https://github.com/acme-corp/evolvxsi/pull/123",
+            "https://github.com/acme-corp/evolvxsi/blob/main/README.md",
         ],
     )
     def test_coding_agent_rejects_repository_subpages(self, source: str) -> None:
@@ -59,7 +59,7 @@ class TestParseGithubSource:
     def test_coding_agent_rejects_http_repository_url(self) -> None:
         with pytest.raises(EvolvXSIError) as exc_info:
             parse_github_source(
-                "http://github.com/onyx-dot-app/evolvxsi",
+                "http://github.com/acme-corp/evolvxsi",
                 allow_ssh=True,
             )
 
@@ -68,10 +68,10 @@ class TestParseGithubSource:
     @pytest.mark.parametrize(
         "source",
         [
-            "http://github.com/onyx-dot-app/evolvxsi",
-            "git@github.com:onyx-dot-app/evolvxsi",
-            "https://gitlab.com/onyx-dot-app/evolvxsi",
-            "https://github.com/onyx-dot-app/evolvxsi/issues",
+            "http://github.com/acme-corp/evolvxsi",
+            "git@github.com:acme-corp/evolvxsi",
+            "https://gitlab.com/acme-corp/evolvxsi",
+            "https://github.com/acme-corp/evolvxsi/issues",
         ],
     )
     def test_rejects_sources_outside_the_import_contract(self, source: str) -> None:
@@ -135,13 +135,13 @@ class TestDownloadGithubArchive:
             "evolvxsi.utils.github.ssrf_safe_get", return_value=response
         ) as mock_get:
             download_github_archive(
-                parse_github_source("https://github.com/onyx-dot-app/evolvxsi.git"),
+                parse_github_source("https://github.com/acme-corp/evolvxsi.git"),
                 "HEAD",
                 max_size_bytes=500 * 1024 * 1024,
             )
 
         called_url = mock_get.call_args.args[0]
-        assert called_url == "https://codeload.github.com/onyx-dot-app/evolvxsi/tar.gz/HEAD"
+        assert called_url == "https://codeload.github.com/acme-corp/evolvxsi/tar.gz/HEAD"
 
     def test_uses_token_only_for_private_repo_fallback(self) -> None:
         public_response = _mock_response([], status_code=404)

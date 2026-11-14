@@ -8,13 +8,13 @@ This document is the sole place in the EvolvXSI document set for named external 
 
 ## Origin
 
-The owner's chats **Evaluate Onyx For Evolve SI** and **Agent Platform Architecture** discussed an integration-first approach. They proposed using Onyx as a possible base, extending it with specialized components only where the chosen workflow needs them. The chat **Product Ideas Compare** established the horizontal platform and vertical platform concepts. These discussions are planning context, not evidence that a dependency is approved, integrated, licensed for the intended use, or currently maintained.
+The owner's chats **Evaluate a knowledge platform for EvolvXSI** and **Agent Platform Architecture** discussed an integration-first approach. They proposed using the upstream core as a possible base, extending it with specialized components only where the chosen workflow needs them. The chat **Product Ideas Compare** established the horizontal platform and vertical platform concepts. These discussions are planning context, not evidence that a dependency is approved, integrated, licensed for the intended use, or currently maintained.
 
 ## Candidate map
 
 | Capability | References mentioned in chat history | Evaluation question |
 | --- | --- | --- |
-| Knowledge, chat, connectors, initial agent UI | [Onyx](https://github.com/onyx-dot-app/onyx) | Can it support the required permission-aware flow and branding through stable extension points? |
+| Knowledge, chat, connectors, initial agent UI | Upstream core | Can it support the required permission-aware flow and branding through stable extension points? |
 | Stateful agent execution | [LangGraph](https://github.com/langchain-ai/langgraph), [Deep Agents](https://github.com/langchain-ai/deepagents) | Do checkpoints, review points, tracing, and upgrades work for the selected workflow? |
 | Model gateway | [LiteLLM](https://github.com/BerriAI/litellm) | Can EvolvXSI enforce data-placement policy before provider routing and measure cost per task? |
 | Local inference | [Ollama](https://github.com/ollama/ollama) | Are quality, latency, throughput, and operations acceptable for the pilot? |
@@ -31,7 +31,7 @@ The owner supplied eight product sites for review. This is a **desk review of of
 
 | Product | What the official material emphasizes | EvolvXSI fit to test | Source and licensing signal |
 | --- | --- | --- | --- |
-| [Onyx](https://onyx.app/) | Enterprise knowledge indexing, permission-aware search, chat, agents, and research. | Strong context and retrieval candidate; test whether its workflow and approval model supports the first vertical. | [Community Edition is MIT; Enterprise Edition is separate](https://github.com/onyx-dot-app/onyx#-licensing). |
+| Upstream core | Enterprise knowledge indexing, permission-aware search, chat, agents, and research. | Strong context and retrieval candidate; test whether its workflow and approval model supports the first vertical. | Community Edition is MIT; Enterprise Edition is separate. |
 | [Sim](https://www.sim.ai/) | Visual and code-built workflows, knowledge base, files, tables, logs, and workspace governance. | Strong candidate for the complete workflow workspace; test evidence permissions and reviewer UX. | [Core is Apache 2.0; enterprise features have a separate production license](https://github.com/simstudioai/sim/blob/main/apps/docs/content/docs/introduction/index.mdx). |
 | [Kortix](https://kortix.com/) | Shared agents, company configuration in git, computer-based work, and self-hosting. | Reference for a company-wide agent workspace and long-running execution. | Current [repository license is Elastic License 2.0](https://github.com/kortix-ai/suna/blob/dev/LICENSE); [white-label hosting terms](https://github.com/kortix-ai/suna/blob/dev/WHITE-LABEL-LICENSE.md) add conditions. |
 | [Agno](https://www.agno.com/) | Agent SDK, AgentOS runtime, and a control plane for traces, evaluation, approvals, and scheduling. | Strong runtime/control-plane candidate; test whether its UI meets practitioner needs or needs a separate product front end. | [SDK repository is Apache 2.0](https://github.com/agno-agi/agno/blob/main/LICENSE); confirm terms for the [Control Plane](https://docs.agno.com/agent-os/control-plane) separately. |
@@ -40,9 +40,9 @@ The owner supplied eight product sites for review. This is a **desk review of of
 | [Opengeni](https://opengeni.ai/) | Always-on agent computers, shared sessions, scoped credentials, action approvals, and schedules. | Candidate for sandboxed long-running tasks where code or browser execution is necessary. | [Apache 2.0 and self-hosting are described by the project](https://opengeni.ai/). |
 | [Rerun](https://rerun.build/) | AI coworkers with their own computers, scheduled work, integrations, and human approvals. | Reference for an outcome-focused, approachable UX; test the product against the selected vertical rather than adopting it as a default foundation. | [Repository is AGPL-3.0](https://github.com/rerun-build/rerun/blob/main/LICENSE); verify obligations before reuse. |
 
-### Onyx
+### Upstream core
 
-Onyx's [repository](https://github.com/onyx-dot-app/onyx) describes indexed knowledge from many applications, fine-grained permissions, deep research, custom agents, MCP actions, sandboxes, and artifacts. Its own deployment description distinguishes a full indexing stack from a Lite chat-and-agent mode, so a knowledge-focused spike should use the full mode. The company [announced it is joining Zoom](https://onyx.app/blog/onyx-joins-zoom) and says Onyx will remain a standalone open-source product. That is relevant to the future roadmap and support relationship, but does not by itself disqualify the project. Test source permission propagation, citation provenance, workflow extension points, and what features are CE versus EE before treating Onyx as the base.
+The upstream core's repository describes indexed knowledge from many applications, fine-grained permissions, deep research, custom agents, MCP actions, sandboxes, and artifacts. Its own deployment description distinguishes a full indexing stack from a Lite chat-and-agent mode, so a knowledge-focused spike should use the full mode. The company announced it is joining Zoom and says the upstream core will remain a standalone open-source product. That is relevant to the future roadmap and support relationship, but does not by itself disqualify the project. Test source permission propagation, citation provenance, workflow extension points, and what features are CE versus EE before treating the upstream core as the base.
 
 ### Sim
 
@@ -74,9 +74,9 @@ Rerun's [site](https://rerun.build/) packages agents as approachable “coworker
 
 ## Decision for the next technical spike
 
-**No platform is selected as EvolvXSI's foundation by this review.** The earlier Onyx-first assumption should be tested against the broader options now available. Run the same thin vertical slice on three routes:
+**No platform is selected as EvolvXSI's foundation by this review.** The earlier upstream-core-first assumption should be tested against the broader options now available. Run the same thin vertical slice on three routes:
 
-1. **Onyx-led:** indexed context, practitioner task flow, citation, and approval.
+1. **Upstream-core-led:** indexed context, practitioner task flow, citation, and approval.
 2. **Sim-led:** workspace and workflow, with equivalent source permission and evidence checks.
 3. **Agno-led:** runtime and control plane, measuring the extra work required for a practitioner-facing UI and enterprise context.
 

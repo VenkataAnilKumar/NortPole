@@ -1,7 +1,7 @@
 {
     "mcpServers": {
-      "Onyx": {
-        "url": "https://cloud.onyx.app/mcp",
+      "EvolvXSI": {
+        "url": "https://YOUR-EVOLVXSI-DOMAIN/mcp",
         "headers": {
           "Authorization": "Bearer [YOUR PAT OR API KEY HERE]"
         }

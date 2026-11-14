@@ -107,7 +107,7 @@ function proposalFor(
 describe("buildEditProposal", () => {
   it("proposes the pair's state when nothing changed", () => {
     const config = {
-      repo_owner: "onyx-dot-app",
+      repo_owner: "acme-corp",
       repositories: "evolvxsi,docs",
       include_prs: true,
       include_issues: false,
@@ -140,7 +140,7 @@ describe("buildEditProposal", () => {
     "keeps the %s access and the pair's groups when nothing changed",
     (accessType, groupIds) => {
       const ccPair = githubPair(
-        { repo_owner: "onyx-dot-app", repositories: "evolvxsi" },
+        { repo_owner: "acme-corp", repositories: "evolvxsi" },
         { access_type: accessType }
       );
 
@@ -154,7 +154,7 @@ describe("buildEditProposal", () => {
 
   it("proposes the picked data-access groups when the access changed", () => {
     const ccPair = githubPair(
-      { repo_owner: "onyx-dot-app", repositories: "evolvxsi" },
+      { repo_owner: "acme-corp", repositories: "evolvxsi" },
       { access_type: "private" }
     );
 
@@ -168,7 +168,7 @@ describe("buildEditProposal", () => {
   });
 
   it("proposes the changed values only", () => {
-    const config = { repo_owner: "onyx-dot-app", repositories: "evolvxsi" };
+    const config = { repo_owner: "acme-corp", repositories: "evolvxsi" };
     const ccPair = githubPair(config);
 
     const proposal = proposalFor(ccPair, [], (values) => ({
@@ -179,7 +179,7 @@ describe("buildEditProposal", () => {
     }));
 
     expect(proposal.connector_specific_config).toEqual({
-      repo_owner: "onyx-dot-app",
+      repo_owner: "acme-corp",
       repositories: "evolvxsi,docs",
     });
     expect(proposal.name).toBe("Renamed");
@@ -191,7 +191,7 @@ describe("buildEditProposal", () => {
     const values = editInitialValues(
       ValidSources.GitHub,
       configuration,
-      githubPair({ repo_owner: "onyx-dot-app" }),
+      githubPair({ repo_owner: "acme-corp" }),
       []
     );
 

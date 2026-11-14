@@ -28,7 +28,7 @@ _CONFLUENCE_FORM: dict[str, Any] = {
     "is_cloud": True,
 }
 _JIRA_FORM: dict[str, Any] = {"jira_base_url": "https://example.atlassian.net"}
-_GITHUB_FORM: dict[str, Any] = {"repo_owner": "onyx-dot-app"}
+_GITHUB_FORM: dict[str, Any] = {"repo_owner": "acme-corp"}
 _NOTION_PAGE_ID = "17ab3186873d418fb899c3f6a43f68de"
 _NOTION_DASHED_PAGE_ID = "17ab3186-873d-418f-b899-c3f6a43f68de"
 _SHAREPOINT_SITE = "https://acme.sharepoint.com/sites/hr"
@@ -81,7 +81,7 @@ def _form_errors(source: DocumentSource, form_values: dict[str, Any]) -> dict[st
         ),
         (
             DocumentSource.GITHUB,
-            {**_GITHUB_FORM, "repositories": "docs, onyx-dot-app/evolvxsi"},
+            {**_GITHUB_FORM, "repositories": "docs, acme-corp/evolvxsi"},
             "repositories",
             REPOSITORY_OWNER_ERROR,
         ),
@@ -191,7 +191,7 @@ def test_a_value_that_follows_the_format_rules_is_no_form_error(
 
 
 def test_a_stored_config_that_breaks_a_format_rule_still_builds_the_connector() -> None:
-    stored = {**_GITHUB_FORM, "repositories": "onyx-dot-app/evolvxsi"}
+    stored = {**_GITHUB_FORM, "repositories": "acme-corp/evolvxsi"}
 
     assert build_connector_kwargs(DocumentSource.GITHUB, stored) == stored
 

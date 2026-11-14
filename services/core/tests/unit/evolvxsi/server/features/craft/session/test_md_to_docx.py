@@ -286,7 +286,7 @@ def test_table_cell_alignment_follows_column_spec() -> None:
 
 
 def test_link_becomes_real_hyperlink() -> None:
-    doc = _render("See [EvolvXSI](https://onyx.app) for details.")
+    doc = _render("See [EvolvXSI](https://example.com) for details.")
     xml = doc.element.xml
     assert "w:hyperlink" in xml
     # The visible link text is preserved.
@@ -343,7 +343,7 @@ def test_paren_wrapped_link_url_is_not_over_extended() -> None:
 def test_hyperlink_uses_pandoc_style_without_underline() -> None:
     # pandoc styles links with the muted "Hyperlink" char style and no underline,
     # not python-docx's brighter underlined default.
-    doc = _render("See [EvolvXSI](https://onyx.app).")
+    doc = _render("See [EvolvXSI](https://example.com).")
     link_props = doc.element.xml.split("w:hyperlink")[1]
     assert 'w:val="Hyperlink"' in link_props  # applies the character style
     assert "<w:u " not in link_props  # no underline
@@ -358,7 +358,7 @@ def test_link_without_url_falls_back_to_text() -> None:
 
 def test_hyperlink_inherits_surrounding_formatting() -> None:
     # A link nested inside bold should keep the bold run property on the link.
-    doc = _render("**[click here](https://onyx.app)**")
+    doc = _render("**[click here](https://example.com)**")
     xml = doc.element.xml
     assert "w:hyperlink" in xml
     hyperlink_run_props = xml.split("w:hyperlink")[1]
@@ -373,7 +373,7 @@ def _hyperlink_run_xml(doc: DocxDocument) -> list[str]:
 def test_hyperlink_preserves_nested_label_formatting() -> None:
     # Formatting inside the link label must survive; collapsing the children into
     # one hyperlink run would lose the bold/italic/code spans (pandoc keeps them).
-    doc = _render("[**bold** and *italic* and `code`](https://onyx.app)")
+    doc = _render("[**bold** and *italic* and `code`](https://example.com)")
     runs = _hyperlink_run_xml(doc)
     assert len(runs) == 5
     assert "<w:b/>" in runs[0] and ">bold<" in runs[0]
@@ -383,7 +383,7 @@ def test_hyperlink_preserves_nested_label_formatting() -> None:
 
 def test_hyperlink_preserves_whitespace_in_text() -> None:
     # Trailing space inside the link text must not be stripped by OOXML.
-    doc = _render("a [ spaced ](https://onyx.app) b")
+    doc = _render("a [ spaced ](https://example.com) b")
     assert 'xml:space="preserve"' in doc.element.xml
 
 
@@ -406,7 +406,7 @@ def test_html_entities_are_decoded_in_text() -> None:
 
 
 def test_html_entities_are_decoded_in_link_text() -> None:
-    doc = _render("[R &amp; D](https://onyx.app)")
+    doc = _render("[R &amp; D](https://example.com)")
     xml = doc.element.xml
     # "&" is stored decoded (serialized as the single XML escape &amp;), not left
     # as the literal entity text (which would double-escape to &amp;amp;).

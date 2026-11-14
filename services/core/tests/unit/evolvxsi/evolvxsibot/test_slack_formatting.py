@@ -201,9 +201,9 @@ def _render(message: str) -> str:
 
 
 def test_bold_url_delimiters_stay_outside_the_link() -> None:
-    rendered = _render("See **https://onyx.app/docs** for details.")
+    rendered = _render("See **https://example.com/docs** for details.")
 
-    assert "See *<https://onyx.app/docs>* for details." == rendered
+    assert "See *<https://example.com/docs>* for details." == rendered
 
 
 def test_unlinked_email_is_still_not_split_by_zero_width_space() -> None:
@@ -213,8 +213,8 @@ def test_unlinked_email_is_still_not_split_by_zero_width_space() -> None:
 
 
 def test_italic_and_strikethrough_urls_stay_intact() -> None:
-    assert "_<https://onyx.app>_" == _render("_https://onyx.app_")
-    assert "~<https://onyx.app>~" == _render("~~https://onyx.app~~")
+    assert "_<https://example.com>_" == _render("_https://example.com_")
+    assert "~<https://example.com>~" == _render("~~https://example.com~~")
 
 
 def test_bold_email_renders_as_mailto_link() -> None:
@@ -285,8 +285,8 @@ def test_slack_style_mailto_link_survives_formatting() -> None:
 
 
 def test_urls_and_emails_in_code_are_left_alone() -> None:
-    assert "```\nhttps://onyx.app and a@b.com\n```" == _render(
-        "```\nhttps://onyx.app and a@b.com\n```"
+    assert "```\nhttps://example.com and a@b.com\n```" == _render(
+        "```\nhttps://example.com and a@b.com\n```"
     )
     assert "code `a@b.com` span" == _render("code `a@b.com` span")
 
@@ -317,33 +317,33 @@ def test_code_is_left_literal_by_every_pre_parse_transform() -> None:
     # before mistune sees the text, so each has to honor the code guard
     for snippet in (
         "`<mailto:admin@evolvxsi.local|admin@evolvxsi.local>`",
-        "`<https://onyx.app/docs|evolvxsi.local/docs>`",
+        "`<https://example.com/docs|evolvxsi.local/docs>`",
         "`<div>hi</div>`",
-        "`[label](https://onyx.app/x)`",
+        "`[label](https://example.com/x)`",
     ):
         assert f"see {snippet} here" == format_slack_message(f"see {snippet} here")
 
-    fenced = "```\n[label](https://onyx.app/x)\n```"
+    fenced = "```\n[label](https://example.com/x)\n```"
     assert fenced == format_slack_message(fenced)
 
 
 def test_url_link_drops_redundant_label() -> None:
-    assert "<https://onyx.app>" == _render("[https://onyx.app](https://onyx.app)")
+    assert "<https://example.com>" == _render("[https://example.com](https://example.com)")
 
 
 def test_link_label_text_is_not_autolinked() -> None:
     # A nested <...> would terminate the citation link that wraps this title
-    title = _clean_markdown_link_text("Runbook for https://onyx.app/docs")
+    title = _clean_markdown_link_text("Runbook for https://example.com/docs")
 
-    assert "Runbook for https://onyx.app/docs" == title
+    assert "Runbook for https://example.com/docs" == title
     assert "Contact support@evolvxsi.local" == _clean_markdown_link_text(
         "Contact support@evolvxsi.local"
     )
     assert "Read the portal" == _clean_markdown_link_text(
-        "Read the [portal](https://onyx.app)"
+        "Read the [portal](https://example.com)"
     )
-    assert "Visit https://onyx.app" == _clean_markdown_link_text(
-        "Visit <https://onyx.app>"
+    assert "Visit https://example.com" == _clean_markdown_link_text(
+        "Visit <https://example.com>"
     )
 
 
@@ -363,19 +363,19 @@ def test_image_labels_cannot_nest_slack_links() -> None:
 
 
 def test_trailing_punctuation_excluded_from_url() -> None:
-    assert "trailing <https://onyx.app/docs>. Done" == _render(
-        "trailing https://onyx.app/docs. Done"
+    assert "trailing <https://example.com/docs>. Done" == _render(
+        "trailing https://example.com/docs. Done"
     )
 
 
 def test_balanced_url_parentheses_stay_inside_the_link() -> None:
-    assert "<https://onyx.app/docs_(v2)>" == _render("https://onyx.app/docs_(v2)")
-    assert "<https://onyx.app/docs>)))" == _render("https://onyx.app/docs)))")
+    assert "<https://example.com/docs_(v2)>" == _render("https://example.com/docs_(v2)")
+    assert "<https://example.com/docs>)))" == _render("https://example.com/docs)))")
 
 
 def test_url_delimiters_and_short_hosts_do_not_break_slack_links() -> None:
     assert "<https://x>" == _render("https://x")
-    assert "<https://onyx.app>|label" == _render("https://onyx.app|label")
+    assert "<https://example.com>|label" == _render("https://example.com|label")
 
 
 def test_email_autolinking_does_not_match_an_overlong_local_part() -> None:

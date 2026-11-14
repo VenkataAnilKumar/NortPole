@@ -84,7 +84,7 @@ def test_proxy_strips_browser_context_request_headers() -> None:
 
     request = _make_request(
         headers=[
-            (b"origin", b"https://cloud.onyx.app"),
+            (b"origin", b"https://cloud.example.com"),
             (b"sec-fetch-mode", b"cors"),
             (b"sec-fetch-site", b"same-origin"),
             (b"sec-fetch-dest", b"empty"),

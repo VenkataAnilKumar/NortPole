@@ -1,5 +1,5 @@
 """MCPTool results: a server's JSON text is encoded once, not as an escaped string
-inside another JSON object (onyx-dot-app/evolvxsi#16016), and a failure that the server
+inside another JSON object (upstream issue 16016), and a failure that the server
 reports is a tool error."""
 
 import json

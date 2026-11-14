@@ -1179,7 +1179,7 @@ DB_YIELD_PER_DEFAULT = 64
 POLL_CONNECTOR_OFFSET = 30  # Minutes overlap between poll windows
 
 # View the list here:
-# https://github.com/onyx-dot-app/evolvxsi/blob/main/backend/evolvxsi/connectors/factory.py
+# evolvxsi/connectors/factory.py
 # If this is empty, all connectors are enabled, this is an option for security heavy orgs where
 # only very select connectors are enabled and admins cannot add other connector types
 ENABLED_CONNECTOR_TYPES = os.environ.get("ENABLED_CONNECTOR_TYPES") or ""
@@ -1871,7 +1871,7 @@ except json.JSONDecodeError:
 # Auto LLM Configuration - fetches model configs from GitHub for providers in Auto mode
 AUTO_LLM_CONFIG_URL = os.environ.get(
     "AUTO_LLM_CONFIG_URL",
-    "https://raw.githubusercontent.com/onyx-dot-app/evolvxsi/main/backend/evolvxsi/llm/well_known_providers/recommended-models.json",
+    "https://raw.githubusercontent.com/VenkataAnilKumar/EvolvXSI/main/services/core/evolvxsi/llm/well_known_providers/recommended-models.json",
 )
 
 #####

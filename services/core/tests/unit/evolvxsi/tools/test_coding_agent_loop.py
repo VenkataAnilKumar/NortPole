@@ -173,7 +173,7 @@ def run_agent(
     bash_tool.run.return_value = ToolResult(content="Command output")
     with patch(f"{MODULE}.model_is_reasoning_model", return_value=is_reasoning_model):
         feature = CodingAgent(
-            repo="onyx-dot-app/evolvxsi",
+            repo="acme-corp/evolvxsi",
             llm=llm,
             token_counter=lambda text: len(text) // 4,
             user_identity=None,

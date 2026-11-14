@@ -123,10 +123,10 @@ Editing a macro's actions replaces its entire action list. Read the current
 macro and preserve actions that the user did not ask to change.
 See [Macros](https://developer.zendesk.com/api-reference/ticketing/business-rules/macros/).
 
-These writes each have a separate Onyx approval policy. A 403 can indicate a
+These writes each have a separate EvolvXSI approval policy. A 403 can indicate a
 missing OAuth scope or Zendesk feature permission. Ask the admin to allow
 `hc:write`, `side_conversations:write`, and `macros:write`, then reconnect in
-Onyx. Do not repeatedly reconnect when a feature is absent from the Zendesk plan.
+EvolvXSI. Do not repeatedly reconnect when a feature is absent from the Zendesk plan.
 
 ## Output
 
