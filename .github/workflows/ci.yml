@@ -124,7 +124,7 @@ jobs:
           python-version: "3.13"
       - name: Install the locked backend and test dependencies
         run: |
-          uv sync --frozen --no-install-project --group backend --group dev
+          uv sync --frozen --no-install-project --group backend --group dev --group azure-voice
           uv pip install pexpect
       - name: Every backend unit test
         # Only PYTHONPATH: some inherited tests check the defaults that the lite-mode settings would override.
