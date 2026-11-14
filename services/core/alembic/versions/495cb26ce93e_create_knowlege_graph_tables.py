@@ -12,8 +12,8 @@ from sqlalchemy.dialects import postgresql
 from sqlalchemy import text
 from datetime import datetime, timedelta
 
-from evolvxsi.configs.app_configs import DB_READONLY_USER
-from evolvxsi.configs.app_configs import DB_READONLY_PASSWORD
+from nortpole.configs.app_configs import DB_READONLY_USER
+from nortpole.configs.app_configs import DB_READONLY_PASSWORD
 from shared_configs.configs import MULTI_TENANT
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA
 

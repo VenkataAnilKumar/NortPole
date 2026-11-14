@@ -152,7 +152,7 @@ export type PacketType =
   | Packet;
 
 // Origin of the message for telemetry tracking.
-// Keep in sync with backend: backend/evolvxsi/server/query_and_chat/models.py::MessageOrigin
+// Keep in sync with backend: backend/nortpole/server/query_and_chat/models.py::MessageOrigin
 export type MessageOrigin =
   | "webapp"
   | "chrome_extension"

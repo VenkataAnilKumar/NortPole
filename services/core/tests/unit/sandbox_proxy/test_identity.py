@@ -5,9 +5,9 @@ from uuid import UUID, uuid4
 
 import pytest
 
-from evolvxsi.sandbox_proxy.sandbox_identity import resolution as identity_mod
-from evolvxsi.sandbox_proxy.sandbox_identity.models import ResolvedSandbox, SandboxIdentity
-from evolvxsi.sandbox_proxy.sandbox_identity.resolution import IdentityResolver, source_ip
+from nortpole.sandbox_proxy.sandbox_identity import resolution as identity_mod
+from nortpole.sandbox_proxy.sandbox_identity.models import ResolvedSandbox, SandboxIdentity
+from nortpole.sandbox_proxy.sandbox_identity.resolution import IdentityResolver, source_ip
 from tests.unit.sandbox_proxy.conftest import StaticLookup
 
 

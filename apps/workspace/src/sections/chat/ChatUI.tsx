@@ -8,7 +8,7 @@ import React, {
   useRef,
 } from "react";
 import { Message } from "@/app/app/types";
-import { EvolvXSIDocument, MinimalEvolvXSIDocument } from "@/lib/search/types";
+import { NortPoleDocument, MinimalEvolvXSIDocument } from "@/lib/search/types";
 import HumanMessage from "@/app/app/message/HumanMessage";
 import { ErrorBanner } from "@/app/app/message/Resubmit";
 import { MinimalAgent } from "@/lib/agents/types";
@@ -121,7 +121,7 @@ const ChatUI = React.memo(
     const loadError = useLoadingError();
     const chatState = useCurrentChatState();
     // Stable fallbacks to avoid changing prop identities on each render
-    const emptyDocs = useMemo<EvolvXSIDocument[]>(() => [], []);
+    const emptyDocs = useMemo<NortPoleDocument[]>(() => [], []);
     const emptyChildrenIds = useMemo<number[]>(() => [], []);
     const rowHeightCache = useRef(new Map<string, number>()).current;
     const hasOlderMessages = useHasOlderMessages();

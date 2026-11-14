@@ -33,7 +33,7 @@ services:
 
   workers:
     profiles: ["workers"]
-    image: evolvxsi-core:${EVOLVXSI_VERSION:-dev}
+    image: evolvxsi-core:${NORTPOLE_VERSION:-${EVOLVXSI_VERSION:-dev}}
     depends_on:
       api: {condition: service_healthy}
     environment:
@@ -46,7 +46,7 @@ services:
       USER_AUTH_SECRET: ${USER_AUTH_SECRET:?set USER_AUTH_SECRET}
       AUTH_TYPE: basic
       FILE_STORE_BACKEND: postgres
-      EVOLVXSI_OFFLINE_TOKENIZER: "true"
+      NORTPOLE_OFFLINE_TOKENIZER: "true"
       HF_HUB_OFFLINE: "1"
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -55,7 +55,7 @@ services:
       - bash
       - -c
       - |
-        A=evolvxsi.background.celery.versioned_apps
+        A=nortpole.background.celery.versioned_apps
         celery -A $$A.primary worker -Q celery -n primary@%h --concurrency=2 --loglevel=INFO &
         celery -A $$A.light worker -Q vespa_metadata_sync,connector_deletion,doc_permissions_upsert,checkpoint_cleanup,index_attempt_cleanup,llm_model_update -n light@%h --concurrency=2 --loglevel=INFO &
         celery -A $$A.heavy worker -Q connector_pruning,connector_doc_permissions_sync,connector_external_group_sync,csv_generation -n heavy@%h --concurrency=2 --loglevel=INFO &

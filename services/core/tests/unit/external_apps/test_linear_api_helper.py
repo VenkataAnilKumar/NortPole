@@ -11,7 +11,7 @@ from pathlib import Path
 from types import ModuleType
 
 _HELPER = (
-    Path(__file__).resolve().parents[3] / "evolvxsi/skills/builtin" / "linear/linear_api.py"
+    Path(__file__).resolve().parents[3] / "nortpole/skills/builtin" / "linear/linear_api.py"
 )
 
 

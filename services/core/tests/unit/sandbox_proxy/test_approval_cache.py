@@ -4,9 +4,9 @@ from uuid import uuid4
 
 import pytest
 
-from evolvxsi.cache.interface import CacheBackend, CacheLock
-from evolvxsi.db.enums import ApprovalDecision, GatedAppKind
-from evolvxsi.sandbox_proxy.approval_cache import (
+from nortpole.cache.interface import CacheBackend, CacheLock
+from nortpole.db.enums import ApprovalDecision, GatedAppKind
+from nortpole.sandbox_proxy.approval_cache import (
     _wake_key,
     cache_session_grant_actions,
     cached_session_grants_cover,

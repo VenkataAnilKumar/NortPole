@@ -50,7 +50,7 @@ BACKEND_DIR = REPO_ROOT / "backend"
 
 # Directories under backend/ to scan for env reads. We skip vendored/build dirs.
 SCAN_ROOTS = [
-    BACKEND_DIR / "evolvxsi",
+    BACKEND_DIR / "nortpole",
     BACKEND_DIR / "ee",
     BACKEND_DIR / "shared_configs",
     BACKEND_DIR / "model_server",

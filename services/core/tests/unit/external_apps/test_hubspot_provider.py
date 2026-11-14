@@ -12,11 +12,11 @@ from urllib.parse import parse_qs, urlparse
 
 import pytest
 
-from evolvxsi.db.enums import ExternalAppType
-from evolvxsi.db.models import User
-from evolvxsi.external_apps.providers.hubspot import HubspotProvider
-from evolvxsi.external_apps.providers.registry import PROVIDERS
-from evolvxsi.server.features.build.external_apps import oauth as oauth_route
+from nortpole.db.enums import ExternalAppType
+from nortpole.db.models import User
+from nortpole.external_apps.providers.hubspot import HubspotProvider
+from nortpole.external_apps.providers.registry import PROVIDERS
+from nortpole.server.features.build.external_apps import oauth as oauth_route
 from tests.unit.fakes import FakeCache
 
 

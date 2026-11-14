@@ -9,9 +9,9 @@ from __future__ import annotations
 
 import pytest
 
-from evolvxsi.db.enums import ActionPolicy, ExternalAppType
-from evolvxsi.external_apps.providers import registry
-from evolvxsi.external_apps.providers.actions import (
+from nortpole.db.enums import ActionPolicy, ExternalAppType
+from nortpole.external_apps.providers import registry
+from nortpole.external_apps.providers.actions import (
     EndpointSpec,
     ExternalAppAction,
     RestRoute,

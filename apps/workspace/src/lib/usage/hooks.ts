@@ -11,7 +11,7 @@ import {
 } from "@/lib/dateUtils";
 import { SWR_KEYS } from "@/lib/swr-keys";
 import {
-  EvolvXSIBotAnalytics,
+  NortPoleBotAnalytics,
   PersonaMessageAnalytics,
   PersonaUniqueUserAnalytics,
   QueryAnalytics,
@@ -84,7 +84,7 @@ export function useEvolvXSIBotAnalytics(timeRange: InputDateRangePickerValue) {
     "/api/analytics/admin/evolvxsibot",
     analyticsRange(timeRange)
   );
-  const swrResponse = useSWR<EvolvXSIBotAnalytics[]>(url, errorHandlingFetcher);
+  const swrResponse = useSWR<NortPoleBotAnalytics[]>(url, errorHandlingFetcher);
 
   return {
     ...swrResponse,

@@ -9,7 +9,7 @@ Create Date: 2023-11-11 20:51:24.228999
 from alembic import op
 import sqlalchemy as sa
 
-from evolvxsi.configs.constants import DocumentSource
+from nortpole.configs.constants import DocumentSource
 
 # revision identifiers, used by Alembic.
 revision = "15326fcec57e"

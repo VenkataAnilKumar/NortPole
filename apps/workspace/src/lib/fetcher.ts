@@ -1,4 +1,4 @@
-/** JSON body of a backend error response. `EvolvXSIError` and the request
+/** JSON body of a backend error response. `NortPoleError` and the request
  * validation handler both send `error_code` and a string `detail`; the
  * validation and `ValueError` handlers also send `message`. */
 export interface ErrorResponseBody {

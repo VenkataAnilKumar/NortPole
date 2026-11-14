@@ -11,7 +11,7 @@ export interface ConnectorEditTarget {
 
 /**
  * The full proposed state of a pair. Mirrors `ConnectorEditProposal` in
- * `backend/evolvxsi/server/documents/connector_edit.py`.
+ * `backend/nortpole/server/documents/connector_edit.py`.
  */
 export interface ConnectorEditProposal {
   connector_specific_config: Record<string, unknown>;
@@ -29,7 +29,7 @@ export interface ConnectorEditProposal {
   check_freq: number | null;
 }
 
-/** Mirrors `EditStepKind` in `backend/evolvxsi/connectors/edit_plan/models.py`. */
+/** Mirrors `EditStepKind` in `backend/nortpole/connectors/edit_plan/models.py`. */
 export type EditStepKind =
   | "access_groups"
   | "access_type"

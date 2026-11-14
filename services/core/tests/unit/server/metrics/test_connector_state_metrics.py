@@ -8,11 +8,11 @@ from unittest.mock import MagicMock
 import pytest
 from prometheus_client import CollectorRegistry
 
-import evolvxsi.server.metrics.connector_state_metrics as csm
-from evolvxsi.configs.constants import DocumentSource
-from evolvxsi.db.connector_credential_pair import ConnectorStateSnapshot
-from evolvxsi.db.enums import AccessType, ConnectorCredentialPairStatus, IndexingMode
-from evolvxsi.server.metrics.connector_state_metrics import (
+import nortpole.server.metrics.connector_state_metrics as csm
+from nortpole.configs.constants import DocumentSource
+from nortpole.db.connector_credential_pair import ConnectorStateSnapshot
+from nortpole.db.enums import AccessType, ConnectorCredentialPairStatus, IndexingMode
+from nortpole.server.metrics.connector_state_metrics import (
     ConnectorStateMetricsCollector,
     _enum_label,
     _to_unix_ts,

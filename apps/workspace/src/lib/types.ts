@@ -237,7 +237,7 @@ export interface IndexAttemptSnapshot {
   is_backfill: boolean;
 }
 
-// Mirror of `evolvxsi.db.index_attempt_metrics_models.IndexAttemptStage`. The
+// Mirror of `nortpole.db.index_attempt_metrics_models.IndexAttemptStage`. The
 // declaration order is the canonical pipeline order, which the API serializes
 // and the stage details popover renders. Keep in sync with the Python enum.
 export const INDEX_ATTEMPT_STAGES = [
@@ -584,13 +584,13 @@ export interface UserGroup {
   permissions?: PermissionsOf<"UserGroup">;
 }
 
-// Mirrors `IncognitoAvailability` in backend/evolvxsi/server/security/models.py.
+// Mirrors `IncognitoAvailability` in backend/nortpole/server/security/models.py.
 export type IncognitoAvailability = "off" | "everyone" | "groups";
 
-// Mirrors `IncognitoRecordMode` in backend/evolvxsi/db/enums.py.
+// Mirrors `IncognitoRecordMode` in backend/nortpole/db/enums.py.
 export type IncognitoRecordMode = "full_history" | "usage_only";
 
-// Mirrors `SSRFProtectionLevel` in backend/evolvxsi/server/security/models.py.
+// Mirrors `SSRFProtectionLevel` in backend/nortpole/server/security/models.py.
 export type SSRFProtectionLevel =
   | "validate_all"
   | "validate_llm"
@@ -598,7 +598,7 @@ export type SSRFProtectionLevel =
   | "disabled";
 
 // Read shape of GET /admin/security: effective, env-merged settings (see
-// `SecuritySettings` in backend/evolvxsi/server/security/models.py). Only the
+// `SecuritySettings` in backend/nortpole/server/security/models.py). Only the
 // jwt_* fields are nullable, null meaning that check is off.
 export interface SecuritySettings {
   user_directory_admin_only: boolean;

@@ -38,7 +38,7 @@ def upgrade() -> None:
     )
     # License expiry: t_1d / grace stages and failed renewals render as
     # errors; earlier stages render as warnings. Mirrors _severity_for_stage
-    # in ee/evolvxsi/utils/license_notifications.py — duplicated here because
+    # in ee/nortpole/utils/license_notifications.py — duplicated here because
     # migrations must not import application code.
     op.execute(
         """

@@ -3,15 +3,15 @@
 import pytest
 from pydantic import ValidationError
 
-from evolvxsi.db.enums import ActionPolicy, ExternalAppType, GatedAppKind
-from evolvxsi.db.models import ExternalApp
-from evolvxsi.external_apps.matching.engine import (
+from nortpole.db.enums import ActionPolicy, ExternalAppType, GatedAppKind
+from nortpole.db.models import ExternalApp
+from nortpole.external_apps.matching.engine import (
     WHOLE_DOMAIN_ACTION_TYPE,
     AllMatchedActions,
     GatedTarget,
     recognize_actions,
 )
-from evolvxsi.external_apps.matching.request import ProxiedRequest
+from nortpole.external_apps.matching.request import ProxiedRequest
 
 
 def test_rejects_empty_actions() -> None:

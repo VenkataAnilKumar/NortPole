@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from evolvxsi.sandbox_proxy.destination_policy import (
+from nortpole.sandbox_proxy.destination_policy import (
     UpstreamEventLoop,
     clear_destination,
     parse_destination_policy,

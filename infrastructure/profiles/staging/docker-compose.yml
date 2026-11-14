@@ -30,7 +30,7 @@ services:
     restart: unless-stopped
 
   api:
-    image: evolvxsi-core:${EVOLVXSI_VERSION:-dev}
+    image: evolvxsi-core:${NORTPOLE_VERSION:-${EVOLVXSI_VERSION:-dev}}
     build:
       context: ../../../services/core
     depends_on:
@@ -47,9 +47,9 @@ services:
       DISABLE_VECTOR_DB: "true"
       CACHE_BACKEND: postgres
       FILE_STORE_BACKEND: postgres
-      EVOLVXSI_OFFLINE_TOKENIZER: "true"
+      NORTPOLE_OFFLINE_TOKENIZER: "true"
       HF_HUB_OFFLINE: "1"
-      EVOLVXSI_VERSION: ${EVOLVXSI_VERSION:-dev}
+      NORTPOLE_VERSION: ${NORTPOLE_VERSION:-${EVOLVXSI_VERSION:-dev}}
     extra_hosts:
       - "host.docker.internal:host-gateway"   # lets a model server on this machine be used as http://host.docker.internal:<port>
     expose:
@@ -57,7 +57,7 @@ services:
     restart: unless-stopped
 
   web:
-    image: evolvxsi-web:${EVOLVXSI_VERSION:-dev}
+    image: evolvxsi-web:${NORTPOLE_VERSION:-${EVOLVXSI_VERSION:-dev}}
     build:
       context: ../../../apps/workspace
       args:

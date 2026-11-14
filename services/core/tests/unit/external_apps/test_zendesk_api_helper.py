@@ -10,7 +10,7 @@ from types import ModuleType
 
 import pytest
 
-_SKILL_DIR = Path(__file__).resolve().parents[3] / "evolvxsi/skills/builtin" / "zendesk"
+_SKILL_DIR = Path(__file__).resolve().parents[3] / "nortpole/skills/builtin" / "zendesk"
 
 
 def _load() -> ModuleType:

@@ -1,6 +1,6 @@
 # Decision 0004: adopt community source as the pilot core
 
-Date: 2026-11-10. Status: **proposed**, recorded from the product owner's direction to copy and rebrand the upstream open-source core and not use its deployment files. It amends the reference-only direction in [decision 0001](0001-modular-monorepo.md) and the [provider SDK decision](../07-implementation/EvolvXSI_Provider-SDK-Decision.md), and it records a layout exception.
+Date: 2026-11-10. Status: **proposed**, recorded from the product owner's direction to copy and rebrand the upstream open-source core and not use its deployment files. It amends the reference-only direction in [decision 0001](0001-modular-monorepo.md) and the [provider SDK decision](../07-implementation/NortPole_Provider-SDK-Decision.md), and it records a layout exception.
 
 ## Decision
 

@@ -20,7 +20,7 @@ from model_server.voyage_nano import (
     add_bidirectional_projection,
     read_projection_weight,
 )
-from evolvxsi.utils.logger import setup_logger
+from nortpole.utils.logger import setup_logger
 from shared_configs.embedding_models import (
     EmbeddingModelSpec,
     LocalModelLoader,

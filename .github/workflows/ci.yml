@@ -79,16 +79,16 @@ jobs:
           CACHE_BACKEND: postgres
           AUTH_TYPE: basic
           FILE_STORE_BACKEND: postgres
-          EVOLVXSI_OFFLINE_TOKENIZER: "true"
+          NORTPOLE_OFFLINE_TOKENIZER: "true"
           HF_HUB_OFFLINE: "1"
         run: >
           uv run --no-sync python -m pytest -q
-          tests/unit/evolvxsi/action_binding tests/unit/evolvxsi/actions tests/unit/evolvxsi/audit_log
-          tests/unit/evolvxsi/extensions tests/unit/evolvxsi/external_permissions tests/unit/evolvxsi/knowledge_access
-          tests/unit/evolvxsi/packs tests/unit/evolvxsi/redaction tests/unit/evolvxsi/route_policy
-          tests/unit/evolvxsi/tasks tests/unit/evolvxsi/tool_catalog tests/unit/evolvxsi/user_preferences
-          tests/unit/evolvxsi/test_schedule_cadence.py tests/unit/evolvxsi/skills/test_bundled_skill_scripts.py
-          tests/unit/evolvxsi/test_domain_boundaries.py tests/unit/evolvxsi/test_contracts_current.py
+          tests/unit/nortpole/action_binding tests/unit/nortpole/actions tests/unit/nortpole/audit_log
+          tests/unit/nortpole/extensions tests/unit/nortpole/external_permissions tests/unit/nortpole/knowledge_access
+          tests/unit/nortpole/packs tests/unit/nortpole/redaction tests/unit/nortpole/route_policy
+          tests/unit/nortpole/tasks tests/unit/nortpole/tool_catalog tests/unit/nortpole/user_preferences
+          tests/unit/nortpole/test_schedule_cadence.py tests/unit/nortpole/skills/test_bundled_skill_scripts.py
+          tests/unit/nortpole/test_domain_boundaries.py tests/unit/nortpole/test_contracts_current.py
 
   pack-sdk:
     name: Pack SDK and first-party packs

@@ -8,15 +8,15 @@ import QualifierContainer from "@opal/components/table/QualifierContainer";
 import TableQualifier from "@opal/components/table/TableQualifier";
 import ActionsContainer from "@opal/components/table/ActionsContainer";
 import type {
-  EvolvXSIColumnDef,
-  EvolvXSIQualifierColumn,
+  NortPoleColumnDef,
+  NortPoleQualifierColumn,
 } from "@opal/components/table/types";
 
 interface DragOverlayRowProps<TData> {
   row: Row<TData>;
   columnWidths?: Record<string, number>;
-  columnKindMap?: Map<string, EvolvXSIColumnDef<TData>>;
-  qualifierColumn?: EvolvXSIQualifierColumn<TData> | null;
+  columnKindMap?: Map<string, NortPoleColumnDef<TData>>;
+  qualifierColumn?: NortPoleQualifierColumn<TData> | null;
   isSelectable?: boolean;
   /** The table's row surface, so the preview matches the dragged row. */
   prominence?: TableProminence;

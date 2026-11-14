@@ -153,7 +153,7 @@ export const MacIcon = ({
     </svg>
   );
 };
-export const EvolvXSILogoTypeIcon = ({
+export const NortPoleLogoTypeIcon = ({
   size = 16,
   className = defaultTailwindCSS,
 }: IconProps) => {

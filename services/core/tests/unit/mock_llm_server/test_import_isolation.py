@@ -10,7 +10,7 @@ def test_server_imports_no_evolvxsi_modules() -> None:
     code = (
         "import sys\n"
         "import tests.integration.mock_services.mock_llm_server.server\n"
-        "bad = [m for m in sys.modules if m.split('.')[0] in ('evolvxsi', 'ee')]\n"
+        "bad = [m for m in sys.modules if m.split('.')[0] in ('nortpole', 'ee')]\n"
         "assert not bad, bad\n"
     )
     subprocess.run([sys.executable, "-c", code], cwd=backend_dir, check=True)

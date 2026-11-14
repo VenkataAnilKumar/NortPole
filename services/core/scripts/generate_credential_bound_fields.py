@@ -13,7 +13,7 @@ Usage (from ``backend/``), then format the file with oxfmt:
 import json
 from pathlib import Path
 
-from evolvxsi.connectors.registry import CONNECTOR_CLASS_MAP
+from nortpole.connectors.registry import CONNECTOR_CLASS_MAP
 
 SNAPSHOT_PATH = (
     # The web app lives in apps/workspace in the NortPole monorepo (services/core/scripts -> repository root).

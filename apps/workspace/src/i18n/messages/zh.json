@@ -1807,8 +1807,8 @@
       },
       "slackChannelChart": {
         "description": "查询总数与自动解决数对比",
-        "empty": "所选时间范围内此工作区没有 EvolvXSIBot 活动。",
-        "error": "获取 EvolvXSIBot 数据失败。",
+        "empty": "所选时间范围内此工作区没有 NortPoleBot 活动。",
+        "error": "获取 NortPoleBot 数据失败。",
         "series": {
           "autoResolved": {
             "label": "自动解决"
@@ -8964,10 +8964,10 @@
     "slackBots": {
       "channelConfig": {
         "createError": {
-          "toast": "创建 EvolvXSIBot 配置出错 - {error}"
+          "toast": "创建 NortPoleBot 配置出错 - {error}"
         },
         "updateError": {
-          "toast": "更新 EvolvXSIBot 配置出错 - {error}"
+          "toast": "更新 NortPoleBot 配置出错 - {error}"
         }
       },
       "channels": {
@@ -9085,16 +9085,16 @@
         },
         "disableDefault": {
           "label": "禁用默认配置",
-          "warning": "警告：禁用默认配置后，EvolvXSIBot 只会在明确配置过的 Slack 频道中回复。此外，EvolvXSIBot 也不会回复私信。"
+          "warning": "警告：禁用默认配置后，NortPoleBot 只会在明确配置过的 Slack 频道中回复。此外，NortPoleBot 也不会回复私信。"
         },
         "documentSets": {
           "autoSyncedDisabled": {
-            "tooltip": "无法使用此文档集，因为它包含启用了权限自动同步的连接器。EvolvXSIBot 在此频道中的回复对所有 Slack 用户可见，因此沿用提问者的权限可能会意外泄露私密信息。"
+            "tooltip": "无法使用此文档集，因为它包含启用了权限自动同步的连接器。NortPoleBot 在此频道中的回复对所有 Slack 用户可见，因此沿用提问者的权限可能会意外泄露私密信息。"
           },
           "autoSyncedNote": {
             "text": "以下文档集无法附加，因为它们包含自动同步的文档："
           },
-          "description": "选择 EvolvXSIBot 在 Slack 中回答问题时使用的文档集。",
+          "description": "选择 NortPoleBot 在 Slack 中回答问题时使用的文档集。",
           "hideUnselectableButton": {
             "label": "隐藏不可选的文档集"
           },
@@ -9119,12 +9119,12 @@
         },
         "isEphemeral": {
           "label": "以私密（临时）消息回复用户",
-          "tooltip": "启用后，EvolvXSIBot 只会以私密（临时）消息回复该用户。如果您在上面还选择了“搜索”智能体，启用此选项后，该用户的私有文档也可用于其查询。"
+          "tooltip": "启用后，NortPoleBot 只会以私密（临时）消息回复该用户。如果您在上面还选择了“搜索”智能体，启用此选项后，该用户的私有文档也可用于其查询。"
         },
         "knowledgeSource": {
           "allPublic": {
             "label": "所有组织范围的知识",
-            "sublabel": "让 EvolvXSIBot 基于所有组织范围连接器中的信息进行回复"
+            "sublabel": "让 NortPoleBot 基于所有组织范围连接器中的信息进行回复"
           },
           "documentSets": {
             "label": "指定文档集",
@@ -9141,7 +9141,7 @@
           }
         },
         "nonSearchAgent": {
-          "description": "选择 EvolvXSIBot 在 Slack 中回答问题时使用的非搜索智能体。"
+          "description": "选择 NortPoleBot 在 Slack 中回答问题时使用的非搜索智能体。"
         },
         "privacyAlert": {
           "connectors": {
@@ -9152,7 +9152,7 @@
         },
         "questionmarkPrefilter": {
           "label": "仅回复提问",
-          "tooltip": "启用后，EvolvXSIBot 只会回复包含问号的消息"
+          "tooltip": "启用后，NortPoleBot 只会回复包含问号的消息"
         },
         "removedDocumentSets": {
           "toast": "我们已从您的选择中移除了一个或多个文档集，因为它们不再有效。请检查并更新您的配置。"
@@ -9162,15 +9162,15 @@
             "tooltip": "启用“以私密（临时）消息回复用户”时不可用，因为临时回复只针对单个用户。"
           },
           "label": "（可选）仅回复特定用户/用户组",
-          "subtext": "如果指定，则只有这些用户/用户组可以在此频道中调用 EvolvXSIBot，且回复仅对他们可见。"
+          "subtext": "如果指定，则只有这些用户/用户组可以在此频道中调用 NortPoleBot，且回复仅对他们可见。"
         },
         "respondTagOnly": {
-          "label": "仅回复 @EvolvXSIBot",
-          "tooltip": "启用后，EvolvXSIBot 只会在被直接提及时回复"
+          "label": "仅回复 @NortPoleBot",
+          "tooltip": "启用后，NortPoleBot 只会在被直接提及时回复"
         },
         "respondToBots": {
           "label": "回复机器人消息",
-          "tooltip": "未启用时，EvolvXSIBot 将始终忽略来自机器人的消息"
+          "tooltip": "未启用时，NortPoleBot 将始终忽略来自机器人的消息"
         },
         "responseType": {
           "detailed": {
@@ -9180,10 +9180,10 @@
           "standard": {
             "label": "标准"
           },
-          "tooltip": "控制 EvolvXSIBot 回复的格式。"
+          "tooltip": "控制 NortPoleBot 回复的格式。"
         },
         "searchAgent": {
-          "description": "选择 EvolvXSIBot 在 Slack 中回答问题时使用的搜索智能体。"
+          "description": "选择 NortPoleBot 在 Slack 中回答问题时使用的搜索智能体。"
         },
         "searchConfig": {
           "section": {
@@ -9199,7 +9199,7 @@
           "section": {
             "prompt": "配置“仍需帮助”按钮"
           },
-          "tooltip": "EvolvXSIBot 的回复底部将包含一个按钮，询问用户是否仍需帮助。"
+          "tooltip": "NortPoleBot 的回复底部将包含一个按钮，询问用户是否仍需帮助。"
         },
         "syncEnabledAgents": {
           "hideButton": {
@@ -9220,17 +9220,17 @@
       },
       "intro": {
         "autoAnswer": {
-          "item": "设置 EvolvXSIBot，让它在特定频道中自动回答问题。"
+          "item": "设置 NortPoleBot，让它在特定频道中自动回答问题。"
         },
         "description": "设置连接到 {appName} 的 Slack 机器人。设置完成后，您可以直接在 Slack 中向 {appName} 提问。此外，您还可以：",
         "directMessage": {
-          "item": "像在 Web 界面中一样，直接给 EvolvXSIBot 发消息进行搜索。"
+          "item": "像在 Web 界面中一样，直接给 NortPoleBot 发消息进行搜索。"
         },
         "docsPrompt": {
           "text": "请按照 NortPole 文档中的<link>指南</link>开始使用！"
         },
         "documentSets": {
-          "item": "根据提问所在的频道，选择 EvolvXSIBot 应基于哪些文档集回答。"
+          "item": "根据提问所在的频道，选择 NortPoleBot 应基于哪些文档集回答。"
         }
       },
       "list": {
@@ -9248,7 +9248,7 @@
       },
       "newChannel": {
         "header": {
-          "title": "为 Slack 频道配置 EvolvXSIBot"
+          "title": "为 Slack 频道配置 NortPoleBot"
         }
       },
       "table": {

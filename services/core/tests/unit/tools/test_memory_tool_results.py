@@ -5,20 +5,20 @@ from uuid import uuid4
 
 import pytest
 
-from evolvxsi.agents.tools import ToolInvocation, ToolProgress
-from evolvxsi.chat.renderer import ToolRenderer
-from evolvxsi.context.models import UserInfo, UserMemoryContext
-from evolvxsi.llm.cancellation import CancellationSignal
-from evolvxsi.llm.models import ToolCall, ToolResult
-from evolvxsi.server.query_and_chat.placement import Placement
-from evolvxsi.server.query_and_chat.streaming_models import (
+from nortpole.agents.tools import ToolInvocation, ToolProgress
+from nortpole.chat.renderer import ToolRenderer
+from nortpole.context.models import UserInfo, UserMemoryContext
+from nortpole.llm.cancellation import CancellationSignal
+from nortpole.llm.models import ToolCall, ToolResult
+from nortpole.server.query_and_chat.placement import Placement
+from nortpole.server.query_and_chat.streaming_models import (
     MemoryToolDelta,
     MemoryToolStart,
     SectionEnd,
     ToolCallDebug,
 )
-from evolvxsi.tools.models import MemoryUpdated, ToolContext
-from evolvxsi.tools.tool_implementations.memory.memory_tool import MemoryTool
+from nortpole.tools.models import MemoryUpdated, ToolContext
+from nortpole.tools.tool_implementations.memory.memory_tool import MemoryTool
 
 
 @pytest.fixture
@@ -44,11 +44,11 @@ def mock_llm() -> MagicMock:
 @pytest.fixture
 def memory_tool(mock_llm: MagicMock, monkeypatch: pytest.MonkeyPatch) -> MemoryTool:
     monkeypatch.setattr(
-        "evolvxsi.tools.tool_implementations.memory.memory_tool.add_memory",
+        "nortpole.tools.tool_implementations.memory.memory_tool.add_memory",
         MagicMock(return_value=42),
     )
     monkeypatch.setattr(
-        "evolvxsi.tools.tool_implementations.memory.memory_tool.update_memory_at_index",
+        "nortpole.tools.tool_implementations.memory.memory_tool.update_memory_at_index",
         MagicMock(return_value=42),
     )
     return MemoryTool(tool_id=1, llm=mock_llm)
@@ -66,7 +66,7 @@ def tool_context() -> ToolContext:
 
 
 class TestMemoryToolRun:
-    @patch("evolvxsi.tools.tool_implementations.memory.memory_tool.process_memory_update")
+    @patch("nortpole.tools.tool_implementations.memory.memory_tool.process_memory_update")
     def test_run_returns_add_operation(
         self,
         mock_process: MagicMock,
@@ -85,7 +85,7 @@ class TestMemoryToolRun:
         assert result.details.memory_id == 42
         assert result.details.index is None
 
-    @patch("evolvxsi.tools.tool_implementations.memory.memory_tool.process_memory_update")
+    @patch("nortpole.tools.tool_implementations.memory.memory_tool.process_memory_update")
     def test_run_returns_update_operation(
         self,
         mock_process: MagicMock,

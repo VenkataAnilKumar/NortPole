@@ -13,7 +13,7 @@ from contextlib import contextmanager  # noqa: E402
 
 import pytest  # noqa: E402
 
-from evolvxsi.utils.variable_functionality import (  # noqa: E402
+from nortpole.utils.variable_functionality import (  # noqa: E402
     fetch_versioned_implementation,
     global_version,
 )

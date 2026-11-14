@@ -12,16 +12,16 @@ from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session
 from sqlalchemy.pool import NullPool
 
-from evolvxsi.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant
-from evolvxsi.db.enums import AccountType, LLMModelFlowType, UserFileStatus
-from evolvxsi.db.llm import (
+from nortpole.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant
+from nortpole.db.enums import AccountType, LLMModelFlowType, UserFileStatus
+from nortpole.db.llm import (
     fetch_default_model,
     fetch_existing_llm_provider,
     remove_llm_provider,
     update_default_model,
     upsert_llm_provider,
 )
-from evolvxsi.db.models import (
+from nortpole.db.models import (
     ChatSession,
     MCPServer,
     MCPServer__UserGroup,
@@ -37,10 +37,10 @@ from evolvxsi.db.models import (
     UserFile,
     UserProject,
 )
-from evolvxsi.db.users import assign_user_to_default_groups__no_commit
-from evolvxsi.file_store.file_store import get_default_file_store
-from evolvxsi.llm.constants import LlmProviderNames
-from evolvxsi.server.manage.llm.models import (
+from nortpole.db.users import assign_user_to_default_groups__no_commit
+from nortpole.file_store.file_store import get_default_file_store
+from nortpole.llm.constants import LlmProviderNames
+from nortpole.server.manage.llm.models import (
     LLMProviderUpsertRequest,
     ModelConfigurationUpsertRequest,
 )
@@ -196,7 +196,7 @@ def delete_test_user(db_session: Session, *users: User) -> None:
     """Tear down users created by create_test_user. Clears default-group
     membership first — user__user_group.user_id has no ON DELETE CASCADE, so a
     bare delete(user) raises ForeignKeyViolation. Mirrors the production delete
-    path in evolvxsi.db.users."""
+    path in nortpole.db.users."""
     _delete_users(db_session, [user.id for user in users])
 
 

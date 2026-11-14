@@ -13,11 +13,11 @@ import sys
 import time
 from pathlib import Path
 
-from evolvxsi.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant
-from evolvxsi.db.models import User
-from evolvxsi.work.tasks.drafter import DRAFT_SYSTEM_PROMPT, draft_answer
-from evolvxsi.work.tasks.evidence import Evidence
-from evolvxsi.work.tasks.untrusted import looks_like_instructions
+from nortpole.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant
+from nortpole.db.models import User
+from nortpole.work.tasks.drafter import DRAFT_SYSTEM_PROMPT, draft_answer
+from nortpole.work.tasks.evidence import Evidence
+from nortpole.work.tasks.untrusted import looks_like_instructions
 
 SET = json.loads((Path(__file__).parent / "injection_cases.json").read_text())
 

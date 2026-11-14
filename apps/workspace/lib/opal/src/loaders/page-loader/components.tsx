@@ -1,7 +1,7 @@
 "use client";
 
 import type { RichStr } from "@opal/types";
-import { EvolvXSILoader, Text } from "@opal/components";
+import { NortPoleLoader, Text } from "@opal/components";
 import { useOpalStrings } from "@opal/strings";
 import { PageCenter } from "@opal/layouts/page-center/components";
 
@@ -17,14 +17,14 @@ interface PageLoaderProps {
 /**
  * Full-page loading state: the animated NortPole mark with a label, centred in
  * the page body by `PageCenter`. Use for page/route-level loading. For an inline or
- * section-level loader without a label, use `EvolvXSILoader` directly.
+ * section-level loader without a label, use `NortPoleLoader` directly.
  */
 function PageLoader({ text }: PageLoaderProps) {
   const strings = useOpalStrings();
   return (
     <PageCenter>
       <div className="flex flex-col items-center gap-3 p-5">
-        <EvolvXSILoader />
+        <NortPoleLoader />
         <Text font="main-ui-muted" color="text-03">
           {text ?? strings.loadingPage}
         </Text>

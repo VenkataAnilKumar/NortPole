@@ -8,11 +8,11 @@ import re
 
 import pytest
 
-from evolvxsi.db.enums import ExternalAppType
-from evolvxsi.error_handling.exceptions import EvolvXSIError
-from evolvxsi.external_apps.providers.registry import PROVIDERS
-from evolvxsi.external_apps.providers.slack import SlackProvider
-from evolvxsi.external_apps.providers.zendesk import ZendeskProvider, normalise_subdomain
+from nortpole.db.enums import ExternalAppType
+from nortpole.error_handling.exceptions import NortPoleError
+from nortpole.external_apps.providers.registry import PROVIDERS
+from nortpole.external_apps.providers.slack import SlackProvider
+from nortpole.external_apps.providers.zendesk import ZendeskProvider, normalise_subdomain
 
 
 def _provider() -> ZendeskProvider:
@@ -56,7 +56,7 @@ def test_subdomain_is_read_out_of_whatever_the_admin_pasted(raw: str) -> None:
 def test_malformed_subdomain_is_rejected(raw: object) -> None:
     """The value becomes a URL host, so it fails loudly rather than silently
     addressing elsewhere."""
-    with pytest.raises(EvolvXSIError):
+    with pytest.raises(NortPoleError):
         normalise_subdomain(raw)
 
 
@@ -151,7 +151,7 @@ def test_extract_credentials_keeps_what_the_refresh_path_needs() -> None:
 
 
 def test_extract_credentials_rejects_a_response_without_a_token() -> None:
-    with pytest.raises(EvolvXSIError):
+    with pytest.raises(NortPoleError):
         _provider().extract_credentials({"error": "invalid_grant"})
 
 

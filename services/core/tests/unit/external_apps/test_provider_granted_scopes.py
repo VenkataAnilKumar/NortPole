@@ -15,14 +15,14 @@ from typing import Any
 import pytest
 import requests
 
-from evolvxsi.db.enums import ExternalAppType
-from evolvxsi.external_apps.providers import hubspot as hubspot_module
-from evolvxsi.external_apps.providers.base import (
+from nortpole.db.enums import ExternalAppType
+from nortpole.external_apps.providers import hubspot as hubspot_module
+from nortpole.external_apps.providers.base import (
     OAuthExternalAppProvider,
     parse_granted_scopes,
 )
-from evolvxsi.external_apps.providers.hubspot import HubspotProvider
-from evolvxsi.external_apps.providers.registry import PROVIDERS
+from nortpole.external_apps.providers.hubspot import HubspotProvider
+from nortpole.external_apps.providers.registry import PROVIDERS
 
 
 def _oauth_provider(app_type: ExternalAppType) -> OAuthExternalAppProvider:

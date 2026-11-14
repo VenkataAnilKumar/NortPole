@@ -1,17 +1,17 @@
-from evolvxsi.db.engine.iam_auth import make_provide_iam_token_async
-from evolvxsi.db.engine.migration_lock import schema_migration_lock
-from evolvxsi.db.engine.migration_search_path import pin_search_path_per_transaction
-from evolvxsi.db.engine.pg_ssl import create_pg_ssl_context
-from evolvxsi.configs.app_configs import USE_IAM_AUTH
-from evolvxsi.configs.app_configs import POSTGRES_HOST
-from evolvxsi.configs.app_configs import POSTGRES_PORT
-from evolvxsi.configs.app_configs import POSTGRES_USER
-from evolvxsi.db.engine.shard_registry import ALEMBIC_TARGET_URL_ATTRIBUTE
-from evolvxsi.db.engine.shard_registry import get_shard_spec
-from evolvxsi.db.engine.shard_registry import validate_shard_name
-from evolvxsi.db.engine.shard_registry import is_sharded
-from evolvxsi.db.engine.sql_engine import build_connection_string
-from evolvxsi.db.engine.tenant_utils import get_tenant_ids_by_shard
+from nortpole.db.engine.iam_auth import make_provide_iam_token_async
+from nortpole.db.engine.migration_lock import schema_migration_lock
+from nortpole.db.engine.migration_search_path import pin_search_path_per_transaction
+from nortpole.db.engine.pg_ssl import create_pg_ssl_context
+from nortpole.configs.app_configs import USE_IAM_AUTH
+from nortpole.configs.app_configs import POSTGRES_HOST
+from nortpole.configs.app_configs import POSTGRES_PORT
+from nortpole.configs.app_configs import POSTGRES_USER
+from nortpole.db.engine.shard_registry import ALEMBIC_TARGET_URL_ATTRIBUTE
+from nortpole.db.engine.shard_registry import get_shard_spec
+from nortpole.db.engine.shard_registry import validate_shard_name
+from nortpole.db.engine.shard_registry import is_sharded
+from nortpole.db.engine.sql_engine import build_connection_string
+from nortpole.db.engine.tenant_utils import get_tenant_ids_by_shard
 from sqlalchemy import event
 from sqlalchemy import pool
 from sqlalchemy import text
@@ -26,19 +26,19 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlalchemy.ext.asyncio import create_async_engine
-from evolvxsi.configs.constants import SSL_CERT_FILE
+from nortpole.configs.constants import SSL_CERT_FILE
 from shared_configs.configs import (
     MULTI_TENANT,
     POSTGRES_DEFAULT_SCHEMA,
     TENANT_ID_PREFIX,
 )
 from shared_configs.contextvars import CURRENT_TENANT_ID_CONTEXTVAR
-from evolvxsi.db.models import Base
+from nortpole.db.models import Base
 from celery.backends.database.session import (
     ResultModelBase,  # ty: ignore[unresolved-import]
 )
-from evolvxsi.db.engine.sql_engine import SqlEngine
-from evolvxsi.utils.variable_functionality import set_is_ee_if_available
+from nortpole.db.engine.sql_engine import SqlEngine
+from nortpole.utils.variable_functionality import set_is_ee_if_available
 
 # Match the app processes' edition so migrations that use versioned
 # implementations (e.g. encrypt_string_to_bytes) resolve the EE variants.

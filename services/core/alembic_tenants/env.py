@@ -6,9 +6,9 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from alembic import context
-from evolvxsi.db.engine.pg_ssl import create_pg_ssl_context
-from evolvxsi.db.engine.sql_engine import build_connection_string
-from evolvxsi.db.models import PublicBase
+from nortpole.db.engine.pg_ssl import create_pg_ssl_context
+from nortpole.db.engine.sql_engine import build_connection_string
+from nortpole.db.models import PublicBase
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

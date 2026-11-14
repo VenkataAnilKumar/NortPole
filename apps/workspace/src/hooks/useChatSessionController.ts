@@ -24,7 +24,7 @@ import {
   shouldSubmitOnLoad,
 } from "@/app/app/services/searchParams";
 
-import { EvolvXSIDocument } from "@/lib/search/types";
+import { NortPoleDocument } from "@/lib/search/types";
 import {
   useChatSessionStore,
   useCurrentMessageHistory,
@@ -53,7 +53,7 @@ interface UseChatSessionControllerProps {
   firstMessage?: string;
 
   // UI state setters
-  setSelectedDocuments: (documents: EvolvXSIDocument[]) => void;
+  setSelectedDocuments: (documents: NortPoleDocument[]) => void;
   setCurrentMessageFiles: (
     files: ProjectFile[] | ((prev: ProjectFile[]) => ProjectFile[])
   ) => void;

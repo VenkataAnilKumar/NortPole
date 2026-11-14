@@ -6,7 +6,7 @@ Create Date: 2026-01-30 12:21:24.955922
 
 """
 
-from evolvxsi.db.enums import LLMModelFlowType
+from nortpole.db.enums import LLMModelFlowType
 from alembic import op
 import sqlalchemy as sa
 

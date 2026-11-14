@@ -395,7 +395,7 @@ export class WebSocketStreamingTTSPlayer {
     if (!tokenResponse.ok) {
       throw new Error("Failed to get WebSocket authentication token");
     }
-    // Mirrors `WSTokenResponse` in backend/evolvxsi/server/manage/voice/user_api.py.
+    // Mirrors `WSTokenResponse` in backend/nortpole/server/manage/voice/user_api.py.
     const { token }: { token: string } = await tokenResponse.json();
 
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";

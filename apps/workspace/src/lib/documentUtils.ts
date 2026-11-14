@@ -1,12 +1,12 @@
-import { EvolvXSIDocument } from "@/lib/search/types";
+import { NortPoleDocument } from "@/lib/search/types";
 
 export function removeDuplicateDocs(
-  documents: EvolvXSIDocument[],
+  documents: NortPoleDocument[],
   agentic?: boolean,
   relevance?: any
 ) {
   const seen = new Set<string>();
-  const output: EvolvXSIDocument[] = [];
+  const output: NortPoleDocument[] = [];
   documents.forEach((document) => {
     if (
       document.document_id &&

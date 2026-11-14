@@ -4,7 +4,7 @@ import socket
 
 import pytest
 
-from evolvxsi.sandbox_proxy.destination_policy import (
+from nortpole.sandbox_proxy.destination_policy import (
     parse_destination_policy,
     resolve_destination,
 )

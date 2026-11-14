@@ -13,8 +13,8 @@ from typing import Any
 import pytest
 from mitmproxy import http
 
-from evolvxsi.sandbox_proxy.mcp_jsonrpc import classify_mcp_request
-from evolvxsi.sandbox_proxy.models import McpRpcKind
+from nortpole.sandbox_proxy.mcp_jsonrpc import classify_mcp_request
+from nortpole.sandbox_proxy.models import McpRpcKind
 
 
 def _request(method: str, body: bytes | None) -> http.Request:

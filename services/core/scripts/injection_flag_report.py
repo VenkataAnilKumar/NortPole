@@ -4,7 +4,7 @@ No model is called. PYTHONPATH=. python scripts/injection_flag_report.py"""
 import json
 from pathlib import Path
 
-from evolvxsi.work.tasks.untrusted import looks_like_instructions
+from nortpole.work.tasks.untrusted import looks_like_instructions
 
 D = Path(__file__).parent
 hostile = json.loads((D / "injection_cases.json").read_text())["cases"]

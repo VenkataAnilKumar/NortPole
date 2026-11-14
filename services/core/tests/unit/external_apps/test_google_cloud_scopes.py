@@ -7,13 +7,13 @@ from __future__ import annotations
 
 import pytest
 
-from evolvxsi.db.enums import ActionPolicy, ExternalAppType
-from evolvxsi.external_apps.providers import gmail, google_calendar, google_drive, registry
-from evolvxsi.external_apps.providers.gmail import GmailAction
-from evolvxsi.external_apps.providers.google_drive import GoogleDriveAction
-from evolvxsi.external_apps.providers.registry import PROVIDERS, get_endpoint_catalog
-from evolvxsi.skills.built_in import BUILTIN_SKILLS_PATH
-from evolvxsi.skills.rendering import render_external_app_skill
+from nortpole.db.enums import ActionPolicy, ExternalAppType
+from nortpole.external_apps.providers import gmail, google_calendar, google_drive, registry
+from nortpole.external_apps.providers.gmail import GmailAction
+from nortpole.external_apps.providers.google_drive import GoogleDriveAction
+from nortpole.external_apps.providers.registry import PROVIDERS, get_endpoint_catalog
+from nortpole.skills.built_in import BUILTIN_SKILLS_PATH
+from nortpole.skills.rendering import render_external_app_skill
 
 # Requesting any of these subjects the OAuth client to an annual third-party
 # security assessment: https://support.google.com/cloud/answer/13464325

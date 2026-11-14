@@ -5,7 +5,7 @@
 
 Writes:
   packages/contracts/schemas/pack-manifest.schema.json   JSON Schema of the pack manifest the server accepts
-  packages/contracts/openapi/evolvxsi-api.json           OpenAPI description of NortPole's own routes
+  packages/contracts/openapi/nortpole-api.json           OpenAPI description of NortPole's own routes
 
 The schema covers structure (fields, types, lengths, enums); the server also runs cross-field checks the schema cannot
 express, such as unique template ids and guides that exist. The API description covers only routes whose handlers live
@@ -20,13 +20,13 @@ CORE = Path(__file__).resolve().parents[1]
 REPO = CORE.parents[1]
 CONTRACTS = REPO / "packages" / "contracts"
 SCHEMA_PATH = CONTRACTS / "schemas" / "pack-manifest.schema.json"
-OPENAPI_PATH = CONTRACTS / "openapi" / "evolvxsi-api.json"
+OPENAPI_PATH = CONTRACTS / "openapi" / "nortpole-api.json"
 OWN_MODULE_PREFIXES = (
-    "evolvxsi.governance.",
-    "evolvxsi.work.",
-    "evolvxsi.knowledge.",
-    "evolvxsi.insight.",
-    "evolvxsi.user_preferences.",
+    "nortpole.governance.",
+    "nortpole.work.",
+    "nortpole.knowledge.",
+    "nortpole.insight.",
+    "nortpole.user_preferences.",
 )
 
 
@@ -35,7 +35,7 @@ def _dump(data: dict) -> str:
 
 
 def pack_manifest_schema() -> str:
-    from evolvxsi.work.packs.manifest import Manifest
+    from nortpole.work.packs.manifest import Manifest
 
     schema = Manifest.model_json_schema()
     schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
@@ -47,7 +47,7 @@ def evolvxsi_openapi() -> str:
     from fastapi.openapi.utils import get_openapi
     from fastapi.routing import APIRoute
 
-    import evolvxsi.main as main
+    import nortpole.main as main
 
     app = main.get_application()
     routes = [

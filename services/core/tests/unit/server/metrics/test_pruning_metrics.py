@@ -2,7 +2,7 @@
 
 import pytest
 
-from evolvxsi.server.metrics.pruning_metrics import (
+from nortpole.server.metrics.pruning_metrics import (
     PRUNING_DIFF_DURATION,
     PRUNING_ENUMERATION_DURATION,
     PRUNING_RATE_LIMIT_ERRORS,

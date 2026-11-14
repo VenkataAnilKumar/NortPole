@@ -10,9 +10,9 @@ from alembic import op
 import fastapi_users_db_sqlalchemy
 import sqlalchemy as sa
 
-from evolvxsi.db.enums import AccountType
-from evolvxsi.db.enums import GrantSource
-from evolvxsi.db.enums import Permission
+from nortpole.db.enums import AccountType
+from nortpole.db.enums import GrantSource
+from nortpole.db.enums import Permission
 
 # revision identifiers, used by Alembic.
 revision = "25a5501dc766"

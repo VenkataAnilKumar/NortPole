@@ -200,9 +200,9 @@ MULTI_TENANT = os.environ.get("MULTI_TENANT", "").lower() == "true"
 # (recommended-models sync, remote model catalog lookup, release notes).
 # Inbound traffic and user-configured integrations are unaffected.
 # NortPole: on by default. While on, the product does not fetch release notes, model price tables or
-# recommended-model lists from the upstream project's GitHub repository. Set EVOLVXSI_AIRGAPPED=false
+# recommended-model lists from the upstream project's GitHub repository. Set NORTPOLE_AIRGAPPED=false
 # to allow those fetches (the release notes shown would then be the upstream project's, not NortPole's).
-EVOLVXSI_AIRGAPPED = os.environ.get("EVOLVXSI_AIRGAPPED", "true").lower() == "true"
+NORTPOLE_AIRGAPPED = os.environ.get("NORTPOLE_AIRGAPPED", "true").lower() == "true"
 
 # How often to check GitHub for updated evolvxsi-published LLM config
 # (recommended-models, remote model catalog sections).

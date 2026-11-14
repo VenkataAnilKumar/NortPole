@@ -4,8 +4,8 @@ An audit hash chain catches an edited event and one removed from the middle. It 
 newest events unless the latest hash was kept where an administrator of this machine cannot change it. Run this
 from another machine (or a scheduled job whose output goes to another system):
 
-  save:   EVOLVXSI_PASSWORD=... python audit_head_snapshot.py save  --url https://host --email admin@example.com --file heads.log
-  check:  EVOLVXSI_PASSWORD=... python audit_head_snapshot.py check --url https://host --email admin@example.com --file heads.log
+  save:   NORTPOLE_PASSWORD=... python audit_head_snapshot.py save  --url https://host --email admin@example.com --file heads.log
+  check:  NORTPOLE_PASSWORD=... python audit_head_snapshot.py check --url https://host --email admin@example.com --file heads.log
 
 `save` appends one line (time, event id, hash) to the file. `check` reads the newest line of that file and asks the server
 whether that event is still there, and whether the whole chain verifies. Exit status: 0 intact, 1 a problem was found,
@@ -39,9 +39,9 @@ def main() -> int:
     p.add_argument("--file", required=True, help="where heads are kept (save appends, check reads the last line)")
     p.add_argument("--ca", default=None, help="a CA certificate file to trust (for a private or self-signed certificate)")
     a = p.parse_args()
-    password = os.environ.get("EVOLVXSI_PASSWORD")
+    password = os.environ.get("NORTPOLE_PASSWORD")
     if not password:
-        sys.exit("set EVOLVXSI_PASSWORD in the environment")
+        sys.exit("set NORTPOLE_PASSWORD in the environment")
     url = a.url.rstrip("/")
     s = _session(url, a.email, password, a.ca or True)
 

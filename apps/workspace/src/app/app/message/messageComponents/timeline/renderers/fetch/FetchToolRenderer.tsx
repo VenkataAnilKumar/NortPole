@@ -5,7 +5,7 @@ import {
   RenderType,
 } from "@/app/app/message/messageComponents/types";
 import { BlinkingBar } from "@/app/app/message/BlinkingBar";
-import { EvolvXSIDocument } from "@/lib/search/types";
+import { NortPoleDocument } from "@/lib/search/types";
 import { openExternalLink } from "@/lib/search/utils";
 import { ValidSources } from "@/lib/connectors/types/source";
 import { SearchChipList, SourceInfo } from "../search/SearchChipList";
@@ -25,7 +25,7 @@ const urlToSourceInfo = (url: string, index: number): SourceInfo => ({
   sourceUrl: url,
 });
 
-const documentToSourceInfo = (doc: EvolvXSIDocument): SourceInfo => ({
+const documentToSourceInfo = (doc: NortPoleDocument): SourceInfo => ({
   id: doc.document_id,
   title: doc.semantic_identifier || doc.link || "",
   sourceType: doc.source_type || ValidSources.Web,
@@ -97,9 +97,9 @@ export const FetchToolRenderer: MessageRenderer<FetchToolPacket, {}> = ({
                 items={documents}
                 initialCount={INITIAL_URLS_TO_SHOW}
                 expansionCount={URLS_PER_EXPANSION}
-                getKey={(doc: EvolvXSIDocument) => doc.document_id}
-                toSourceInfo={(doc: EvolvXSIDocument) => documentToSourceInfo(doc)}
-                onClick={(doc: EvolvXSIDocument) => {
+                getKey={(doc: NortPoleDocument) => doc.document_id}
+                toSourceInfo={(doc: NortPoleDocument) => documentToSourceInfo(doc)}
+                onClick={(doc: NortPoleDocument) => {
                   if (doc.link) openExternalLink(doc.link);
                 }}
                 emptyState={!stopPacketSeen ? <BlinkingBar /> : undefined}
@@ -136,9 +136,9 @@ export const FetchToolRenderer: MessageRenderer<FetchToolPacket, {}> = ({
               items={documents}
               initialCount={INITIAL_URLS_TO_SHOW}
               expansionCount={URLS_PER_EXPANSION}
-              getKey={(doc: EvolvXSIDocument) => doc.document_id}
-              toSourceInfo={(doc: EvolvXSIDocument) => documentToSourceInfo(doc)}
-              onClick={(doc: EvolvXSIDocument) => {
+              getKey={(doc: NortPoleDocument) => doc.document_id}
+              toSourceInfo={(doc: NortPoleDocument) => documentToSourceInfo(doc)}
+              onClick={(doc: NortPoleDocument) => {
                 if (doc.link) openExternalLink(doc.link);
               }}
               emptyState={!stopPacketSeen ? <BlinkingBar /> : undefined}

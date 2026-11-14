@@ -6,11 +6,11 @@ import {
 } from "@tanstack/react-table";
 import type {
   TableColumn,
-  EvolvXSIColumnDef,
-  EvolvXSIQualifierColumn,
-  EvolvXSIDataColumn,
-  EvolvXSIDisplayColumn,
-  EvolvXSIActionsColumn,
+  NortPoleColumnDef,
+  NortPoleQualifierColumn,
+  NortPoleDataColumn,
+  NortPoleDisplayColumn,
+  NortPoleActionsColumn,
   TableQualifierColumn,
   TableFieldColumn,
   TableValueColumn,
@@ -26,7 +26,7 @@ import type { TableSize } from "@opal/components/table/TableSizeContext";
 
 function resolveQualifier<TData>(
   col: TableQualifierColumn<TData>
-): EvolvXSIQualifierColumn<TData> {
+): NortPoleQualifierColumn<TData> {
   const def: ColumnDef<TData, any> = createColumnHelper<TData>().display({
     id: "qualifier",
     enableResizing: false,
@@ -52,7 +52,7 @@ function resolveQualifier<TData>(
 
 function resolveData<TData>(
   col: TableFieldColumn<TData> | TableValueColumn<TData>
-): EvolvXSIDataColumn<TData> {
+): NortPoleDataColumn<TData> {
   const {
     title,
     sortable = true,
@@ -116,7 +116,7 @@ function resolveData<TData>(
 
 function resolveDisplay<TData>(
   col: TableDisplayColumn<TData>
-): EvolvXSIDisplayColumn<TData> {
+): NortPoleDisplayColumn<TData> {
   const def: ColumnDef<TData, any> = createColumnHelper<TData>().display({
     id: col.id,
     header: col.title,
@@ -143,7 +143,7 @@ const ACTIONS_PADDING = 8;
 
 function resolveActions<TData>(
   col: TableActionsColumn<TData>
-): EvolvXSIActionsColumn<TData> {
+): NortPoleActionsColumn<TData> {
   const { cell } = col;
   const def: ColumnDef<TData, any> = {
     id: "__actions",
@@ -180,7 +180,7 @@ function resolveActions<TData>(
 /** Turn a `TableColumn` literal into the internal, TanStack-backed column. */
 export function resolveColumn<TData>(
   col: TableColumn<TData>
-): EvolvXSIColumnDef<TData> {
+): NortPoleColumnDef<TData> {
   switch (col.kind) {
     case "qualifier":
       return resolveQualifier(col);

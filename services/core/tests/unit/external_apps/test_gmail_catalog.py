@@ -7,10 +7,10 @@ from __future__ import annotations
 
 import pytest
 
-from evolvxsi.db.enums import ActionPolicy, ExternalAppType
-from evolvxsi.external_apps.providers.actions import RestRoute, path_matches
-from evolvxsi.external_apps.providers.gmail import GmailAction
-from evolvxsi.external_apps.providers.registry import get_endpoint_catalog
+from nortpole.db.enums import ActionPolicy, ExternalAppType
+from nortpole.external_apps.providers.actions import RestRoute, path_matches
+from nortpole.external_apps.providers.gmail import GmailAction
+from nortpole.external_apps.providers.registry import get_endpoint_catalog
 
 _CATALOG = get_endpoint_catalog(ExternalAppType.GMAIL)
 

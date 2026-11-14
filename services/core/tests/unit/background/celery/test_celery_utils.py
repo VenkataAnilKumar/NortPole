@@ -7,10 +7,10 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from evolvxsi.background.celery.celery_utils import extract_ids_from_runnable_connector
-from evolvxsi.configs.constants import DocumentSource
-from evolvxsi.connectors.factory import source_prune_honors_indexing_start
-from evolvxsi.connectors.interfaces import (
+from nortpole.background.celery.celery_utils import extract_ids_from_runnable_connector
+from nortpole.configs.constants import DocumentSource
+from nortpole.connectors.factory import source_prune_honors_indexing_start
+from nortpole.connectors.interfaces import (
     BaseConnector,
     GenerateDocumentsOutput,
     GenerateSlimDocumentOutput,
@@ -20,9 +20,9 @@ from evolvxsi.connectors.interfaces import (
     SlimConnector,
     prune_listing_honors_indexing_start,
 )
-from evolvxsi.connectors.models import SlimDocument
-from evolvxsi.indexing.indexing_heartbeat import IndexingHeartbeatInterface
-from evolvxsi.server.metrics.pruning_metrics import (
+from nortpole.connectors.models import SlimDocument
+from nortpole.indexing.indexing_heartbeat import IndexingHeartbeatInterface
+from nortpole.server.metrics.pruning_metrics import (
     PRUNING_ENUMERATION_DURATION,
     PRUNING_RATE_LIMIT_ERRORS,
 )

@@ -3,7 +3,7 @@ from __future__ import annotations
 import builtins
 from collections.abc import Collection
 
-from evolvxsi.cache.interface import CacheBackend, CacheLock
+from nortpole.cache.interface import CacheBackend, CacheLock
 
 
 class FakeLock(CacheLock):

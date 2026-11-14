@@ -12,7 +12,7 @@ import MultiModelResponseView from "@/app/app/message/MultiModelResponseView";
 import { getMultiModelResponses } from "@/app/app/message/multiModel";
 import { useLanguageModels } from "@/lib/languageModels/hooks";
 import { buildModelProviderLookup } from "@/lib/languageModels/options";
-import EvolvXSIInitializingLoader from "@/components/EvolvXSIInitializingLoader";
+import NortPoleInitializingLoader from "@/components/NortPoleInitializingLoader";
 import { IllustrationContent, Section } from "@opal/layouts";
 import SvgNotFound from "@opal/illustrations/not-found";
 import { Button, Text, useCreateModal } from "@opal/components";
@@ -235,7 +235,7 @@ export default function SharedChatDisplay({
             </div>
           ) : (
             <div className="h-full w-full flex items-center justify-center">
-              <EvolvXSIInitializingLoader />
+              <NortPoleInitializingLoader />
             </div>
           )}
         </div>

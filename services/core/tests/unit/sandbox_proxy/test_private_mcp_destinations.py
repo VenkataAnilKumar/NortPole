@@ -6,15 +6,15 @@ import pytest
 from mitmproxy import connection
 from mitmproxy.proxy import server_hooks
 
-from evolvxsi.sandbox_proxy.addons.gate import GateAddon
-from evolvxsi.sandbox_proxy.credential_injection import CredentialInjectionDispatcher
-from evolvxsi.sandbox_proxy.destination_policy import (
+from nortpole.sandbox_proxy.addons.gate import GateAddon
+from nortpole.sandbox_proxy.credential_injection import CredentialInjectionDispatcher
+from nortpole.sandbox_proxy.destination_policy import (
     parse_destination_policy,
     resolve_destination,
 )
-from evolvxsi.sandbox_proxy.resolvers.mcp_matching import CraftMCPTarget
-from evolvxsi.sandbox_proxy.resolvers.mcp_server import MCPServerResolver
-from evolvxsi.server.security.models import SSRFProtectionLevel
+from nortpole.sandbox_proxy.resolvers.mcp_matching import CraftMCPTarget
+from nortpole.sandbox_proxy.resolvers.mcp_server import MCPServerResolver
+from nortpole.server.security.models import SSRFProtectionLevel
 from tests.unit.sandbox_proxy.conftest import (
     NoMatchedRequest,
     StubResolver,
@@ -74,7 +74,7 @@ async def test_private_mcp_origin(
     monkeypatch.setattr(resolver, "_load_targets", load_targets)
     monkeypatch.setattr(resolver, "_load_accessible_ids", load_access)
     pin = MagicMock()
-    monkeypatch.setattr("evolvxsi.sandbox_proxy.addons.gate.pin_destination", pin)
+    monkeypatch.setattr("nortpole.sandbox_proxy.addons.gate.pin_destination", pin)
     addon = GateAddon(
         identity=StubResolver(sandbox=None if case == "unknown" else sandbox),
         request_evaluator=NoMatchedRequest(),
@@ -140,7 +140,7 @@ def test_mcp_validates_resolved_addresses(
 ) -> None:
     import socket
 
-    from evolvxsi.sandbox_proxy.destination_policy import resolve_destination
+    from nortpole.sandbox_proxy.destination_policy import resolve_destination
 
     dns = MagicMock(
         return_value=[
@@ -222,7 +222,7 @@ def test_mcp_rechecks_tenant_ssrf_settings(
         return mcp_ssrf_settings
 
     monkeypatch.setattr(
-        "evolvxsi.sandbox_proxy.destination_policy.get_security_settings", settings
+        "nortpole.sandbox_proxy.destination_policy.get_security_settings", settings
     )
     policy = parse_destination_policy("https://evolvxsi.test")
     identity = StubResolver(sandbox=sandbox)
@@ -247,7 +247,7 @@ def test_mcp_rechecks_tenant_ssrf_settings(
         )
         assert CURRENT_TENANT_ID_CONTEXTVAR.get() == previous
     monkeypatch.setattr(
-        "evolvxsi.sandbox_proxy.destination_policy.get_security_settings",
+        "nortpole.sandbox_proxy.destination_policy.get_security_settings",
         MagicMock(side_effect=RuntimeError("settings unavailable")),
     )
     assert (
@@ -272,8 +272,8 @@ def test_private_mcp_denies_real_settings_read_failure(
 ) -> None:
     from cachetools import TTLCache
 
-    from evolvxsi.server.security import store
-    from evolvxsi.server.security.models import SecuritySettingsOverrides
+    from nortpole.server.security import store
+    from nortpole.server.security.models import SecuritySettingsOverrides
     from shared_configs.contextvars import CURRENT_TENANT_ID_CONTEXTVAR
 
     sandbox = make_resolved_sandbox(tenant_id="tenant-strict")
@@ -384,13 +384,13 @@ def test_disabled_ssrf_matches_backend_mcp_hostname_policy(
 ) -> None:
     import socket
 
-    from evolvxsi.sandbox_proxy.destination_policy import resolve_destination
-    from evolvxsi.server.features.mcp.ssrf import validate_mcp_outbound_url
-    from evolvxsi.utils.url import SSRFException
+    from nortpole.sandbox_proxy.destination_policy import resolve_destination
+    from nortpole.server.features.mcp.ssrf import validate_mcp_outbound_url
+    from nortpole.utils.url import SSRFException
 
     settings = mcp_ssrf_settings
     monkeypatch.setattr(
-        "evolvxsi.server.features.mcp.ssrf.get_security_settings", lambda: settings
+        "nortpole.server.features.mcp.ssrf.get_security_settings", lambda: settings
     )
     monkeypatch.setattr(
         socket,
@@ -528,7 +528,7 @@ async def test_request_checks_pending_and_connected_addresses(
     resolver = MCPServerResolver()
     monkeypatch.setattr(resolver, "allows_destination", lambda *_args: True)
     pin = MagicMock()
-    monkeypatch.setattr("evolvxsi.sandbox_proxy.addons.gate.pin_destination", pin)
+    monkeypatch.setattr("nortpole.sandbox_proxy.addons.gate.pin_destination", pin)
     dns = MagicMock(
         return_value=[
             (socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP, "", (ip, port))

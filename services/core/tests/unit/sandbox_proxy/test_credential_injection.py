@@ -8,13 +8,13 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock
 
-from evolvxsi.external_apps.matching.engine import AllMatchedActions
-from evolvxsi.sandbox_proxy.credential_injection import (
+from nortpole.external_apps.matching.engine import AllMatchedActions
+from nortpole.sandbox_proxy.credential_injection import (
     CredentialInjectionDispatcher,
     CredentialResolver,
     CredentialUnavailableError,
 )
-from evolvxsi.sandbox_proxy.models import InjectionContext, InjectionOutcome
+from nortpole.sandbox_proxy.models import InjectionContext, InjectionOutcome
 from tests.unit.sandbox_proxy.conftest import (
     RecordingCredentialResolver,
     make_flow,

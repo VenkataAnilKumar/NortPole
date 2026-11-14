@@ -1807,8 +1807,8 @@
       },
       "slackChannelChart": {
         "description": "전체 쿼리 대비 자동 해결",
-        "empty": "선택한 기간에 이 워크스페이스의 EvolvXSIBot 활동이 없습니다.",
-        "error": "EvolvXSIBot 데이터를 가져오지 못했습니다.",
+        "empty": "선택한 기간에 이 워크스페이스의 NortPoleBot 활동이 없습니다.",
+        "error": "NortPoleBot 데이터를 가져오지 못했습니다.",
         "series": {
           "autoResolved": {
             "label": "자동 해결됨"
@@ -8964,10 +8964,10 @@
     "slackBots": {
       "channelConfig": {
         "createError": {
-          "toast": "EvolvXSIBot 구성 생성 오류 - {error}"
+          "toast": "NortPoleBot 구성 생성 오류 - {error}"
         },
         "updateError": {
-          "toast": "EvolvXSIBot 구성 업데이트 오류 - {error}"
+          "toast": "NortPoleBot 구성 업데이트 오류 - {error}"
         }
       },
       "channels": {
@@ -9085,16 +9085,16 @@
         },
         "disableDefault": {
           "label": "기본 구성 비활성화",
-          "warning": "경고: 기본 구성을 비활성화하면 EvolvXSIBot은 명시적으로 구성된 Slack 채널에서만 응답합니다. 또한 EvolvXSIBot은 DM에 응답하지 않습니다."
+          "warning": "경고: 기본 구성을 비활성화하면 NortPoleBot은 명시적으로 구성된 Slack 채널에서만 응답합니다. 또한 NortPoleBot은 DM에 응답하지 않습니다."
         },
         "documentSets": {
           "autoSyncedDisabled": {
-            "tooltip": "이 문서 세트에는 자동 동기화 권한이 있는 커넥터가 포함되어 있어 사용할 수 없습니다. 이 채널의 EvolvXSIBot 응답은 모든 Slack 사용자에게 표시되므로, 질문자의 권한을 그대로 적용하면 비공개 정보가 의도치 않게 노출될 수 있습니다."
+            "tooltip": "이 문서 세트에는 자동 동기화 권한이 있는 커넥터가 포함되어 있어 사용할 수 없습니다. 이 채널의 NortPoleBot 응답은 모든 Slack 사용자에게 표시되므로, 질문자의 권한을 그대로 적용하면 비공개 정보가 의도치 않게 노출될 수 있습니다."
           },
           "autoSyncedNote": {
             "text": "다음 문서 세트에는 자동 동기화된 문서가 있어 첨부할 수 없습니다:"
           },
-          "description": "EvolvXSIBot이 Slack에서 질문에 답변할 때 사용할 문서 세트를 선택하세요.",
+          "description": "NortPoleBot이 Slack에서 질문에 답변할 때 사용할 문서 세트를 선택하세요.",
           "hideUnselectableButton": {
             "label": "선택할 수 없는 문서 세트 숨기기"
           },
@@ -9119,12 +9119,12 @@
         },
         "isEphemeral": {
           "label": "비공개(임시) 메시지로 사용자에게 응답",
-          "tooltip": "설정하면 EvolvXSIBot이 비공개(임시) 메시지로 해당 사용자에게만 응답합니다. 위에서 'Search' 에이전트도 선택한 경우, 이 옵션을 선택하면 사용자에게 비공개인 문서도 질의에 사용할 수 있습니다."
+          "tooltip": "설정하면 NortPoleBot이 비공개(임시) 메시지로 해당 사용자에게만 응답합니다. 위에서 'Search' 에이전트도 선택한 경우, 이 옵션을 선택하면 사용자에게 비공개인 문서도 질의에 사용할 수 있습니다."
         },
         "knowledgeSource": {
           "allPublic": {
             "label": "조직 전체의 모든 지식",
-            "sublabel": "EvolvXSIBot이 조직 전체의 모든 커넥터 정보를 바탕으로 응답하도록 합니다"
+            "sublabel": "NortPoleBot이 조직 전체의 모든 커넥터 정보를 바탕으로 응답하도록 합니다"
           },
           "documentSets": {
             "label": "특정 문서 세트",
@@ -9141,7 +9141,7 @@
           }
         },
         "nonSearchAgent": {
-          "description": "EvolvXSIBot이 Slack에서 질문에 답변할 때 사용할 비검색 에이전트를 선택하세요."
+          "description": "NortPoleBot이 Slack에서 질문에 답변할 때 사용할 비검색 에이전트를 선택하세요."
         },
         "privacyAlert": {
           "connectors": {
@@ -9152,7 +9152,7 @@
         },
         "questionmarkPrefilter": {
           "label": "질문에만 응답",
-          "tooltip": "설정하면 EvolvXSIBot이 물음표가 포함된 메시지에만 응답합니다"
+          "tooltip": "설정하면 NortPoleBot이 물음표가 포함된 메시지에만 응답합니다"
         },
         "removedDocumentSets": {
           "toast": "일부 문서 세트가 더 이상 유효하지 않아 선택 항목에서 제거했습니다. 구성을 검토하고 업데이트하세요."
@@ -9162,15 +9162,15 @@
             "tooltip": "'비공개(임시) 메시지로 사용자에게 응답'이 켜져 있는 동안에는 비활성화됩니다. 임시 응답은 한 명의 사용자에게만 전달됩니다."
           },
           "label": "(선택 사항) 특정 사용자 / 그룹에만 응답",
-          "subtext": "지정하면 이 채널에서 해당 사용자 / 그룹만 EvolvXSIBot을 호출할 수 있으며, 응답도 그들에게만 표시됩니다."
+          "subtext": "지정하면 이 채널에서 해당 사용자 / 그룹만 NortPoleBot을 호출할 수 있으며, 응답도 그들에게만 표시됩니다."
         },
         "respondTagOnly": {
-          "label": "@EvolvXSIBot 태그 시에만 응답",
-          "tooltip": "설정하면 EvolvXSIBot이 직접 태그된 경우에만 응답합니다"
+          "label": "@NortPoleBot 태그 시에만 응답",
+          "tooltip": "설정하면 NortPoleBot이 직접 태그된 경우에만 응답합니다"
         },
         "respondToBots": {
           "label": "봇 메시지에 응답",
-          "tooltip": "설정하지 않으면 EvolvXSIBot이 봇의 메시지를 항상 무시합니다"
+          "tooltip": "설정하지 않으면 NortPoleBot이 봇의 메시지를 항상 무시합니다"
         },
         "responseType": {
           "detailed": {
@@ -9180,10 +9180,10 @@
           "standard": {
             "label": "표준"
           },
-          "tooltip": "EvolvXSIBot 응답의 형식을 제어합니다."
+          "tooltip": "NortPoleBot 응답의 형식을 제어합니다."
         },
         "searchAgent": {
-          "description": "EvolvXSIBot이 Slack에서 질문에 답변할 때 사용할 검색 지원 에이전트를 선택하세요."
+          "description": "NortPoleBot이 Slack에서 질문에 답변할 때 사용할 검색 지원 에이전트를 선택하세요."
         },
         "searchConfig": {
           "section": {
@@ -9199,7 +9199,7 @@
           "section": {
             "prompt": "도움이 더 필요하신가요 버튼 구성"
           },
-          "tooltip": "EvolvXSIBot 응답 하단에 도움이 더 필요한지 묻는 버튼이 포함됩니다."
+          "tooltip": "NortPoleBot 응답 하단에 도움이 더 필요한지 묻는 버튼이 포함됩니다."
         },
         "syncEnabledAgents": {
           "hideButton": {
@@ -9220,17 +9220,17 @@
       },
       "intro": {
         "autoAnswer": {
-          "item": "특정 채널에서 질문에 자동으로 답변하도록 EvolvXSIBot을 설정하세요."
+          "item": "특정 채널에서 질문에 자동으로 답변하도록 NortPoleBot을 설정하세요."
         },
         "description": "{appName}에 연결되는 Slack 봇을 설정하세요. 설정을 마치면 Slack에서 바로 {appName}에 질문할 수 있습니다. 또한 다음을 할 수 있습니다:",
         "directMessage": {
-          "item": "웹 UI에서와 똑같이 EvolvXSIBot에 다이렉트 메시지를 보내 검색하세요."
+          "item": "웹 UI에서와 똑같이 NortPoleBot에 다이렉트 메시지를 보내 검색하세요."
         },
         "docsPrompt": {
           "text": "시작하려면 NortPole 문서의 <link>가이드</link>를 따라 하세요!"
         },
         "documentSets": {
-          "item": "질문을 받은 채널에 따라 EvolvXSIBot이 어떤 문서 세트를 기반으로 답변할지 선택하세요."
+          "item": "질문을 받은 채널에 따라 NortPoleBot이 어떤 문서 세트를 기반으로 답변할지 선택하세요."
         }
       },
       "list": {
@@ -9248,7 +9248,7 @@
       },
       "newChannel": {
         "header": {
-          "title": "Slack 채널용 EvolvXSIBot 구성"
+          "title": "Slack 채널용 NortPoleBot 구성"
         }
       },
       "table": {

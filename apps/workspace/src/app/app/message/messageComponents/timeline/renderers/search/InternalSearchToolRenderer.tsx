@@ -6,7 +6,7 @@ import {
   RenderType,
 } from "@/app/app/message/messageComponents/types";
 import { BlinkingBar } from "@/app/app/message/BlinkingBar";
-import { EvolvXSIDocument } from "@/lib/search/types";
+import { NortPoleDocument } from "@/lib/search/types";
 import { ValidSources } from "@/lib/connectors/types/source";
 import { SearchChipList, SourceInfo } from "./SearchChipList";
 import {
@@ -27,7 +27,7 @@ const queryToSourceInfo = (query: string, index: number): SourceInfo => ({
   icon: SvgSearch,
 });
 
-const resultToSourceInfo = (doc: EvolvXSIDocument): SourceInfo => ({
+const resultToSourceInfo = (doc: NortPoleDocument): SourceInfo => ({
   id: doc.document_id,
   title: doc.semantic_identifier || "",
   sourceType: doc.source_type,
@@ -112,11 +112,11 @@ export const InternalSearchToolRenderer: MessageRenderer<
               items={results}
               initialCount={INITIAL_RESULTS_TO_SHOW}
               expansionCount={RESULTS_PER_EXPANSION}
-              getKey={(doc: EvolvXSIDocument, index: number) =>
+              getKey={(doc: NortPoleDocument, index: number) =>
                 doc.document_id ?? `result-${index}`
               }
-              toSourceInfo={(doc: EvolvXSIDocument) => resultToSourceInfo(doc)}
-              onClick={(doc: EvolvXSIDocument) => {
+              toSourceInfo={(doc: NortPoleDocument) => resultToSourceInfo(doc)}
+              onClick={(doc: NortPoleDocument) => {
                 if (doc.link) {
                   window.open(doc.link, "_blank", "noopener,noreferrer");
                 }
@@ -175,11 +175,11 @@ export const InternalSearchToolRenderer: MessageRenderer<
             items={results}
             initialCount={INITIAL_RESULTS_TO_SHOW}
             expansionCount={RESULTS_PER_EXPANSION}
-            getKey={(doc: EvolvXSIDocument, index: number) =>
+            getKey={(doc: NortPoleDocument, index: number) =>
               doc.document_id ?? `result-${index}`
             }
-            toSourceInfo={(doc: EvolvXSIDocument) => resultToSourceInfo(doc)}
-            onClick={(doc: EvolvXSIDocument) => {
+            toSourceInfo={(doc: NortPoleDocument) => resultToSourceInfo(doc)}
+            onClick={(doc: NortPoleDocument) => {
               if (doc.link) {
                 window.open(doc.link, "_blank", "noopener,noreferrer");
               }
@@ -232,11 +232,11 @@ export const InternalSearchToolRenderer: MessageRenderer<
                 items={results}
                 initialCount={INITIAL_RESULTS_TO_SHOW}
                 expansionCount={RESULTS_PER_EXPANSION}
-                getKey={(doc: EvolvXSIDocument, index: number) =>
+                getKey={(doc: NortPoleDocument, index: number) =>
                   doc.document_id ?? `result-${index}`
                 }
-                toSourceInfo={(doc: EvolvXSIDocument) => resultToSourceInfo(doc)}
-                onClick={(doc: EvolvXSIDocument) => {
+                toSourceInfo={(doc: NortPoleDocument) => resultToSourceInfo(doc)}
+                onClick={(doc: NortPoleDocument) => {
                   if (doc.link) {
                     window.open(doc.link, "_blank", "noopener,noreferrer");
                   }

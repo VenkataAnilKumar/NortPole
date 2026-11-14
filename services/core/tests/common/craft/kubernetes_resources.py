@@ -8,11 +8,11 @@ from uuid import UUID
 from kubernetes import client
 from kubernetes.client.rest import ApiException
 
-from evolvxsi.server.features.build.configs import SANDBOX_CONTAINER_IMAGE
-from evolvxsi.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
+from nortpole.server.features.build.configs import SANDBOX_CONTAINER_IMAGE
+from nortpole.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
     KubernetesSandboxManager,
 )
-from evolvxsi.server.features.build.sandbox.labels import (
+from nortpole.server.features.build.sandbox.labels import (
     LABEL_K8S_COMPONENT,
     LABEL_K8S_MANAGED_BY,
     LABEL_K8S_MANAGED_BY_EVOLVXSI,

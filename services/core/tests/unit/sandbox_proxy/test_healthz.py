@@ -6,9 +6,9 @@ from http.server import HTTPServer
 
 import pytest
 
-from evolvxsi.sandbox_proxy import server as proxy_server
-from evolvxsi.sandbox_proxy.sandbox_identity.resolution import SandboxIPLookup
-from evolvxsi.sandbox_proxy.server import _build_healthz_handler, _Readiness
+from nortpole.sandbox_proxy import server as proxy_server
+from nortpole.sandbox_proxy.sandbox_identity.resolution import SandboxIPLookup
+from nortpole.sandbox_proxy.server import _build_healthz_handler, _Readiness
 
 
 class _FakeLookup(SandboxIPLookup):

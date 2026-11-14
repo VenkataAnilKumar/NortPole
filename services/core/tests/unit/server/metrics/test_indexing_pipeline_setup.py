@@ -2,7 +2,7 @@
 
 from unittest.mock import MagicMock
 
-from evolvxsi.server.metrics.indexing_pipeline import (
+from nortpole.server.metrics.indexing_pipeline import (
     QueueDepthCollector,
     RedisHealthCollector,
 )

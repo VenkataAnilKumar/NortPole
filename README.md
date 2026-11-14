@@ -134,7 +134,7 @@ flowchart LR
 
 **Not yet:** a production deployment, single sign-on, and a third-party security review. All results so far come from sandbox testing.
 
-The full, honest list lives in the [pending-work checklist](docs/07-implementation/EvolvXSI_Pending-Work-Checklist.md), and what each piece checked is in the [review log](docs/REVIEW.md).
+The full, honest list lives in the [pending-work checklist](docs/07-implementation/NortPole_Pending-Work-Checklist.md), and what each piece checked is in the [review log](docs/REVIEW.md).
 
 ## Work with us
 
@@ -150,6 +150,6 @@ To talk about a pilot, email [vanilkumarch@gmail.com](mailto:vanilkumarch@gmail.
 | Web workspace (Next.js) | [apps/workspace](apps/workspace) |
 | Workflow packs | [packs](packs) |
 | Deployment profiles | [infrastructure/profiles](infrastructure/profiles) |
-| Product and architecture documents | [Document index](docs/README.md), [Product definition](docs/02-product/EvolvXSI_Product-Definition.md), [System architecture](docs/06-technical/EvolvXSI_System-Architecture.md) |
+| Product and architecture documents | [Document index](docs/README.md), [Product definition](docs/02-product/NortPole_Product-Definition.md), [System architecture](docs/06-technical/NortPole_System-Architecture.md) |
 
-Run `make help` for common commands and `make check` to check the repository layout and document links. The layout and its rules are in the [repository structure](docs/06-technical/EvolvXSI_Repo-Structure.md).
+Run `make help` for common commands and `make check` to check the repository layout and document links. The layout and its rules are in the [repository structure](docs/06-technical/NortPole_Repo-Structure.md).

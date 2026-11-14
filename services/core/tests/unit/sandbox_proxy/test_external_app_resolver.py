@@ -15,11 +15,11 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from evolvxsi.external_apps.matching.engine import AllMatchedActions
-from evolvxsi.sandbox_proxy.credential_injection import CredentialUnavailableError
-from evolvxsi.sandbox_proxy.models import InjectionContext
-from evolvxsi.sandbox_proxy.resolvers import external_app
-from evolvxsi.sandbox_proxy.resolvers.external_app import ExternalAppResolver
+from nortpole.external_apps.matching.engine import AllMatchedActions
+from nortpole.sandbox_proxy.credential_injection import CredentialUnavailableError
+from nortpole.sandbox_proxy.models import InjectionContext
+from nortpole.sandbox_proxy.resolvers import external_app
+from nortpole.sandbox_proxy.resolvers.external_app import ExternalAppResolver
 from tests.unit.sandbox_proxy.conftest import (
     make_flow,
     make_matched_actions,

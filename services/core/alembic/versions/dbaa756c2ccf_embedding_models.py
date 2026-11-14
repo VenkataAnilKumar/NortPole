@@ -10,18 +10,18 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy import table, column, String, Integer, Boolean
 
-from evolvxsi.configs.model_configs import ASYM_PASSAGE_PREFIX
-from evolvxsi.configs.model_configs import ASYM_QUERY_PREFIX
-from evolvxsi.configs.model_configs import DOC_EMBEDDING_DIM
-from evolvxsi.configs.model_configs import DOCUMENT_ENCODER_MODEL
-from evolvxsi.configs.model_configs import NORMALIZE_EMBEDDINGS
-from evolvxsi.configs.model_configs import OLD_DEFAULT_DOCUMENT_ENCODER_MODEL
-from evolvxsi.configs.model_configs import OLD_DEFAULT_MODEL_DOC_EMBEDDING_DIM
-from evolvxsi.configs.model_configs import OLD_DEFAULT_MODEL_NORMALIZE_EMBEDDINGS
-from evolvxsi.db.enums import EmbeddingPrecision
-from evolvxsi.db.models import IndexModelStatus
-from evolvxsi.db.search_settings import user_has_overridden_embedding_model
-from evolvxsi.indexing.models import IndexingSetting
+from nortpole.configs.model_configs import ASYM_PASSAGE_PREFIX
+from nortpole.configs.model_configs import ASYM_QUERY_PREFIX
+from nortpole.configs.model_configs import DOC_EMBEDDING_DIM
+from nortpole.configs.model_configs import DOCUMENT_ENCODER_MODEL
+from nortpole.configs.model_configs import NORMALIZE_EMBEDDINGS
+from nortpole.configs.model_configs import OLD_DEFAULT_DOCUMENT_ENCODER_MODEL
+from nortpole.configs.model_configs import OLD_DEFAULT_MODEL_DOC_EMBEDDING_DIM
+from nortpole.configs.model_configs import OLD_DEFAULT_MODEL_NORMALIZE_EMBEDDINGS
+from nortpole.db.enums import EmbeddingPrecision
+from nortpole.db.models import IndexModelStatus
+from nortpole.db.search_settings import user_has_overridden_embedding_model
+from nortpole.indexing.models import IndexingSetting
 from shared_configs.utils import clean_model_name
 
 # revision identifiers, used by Alembic.

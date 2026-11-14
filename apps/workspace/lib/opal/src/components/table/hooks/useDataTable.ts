@@ -24,8 +24,8 @@ import {
 // Exported types
 // ---------------------------------------------------------------------------
 
-export type EvolvXSISortDirection = "none" | "ascending" | "descending";
-export type EvolvXSISelectionState = "none" | "partial" | "all";
+export type NortPoleSortDirection = "none" | "ascending" | "descending";
+export type NortPoleSelectionState = "none" | "partial" | "all";
 
 // ---------------------------------------------------------------------------
 // Exported utility
@@ -39,7 +39,7 @@ export type EvolvXSISelectionState = "none" | "partial" | "all";
  */
 export function toEvolvXSISortDirection(
   dir: false | "asc" | "desc"
-): EvolvXSISortDirection {
+): NortPoleSortDirection {
   if (dir === "asc") return "ascending";
   if (dir === "desc") return "descending";
   return "none";
@@ -145,7 +145,7 @@ interface UseDataTableReturn<TData extends RowData> {
 
   // Selection (pre-computed for NortPole Footer)
   /** Aggregate selection state for the current page. */
-  selectionState: EvolvXSISelectionState;
+  selectionState: NortPoleSelectionState;
   /** Number of selected rows. */
   selectedCount: number;
   /** Whether every row on the current page is selected. */
@@ -400,7 +400,7 @@ export default function useDataTable<TData extends RowData>(
   const isAllPageRowsSelected = table.getIsAllPageRowsSelected();
   const isSomePageRowsSelected = table.getIsSomePageRowsSelected();
 
-  const selectionState: EvolvXSISelectionState = isAllPageRowsSelected
+  const selectionState: NortPoleSelectionState = isAllPageRowsSelected
     ? "all"
     : isSomePageRowsSelected
       ? "partial"

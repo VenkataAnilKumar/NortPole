@@ -13,7 +13,7 @@ export interface MemberRow extends UserRow {
   api_key_display?: string;
 }
 
-/** Mirrors backend PermissionRegistryEntry from evolvxsi.auth.permissions. */
+/** Mirrors backend PermissionRegistryEntry from nortpole.auth.permissions. */
 export interface PermissionRegistryEntry {
   id: string;
   display_name: string;

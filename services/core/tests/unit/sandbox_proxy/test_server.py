@@ -10,10 +10,10 @@ from mitmproxy import http
 from mitmproxy.options import Options
 from mitmproxy.tools.dump import DumpMaster
 
-from evolvxsi.sandbox_proxy import server
-from evolvxsi.sandbox_proxy.destination_policy import resolve_destination
-from evolvxsi.sandbox_proxy.models import DestinationPolicyConfig
-from evolvxsi.server.features.build import configs
+from nortpole.sandbox_proxy import server
+from nortpole.sandbox_proxy.destination_policy import resolve_destination
+from nortpole.sandbox_proxy.models import DestinationPolicyConfig
+from nortpole.server.features.build import configs
 from tests.unit.sandbox_proxy.conftest import wait_for_proxy_listener
 
 

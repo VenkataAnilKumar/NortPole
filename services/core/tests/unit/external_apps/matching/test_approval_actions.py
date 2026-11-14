@@ -1,5 +1,5 @@
-from evolvxsi.db.enums import ActionPolicy
-from evolvxsi.external_apps.matching.engine import MatchedAction, actions_requiring_approval
+from nortpole.db.enums import ActionPolicy
+from nortpole.external_apps.matching.engine import MatchedAction, actions_requiring_approval
 
 
 def _action(action_type: str, policy: ActionPolicy) -> MatchedAction:

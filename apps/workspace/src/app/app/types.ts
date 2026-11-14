@@ -1,5 +1,5 @@
 import {
-  EvolvXSIDocument,
+  NortPoleDocument,
   SearchEvolvXSIDocument,
   StreamStopReason,
 } from "@/lib/search/types";
@@ -194,7 +194,7 @@ export interface Message {
   restoredPacketCount?: number;
 
   // cached values for easy access
-  documents?: EvolvXSIDocument[] | null;
+  documents?: NortPoleDocument[] | null;
   citations?: CitationMap;
 
   // feedback state
@@ -254,7 +254,7 @@ export interface BackendMessage {
   message: string;
   rephrased_query: string | null;
   // Backend sends context_docs as a flat array of documents
-  context_docs: EvolvXSIDocument[] | null;
+  context_docs: NortPoleDocument[] | null;
   time_sent: string;
   overridden_model: string;
   alternate_assistant_id: number | null; // TODO: rename to agent — https://linear.app/evolvxsi-app/issue/ENG-3766
@@ -300,7 +300,7 @@ export interface UserKnowledgeFilePacket {
 }
 
 export interface DocumentsResponse {
-  top_documents: EvolvXSIDocument[];
+  top_documents: NortPoleDocument[];
   rephrased_query: string | null;
   level?: number | null;
   level_question_num?: number | null;
@@ -371,7 +371,7 @@ export interface SubQuestionDetail extends BaseQuestionIdentifier {
   question: string;
   answer: string;
   sub_queries?: SubQueryDetail[] | null;
-  context_docs?: { top_documents: EvolvXSIDocument[] } | null;
+  context_docs?: { top_documents: NortPoleDocument[] } | null;
   is_complete?: boolean;
   is_stopped?: boolean;
   answer_streaming?: boolean;

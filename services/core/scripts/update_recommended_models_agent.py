@@ -61,7 +61,7 @@ from update_recommended_models import (  # ty: ignore[unresolved-import]  # noqa
 
 BACKEND_DIR = SCRIPT_DIR.parent
 DEFAULT_OUTPUT = (
-    BACKEND_DIR / "evolvxsi" / "llm" / "well_known_providers" / "recommended-models.json"
+    BACKEND_DIR / "nortpole" / "llm" / "well_known_providers" / "recommended-models.json"
 )
 DEFAULT_RULES = SCRIPT_DIR / "update_recommended_models_rules.json"
 

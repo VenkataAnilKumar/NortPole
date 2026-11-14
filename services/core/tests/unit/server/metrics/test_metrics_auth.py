@@ -7,10 +7,10 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from evolvxsi.error_handling.error_codes import EvolvXSIErrorCode
-from evolvxsi.error_handling.exceptions import EvolvXSIError
-from evolvxsi.server.metrics import metrics_auth
-from evolvxsi.server.metrics.metrics_auth import verify_metrics_token
+from nortpole.error_handling.error_codes import NortPoleErrorCode
+from nortpole.error_handling.exceptions import NortPoleError
+from nortpole.server.metrics import metrics_auth
+from nortpole.server.metrics.metrics_auth import verify_metrics_token
 
 
 @pytest.fixture(autouse=True)
@@ -33,14 +33,14 @@ def _request_with_auth(auth_header: str | None) -> MagicMock:
 
 def test_locked_when_unconfigured() -> None:
     """No token and not explicitly disabled => fail secure (lock the endpoint)."""
-    with pytest.raises(EvolvXSIError) as exc_info:
+    with pytest.raises(NortPoleError) as exc_info:
         verify_metrics_token(_request_with_auth(None))
-    assert exc_info.value.error_code == EvolvXSIErrorCode.UNAUTHENTICATED
+    assert exc_info.value.error_code == NortPoleErrorCode.UNAUTHENTICATED
     # RFC 6750: advertise the bearer scheme on 401.
     assert exc_info.value.headers == {"WWW-Authenticate": "Bearer"}
 
     # Even a bearer header can't satisfy a locked endpoint with no configured token.
-    with pytest.raises(EvolvXSIError):
+    with pytest.raises(NortPoleError):
         verify_metrics_token(_request_with_auth("Bearer anything"))
 
 
@@ -61,22 +61,22 @@ def test_valid_token_passes(monkeypatch: pytest.MonkeyPatch) -> None:
 def test_missing_header_rejected(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(metrics_auth, "METRICS_AUTH_TOKEN", "s3cret")
 
-    with pytest.raises(EvolvXSIError) as exc_info:
+    with pytest.raises(NortPoleError) as exc_info:
         verify_metrics_token(_request_with_auth(None))
-    assert exc_info.value.error_code == EvolvXSIErrorCode.UNAUTHENTICATED
+    assert exc_info.value.error_code == NortPoleErrorCode.UNAUTHENTICATED
 
 
 def test_non_bearer_header_rejected(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(metrics_auth, "METRICS_AUTH_TOKEN", "s3cret")
 
-    with pytest.raises(EvolvXSIError) as exc_info:
+    with pytest.raises(NortPoleError) as exc_info:
         verify_metrics_token(_request_with_auth("s3cret"))
-    assert exc_info.value.error_code == EvolvXSIErrorCode.UNAUTHENTICATED
+    assert exc_info.value.error_code == NortPoleErrorCode.UNAUTHENTICATED
 
 
 def test_wrong_token_rejected(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(metrics_auth, "METRICS_AUTH_TOKEN", "s3cret")
 
-    with pytest.raises(EvolvXSIError) as exc_info:
+    with pytest.raises(NortPoleError) as exc_info:
         verify_metrics_token(_request_with_auth("Bearer wrong"))
-    assert exc_info.value.error_code == EvolvXSIErrorCode.UNAUTHENTICATED
+    assert exc_info.value.error_code == NortPoleErrorCode.UNAUTHENTICATED

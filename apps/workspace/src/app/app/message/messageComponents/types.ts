@@ -2,7 +2,7 @@ import { JSX } from "react";
 import type { NestedCall } from "@/app/app/message/messageComponents/timeline/packetHelpers";
 import { MinimalAgent } from "@/lib/agents/types";
 import { Packet, StopReason } from "../../services/streamingModels";
-import { EvolvXSIDocument, MinimalEvolvXSIDocument } from "@/lib/search/types";
+import { NortPoleDocument, MinimalEvolvXSIDocument } from "@/lib/search/types";
 import { ProjectFile } from "@/lib/projects/types";
 import { LlmDescriptor } from "@/lib/hooks";
 import type { IconFunctionComponent } from "@opal/types";
@@ -26,7 +26,7 @@ export type TimelineLayout = "timeline" | "content";
 export interface FullChatState {
   agent: MinimalAgent;
   // Document-related context for citations
-  docs?: EvolvXSIDocument[] | null;
+  docs?: NortPoleDocument[] | null;
   userFiles?: ProjectFile[];
   citations?: CitationMap;
   setPresentingDocument?: (document: MinimalEvolvXSIDocument) => void;

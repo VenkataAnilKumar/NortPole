@@ -14,7 +14,7 @@ Sources, in precedence order:
 models.dev provider slugs are mapped onto NortPole provider keys; each model entry
 is normalized and lookup aliases are derived (region prefixes, version/date
 suffixes). One JSON file per provider is written under
-backend/evolvxsi/llm/price_table/. Output is deterministic so diffs reflect real
+backend/nortpole/llm/price_table/. Output is deterministic so diffs reflect real
 upstream changes only. Secondary-source failures warn and degrade to the
 models.dev-only output rather than failing the sync.
 
@@ -40,12 +40,12 @@ LITELLM_URL = (
     "model_prices_and_context_window.json"
 )
 OPENROUTER_URL = "https://openrouter.ai/api/v1/models"
-OUTPUT_DIR = Path(__file__).resolve().parent.parent / "evolvxsi" / "llm" / "price_table"
+OUTPUT_DIR = Path(__file__).resolve().parent.parent / "nortpole" / "llm" / "price_table"
 
 # NortPole provider key -> models.dev provider slugs, in preference order.
 # Later slugs fill gaps; earlier entries win on model-id collisions.
 PROVIDER_MAP: dict[str, list[str]] = {
-    # Well-known providers (evolvxsi/llm/constants.py LlmProviderNames)
+    # Well-known providers (nortpole/llm/constants.py LlmProviderNames)
     "openai": ["openai"],
     "anthropic": ["anthropic"],
     "google": ["google"],
@@ -59,7 +59,7 @@ PROVIDER_MAP: dict[str, list[str]] = {
     "lm_studio": ["lmstudio"],
     "mistral": ["mistral"],
     "nebius_tokenfactory": ["nebius"],
-    # Custom-provider keys (evolvxsi/llm/constants.py PROVIDER_DISPLAY_NAMES)
+    # Custom-provider keys (nortpole/llm/constants.py PROVIDER_DISPLAY_NAMES)
     "azure_ai": ["azure", "azure-cognitive-services"],
     "cohere_chat": ["cohere"],
     "deepinfra": ["deepinfra"],

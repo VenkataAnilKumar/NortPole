@@ -1,7 +1,7 @@
 // Locale registry for the web UI.
 //
 // Must stay in sync with the backend `SupportedLanguage` enum in
-// backend/evolvxsi/db/enums.py — config.test.ts pins this list, and
+// backend/nortpole/db/enums.py — config.test.ts pins this list, and
 // `PATCH /user/language` rejects values outside that enum.
 export const SUPPORTED_LOCALES = [
   "en",

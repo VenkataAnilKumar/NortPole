@@ -2,7 +2,7 @@ import SvgEvolvXSILogo from "@opal/logos/evolvxsi-logo";
 import SvgEvolvXSIWordmark from "@opal/logos/evolvxsi-wordmark";
 import { cn } from "@opal/utils";
 
-interface EvolvXSILogoWordmarkProps {
+interface NortPoleLogoWordmarkProps {
   size?: number;
   className?: string;
 }
@@ -14,7 +14,7 @@ const HEIGHT_TO_GAP_RATIO = 5 / 16;
 const SvgEvolvXSILogoWordmark = ({
   size: height,
   className,
-}: EvolvXSILogoWordmarkProps) => {
+}: NortPoleLogoWordmarkProps) => {
   const gap = height != null ? height * HEIGHT_TO_GAP_RATIO : undefined;
 
   return (

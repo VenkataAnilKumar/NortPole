@@ -12,7 +12,7 @@ export const lightExtensionImages = [
 // Chrome message types
 export const CHROME_MESSAGE = {
   PREFERENCES_UPDATED: "PREFERENCES_UPDATED",
-  EVOLVXSI_APP_LOADED: "EVOLVXSI_APP_LOADED",
+  NORTPOLE_APP_LOADED: "NORTPOLE_APP_LOADED",
   SET_DEFAULT_NEW_TAB: "SET_DEFAULT_NEW_TAB",
   LOAD_NEW_CHAT_PAGE: "LOAD_NEW_CHAT_PAGE",
   LOAD_NEW_PAGE: "LOAD_NEW_PAGE",
@@ -32,7 +32,7 @@ export const LocalStorageKeys = {
   DARK_BG_URL: "darkBgUrl",
   SHORTCUTS: "shortCuts",
   SHOW_SHORTCUTS: "showShortcuts",
-  USE_EVOLVXSI_AS_NEW_TAB: "useEvolvXSIAsDefaultNewTab",
+  USE_NORTPOLE_AS_NEW_TAB: "useEvolvXSIAsDefaultNewTab",
 };
 
 export const SEARCH_PARAMS = {

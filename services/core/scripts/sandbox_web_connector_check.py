@@ -19,13 +19,13 @@ class H(BaseHTTPRequestHandler):
     def log_message(self, *a): pass
 srv = HTTPServer(("127.0.0.1", 0), H); threading.Thread(target=srv.serve_forever, daemon=True).start()
 base = f"http://127.0.0.1:{srv.server_port}/"
-from evolvxsi.connectors.web import connector as w
+from nortpole.connectors.web import connector as w
 c = w.WebConnector(base_url=base)
 try:
     for batch in c.load_from_state(): print("guarded: got", len(batch))
 except Exception as e: print("guarded:", type(e).__name__, str(e)[:120])
-from evolvxsi.utils import playwright_fetch as pf
-import evolvxsi.utils.url as U
+from nortpole.utils import playwright_fetch as pf
+import nortpole.utils.url as U
 from urllib.parse import urlparse as _up
 with patch.object(U, "_validate_and_resolve_url", lambda u: ('127.0.0.1', _up(u).hostname, _up(u).port or 80)), patch.object(w, "protected_url_check", lambda u: None), patch.object(pf, "_ssrf_allows", lambda *a, **k: True), patch.object(pf, "install_ssrf_guard", lambda *a, **k: None), patch.object(w, "install_ssrf_guard", lambda *a, **k: None, create=True):
     c = w.WebConnector(base_url=base)

@@ -9,8 +9,8 @@ Create Date: 2024-03-22 21:34:27.629444
 from alembic import op
 import sqlalchemy as sa
 
-from evolvxsi.db.models import IndexModelStatus
-from evolvxsi.context.search.enums import RecencyBiasSetting, SearchType
+from nortpole.db.models import IndexModelStatus
+from nortpole.context.search.enums import RecencyBiasSetting, SearchType
 
 # revision identifiers, used by Alembic.
 revision = "776b3bbe9092"

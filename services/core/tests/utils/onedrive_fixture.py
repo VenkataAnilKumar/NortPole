@@ -10,16 +10,16 @@ from urllib.parse import quote
 import requests
 from pydantic import AliasChoices, BaseModel, ConfigDict, Field
 
-from evolvxsi.connectors.microsoft_utils.config import (
+from nortpole.connectors.microsoft_utils.config import (
     DEFAULT_AUTHORITY_HOST,
     DEFAULT_GRAPH_API_HOST,
 )
-from evolvxsi.connectors.microsoft_utils.graph_auth import (
+from nortpole.connectors.microsoft_utils.graph_auth import (
     MicrosoftAuthMethod,
     acquire_app_token,
     build_msal_app,
 )
-from evolvxsi.connectors.microsoft_utils.graph_client import GraphApiClient
+from nortpole.connectors.microsoft_utils.graph_client import GraphApiClient
 from tests.utils.aws_secrets import get_secrets
 from tests.utils.secret_names import TestSecret
 

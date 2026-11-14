@@ -17,8 +17,8 @@ import jwt
 import pytest
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
-from evolvxsi.sandbox_proxy.sandbox_identity import signed
-from evolvxsi.sandbox_proxy.sandbox_identity.signed import (
+from nortpole.sandbox_proxy.sandbox_identity import signed
+from nortpole.sandbox_proxy.sandbox_identity.signed import (
     NodeSigningKey,
     NodeSigningKeyLookup,
     ReplayGuard,

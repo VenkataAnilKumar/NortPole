@@ -89,7 +89,7 @@ export async function validateToolDefinition(toolData: {
       return { data: null, error: errorDetail };
     }
 
-    // Mirrors `ValidateToolResponse` in backend/evolvxsi/server/features/tool/api.py.
+    // Mirrors `ValidateToolResponse` in backend/nortpole/server/features/tool/api.py.
     const responseJson: { methods: MethodSpec[] } = await response.json();
     return { data: responseJson.methods, error: null };
   } catch (error) {

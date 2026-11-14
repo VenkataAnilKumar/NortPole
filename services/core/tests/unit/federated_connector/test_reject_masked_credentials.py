@@ -1,7 +1,7 @@
 import pytest
 
-from evolvxsi.configs.constants import MASK_CREDENTIAL_CHAR
-from evolvxsi.utils.encryption import reject_masked_credentials
+from nortpole.configs.constants import MASK_CREDENTIAL_CHAR
+from nortpole.utils.encryption import reject_masked_credentials
 
 
 class TestRejectMaskedCredentials:

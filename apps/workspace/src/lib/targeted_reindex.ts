@@ -10,7 +10,7 @@ import type {
 } from "@/lib/connectors/types";
 
 /** Server-enforced cap. Keep in sync with `MAX_TARGETS_PER_REQUEST`
- * in `backend/evolvxsi/db/targeted_reindex.py`. */
+ * in `backend/nortpole/db/targeted_reindex.py`. */
 export const TARGETED_REINDEX_MAX_PER_REQUEST = 100;
 
 const JOB_POLL_MS = 2000;

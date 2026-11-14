@@ -4,9 +4,9 @@ from urllib.parse import parse_qs, urlparse
 import pytest
 from pydantic import ValidationError
 
-from evolvxsi.error_handling.exceptions import EvolvXSIError
-from evolvxsi.server.features.build.external_apps.models import OAuthCallbackRequest
-from evolvxsi.server.features.build.external_apps.oauth import (
+from nortpole.error_handling.exceptions import NortPoleError
+from nortpole.server.features.build.external_apps.models import OAuthCallbackRequest
+from nortpole.server.features.build.external_apps.oauth import (
     _ExternalAppOAuthAttemptPayload,
     handle_external_app_oauth_callback,
     start_external_app_oauth,
@@ -48,9 +48,9 @@ def test_oauth_attempt_without_return_path_uses_default() -> None:
 
 def test_oauth_start_rejects_unsafe_return_before_loading_app() -> None:
     with patch(
-        "evolvxsi.server.features.build.external_apps.oauth.get_external_app_by_id"
+        "nortpole.server.features.build.external_apps.oauth.get_external_app_by_id"
     ) as get_app:
-        with pytest.raises(EvolvXSIError):
+        with pytest.raises(NortPoleError):
             start_external_app_oauth(
                 7, user=MagicMock(), db_session=MagicMock(), return_path="//example.com"
             )
@@ -76,5 +76,5 @@ def test_callback_preserves_return_path_after_saving_credentials(
     assert result.success is True
     assert result.external_app_id == 7
     assert result.return_path == return_path
-    with pytest.raises(EvolvXSIError):
+    with pytest.raises(NortPoleError):
         handle_external_app_oauth_callback(request, user=user, db_session=db_session)

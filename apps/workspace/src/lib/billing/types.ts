@@ -2,8 +2,8 @@
  * Billing and License interfaces.
  *
  * These types match the backend Pydantic models:
- * - LicenseStatusResponse (backend/ee/evolvxsi/server/license/models.py)
- * - BillingInformationResponse (backend/ee/evolvxsi/server/billing/models.py)
+ * - LicenseStatusResponse (backend/ee/nortpole/server/license/models.py)
+ * - BillingInformationResponse (backend/ee/nortpole/server/billing/models.py)
  */
 
 // ----------------------------------------------------------------------------

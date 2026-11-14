@@ -13,8 +13,8 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
 SDK_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(SDK_ROOT))
 
-from evolvxsi_pack_sdk import PackError, build, canonical_bytes, digest, keygen, sign, validate  # noqa: E402
-from evolvxsi_pack_sdk.__main__ import main  # noqa: E402
+from nortpole_pack_sdk import PackError, build, canonical_bytes, digest, keygen, sign, validate  # noqa: E402
+from nortpole_pack_sdk.__main__ import main  # noqa: E402
 
 REPO = SDK_ROOT.parents[1]
 HORIZONTAL = REPO / "packs" / "horizontal" / "everyday-brief"

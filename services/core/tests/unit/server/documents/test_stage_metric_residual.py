@@ -5,8 +5,8 @@ tested without a DB. Covers the residual math, the in-span component set, the
 clamp, and the absent-BATCH_TOTAL case.
 """
 
-from evolvxsi.db.index_attempt_metrics_models import STAGE_SCOPE, IndexAttemptStage
-from evolvxsi.server.documents.models import (
+from nortpole.db.index_attempt_metrics_models import STAGE_SCOPE, IndexAttemptStage
+from nortpole.server.documents.models import (
     _BATCH_TOTAL_COMPONENT_STAGES,
     IndexAttemptStageMetricSnapshot,
     synthesize_unaccounted,
@@ -119,7 +119,7 @@ def test_residual_uses_component_totals_not_averages() -> None:
 
 
 def test_warn_log_fires_when_components_exceed_total(monkeypatch) -> None:
-    import evolvxsi.server.documents.models as models_module
+    import nortpole.server.documents.models as models_module
 
     calls: list[tuple] = []
     monkeypatch.setattr(

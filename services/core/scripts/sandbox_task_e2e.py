@@ -1,8 +1,8 @@
 """Sandbox only. Runs the same travel-receipts task as the group member and as the outsider over HTTP, then removes and restores the member's group membership to show the draft is hidden and returns. Usage: sandbox_task_e2e.py <run-id> <group-id> (both printed by sandbox_ingest_corpus.py)."""
 import sys, time, requests
 sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parents[1]))
-from evolvxsi.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant
-from evolvxsi.db.models import User, User__UserGroup
+from nortpole.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant
+from nortpole.db.models import User, User__UserGroup
 SqlEngine.init_engine(pool_size=2, max_overflow=0)
 API = "http://127.0.0.1:8080"; RUN = sys.argv[1]; GID = int(sys.argv[2])
 def login(email):

@@ -29,16 +29,16 @@ from mitmproxy import http as mitm_http
 from mitmproxy.options import Options
 from mitmproxy.tools.dump import DumpMaster
 
-from evolvxsi.sandbox_proxy import destination_policy
-from evolvxsi.sandbox_proxy.addons.gate import GateAddon
-from evolvxsi.sandbox_proxy.credential_injection import CredentialInjectionDispatcher
-from evolvxsi.sandbox_proxy.destination_policy import (
+from nortpole.sandbox_proxy import destination_policy
+from nortpole.sandbox_proxy.addons.gate import GateAddon
+from nortpole.sandbox_proxy.credential_injection import CredentialInjectionDispatcher
+from nortpole.sandbox_proxy.destination_policy import (
     UpstreamEventLoop,
     parse_destination_policy,
 )
-from evolvxsi.sandbox_proxy.request_evaluator import RequestEvaluator
-from evolvxsi.sandbox_proxy.sandbox_identity.models import ResolvedSandbox
-from evolvxsi.sandbox_proxy.sandbox_identity.resolution import SandboxIdentityResolver
+from nortpole.sandbox_proxy.request_evaluator import RequestEvaluator
+from nortpole.sandbox_proxy.sandbox_identity.models import ResolvedSandbox
+from nortpole.sandbox_proxy.sandbox_identity.resolution import SandboxIdentityResolver
 
 # Inter-chunk delay on the upstream. The whole stream takes
 # `(_CHUNK_COUNT - 1) * _CHUNK_DELAY_S`, during which a streamed client must

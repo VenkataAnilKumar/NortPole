@@ -16,14 +16,16 @@ export async function GET(req: NextRequest) {
   if (!code || !serverId) {
     return NextResponse.json(
       { error: "Missing code or server_id" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
   try {
     const resp = await fetch(
       `${
-        process.env.NEXT_PUBLIC_EVOLVXSI_BACKEND_URL || ""
+        process.env.NEXT_PUBLIC_NORTPOLE_BACKEND_URL ||
+        process.env.NEXT_PUBLIC_EVOLVXSI_BACKEND_URL || // old name, still read (decision 0007)
+        ""
       }/api/mcp/oauth/callback`,
       {
         method: "POST",
@@ -37,14 +39,14 @@ export async function GET(req: NextRequest) {
         }),
         // Ensure cookies/auth forwarded if needed
         credentials: "include",
-      }
+      },
     );
 
     if (!resp.ok) {
       const err: ErrorResponseBody = await resp.json().catch(() => ({}));
       return NextResponse.json(
         { error: err.detail || "OAuth callback failed" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -67,7 +69,7 @@ export async function GET(req: NextRequest) {
   } catch (e) {
     return NextResponse.json(
       { error: "OAuth callback error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

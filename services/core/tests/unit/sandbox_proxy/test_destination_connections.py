@@ -17,18 +17,18 @@ import pytest
 from mitmproxy.proxy import server_hooks
 from mitmproxy.tools.dump import DumpMaster
 
-from evolvxsi.sandbox_proxy import server
-from evolvxsi.sandbox_proxy.addons import gate
-from evolvxsi.sandbox_proxy.addons.gate import GateAddon
-from evolvxsi.sandbox_proxy.credential_injection import CredentialInjectionDispatcher
-from evolvxsi.sandbox_proxy.destination_policy import (
+from nortpole.sandbox_proxy import server
+from nortpole.sandbox_proxy.addons import gate
+from nortpole.sandbox_proxy.addons.gate import GateAddon
+from nortpole.sandbox_proxy.credential_injection import CredentialInjectionDispatcher
+from nortpole.sandbox_proxy.destination_policy import (
     UpstreamEventLoop,
     parse_destination_policy,
 )
-from evolvxsi.sandbox_proxy.request_evaluator import RequestEvaluator
-from evolvxsi.sandbox_proxy.resolvers.mcp_matching import CraftMCPTarget
-from evolvxsi.sandbox_proxy.resolvers.mcp_server import MCPServerResolver
-from evolvxsi.server.security.models import SSRFProtectionLevel
+from nortpole.sandbox_proxy.request_evaluator import RequestEvaluator
+from nortpole.sandbox_proxy.resolvers.mcp_matching import CraftMCPTarget
+from nortpole.sandbox_proxy.resolvers.mcp_server import MCPServerResolver
+from nortpole.server.security.models import SSRFProtectionLevel
 from tests.unit.sandbox_proxy.conftest import (
     NoMatchedRequest,
     StubResolver,
@@ -431,15 +431,15 @@ def test_private_mcp_http_enforces_path_credentials_and_policy(
     import json
     from unittest.mock import MagicMock
 
-    from evolvxsi.db.enums import (
+    from nortpole.db.enums import (
         ActionPolicy,
         MCPAuthenticationPerformer,
         MCPAuthenticationType,
     )
-    from evolvxsi.db.models import MCPServer, User
-    from evolvxsi.sandbox_proxy import request_evaluator
-    from evolvxsi.sandbox_proxy.resolvers import mcp_server
-    from evolvxsi.server.features.mcp.credentials import ResolvedMCPCredentials
+    from nortpole.db.models import MCPServer, User
+    from nortpole.sandbox_proxy import request_evaluator
+    from nortpole.sandbox_proxy.resolvers import mcp_server
+    from nortpole.server.features.mcp.credentials import ResolvedMCPCredentials
 
     async def exercise() -> None:
         async with _upstream(address) as (port, requests):

@@ -109,7 +109,7 @@ interface OpenFence {
 // ``` in prose is ignored; closers need the opener's char, >= its length and
 // no info string; a block also ends when its blockquote or list item ends.
 // A trailing unclosed block (mid-stream) stays "code". Mirrors
-// CodeFenceTracker in backend/evolvxsi/chat/citation_processor.py.
+// CodeFenceTracker in backend/nortpole/chat/citation_processor.py.
 const classifyFenceLines = (lines: string[]): FenceLine[] => {
   let open: OpenFence | null = null;
   let listColumn = 0;

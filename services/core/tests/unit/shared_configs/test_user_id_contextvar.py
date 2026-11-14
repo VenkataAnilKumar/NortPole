@@ -7,16 +7,16 @@ from fastapi import Depends, FastAPI, WebSocket
 from fastapi.responses import StreamingResponse
 from fastapi.testclient import TestClient
 
-from evolvxsi.auth import users
-from evolvxsi.auth.users import (
+from nortpole.auth import users
+from nortpole.auth.users import (
     current_chat_accessible_user,
     current_user_from_websocket,
     get_user_manager,
     optional_fastapi_current_user,
     optional_user,
 )
-from evolvxsi.configs.constants import ANONYMOUS_USER_UUID
-from evolvxsi.db.engine.async_sql_engine import get_async_session
+from nortpole.configs.constants import ANONYMOUS_USER_UUID
+from nortpole.db.engine.async_sql_engine import get_async_session
 from shared_configs.contextvars import (
     CURRENT_TENANT_ID_CONTEXTVAR,
     CURRENT_USER_ID_CONTEXTVAR,

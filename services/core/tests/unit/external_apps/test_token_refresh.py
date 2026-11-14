@@ -9,14 +9,14 @@ import requests
 from redis.exceptions import ConnectionError as RedisConnectionError
 from sqlalchemy.exc import SQLAlchemyError
 
-from evolvxsi.db.enums import ExternalAppType
-from evolvxsi.external_apps import token_refresh as tr
-from evolvxsi.external_apps.providers.base import (
+from nortpole.db.enums import ExternalAppType
+from nortpole.external_apps import token_refresh as tr
+from nortpole.external_apps.providers.base import (
     TokenRefreshTerminalError,
     TokenRefreshTransientError,
 )
-from evolvxsi.external_apps.providers.google_calendar import GoogleCalendarProvider
-from evolvxsi.external_apps.providers.zendesk import ZendeskProvider
+from nortpole.external_apps.providers.google_calendar import GoogleCalendarProvider
+from nortpole.external_apps.providers.zendesk import ZendeskProvider
 
 _GOOGLE_TOKEN_URL = GoogleCalendarProvider().resolve_oauth_flow({}).token_url
 
@@ -36,7 +36,7 @@ def _response(status_code: int, body: dict[str, Any]) -> requests.Response:
 
 def _patch_post(monkeypatch: pytest.MonkeyPatch, response: object) -> None:
     monkeypatch.setattr(
-        "evolvxsi.external_apps.providers.base.requests.post",
+        "nortpole.external_apps.providers.base.requests.post",
         lambda *_a, **_k: response,
     )
 
@@ -94,7 +94,7 @@ def test_refresh_missing_refresh_token_is_terminal(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     called = MagicMock()
-    monkeypatch.setattr("evolvxsi.external_apps.providers.base.requests.post", called)
+    monkeypatch.setattr("nortpole.external_apps.providers.base.requests.post", called)
     with pytest.raises(TokenRefreshTerminalError):
         GoogleCalendarProvider().refresh_credentials(
             {"access_token": "a"}, "c", "s", token_url=_GOOGLE_TOKEN_URL
@@ -161,7 +161,7 @@ def test_refresh_network_error_is_transient(monkeypatch: pytest.MonkeyPatch) -> 
     def _boom(*_a: Any, **_k: Any) -> None:
         raise requests.RequestException("connection reset")
 
-    monkeypatch.setattr("evolvxsi.external_apps.providers.base.requests.post", _boom)
+    monkeypatch.setattr("nortpole.external_apps.providers.base.requests.post", _boom)
     with pytest.raises(TokenRefreshTransientError):
         GoogleCalendarProvider().refresh_credentials(
             {"refresh_token": "rt"}, "c", "s", token_url=_GOOGLE_TOKEN_URL
@@ -208,7 +208,7 @@ def _capturing_post(
         captured["headers"] = kwargs.get("headers")
         return response
 
-    monkeypatch.setattr("evolvxsi.external_apps.providers.base.requests.post", _post)
+    monkeypatch.setattr("nortpole.external_apps.providers.base.requests.post", _post)
     return captured
 
 

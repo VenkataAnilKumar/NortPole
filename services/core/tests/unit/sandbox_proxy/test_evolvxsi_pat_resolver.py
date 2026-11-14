@@ -1,6 +1,6 @@
-"""Unit tests for `EvolvXSIPatResolver`.
+"""Unit tests for `NortPolePatResolver`.
 
-Coverage: the host claim rule (incl. inert when `EVOLVXSI_SERVER_URL` is
+Coverage: the host claim rule (incl. inert when `NORTPOLE_SERVER_URL` is
 unset), header rendering on both auth headers, and the fail-closed cases the
 dispatcher maps to a 403. The encrypt/store/read round-trip against a real DB
 is pinned in `tests/external_dependency_unit/sandbox_proxy/test_evolvxsi_pat_resolver.py`.
@@ -15,11 +15,11 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from evolvxsi.auth.constants import API_KEY_HEADER_ALTERNATIVE_NAME, API_KEY_HEADER_NAME
-from evolvxsi.sandbox_proxy.credential_injection import CredentialUnavailableError
-from evolvxsi.sandbox_proxy.models import InjectionContext
-from evolvxsi.sandbox_proxy.resolvers import evolvxsi_pat
-from evolvxsi.sandbox_proxy.resolvers.evolvxsi_pat import EvolvXSIPatResolver
+from nortpole.auth.constants import API_KEY_HEADER_ALTERNATIVE_NAME, API_KEY_HEADER_NAME
+from nortpole.sandbox_proxy.credential_injection import CredentialUnavailableError
+from nortpole.sandbox_proxy.models import InjectionContext
+from nortpole.sandbox_proxy.resolvers import evolvxsi_pat
+from nortpole.sandbox_proxy.resolvers.evolvxsi_pat import NortPolePatResolver
 from tests.unit.sandbox_proxy.conftest import make_flow, make_resolved_sandbox
 
 _API_URL = "https://api.evolvxsi.example.com"
@@ -66,13 +66,13 @@ def _ctx() -> InjectionContext:
 
 
 @pytest.fixture
-def resolver(monkeypatch: pytest.MonkeyPatch) -> EvolvXSIPatResolver:
+def resolver(monkeypatch: pytest.MonkeyPatch) -> NortPolePatResolver:
     # __init__ captures the API host, so the patch must precede construction.
-    monkeypatch.setattr(evolvxsi_pat, "EVOLVXSI_SERVER_URL", _API_URL)
-    return EvolvXSIPatResolver()
+    monkeypatch.setattr(evolvxsi_pat, "NORTPOLE_SERVER_URL", _API_URL)
+    return NortPolePatResolver()
 
 
-def test_claims_requires_matching_host_and_port(resolver: EvolvXSIPatResolver) -> None:
+def test_claims_requires_matching_host_and_port(resolver: NortPolePatResolver) -> None:
     # _API_URL is https with no explicit port, so the effective port is 443.
     assert resolver.claims(make_flow(host=_API_HOST, port=443).request, _ctx()) is True
     assert (
@@ -89,8 +89,8 @@ def test_claims_requires_matching_host_and_port(resolver: EvolvXSIPatResolver) -
 
 
 def test_claims_matches_explicit_port(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(evolvxsi_pat, "EVOLVXSI_SERVER_URL", "http://internal:8080")
-    resolver = EvolvXSIPatResolver()
+    monkeypatch.setattr(evolvxsi_pat, "NORTPOLE_SERVER_URL", "http://internal:8080")
+    resolver = NortPolePatResolver()
     assert (
         resolver.claims(make_flow(host="internal", port=8080).request, _ctx()) is True
     )
@@ -100,15 +100,15 @@ def test_claims_matches_explicit_port(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_inert_when_api_url_unset(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(evolvxsi_pat, "EVOLVXSI_SERVER_URL", "")
+    monkeypatch.setattr(evolvxsi_pat, "NORTPOLE_SERVER_URL", "")
     assert (
-        EvolvXSIPatResolver().claims(make_flow(host=_API_HOST, port=443).request, _ctx())
+        NortPolePatResolver().claims(make_flow(host=_API_HOST, port=443).request, _ctx())
         is False
     )
 
 
 def test_resolve_renders_pat_on_both_auth_headers(
-    resolver: EvolvXSIPatResolver, monkeypatch: pytest.MonkeyPatch
+    resolver: NortPolePatResolver, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setattr(
         evolvxsi_pat,
@@ -123,7 +123,7 @@ def test_resolve_renders_pat_on_both_auth_headers(
 
 
 def test_resolve_raises_when_sandbox_missing(
-    resolver: EvolvXSIPatResolver, monkeypatch: pytest.MonkeyPatch
+    resolver: NortPolePatResolver, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setattr(evolvxsi_pat, "get_sandbox_by_id", lambda *_: None)
     with pytest.raises(CredentialUnavailableError):
@@ -131,7 +131,7 @@ def test_resolve_raises_when_sandbox_missing(
 
 
 def test_resolve_raises_when_pat_unset(
-    resolver: EvolvXSIPatResolver, monkeypatch: pytest.MonkeyPatch
+    resolver: NortPolePatResolver, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setattr(evolvxsi_pat, "get_sandbox_by_id", lambda *_: _FakeSandbox(None))
     with pytest.raises(CredentialUnavailableError):
@@ -139,7 +139,7 @@ def test_resolve_raises_when_pat_unset(
 
 
 def test_resolve_raises_when_decrypt_fails(
-    resolver: EvolvXSIPatResolver, monkeypatch: pytest.MonkeyPatch
+    resolver: NortPolePatResolver, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setattr(
         evolvxsi_pat,

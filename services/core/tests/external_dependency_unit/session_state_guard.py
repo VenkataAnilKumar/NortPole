@@ -10,7 +10,7 @@ from sqlalchemy import text
 from sqlalchemy.engine import Connection, Engine
 from sqlalchemy.pool import QueuePool
 
-from evolvxsi.db.engine.sql_engine import SqlEngine
+from nortpole.db.engine.sql_engine import SqlEngine
 
 # SQLAlchemy sets this itself when it restores the isolation level of a
 # connection that a caller switched to AUTOCOMMIT.

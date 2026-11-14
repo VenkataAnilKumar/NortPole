@@ -1,4 +1,4 @@
-import { EvolvXSIDocument } from "@/lib/search/types";
+import { NortPoleDocument } from "@/lib/search/types";
 
 // Base interface for all streaming objects
 interface BaseObj {
@@ -97,7 +97,7 @@ export interface MessageStart extends BaseObj {
   type: "message_start";
   content: string;
 
-  final_documents: EvolvXSIDocument[] | null;
+  final_documents: NortPoleDocument[] | null;
   pre_answer_processing_seconds?: number;
 }
 
@@ -154,7 +154,7 @@ export interface SearchToolFilterDelta extends BaseObj {
 
 export interface SearchToolDocumentsDelta extends BaseObj {
   type: "search_tool_documents_delta";
-  documents: EvolvXSIDocument[];
+  documents: NortPoleDocument[];
 }
 
 export type ImageShape = "square" | "landscape" | "portrait";
@@ -205,7 +205,7 @@ export interface FetchToolUrls extends BaseObj {
 
 export interface FetchToolDocuments extends BaseObj {
   type: "open_url_documents";
-  documents: EvolvXSIDocument[];
+  documents: NortPoleDocument[];
 }
 
 // Custom Tool Packets
@@ -327,7 +327,7 @@ export interface IntermediateReportDelta extends BaseObj {
 
 export interface IntermediateReportCitedDocs extends BaseObj {
   type: "intermediate_report_cited_docs";
-  cited_docs: EvolvXSIDocument[] | null;
+  cited_docs: NortPoleDocument[] | null;
 }
 
 // Coding Agent Packets

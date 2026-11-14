@@ -8,7 +8,7 @@ Create Date: 2025-09-13 14:58:08.413534
 
 from alembic import op
 import sqlalchemy as sa
-from evolvxsi.db.enums import MCPAuthenticationPerformer, MCPTransport
+from nortpole.db.enums import MCPAuthenticationPerformer, MCPTransport
 
 # revision identifiers, used by Alembic.
 revision = "b30353be4eec"

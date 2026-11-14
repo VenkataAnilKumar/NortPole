@@ -11,7 +11,7 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.dialects.postgresql import ENUM
-from evolvxsi.configs.constants import DocumentSource
+from nortpole.configs.constants import DocumentSource
 
 # revision identifiers, used by Alembic.
 revision = "b156fa702355"

@@ -9,7 +9,7 @@ import json
 
 import pytest
 
-from evolvxsi.sandbox_proxy.errors import SandboxProxyError, http_403
+from nortpole.sandbox_proxy.errors import SandboxProxyError, http_403
 
 
 @pytest.mark.parametrize("code", list(SandboxProxyError))

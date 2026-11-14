@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 from kubernetes import client
 
-from evolvxsi.sandbox_proxy.sandbox_identity.kubernetes import (
+from nortpole.sandbox_proxy.sandbox_identity.kubernetes import (
     K8sInformerLookup,
     _identity_from_pod,
 )
@@ -152,7 +152,7 @@ def test_synced_clears_after_watch_loop_returns_cleanly() -> None:
             pass
 
     with patch(
-        "evolvxsi.sandbox_proxy.sandbox_identity.kubernetes.watch.Watch", _StubWatch
+        "nortpole.sandbox_proxy.sandbox_identity.kubernetes.watch.Watch", _StubWatch
     ):
         lookup._run()
 

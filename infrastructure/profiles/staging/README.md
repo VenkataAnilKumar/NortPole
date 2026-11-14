@@ -48,7 +48,7 @@ Scheduling is only an example here and was not run on a clock; the script itself
 
 ## Upgrade and rollback
 
-Images are tagged with `EVOLVXSI_VERSION` (default `dev`). To upgrade: take a backup, build or pull the new images tagged with the new version, then `EVOLVXSI_VERSION=<new> docker compose up -d`; the API applies database migrations when it starts. `./release.sh manifest <version>` writes a small JSON record of the product commit, the two image IDs and the migration head for that version.
+Images are tagged with `NORTPOLE_VERSION` (default `dev`). To upgrade: take a backup, build or pull the new images tagged with the new version, then `NORTPOLE_VERSION=<new> docker compose up -d`; the API applies database migrations when it starts. `./release.sh manifest <version>` writes a small JSON record of the product commit, the two image IDs and the migration head for that version.
 
 To roll back, start the previous version tag **and restore the backup taken before the upgrade**: migrations are not assumed to be reversible, so older code may not run against a newer database. A rollback therefore loses anything written after that backup.
 
@@ -101,7 +101,7 @@ The API container can reach a model server on the host as `http://host.docker.in
 - Clean-room start: with the volume deleted, `up -d` on the images alone gave a healthy API in about five seconds at migration head; the first registered account could reach admin endpoints; packs and the HTTPS login page answered.
 - Registry round trip against a local `registry:2`: both images were pushed, the local core tag removed, and the pulled image had the same ID as the built one.
 - `KEEP=2` kept the newest two of four backups, a non-numeric value was refused before any work, and unrelated files in the folder were left alone.
-- Version pinning: with `EVOLVXSI_VERSION=0.0.1` the API and web containers were recreated on the `0.0.1` images and `up -d` without it moved them back to `dev`. `release.sh manifest` printed the commit, image IDs and a migration head that matches `alembic heads`.
+- Version pinning: with `NORTPOLE_VERSION=0.0.1` the API and web containers were recreated on the `0.0.1` images and `up -d` without it moved them back to `dev`. `release.sh manifest` printed the commit, image IDs and a migration head that matches `alembic heads`.
 - Building in the sandbox needed a proxy certificate and an HTTPS package mirror that a normal network does not; those sandbox-only steps are not in the file.
 
 ## Not covered

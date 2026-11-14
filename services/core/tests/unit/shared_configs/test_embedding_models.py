@@ -36,7 +36,7 @@ def test_registry_imports_no_evolvxsi_or_ml_packages() -> None:
     code = (
         "import sys\n"
         "import shared_configs.embedding_models\n"
-        "banned = {'evolvxsi', 'ee', 'model_server', 'torch', 'transformers',"
+        "banned = {'nortpole', 'ee', 'model_server', 'torch', 'transformers',"
         " 'sentence_transformers'}\n"
         "print(sorted(m for m in sys.modules if m.split('.')[0] in banned))\n"
     )

@@ -71,7 +71,7 @@ export async function updateOAuthConfig(
 
 // User OAuth Flow
 
-// Mirrors `OAuthInitiateResponse` in backend/evolvxsi/server/features/oauth_config/models.py.
+// Mirrors `OAuthInitiateResponse` in backend/nortpole/server/features/oauth_config/models.py.
 interface OAuthInitiateResponse {
   authorization_url: string;
   state: string;

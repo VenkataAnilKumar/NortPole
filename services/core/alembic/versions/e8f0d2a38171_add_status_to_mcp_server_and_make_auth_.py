@@ -8,7 +8,7 @@ Create Date: 2025-11-28 11:15:37.667340
 
 from alembic import op
 import sqlalchemy as sa
-from evolvxsi.db.enums import (
+from nortpole.db.enums import (
     MCPTransport,
     MCPAuthenticationType,
     MCPAuthenticationPerformer,

@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { motion } from "motion/react";
 import { track, AnalyticsEvent } from "@/lib/analytics/utils";
-import { EvolvXSILogoTypeIcon } from "@/components/icons/icons";
+import { NortPoleLogoTypeIcon } from "@/components/icons/icons";
 import BigButton from "@/app/craft/components/BigButton";
 import { LifecycleBadge } from "@/lib/badges/components";
 
@@ -34,7 +34,7 @@ export default function BuildModeIntroContent({
         >
           <div className="grid grid-cols-[1fr_auto_1fr] items-end">
             <div className="flex justify-end">
-              <EvolvXSILogoTypeIcon size={385} className="text-white" />
+              <NortPoleLogoTypeIcon size={385} className="text-white" />
             </div>
             <div className="w-8"></div>
             <div className="flex justify-start">

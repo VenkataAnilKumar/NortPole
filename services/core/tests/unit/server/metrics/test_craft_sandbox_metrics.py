@@ -10,7 +10,7 @@ from unittest.mock import patch
 import pytest
 from prometheus_client import REGISTRY
 
-from evolvxsi.server.metrics.craft_sandbox import (
+from nortpole.server.metrics.craft_sandbox import (
     OUTCOME_LABEL_NAME,
     PHASE_LABEL_NAME,
     SandboxProvisionPhase,

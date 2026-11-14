@@ -4,9 +4,9 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from evolvxsi.background.celery.celery_utils import SlimConnectorExtractionResult
-from evolvxsi.background.celery.tasks.pruning import tasks as pruning_tasks
-from evolvxsi.configs.constants import DocumentSource
+from nortpole.background.celery.celery_utils import SlimConnectorExtractionResult
+from nortpole.background.celery.tasks.pruning import tasks as pruning_tasks
+from nortpole.configs.constants import DocumentSource
 
 _SOURCE = DocumentSource.CONFLUENCE
 _YIELDED_NODE_IDS = {1, 2}
