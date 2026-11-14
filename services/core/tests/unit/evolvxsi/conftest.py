@@ -20,3 +20,4 @@ def _capture_audit_logger(
         yield
     finally:
         audit_logger.removeHandler(caplog.handler)
+

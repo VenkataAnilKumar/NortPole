@@ -50,10 +50,17 @@ def list_changes(
     user: User = Depends(require_permission(Permission.FULL_ADMIN_PANEL_ACCESS)),
     db_session: Session = Depends(get_session),
 ) -> ChangesView:
-    service.expire_old(db_session)
+    # A GET never writes (route contract). A pending change past its 7 days is shown as expired here; its stored
+    # state is updated the next time anyone approves, declines or proposes a change (service.expire_old).
+    cutoff = service._now() - service.EXPIRES_AFTER
     pending = db_session.scalars(select(EvolvXSIAdminChange).where(EvolvXSIAdminChange.state == "pending").order_by(EvolvXSIAdminChange.created_at)).all()
     recent = db_session.scalars(select(EvolvXSIAdminChange).where(EvolvXSIAdminChange.state != "pending").order_by(EvolvXSIAdminChange.decided_at.desc()).limit(10)).all()
-    return ChangesView(pending=[_view(c, user) for c in pending], recent=[_view(c, user) for c in recent])
+    live = [_view(c, user) for c in pending if c.created_at >= cutoff]
+    overdue = [_view(c, user).model_copy(update={"state": "expired", "error": "Nobody approved it within 7 days.",
+                                                  "decided_at": c.created_at + service.EXPIRES_AFTER})
+               for c in pending if c.created_at < cutoff]
+    done = sorted(overdue + [_view(c, user) for c in recent], key=lambda v: v.decided_at or v.created_at, reverse=True)[:10]
+    return ChangesView(pending=live, recent=done)
 
 
 @router.post("/changes/{change_id}/approve")

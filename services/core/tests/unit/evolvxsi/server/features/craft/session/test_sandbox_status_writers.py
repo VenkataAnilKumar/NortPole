@@ -27,7 +27,7 @@ ALLOWED_REFERENCES: set[str] = {
 
 
 def _modules_referencing_status_mutation() -> set[str]:
-    backend_dir = find_ancestor_containing("backend/evolvxsi") / "backend"
+    backend_dir = find_ancestor_containing("services/core/evolvxsi") / "services/core"
     scan_roots = (
         backend_dir / "evolvxsi" / "server" / "features" / "build",
         backend_dir / "evolvxsi" / "background",

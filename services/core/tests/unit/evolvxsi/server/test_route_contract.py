@@ -275,20 +275,19 @@ def get_write_violations(app: FastAPI) -> set[str]:
 
 @pytest.fixture(scope="module")
 def app() -> Iterator[FastAPI]:
-    # evolvxsi.main must load before ee.evolvxsi.main, or the import is circular.
+    # EvolvXSI ships the community edition only (no ``ee`` package), so the contract covers the application
+    # ``evolvxsi.main`` builds, including EvolvXSI's own routers.
     evolvxsi_main = importlib.import_module("evolvxsi.main")
-    ee_main = importlib.import_module("ee.evolvxsi.main")
 
     # Pin the flags that add or remove routers so the route set is stable.
     with pytest.MonkeyPatch.context() as mp:
-        mp.setattr(ee_main, "MULTI_TENANT", True)
         mp.setattr(evolvxsi_main, "OAUTH_ENABLED", True)
         mp.setattr(evolvxsi_main, "OAUTH_CLIENT_ID", "route-contract-client")
         mp.setattr(evolvxsi_main, "OAUTH_CLIENT_SECRET", "route-contract-value")
         mp.setattr(evolvxsi_main, "OAUTH_PROVIDER_SETTINGS", MagicMock())
         mp.setattr(evolvxsi_main, "ENABLE_PUBLIC_DOCS", False)
         mp.setattr(evolvxsi_main, "APP_API_PREFIX", "")
-        yield ee_main.get_application()
+        yield evolvxsi_main.get_application()
 
 
 def _load_baseline() -> dict[str, dict[str, str]]:

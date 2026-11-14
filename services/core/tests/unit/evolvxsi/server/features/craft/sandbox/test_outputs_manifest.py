@@ -20,8 +20,8 @@ from evolvxsi.server.features.build.sandbox.image.sandbox_daemon.models import (
 from tests.common.paths import find_ancestor_containing
 
 _DAEMON_DIR = (
-    find_ancestor_containing("backend/evolvxsi")
-    / "backend/evolvxsi/server/features/build/sandbox/image/sandbox_daemon"
+    find_ancestor_containing("services/core/evolvxsi")
+    / "services/core/evolvxsi/server/features/build/sandbox/image/sandbox_daemon"
 )
 
 

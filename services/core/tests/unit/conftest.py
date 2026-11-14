@@ -56,3 +56,59 @@ def _reset_leaked_ee_state() -> Generator[None, None, None]:
         # implementations; drop them along with the flag.
         fetch_versioned_implementation.cache_clear()
     yield
+
+
+# EvolvXSI's own governance tests: they exercise the real settings readers, including failing closed when the
+# store cannot be read, so the neutral settings below are not applied to them.
+_GOVERNANCE_TEST_DIRS = ("route_policy", "redaction", "tool_catalog", "extensions")
+
+
+@pytest.fixture(autouse=True)
+def _evolvxsi_governance_neutral(request: pytest.FixtureRequest) -> Generator[None, None, None]:
+    """Unit tests have no database. EvolvXSI added governance that reads its settings from the key-value store on
+    the request path (route policy and redaction, the MCP allowlist, the tool catalog), and with no store those
+    readers fail closed: the inherited tests then see blocked MCP servers, withheld tools or a crashed model call
+    instead of the behaviour they test.
+
+    This gives every other unit test an in-memory store for the ``evolvxsi_`` keys only, holding neutral settings
+    (no redaction, no MCP allowlist, every tool kind on), and passes the tool catalog's filter through. Other keys
+    still reach the real store, as before. The governance itself is tested in its own unit folders (which opt out
+    of this fixture) and against a real database in ``tests/evolvxsi_integration``.
+    """
+    parts = request.node.path.parts
+    if any(d in parts for d in _GOVERNANCE_TEST_DIRS):
+        yield
+        return
+
+    from evolvxsi.key_value_store.interface import KvKeyNotFoundError
+    from evolvxsi.key_value_store.store import PgRedisKVStore
+    from evolvxsi.route_policy.policy import RoutePolicy
+    from evolvxsi.tool_catalog import catalog
+
+    memory: dict[str, object] = {
+        "evolvxsi_route_policy": RoutePolicy(redact_route_kinds=[]).model_dump(),
+        "evolvxsi_tool_catalog": catalog.CatalogPolicy(kinds={k: True for k in catalog.KINDS}).model_dump(),
+    }
+    real_load, real_store, real_delete = PgRedisKVStore.load, PgRedisKVStore.store, PgRedisKVStore.delete
+
+    def load(self, key, refresh_cache=False):  # type: ignore[no-untyped-def]
+        if not key.startswith("evolvxsi_"):
+            return real_load(self, key, refresh_cache)
+        if key not in memory:
+            raise KvKeyNotFoundError
+        return memory[key]
+
+    def store(self, key, val, *args, **kwargs):  # type: ignore[no-untyped-def]
+        if not key.startswith("evolvxsi_"):
+            return real_store(self, key, val, *args, **kwargs)
+        memory[key] = val
+
+    def delete(self, key):  # type: ignore[no-untyped-def]
+        if not key.startswith("evolvxsi_"):
+            return real_delete(self, key)
+        memory.pop(key, None)
+
+    with patch.object(PgRedisKVStore, "load", load), patch.object(PgRedisKVStore, "store", store), \
+            patch.object(PgRedisKVStore, "delete", delete), \
+            patch.object(catalog, "filter_tools", lambda tools, db_session=None: tools):
+        yield
