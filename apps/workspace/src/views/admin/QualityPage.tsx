@@ -17,6 +17,10 @@ interface Quality {
   evals: { pack_id: string; version: string; model: string; route_kind: string; passed: boolean; cases_passed: number; cases_total: number; failed_questions: string[]; run_at: string }[];
   feedback: { chat: { positive: number; negative: number; needed_followup: number; positive_share: number | null } };
   trends: { date: string; started: number; drafted: number; approved: number; failed: number; refused: number }[];
+  scheduled?: {
+    runs: number; plans: number; accepted: number; accepted_rate: number | null; failed_or_skipped: number;
+    auto_paused_schedules: number; input_tokens: number; output_tokens: number; active_schedules: number;
+  };
 }
 
 const TABS = ["Runs", "Evals", "Feedback", "Trends"] as const;
@@ -93,6 +97,24 @@ function Runs({ d }: { d: Quality }) {
         </div>
         <p className="mt-3 text-sm text-text-04">Unsupported share of claims: {pct(r.unsupported_share)}. Kept by the reviewer: {r.claims.kept}.</p>
       </section>
+      {d.scheduled && (
+        <section className={card} aria-labelledby="q-scheduled" data-testid="q-scheduled">
+          <h2 id="q-scheduled" className="text-base font-semibold text-text-05">Scheduled workflows</h2>
+          <p className="mt-1 text-sm text-text-03">
+            Each scheduled run drafts a plan and waits for its owner. A schedule pauses itself after 3 plans in a row are not accepted, or 3 runs that cannot make a plan.
+          </p>
+          <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <Stat label="Active schedules" value={d.scheduled.active_schedules} />
+            <Stat label="Runs in the period" value={d.scheduled.runs} />
+            <Stat label="Plans accepted" value={`${d.scheduled.accepted} of ${d.scheduled.plans}`} />
+            <Stat label="Paused by the rules" value={d.scheduled.auto_paused_schedules} warn />
+          </div>
+          <p className="mt-3 text-sm text-text-04">
+            Plans accepted: {pct(d.scheduled.accepted_rate)}. Runs that failed or were skipped: {d.scheduled.failed_or_skipped}. Tokens used by scheduled planning:{" "}
+            {d.scheduled.input_tokens.toLocaleString()} in, {d.scheduled.output_tokens.toLocaleString()} out (costs by route are on the Route policy page).
+          </p>
+        </section>
+      )}
     </div>
   );
 }

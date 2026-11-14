@@ -252,9 +252,20 @@ export default function PacksPage() {
                             </div>
                           )}
                         </div>
-                        <button type="button" className={secondary} disabled={!!busy || !p.ready_on_current_route} onClick={() => use(p, t)}>
-                          {busy === `${p.pack_id}/${t.id}` ? "Creating…" : "Start a draft"}
-                        </button>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <button type="button" className={secondary} disabled={!!busy || !p.ready_on_current_route} onClick={() => use(p, t)}>
+                            {busy === `${p.pack_id}/${t.id}` ? "Creating…" : "Start a draft"}
+                          </button>
+                          {p.ready_on_current_route && (
+                            <a
+                              href={`/app/workflows/scheduled?pack=${encodeURIComponent(p.pack_id)}&template=${encodeURIComponent(t.id)}`}
+                              className="inline-flex min-h-11 items-center px-2 text-sm font-semibold text-text-05 underline"
+                              aria-label={`Schedule ${t.title}`}
+                            >
+                              Schedule…
+                            </a>
+                          )}
+                        </div>
                       </li>
                     ))}
                   </ul>

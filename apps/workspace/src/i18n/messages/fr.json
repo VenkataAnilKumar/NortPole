@@ -16872,6 +16872,9 @@
         },
         "approvals": {
           "label": "Approbations"
+        },
+        "scheduling": {
+          "label": "Planification"
         }
       },
       "sections": {

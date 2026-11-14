@@ -16872,6 +16872,9 @@
         },
         "approvals": {
           "label": "Genehmigungen"
+        },
+        "scheduling": {
+          "label": "Zeitplanung"
         }
       },
       "sections": {

@@ -90,6 +90,8 @@ class ScheduleView(BaseModel):
     pause_text: str | None
     unaccepted_streak: int
     last_run: RunView | None
+    shared_with_groups: list[str]
+    copied_from_id: UUID | None
     version: int
 
 
@@ -97,6 +99,7 @@ class MySchedules(BaseModel):
     schedules: list[ScheduleView]
     scheduling_allowed: bool
     max_per_person: int
+    my_groups: list[str]  # the groups this person may share a schedule with
 
 
 def _run_view(db: Session, r: EvolvXSIWorkflowRun) -> RunView:
@@ -113,7 +116,8 @@ def _view(db: Session, s: EvolvXSIWorkflowSchedule) -> ScheduleView:
         when=cadence.describe(s.cadence, s.at_time, s.timezone, s.weekday, s.month_day, s.run_on),
         next_run_at=s.next_run_at, state=s.state, pause_reason=s.pause_reason,
         pause_text=runner.PAUSE_TEXT.get(s.pause_reason or "") if s.state == "paused" else None,
-        unaccepted_streak=s.unaccepted_streak, last_run=_run_view(db, last) if last else None, version=s.version)
+        unaccepted_streak=s.unaccepted_streak, last_run=_run_view(db, last) if last else None,
+        shared_with_groups=list(s.shared_with_groups or []), copied_from_id=s.copied_from_id, version=s.version)
 
 
 def _check_when(w: When) -> None:
@@ -140,6 +144,20 @@ def _audit(action: AuditAction, user: User | None, s: EvolvXSIWorkflowSchedule, 
                  resource_type="workflow_schedule", resource_id=str(s.id))
 
 
+def _check_limit(db: Session, user: User) -> None:
+    live = db.scalar(select(func.count()).select_from(EvolvXSIWorkflowSchedule)
+                     .where(EvolvXSIWorkflowSchedule.owner_id == user.id, EvolvXSIWorkflowSchedule.state != "ended")) or 0
+    if live >= controls.load().max_per_person:
+        raise EvolvXSIError(EvolvXSIErrorCode.CONFLICT, "You have the most schedules allowed. Delete one first.")
+
+
+def _active_template(db: Session, pack_id: str, template_id: str) -> dict | None:
+    from evolvxsi.packs.api import _active_versions
+
+    v = next((x for x in _active_versions(db) if x.pack_id == pack_id), None)
+    return next((x for x in v.manifest["templates"] if x["id"] == template_id), None) if v else None
+
+
 def _set_when(s: EvolvXSIWorkflowSchedule, w: When, now: datetime.datetime) -> None:
     s.cadence, s.at_time, s.timezone, s.weekday, s.month_day, s.run_on = w.cadence, w.at_time, w.timezone, w.weekday, w.month_day, w.run_on
     if s.state == "active":
@@ -156,7 +174,7 @@ def list_mine(
     rows = db_session.scalars(select(EvolvXSIWorkflowSchedule).where(EvolvXSIWorkflowSchedule.owner_id == user.id)
                               .order_by(EvolvXSIWorkflowSchedule.created_at.desc()))
     return MySchedules(schedules=[_view(db_session, s) for s in rows], scheduling_allowed=_allowed(db_session, user),
-                       max_per_person=controls.load().max_per_person)
+                       max_per_person=controls.load().max_per_person, my_groups=sorted(group_names_for_user(db_session, user.id)))
 
 
 @router.post("/workflow-schedules")
@@ -169,20 +187,14 @@ def create_schedule(
         raise EvolvXSIError(EvolvXSIErrorCode.CONFLICT,
                             "Scheduling is not turned on for you. An administrator decides who may schedule workflows.")
     _check_when(body)
-    live = db_session.scalar(select(func.count()).select_from(EvolvXSIWorkflowSchedule)
-                             .where(EvolvXSIWorkflowSchedule.owner_id == user.id, EvolvXSIWorkflowSchedule.state != "ended")) or 0
-    if live >= controls.load().max_per_person:
-        raise EvolvXSIError(EvolvXSIErrorCode.CONFLICT, "You have the most schedules allowed. Delete one first.")
+    _check_limit(db_session, user)
     if body.task_id is not None:
         t = db_session.scalar(select(EvolvXSITask).where(EvolvXSITask.id == body.task_id, EvolvXSITask.owner_id == user.id))
         if t is None:
             raise EvolvXSIError(EvolvXSIErrorCode.NOT_FOUND, "Draft not found.")
         pack_id, template, title, request, desired = t.pack_id, t.pack_template, t.title, t.request, t.desired_output
     elif body.pack_id and body.pack_template:
-        from evolvxsi.packs.api import _active_versions
-
-        v = next((x for x in _active_versions(db_session) if x.pack_id == body.pack_id), None)
-        t = next((x for x in v.manifest["templates"] if x["id"] == body.pack_template), None) if v else None
+        t = _active_template(db_session, body.pack_id, body.pack_template)
         if t is None:
             raise EvolvXSIError(EvolvXSIErrorCode.NOT_FOUND, "Workflow not found.")
         pack_id, template, title, request, desired = body.pack_id, body.pack_template, t["title"], t["request"], t.get("desired_output", "")
@@ -275,6 +287,95 @@ def list_runs(
     runs = db_session.scalars(select(EvolvXSIWorkflowRun).where(EvolvXSIWorkflowRun.schedule_id == s.id)
                               .order_by(EvolvXSIWorkflowRun.fired_at.desc()).limit(50))
     return [_run_view(db_session, r) for r in runs]
+
+
+# ---- sharing: others copy a shared schedule; the copy is theirs and runs as them ----
+
+class ShareBody(BaseModel):
+    version: int
+    groups: list[str] = Field(default_factory=list, max_length=20)
+
+
+class SharedView(BaseModel):
+    id: UUID
+    name: str
+    owner_email: str
+    when: str
+    title: str
+    request: str
+    desired_output: str
+    pack_id: str | None
+    already_copied: bool
+
+
+def _shared_with(db: Session, s: EvolvXSIWorkflowSchedule, user: User) -> bool:
+    return s.owner_id != user.id and s.state != "ended" and bool(set(s.shared_with_groups or []) & group_names_for_user(db, user.id))
+
+
+@router.put("/workflow-schedules/{schedule_id}/share")
+def share_schedule(
+    schedule_id: UUID, body: ShareBody,
+    user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
+    db_session: Session = Depends(get_session),
+) -> ScheduleView:
+    s = _own(db_session, schedule_id, user)
+    if s.version != body.version:
+        raise EvolvXSIError(EvolvXSIErrorCode.CONFLICT, "This schedule changed since you opened it. Reload and try again.")
+    groups = sorted({g.strip() for g in body.groups if g.strip()})
+    mine = group_names_for_user(db_session, user.id)
+    if not set(groups) <= mine:
+        raise EvolvXSIError(EvolvXSIErrorCode.INVALID_INPUT, "You can share only with groups you belong to.")
+    s.shared_with_groups = groups
+    s.version += 1
+    db_session.commit()
+    _audit(AuditAction.SCHEDULE_CHANGE, user, s, "Shared a schedule" if groups else "Stopped sharing a schedule",
+           change="share", groups=groups)
+    return _view(db_session, s)
+
+
+@router.get("/workflow-schedules/shared")
+def list_shared(
+    user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
+    db_session: Session = Depends(get_session),
+) -> list[SharedView]:
+    mine = group_names_for_user(db_session, user.id)
+    if not mine:
+        return []
+    copied = {c for c in db_session.scalars(select(EvolvXSIWorkflowSchedule.copied_from_id)
+                                            .where(EvolvXSIWorkflowSchedule.owner_id == user.id)) if c}
+    rows = db_session.execute(select(EvolvXSIWorkflowSchedule, User.email).join(User, User.id == EvolvXSIWorkflowSchedule.owner_id)
+                              .where(EvolvXSIWorkflowSchedule.owner_id != user.id, EvolvXSIWorkflowSchedule.state != "ended")
+                              .order_by(EvolvXSIWorkflowSchedule.created_at.desc()).limit(200)).all()
+    return [SharedView(id=s.id, name=s.name, owner_email=email, title=s.title, request=s.request, desired_output=s.desired_output,
+                       pack_id=s.pack_id, already_copied=s.id in copied,
+                       when=cadence.describe(s.cadence, s.at_time, s.timezone, s.weekday, s.month_day, s.run_on))
+            for s, email in rows if set(s.shared_with_groups or []) & mine]
+
+
+@router.post("/workflow-schedules/{schedule_id}/copy")
+def copy_schedule(
+    schedule_id: UUID,
+    user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
+    db_session: Session = Depends(get_session),
+) -> ScheduleView:
+    src = db_session.get(EvolvXSIWorkflowSchedule, schedule_id)
+    if src is None or not _shared_with(db_session, src, user):
+        raise EvolvXSIError(EvolvXSIErrorCode.NOT_FOUND, "Schedule not found.")
+    if not _allowed(db_session, user):
+        raise EvolvXSIError(EvolvXSIErrorCode.CONFLICT, "Scheduling is not turned on for you. An administrator decides who may schedule workflows.")
+    _check_limit(db_session, user)
+    if src.pack_id and _active_template(db_session, src.pack_id, src.pack_template or "") is None:
+        raise EvolvXSIError(EvolvXSIErrorCode.CONFLICT, "Its workflow is no longer active, so it cannot be copied.")
+    s = EvolvXSIWorkflowSchedule(owner_id=user.id, name=src.name, pack_id=src.pack_id, pack_template=src.pack_template,
+                                 title=src.title, request=src.request, desired_output=src.desired_output,
+                                 spread_minutes=random.randint(0, 4), state="active", shared_with_groups=[],  # noqa: S311
+                                 copied_from_id=src.id)
+    _set_when(s, When(cadence=src.cadence, at_time=src.at_time, timezone=src.timezone, weekday=src.weekday,
+                      month_day=src.month_day, run_on=src.run_on), datetime.datetime.now(datetime.timezone.utc))
+    db_session.add(s)
+    db_session.commit()
+    _audit(AuditAction.SCHEDULE_CHANGE, user, s, "Copied a shared schedule", change="copy", source=str(src.id))
+    return _view(db_session, s)
 
 
 # ---- administrators ----
