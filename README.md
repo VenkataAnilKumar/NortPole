@@ -25,6 +25,24 @@ One place to ask, search and get work done over your company's knowledge:
 | **Agents** and **Projects** | Chat assistants with the knowledge and tools they may use, and folders for related work. |
 | **Admin Panel** | For administrators: approvals, route policy, packs, tools, people, audit and quality. |
 
+## Core features
+
+| | Feature | What you get |
+|---|---|---|
+| **Trust** | Cited answers | Every statement links to the passage it came from; unsupported sentences are flagged, and a draft with nothing to cite says so instead of guessing. |
+| | Permission-aware knowledge | Answers only use documents each person may open in the source system; Google Drive sharing is applied per document. |
+| | Audit log | A hash-chained, tamper-evident record of refusals, approvals, sends, policy changes and exports, with integrity checks, a savable head, and export. |
+| **Control** | Route policy and redaction | Mark each model as local, private or cloud, decide which class of data may go where, and redact sensitive patterns before the cloud. Blocked requests fail before anything is sent. |
+| | Approvals | Accept the plan before work runs and approve one exact draft before anything leaves; optional second approver for sends and two-administrator rules for sensitive changes, all in one queue. |
+| | Tool governance | A catalog of what assistants may use; outside tools (MCP, OpenAPI) stay off until approved, with pinned definitions that stop the tool if they change. |
+| | Retention and legal hold | Set how long records are kept and hold them when needed. |
+| **Work** | Governed workflows | Ready-made, versioned workflows: plan, gather sources, cited draft, review rules, approve, export or send. |
+| | Signed packs and Studio | Workflows ship as signed packs that run only on models they passed evaluation on; administrators build their own in Studio. |
+| | Workflow agents | Agents plan their searches first, run as you over the sources you can open, and can never send anything. |
+| | Scheduled workflows | Recurring runs prepare the plan and wait in your Inbox; nothing continues without your yes, and a schedule pauses itself if plans go unaccepted. |
+| | Inbox and Discover | One place for plans to approve, drafts to review and updates; see what connectors, skills and tools exist and request them. |
+| **Insight** | Quality and cost | Draft and approval rates, unsupported-claim share, evaluation results per model, scheduled runs, and tokens and estimated cost per route. |
+
 ## Why EvolvXSI
 
 Most AI assistants are built to be helpful first and safe second. In finance, legal, HR, compliance and operations that order is backwards: an invented answer, a leaked document or an unreviewed email costs more than the time AI saves.
