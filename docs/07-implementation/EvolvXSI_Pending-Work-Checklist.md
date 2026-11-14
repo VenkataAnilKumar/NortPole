@@ -1,13 +1,13 @@
 # EvolvXSI — pending work checklist
 
-Status: Working list, 2026-11-13 (pending-work list below saved 2026-11-13 after the A7 steps and the Google Drive discussion). Followed one item at a time, in the order below. The phase definitions are in the [delivery plan](EvolvXSI_Adopted-Core-Delivery-Plan.md); what each finished piece checked and did not check is in [REVIEW](../REVIEW.md). All testing so far is sandbox-only, with stand-in models.
+Status: Working list, updated 2026-11-14 (after the redesign stages R1–R6b and R8 and the inherited test suite work). Followed one item at a time, in the order below. The phase definitions are in the [delivery plan](EvolvXSI_Adopted-Core-Delivery-Plan.md); what each finished piece checked and did not check is in [REVIEW](../REVIEW.md). All testing so far is sandbox-only, with stand-in models.
 
 ## Phase status
 
 | Phase | Name | State |
 | --- | --- | --- |
 | A0–A3 | Direction, adopt and rebrand, run and restyle, first routing slice | Done |
-| A4 | Product shell and navigation | Mostly done (translations and user Privacy/Security settings wait on you) |
+| A4 | Product shell and navigation (now the redesign R1–R8) | Mostly done (translations of new pages and user Privacy/Security settings wait on you) |
 | A5 | Knowledge, evidence, permissions | Built for one path (synthetic corpus) |
 | A6 | Reviewed task workflow and approvals | Built |
 | A7 | Agents, skills, packs | Mostly built (steps 1 to 4 and 6; the connector waits for the source system) |
@@ -43,17 +43,19 @@ Status: Working list, 2026-11-13 (pending-work list below saved 2026-11-13 after
 - [ ] 24. A scheduled job that saves the audit-log head off the machine.
 
 **Operations (A10)**
-- [ ] 25. Check the first CI runs on GitHub, make the core-test job required, add a vulnerability scan.
+- [ ] 25. Check the first CI runs on GitHub, make the core-test job required, add a vulnerability scan, and add a job that runs the full unit suite (to confirm the IPv6 and `torch` tests pass outside the sandbox).
 - [ ] 26. Encrypted backups.
-- [ ] 27. Rebuild the web image and repeat the clean-room start with it.
+- [ ] 27. Rebuild the web image and repeat the clean-room start with it; build the API image once to confirm the new tokenizer bake step.
 
 **Quality (A4)**
 - [ ] 28. Quality tab: details of a single run, regression alerts, test history.
+- [ ] 30. Cost in money per scheduled run (runs store tokens, not the model used; needs a column for the model).
+- [ ] 31. Accessibility checks not yet done: screen-reader output, right-to-left layout for Arabic, 200% zoom.
 
 **Retrieval**
 - [ ] 29. Start the search index in the sandbox (retrieval is tested only in code tests so far).
 
-**Suggested order if work continues:** 7(a), 29, 22, 25; decisions 10, 12 and 13 unblock the most.
+**Suggested order if work continues (2026-11-14):** 7(a) Drive permission sync on recorded responses, 29 search index, 22 pack takeover gap, 25 CI checks with the full-suite job; decisions 10 (customer), 12 (cloud model) and 13 (hosting) unblock the most.
 
 ## UI and admin console redesign (agreed 2026-11-13; plan in `docs/05-design/EvolvXSI_Redesign-Plan.md`)
 
@@ -78,7 +80,9 @@ Status: Working list, 2026-11-13 (pending-work list below saved 2026-11-13 after
 - No real document source has been connected; retrieval, agent search results and connectors are tested only in code tests.
 - Tools that are switched on still run in chat with no approval step; web tools can carry text out in a web address.
 - Not tried live: an MCP server (the safety system blocked turning off the SSRF check), a real OpenAPI tool, the Slack bot path, CI on GitHub.
-- The web unit tests cannot run in this copy (the Jest setup file is missing).
+- The web unit tests cannot run as configured (the Jest setup file is missing); they run with a scratch config that skips it.
+- The sandbox often stops its services (database, API, local model); test runs must check them first.
+- About 292 references to upstream domains still need review before release (`services/core/UPSTREAM.md`).
 - Sandbox leftovers (test accounts, demo packs) are listed in `docs/REVIEW.md`.
 - All testing is sandbox-only, with the local 7B model or stand-in models.
 
@@ -90,7 +94,7 @@ Status: Working list, 2026-11-13 (pending-work list below saved 2026-11-13 after
 ## Blocked on the owner or outside the sandbox
 
 - [ ] 10. Customer and vertical (unblocks A11).
-- [ ] 11. Source system for the real connector (unblocks A5).
+- [ ] 11. Google Drive test setup for the real connector (unblocks A5, R6c and R7): Gmail test accounts with shared test documents, a read-only OAuth refresh token attached as a file, approval of network access to Google's API hosts, and the open question on "anyone with the link" files (recommended: hidden except to people named on them).
 - [ ] 12. Cloud model (unblocks the live part of A8).
 - [ ] 13. Hosting target (A10 depends on it).
 - [ ] 14. Real retention periods (365 days is a placeholder).
