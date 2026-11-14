@@ -149,7 +149,7 @@ export default function InboxPage() {
             <LiveApprovals />
             {own.plans.length > 0 && (
               <ul className={`${card} overflow-hidden`} aria-label="Plans to accept">
-                {own.plans.map((t) => <TaskRow key={t.id} t={t} label="Plan ready: accept it to start the work" action="Review the plan" />)}
+                {own.plans.map((t) => <TaskRow key={t.id} t={t} label={t.schedule_name ? `Scheduled: ${t.schedule_name}. Plan ready: accept it to start the work` : "Plan ready: accept it to start the work"} action="Review the plan" />)}
               </ul>
             )}
             {actionNotes.length > 0 && notes(actionNotes)}

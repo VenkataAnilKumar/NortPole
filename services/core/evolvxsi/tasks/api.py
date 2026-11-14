@@ -35,7 +35,7 @@ from evolvxsi.tasks.claims import (
     visible_text,
 )
 from evolvxsi.tasks.export import draft_fingerprint, recheck_cited_sources, to_markdown
-from evolvxsi.tasks.planner import PlanError, draft_plan
+from evolvxsi.tasks.planner import PlanError, PlanResult, draft_plan
 from evolvxsi.tasks.relevance import filter_relevant
 from evolvxsi.tasks.untrusted import looks_like_instructions, neutralize_passage
 from evolvxsi.tasks.states import EDITABLE, InvalidTransition, TaskAction, TaskState, next_state
@@ -79,6 +79,8 @@ class TaskView(BaseModel):
     # claims, sources and versions are then not returned until it is redrafted.
     withheld: bool = False
     withheld_message: str | None = None
+    schedule_id: UUID | None = None
+    schedule_name: str | None = None  # filled in by the list, for Inbox
     pack_id: str | None = None
     pack_version: str | None = None
     pack_template: str | None = None
@@ -222,10 +224,19 @@ def list_tasks(
     user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
     db_session: Session = Depends(get_session),
 ) -> list[TaskView]:
-    rows = db_session.scalars(
+    rows = list(db_session.scalars(
         select(EvolvXSITask).where(EvolvXSITask.owner_id == user.id).order_by(EvolvXSITask.updated_at.desc()).limit(200)
-    )
-    return [_view(t) for t in rows]
+    ))
+    views = [_view(t) for t in rows]
+    ids = {t.schedule_id for t in rows if t.schedule_id is not None}
+    if ids:
+        from evolvxsi.workflow_schedules.models import EvolvXSIWorkflowSchedule
+        names = dict(db_session.execute(select(EvolvXSIWorkflowSchedule.id, EvolvXSIWorkflowSchedule.name)
+                                        .where(EvolvXSIWorkflowSchedule.id.in_(ids))).all())
+        for v in views:
+            if v.schedule_id is not None:
+                v.schedule_name = names.get(v.schedule_id)
+    return views
 
 
 @router.get("/{task_id}")
@@ -323,33 +334,38 @@ def start_task(
 ) -> TaskView:
     """The explicit start. Moves the draft to planning atomically (a duplicate
     start is refused), then drafts a plan through the route policy."""
+    return _view(plan_task(db_session, task_id, user, body.version)[0])
+
+
+def plan_task(db_session: Session, task_id: UUID, user: User, version: int, *, scheduled: bool = False) -> "tuple[EvolvXSITask, PlanResult | None]":
+    """Start a draft and draft its plan, as its owner. Used by Start and by scheduled runs, so both plan the same
+    way: pack requirements, the route policy, the owner's permissions. Returns the task and, when a plan was made,
+    the planner's result (with its token counts)."""
     _enforce_pack_requirements(db_session, _own(db_session, task_id, user), user)
-    task = _move(db_session, task_id, user, body.version, TaskAction.START,
+    task = _move(db_session, task_id, user, version, TaskAction.START,
                  started_at=func.now(), plan=None, plan_error=None, plan_route=None)
-    _audit(user, AuditAction.TASK_START, task, "Started a task")
+    _audit(user, AuditAction.TASK_START, task, "Started a task (scheduled run)" if scheduled else "Started a task")
     try:
         from evolvxsi.packs.agents import agent_for
         from evolvxsi.packs.guidance import guides_for
-
         agent = agent_for(db_session, task.pack_id, task.pack_version, task.pack_template)
         if agent is not None:
             from evolvxsi.tasks.planner import draft_agent_plan
-
             result = draft_agent_plan(db_session, user, task.title, task.request, task.desired_output, agent)
         else:
             guides = guides_for(db_session, task.pack_id, task.pack_version, task.pack_template)
             result = draft_plan(db_session, user, task.title, task.request, task.desired_output, guides)
     except PlanError as e:
-        return _view(_move(db_session, task_id, user, task.version, TaskAction.PLAN_FAILED, plan_error=str(e)))
+        return _move(db_session, task_id, user, task.version, TaskAction.PLAN_FAILED, plan_error=str(e)), None
     except EvolvXSIError as e:
         # A policy block keeps its own audit record; tell the owner plainly.
-        return _view(_move(db_session, task_id, user, task.version, TaskAction.PLAN_FAILED, plan_error=e.detail))
+        return _move(db_session, task_id, user, task.version, TaskAction.PLAN_FAILED, plan_error=e.detail), None
     except Exception:
         logger.exception("task planning failed task_id=%s", task_id)
-        return _view(_move(db_session, task_id, user, task.version, TaskAction.PLAN_FAILED,
-                           plan_error="The plan could not be drafted. Try again in a moment."))
-    return _view(_move(db_session, task_id, user, task.version, TaskAction.PLAN_READY,
-                       plan=result.steps, plan_route=result.route_kind))
+        return _move(db_session, task_id, user, task.version, TaskAction.PLAN_FAILED,
+                     plan_error="The plan could not be drafted. Try again in a moment."), None
+    return _move(db_session, task_id, user, task.version, TaskAction.PLAN_READY,
+                 plan=result.steps, plan_route=result.route_kind), result
 
 
 @router.post("/{task_id}/plan/accept")

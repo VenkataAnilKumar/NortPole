@@ -59,7 +59,7 @@ The old addresses redirect (HTTP 307, set in `next.config.js`) because home card
 | R3 | "Run by" line on Start, Agent tab for chat assistants, Channels rename, Sources order | Medium | Done |
 | R4 | **Discover** (first tab of Sources) with requests for connectors, skills and plugins, landing in Approvals | Medium | Done |
 | R5 | Inbox filters | Small | Done |
-| R6 | Scheduled workflows (design: `EvolvXSI_Workflows-and-Knowledge-Design.md` §3): R6a runner and rules, R6b screens and sharing, R6c event triggers later | Medium | Next (R6a) |
+| R6 | Scheduled workflows (design: `EvolvXSI_Workflows-and-Knowledge-Design.md` §3): R6a runner and rules, R6b screens and sharing, R6c event triggers later | Medium | R6a done; R6b next |
 | R7 | Knowledge (design §4): R7a domains, R7b My files and requests, R7c verification and freshness | Large | After the search index and the Google Drive connector |
 | R8 | Quality pass of each stage | Small per stage | Ongoing |
 

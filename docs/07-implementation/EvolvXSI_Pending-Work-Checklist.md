@@ -62,7 +62,7 @@ Status: Working list, 2026-11-13 (pending-work list below saved 2026-11-13 after
 - [x] R3. "Run by" line on Start, Agent tab for chat assistants, Channels rename, Sources order.
 - [x] R4. Discover as the first Sources tab, with requests landing in Approvals.
 - [x] R5. Inbox filters.
-- [ ] R6. Scheduled workflows (design in `docs/05-design/EvolvXSI_Workflows-and-Knowledge-Design.md`): R6a runner and rules, R6b screens and sharing, R6c event triggers (after the connector).
+- [ ] R6. Scheduled workflows (design in `docs/05-design/EvolvXSI_Workflows-and-Knowledge-Design.md`): R6a runner and rules (done), R6b screens and sharing (next), R6c event triggers (after the connector).
 - [ ] R7. Knowledge (same design): R7a domains, R7b My files and requests, R7c verification and freshness (after the search index and the Google Drive connector).
 - [ ] R8. Quality pass of each stage.
 

@@ -8,6 +8,7 @@ export enum NotificationType {
   SCHEDULED_TASK_PRE_APPROVED_ACTION = "scheduled_task_pre_approved_action",
   APPROVAL_REQUESTED = "approval_requested",
   SOURCE_REQUEST_DECIDED = "source_request_decided",
+  SCHEDULE_PAUSED = "schedule_paused",
 
   // SvgAlertTriangle
   TRIAL_ENDS_TWO_DAYS = "two_day_trial_ending",

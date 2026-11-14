@@ -37,6 +37,10 @@ class EvolvXSITask(Base):
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
     )
     started_at: Mapped[datetime.datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    # The schedule that created this task, if a scheduled run did (R6).
+    schedule_id: Mapped[uuid.UUID | None] = mapped_column(
+        PGUUID(as_uuid=True), ForeignKey("evolvxsi_workflow_schedule.id", ondelete="SET NULL"), nullable=True, index=True
+    )
     # The pack version this task was started from, kept so later upgrades
     # or rollbacks never change what a past run was.
     pack_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
@@ -65,3 +69,7 @@ class EvolvXSITask(Base):
 
     def as_dict(self) -> dict[str, Any]:
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+
+# The schedule table that `schedule_id` points to, loaded with this model so the foreign key always resolves.
+from evolvxsi.workflow_schedules import models as _schedule_models  # noqa: E402,F401

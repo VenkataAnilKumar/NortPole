@@ -3,7 +3,7 @@
 import useSWR from "swr";
 import { errorHandlingFetcher } from "@/lib/fetcher";
 
-export interface OwnTask { id: string; title: string; state: string; updated_at: string }
+export interface OwnTask { id: string; title: string; state: string; updated_at: string; schedule_name?: string | null }
 
 /**
  * The person's own drafts that wait for them: a plan to accept (To approve) or a draft to review (To review). Only
