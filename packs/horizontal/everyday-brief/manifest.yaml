@@ -1,0 +1,45 @@
+# Evidence brief 1.0.0: workflow pack source. Validate with the core's pack tests; build and sign with the pack SDK (decision 0006).
+schema_version: 1
+id: everyday-brief
+name: Evidence brief
+version: 1.0.0
+vertical: general
+description: 'Domain-neutral workflows: a cited brief, finding the policy that covers a question, and comparing
+  two documents.'
+autonomy: act_with_approval
+requires:
+  route_kinds:
+  - local
+  - private
+  data_classes:
+  - confidential
+  - internal
+  - public
+requests:
+  send_destinations: false
+  personal_connectors: false
+review_rules:
+- kind: min_citations
+  value: 1
+  message: Cite at least one source.
+  severity: block
+templates:
+- id: brief
+  style: ''
+  title: Cited brief
+  request: Write a short brief on the topic below, citing every statement to a source.
+  review_rules: []
+  desired_output: A one-page brief with citations
+- id: find-policy
+  style: ''
+  title: Find the policy
+  request: Find the policy that covers the situation below and quote the rule, with a citation.
+  review_rules: []
+  desired_output: The rule and where it comes from
+- id: compare
+  style: ''
+  title: Compare two documents
+  request: Compare the two documents named below and list what changed, citing each difference.
+  review_rules: []
+  desired_output: A list of differences with citations
+evaluation_cases: []

@@ -10,7 +10,7 @@ from pydantic import ValidationError
 from evolvxsi.work.packs.manifest import Manifest, canonical_bytes, digest, version_key
 from evolvxsi.work.packs.signing import SignatureProblem, verify
 
-SAMPLE = json.loads((Path(__file__).parents[4] / "scripts/sample_packs/finance-policy-review.json").read_text())
+SAMPLE = json.loads((Path(__file__).parents[4] / "tests/common/fixtures/finance-policy-review-1.1.0.json").read_text())
 
 
 def _keys():  # type: ignore[no-untyped-def]

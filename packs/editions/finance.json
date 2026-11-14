@@ -1,0 +1,6 @@
+{
+  "edition": "finance",
+  "name": "EvolvXSI for finance teams",
+  "description": "Everyday cited workflows plus finance policy review: receipt rules, approval limits and policy changes.",
+  "packs": ["everyday-brief", "finance-policy-review"]
+}

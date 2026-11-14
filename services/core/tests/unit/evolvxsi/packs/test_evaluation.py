@@ -62,7 +62,7 @@ def test_a_case_runs_with_its_templates_style_and_must_name_a_real_template() ->
 
     from evolvxsi.work.packs.manifest import Manifest
 
-    raw = json.loads((Path(__file__).parents[4] / "scripts/sample_packs/finance-policy-review.json").read_text())
+    raw = json.loads((Path(__file__).parents[4] / "tests/common/fixtures/finance-policy-review-1.1.0.json").read_text())
     m = Manifest.model_validate(raw)
     seen: list[str] = []
 

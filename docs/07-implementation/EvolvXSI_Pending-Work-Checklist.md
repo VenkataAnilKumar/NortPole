@@ -89,8 +89,8 @@ Status: Working list, updated 2026-11-14 (after the redesign stages R1–R6b and
 ## Repository structure (decision 0006, 2026-11-14)
 
 - [x] Phase 1: placeholders removed, `modules.json` true, structure check updated, `CODEOWNERS`, `Makefile`, CI for the web app and a nightly full suite.
-- [ ] Phase 2: EvolvXSI modules grouped by domain in `services/core/evolvxsi`, with an import-boundary test.
-- [ ] Phase 3: first-party packs as source in `packs/horizontal` and `packs/vertical/<industry>`, editions.
+- [x] Phase 2: EvolvXSI modules grouped by domain in `services/core/evolvxsi`, with an import-boundary test.
+- [x] Phase 3: first-party packs as source in `packs/horizontal` and `packs/vertical/<industry>`, editions.
 - [ ] Phase 4: generated contracts in `packages/contracts` and `packages/pack-sdk`.
 - [ ] Phase 5 (when needed): tenancy decision, Kubernetes and cloud profiles, service splits, connector SDK.
 

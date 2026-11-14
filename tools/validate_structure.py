@@ -94,6 +94,17 @@ def validate(root):
                 dest = local_path(value)
                 if dest is None or not ACTIVE_PACK.fullmatch(value) or not (dest / 'manifest.yaml').is_file():
                     errors.append(f'Invalid active pack or missing manifest: {value!r}')
+            pack_ids = {PurePosixPath(v).name for v in active if isinstance(v, str)}
+            editions = local_path(packs.get('editions', 'packs/editions'))
+            for edition in sorted(editions.glob('*.json')) if editions and editions.is_dir() else []:
+                try:
+                    named = json.loads(edition.read_text(encoding='utf-8')).get('packs', [])
+                except ValueError as exc:
+                    errors.append(f'Invalid edition {edition.name}: {exc}')
+                    continue
+                for pack_id in named if isinstance(named, list) else [named]:
+                    if pack_id not in pack_ids:
+                        errors.append(f'Edition {edition.name} names a pack that is not active: {pack_id!r}')
 
     for directory, folders, files in os.walk(root, followlinks=False):
         folders[:] = [d for d in folders if d not in IGNORED and not (Path(directory) / d).is_symlink()]

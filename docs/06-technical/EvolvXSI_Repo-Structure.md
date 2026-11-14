@@ -28,7 +28,8 @@ modules.json                    Existing and planned modules, with maturity
    so upstream fixes can still be compared file by file. `tests/unit/evolvxsi/test_domain_boundaries.py` enforces the
    layers (below) and lists the only places where inherited code calls into our domains.
 4. **Packs are source**: `packs/horizontal/<pack>/` and `packs/vertical/<industry>/<pack>/`, each with `manifest.yaml`,
-   bundled per industry by `packs/editions/<industry>.json` (phase 3).
+   bundled per industry by `packs/editions/<industry>.json`. See the [packs README](../../packs/README.md) for the rules
+   and their tests.
 5. **Contracts are generated** into `packages/contracts` and checked for drift (phase 4).
 
 ## EvolvXSI domains in `services/core/evolvxsi`

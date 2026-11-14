@@ -27,7 +27,7 @@ from tests.evolvxsi_integration.test_tasks_flow import _up
 
 pytestmark = pytest.mark.skipif(not _up(), reason="needs Postgres with the pack tables")
 
-SAMPLE = json.loads((Path(__file__).parents[2] / "scripts/sample_packs/finance-policy-review.json").read_text())
+SAMPLE = json.loads((Path(__file__).parents[2] / "tests/common/fixtures/finance-policy-review-1.1.0.json").read_text())
 RUN = uuid.uuid4().hex[:8]
 PACK_ID = f"fin-{RUN}"
 ADMIN = SimpleNamespace(id=uuid.uuid4(), email=f"pack-admin-{RUN}@example.com")
