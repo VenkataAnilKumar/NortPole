@@ -179,7 +179,7 @@ def _known_principal_type(value: Any) -> Any:
         return None
 
 
-# None when ARM names no type, or one EvolvXSI does not know.
+# None when ARM names no type, or one NortPole does not know.
 PrincipalType = Annotated[
     AzurePrincipalType | None, BeforeValidator(_known_principal_type)
 ]
@@ -190,7 +190,7 @@ class AzureRoleAssignment(ArmModel):
     principal_id: str
     principal_type: PrincipalType = None
     role_definition_id: str
-    # An ABAC condition. EvolvXSI cannot evaluate it.
+    # An ABAC condition. NortPole cannot evaluate it.
     condition: str | None = None
 
 

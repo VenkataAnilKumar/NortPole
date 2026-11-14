@@ -1,4 +1,4 @@
-# EvolvXSI — threat model and security scan
+# NortPole — threat model and security scan
 
 Status: first version, 2026-11-12. **Written by the developer of the product (an AI assistant working with the owner), from what is built and checked in a sandbox. It is not an independent review, a penetration test or legal advice.** Each "control" below points to a check recorded in [REVIEW.md](../REVIEW.md); where no check exists the row says so.
 

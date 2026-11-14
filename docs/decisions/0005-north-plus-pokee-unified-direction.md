@@ -6,7 +6,7 @@ Status: **accepted** (confirmed by the product owner, 2026-11-12) · Date: 2026-
 
 The product direction so far follows Cohere North: a governed workspace with knowledge sources, permissions, audit and vertical packs. The owner asked for a combination of North and Pokee as one product.
 
-Source for Pokee: the vendor's own home page (pokee.ai, read 2026-11-11). These are marketing claims. Nothing here was measured or tested by EvolvXSI, and numbers on that page are the vendor's own.
+Source for Pokee: the vendor's own home page (pokee.ai, read 2026-11-11). These are marketing claims. Nothing here was measured or tested by NortPole, and numbers on that page are the vendor's own.
 
 What the page says Pokee is:
 
@@ -29,7 +29,7 @@ The action layer is not allowed to bypass the governed layer. Every outward acti
 - needs an approval bound to that exact action and payload where the pack requires it, with an idempotency key;
 - is written to the audit trail and shown in the inbox.
 
-EvolvXSI does not train or ship its own model. Hybrid routing stays the way models are chosen: local, private or cloud, inside administrator policy.
+NortPole does not train or ship its own model. Hybrid routing stays the way models are chosen: local, private or cloud, inside administrator policy.
 
 ## What changes in the delivery plan
 

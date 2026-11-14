@@ -225,7 +225,7 @@ class EvolvXSIRedisSlackRetryHandler(BaseRetryHandler):
 
 
 class EvolvXSISlackWebClient(WebClient):
-    """Use in combination with the EvolvXSI Retry Handler.
+    """Use in combination with the NortPole Retry Handler.
 
     This client wrapper enforces a proper retry delay through redis BEFORE the
     api call so that multiple clients can synchronize and rate limit properly.

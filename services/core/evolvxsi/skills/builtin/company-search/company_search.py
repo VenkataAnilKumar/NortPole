@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Search company knowledge through the EvolvXSI search API.
+"""Search company knowledge through the NortPole search API.
 
     python company_search.py search "<query>" ["<query>" ...] [--source slack,google_drive] [--days 30]
                                     [--no-query-expansion]

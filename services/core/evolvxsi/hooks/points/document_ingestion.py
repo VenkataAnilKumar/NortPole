@@ -86,7 +86,7 @@ class DocumentIngestionResponse(BaseModel):
 class DocumentIngestionSpec(HookPointSpec):
     """Hook point that runs on every document before it enters the indexing pipeline.
 
-    Call site: immediately after EvolvXSI's internal validation and before the
+    Call site: immediately after NortPole's internal validation and before the
     indexing pipeline begins — no partial writes have occurred yet.
 
     If a Document Ingestion hook is configured, it takes precedence —

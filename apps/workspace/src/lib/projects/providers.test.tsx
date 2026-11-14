@@ -34,7 +34,7 @@ jest.mock("@/lib/settings/hooks", () => ({
   useSettings: () => ({
     user_file_max_upload_size_mb: 1,
     enterprise: null,
-    appName: "EvolvXSI",
+    appName: "NortPole",
     vectorDbEnabled: true,
     isLoading: false,
     error: undefined,

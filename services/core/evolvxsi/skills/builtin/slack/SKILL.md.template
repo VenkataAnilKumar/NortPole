@@ -56,7 +56,7 @@ python slack_api.py search "deploy failed" [--count N]
 ### Post a message (write)
 
 ```
-python slack_api.py post C0123456789 "Hello from EvolvXSI"
+python slack_api.py post C0123456789 "Hello from NortPole"
 ```
 
 ### Upload a file (write)

@@ -105,7 +105,7 @@ def validate_file(size: int) -> tuple[bool, str | None]:
 # Build Mode Feature Announcements
 # =============================================================================
 
-# PostHog feature flag key for enabling EvolvXSI Craft (cloud rollout control)
+# PostHog feature flag key for enabling NortPole Craft (cloud rollout control)
 # Flag logic: True = enabled, False/null/not found = disabled
 EVOLVXSI_CRAFT_ENABLED_FLAG = "evolvxsi-craft-enabled"
 
@@ -123,9 +123,9 @@ BUILD_MODE_FEATURE_ID = "build_mode"
 def _craft_flag_enabled(user: User) -> bool:
     """
     Flag logic for "evolvxsi-craft-enabled":
-    - Flag = True → enabled (EvolvXSI Craft is available)
-    - Flag = False → disabled (EvolvXSI Craft is not available)
-    - Flag = null/not found → disabled (EvolvXSI Craft is not available)
+    - Flag = True → enabled (NortPole Craft is available)
+    - Flag = False → disabled (NortPole Craft is not available)
+    - Flag = null/not found → disabled (NortPole Craft is not available)
 
     Only explicit True enables the feature.
 
@@ -146,16 +146,16 @@ def _craft_flag_enabled(user: User) -> bool:
     )
 
     if is_enabled:
-        logger.debug("EvolvXSI Craft enabled via PostHog feature flag")
+        logger.debug("NortPole Craft enabled via PostHog feature flag")
         return True
     else:
-        logger.debug("EvolvXSI Craft disabled via PostHog feature flag")
+        logger.debug("NortPole Craft disabled via PostHog feature flag")
         return False
 
 
 def is_craft_available_for_deployment(user: User) -> bool:
     """
-    Check whether EvolvXSI Craft (Build Mode) is available at the deployment level:
+    Check whether NortPole Craft (Build Mode) is available at the deployment level:
     the craft flag must be on and the tier must reach LLM_GATEWAY_MIN_TIER,
     since every Craft turn goes through the tier-gated LLM gateway.
     """
@@ -180,7 +180,7 @@ def is_craft_enabled_for_user(
     workspace_default: bool | None = None,
 ) -> bool:
     """
-    Check if EvolvXSI Craft (Build Mode) is enabled for the user: the deployment
+    Check if NortPole Craft (Build Mode) is enabled for the user: the deployment
     must have Craft available AND the workspace policy must grant it — the
     per-user override (User.craft_enabled) when set, else the workspace
     default (Settings.craft_default_enabled).
@@ -234,7 +234,7 @@ def ensure_build_mode_intro_notification(user: User, db_session: Session) -> Non
     Called from /api/notifications endpoint. Uses notification deduplication
     to ensure each user only gets one notification.
     """
-    # PostHog feature flag check - only show notification if EvolvXSI Craft is enabled
+    # PostHog feature flag check - only show notification if NortPole Craft is enabled
     if not is_craft_enabled_for_user(user):
         return
 
@@ -243,8 +243,8 @@ def ensure_build_mode_intro_notification(user: User, db_session: Session) -> Non
         user_id=user.id,
         notif_type=NotificationType.FEATURE_ANNOUNCEMENT,
         db_session=db_session,
-        title="Introducing EvolvXSI Craft",
-        description="Unleash EvolvXSI to create dashboards, slides, documents, and more with your connected data.",
+        title="Introducing NortPole Craft",
+        description="Unleash NortPole to create dashboards, slides, documents, and more with your connected data.",
         additional_data={"feature": BUILD_MODE_FEATURE_ID},
         refresh_existing=False,
     )

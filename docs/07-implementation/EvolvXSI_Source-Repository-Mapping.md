@@ -1,12 +1,12 @@
-# EvolvXSI — source-to-module mapping
+# NortPole — source-to-module mapping
 
 > **Where this lives in code (2026-11-14).** Service and package names here (`services/control-plane`, `services/execution`, `services/knowledge`, `packages/*`, `evaluations`) are logical owners from the design stage. [Decision 0006](../decisions/0006-scalable-repository-structure.md) maps them to the code: the three services are implemented inside `services/core`, and the packages and evaluations are planned modules in `modules.json`, created when their first code arrives.
 
-> Downloaded projects are reference only. EvolvXSI owns its runtime and contracts. See the [provider decision](EvolvXSI_Provider-SDK-Decision.md).
+> Downloaded projects are reference only. NortPole owns its runtime and contracts. See the [provider decision](EvolvXSI_Provider-SDK-Decision.md).
 
 Reviewed: 2026-11-05 · Status: reference study
 
-This document maps source snapshots to EvolvXSI modules. The external reference collection retains manifest.json and reuse-map.json for local provenance. The links below point to the recorded upstream commits.
+This document maps source snapshots to NortPole modules. The external reference collection retains manifest.json and reuse-map.json for local provenance. The links below point to the recorded upstream commits.
 
 ## Module mapping
 
@@ -31,7 +31,7 @@ This document maps source snapshots to EvolvXSI modules. The external reference 
 
 [sim/apps/sim/app](https://github.com/simstudioai/sim/tree/093ea9ddb2f3e47facbc2dc42d4e523ba050dedb/apps/sim/app) · [sim/apps/sim/components](https://github.com/simstudioai/sim/tree/093ea9ddb2f3e47facbc2dc42d4e523ba050dedb/apps/sim/components) · [openagents-workspace/workspace/frontend](https://github.com/openagents-org/openagents/tree/4178b1e4a84b7e54de1d4e7dbb1d87e7a7c793cf/workspace/frontend)
 
-Study workspace navigation, collaboration and review patterns. Implement the EvolvXSI workspace through first-party APIs.
+Study workspace navigation, collaboration and review patterns. Implement the NortPole workspace through first-party APIs.
 
 ### services/control-plane
 
@@ -43,13 +43,13 @@ Build the unified tenant registry, task API and approval-payload contract; exist
 
 [sim/apps/sim/executor](https://github.com/simstudioai/sim/tree/093ea9ddb2f3e47facbc2dc42d4e523ba050dedb/apps/sim/executor) · [sim/apps/sim/background](https://github.com/simstudioai/sim/tree/093ea9ddb2f3e47facbc2dc42d4e523ba050dedb/apps/sim/background) · [sim/apps/sim/sandboxes](https://github.com/simstudioai/sim/tree/093ea9ddb2f3e47facbc2dc42d4e523ba050dedb/apps/sim/sandboxes) · [agno/libs/agno/agno/workflow](https://github.com/agno-agi/agno/tree/b21807bb6d86d2a62efeb42d492c04e566ee7f90/libs/agno/agno/workflow) · [opengeni/apps/worker](https://github.com/Cloudgeni-ai/opengeni/tree/6af476612385066db6919c176809705017976d52/apps/worker) · [minimax-code/packages/agent-runtime](https://github.com/MiniMax-AI/minimax-code/tree/39c1f42444c110cfeb770c8d64bf801dc727111c/packages/agent-runtime)
 
-Prove checkpoint/recovery and approval semantics first. Agno and Opengeni are runtime-design references; MiniMax Code/OpenAgentCore are coding-session references. None is selected as an EvolvXSI runtime or backend.
+Prove checkpoint/recovery and approval semantics first. Agno and Opengeni are runtime-design references; MiniMax Code/OpenAgentCore are coding-session references. None is selected as an NortPole runtime or backend.
 
 ### packages/agents
 
 [agno/libs/agno/agno/agent](https://github.com/agno-agi/agno/tree/b21807bb6d86d2a62efeb42d492c04e566ee7f90/libs/agno/agno/agent) · [agno/libs/agno/agno/team](https://github.com/agno-agi/agno/tree/b21807bb6d86d2a62efeb42d492c04e566ee7f90/libs/agno/agno/team) · [minimax-mini-agent/mini_agent](https://github.com/MiniMax-AI/Mini-Agent/tree/d76a4f6389688cabda39c224a6cdfa274215d47c/mini_agent)
 
-Define EvolvXSI manifests in contracts; do not copy framework agent objects into public APIs.
+Define NortPole manifests in contracts; do not copy framework agent objects into public APIs.
 
 ### packages/skills
 
@@ -61,7 +61,7 @@ Select document/report skills, declare dependencies and permissions, and validat
 
 [sim/apps/sim/providers](https://github.com/simstudioai/sim/tree/093ea9ddb2f3e47facbc2dc42d4e523ba050dedb/apps/sim/providers) · [agno/libs/agno/agno/models](https://github.com/agno-agi/agno/tree/b21807bb6d86d2a62efeb42d492c04e566ee7f90/libs/agno/agno/models) · [kortix/apps/llm-gateway](https://github.com/kortix-ai/suna/tree/68fd3646bca1a7af4aee50cd3c314f6225e86c35/apps/llm-gateway)
 
-EvolvXSI must own data-placement decisions, policy-preserving fallback, budgets and usage identity. Multiple model clients do not establish a working hybrid policy.
+NortPole must own data-placement decisions, policy-preserving fallback, budgets and usage identity. Multiple model clients do not establish a working hybrid policy.
 
 ### services/knowledge
 
@@ -79,13 +79,13 @@ Adapt credentials, actor identity, approval binding, idempotency and provider ra
 
 [agno/libs/agno/agno/eval](https://github.com/agno-agi/agno/tree/b21807bb6d86d2a62efeb42d492c04e566ee7f90/libs/agno/agno/eval) · `upstream/backend/upstream/evals` · [sim/packages/testing](https://github.com/simstudioai/sim/tree/093ea9ddb2f3e47facbc2dc42d4e523ba050dedb/packages/testing)
 
-Author pilot-specific cases and cross-service gates; framework unit tests do not prove EvolvXSI outcomes.
+Author pilot-specific cases and cross-service gates; framework unit tests do not prove NortPole outcomes.
 
 ### packages/pack-sdk
 
 [minimax-miniapps/plugins](https://github.com/MiniMax-AI/MiniMax-Code-MiniApps/tree/0f2183f14dd8b8ebffcd08ba42ad719a53a5f5b8/plugins) · [busabase/packages/busabase-package](https://github.com/busabase/busabase/tree/a525be9c5e3d74a21eec022469f9973378a49448/packages/busabase-package)
 
-Build EvolvXSI authoring/validation helpers; MiniApps desktop host plugins require adaptation to the chosen web extension boundary.
+Build NortPole authoring/validation helpers; MiniApps desktop host plugins require adaptation to the chosen web extension boundary.
 
 ### packages/contracts
 
@@ -121,7 +121,7 @@ Create a compatible deployment set, migration order, resource/network boundaries
 
 ## Vertical packs
 
-The template uses EvolvXSI-owned shared contracts and skills. MiniMax skills and MiniApps interface patterns may inform study; their code/assets are not copied into the template. Domain data, schemas, review criteria and evaluation sets still require domain-specific sources. None of the downloaded generic platforms is a complete Bio, Legal, Finance or other vertical pack. The first domain remains undecided.
+The template uses NortPole-owned shared contracts and skills. MiniMax skills and MiniApps interface patterns may inform study; their code/assets are not copied into the template. Domain data, schemas, review criteria and evaluation sets still require domain-specific sources. None of the downloaded generic platforms is a complete Bio, Legal, Finance or other vertical pack. The first domain remains undecided.
 
 ## Source identity correction
 
@@ -129,12 +129,12 @@ The earlier clone named sources/openagents points to OpenAgentsInc/openagents, w
 
 ## Integration gates
 
-Verify tenant and actor propagation, approvals, source permissions, recovery, artifact provenance and model destination policy through EvolvXSI acceptance cases. Keep downloaded projects outside the product build.
+Verify tenant and actor propagation, approvals, source permissions, recovery, artifact provenance and model destination policy through NortPole acceptance cases. Keep downloaded projects outside the product build.
 
 
 ## Commercial reference research — 4 November 2026
 
-The [commercial reference review](EvolvXSI_Commercial_Reference_Research.md) evaluates Temporal, Langfuse, LiteLLM, Qdrant, Infisical, Appsmith, E2B, Dify, n8n and Airbyte against named adoption evidence and product-module relevance. It records source-license boundaries and maps each study to an EvolvXSI design question. Temporal and LiteLLM were already mentioned in earlier research. All entries remain reference only. This review adds research candidates to the documentation. The downloaded-source manifest continues to describe only existing local snapshots.
+The [commercial reference review](EvolvXSI_Commercial_Reference_Research.md) evaluates Temporal, Langfuse, LiteLLM, Qdrant, Infisical, Appsmith, E2B, Dify, n8n and Airbyte against named adoption evidence and product-module relevance. It records source-license boundaries and maps each study to an NortPole design question. Temporal and LiteLLM were already mentioned in earlier research. All entries remain reference only. This review adds research candidates to the documentation. The downloaded-source manifest continues to describe only existing local snapshots.
 
 ## Layer mapping
 

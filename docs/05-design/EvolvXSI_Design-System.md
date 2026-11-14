@@ -1,10 +1,10 @@
-# EvolvXSI — design system
+# NortPole — design system
 
 Status: **interaction principles and proposed glass visual direction** · Updated: 2026-11-09
 
 ## Purpose
 
-Create a consistent interface for task execution, evidence inspection, review, and administration. The product name is EvolvXSI. The visual direction is modern frosted glass. Final palette, typography and brand assets remain open for review.
+Create a consistent interface for task execution, evidence inspection, review, and administration. The product name is NortPole. The visual direction is modern frosted glass. Final palette, typography and brand assets remain open for review.
 
 ## Principles
 

@@ -282,7 +282,7 @@ def test_xml_tool_recovery_preserves_visible_prose(
     fragments = [
         prefix,
         '<function_calls><invoke name="search">',
-        '<parameter name="queries" string="false">["EvolvXSI"]</parameter>',
+        '<parameter name="queries" string="false">["NortPole"]</parameter>',
         "</invoke></function_calls>",
         "  ",
         "\nAfter",
@@ -310,7 +310,7 @@ def test_xml_tool_recovery_preserves_visible_prose(
     assert message.text == prefix + "\nAfter"
     assert len(message.tool_calls) == 1
     assert message.tool_calls[0].name == "search"
-    assert message.tool_calls[0].arguments == {"queries": ["EvolvXSI"]}
+    assert message.tool_calls[0].arguments == {"queries": ["NortPole"]}
 
 
 def _stream_chunk(delta: Delta, *, usage: Usage | None = None) -> ModelResponseStream:

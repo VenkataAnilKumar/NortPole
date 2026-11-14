@@ -52,7 +52,7 @@ _CLOUD_SCOPES = [
 
 @pytest.fixture
 def cloud(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Pretend this deployment is cloud, where EvolvXSI owns the OAuth client. Only
+    """Pretend this deployment is cloud, where NortPole owns the OAuth client. Only
     the catalog reads this — ``spec.oauth.scope`` is resolved at import."""
     monkeypatch.setattr(registry, "MULTI_TENANT", True)
 

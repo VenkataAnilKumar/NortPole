@@ -206,7 +206,7 @@ def _scope_need(context: CapabilityCheckContext) -> str:
 
 def _scope_hint(context: CapabilityCheckContext) -> str:
     if _is_oauth(context):
-        return "Connect Google Drive again and accept every permission EvolvXSI asks for."
+        return "Connect Google Drive again and accept every permission NortPole asks for."
     scopes: str = ", ".join(GOOGLE_SCOPES[DocumentSource.GOOGLE_DRIVE])
     return (
         "In the Google Admin console (Security > API controls > Domain-wide "
@@ -243,7 +243,7 @@ def _google_errors(
                 description=timeout_row.description,
             ) from e
         raise UnreachableValidationError(
-            f"EvolvXSI cannot reach Google: {_detail(e)}",
+            f"NortPole cannot reach Google: {_detail(e)}",
             summary=_UNREACHABLE_TEXT.summary,
             description=_UNREACHABLE_TEXT.description,
         ) from e
@@ -292,7 +292,7 @@ def _raise_google_error(
         message: str = str(e)
         if MISSING_SCOPES_ERROR_STR in message or "unauthorized_client" in message:
             raise InsufficientPermissionsError(
-                f"Google refused the scopes EvolvXSI asks for. {_scope_hint(context)}",
+                f"Google refused the scopes NortPole asks for. {_scope_hint(context)}",
                 summary="Google refused the requested scopes",
                 description=(
                     "Google does not let the account act with the scopes the "
@@ -361,7 +361,7 @@ def _raise_google_error(
             ) from e
         if _SCOPE_REASONS.intersection(e.reasons):
             raise InsufficientPermissionsError(
-                f"The credential is missing a scope EvolvXSI needs. {_scope_hint(context)}",
+                f"The credential is missing a scope NortPole needs. {_scope_hint(context)}",
                 summary="Account is missing a required scope",
                 description=(
                     "The token lacks a scope this request needs.\n"
@@ -435,7 +435,7 @@ def _no_ids_error(field: str, noun: str) -> ConnectorValidationError:
     """A URL field that is set but gives no ID: the connector reads it as a
     specific request for nothing."""
     return ConnectorValidationError(
-        f"{field} gives no {noun} ID, so EvolvXSI indexes no {noun} from it.",
+        f"{field} gives no {noun} ID, so NortPole indexes no {noun} from it.",
         summary=f"No {noun} URL in {field}",
         description=(
             f"{field} has no URL with a {noun} ID.\n"
@@ -587,7 +587,7 @@ class _AuthCheck(_GoogleDriveCheck):
             display_name="Sign in to Google Drive",
             remediation=(
                 "Service account: set up domain-wide delegation with the scopes "
-                "in the EvolvXSI docs, and use a Workspace user as the primary admin. "
+                "in the NortPole docs, and use a Workspace user as the primary admin. "
                 "OAuth: connect Google Drive again. Turn on the Google Drive API "
                 "in the Google Cloud project of the credential."
             ),
@@ -663,7 +663,7 @@ class _WorkspaceUsersCheck(_GoogleDriveCheck):
             )
         if first_admin is None:
             raise InconclusiveValidationError(
-                "The Workspace directory listed no admin, so EvolvXSI cannot verify "
+                "The Workspace directory listed no admin, so NortPole cannot verify "
                 "the user listing.",
                 summary="Directory listed no admin",
                 description=(
@@ -731,7 +731,7 @@ def _unprobed_users_advisories(user_count: int) -> list[CheckAdvisory]:
     return [
         CheckAdvisory(
             message=(
-                f"EvolvXSI probed only the first {_MAX_PROBED_USERS} users. It did "
+                f"NortPole probed only the first {_MAX_PROBED_USERS} users. It did "
                 f"not verify that it can act as the other {unprobed} users."
             )
         )
@@ -740,7 +740,7 @@ def _unprobed_users_advisories(user_count: int) -> list[CheckAdvisory]:
 
 def _impersonation_error(failures: list[str], what: str) -> ConnectorValidationError:
     return ConnectorValidationError(
-        f"EvolvXSI cannot act as these users, so it skips their files: "
+        f"NortPole cannot act as these users, so it skips their files: "
         f"{', '.join(failures)}.",
         summary=f"Cannot act as {len(failures)} {what}",
         description=(
@@ -817,7 +817,7 @@ class _OAuthIgnoredSettingsCheck(_GoogleDriveCheck):
             if value
         ]
         raise ConnectorValidationError(
-            f"An OAuth credential indexes only what its own user sees, so EvolvXSI "
+            f"An OAuth credential indexes only what its own user sees, so NortPole "
             f"ignores {' and '.join(ignored)}.",
             summary=f"{' and '.join(ignored)} ignored with OAuth",
             description=(
@@ -873,7 +873,7 @@ class _SharedDrivesCheck(_GoogleDriveCheck):
                         "Find selected drives looks for each selected drive as "
                         "the indexed users."
                         if config.shared_drive_urls
-                        else "The credential sees no shared drive, so EvolvXSI did "
+                        else "The credential sees no shared drive, so NortPole did "
                         "not verify that it can read shared drives. Shared "
                         "drives index nothing until the credential sees one."
                     )
@@ -929,7 +929,7 @@ class _ConfiguredSharedDrivesCheck(_GoogleDriveCheck):
             remediation=(
                 "Use the URL of each shared drive (https://drive.google.com/drive/"
                 "folders/<id>). Service account: an organizer of the drive must be "
-                "a user EvolvXSI indexes. OAuth: the connected user must be a member."
+                "a user NortPole indexes. OAuth: the connected user must be a member."
             ),
         )
 
@@ -978,7 +978,7 @@ class _ConfiguredSharedDrivesCheck(_GoogleDriveCheck):
         if not_folders:
             # The crawl lists the children of the id, so a file indexes nothing.
             raise ConnectorValidationError(
-                "These IDs are files, not shared drives or folders, so EvolvXSI "
+                "These IDs are files, not shared drives or folders, so NortPole "
                 f"indexes nothing from them: {', '.join(not_folders)}.",
                 summary=f"{len(not_folders)} selected IDs are files, not drives",
                 description=(
@@ -991,7 +991,7 @@ class _ConfiguredSharedDrivesCheck(_GoogleDriveCheck):
         if truncated:
             raise InconclusiveValidationError(
                 f"No shared drive with the IDs {', '.join(unreachable)} is "
-                f"visible to the first {_MAX_LISTED_USERS} users, so EvolvXSI cannot "
+                f"visible to the first {_MAX_LISTED_USERS} users, so NortPole cannot "
                 "verify them.",
                 summary=f"Drives not seen by first {_MAX_LISTED_USERS:,} users",
                 description=(
@@ -1014,7 +1014,7 @@ class _ConfiguredSharedDrivesCheck(_GoogleDriveCheck):
             )
         raise ConnectorValidationError(
             f"Nothing with the IDs {', '.join(unreachable)} is visible to the "
-            "credential. EvolvXSI cannot index them, and it does not prune the "
+            "credential. NortPole cannot index them, and it does not prune the "
             "connector while they stay out of reach.",
             summary="No selected drive found",
             description=description,
@@ -1030,7 +1030,7 @@ class _ConfiguredFoldersCheck(_GoogleDriveCheck):
             remediation=(
                 "Use the URL of each folder (https://drive.google.com/drive/"
                 "folders/<id>). Put shared drive URLs in 'Shared drive URLs'. "
-                "Share each folder with a user EvolvXSI indexes."
+                "Share each folder with a user NortPole indexes."
             ),
         )
 
@@ -1067,7 +1067,7 @@ class _ConfiguredFoldersCheck(_GoogleDriveCheck):
                     # The connector drops a drive id from the folders.
                     if folder_id not in requested_drives:
                         raise ConnectorValidationError(
-                            f"EvolvXSI cannot index the folder {folder_id}: it is a "
+                            f"NortPole cannot index the folder {folder_id}: it is a "
                             "shared drive; put its URL in 'Shared drive URLs'.",
                             summary="A selected folder is a shared drive",
                             description=(
@@ -1086,7 +1086,7 @@ class _ConfiguredFoldersCheck(_GoogleDriveCheck):
                 viewer, metadata = found
                 if metadata.get("mimeType") != DRIVE_FOLDER_TYPE:
                     raise ConnectorValidationError(
-                        f"EvolvXSI cannot index the folder {folder_id}: it is a "
+                        f"NortPole cannot index the folder {folder_id}: it is a "
                         "file, not a folder.",
                         summary="A selected folder URL is a file",
                         description=(
@@ -1125,7 +1125,7 @@ class _ConfiguredFoldersCheck(_GoogleDriveCheck):
         if truncated:
             raise InconclusiveValidationError(
                 f"{', '.join(unseen)} are not visible to the first "
-                f"{_MAX_LISTED_USERS} users, so EvolvXSI cannot verify them.",
+                f"{_MAX_LISTED_USERS} users, so NortPole cannot verify them.",
                 summary=f"Folders not seen by first {_MAX_LISTED_USERS:,} users",
                 description=(
                     f"None of the first {_MAX_LISTED_USERS:,} users can open these "
@@ -1145,7 +1145,7 @@ class _ConfiguredFoldersCheck(_GoogleDriveCheck):
                 description=description,
             )
         raise ConnectorValidationError(
-            f"EvolvXSI cannot index these folders: {', '.join(unseen)} are not "
+            f"NortPole cannot index these folders: {', '.join(unseen)} are not "
             "visible to the credential.",
             summary="No selected folder found",
             description=description,
@@ -1192,7 +1192,7 @@ class _ConfiguredMyDrivesCheck(_GoogleDriveCheck):
         if missing and truncated:
             raise InconclusiveValidationError(
                 f"{', '.join(missing)} are not among the first {_MAX_LISTED_USERS} "
-                "users, so EvolvXSI cannot verify them.",
+                "users, so NortPole cannot verify them.",
                 summary=f"Users not among the first {_MAX_LISTED_USERS:,} listed",
                 description=(
                     f"These emails are not among the first {_MAX_LISTED_USERS:,} "
@@ -1206,7 +1206,7 @@ class _ConfiguredMyDrivesCheck(_GoogleDriveCheck):
         )
         if missing and not found:
             raise ConnectorValidationError(
-                f"EvolvXSI skips these My Drives: {', '.join(missing)} are not "
+                f"NortPole skips these My Drives: {', '.join(missing)} are not "
                 "primary emails of the users it indexes.",
                 summary="No My Drive user found",
                 description=missing_description,
@@ -1268,7 +1268,7 @@ class _SharedDriveOrganizerCheck(_GoogleDriveCheck):
             credential_kind=GoogleCredentialKind.SERVICE_ACCOUNT,
             remediation=(
                 "Make a Workspace user a Manager of each shared drive, and keep "
-                "that user in the users EvolvXSI indexes. Without one, EvolvXSI can miss "
+                "that user in the users NortPole indexes. Without one, NortPole can miss "
                 "folders with limited access."
             ),
         )
@@ -1283,7 +1283,7 @@ class _SharedDriveOrganizerCheck(_GoogleDriveCheck):
             context,
             api=_DRIVE_API,
             denied=(
-                "EvolvXSI cannot read the members of a shared drive, so it reads "
+                "NortPole cannot read the members of a shared drive, so it reads "
                 "shared drives as the primary admin and can miss folders with "
                 "limited access"
             ),
@@ -1322,7 +1322,7 @@ class _SharedDriveOrganizerCheck(_GoogleDriveCheck):
             if choice.email is None:
                 raise ConnectorValidationError(
                     f"No member of shared drive {drive_id} is a Workspace user "
-                    "EvolvXSI can act as, so EvolvXSI reads it as the primary admin, if "
+                    "NortPole can act as, so NortPole reads it as the primary admin, if "
                     "the admin can see it.",
                     summary=f"Drive {drive_id} has no member to act as",
                     description=(
@@ -1333,8 +1333,8 @@ class _SharedDriveOrganizerCheck(_GoogleDriveCheck):
             if not choice.complete:
                 role: str = choice.role.value if choice.role else "member"
                 raise ConnectorValidationError(
-                    f"Shared drive {drive_id} has no organizer EvolvXSI can act as, so "
-                    f"EvolvXSI reads it as {choice.email} ({role}) and can miss folders "
+                    f"Shared drive {drive_id} has no organizer NortPole can act as, so "
+                    f"NortPole reads it as {choice.email} ({role}) and can miss folders "
                     "with limited access.",
                     summary=f"Drive {drive_id} has no usable Manager",
                     description=(
@@ -1505,7 +1505,7 @@ class _ContentReadCheck(_GoogleDriveCheck):
             remediation=(
                 "Give the service account the drive.readonly scope (OAuth: "
                 "connect again and accept every permission). A file owner can "
-                "also block downloads for viewers; EvolvXSI skips those files."
+                "also block downloads for viewers; NortPole skips those files."
             ),
         )
 
@@ -1554,7 +1554,7 @@ class _ContentReadCheck(_GoogleDriveCheck):
         if not read:
             raise InconclusiveValidationError(
                 f"The primary admin's first {_SAMPLE_FILES} files hold no Google "
-                "file and no small upload, so EvolvXSI did not verify downloads.",
+                "file and no small upload, so NortPole did not verify downloads.",
                 summary="No files found to test",
                 description=(
                     f"The primary admin's first {_SAMPLE_FILES} files hold no "
@@ -1602,7 +1602,7 @@ class _ContentReadCheck(_GoogleDriveCheck):
             if _DOWNLOAD_BLOCKED_REASONS.intersection(e.reasons):
                 raise InconclusiveValidationError(
                     f"The owner of '{name}' blocked downloads for viewers, so "
-                    "EvolvXSI skips files like it.",
+                    "NortPole skips files like it.",
                     summary="Sampled file blocks downloads",
                     description=(
                         f"The owner of {name} blocked downloads for viewers.\n"
@@ -1665,7 +1665,7 @@ class _DocsApiCheck(_GoogleDriveCheck):
             )
         if not docs:
             raise InconclusiveValidationError(
-                "The primary admin sees no Google Doc, so EvolvXSI did not verify the "
+                "The primary admin sees no Google Doc, so NortPole did not verify the "
                 "Docs API.",
                 summary="No Google Docs found to test",
                 description=(
@@ -1845,7 +1845,7 @@ class _FilePermissionsCheck(_GoogleDriveCheck):
         if by_id_only:
             raise InconclusiveValidationError(
                 "Google Drive denied the permissions of every sampled file, so "
-                "EvolvXSI cannot verify the permission sync. The sync gives such "
+                "NortPole cannot verify the permission sync. The sync gives such "
                 "files only to the user who found them.",
                 summary="No sampled file's permissions readable",
                 description=(
@@ -1854,7 +1854,7 @@ class _FilePermissionsCheck(_GoogleDriveCheck):
                 ),
             )
         raise InsufficientPermissionsError(
-            "Google Drive listed files without their permissions, so EvolvXSI "
+            "Google Drive listed files without their permissions, so NortPole "
             "cannot tell who can open them. Give the credential the "
             "drive.metadata.readonly scope.",
             summary="Files listed without their permissions",
@@ -1935,7 +1935,7 @@ class _DirectoryUsersCheck(_GoogleDriveCheck):
             first_user: str | None = next(ops.list_user_emails(), None)
         if first_user is None:
             raise InconclusiveValidationError(
-                "The Workspace directory listed no user, so EvolvXSI cannot verify "
+                "The Workspace directory listed no user, so NortPole cannot verify "
                 "the user listing.",
                 summary="Directory listed no user",
                 description=(

@@ -51,7 +51,7 @@ jest.mock("@/lib/navigation/hooks", () => ({
   useAppPosition: () => ({ isNewSession: () => false, chat: () => "session" }),
 }));
 jest.mock("@/lib/settings/hooks", () => ({
-  useSettings: () => ({ appName: "EvolvXSI" }),
+  useSettings: () => ({ appName: "NortPole" }),
 }));
 jest.mock("@/lib/projects/providers", () => ({
   useProjectsContext: () => ({

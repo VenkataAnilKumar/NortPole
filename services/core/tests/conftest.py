@@ -35,10 +35,10 @@ def _ee_enabled() -> Generator[None, None, None]:
 
 
 def _skip_without_ee() -> None:
-    """EvolvXSI ships the community edition only. A test that switches on Enterprise mode tests code this
+    """NortPole ships the community edition only. A test that switches on Enterprise mode tests code this
     repository does not contain, so it is skipped (with this reason) rather than reported as a failure."""
     if importlib.util.find_spec("ee") is None:
-        pytest.skip("Enterprise (ee) package is not part of EvolvXSI")
+        pytest.skip("Enterprise (ee) package is not part of NortPole")
 
 
 @pytest.fixture()

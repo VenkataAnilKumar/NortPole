@@ -246,7 +246,7 @@ def test_permission_sync_cadences_follow_the_schedulers_rules(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     unindexed: dict[str, Any] = _connector_row(last_success_at=None)
-    # EvolvXSI Lite runs no permission syncs, and a build without Enterprise code has none.
+    # NortPole Lite runs no permission syncs, and a build without Enterprise code has none.
     monkeypatch.setattr(collector, "DISABLE_VECTOR_DB", True)
     assert collector.permission_sync_cadence_reader()(_connector_row()) == (None, None)
     monkeypatch.setattr(collector, "DISABLE_VECTOR_DB", False)

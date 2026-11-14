@@ -1,1 +1,1 @@
-"""Per-user EvolvXSI preferences: default route and notification choices."""
+"""Per-user NortPole preferences: default route and notification choices."""

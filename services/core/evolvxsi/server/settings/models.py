@@ -158,7 +158,7 @@ class UserSettings(Settings):
     notifications: list[NotificationResponse]
     needs_reindexing: bool
     tenant_id: str = POSTGRES_DEFAULT_SCHEMA
-    # Feature flag for EvolvXSI Craft (Build Mode) - used for server-side redirects
+    # Feature flag for NortPole Craft (Build Mode) - used for server-side redirects
     evolvxsi_craft_enabled: bool = False
     # Deployment-level Craft availability, ignoring the per-user admin toggle.
     # Gates visibility of the admin per-user Craft controls.

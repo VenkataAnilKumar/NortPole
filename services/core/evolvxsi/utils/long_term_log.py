@@ -92,7 +92,7 @@ class LongTermLogger:
             )
             thread.start()
         except Exception:
-            # Should never interfere with normal functions of EvolvXSI
+            # Should never interfere with normal functions of NortPole
             pass
 
     def fetch_category(

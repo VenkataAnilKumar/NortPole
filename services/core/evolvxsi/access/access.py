@@ -58,7 +58,7 @@ from evolvxsi.utils.variable_functionality import (
 
 
 def _stored_external_access(db_session: Session, document_ids: list[str]) -> dict[str, tuple[list[str], list[str], bool]]:
-    """EvolvXSI: the access list a source reported for each document (emails, external group ids, public), as the
+    """NortPole: the access list a source reported for each document (emails, external group ids, public), as the
     indexing pipeline stored it. Only documents from sources with "sync" access ever have one; for every other
     document the lists are empty and public is false, so nothing changes for them."""
     from evolvxsi.db.models import Document
@@ -127,11 +127,11 @@ def _get_access_for_documents(
         ext_emails, ext_groups, ext_public = external.get(document_id, ([], [], False))
         doc_access[document_id] = DocumentAccess.build(
             user_emails=[email for email in user_emails if email],
-            # EvolvXSI: groups linked to the document's sources. External
+            # NortPole: groups linked to the document's sources. External
             # groups still need a per-source permission sync.
             user_groups=sorted(groups_by_doc.get(document_id, set())),
             is_public=is_public or ext_public,
-            # EvolvXSI: what a "sync" source reported (e.g. Google Drive sharing).
+            # NortPole: what a "sync" source reported (e.g. Google Drive sharing).
             external_user_emails=ext_emails,
             external_user_group_ids=ext_groups,
         )
@@ -174,13 +174,13 @@ def _get_acl_for_user(
     """
     if user.is_anonymous:
         return {PUBLIC_DOC_PAT}
-    # EvolvXSI: the user's groups, read on every request so a removal from a
+    # NortPole: the user's groups, read on every request so a removal from a
     # group takes effect on the next search.
     with get_session_with_current_tenant_if_none(db_session) as session:
         groups = group_names_for_user(session, user.id)
     return {
         prefix_user_email(user.email),
-        # EvolvXSI: sources such as Google Drive report addresses in lowercase; the same address in lowercase.
+        # NortPole: sources such as Google Drive report addresses in lowercase; the same address in lowercase.
         prefix_user_email(user.email.lower()),
         *(prefix_user_email(email) for email in user.prior_emails),
         *(prefix_user_email(email.lower()) for email in user.prior_emails),

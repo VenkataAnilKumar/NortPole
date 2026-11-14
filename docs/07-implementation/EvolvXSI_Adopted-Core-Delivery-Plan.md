@@ -1,10 +1,10 @@
-# EvolvXSI — delivery plan on the adopted core
+# NortPole — delivery plan on the adopted core
 
 > **Where this lives in code (2026-11-14).** Service and package names here (`services/control-plane`, `services/execution`, `services/knowledge`, `packages/*`, `evaluations`) are logical owners from the design stage. [Decision 0006](../decisions/0006-scalable-repository-structure.md) maps them to the code: the three services are implemented inside `services/core`, and the packages and evaluations are planned modules in `modules.json`, created when their first code arrives.
 
 Status: **proposed; supersedes the sequencing (not the scope) of the fixture-first plan** · Updated: 2026-11-11
 
-This plan rebuilds the delivery sequence around [decision 0004](../decisions/0004-adopt-community-source-as-pilot-core.md): the pilot runs on the adapted upstream open-source core in `services/core` and `apps/workspace`, with EvolvXSI-owned governance added in separate modules. The earlier [P00–P11 plan](EvolvXSI_Implementation-Phases.md) stays valid as the scope reference and the source of acceptance wording; this document records what is actually done and the order of what remains. It commits no dates, no staffing and no customer.
+This plan rebuilds the delivery sequence around [decision 0004](../decisions/0004-adopt-community-source-as-pilot-core.md): the pilot runs on the adapted upstream open-source core in `services/core` and `apps/workspace`, with NortPole-owned governance added in separate modules. The earlier [P00–P11 plan](EvolvXSI_Implementation-Phases.md) stays valid as the scope reference and the source of acceptance wording; this document records what is actually done and the order of what remains. It commits no dates, no staffing and no customer.
 
 How to read it: **Done** means verified in a sandbox on 2026-11-10 (not production). **Sizes** are relative (S, M, L, XL), not time estimates. **PF IDs** refer to the [feature catalog](../04-specs/EvolvXSI_Feature-Spec.md#full-platform-feature-catalog). Every phase ends with evidence a reviewer can check.
 
@@ -56,7 +56,7 @@ Delivered: MIT-licensed parts of the upstream open-source core (commit `919578e`
 
 ## A2 — Run, verify and restyle (done)
 
-**Goal:** the adapted product runs end to end and looks like EvolvXSI.
+**Goal:** the adapted product runs end to end and looks like NortPole.
 
 Delivered: lite-mode local profile (PostgreSQL, Redis, no search index or model server); dependency locks regenerated; backend imports and builds without `ee`; web source type-checks (apart from one package blocked in the sandbox); warm light and dark themes with System selection; centered serif home screen with quick-start cards; Manus/North-style chat box; sidebar relabelled (New task, Search, All agents, Tasks); admin-recovery command; offline tokenizer fallback; deterministic mock model routes; local profile runbook.
 
@@ -101,9 +101,9 @@ Delivered (PF-07.03 slice, PF-04.02 groundwork): route kinds (local, private, cl
 
 | Work item | Notes |
 | --- | --- |
-| Retrieval backend | Re-enable a vector index (the adapted code supports one) or an EvolvXSI-owned alternative; decide hosting. Lite mode has none. |
+| Retrieval backend | Re-enable a vector index (the adapted code supports one) or an NortPole-owned alternative; decide hosting. Lite mode has none. |
 | One source connector | Choose the pilot source; ingestion status, failures, refresh. |
-| Per-user permission sync | **Upstream keeps this in `ee`.** EvolvXSI builds its own for the chosen source: effective access per document, applied at retrieval, citation and export. |
+| Per-user permission sync | **Upstream keeps this in `ee`.** NortPole builds its own for the chosen source: effective access per document, applied at retrieval, citation and export. |
 | Cited search screen | Replace the stubbed search view: answer, numbered citations, source panel, access state, hidden-result notice without titles. |
 | Revocation withholding | Reports, previews and exports that depend on a revoked source are withheld until regenerated; downloaded files cannot be recalled (state this in the pilot agreement). |
 | Freshness and conflicts | Flag stale, superseded and conflicting sources (PF-06.05). |
@@ -134,9 +134,9 @@ Delivered (PF-07.03 slice, PF-04.02 groundwork): route kinds (local, private, cl
 
 **Exit evidence:** the cross-feature acceptance example in the feature specification passes; restart, duplicate-start and revocation tests pass.
 
-**Dependencies:** A5 for real evidence; a durable execution choice (extend the adapted background workers or add an EvolvXSI-owned executor). **Risks:** the adapted code was not designed around approval binding; narrow the guarantee for the pilot if it cannot be met cleanly, and record it.
+**Dependencies:** A5 for real evidence; a durable execution choice (extend the adapted background workers or add an NortPole-owned executor). **Risks:** the adapted code was not designed around approval binding; narrow the guarantee for the pilot if it cannot be met cleanly, and record it.
 
-**Craft assessed and set aside (2026-11-12).** With the full stack running, Craft's sandbox still cannot start here: its image name (`evolvxsidotapp/sandbox`) exists on no registry (the rebrand renamed it and upstream's Dockerfile was left out of the copy), building one means adopting upstream deployment pieces plus a coding-agent runtime that needs a strong model, and Craft is built for sandboxed coding agents, which is not the "agents acting across apps with approval" path of decision 0005. EvolvXSI builds its own action layer instead (next paragraph) and keeps the approval, policy and audit rules it already has.
+**Craft assessed and set aside (2026-11-12).** With the full stack running, Craft's sandbox still cannot start here: its image name (`evolvxsidotapp/sandbox`) exists on no registry (the rebrand renamed it and upstream's Dockerfile was left out of the copy), building one means adopting upstream deployment pieces plus a coding-agent runtime that needs a strong model, and Craft is built for sandboxed coding agents, which is not the "agents acting across apps with approval" path of decision 0005. NortPole builds its own action layer instead (next paragraph) and keeps the approval, policy and audit rules it already has.
 
 **Progress (2026-11-12), first outbound action, in the sandbox** (`services/core/evolvxsi/work/actions/`, migration `1b8d4f6a2e93`): an owner can propose sending an *approved* draft to a target an administrator registered (a webhook). The payload is built on the server from the draft (title, Markdown with its cited sources), never typed in. Approval names the exact payload fingerprint, is single use and expires after 30 minutes. At send time the server re-checks, from the database: the target is still enabled and allowed for the workspace's data class (policy); the owner can still open every cited source; the approval is exact, unexpired and unused. The request carries an `Idempotency-Key` that is stable for the action, so a retry after a failure or an unknown outcome reuses it. Destinations resolving to link-local, metadata, multicast, unspecified or reserved addresses are refused at registration and again at send, redirects are not followed, and the response body is not stored. Propose, approve, send, denied send and target changes are audited with the fingerprint and no draft text. Checked: 16 integration checks against a local sink that records every request (sent once; retry after a 500 reused the key; policy, disabled target, lost access and expired approval each sent nothing; another user got "not found"; audit held no draft text). Not built: the screen, other target kinds (email, chat, a real connector), an owner-visible send history, a policy by target and route beyond data class, and live use against a real receiver.
 
@@ -206,13 +206,13 @@ Delivered (PF-07.03 slice, PF-04.02 groundwork): route kinds (local, private, cl
 
 Checked: unit tests for each control, and a run with a hostile passage (asks to cite [9] and fakes a second source) through the real drafter and mock route produced a draft with only the real source and no injected citations. The mock model does not try to obey injected text, so this shows the structural controls hold, not that a real model resists instructions; that needs testing against real models (A8).
 
-**Progress (2026-11-12), second A9 slice: endpoint access and audit privacy** (`services/core/tests/evolvxsi_integration/test_endpoint_security.py`, against the running API with one throwaway user): 16 EvolvXSI endpoints (tasks, preferences, route policy, access groups, source groups, pending approvals) refuse signed-out requests; a signed-in ordinary user is refused (403) on the five admin endpoints but can use their own tasks and preferences; another person's task answers 404, the same as a missing one; and after creating and cancelling a task with a distinctive title and request, no audit row holds that text. 25 checks pass, run twice. Limits: this covers the endpoints we added, not the whole upstream API; an administrator role was not probed in this file; sign-in used basic auth only (no SSO).
+**Progress (2026-11-12), second A9 slice: endpoint access and audit privacy** (`services/core/tests/evolvxsi_integration/test_endpoint_security.py`, against the running API with one throwaway user): 16 NortPole endpoints (tasks, preferences, route policy, access groups, source groups, pending approvals) refuse signed-out requests; a signed-in ordinary user is refused (403) on the five admin endpoints but can use their own tasks and preferences; another person's task answers 404, the same as a missing one; and after creating and cancelling a task with a distinctive title and request, no audit row holds that text. 25 checks pass, run twice. Limits: this covers the endpoints we added, not the whole upstream API; an administrator role was not probed in this file; sign-in used basic auth only (no SSO).
 
 **Progress (2026-11-12), third A9 slice: the action layer's destination checks hold at connection time.** The first version checked where a destination pointed and then let the HTTP library look the name up again when it connected, so a name that answered safely once and a metadata address the second time would have passed the check and reached the metadata address (DNS rebinding). Now (`services/core/evolvxsi/work/actions/delivery.py`): the name is looked up once, every address it returns must be allowed (a name that also points somewhere forbidden is refused), and the connection is pinned to the checked address while the real host name is kept for the `Host` header and for TLS certificate and SNI checks; IPv4-mapped IPv6 forms of forbidden addresses (`::ffff:169.254.169.254`), link-local, multicast, unspecified and reserved addresses are refused; user names or passwords in the address are refused; proxy settings in the environment are ignored so a proxy variable cannot reroute a send; redirects are still not followed. Checked with 17 unit tests, including a resolver that answers with a safe address once and the metadata address afterwards (the send reaches the checked address, with the real `Host` header, after exactly one lookup), an environment proxy that must be ignored, and a 307 whose target must never be contacted; 116 integration checks still pass. Limits: private (RFC 1918) addresses are allowed on purpose, since an administrator may register an internal receiver; the HTTPS pinning was checked by inspecting the adapter's settings, not against a live TLS server with a bad certificate; there is no per-destination rate limit or maximum payload beyond the draft length limit.
 
 ## A10 — Deployment, operations and upstream upkeep (planned, L)
 
-**Goal:** a repeatable, supportable release; upstream files were not copied, so EvolvXSI owns this.
+**Goal:** a repeatable, supportable release; upstream files were not copied, so NortPole owns this.
 
 | Work item | Notes |
 | --- | --- |
@@ -222,7 +222,7 @@ Checked: unit tests for each control, and a run with a hostile passage (asks to 
 | Observability | Structured events, correlation IDs, dashboards, alerts; the stored audit trail feeds this. |
 | Backup and recovery | Backups, restore drill, rollback to a pinned release set. |
 | Release manifest | Product commit, service and package versions, documentation commit and approval record. |
-| Upstream upkeep | A rule for taking new upstream commits: fresh copy, re-run the rebrand script from git history (7cabc08), re-apply EvolvXSI modules, re-run tests; decide how often. |
+| Upstream upkeep | A rule for taking new upstream commits: fresh copy, re-run the rebrand script from git history (7cabc08), re-apply NortPole modules, re-run tests; decide how often. |
 
 **Exit evidence:** a clean-room deployment from the manifest, a restore drill and a rollback, each recorded.
 
@@ -267,7 +267,7 @@ Informed by pilot evidence, not scheduled: second vertical and reuse measurement
 1. **Evidence before claims:** no feature is marked done without a recorded check; sandbox results are labelled as such.
 2. **Fail closed:** unknown routes, unplaceable models and missing permissions deny, never allow.
 3. **Authority at every boundary:** retrieval, tool calls, approval consumption, views and exports each recheck access and policy.
-4. **Keep EvolvXSI code separate** from adapted upstream files, so upstream updates stay possible.
+4. **Keep NortPole code separate** from adapted upstream files, so upstream updates stay possible.
 5. **Record decisions and limits** in `docs/decisions`, `UPSTREAM.md` and `docs/REVIEW.md` as work lands; update this plan when a phase closes.
 6. **No secrets in the repository;** credentials go through the credential store only.
 

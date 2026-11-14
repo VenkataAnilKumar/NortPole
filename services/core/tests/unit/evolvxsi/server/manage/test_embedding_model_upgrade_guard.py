@@ -272,7 +272,7 @@ _REJECTED = [
         _present("embed-english-v3.0", COHERE),
         _spec_request(OPENAI, "text-embedding-3-large", reduced_dimension=1024),
         True,
-        "not supported in EvolvXSI Cloud",
+        "not supported in NortPole Cloud",
         id="reduced-dimension-in-multi-tenant",
     ),
     pytest.param(
@@ -300,7 +300,7 @@ _REJECTED = [
         _present(GRANITE),
         _request("text-embedding-ada-002", provider_type=OPENAI),
         False,
-        "not an embedding model that EvolvXSI supports",
+        "not an embedding model that NortPole supports",
         id="unknown-model-of-a-registry-provider",
     ),
 ]

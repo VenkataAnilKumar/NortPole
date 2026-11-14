@@ -1,4 +1,4 @@
-# EvolvXSI — model gateway (mock)
+# NortPole — model gateway (mock)
 
 Today this folder holds `src/adapters/mock/mock_openai_server.py`: a small OpenAI-compatible server with deterministic
 replies. Tests and the [local profile](../../infrastructure/profiles/local/README.md) use it as stand-in local and cloud

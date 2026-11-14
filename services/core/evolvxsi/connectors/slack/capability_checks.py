@@ -539,7 +539,7 @@ class _TokenAuthCheck(_SlackCheck):
             auth = _auth_test(_slack_client(context))
         except (URLError, ConnectionError, IncompleteRead) as e:
             raise UnreachableValidationError(
-                f"EvolvXSI cannot connect to Slack: {e}",
+                f"NortPole cannot connect to Slack: {e}",
                 summary="Cannot reach Slack",
                 description=(
                     "The connection to Slack failed.\nCheck that the server can "
@@ -922,7 +922,7 @@ class _ChannelJoinScopeCheck(_SlackCheck):
             )
         if "channels:join" not in granted_scopes:
             raise InsufficientPermissionsError(
-                "The bot token lacks the `channels:join` scope, so EvolvXSI cannot "
+                "The bot token lacks the `channels:join` scope, so NortPole cannot "
                 "automatically join public channels. This is a warning, but it "
                 "usually still requires action: every public channel the bot "
                 "has not been invited to WILL fail to index. Either add the "
@@ -1296,7 +1296,7 @@ class _PermSyncPrivateChannelListingCheck(_SlackCheck):
                     "only, so private-channel access lists are never created or "
                     "updated. Previously indexed private documents keep stale "
                     "access lists, so users removed from a private channel keep "
-                    "access in EvolvXSI."
+                    "access in NortPole."
                 ),
                 denied_row=CheckRowText(
                     summary="Bot cannot list private channels",
@@ -1342,7 +1342,7 @@ class _UserEmailVisibilityCheck(_SlackCheck):
                 e,
                 denied=(
                     "The bot token cannot list users (`users.list`), which "
-                    "permission sync requires to map Slack members to EvolvXSI users "
+                    "permission sync requires to map Slack members to NortPole users "
                     "by email."
                 ),
                 denied_row=CheckRowText(
@@ -1377,7 +1377,7 @@ class _UserEmailVisibilityCheck(_SlackCheck):
         if not with_email:
             raise InsufficientPermissionsError(
                 "`users.list` succeeded but returned no email addresses, so "
-                "permission sync cannot map Slack members to EvolvXSI users. This "
+                "permission sync cannot map Slack members to NortPole users. This "
                 "is how a missing `users:read.email` scope manifests -- Slack "
                 "omits the email field instead of raising a scope error.",
                 summary="No user emails visible",
@@ -1477,7 +1477,7 @@ class _GridPublicChannelScopingCheck(_SlackCheck):
     """Verifies per-workspace user listing on Enterprise Grid.
 
     Not required: without it, permission sync still runs but silently marks
-    every public channel visible org-wide in EvolvXSI.
+    every public channel visible org-wide in NortPole.
     """
 
     def __init__(self) -> None:
@@ -1508,7 +1508,7 @@ class _GridPublicChannelScopingCheck(_SlackCheck):
                     "On Enterprise Grid, per-workspace user listing (`users.list` "
                     "with `team_id`) scopes public channels to their workspaces. "
                     "Without it, permission sync silently marks every public "
-                    "channel visible org-wide in EvolvXSI (over-sharing)."
+                    "channel visible org-wide in NortPole (over-sharing)."
                 ),
                 denied_row=CheckRowText(
                     summary="Bot cannot list users per workspace",

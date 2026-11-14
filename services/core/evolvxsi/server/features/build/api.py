@@ -44,7 +44,7 @@ def require_evolvxsi_craft_enabled(
     if not is_craft_enabled_for_user(user):
         raise EvolvXSIError(
             EvolvXSIErrorCode.INSUFFICIENT_PERMISSIONS,
-            "EvolvXSI Craft is not available",
+            "NortPole Craft is not available",
         )
     return user
 

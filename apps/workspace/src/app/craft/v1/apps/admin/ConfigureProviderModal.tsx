@@ -81,7 +81,7 @@ export default function ConfigureProviderModal({
   const associationPatch = existingAssociationDirty
     ? { associated_skill_ids: selectedSkillIds }
     : {};
-  // Managed built-ins (cloud): EvolvXSI owns creds/config, so the modal only edits
+  // Managed built-ins (cloud): NortPole owns creds/config, so the modal only edits
   // policies — cred fields are hidden and the backend ignores them anyway.
   const managed = existingApp?.is_evolvxsi_managed ?? false;
 
@@ -133,7 +133,7 @@ export default function ConfigureProviderModal({
     policies: Record<string, ActionPolicy>
   ) {
     if (managed && existingApp) {
-      // Keep EvolvXSI-managed credentials unchanged.
+      // Keep NortPole-managed credentials unchanged.
       const payload: Parameters<typeof updateExternalApp>[1] = {
         action_policies: policies,
         users_can_manage_policies: usersCanManagePolicies,

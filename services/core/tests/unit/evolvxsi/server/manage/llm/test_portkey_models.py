@@ -1,6 +1,6 @@
 """Tests for the Portkey model fetcher.
 
-Verifies the mapping from Portkey's OpenAI-shaped /v1/models response to EvolvXSI
+Verifies the mapping from Portkey's OpenAI-shaped /v1/models response to NortPole
 model configs: embedding models dropped, context length mapped, id-less entries
 skipped, and results sorted by name.
 """

@@ -71,7 +71,7 @@ def _cloud_spec(
     status: EmbeddingModelStatus,
     supports_reduced_dimension: bool = False,
 ) -> EmbeddingModelSpec:
-    """Cloud models: no EvolvXSI-side normalize and no prefixes."""
+    """Cloud models: no NortPole-side normalize and no prefixes."""
     return EmbeddingModelSpec(
         provider_type=provider_type,
         model_name=model_name,

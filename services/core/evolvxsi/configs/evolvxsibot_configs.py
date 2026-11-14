@@ -1,16 +1,16 @@
 import os
 
 #####
-# EvolvXSI Slack Bot Configs
+# NortPole Slack Bot Configs
 #####
 EVOLVXSI_BOT_NUM_RETRIES = int(os.environ.get("EVOLVXSI_BOT_NUM_RETRIES", "5"))
 # Number of docs to display in "Reference Documents"
 EVOLVXSI_BOT_NUM_DOCS_TO_DISPLAY = int(os.environ.get("EVOLVXSI_BOT_NUM_DOCS_TO_DISPLAY", "5"))
-# If the LLM fails to answer, EvolvXSI can still show the "Reference Documents"
+# If the LLM fails to answer, NortPole can still show the "Reference Documents"
 EVOLVXSI_BOT_DISABLE_DOCS_ONLY_ANSWER = os.environ.get(
     "EVOLVXSI_BOT_DISABLE_DOCS_ONLY_ANSWER", ""
 ).lower() not in ["false", ""]
-# When EvolvXSI is considering a message, what emoji does it react with
+# When NortPole is considering a message, what emoji does it react with
 EVOLVXSI_BOT_REACT_EMOJI = os.environ.get("EVOLVXSI_BOT_REACT_EMOJI") or "eyes"
 # When User needs more help, what should the emoji be
 EVOLVXSI_BOT_FOLLOWUP_EMOJI = os.environ.get("EVOLVXSI_BOT_FOLLOWUP_EMOJI") or "sos"

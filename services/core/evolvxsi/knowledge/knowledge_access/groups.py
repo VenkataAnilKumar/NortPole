@@ -1,4 +1,4 @@
-"""EvolvXSI group access (replaces the community stubs, which have no groups).
+"""NortPole group access (replaces the community stubs, which have no groups).
 
 Two sides must agree for a group to grant access:
 

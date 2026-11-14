@@ -215,7 +215,7 @@ def verify_auth_setting() -> None:
         )
     if raw_auth_type in ("google_oauth", "oidc", "saml"):
         logger.warning(
-            "AUTH_TYPE='%s' single-provider mode was removed and EvolvXSI is running "
+            "AUTH_TYPE='%s' single-provider mode was removed and NortPole is running "
             "as 'basic'. SSO login is now served by SSO provider rows (Admin "
             "Panel > Organization > SSO Providers). Remove AUTH_TYPE and the "
             "legacy SSO env vars.",
@@ -1749,7 +1749,7 @@ cookie_transport = CookieTransport(
 #
 # API keys / PATs also ride in the Authorization header; for those the session
 # strategy's read_token simply finds nothing and the request falls through to
-# EvolvXSI's own API-key/PAT handlers (see `optional_user`).
+# NortPole's own API-key/PAT handlers (see `optional_user`).
 bearer_transport = BearerTransport(tokenUrl="auth/mobile/login")
 
 
@@ -2855,7 +2855,7 @@ current_user_from_websocket_cookie._is_websocket_auth_dependency = True  # ty: i
 
 
 def get_default_admin_user_emails_() -> list[str]:
-    # No default seeding available for EvolvXSI MIT
+    # No default seeding available for NortPole MIT
     return []
 
 

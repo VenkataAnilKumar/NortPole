@@ -32,7 +32,7 @@ _ISSUE = {"id": "1", "key": "AS-1", "fields": {"summary": "An issue"}}
 def _gateway(*, is_cloud: bool) -> MagicMock:
     gateway: MagicMock = create_autospec(JiraSourceOperations, instance=True)
     gateway._is_cloud.return_value = is_cloud
-    gateway.list_projects.return_value = [{"key": "AS", "name": "EvolvXSI Support"}]
+    gateway.list_projects.return_value = [{"key": "AS", "name": "NortPole Support"}]
     gateway.search_issue_ids.return_value = JiraIssueIdPage(
         issue_ids=["1"], next_page_token=None
     )
@@ -287,7 +287,7 @@ def test_configured_project_suggests_the_key_for_a_name() -> None:
     gateway.get_project.side_effect = _api_error(404)
 
     result: CapabilityCheckResult = _run(
-        "jira_configured_project", gateway, _config(project_key="evolvxsi support")
+        "jira_configured_project", gateway, _config(project_key="nortpole support")
     )
 
     assert result.status == CapabilityCheckStatus.FAILED

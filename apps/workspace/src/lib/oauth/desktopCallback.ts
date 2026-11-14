@@ -18,7 +18,7 @@ const CALLBACK_PATTERNS = [
 
 /**
  * True for a callback that a desktop-started attempt reached in the browser.
- * It goes back to the app, so the browser needs no EvolvXSI session for it.
+ * It goes back to the app, so the browser needs no NortPole session for it.
  */
 export function isDesktopOAuthCallback(
   pathname: string,

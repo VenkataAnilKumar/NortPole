@@ -60,7 +60,7 @@ class SSODiscoveryResponse(BaseModel):
 
 async def _enforce_discovery_rate_limit(request: Request) -> None:
     # Single-tenant has one workspace to enumerate and runs without Redis on
-    # EvolvXSI-lite, so the bound applies only on cloud, where it is the sole limit
+    # NortPole-lite, so the bound applies only on cloud, where it is the sole limit
     # on address enumeration.
     if not MULTI_TENANT:
         return

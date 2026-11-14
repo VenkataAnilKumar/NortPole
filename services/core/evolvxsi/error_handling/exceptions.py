@@ -1,4 +1,4 @@
-"""EvolvXSIError — the single exception type for all EvolvXSI business errors.
+"""EvolvXSIError — the single exception type for all NortPole business errors.
 
 Raise ``EvolvXSIError`` instead of ``HTTPException`` in business code.  A global
 FastAPI exception handler (registered via ``register_evolvxsi_exception_handlers``)

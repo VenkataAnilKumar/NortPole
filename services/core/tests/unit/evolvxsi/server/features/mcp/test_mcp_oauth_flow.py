@@ -532,7 +532,7 @@ def test_reverse_order_completions_restore_their_own_registration(
         provider = oauth.EvolvXSIOAuthClientProvider(
             server_url="https://mcp.example.com/mcp",
             client_metadata=oauth.OAuthClientMetadata(
-                client_name="EvolvXSI",
+                client_name="NortPole",
                 redirect_uris=[oauth.AnyUrl(_REDIRECT_URI)],
             ),
             storage=MagicMock(),

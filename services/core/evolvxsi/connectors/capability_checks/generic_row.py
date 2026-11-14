@@ -74,7 +74,7 @@ _RATE_LIMITED_ROW = CheckRowText(
 _UNREACHABLE_ROW = CheckRowText(
     summary="Cannot reach the source",
     description=(
-        "EvolvXSI could not connect to the source.\n"
+        "NortPole could not connect to the source.\n"
         "Check the address in the settings, then re-run."
     ),
 )

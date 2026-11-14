@@ -606,9 +606,9 @@ def test_group_mode_walks_the_group_members_instead_of_every_user() -> None:
         OutlookMailboxPage(mailboxes=[mailbox(id="user-2")]),
     ]
 
-    _run(_connector(gateway, mailbox_groups=["EvolvXSI Users"]))
+    _run(_connector(gateway, mailbox_groups=["NortPole Users"]))
 
-    gateway.resolve_groups.assert_called_once_with(identifier="EvolvXSI Users")
+    gateway.resolve_groups.assert_called_once_with(identifier="NortPole Users")
     assert gateway.list_group_mailbox_users.call_args_list == [
         call(group_id="group-1", next_link=None),
         call(group_id="group-1", next_link="https://graph/next"),

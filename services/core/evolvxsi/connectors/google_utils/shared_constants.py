@@ -76,7 +76,7 @@ MISSING_SCOPES_ERROR_STR = "client not authorized for any of the scopes requeste
 # Documentation and error messages
 SCOPE_DOC_URL = "/help/admins/connectors/official/google_drive/overview"
 EVOLVXSI_SCOPE_INSTRUCTIONS = (
-    "You have upgraded EvolvXSI without updating the Google Auth scopes. "
+    "You have upgraded NortPole without updating the Google Auth scopes. "
     f"Please refer to the documentation to learn how to update the scopes: {SCOPE_DOC_URL}"
 )
 

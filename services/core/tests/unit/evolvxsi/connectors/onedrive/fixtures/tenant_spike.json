@@ -8,7 +8,7 @@
       "value": [
         {
           "id": "<fixture-root-item-id>",
-          "name": "EvolvXSI OneDrive Connector Tests",
+          "name": "NortPole OneDrive Connector Tests",
           "webUrl": "https://<tenant-host>/personal/<owner-personal-path>/Documents/EvolvXSI%20OneDrive%20Connector%20Tests",
           "size": 0,
           "folder": {
@@ -694,7 +694,7 @@
       "value": [
         {
           "id": "<fixture-root-item-id>",
-          "name": "EvolvXSI OneDrive Connector Tests",
+          "name": "NortPole OneDrive Connector Tests",
           "webUrl": "https://<tenant-host>/personal/<owner-personal-path>/Documents/EvolvXSI%20OneDrive%20Connector%20Tests",
           "size": 0,
           "folder": {

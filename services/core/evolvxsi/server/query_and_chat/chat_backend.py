@@ -978,7 +978,7 @@ def handle_send_chat_message(
             result.chat_session_id = chat_message_req.chat_session_id
         return result
 
-    # Streaming path, normal EvolvXSI UI behavior
+    # Streaming path, normal NortPole UI behavior
     def stream_generator() -> Generator[str, None, None]:
         response_future = Future[ChatResponseOutcome]()
         try:

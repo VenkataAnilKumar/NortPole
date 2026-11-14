@@ -98,7 +98,7 @@ def _to_admin_response(
         id=app.id,
         name=app.name,
         app_type=app.app_type,
-        # Managed built-ins: hide EvolvXSI-owned config/creds. Else mask secrets — the
+        # Managed built-ins: hide NortPole-owned config/creds. Else mask secrets — the
         # write path restores masked values echoed back unchanged.
         upstream_url_patterns=[] if managed else list(app.upstream_url_patterns),
         auth_template={} if managed else app.auth_template,
@@ -209,7 +209,7 @@ def create_built_in_external_app(
 ) -> ExternalAppAdminResponse:
     """Create a built-in external app. Built-in providers only (CUSTOM rejected);
     custom apps use ``POST /admin/apps/custom``, updates use ``PATCH``. On cloud,
-    EvolvXSI-managed built-ins are EvolvXSI-provisioned and can't be created here.
+    NortPole-managed built-ins are NortPole-provisioned and can't be created here.
     """
     if request.app_type == ExternalAppType.CUSTOM:
         raise EvolvXSIError(
@@ -220,7 +220,7 @@ def create_built_in_external_app(
     if MULTI_TENANT and get_evolvxsi_managed_provider(request.app_type) is not None:
         raise EvolvXSIError(
             EvolvXSIErrorCode.INVALID_INPUT,
-            "Built-in apps are provided by EvolvXSI; use PATCH /admin/apps/{id} to "
+            "Built-in apps are provided by NortPole; use PATCH /admin/apps/{id} to "
             "set approval policies.",
         )
 
@@ -266,8 +266,8 @@ def update_external_app_admin(
     db_session: Session = Depends(get_session),
 ) -> ExternalAppAdminResponse:
     """Partial update of any app (404 if absent). ``None`` fields are left
-    untouched. For EvolvXSI-managed built-ins (cloud) the gateway-config fields
-    are EvolvXSI-owned and ignored — only ``enabled`` and ``action_policies`` apply.
+    untouched. For NortPole-managed built-ins (cloud) the gateway-config fields
+    are NortPole-owned and ignored — only ``enabled`` and ``action_policies`` apply.
     """
     app = _get_app_or_404(db_session, external_app_id)
     managed = MULTI_TENANT and get_evolvxsi_managed_provider(app.app_type) is not None
@@ -292,7 +292,7 @@ def update_external_app_admin(
         app_type=app.app_type,
         enabled=none_as_unset(request.enabled),
         name=none_as_unset(request.name),
-        # Gateway config is EvolvXSI-owned for managed built-ins; leave it untouched.
+        # Gateway config is NortPole-owned for managed built-ins; leave it untouched.
         upstream_url_patterns=(
             UNSET if managed else none_as_unset(request.upstream_url_patterns)
         ),
@@ -426,7 +426,7 @@ def delete_external_app_admin(
     if MULTI_TENANT and get_evolvxsi_managed_provider(app.app_type) is not None:
         raise EvolvXSIError(
             EvolvXSIErrorCode.INVALID_INPUT,
-            "Built-in apps are provided by EvolvXSI and cannot be deleted.",
+            "Built-in apps are provided by NortPole and cannot be deleted.",
         )
     affected: set[UUID] = set()
     for skill in get_skills_for_external_app(db_session, app.id):

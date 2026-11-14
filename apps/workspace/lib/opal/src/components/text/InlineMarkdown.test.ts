@@ -17,9 +17,9 @@ describe("toPlainString", () => {
   it("strips link syntax, keeping the label", () => {
     expect(
       toPlainString(
-        markdown("[EvolvXSI 0.0.0-dev](/help/changelog)")
+        markdown("[NortPole 0.0.0-dev](/help/changelog)")
       )
-    ).toBe("EvolvXSI 0.0.0-dev");
+    ).toBe("NortPole 0.0.0-dev");
   });
 
   it("strips bold (**) syntax", () => {

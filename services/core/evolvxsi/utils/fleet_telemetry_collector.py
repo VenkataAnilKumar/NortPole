@@ -1,7 +1,7 @@
 """Fleet telemetry snapshots of connectors, indexing, and background jobs.
 
 `collect_snapshots` runs every five minutes for each tenant: as a Celery task on
-the monitoring worker, or in the API server's poller in EvolvXSI Lite. Each run reads
+the monitoring worker, or in the API server's poller in NortPole Lite. Each run reads
 the rows that changed since the previous run and the work that is still running.
 """
 
@@ -153,7 +153,7 @@ SyncCadences = tuple[int | None, int | None]
 def permission_sync_cadence_reader() -> Callable[[dict[str, Any]], SyncCadences]:
     """Returns a reader of how often a pair's permission syncs run now, by the
     schedulers' own rules. A sync that cannot run now has no cadence. Dispatch
-    also waits while the pair is pruned; the fleet service allows for that. EvolvXSI
+    also waits while the pair is pruned; the fleet service allows for that. NortPole
     Lite runs neither sync, and a build without Enterprise code has none."""
     if DISABLE_VECTOR_DB:
         return lambda _row: (None, None)

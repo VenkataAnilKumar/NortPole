@@ -257,7 +257,7 @@ def from_litellm_model_response(
 ) -> ModelResponse:
     """Collapse a response's ``choices`` into the single answer they describe.
 
-    ``choices`` normally holds one entry per requested completion, and EvolvXSI only
+    ``choices`` normally holds one entry per requested completion, and NortPole only
     ever requests one. litellm's OpenAI-responses bridge (non-streamed) is the
     exception: it emits one choice per message content part, then one holding
     every tool call. Reading ``choices[0]`` drops the tool calls, and on
@@ -266,7 +266,7 @@ def from_litellm_model_response(
     Upstream: BerriAI/litellm#37299, open PRs #33931 and #41123 (unfixed in
     1.102.1). Once a single choice comes back, this is a pass-through.
 
-    Merging is safe because EvolvXSI never sets ``n``: more than one choice always
+    Merging is safe because NortPole never sets ``n``: more than one choice always
     means a split answer, never alternative answers.
     """
     response_data = response.model_dump()

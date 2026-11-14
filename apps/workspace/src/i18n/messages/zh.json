@@ -1,8 +1,8 @@
 {
   "mcpOAuth": {
     "consent": {
-      "title": "连接到 EvolvXSI",
-      "request": "允许 {clientName} 搜索 EvolvXSI 吗？",
+      "title": "连接到 NortPole",
+      "request": "允许 {clientName} 搜索 NortPole 吗？",
       "account": "当前登录账号：{email}",
       "workspace": "工作区：{workspaceName}",
       "appAddress": "应用地址：{origin}",
@@ -16,13 +16,13 @@
       "signInRequired": "请登录以授权此应用。",
       "signIn": "登录",
       "forbidden": "你无法授权此应用。请联系工作区管理员。",
-      "loadFailed": "EvolvXSI 无法加载此请求。请重试。",
+      "loadFailed": "NortPole 无法加载此请求。请重试。",
       "retry": "重试"
     },
     "connections": {
       "cancel": "取消",
       "title": "已连接的应用",
-      "description": "你已允许搜索 EvolvXSI 的应用。",
+      "description": "你已允许搜索 NortPole 的应用。",
       "empty": "没有已连接的应用。",
       "loading": "正在加载已连接的应用...",
       "expires": "到期日期：{date}",
@@ -32,7 +32,7 @@
       "failed": "无法断开应用连接。请重试。",
       "loadFailed": "无法加载已连接的应用。",
       "confirmTitle": "断开 {clientName} 的连接吗？",
-      "confirmDescription": "此应用将失去对 EvolvXSI 的访问权限。你可以稍后重新连接。"
+      "confirmDescription": "此应用将失去对 NortPole 的访问权限。你可以稍后重新连接。"
     }
   },
   "accountPopover": {
@@ -192,7 +192,7 @@
         "planNote": "用户组访问需要 Business 套餐。"
       },
       "defaultChat": {
-        "title": "在默认 EvolvXSI 聊天中可用"
+        "title": "在默认 NortPole 聊天中可用"
       }
     },
     "addOpenApiModal": {
@@ -2048,7 +2048,7 @@
           "label": "许可证密钥已过期"
         },
         "keyField": {
-          "description": "粘贴或附加您从 EvolvXSI 收到的许可证密钥文件。",
+          "description": "粘贴或附加您从 NortPole 收到的许可证密钥文件。",
           "title": "许可证密钥"
         },
         "updateKey": {
@@ -3265,7 +3265,7 @@
         "resolveAll": {
           "button": "全部解决",
           "title": "解决所有显示的活动",
-          "body": "{count, plural, other {这会解决符合当前筛选条件的 # 项活动：{failures}和{errors}。EvolvXSI 不会重试其中失败的项目。这些活动保留原有状态，并移到已解决下方。}}",
+          "body": "{count, plural, other {这会解决符合当前筛选条件的 # 项活动：{failures}和{errors}。NortPole 不会重试其中失败的项目。这些活动保留原有状态，并移到已解决下方。}}",
           "body2": "仍在运行的运行可能会报告新的错误，这些错误会再次显示为未解决。您之后可以在失败文档列表中重试已解决的文档。",
           "failures": "{count, plural, =0 {无失败} other {# 次失败}}",
           "errors": "{count, plural, =0 {没有出错的运行} other {# 次运行有错误}}",
@@ -3339,7 +3339,7 @@
         },
         "organizationLinks": {
           "label": "将组织链接视为公开链接",
-          "description": "让所有 EvolvXSI 用户都能看到通过组织范围链接共享的文件。"
+          "description": "让所有 NortPole 用户都能看到通过组织范围链接共享的文件。"
         },
         "authorityHost": {
           "label": "授权主机",
@@ -3360,7 +3360,7 @@
           "label": "项目",
           "description": "要索引的 Linear 项目名称或 URL。留空则索引所有项目。若同时设置了团队，问题必须同时匹配两者。"
         },
-        "syncNotice": "请以属于您要索引的每个私有团队的工作区成员（而非访客）身份连接。EvolvXSI 无法看到已连接用户不在其中的私有团队。公开团队的问题可由所有工作区成员搜索，私有或受限团队的问题仅可由其成员搜索。"
+        "syncNotice": "请以属于您要索引的每个私有团队的工作区成员（而非访客）身份连接。NortPole 无法看到已连接用户不在其中的私有团队。公开团队的问题可由所有工作区成员搜索，私有或受限团队的问题仅可由其成员搜索。"
       },
       "add": {
         "authorizeButton": {
@@ -3840,7 +3840,7 @@
             },
             "treat_link_access_as_public": {
               "label": "将链接访问视为公开",
-              "description": "仅在启用权限同步时有效。开启后，链接访问权限为“任何拥有链接的人”或需登录规则的录制内容对所有 EvolvXSI 用户可见，域规则则对这些域的用户可见。关闭后，每份转录文本仅对录制所有者可见，因为 Zoom 无法提供“有权访问的人员”中包含哪些人。"
+              "description": "仅在启用权限同步时有效。开启后，链接访问权限为“任何拥有链接的人”或需登录规则的录制内容对所有 NortPole 用户可见，域规则则对这些域的用户可见。关闭后，每份转录文本仅对录制所有者可见，因为 Zoom 无法提供“有权访问的人员”中包含哪些人。"
             },
             "plan_tier": {
               "label": "Zoom 套餐",
@@ -3953,7 +3953,7 @@
             },
             "everything": {
               "label": "索引全部",
-              "description": "EvolvXSI 将索引为所有者 {owner} 找到的所有仓库。"
+              "description": "NortPole 将索引为所有者 {owner} 找到的所有仓库。"
             },
             "include_prs": {
               "label": "包含拉取请求",
@@ -4054,7 +4054,7 @@
             },
             "workspace_tab": {
               "label": "索引工作区中的所有仓库",
-              "description": "EvolvXSI 会索引工作区中所选账户可读取的全部仓库。如需缩小范围，请选择其他标签页。"
+              "description": "NortPole 会索引工作区中所选账户可读取的全部仓库。如需缩小范围，请选择其他标签页。"
             }
           }
         },
@@ -4086,8 +4086,8 @@
             "include_shared_drives": {
               "label": "包含共享云端硬盘",
               "description": {
-                "oauth": "这将允许 EvolvXSI 索引您有权访问的共享云端硬盘中的所有内容。",
-                "serviceAccount": "这将允许 EvolvXSI 索引贵组织共享云端硬盘中的所有内容。"
+                "oauth": "这将允许 NortPole 索引您有权访问的共享云端硬盘中的所有内容。",
+                "serviceAccount": "这将允许 NortPole 索引贵组织共享云端硬盘中的所有内容。"
               }
             },
             "include_my_drives": {
@@ -4096,12 +4096,12 @@
                 "serviceAccount": "包含所有人的我的云端硬盘"
               },
               "description": {
-                "oauth": "这将允许 EvolvXSI 索引您的我的云端硬盘中的所有内容。",
-                "serviceAccount": "这将允许 EvolvXSI 索引所有人的我的云端硬盘中的所有内容。"
+                "oauth": "这将允许 NortPole 索引您的我的云端硬盘中的所有内容。",
+                "serviceAccount": "这将允许 NortPole 索引所有人的我的云端硬盘中的所有内容。"
               }
             },
             "include_files_shared_with_me": {
-              "description": "这将允许 EvolvXSI 索引与您共享的所有文件。",
+              "description": "这将允许 NortPole 索引与您共享的所有文件。",
               "label": "包含与您共享的所有文件"
             },
             "shared_drive_urls": {
@@ -4125,7 +4125,7 @@
             },
             "exclude_domain_link_only": {
               "label": "隐藏仅限域链接的文件",
-              "description": "启用后，EvolvXSI 会跳过广泛共享（域内或公开）但需要通过链接访问的文件。"
+              "description": "启用后，NortPole 会跳过广泛共享（域内或公开）但需要通过链接访问的文件。"
             }
           }
         },
@@ -4177,7 +4177,7 @@
             },
             "everything": {
               "label": "索引全部",
-              "description": "EvolvXSI 将索引所选账户有权访问的所有空间和页面。"
+              "description": "NortPole 将索引所选账户有权访问的所有空间和页面。"
             },
             "space": {
               "label": "空间",
@@ -4198,7 +4198,7 @@
             },
             "cql_query": {
               "label": "CQL 查询",
-              "description": "仅返回页面。类型过滤器只保留 `type=page`。\n避免排序和日期过滤器。`order by` 或 `lastModified` 会破坏 EvolvXSI 自身的查询。 [CQL 参考](https://developer.atlassian.com/server/confluence/advanced-searching-using-cql/)",
+              "description": "仅返回页面。类型过滤器只保留 `type=page`。\n避免排序和日期过滤器。`order by` 或 `lastModified` 会破坏 NortPole 自身的查询。 [CQL 参考](https://developer.atlassian.com/server/confluence/advanced-searching-using-cql/)",
               "testButton": {
                 "label": "测试查询"
               },
@@ -4232,7 +4232,7 @@
             },
             "everything": {
               "label": "索引该账户可读取的所有问题",
-              "description": "EvolvXSI 会索引所选账户可读取的每个项目中的全部问题。如需缩小范围，请选择其他标签页。"
+              "description": "NortPole 会索引所选账户可读取的每个项目中的全部问题。如需缩小范围，请选择其他标签页。"
             },
             "project_key": {
               "label": "项目键",
@@ -4264,7 +4264,7 @@
             },
             "requested_objects": {
               "label": "请求的对象",
-              "description": "指定要索引的 Salesforce 对象类型。如果不确定，请不要指定任何对象，EvolvXSI 将默认按“Account”索引。\n\n提示：请使用对象名称的单数形式（例如使用“Opportunity”而不是“Opportunities”）。"
+              "description": "指定要索引的 Salesforce 对象类型。如果不确定，请不要指定任何对象，NortPole 将默认按“Account”索引。\n\n提示：请使用对象名称的单数形式（例如使用“Opportunity”而不是“Opportunities”）。"
             },
             "custom_query_config": {
               "label": "自定义查询配置",
@@ -4277,7 +4277,7 @@
           "fields": {
             "sites": {
               "label": "站点",
-              "description": "- 如果未指定站点，将索引您组织中的所有站点（需要 `Sites.Read.All` 权限）。\n- 例如，指定 `https://evolvxsiai.sharepoint.com/sites/support` 只会索引该站点。\n- 例如，指定 `https://evolvxsiai.sharepoint.com/sites/support/subfolder` 只会索引该文件夹。\n- 如需索引用户的个人站点，请使用 [OneDrive 连接器]({docsAdminsPath}/connectors/official/onedrive)。\n- 目前，指定站点适用于使用英语、西班牙语或德语的 SharePoint 实例。如需支持其他语言，请联系 EvolvXSI 团队。"
+              "description": "- 如果未指定站点，将索引您组织中的所有站点（需要 `Sites.Read.All` 权限）。\n- 例如，指定 `https://evolvxsiai.sharepoint.com/sites/support` 只会索引该站点。\n- 例如，指定 `https://evolvxsiai.sharepoint.com/sites/support/subfolder` 只会索引该文件夹。\n- 如需索引用户的个人站点，请使用 [OneDrive 连接器]({docsAdminsPath}/connectors/official/onedrive)。\n- 目前，指定站点适用于使用英语、西班牙语或德语的 SharePoint 实例。如需支持其他语言，请联系 NortPole 团队。"
             },
             "include_site_documents": {
               "label": "索引文档",
@@ -4289,7 +4289,7 @@
             },
             "treat_sharing_link_as_public": {
               "label": "将共享链接视为公开",
-              "description": "启用后，带有共享链接（匿名或全组织范围）的文档将被视为公开（对所有 EvolvXSI 用户可见）。禁用后，只有被明确分配角色的用户和群组才能查看该文档。"
+              "description": "启用后，带有共享链接（匿名或全组织范围）的文档将被视为公开（对所有 NortPole 用户可见）。禁用后，只有被明确分配角色的用户和群组才能查看该文档。"
             },
             "excluded_sites": {
               "label": "排除的站点",
@@ -4358,7 +4358,7 @@
             },
             "mailbox_groups": {
               "label": "邮箱组",
-              "description": "Entra 组的显示名称或对象 ID。将索引每位成员的邮箱，包括嵌套组的成员，因此可将租户限定为使用 EvolvXSI 的人员。需要 GroupMember.Read.All 应用程序权限。"
+              "description": "Entra 组的显示名称或对象 ID。将索引每位成员的邮箱，包括嵌套组的成员，因此可将租户限定为使用 NortPole 的人员。需要 GroupMember.Read.All 应用程序权限。"
             },
             "include_attachments": {
               "description": "索引文件附件中的文本。内嵌图片、嵌套项目和云链接会被跳过。"
@@ -4420,7 +4420,7 @@
             },
             "everything_description": {
               "label": "索引该账户可读取的所有空间",
-              "description": "EvolvXSI 会索引所选账户可读取的每个空间中的全部页面。如需缩小范围，请选择其他标签页。"
+              "description": "NortPole 会索引所选账户可读取的每个空间中的全部页面。如需缩小范围，请选择其他标签页。"
             },
             "spaces": {
               "label": "空间 ID",
@@ -4878,7 +4878,7 @@
             },
             "everything_description": {
               "label": "索引该令牌可读取的所有 Base",
-              "description": "EvolvXSI 会查找并索引 API 令牌可读取的全部 Base 和表。如需缩小范围，请选择其他标签页。"
+              "description": "NortPole 会查找并索引 API 令牌可读取的全部 Base 和表。如需缩小范围，请选择其他标签页。"
             },
             "airtable_url": {
               "label": "Airtable URL",
@@ -4918,7 +4918,7 @@
             },
             "everything": {
               "label": "索引该账户可读取的所有 Spot",
-              "description": "EvolvXSI 会索引所选账户可读取的全部 Spot。如需缩小范围，请选择其他标签页。"
+              "description": "NortPole 会索引所选账户可读取的全部 Spot。如需缩小范围，请选择其他标签页。"
             }
           }
         },
@@ -5068,7 +5068,7 @@
         "title": "未找到用户"
       },
       "header": {
-        "description": "控制谁可以使用 Craft，即 EvolvXSI 的智能体式应用构建器。",
+        "description": "控制谁可以使用 Craft，即 NortPole 的智能体式应用构建器。",
         "title": "访问权限"
       },
       "perUserAccess": {
@@ -5099,7 +5099,7 @@
         }
       },
       "unavailable": {
-        "description": "Craft 由 EvolvXSI 按部署逐一启用。请联系您的 EvolvXSI 客户代表以获取访问权限。",
+        "description": "Craft 由 NortPole 按部署逐一启用。请联系您的 NortPole 客户代表以获取访问权限。",
         "title": "此部署不提供 Craft"
       },
       "usersLoadError": {
@@ -5179,7 +5179,7 @@
         "label": "在 Craft 中试用"
       },
       "unavailable": {
-        "description": "Craft 由 EvolvXSI 按部署逐一启用。请联系您的 EvolvXSI 客户代表以获取访问权限。",
+        "description": "Craft 由 NortPole 按部署逐一启用。请联系您的 NortPole 客户代表以获取访问权限。",
         "title": "此部署不提供 Craft"
       }
     },
@@ -5883,7 +5883,7 @@
         "title": "导出日志"
       },
       "header": {
-        "description": "下载服务器日志文件的 zip 压缩包,以附加到 EvolvXSI 支持工单中。"
+        "description": "下载服务器日志文件的 zip 压缩包,以附加到 NortPole 支持工单中。"
       },
       "receipt": {
         "duplicateHost": {
@@ -6361,7 +6361,7 @@
         }
       },
       "tokenLimits": {
-        "disabledTooltip": "Token 速率限制仅在 [EvolvXSI 企业版](/admin/billing) 中提供。"
+        "disabledTooltip": "Token 速率限制仅在 [NortPole 企业版](/admin/billing) 中提供。"
       },
       "builtIn": {
         "admin": {
@@ -6869,7 +6869,7 @@
     "indexSettings": {
       "advanced": {
         "title": "高级选项",
-        "description": "这些设置会改变 {appName} 在搜索中应用文档权限的效率，不会改变每个用户可以看到的文档。如无 EvolvXSI 团队的明确指导，请勿更改。"
+        "description": "这些设置会改变 {appName} 在搜索中应用文档权限的效率，不会改变每个用户可以看到的文档。如无 NortPole 团队的明确指导，请勿更改。"
       },
       "actions": {
         "applyForward": {
@@ -6958,7 +6958,7 @@
           "label": "或"
         },
         "quantizationOnly": {
-          "description": "仅更改了向量量化，因此 EvolvXSI 会使用已存储的向量重建索引，无需重新嵌入。这比完整重新索引快得多。",
+          "description": "仅更改了向量量化，因此 NortPole 会使用已存储的向量重建索引，无需重新嵌入。这比完整重新索引快得多。",
           "title": "将重建索引。"
         },
         "reindex": {
@@ -6970,7 +6970,7 @@
         }
       },
       "cloudDisabled": {
-        "tooltip": "此设置由 EvolvXSI Cloud 管理。"
+        "tooltip": "此设置由 NortPole Cloud 管理。"
       },
       "contextualModel": {
         "description": "此模型用于为分块生成上下文。",
@@ -6987,7 +6987,7 @@
       },
       "embeddingModel": {
         "cloudManaged": {
-          "title": "Embedding 模型和相关设置由 EvolvXSI Cloud 管理。"
+          "title": "Embedding 模型和相关设置由 NortPole Cloud 管理。"
         },
         "description": "{appName} 使用此模型对文档进行编码，以供搜索和检索。",
         "title": "Embedding 模型"
@@ -7136,7 +7136,7 @@
         }
       },
       "modelPicker": {
-        "cpuEstimateHint": "CPU 速度为估计值，会因硬件和文档大小而异。RAM 建议适用于一个已加载模型，并非整个 EvolvXSI 系统的内存要求。重新索引时请预留更多内存。",
+        "cpuEstimateHint": "CPU 速度为估计值，会因硬件和文档大小而异。RAM 建议适用于一个已加载模型，并非整个 NortPole 系统的内存要求。重新索引时请预留更多内存。",
         "addCustomModel": {
           "label": "添加自定义模型"
         },
@@ -7203,7 +7203,7 @@
         },
         "copyTitle": "正在重建索引…",
         "description": {
-          "copy": "EvolvXSI 正在使用已存储的向量重建索引，无需重新嵌入。这比重新嵌入快得多。",
+          "copy": "NortPole 正在使用已存储的向量重建索引，无需重新嵌入。这比重新嵌入快得多。",
           "withModel": "随着重新索引的进行，新的 embedding 设置（**{model}**）正在生效。这可能需要**数小时或数天**，具体取决于语料库规模。",
           "withoutModel": "随着重新索引的进行，新的 embedding 设置正在生效。这可能需要**数小时或数天**，具体取决于语料库规模。"
         },
@@ -8125,7 +8125,7 @@
         },
         "requestSentBody": "您的加入请求已发送。在等待 {domain} 管理员批准期间，您可以先以自己的团队身份浏览体验。",
         "tryEvolvXSIButton": {
-          "label": "等待期间先试用 EvolvXSI"
+          "label": "等待期间先试用 NortPole"
         }
       },
       "newTenant": {
@@ -8938,7 +8938,7 @@
         }
       },
       "liteModeNotice": {
-        "description": "此部署运行的是 EvolvXSI Lite，它没有向量数据库，因此连接器和文档索引均已禁用，不会索引任何内容。要连接数据源并索引文档，请以**标准模式**部署 EvolvXSI。请查看[部署指南]({docsUrl})开始使用。",
+        "description": "此部署运行的是 NortPole Lite，它没有向量数据库，因此连接器和文档索引均已禁用，不会索引任何内容。要连接数据源并索引文档，请以**标准模式**部署 NortPole。请查看[部署指南]({docsUrl})开始使用。",
         "title": "Lite 模式下无法使用索引功能"
       },
       "providerCard": {
@@ -9227,7 +9227,7 @@
           "item": "像在 Web 界面中一样，直接给 EvolvXSIBot 发消息进行搜索。"
         },
         "docsPrompt": {
-          "text": "请按照 EvolvXSI 文档中的<link>指南</link>开始使用！"
+          "text": "请按照 NortPole 文档中的<link>指南</link>开始使用！"
         },
         "documentSets": {
           "item": "根据提问所在的频道，选择 EvolvXSIBot 应基于哪些文档集回答。"
@@ -9770,7 +9770,7 @@
         "label": "首次访问弹窗通知"
       },
       "appName": {
-        "description": "此名称将在整个应用中显示,并替换界面中的\"EvolvXSI\"。",
+        "description": "此名称将在整个应用中显示,并替换界面中的\"NortPole\"。",
         "label": "应用显示名称"
       },
       "chatFooter": {
@@ -9796,7 +9796,7 @@
         "label": "问候语"
       },
       "helpLink": {
-        "description": "除 EvolvXSI 文档外,在用户菜单中添加自定义帮助链接。",
+        "description": "除 NortPole 文档外,在用户菜单中添加自定义帮助链接。",
         "enterpriseTooltip": "自定义帮助链接是企业版套餐的功能。",
         "label": "自定义帮助链接"
       },
@@ -9949,7 +9949,7 @@
             "project": {
               "label": "项目名称",
               "description": "记录跟踪数据的 Braintrust 项目名称。",
-              "placeholder": "EvolvXSI"
+              "placeholder": "NortPole"
             },
             "apiUrl": {
               "label": "API URL",
@@ -11674,7 +11674,7 @@
         "label": "创建新组织"
       },
       "createTeamOption": {
-        "text": "创建新的 EvolvXSI 团队"
+        "text": "创建新的 NortPole 团队"
       },
       "differentEmailPrompt": {
         "text": "拥有使用其他邮箱的账户？"
@@ -11683,10 +11683,10 @@
         "title": "未找到账户"
       },
       "inviteOption": {
-        "text": "受邀加入现有的 EvolvXSI 团队"
+        "text": "受邀加入现有的 NortPole 团队"
       },
       "notFound": {
-        "description": "我们在记录中找不到您的账户。要访问 EvolvXSI，您需要执行以下操作之一："
+        "description": "我们在记录中找不到您的账户。要访问 NortPole，您需要执行以下操作之一："
       },
       "signInLink": {
         "label": "登录"
@@ -11755,7 +11755,7 @@
         "description": "账户访问限制或权限问题"
       },
       "cloudSupportPrompt": {
-        "text": "如果问题持续存在，请通过 <link>support@evolvxsi.local</link> 联系 EvolvXSI 团队"
+        "text": "如果问题持续存在，请通过 <link>support@evolvxsi.local</link> 联系 NortPole 团队"
       },
       "code": {
         "accessDenied": "您的身份提供方拒绝了访问。",
@@ -12175,7 +12175,7 @@
       },
       "modal": {
         "title": "连接工具",
-        "description": "添加你的凭据，即可在 EvolvXSI 中使用这些工具。",
+        "description": "添加你的凭据，即可在 NortPole 中使用这些工具。",
         "hint": "你可以在不连接这些工具的情况下继续聊天，但智能体的功能可能会受到限制。"
       },
       "connect": {
@@ -14224,7 +14224,7 @@
         "alt": "徽标"
       },
       "poweredBy": {
-        "label": "由 EvolvXSI 提供支持"
+        "label": "由 NortPole 提供支持"
       }
     },
     "modelSelectors": {
@@ -14250,9 +14250,9 @@
         "message": "无法完成授权"
       },
       "desktopHandoff": {
-        "button": "打开 EvolvXSI",
-        "description": "浏览器将打开 EvolvXSI 桌面应用以完成连接。应用打开后，您可以关闭此标签页。",
-        "title": "返回 EvolvXSI"
+        "button": "打开 NortPole",
+        "description": "浏览器将打开 NortPole 桌面应用以完成连接。应用打开后，您可以关闭此标签页。",
+        "title": "返回 NortPole"
       },
       "genericError": {
         "description": "OAuth 过程中发生错误。请重试。",
@@ -14301,11 +14301,11 @@
       },
       "business": {
         "title": "商业版",
-        "tooltip": "此功能仅在 [EvolvXSI 商业版或企业版](/admin/billing) 中提供。"
+        "tooltip": "此功能仅在 [NortPole 商业版或企业版](/admin/billing) 中提供。"
       },
       "enterprise": {
         "title": "企业版",
-        "tooltip": "此功能仅在 [EvolvXSI 企业版](/admin/billing) 中提供。"
+        "tooltip": "此功能仅在 [NortPole 企业版](/admin/billing) 中提供。"
       },
       "upgrade": {
         "label": "升级方案"
@@ -14514,8 +14514,8 @@
             "label": "名称"
           }
         },
-        "managedDescription": "由 EvolvXSI 提供，请配置智能体可以执行的操作。",
-        "managedNote": "EvolvXSI 管理凭据。在“权限”中设置操作策略。成员可从“插件”连接。",
+        "managedDescription": "由 NortPole 提供，请配置智能体可以执行的操作。",
+        "managedNote": "NortPole 管理凭据。在“权限”中设置操作策略。成员可从“插件”连接。",
         "saveButton": "保存"
       },
       "customApp": {
@@ -14596,7 +14596,7 @@
           "title": "暂无可连接的内容"
         },
         "header": {
-          "description": "连接 EvolvXSI Craft 在工作时可用作上下文的工具。",
+          "description": "连接 NortPole Craft 在工作时可用作上下文的工具。",
           "title": "应用"
         },
         "loading": {
@@ -15009,7 +15009,7 @@
       },
       "llmLocked": {
         "backToChatButton": "返回聊天",
-        "description": "EvolvXSI Craft 需要模型提供商，且只有管理员可以设置。请让您的管理员连接 Anthropic、OpenAI 或 OpenRouter。",
+        "description": "NortPole Craft 需要模型提供商，且只有管理员可以设置。请让您的管理员连接 Anthropic、OpenAI 或 OpenRouter。",
         "title": "需要 LLM 提供商"
       },
       "llmSetup": {
@@ -17611,7 +17611,7 @@
     "disk": "OpenSearch 数据节点的磁盘使用率至少为 85%。磁盘空间耗尽时，索引可能停止。",
     "jvmMemory": "多次检查显示 OpenSearch JVM 内存使用率持续超过 85%。搜索和索引可能失败。",
     "vectorMemory": "OpenSearch 向量内存接近满载或已达到上限。搜索和索引可能失败。",
-    "contact": "请联系系统管理员或通过 [support@evolvxsi.local](mailto:support@evolvxsi.local) 联系 EvolvXSI 团队。",
+    "contact": "请联系系统管理员或通过 [support@evolvxsi.local](mailto:support@evolvxsi.local) 联系 NortPole 团队。",
     "stale": "最新检查不可用。此警告反映上次成功检查的结果，尚未确认恢复。",
     "dismiss": "关闭",
     "diskTitle": "磁盘空间",

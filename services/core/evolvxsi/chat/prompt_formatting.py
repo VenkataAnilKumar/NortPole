@@ -1,4 +1,4 @@
-"""Prepare EvolvXSI message content, attachments, reminders, and token estimates."""
+"""Prepare NortPole message content, attachments, reminders, and token estimates."""
 
 import json
 from collections.abc import Callable, Sequence

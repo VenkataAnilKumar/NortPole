@@ -47,7 +47,7 @@ export const TRACING_PROVIDER_DETAILS: Record<
         labelKey: "providers.braintrust.fields.project.label",
         placeholderKey: "providers.braintrust.fields.project.placeholder",
         optional: true,
-        defaultValue: "EvolvXSI",
+        defaultValue: "NortPole",
         descriptionKey: "providers.braintrust.fields.project.description",
       },
       {

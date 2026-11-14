@@ -22,7 +22,7 @@ def _default_model_revision() -> str:
     return spec.hf_revision
 
 
-# EvolvXSI does not build or deploy a model-server image (upstream's Dockerfile.model_server is not part of this
+# NortPole does not build or deploy a model-server image (upstream's Dockerfile.model_server is not part of this
 # repository), so only the API image is checked here.
 
 

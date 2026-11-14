@@ -109,7 +109,7 @@ def deliver(url: str, payload: dict[str, Any], idempotency_key: str) -> Delivery
             json=payload,
             headers={
                 "Idempotency-Key": idempotency_key,
-                "User-Agent": "EvolvXSI-Action/1",
+                "User-Agent": "NortPole-Action/1",
                 # The connection goes to the checked address, so the name is sent explicitly.
                 "Host": host if port in (80, 443) else f"{host}:{port}",
             },

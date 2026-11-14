@@ -59,8 +59,8 @@ def mt_cloud_telemetry(
     all_properties["tenant_id"] = tenant_id
 
     # MIT version should not need to include any Posthog code
-    # This is only for EvolvXSI MT Cloud, this code should also never be hit, no reason for any orgs to
-    # be running the Multi Tenant version of EvolvXSI.
+    # This is only for NortPole MT Cloud, this code should also never be hit, no reason for any orgs to
+    # be running the Multi Tenant version of NortPole.
     fetch_versioned_implementation_with_fallback(
         module="evolvxsi.utils.telemetry",
         attribute="event_telemetry",

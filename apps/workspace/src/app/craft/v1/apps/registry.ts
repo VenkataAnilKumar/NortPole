@@ -104,7 +104,7 @@ export interface ExternalAppAdminResponse {
     name: string;
     is_valid: boolean | null;
   }[];
-  // EvolvXSI-managed built-in (cloud): creds/config EvolvXSI-owned and blanked here; the
+  // NortPole-managed built-in (cloud): creds/config NortPole-owned and blanked here; the
   // admin may only set availability and policies (the UI hides the rest).
   is_evolvxsi_managed: boolean;
 }

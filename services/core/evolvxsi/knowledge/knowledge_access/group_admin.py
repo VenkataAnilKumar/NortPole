@@ -1,4 +1,4 @@
-"""Create and maintain access groups (EvolvXSI-owned; upstream kept this in its
+"""Create and maintain access groups (NortPole-owned; upstream kept this in its
 enterprise edition).
 
 A group's name is what documents carry on their access lists (`group:<name>`),

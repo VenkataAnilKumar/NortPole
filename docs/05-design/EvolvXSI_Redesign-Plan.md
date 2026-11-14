@@ -1,4 +1,4 @@
-# EvolvXSI — UI and admin console redesign
+# NortPole — UI and admin console redesign
 
 Agreed with the owner on 2026-11-13. This plan follows UI plan U1–U6 (`EvolvXSI_UI-Plan.md`) and replaces its navigation. Every stage ends with the quality pass: light and dark, 1280 and 390 pixels wide, axe WCAG 2.1 A/AA, keyboard.
 

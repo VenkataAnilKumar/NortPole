@@ -168,7 +168,7 @@ def _load_registry_model(spec: EmbeddingModelSpec) -> "SentenceTransformer":
         )
         logger.info(
             "%s: transformers reports 'linear.weight' as UNEXPECTED. This is "
-            "expected: EvolvXSI adds it back as the projection layer.",
+            "expected: NortPole adds it back as the projection layer.",
             spec.model_name,
         )
 

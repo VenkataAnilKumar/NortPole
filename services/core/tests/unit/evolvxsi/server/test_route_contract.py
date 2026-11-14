@@ -275,8 +275,8 @@ def get_write_violations(app: FastAPI) -> set[str]:
 
 @pytest.fixture(scope="module")
 def app() -> Iterator[FastAPI]:
-    # EvolvXSI ships the community edition only (no ``ee`` package), so the contract covers the application
-    # ``evolvxsi.main`` builds, including EvolvXSI's own routers.
+    # NortPole ships the community edition only (no ``ee`` package), so the contract covers the application
+    # ``evolvxsi.main`` builds, including NortPole's own routers.
     evolvxsi_main = importlib.import_module("evolvxsi.main")
 
     # Pin the flags that add or remove routers so the route set is stable.

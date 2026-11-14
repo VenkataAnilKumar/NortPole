@@ -14,7 +14,7 @@ export interface LayoutProps {
  *
  * Child routes (/craft and /craft/v1) handle their own UI structure.
  * Shows the upgrade page when Craft is on but the tier is too low, and
- * redirects to /app if EvolvXSI Craft is otherwise disabled.
+ * redirects to /app if NortPole Craft is otherwise disabled.
  */
 export default async function Layout({ children }: LayoutProps) {
   noStore();
@@ -26,7 +26,7 @@ export default async function Layout({ children }: LayoutProps) {
     redirect(authResult.redirect as Route);
   }
 
-  // Check if EvolvXSI Craft is enabled via feature flag
+  // Check if NortPole Craft is enabled via feature flag
   // Only explicit true enables the feature; false or undefined = disabled
   const settings = await fetchSettingsSS();
   if (settings?.settings?.evolvxsi_craft_enabled !== true) {

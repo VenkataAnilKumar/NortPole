@@ -16,7 +16,7 @@ from pathlib import Path
 from evolvxsi.connectors.registry import CONNECTOR_CLASS_MAP
 
 SNAPSHOT_PATH = (
-    # The web app lives in apps/workspace in the EvolvXSI monorepo (services/core/scripts -> repository root).
+    # The web app lives in apps/workspace in the NortPole monorepo (services/core/scripts -> repository root).
     Path(__file__).resolve().parents[3]
     / "apps"
     / "workspace"

@@ -204,7 +204,7 @@ class MCPTool(Tool):
         _start = time.monotonic()
         _server = self.mcp_server.name
         outcome = MCPToolCallStatus.ERROR
-        # EvolvXSI: a server whose host is no longer on the allowlist is not called, whatever was saved earlier.
+        # NortPole: a server whose host is no longer on the allowlist is not called, whatever was saved earlier.
         from evolvxsi.extensions.policy import host_allowed
 
         if not host_allowed(self.mcp_server.server_url):

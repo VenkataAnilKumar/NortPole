@@ -220,7 +220,7 @@ def upsert_ingestion_doc(
         written_search_settings_id=active_search_settings.primary.id,
     )
 
-    # EvolvXSI: the pipeline reports a document that could not be embedded or
+    # NortPole: the pipeline reports a document that could not be embedded or
     # written in `failures` and still returns normally. Without this check the
     # caller gets a success, and the document row is marked indexed with no
     # chunks in the index, so it looks present and is never found.

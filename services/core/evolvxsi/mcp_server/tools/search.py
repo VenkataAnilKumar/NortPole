@@ -56,7 +56,7 @@ async def _post_model(
     body: BaseModel,
     access_token: AccessToken,
 ) -> httpx.Response:
-    """POST a Pydantic model as JSON to the EvolvXSI backend."""
+    """POST a Pydantic model as JSON to the NortPole backend."""
     return await get_http_client().post(
         url,
         content=body.model_dump_json(exclude_unset=True),
@@ -97,7 +97,7 @@ def _extract_error_detail(response: httpx.Response) -> str:
         if detail := body.get("detail"):
             return str(detail)
     except Exception as exc:
-        logger.debug("EvolvXSI MCP Server: error body was not JSON (%s)", exc)
+        logger.debug("NortPole MCP Server: error body was not JSON (%s)", exc)
     return f"Request failed with status {response.status_code}"
 
 
@@ -285,13 +285,13 @@ async def search_indexed_documents(
     retrieval_only: bool = False,
 ) -> dict[str, Any]:
     """
-    Search the user's knowledge base indexed in EvolvXSI.
+    Search the user's knowledge base indexed in NortPole.
     Use this tool for information that is not public knowledge and specific to the user,
     their team, their work, or their organization/company.
 
-    Runs the full EvolvXSI search pipeline (LLM query expansion, hybrid retrieval,
+    Runs the full NortPole search pipeline (LLM query expansion, hybrid retrieval,
     document selection, context expansion) — the same search quality as the
-    EvolvXSI chat interface.
+    NortPole chat interface.
 
     `source_types` restricts results to the named connector sources, and
     `document_set_names` to documents in the named Document Sets — useful for
@@ -305,7 +305,7 @@ async def search_indexed_documents(
     `skip_query_expansion` bypasses the LLM query-expansion step; useful when
     you already know the exact phrase to search for (faster, no LLM call for
     expansion).
-    `agent` runs the search as a named EvolvXSI agent, applying that agent's
+    `agent` runs the search as a named NortPole agent, applying that agent's
     knowledge scope (its document sets, attached documents and start date) and
     its configured model. It resolves the same way as the filters above.
     `agent` and `document_set_names` are mutually exclusive: explicit document
@@ -346,7 +346,7 @@ async def search_indexed_documents(
     tool = MCPServerToolName.SEARCH_INDEXED_DOCUMENTS
     use_retrieval_only = retrieval_only or MCP_SERVER_SEARCH_RETRIEVAL_ONLY
     logger.info(
-        "EvolvXSI MCP Server: document search: query='%s', sources=%s, document_sets=%s, agent=%s, retrieval_only=%s",
+        "NortPole MCP Server: document search: query='%s', sources=%s, document_sets=%s, agent=%s, retrieval_only=%s",
         query,
         source_types,
         document_set_names,
@@ -379,19 +379,19 @@ async def search_indexed_documents(
         except _FilterError as err:
             return _error_payload(str(err))
         except _NoIndexedSources:
-            logger.info("EvolvXSI MCP Server: No indexed sources available for tenant")
+            logger.info("NortPole MCP Server: No indexed sources available for tenant")
             outcome = MCPToolCallStatus.SUCCESS
             result_count = 0
             return _error_payload(
                 "No document sources are indexed yet. Add connectors or upload data "
-                "through EvolvXSI before calling search_indexed_documents."
+                "through NortPole before calling search_indexed_documents."
             )
 
         try:
             parsed_cutoff = _TIME_CUTOFF_ADAPTER.validate_python(time_cutoff)
         except ValidationError as err:
             logger.warning(
-                "EvolvXSI MCP Server: invalid time_cutoff '%s' (%s); continuing without time filter",
+                "NortPole MCP Server: invalid time_cutoff '%s' (%s); continuing without time filter",
                 time_cutoff,
                 err,
             )
@@ -427,11 +427,11 @@ async def search_indexed_documents(
         outcome = MCPToolCallStatus.SUCCESS
         result_count = len(results)
         logger.info(
-            "EvolvXSI MCP Server: Internal search returned %s results", len(results)
+            "NortPole MCP Server: Internal search returned %s results", len(results)
         )
         return {"results": results}
     except Exception as err:
-        logger.error("EvolvXSI MCP Server: Document search error: %s", err, exc_info=True)
+        logger.error("NortPole MCP Server: Document search error: %s", err, exc_info=True)
         return _error_payload(f"Document search failed: {str(err)}")
     finally:
         record_mcp_server_tool_outcome(tool, _start, outcome)
@@ -461,7 +461,7 @@ async def search_web(
     """
     _start = time.monotonic()
     tool = MCPServerToolName.SEARCH_WEB
-    logger.info("EvolvXSI MCP Server: Web search: query='%s', limit=%s", query, limit)
+    logger.info("NortPole MCP Server: Web search: query='%s', limit=%s", query, limit)
 
     access_token = require_access_token()
     outcome = MCPToolCallStatus.ERROR
@@ -487,7 +487,7 @@ async def search_web(
             "query": query,
         }
     except Exception as e:
-        logger.error("EvolvXSI MCP Server: Web search error: %s", e, exc_info=True)
+        logger.error("NortPole MCP Server: Web search error: %s", e, exc_info=True)
         return {
             "error": f"Web search failed: {str(e)}",
             "results": [],
@@ -522,7 +522,7 @@ async def open_urls(
     """
     _start = time.monotonic()
     tool = MCPServerToolName.OPEN_URLS
-    logger.info("EvolvXSI MCP Server: Open URL: fetching %s URLs", len(urls))
+    logger.info("NortPole MCP Server: Open URL: fetching %s URLs", len(urls))
 
     access_token = require_access_token()
     outcome = MCPToolCallStatus.ERROR
@@ -546,7 +546,7 @@ async def open_urls(
             "results": [result.model_dump(mode="json") for result in payload.results],
         }
     except Exception as err:
-        logger.error("EvolvXSI MCP Server: URL fetch error: %s", err, exc_info=True)
+        logger.error("NortPole MCP Server: URL fetch error: %s", err, exc_info=True)
         return _error_payload(f"URL fetch failed: {str(err)}")
     finally:
         record_mcp_server_tool_outcome(tool, _start, outcome)

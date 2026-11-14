@@ -30,15 +30,15 @@ const TOPICS: { title: string; body: string; href?: Route; link?: string }[] = [
   },
 ];
 
-export const metadata: Metadata = { title: "Help · EvolvXSI" };
+export const metadata: Metadata = { title: "Help · NortPole" };
 
 export default function HelpPage() {
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-10">
       <header className="flex flex-col gap-2">
-        <h1 className="text-xl font-semibold text-text-05">EvolvXSI help</h1>
+        <h1 className="text-xl font-semibold text-text-05">NortPole help</h1>
         <p className="text-sm text-text-03">
-          The essentials of using EvolvXSI. For anything specific to your
+          The essentials of using NortPole. For anything specific to your
           organisation, such as which sources are connected or who approves
           requests, ask your administrator.
         </p>

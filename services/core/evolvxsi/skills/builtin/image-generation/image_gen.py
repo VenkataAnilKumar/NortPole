@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate or edit images through the EvolvXSI image-generation API.
+"""Generate or edit images through the NortPole image-generation API.
 
     python image_gen.py generate -p "<prompt>" [--shape square|portrait|landscape] [-q high] [-n 1] [-o output.png]
     python image_gen.py edit -i input.png [-i more.png] -p "<instruction>" [-o output.png]

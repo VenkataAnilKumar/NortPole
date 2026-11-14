@@ -1,9 +1,9 @@
-"""EvolvXSI-owned load fix-up for ``voyageai/voyage-4-nano``, with no remote code.
+"""NortPole-owned load fix-up for ``voyageai/voyage-4-nano``, with no remote code.
 
 A plain SentenceTransformer load of this checkpoint gives wrong vectors and no
 error: transformers loads the native, causal ``Qwen3Model`` and drops the
 bias-free ``linear.weight`` projection (1024 -> 2048). The checkpoint's remote
-code fails on transformers 5.14.1, and EvolvXSI never runs remote code anyway. The
+code fails on transformers 5.14.1, and NortPole never runs remote code anyway. The
 fix makes attention bidirectional and adds the projection as a bias-free
 ``Dense`` layer after mean pooling: pooling is linear, so this equals the remote
 code's per-token projection. Checked on real weights against an independent

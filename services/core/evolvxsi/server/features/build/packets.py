@@ -1,8 +1,8 @@
 """Build Mode packet types for streaming agent responses.
 
-Custom EvolvXSI packet types layered on top of the sandbox-event schema
+Custom NortPole packet types layered on top of the sandbox-event schema
 (:mod:`sandbox.event_schema`). Sandbox events pass through directly from
-the agent; this module only contains EvolvXSI-specific extensions like
+the agent; this module only contains NortPole-specific extensions like
 artifacts and file operations.
 
 All packets use SSE (Server-Sent Events) format with `event: message` and
@@ -18,8 +18,8 @@ Sandbox events (re-emitted from :mod:`sandbox.event_schema`):
 - prompt_response: Agent finished processing
 - error: An error occurred
 
-Custom EvolvXSI packets (defined here):
-- error: EvolvXSI-specific errors (e.g., session not found)
+Custom NortPole packets (defined here):
+- error: NortPole-specific errors (e.g., session not found)
 - subagent_started: A child opencode session was created under a parent turn
 """
 
@@ -35,7 +35,7 @@ from pydantic import BaseModel, Field
 
 
 class BasePacket(BaseModel):
-    """Base packet with common fields for all custom EvolvXSI packet types."""
+    """Base packet with common fields for all custom NortPole packet types."""
 
     type: str
     timestamp: str = Field(
@@ -44,12 +44,12 @@ class BasePacket(BaseModel):
 
 
 # =============================================================================
-# Custom EvolvXSI Packets
+# Custom NortPole Packets
 # =============================================================================
 
 
 class ErrorPacket(BasePacket):
-    """An EvolvXSI-specific error occurred (e.g., session not found, sandbox not running)."""
+    """An NortPole-specific error occurred (e.g., session not found, sandbox not running)."""
 
     type: Literal["error"] = "error"
     message: str
@@ -101,7 +101,7 @@ class CompactionPacket(BasePacket):
 
 
 # =============================================================================
-# Union Type for Custom EvolvXSI Packets
+# Union Type for Custom NortPole Packets
 # =============================================================================
 
 BuildPacket = (

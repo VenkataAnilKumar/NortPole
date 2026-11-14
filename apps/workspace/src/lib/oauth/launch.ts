@@ -151,7 +151,7 @@ export function notifyOAuthComplete(
 }
 
 /**
- * Closes a callback tab that a waiting EvolvXSI page opened. Returns false when
+ * Closes a callback tab that a waiting NortPole page opened. Returns false when
  * nothing is waiting, so the caller keeps its redirect fallback. A desktop
  * callback window stays open on failure, since the waiting page may be gone.
  */

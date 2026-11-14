@@ -37,7 +37,7 @@ Sandbox containers run with:
 
 Threat model — Docker vs Kubernetes parity gap
 ----------------------------------------------
-``OPENCODE_CONFIG_CONTENT`` contains only the EvolvXSI gateway placeholder. The
+``OPENCODE_CONFIG_CONTENT`` contains only the NortPole gateway placeholder. The
 egress proxy replaces it with the sandbox PAT; provider credentials never enter
 the sandbox container.
 
@@ -46,7 +46,7 @@ Outbound communication is intentionally limited to:
 1. Public internet over HTTPS (the bridge has default internet egress; block at
    the host's ``DOCKER-USER`` chain if you need a stricter posture, e.g. for EC2
    IMDS).
-2. The EvolvXSI API via the complete ``EVOLVXSI_SERVER_URL`` API base. The Craft
+2. The NortPole API via the complete ``EVOLVXSI_SERVER_URL`` API base. The Craft
    overlay uses a private alias on the sandbox bridge by default; deployments
    may instead provide a public HTTPS API URL.
 

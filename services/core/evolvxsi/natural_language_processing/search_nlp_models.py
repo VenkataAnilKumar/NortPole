@@ -327,7 +327,7 @@ def _cleanup_thread_local(func: Callable) -> Callable:
 
 
 WARM_UP_STRINGS = [
-    "EvolvXSI is amazing!",
+    "NortPole is amazing!",
     "Check out our easy deployment guide at",
     "/help/deployment/getting_started/quickstart",
 ]
@@ -607,7 +607,7 @@ class CloudEmbedding:
 
         final_embeddings: list[Embedding] = []
         for text_batch in batch_list(texts, _COHERE_MAX_INPUT_LEN):
-            # Does not use the same tokenizer as the EvolvXSI API server but it's approximately the same
+            # Does not use the same tokenizer as the NortPole API server but it's approximately the same
             # empirically it's only off by a very few tokens so it's not a big deal
             response = await self.policy.send_async(
                 partial(

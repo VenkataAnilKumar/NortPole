@@ -99,7 +99,7 @@ _DEFAULT_ROW_TEXT_BY_KIND: dict[CheckErrorKind, tuple[str, str]] = {
     ),
     CheckErrorKind.UNREACHABLE: (
         "Cannot reach the source",
-        "EvolvXSI could not connect to the source.\nCheck the address, then re-run.",
+        "NortPole could not connect to the source.\nCheck the address, then re-run.",
     ),
     CheckErrorKind.UNEXPECTED: (
         "Unexpected error",

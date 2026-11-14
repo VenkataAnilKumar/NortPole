@@ -1,16 +1,16 @@
-"""Who may read a Google Drive file or folder, from Drive's own sharing. EvolvXSI's implementation of the hook the
-Drive connector calls when a source uses "sync" access (the upstream one is in the Enterprise package, which EvolvXSI
+"""Who may read a Google Drive file or folder, from Drive's own sharing. NortPole's implementation of the hook the
+Drive connector calls when a source uses "sync" access (the upstream one is in the Enterprise package, which NortPole
 does not ship). Written from Drive's documented permission model, not copied.
 
 Mapping, failing closed where the meaning is unclear:
 
 - ``user``: that address may read it (owners, editors, commenters and readers alike).
-- ``group``: recorded, but grants nothing until EvolvXSI syncs that group's members (nobody's access list holds an
+- ``group``: recorded, but grants nothing until NortPole syncs that group's members (nobody's access list holds an
   external group yet).
 - ``domain`` ("anyone at example.com"): grants nothing for now; it needs a per-domain entry on both the document and
   the person, which is not built.
 - ``anyone`` ("anyone with the link", or public on the web): never makes the file public here. Only the people and
-  groups named on the file can find it in EvolvXSI (the recommended default, 2026-11-14; the owner may change it).
+  groups named on the file can find it in NortPole (the recommended default, 2026-11-14; the owner may change it).
 - A removed (``deleted``) permission grants nothing.
 - If the permissions cannot be read at all, only the person whose access found the file is granted (as upstream).
 """

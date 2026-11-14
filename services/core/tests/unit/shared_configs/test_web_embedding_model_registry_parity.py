@@ -15,7 +15,7 @@ from shared_configs.embedding_models import (
 from shared_configs.enums import EmbeddingProvider
 from tests.common.paths import find_ancestor_containing
 
-# The web app lives in apps/workspace in the EvolvXSI monorepo.
+# The web app lives in apps/workspace in the NortPole monorepo.
 _WEB_REGISTRY = (
     find_ancestor_containing("apps/workspace/src")
     / "apps"

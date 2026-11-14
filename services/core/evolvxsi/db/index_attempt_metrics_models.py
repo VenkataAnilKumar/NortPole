@@ -2,7 +2,7 @@
 
 This module owns the canonical pipeline-stage enum, its display-scope
 companion enum, and the static mapping between them. It is intentionally
-a leaf module — it imports nothing from the rest of the EvolvXSI codebase —
+a leaf module — it imports nothing from the rest of the NortPole codebase —
 so it can be safely imported by both ``evolvxsi.db.models`` (which needs the
 enum as a column type on ``IndexAttemptStageMetric``) and
 ``evolvxsi.db.index_attempt_metrics`` (which uses the taxonomy when writing

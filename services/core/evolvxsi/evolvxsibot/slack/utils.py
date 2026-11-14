@@ -228,7 +228,7 @@ def _build_error_block(error_message: str) -> Block:
     the error without completely breaking
     """
     display_text = (
-        "There was an error displaying all of the EvolvXSI answers."
+        "There was an error displaying all of the NortPole answers."
         f" Please let an admin or an evolvxsi developer know. Error: {error_message}"
     )
     return SectionBlock(text=display_text)
@@ -608,7 +608,7 @@ def read_slack_thread(
                     # this will need to be updated to get the correct "answer" portion
                     message = reply["blocks"][1].get("text", {}).get("text")
             else:
-                # Other bots are not counted as the LLM response which only comes from EvolvXSI
+                # Other bots are not counted as the LLM response which only comes from NortPole
                 message_type = MessageType.USER
                 bot_user_name = fetch_user_semantic_id_from_id(
                     reply.get("user"), client

@@ -16,8 +16,8 @@ from evolvxsi.utils.logger import setup_logger
 
 _CA_KEY_SIZE_BITS = 4096
 _CA_VALIDITY_DAYS = 1825
-_CA_COMMON_NAME = "EvolvXSI Sandbox Proxy CA"
-_CA_ORG_NAME = "EvolvXSI"
+_CA_COMMON_NAME = "NortPole Sandbox Proxy CA"
+_CA_ORG_NAME = "NortPole"
 # mitmproxy auto-loads `$confdir/mitmproxy-ca.pem`. The subdir is ours to chmod
 # 0o700 (the mount root is root-owned).
 _DEFAULT_CA_PEM_PATH = "/var/run/sandbox-proxy/mitmproxy-confdir/mitmproxy-ca.pem"

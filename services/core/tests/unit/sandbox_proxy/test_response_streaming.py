@@ -7,7 +7,7 @@ not buffered whole. This is the only assertion that catches the real failure
 mode (hooking `response` instead of `responseheaders`); pinning
 `flow.response.stream` on a mock would not, since the relay never runs.
 
-Uses real local TCP sockets only; no EvolvXSI services are touched (the db/cache
+Uses real local TCP sockets only; no NortPole services are touched (the db/cache
 factories are wired to raise if consulted), so this lives in the unit suite.
 """
 

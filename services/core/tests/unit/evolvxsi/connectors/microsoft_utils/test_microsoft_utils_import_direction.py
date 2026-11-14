@@ -69,7 +69,7 @@ def test_package_does_not_import_enterprise(module_path: pathlib.Path) -> None:
 
 @pytest.mark.parametrize(
     "module_path",
-    # EvolvXSI ships without the Enterprise package; check its modules only where it exists.
+    # NortPole ships without the Enterprise package; check its modules only where it exists.
     _modules_in(PACKAGE_DIR) + (_modules_in(EE_PACKAGE_DIR) if EE_PACKAGE_DIR.is_dir() else []),
     ids=_module_id,
 )

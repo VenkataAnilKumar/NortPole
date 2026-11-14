@@ -1,4 +1,4 @@
-# EvolvXSI — pending work checklist
+# NortPole — pending work checklist
 
 Status: Working list, updated 2026-11-14 (after the redesign stages R1–R6b and R8 and the inherited test suite work). Followed one item at a time, in the order below. The phase definitions are in the [delivery plan](EvolvXSI_Adopted-Core-Delivery-Plan.md); what each finished piece checked and did not check is in [REVIEW](../REVIEW.md). All testing so far is sandbox-only, with stand-in models.
 
@@ -70,7 +70,7 @@ Status: Working list, updated 2026-11-14 (after the redesign stages R1–R6b and
 
 ## Inherited test suite (2026-11-14)
 
-- [x] Fixed: neutral governance settings for unit tests, missing fixtures and test helpers, monorepo paths, the route contract (with three GET handlers that wrote), files the upstream copy dropped (Craft agent templates, dev scripts, test helpers), tests pointed at EvolvXSI's own deployment, and tokenizers baked into the API image.
+- [x] Fixed: neutral governance settings for unit tests, missing fixtures and test helpers, monorepo paths, the route contract (with three GET handlers that wrote), files the upstream copy dropped (Craft agent templates, dev scripts, test helpers), tests pointed at NortPole's own deployment, and tokenizers baked into the API image.
 - Not a gap (checked 2026-11-14): Box web links. A failing test suggested they had no access list, but that test switches on Enterprise mode; in the community edition every Box document takes the source's own access setting.
 - Sandbox-only (pass on a normal machine): IPv6 `::1` binding in the sandbox proxy tests, DNS for `example.com`, the model server needs `torch`, and one Hugging Face download host blocked (the Docker image bake was therefore not run here).
 
@@ -89,12 +89,18 @@ Status: Working list, updated 2026-11-14 (after the redesign stages R1–R6b and
 ## Repository structure (decision 0006, 2026-11-14)
 
 - [x] Phase 1: placeholders removed, `modules.json` true, structure check updated, `CODEOWNERS`, `Makefile`, CI for the web app and a nightly full suite.
-- [x] Phase 2: EvolvXSI modules grouped by domain in `services/core/evolvxsi`, with an import-boundary test.
+- [x] Phase 2: NortPole modules grouped by domain in `services/core/evolvxsi`, with an import-boundary test.
 - [x] Phase 3: first-party packs as source in `packs/horizontal` and `packs/vertical/<industry>`, editions.
 - [x] Phase 4: generated contracts in `packages/contracts` and `packages/pack-sdk`.
 - [ ] Phase 5 (when needed): tenancy decision, Kubernetes and cloud profiles, service splits, connector SDK.
 - [x] Pack signatures re-checkable from the database (done 2026-11-14): each version keeps its exact signed bytes (`signed_manifest`, migration `a1c3e5f7b9d2`) and `GET /admin/packs/verify` re-checks digest, signature and content. Versions installed earlier whose bytes could not be recovered are reported as unverifiable until the same signed package is uploaded again.
 - [ ] Packs admin page: show the integrity check's result and the "signed bytes kept" flag (the API is built; the screen is not).
+
+## Product name (decision 0007, 2026-11-14)
+
+- [x] Step 1: the visible name is NortPole (app, notifications, skill text, README, documents, screenshots).
+- [ ] Step 2: code names (`evolvxsi` package, `EVOLVXSI_*` settings, `EvolvXSI*` classes, document file names) and the GitHub repository name.
+- [ ] Before launch: trademark search for NortPole (software, classes 9 and 42) and the `.com` and `.ai` domains.
 
 ## Waiting for the owner's yes
 

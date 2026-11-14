@@ -76,7 +76,7 @@ Status checked against LiteLLM v1.100.4 (2026-10-27):
      registry (valid provider prefix + known tail, mode "chat"), so an explicit
      "responses/" prefix is left attached and the request is sent to
      /chat/completions with the mangled model name
-   - The prefix is only ever set deliberately (EvolvXSI API-surface routing for
+   - The prefix is only ever set deliberately (NortPole API-surface routing for
      OpenAI-compatible gateways such as Bifrost and Portkey), so honor it
      unconditionally and pass the remainder through as the literal model id
    STATUS: STILL NEEDED - v1.100.4 consults the registry before honoring the prefix.
@@ -92,7 +92,7 @@ Status checked against LiteLLM v1.100.4 (2026-10-27):
    - Reasoning off then silently becomes the API's own default on every turn after a
      tool call, which on the Claude 5 line is full reasoning
    - The API also accepts enabled thinking after tool calls without thinking
-     blocks. EvolvXSI sends that only when the model chose not to think on a step or
+     blocks. NortPole sends that only when the model chose not to think on a step or
      a replayed block's prefix changed, and the drop then keeps thinking off for
      the rest of the session. So every thinking type is kept
    - Bedrock Converse carries its own copy of the same check in
@@ -786,7 +786,7 @@ def _patch_anthropic_keeps_requested_thinking() -> None:
 
     Upstream drops the param there to avoid "Expected thinking or
     redacted_thinking, but found tool_use". The Anthropic API accepts that
-    history on every current Claude model, and EvolvXSI sends it only when the
+    history on every current Claude model, and NortPole sends it only when the
     model chose not to think or a replayed block's prefix changed. Dropping
     the param instead turns thinking off for the rest of the session, or on
     the Claude 5 line resets it to the model's default effort.

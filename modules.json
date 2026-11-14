@@ -8,7 +8,7 @@
     },
     {
       "path": "services/core",
-      "responsibility": "API and background workers. EvolvXSI's own code is grouped by domain (governance, work, knowledge, insight); inherited platform modules stay in place.",
+      "responsibility": "API and background workers. NortPole's own code is grouped by domain (governance, work, knowledge, insight); inherited platform modules stay in place.",
       "maturity": "implemented",
       "implemented": true
     },
@@ -32,7 +32,7 @@
     },
     {
       "path": "packages/contracts",
-      "responsibility": "Generated contracts: the pack manifest JSON Schema and the OpenAPI description of EvolvXSI's routes, checked for drift.",
+      "responsibility": "Generated contracts: the pack manifest JSON Schema and the OpenAPI description of NortPole's routes, checked for drift.",
       "maturity": "implemented",
       "implemented": true
     },
@@ -45,7 +45,7 @@
   ],
   "status": "pilot",
   "updated": "2026-11-14",
-  "product": "EvolvXSI",
+  "product": "NortPole",
   "structure": "modular-monorepo (decision 0006)",
   "packs": {
     "template": "packs/_template",

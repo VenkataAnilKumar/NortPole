@@ -114,7 +114,7 @@ GROUP_ID = "0b7c4c6e-5b7b-4c53-9a36-1e6a5f3f2d10"
 
 def test_resolve_groups_reads_an_object_id_directly() -> None:
     gateway, client = _gateway()
-    client.get_json.return_value = {"id": GROUP_ID, "displayName": "EvolvXSI Users"}
+    client.get_json.return_value = {"id": GROUP_ID, "displayName": "NortPole Users"}
 
     result = gateway.resolve_groups(identifier=GROUP_ID)
 
@@ -166,7 +166,7 @@ def test_group_member_without_an_account_enabled_field_is_kept() -> None:
 
 def test_resolve_groups_canonicalises_an_object_id_in_the_path() -> None:
     gateway, client = _gateway()
-    client.get_json.return_value = {"id": GROUP_ID, "displayName": "EvolvXSI Users"}
+    client.get_json.return_value = {"id": GROUP_ID, "displayName": "NortPole Users"}
 
     gateway.resolve_groups(identifier="{" + GROUP_ID.upper() + "}")
 

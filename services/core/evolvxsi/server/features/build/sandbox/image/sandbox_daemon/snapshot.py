@@ -1,7 +1,7 @@
 """Snapshot create/restore operations for the sandbox sidecar.
 
 The sidecar owns pod-local filesystem access. The api-server owns durable
-storage by streaming these tarballs into/out of the main EvolvXSI FileStore.
+storage by streaming these tarballs into/out of the main NortPole FileStore.
 """
 
 import logging

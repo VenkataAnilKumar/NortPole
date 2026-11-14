@@ -371,7 +371,7 @@ def update_persona_access(
         ).delete(synchronize_session="fetch")
 
         if group_ids or group_shares:
-            raise NotImplementedError("EvolvXSI MIT does not support group-based sharing")
+            raise NotImplementedError("NortPole MIT does not support group-based sharing")
 
     # When sharing changes, user file ACLs need to be updated in the vector DB
     if needs_sync:
@@ -963,7 +963,7 @@ def transfer_persona_ownership(
     """Move ownership to a single user. Group targets are EE-only (versioned
     override in ee.evolvxsi.db.persona)."""
     if new_owner_group_id is not None:
-        raise NotImplementedError("EvolvXSI MIT does not support group ownership")
+        raise NotImplementedError("NortPole MIT does not support group ownership")
     _transfer_persona_ownership(
         persona_id=persona_id,
         user=user,

@@ -1,4 +1,4 @@
-# EvolvXSI core API (FastAPI). Lite mode needs no search index and no model server.
+# NortPole core API (FastAPI). Lite mode needs no search index and no model server.
 # Build from this directory:  docker build -t evolvxsi-core .
 # Every dependency is a prebuilt wheel, so no system packages are installed.
 FROM python:3.13-slim AS build

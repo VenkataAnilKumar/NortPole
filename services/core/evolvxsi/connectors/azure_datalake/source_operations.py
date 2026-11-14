@@ -311,7 +311,7 @@ class AzureDataLakeSourceOperations(SourceOperations):
             ) from e
         except (requests.RequestException, ValueError) as e:
             raise UnreachableValidationError(
-                f"EvolvXSI cannot read {target} from Microsoft: {e}"
+                f"NortPole cannot read {target} from Microsoft: {e}"
             ) from e
 
     def _arm_get(
@@ -409,7 +409,7 @@ class AzureDataLakeSourceOperations(SourceOperations):
             ) from e
         except ServiceRequestError as e:
             raise UnreachableValidationError(
-                f"EvolvXSI cannot reach the storage account "
+                f"NortPole cannot reach the storage account "
                 f"'{self._account_name()}'. Check the account name."
             ) from e
         except HttpResponseError as e:

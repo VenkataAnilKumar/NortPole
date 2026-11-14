@@ -1,5 +1,5 @@
 /**
- * @evolvxsi-ai/shared — platform-agnostic code shared between EvolvXSI web and mobile.
+ * @evolvxsi-ai/shared — platform-agnostic code shared between NortPole web and mobile.
  *
  * Design tokens are NOT re-exported here: they are generated build artifacts,
  * consumed via the dedicated subpaths "@evolvxsi-ai/shared/tokens.css" (web/Opal CSS

@@ -494,7 +494,7 @@ def test_disabled_thinking_survives_tool_call_history(off_type: str) -> None:
 
 
 def test_anthropic_api_keeps_enabled_thinking_after_tool_calls() -> None:
-    """EvolvXSI sends thinking after a tool step with no blocks only when the model
+    """NortPole sends thinking after a tool step with no blocks only when the model
     chose not to think, and the Anthropic API accepts it."""
     body = _anthropic_body({"type": "adaptive"}, list(_TOOL_HISTORY))
     assert body["thinking"] == {"type": "adaptive"}

@@ -1,4 +1,4 @@
-"""Utility helpers for the EvolvXSI MCP server."""
+"""Utility helpers for the NortPole MCP server."""
 
 from __future__ import annotations
 
@@ -53,7 +53,7 @@ def require_access_token() -> AccessToken:
     access_token = get_access_token()
     if not access_token:
         raise ValueError(
-            "MCP Server requires an EvolvXSI access token to authenticate your request"
+            "MCP Server requires an NortPole access token to authenticate your request"
         )
     return access_token
 
@@ -98,14 +98,14 @@ async def get_indexed_sources(
     except (httpx.HTTPStatusError, httpx.RequestError, ValueError):
         # Re-raise known exception types (httpx errors and validation errors)
         logger.error(
-            "EvolvXSI MCP Server: Failed to fetch indexed sources",
+            "NortPole MCP Server: Failed to fetch indexed sources",
             exc_info=True,
         )
         raise
     except Exception as exc:
         # Wrap unexpected exceptions
         logger.error(
-            "EvolvXSI MCP Server: Unexpected error fetching indexed sources",
+            "NortPole MCP Server: Unexpected error fetching indexed sources",
             exc_info=True,
         )
         raise RuntimeError(f"Failed to fetch indexed sources: {exc}") from exc
@@ -128,13 +128,13 @@ async def get_accessible_document_sets(
         return _DOCUMENT_SET_ENTRIES_ADAPTER.validate_json(response.content)
     except (httpx.HTTPStatusError, httpx.RequestError, ValueError):
         logger.error(
-            "EvolvXSI MCP Server: Failed to fetch document sets",
+            "NortPole MCP Server: Failed to fetch document sets",
             exc_info=True,
         )
         raise
     except Exception as exc:
         logger.error(
-            "EvolvXSI MCP Server: Unexpected error fetching document sets",
+            "NortPole MCP Server: Unexpected error fetching document sets",
             exc_info=True,
         )
         raise RuntimeError(f"Failed to fetch document sets: {exc}") from exc
@@ -157,13 +157,13 @@ async def get_accessible_agents(
         return _AGENT_ENTRIES_ADAPTER.validate_json(response.content)
     except (httpx.HTTPStatusError, httpx.RequestError, ValueError):
         logger.error(
-            "EvolvXSI MCP Server: Failed to fetch agents",
+            "NortPole MCP Server: Failed to fetch agents",
             exc_info=True,
         )
         raise
     except Exception as exc:
         logger.error(
-            "EvolvXSI MCP Server: Unexpected error fetching agents",
+            "NortPole MCP Server: Unexpected error fetching agents",
             exc_info=True,
         )
         raise RuntimeError(f"Failed to fetch agents: {exc}") from exc

@@ -162,16 +162,16 @@ def handle_regular_answer(
 
     # Capture whether response mode for channel is ephemeral. Even if the channel is set
     # to respond with an ephemeral message, we still send as non-ephemeral if
-    # the message is a dm with the EvolvXSI bot.
+    # the message is a dm with the NortPole bot.
     send_as_ephemeral = (
         slack_channel_config.channel_config.get("is_ephemeral", False)
         or message_info.is_slash_command
     ) and not message_info.is_bot_dm
 
     # If the channel is configured to respond with an ephemeral message,
-    # or the message is a dm to the EvolvXSI bot, we should use the proper evolvxsi user from the email.
-    # This will make documents privately accessible to the user available to EvolvXSI Bot answers.
-    # Otherwise - if not ephemeral or DM to EvolvXSI Bot - we use anonymous user to restrict
+    # or the message is a dm to the NortPole bot, we should use the proper evolvxsi user from the email.
+    # This will make documents privately accessible to the user available to NortPole Bot answers.
+    # Otherwise - if not ephemeral or DM to NortPole Bot - we use anonymous user to restrict
     # to public docs.
 
     resolved_user = (
@@ -528,7 +528,7 @@ def handle_regular_answer(
             client=client,
             channel=channel,
             receiver_ids=target_receiver_ids,
-            text="Hello! EvolvXSI has some results for you!",
+            text="Hello! NortPole has some results for you!",
             blocks=all_blocks,
             thread_ts=target_thread_ts,
             # don't unfurl, since otherwise we will have 5+ previews which makes the message very long

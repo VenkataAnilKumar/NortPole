@@ -293,7 +293,7 @@ export default function AppSidebar() {
   >(null);
   const moveCustomAgentModal = useCreateModal();
 
-  // Check if EvolvXSI Craft is enabled via settings (backed by PostHog feature flag)
+  // Check if NortPole Craft is enabled via settings (backed by PostHog feature flag)
   // Only explicit true enables the feature; false or undefined = disabled
   const isEvolvXSICraftEnabled = combinedSettingsData?.evolvxsi_craft_enabled === true;
   const isEvolvXSICraftUpsell =
@@ -312,7 +312,7 @@ export default function AppSidebar() {
     enabled: isEvolvXSICraftEnabled,
   });
 
-  // Find build_mode feature announcement notification (only if EvolvXSI Craft is enabled)
+  // Find build_mode feature announcement notification (only if NortPole Craft is enabled)
   const buildModeNotification = isEvolvXSICraftEnabled
     ? notifications?.find(
         (n) =>

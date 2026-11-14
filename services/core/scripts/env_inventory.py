@@ -1,4 +1,4 @@
-"""Environment-variable inventory for the EvolvXSI backend.
+"""Environment-variable inventory for the NortPole backend.
 
 AST-walks the backend (and optionally the frontend) to build a canonical
 manifest of every environment variable the code actually reads, then

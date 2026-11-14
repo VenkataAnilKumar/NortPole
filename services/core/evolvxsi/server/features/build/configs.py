@@ -134,7 +134,7 @@ ENABLE_OPENCODE_DEBUGGING = (
     os.environ.get("ENABLE_OPENCODE_DEBUGGING", "false").lower() == "true"
 )
 
-# Complete EvolvXSI API base URL reachable from the sandbox, including any path
+# Complete NortPole API base URL reachable from the sandbox, including any path
 # prefix. Must be set when SANDBOX_BACKEND=kubernetes.
 EVOLVXSI_SERVER_URL = os.environ.get("EVOLVXSI_SERVER_URL", "")
 

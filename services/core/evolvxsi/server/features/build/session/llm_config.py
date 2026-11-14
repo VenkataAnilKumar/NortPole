@@ -169,6 +169,6 @@ def build_evolvxsi_gateway_config(
         # sandbox PAT; the key here is never used.
         api_key=SANDBOX_PROXY_INJECTED_PLACEHOLDER,
         api_base=api_base,
-        display_name="EvolvXSI",
+        display_name="NortPole",
         models=models,
     )

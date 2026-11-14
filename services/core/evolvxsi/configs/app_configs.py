@@ -42,7 +42,7 @@ APP_API_PREFIX = os.environ.get("API_PREFIX", "")
 # Certain services need to make HTTP requests to the API server, such as the MCP server and Discord bot
 API_SERVER_PROTOCOL = os.environ.get("API_SERVER_PROTOCOL", "http")
 API_SERVER_HOST = os.environ.get("API_SERVER_HOST", "127.0.0.1")
-# This override allows self-hosting the MCP server with EvolvXSI Cloud backend.
+# This override allows self-hosting the MCP server with NortPole Cloud backend.
 API_SERVER_URL_OVERRIDE_FOR_HTTP_REQUESTS = os.environ.get(
     "API_SERVER_URL_OVERRIDE_FOR_HTTP_REQUESTS"
 )
@@ -79,12 +79,12 @@ DISABLE_USER_KNOWLEDGE = os.environ.get("DISABLE_USER_KNOWLEDGE", "").lower() ==
 # are disabled but core chat, tools, user file uploads, and Projects still work.
 DISABLE_VECTOR_DB = os.environ.get("DISABLE_VECTOR_DB", "").lower() == "true"
 
-# Hides the "Powered by EvolvXSI" tagline on Enterprise deployments. Do not set
-# without explicit permission from EvolvXSI.
+# Hides the "Powered by NortPole" tagline on Enterprise deployments. Do not set
+# without explicit permission from NortPole.
 HIDE_EVOLVXSI_BRANDING = os.environ.get("HIDE_EVOLVXSI_BRANDING", "").lower() == "true"
 
 # TEMPORARY (will be removed soon): operator-forced Search-UI scope (self-hosted only) —
-# comma-separated document set NAMES. When set, the EvolvXSI Search UI is restricted to those sets
+# comma-separated document set NAMES. When set, the NortPole Search UI is restricted to those sets
 # (AND'd on top of any persona/user scope; ACL still enforced) — chat/other flows are unaffected,
 # and it is disabled under MULTI_TENANT. Empty = no restriction. Names match the index directly; a
 # name that doesn't exist matches nothing (fail-closed) and is logged. Read at import — restart to change.
@@ -132,7 +132,7 @@ HIDE_QUERY_HISTORY_FROM_ADMIN_PANEL = (
 # Web Configs
 #####
 # WEB_DOMAIN is used to set the redirect_uri after login flows
-# NOTE: if you are having problems accessing the EvolvXSI web UI locally (especially
+# NOTE: if you are having problems accessing the NortPole web UI locally (especially
 # on Windows, try  setting this to `http://127.0.0.1:3000` instead and see if that
 # fixes it)
 WEB_DOMAIN = os.environ.get("WEB_DOMAIN") or "http://localhost:3000"
@@ -163,7 +163,7 @@ PASSWORD_REQUIRE_SPECIAL_CHAR = (
 
 # Encryption key secret is used to encrypt connector credentials, api keys, and other sensitive
 # information. This provides an extra layer of security on top of Postgres access controls
-# and is available in EvolvXSI EE
+# and is available in NortPole EE
 ENCRYPTION_KEY_SECRET = os.environ.get("ENCRYPTION_KEY_SECRET") or ""
 
 # Turn off mask if admin users should see full credentials for data connectors.
@@ -183,8 +183,8 @@ SESSION_EXPIRE_TIME_SECONDS = int(
 REQUEST_TIMEOUT_SECONDS = int(os.environ.get("REQUEST_TIMEOUT_SECONDS") or 60)
 
 # set `VALID_EMAIL_DOMAINS` to a comma seperated list of domains in order to
-# restrict access to EvolvXSI to only users with emails from those domains.
-# E.g. `VALID_EMAIL_DOMAINS=example.com,example.org` will restrict EvolvXSI
+# restrict access to NortPole to only users with emails from those domains.
+# E.g. `VALID_EMAIL_DOMAINS=example.com,example.org` will restrict NortPole
 # signups to users with either an @example.com or an @example.org email.
 # NOTE: maintaining `VALID_EMAIL_DOMAIN` to keep backwards compatibility
 _VALID_EMAIL_DOMAIN = os.environ.get("VALID_EMAIL_DOMAIN", "")
@@ -415,7 +415,7 @@ EMAIL_ARCHIVE_BCC_ADDRESSES = tuple(
 SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY") or ""
 EMAIL_CONFIGURED = (bool(SMTP_SERVER) and bool(EMAIL_FROM)) or bool(SENDGRID_API_KEY)
 
-# If set, EvolvXSI will listen to the `expires_at` returned by the identity
+# If set, NortPole will listen to the `expires_at` returned by the identity
 # provider (e.g. Okta, Google, etc.) and force the user to re-authenticate
 # after this time has elapsed. Disabled since by default many auth providers
 # have very short expiry times (e.g. 1 hour) which provide a poor user experience
@@ -600,7 +600,7 @@ POSTGRES_DB = os.environ.get("POSTGRES_DB") or "postgres"
 AWS_REGION_NAME = os.environ.get("AWS_REGION_NAME") or "us-east-2"
 
 # --- Tenant sharding (multi-database) ---------------------------------------
-# EvolvXSI addresses a tenant by schema (`schema_translate_map`). These settings let
+# NortPole addresses a tenant by schema (`schema_translate_map`). These settings let
 # tenants additionally be spread across separate physical databases ("shards").
 #
 # EVOLVXSI_DB_SHARDS is a JSON object of shard name -> connection overrides, e.g.
@@ -608,7 +608,7 @@ AWS_REGION_NAME = os.environ.get("AWS_REGION_NAME") or "us-east-2"
 # Keys not supplied for a shard fall back to the POSTGRES_* values above.
 #
 # When unset, exactly one shard exists (named by EVOLVXSI_DB_DEFAULT_SHARD, built
-# from POSTGRES_*), which is the single-database behavior EvolvXSI has always had.
+# from POSTGRES_*), which is the single-database behavior NortPole has always had.
 EVOLVXSI_DB_SHARDS_JSON = os.environ.get("EVOLVXSI_DB_SHARDS", "").strip()
 # Shard that hosts tenants with no explicit mapping.
 EVOLVXSI_DB_DEFAULT_SHARD = os.environ.get("EVOLVXSI_DB_DEFAULT_SHARD") or "default"
@@ -1763,7 +1763,7 @@ JOB_TIMEOUT = int(os.environ.get("JOB_TIMEOUT_SECONDS") or 60 * 60 * 6)  # defau
 PERMISSION_SYNC_TIMEOUT = int(
     os.environ.get("PERMISSION_SYNC_TIMEOUT_SECONDS") or JOB_TIMEOUT
 )
-# Logs EvolvXSI only model interactions like prompts, responses, messages etc.
+# Logs NortPole only model interactions like prompts, responses, messages etc.
 LOG_EVOLVXSI_MODEL_INTERACTIONS = (
     os.environ.get("LOG_EVOLVXSI_MODEL_INTERACTIONS", "").lower() == "true"
 )
@@ -1780,14 +1780,14 @@ LOG_POSTGRES_CONN_COUNTS = (
     os.environ.get("LOG_POSTGRES_CONN_COUNTS", "").lower() == "true"
 )
 # Anonymous usage telemetry
-# EvolvXSI sends no telemetry by default; opt in with DISABLE_TELEMETRY=false and EVOLVXSI_TELEMETRY_ENDPOINT.
+# NortPole sends no telemetry by default; opt in with DISABLE_TELEMETRY=false and EVOLVXSI_TELEMETRY_ENDPOINT.
 DISABLE_TELEMETRY = os.environ.get("DISABLE_TELEMETRY", "true").lower() == "true"
 
 #####
 # Braintrust Configuration
 #####
 # Braintrust project name
-BRAINTRUST_PROJECT = os.environ.get("BRAINTRUST_PROJECT", "EvolvXSI")
+BRAINTRUST_PROJECT = os.environ.get("BRAINTRUST_PROJECT", "NortPole")
 # Braintrust API key - if provided, Braintrust tracing will be enabled
 BRAINTRUST_API_KEY = os.environ.get("BRAINTRUST_API_KEY") or ""
 # Optional custom Braintrust API URL (self-hosted / non-default deployments)
@@ -2033,7 +2033,7 @@ ENABLE_TENANT_WORK_GATING = (
     os.environ.get("ENABLE_TENANT_WORK_GATING", "").lower() == "true"
 )
 
-# Query-time cc-pair (source) access filtering. EvolvXSI turns it on and
+# Query-time cc-pair (source) access filtering. NortPole turns it on and
 # enforces it by default: which sources a person may read is then computed from
 # the database on every search, so group changes apply at once. Enforcement
 # only takes effect once every chunk carries its source ids (the backfill);
@@ -2220,7 +2220,7 @@ AZURE_STORAGE_ACCOUNT_KEY = os.environ.get("AZURE_STORAGE_ACCOUNT_KEY") or None
 
 #####
 # Default LLM API Keys (for cloud deployments)
-# These are EvolvXSI-managed API keys provided to tenants by default
+# These are NortPole-managed API keys provided to tenants by default
 #####
 OPENAI_DEFAULT_API_KEY = os.environ.get("OPENAI_DEFAULT_API_KEY")
 ANTHROPIC_DEFAULT_API_KEY = os.environ.get("ANTHROPIC_DEFAULT_API_KEY")
@@ -2236,14 +2236,14 @@ AUTO_PROVISION_DEFAULT_LLM_PROVIDERS = (
     os.environ.get("AUTO_PROVISION_DEFAULT_LLM_PROVIDERS", "true").lower() == "true"
 )
 
-# Auto-create EvolvXSI-managed built-in external app rows (disabled, EvolvXSI-owned creds)
+# Auto-create NortPole-managed built-in external app rows (disabled, NortPole-owned creds)
 # per tenant. Default False; set True on cloud so tenants can enable built-ins
 # without registering their own OAuth app.
 AUTO_PROVISION_DEFAULT_EXTERNAL_APPS = (
     os.environ.get("AUTO_PROVISION_DEFAULT_EXTERNAL_APPS", "false").lower() == "true"
 )
 
-# EvolvXSI-owned OAuth credentials for built-in external apps (managed cloud)
+# NortPole-owned OAuth credentials for built-in external apps (managed cloud)
 EXT_APP_SLACK_CLIENT_ID = os.environ.get("EXT_APP_SLACK_CLIENT_ID", "")
 EXT_APP_SLACK_CLIENT_SECRET = os.environ.get("EXT_APP_SLACK_CLIENT_SECRET", "")
 EXT_APP_GMAIL_CLIENT_ID = os.environ.get("EXT_APP_GMAIL_CLIENT_ID", "")

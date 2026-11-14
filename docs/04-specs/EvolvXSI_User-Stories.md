@@ -1,4 +1,4 @@
-# EvolvXSI — user stories
+# NortPole — user stories
 
 Status: **candidate first-release backlog and platform expansion epics** · Updated: 2026-11-05
 

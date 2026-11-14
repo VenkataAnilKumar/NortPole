@@ -1,4 +1,4 @@
-# EvolvXSI — system architecture
+# NortPole — system architecture
 
 > **Where this lives in code (2026-11-14).** Service and package names here (`services/control-plane`, `services/execution`, `services/knowledge`, `packages/*`, `evaluations`) are logical owners from the design stage. [Decision 0006](../decisions/0006-scalable-repository-structure.md) maps them to the code: the three services are implemented inside `services/core`, and the packages and evaluations are planned modules in `modules.json`, created when their first code arrives.
 
@@ -8,7 +8,7 @@ For deployable services, storage, network boundaries and scaling, see the [deplo
 
 ## Ten engineering layers
 
-These IDs are the canonical ownership map for EvolvXSI. A layer can span several modules, and several layers can share a deployment. The monorepo inventory records the physical layout.
+These IDs are the canonical ownership map for NortPole. A layer can span several modules, and several layers can share a deployment. The monorepo inventory records the physical layout.
 
 | Layer | Responsibility | Monorepo owners |
 | --- | --- | --- |
@@ -25,11 +25,11 @@ These IDs are the canonical ownership map for EvolvXSI. A layer can span several
 
 L03 records registry and activation state. L04 defines authority and records approval decisions. L05 applies those decisions to the current run, with an access and policy check before protected actions. L06 owns retrieval authorization and provenance. L07 applies destination policy before sending content, including embedding requests and fallback. L09 provides evaluation evidence for L03 to enforce at publication. L10 operates the infrastructure used by all layers.
 
-The [product definition](../02-product/EvolvXSI_Product-Definition.md) describes the ten product coverage areas. Discover, Create, Automate and Customize cross layers. Go-to-market uses the public surface and vertical packs and is owned by the commercial workstream. Cohere North is the product benchmark. This layer model belongs to EvolvXSI. Downloaded source projects serve as design references only.
+The [product definition](../02-product/EvolvXSI_Product-Definition.md) describes the ten product coverage areas. Discover, Create, Automate and Customize cross layers. Go-to-market uses the public surface and vertical packs and is owned by the commercial workstream. Cohere North is the product benchmark. This layer model belongs to NortPole. Downloaded source projects serve as design references only.
 
 ## Horizontal platform and vertical packs
 
-EvolvXSI gives practitioners one workspace for questions, tasks, evidence, reviews, and approved outputs. Workflow authors use Agent and Automation Studio to test and publish definitions. Administrators configure access and processing destinations. Developers invoke the same task and run contracts through the developer portal. Cohere North informs the breadth of these surfaces. EvolvXSI's design centers on whether a team can produce and verify a recurring deliverable within its own policies.
+NortPole gives practitioners one workspace for questions, tasks, evidence, reviews, and approved outputs. Workflow authors use Agent and Automation Studio to test and publish definitions. Administrators configure access and processing destinations. Developers invoke the same task and run contracts through the developer portal. Cohere North informs the breadth of these surfaces. NortPole's design centers on whether a team can produce and verify a recurring deliverable within its own policies.
 
 ```mermaid
 flowchart TB
@@ -70,7 +70,7 @@ Consider a manufacturing quality pack as an illustration. Its author defines wha
 1. A practitioner saves a question as a draft, then explicitly starts the comparison. Execution validates authority, pins the activated versions and atomically records the run, job and dispatch intent.
 2. Knowledge returns permitted passages from the old and new procedures. The gateway checks the permitted destination before model processing. When policy permits only local inference and that route is unavailable, the run reports the problem.
 3. Execution produces a versioned brief with passage references and flags unsupported findings. The reviewer approves that exact version. A subsequent edit requires a fresh decision.
-4. On reopening or exporting the brief, EvolvXSI checks current access to the artifact and its sources. Revoked access withholds affected content until redaction or regeneration. Run history and evaluation evidence follow the same access policy.
+4. On reopening or exporting the brief, NortPole checks current access to the artifact and its sources. Revoked access withholds affected content until redaction or regeneration. Run history and evaluation evidence follow the same access policy.
 
 The pack defines the meaning and quality of the deliverable. The platform owns identity, run history, routing, approvals and export authorization across all packs. Shared agents and skills can be referenced directly. Downloaded open-source projects remain design references only.
 
@@ -122,7 +122,7 @@ flowchart TB
 | docs | Canonical product, architecture, decisions and separate reference research. | Documentation pinned to the product commit |
 | packs/vertical/<domain> | Domain agents, skills, workflows, review views, templates, policies and evaluations. | Vertical package; optional specialized worker |
 
-The product monorepo contains module skeletons; no application implementation or CI pipeline has been built. The current sources directory remains a collection of reference checkouts. Implement EvolvXSI-owned modules within these boundaries, using official provider clients behind internal adapters. Reference checkouts are excluded from product builds.
+The product monorepo contains module skeletons; no application implementation or CI pipeline has been built. The current sources directory remains a collection of reference checkouts. Implement NortPole-owned modules within these boundaries, using official provider clients behind internal adapters. Reference checkouts are excluded from product builds.
 
 ## Skills, agents, and hybrid intelligence
 
@@ -183,7 +183,7 @@ See [feature and architecture mapping](EvolvXSI_Feature-Architecture-Mapping.md)
 
 ## Current implementation direction
 
-EvolvXSI owns the service logic and public contracts. Use official provider clients behind internal adapters. Downloaded application and agent-framework sources are reference material; earlier extraction suggestions are not selected dependencies. The optional agent-loop SDK choice remains separate from the API client choice. See the [dependency decision](../07-implementation/EvolvXSI_Provider-SDK-Decision.md).
+NortPole owns the service logic and public contracts. Use official provider clients behind internal adapters. Downloaded application and agent-framework sources are reference material; earlier extraction suggestions are not selected dependencies. The optional agent-loop SDK choice remains separate from the API client choice. See the [dependency decision](../07-implementation/EvolvXSI_Provider-SDK-Decision.md).
 
 ## Controlled improvement extension
 

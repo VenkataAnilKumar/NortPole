@@ -18,7 +18,7 @@ from evolvxsi.configs.constants import EvolvXSICeleryQueues, EvolvXSICeleryTask
 from tests.common.paths import find_ancestor_containing
 
 
-# EvolvXSI deploys the workers from its own compose profile (upstream used supervisord): the retrieval profile
+# NortPole deploys the workers from its own compose profile (upstream used supervisord): the retrieval profile
 # starts each worker with a `celery -A ...<app> worker -Q a,b,c` line.
 _RETRIEVAL_COMPOSE = (
     find_ancestor_containing("infrastructure/profiles/staging")

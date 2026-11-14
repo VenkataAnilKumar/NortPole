@@ -1,4 +1,4 @@
-# EvolvXSI — document list
+# NortPole — document list
 
 Updated: 2026-11-05 · Status: working product definition
 
@@ -20,7 +20,7 @@ The document names and numbered areas follow the convention used by the Qvora do
 | 05 Design | [EvolvXSI_Design-System.md](05-design/EvolvXSI_Design-System.md) | Draft | Interaction rules and visual token categories; final brand pending. |
 | 05 Design | [EvolvXSI_UI-Plan.md](05-design/EvolvXSI_UI-Plan.md) | Plan | Tab names, order and the staged UI work (U1 to U6). |
 | 06 Technical | [EvolvXSI_System-Architecture.md](06-technical/EvolvXSI_System-Architecture.md) | Draft | Capability boundaries, contracts, execution flow, and risks. |
-| 06 Technical | [EvolvXSI_Tech-Stack.md](06-technical/EvolvXSI_Tech-Stack.md) | Current | Frameworks, services and versions in use, EvolvXSI-owned parts, and choices still open. |
+| 06 Technical | [EvolvXSI_Tech-Stack.md](06-technical/EvolvXSI_Tech-Stack.md) | Current | Frameworks, services and versions in use, NortPole-owned parts, and choices still open. |
 | 06 Technical | [EvolvXSI_Deployment-Architecture.md](06-technical/EvolvXSI_Deployment-Architecture.md) | Draft | Deployable services, persistence, queues, network boundaries and scaling. |
 | 06 Technical | [EvolvXSI_Repo-Structure.md](06-technical/EvolvXSI_Repo-Structure.md) | Draft | Monorepo layout, module ownership and release rules. |
 | 06 Technical | [EvolvXSI_Feature-Architecture-Mapping.md](06-technical/EvolvXSI_Feature-Architecture-Mapping.md) | Draft | Complete PF module/phase mapping and first-workflow PRD traceability. |
@@ -33,7 +33,7 @@ The document names and numbered areas follow the convention used by the Qvora do
 | 07 Implementation | [EvolvXSI_A7-Agents-Skills-Connectors-Design.md](07-implementation/EvolvXSI_A7-Agents-Skills-Connectors-Design.md) | Proposal | Research on agent platforms and a proposed design for pack skills, agents and connectors (A7); seven decisions needed before any build. |
 | 07 Implementation | [EvolvXSI_Implementation-Checklist.md](07-implementation/EvolvXSI_Implementation-Checklist.md) | Draft | Phase-aligned execution tasks and release evidence checklist. |
 | 07 Implementation | [EvolvXSI_Documentation-Governance.md](07-implementation/EvolvXSI_Documentation-Governance.md) | Planning baseline | Documentation ownership, version control and release commit pinning. |
-| 07 Implementation | [EvolvXSI_Provider-SDK-Decision.md](07-implementation/EvolvXSI_Provider-SDK-Decision.md) | Owner direction | Official provider SDKs with EvolvXSI-owned logic; downloaded platforms remain references. |
+| 07 Implementation | [EvolvXSI_Provider-SDK-Decision.md](07-implementation/EvolvXSI_Provider-SDK-Decision.md) | Owner direction | Official provider SDKs with NortPole-owned logic; downloaded platforms remain references. |
 | 07 Implementation | [EvolvXSI_Source-Repository-Mapping.md](07-implementation/EvolvXSI_Source-Repository-Mapping.md) | Draft | Local source evidence, reuse candidates, gaps and source identity correction. |
 | 07 Implementation | [EvolvXSI_Open-Source-References.md](07-implementation/EvolvXSI_Open-Source-References.md) | Draft | External project shortlist, eight-platform review, and due diligence; kept outside the product definition. |
 | 07 Implementation | [Commercial reference research](07-implementation/EvolvXSI_Commercial_Reference_Research.md) | Reference | Commercial evidence, module mappings and license boundaries. |
@@ -57,13 +57,13 @@ The owner's earlier chats establish two related ideas: a horizontal super intell
 ## Decisions still needed
 
 - Select the first customer segment and vertical workflow through discovery interviews.
-- Finalize visual identity for the confirmed product name, EvolvXSI.
+- Finalize visual identity for the confirmed product name, NortPole.
 - Validate the proposed technical foundation with a spike.
 - Decide initial deployment model, buyer, pricing metric, and launch geography.
 
 ## Documentation version control
 
-The EvolvXSI monorepo versions canonical documentation alongside product modules. See [documentation governance](07-implementation/EvolvXSI_Documentation-Governance.md) for ownership, review and release-baseline rules. The initial local commit records planning changes; it does not approve an implementation or release.
+The NortPole monorepo versions canonical documentation alongside product modules. See [documentation governance](07-implementation/EvolvXSI_Documentation-Governance.md) for ownership, review and release-baseline rules. The initial local commit records planning changes; it does not approve an implementation or release.
 
 ## Learning environments
 
@@ -79,7 +79,7 @@ The [feature catalog](04-specs/EvolvXSI_Feature-Spec.md#full-platform-feature-ca
 
 ## Reference-only delivery plan
 
-The [reference-only implementation workstream](07-implementation/EvolvXSI_Implementation-Phases.md#reference-only-implementation-workstream) maps local and web studies to P00–P11, defines provenance/commercial-evidence gates and records the per-phase design/test workflow. The selected direction is EvolvXSI-owned implementation; application-platform copying and rebranding are not selected. Use the aligned [implementation checklist](07-implementation/EvolvXSI_Implementation-Checklist.md#reference-only-workstream-gates).
+The [reference-only implementation workstream](07-implementation/EvolvXSI_Implementation-Phases.md#reference-only-implementation-workstream) maps local and web studies to P00–P11, defines provenance/commercial-evidence gates and records the per-phase design/test workflow. The selected direction is NortPole-owned implementation; application-platform copying and rebranding are not selected. Use the aligned [implementation checklist](07-implementation/EvolvXSI_Implementation-Checklist.md#reference-only-workstream-gates).
 
 ## Decisions
 

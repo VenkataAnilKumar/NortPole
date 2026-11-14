@@ -56,7 +56,7 @@ export default defineConfig({
       workers: 1,
     },
     {
-      // runs against the EvolvXSI Lite stack (DISABLE_VECTOR_DB=true, no OpenSearch/Redis)
+      // runs against the NortPole Lite stack (DISABLE_VECTOR_DB=true, no OpenSearch/Redis)
       name: "lite",
       use: {
         ...devices["Desktop Chrome"],

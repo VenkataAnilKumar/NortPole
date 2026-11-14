@@ -1,4 +1,4 @@
-# EvolvXSI — product definition
+# NortPole — product definition
 
 > **Where this lives in code (2026-11-14).** Service and package names here (`services/control-plane`, `services/execution`, `services/knowledge`, `packages/*`, `evaluations`) are logical owners from the design stage. [Decision 0006](../decisions/0006-scalable-repository-structure.md) maps them to the code: the three services are implemented inside `services/core`, and the packages and evaluations are planned modules in `modules.json`, created when their first code arrives.
 
@@ -6,7 +6,7 @@ Status: **draft; first market not selected** · Updated: 2026-11-05
 
 ## Definition
 
-EvolvXSI is a proposed governed agent workflow product. Its horizontal platform supplies task intake, permission-aware knowledge access, agent execution, model and tool policy, human approval, evidence, evaluation, and run operations. Vertical solutions add a specific domain's tasks, tools, output formats, policies, and evaluation cases.
+NortPole is a proposed governed agent workflow product. Its horizontal platform supplies task intake, permission-aware knowledge access, agent execution, model and tool policy, human approval, evidence, evaluation, and run operations. Vertical solutions add a specific domain's tasks, tools, output formats, policies, and evaluation cases.
 
 The product is valuable when a team can complete a real workflow with less effort while retaining the ability to inspect evidence, correct errors, and control consequential actions.
 
@@ -34,7 +34,7 @@ The product is valuable when a team can complete a real workflow with less effor
 | Developer portal | Document how an authorized caller starts a task and reads its result. | Provide worked integration examples and versioned extension contracts. |
 | Observability and evaluation | Inspect run history and compare workflow versions on a fixed set of tasks. | Compare quality, cost, and recovery across teams and deployments. |
 
-EvolvXSI owns these product contracts. Downloaded open-source projects are design references only.
+NortPole owns these product contracts. Downloaded open-source projects are design references only.
 
 ## Product coverage and engineering ownership
 

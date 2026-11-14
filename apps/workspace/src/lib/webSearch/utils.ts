@@ -230,7 +230,7 @@ export function getSingleConfigFieldValueForForm(
 
 export const CONTENT_PROVIDER_DETAILS: Record<string, ContentProviderDetail> = {
   evolvxsi_web_crawler: {
-    label: "EvolvXSI Web Crawler",
+    label: "NortPole Web Crawler",
     subtitleKey: "contentProviders.evolvxsiWebCrawler.subtitle",
   },
   firecrawl: {

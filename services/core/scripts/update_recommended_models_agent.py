@@ -115,7 +115,7 @@ def _output_schema(section_names: list[str]) -> dict[str, Any]:
 
 
 PROMPT_TEMPLATE = """\
-You are updating `recommended-models.json` for EvolvXSI, an enterprise AI assistant
+You are updating `recommended-models.json` for NortPole, an enterprise AI assistant
 platform. Production deployments fetch this file from GitHub and surface exactly
 these models to admins configuring providers in "Auto" mode — the default model
 plus a short visible list. Your picks ship to every deployment, so recommend
@@ -181,9 +181,9 @@ The last generated PR failed the provider chat tests — real API calls against
 each recommended model. Read the error for each failing model:
 - The provider rejected the model (unknown model, not found, deprecated, no
   access): drop or replace that model.
-- EvolvXSI failed while handling a model the vendor still recommends (for example
+- NortPole failed while handling a model the vendor still recommends (for example
   a 400 VALIDATION_ERROR with "An unexpected error occurred", or a 5xx): that
-  is an EvolvXSI bug, not a bad pick. Keep the model; do not swap in an older one.
+  is an NortPole bug, not a bad pick. Keep the model; do not swap in an older one.
 
 {failure_context}
 """

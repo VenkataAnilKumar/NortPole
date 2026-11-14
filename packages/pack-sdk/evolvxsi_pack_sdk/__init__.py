@@ -1,4 +1,4 @@
-"""Validate, build and sign EvolvXSI workflow packs from source (decision 0006, phase 4).
+"""Validate, build and sign NortPole workflow packs from source (decision 0006, phase 4).
 
 The SDK does not import the server. It validates against the generated JSON Schema in packages/contracts, checks the
 repository's folder rules, and signs the same canonical bytes the server verifies (sorted keys, no whitespace,

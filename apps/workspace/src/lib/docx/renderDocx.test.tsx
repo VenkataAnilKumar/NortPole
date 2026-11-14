@@ -72,7 +72,7 @@ describe("document sanitization", () => {
 
   it("preserves https hyperlinks and basic document formatting", async () => {
     const dirty =
-      '<a href="https://example.com">EvolvXSI</a>' +
+      '<a href="https://example.com">NortPole</a>' +
       "<table><tr><td><b>bold</b> <i>italic</i></td></tr></table>" +
       "<h1>Heading</h1>";
     const doc = parse(await renderHtml(dirty));

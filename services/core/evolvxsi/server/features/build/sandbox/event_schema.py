@@ -1,6 +1,6 @@
-"""EvolvXSI's internal sandbox-event schema.
+"""NortPole's internal sandbox-event schema.
 
-Single import point for the typed events EvolvXSI's sandbox layer emits and
+Single import point for the typed events NortPole's sandbox layer emits and
 consumes. Currently re-exports from the `agent-client-protocol` PyPI
 package; the wrapper exists so consumers don't need to know that, and so
 a future inlining of these types (or swap to a different upstream)
@@ -33,7 +33,7 @@ class TextPartMetadata(TypedDict):
     snapshotText: NotRequired[str]
 
 
-# EvolvXSI-synthesized ``Error.code`` sentinels for turn-terminating failures.
+# NortPole-synthesized ``Error.code`` sentinels for turn-terminating failures.
 # Negative so they never collide with opencode / JSON-RPC error codes.
 TURN_ERROR_CODE_SESSION = -1  # opencode reported an error during the turn
 TURN_ERROR_CODE_TIMEOUT = -2

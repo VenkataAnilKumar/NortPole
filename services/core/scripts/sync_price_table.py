@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Sync upstream model catalogs into the vendored EvolvXSI price table.
+"""Sync upstream model catalogs into the vendored NortPole price table.
 
 Sources, in precedence order:
 
@@ -11,7 +11,7 @@ Sources, in precedence order:
 3. OpenRouter /api/v1/models — fills missing prices on openrouter entries and
    adds models models.dev has not indexed yet (listed there = callable).
 
-models.dev provider slugs are mapped onto EvolvXSI provider keys; each model entry
+models.dev provider slugs are mapped onto NortPole provider keys; each model entry
 is normalized and lookup aliases are derived (region prefixes, version/date
 suffixes). One JSON file per provider is written under
 backend/evolvxsi/llm/price_table/. Output is deterministic so diffs reflect real
@@ -42,7 +42,7 @@ LITELLM_URL = (
 OPENROUTER_URL = "https://openrouter.ai/api/v1/models"
 OUTPUT_DIR = Path(__file__).resolve().parent.parent / "evolvxsi" / "llm" / "price_table"
 
-# EvolvXSI provider key -> models.dev provider slugs, in preference order.
+# NortPole provider key -> models.dev provider slugs, in preference order.
 # Later slugs fill gaps; earlier entries win on model-id collisions.
 PROVIDER_MAP: dict[str, list[str]] = {
     # Well-known providers (evolvxsi/llm/constants.py LlmProviderNames)
@@ -323,7 +323,7 @@ def build_price_table(api: dict[str, Any]) -> dict[str, Any]:
 # flagship before models.dev does.
 # ---------------------------------------------------------------------------
 
-# litellm_provider tag -> EvolvXSI provider keys it should enrich. Vertex uses a
+# litellm_provider tag -> NortPole provider keys it should enrich. Vertex uses a
 # zoo of suffixed tags handled by prefix match.
 _LITELLM_PROVIDER_MAP: dict[str, tuple[str, ...]] = {
     "openai": ("openai",),

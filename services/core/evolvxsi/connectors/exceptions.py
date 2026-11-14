@@ -81,12 +81,12 @@ class RateLimitedValidationError(UnexpectedValidationError):
 
 
 class UnreachableValidationError(UnexpectedValidationError):
-    """Raised when EvolvXSI cannot reach the source: the connection fails, or the
+    """Raised when NortPole cannot reach the source: the connection fails, or the
     address does not answer as the source's API."""
 
     def __init__(
         self,
-        message: str = "EvolvXSI cannot reach the source",
+        message: str = "NortPole cannot reach the source",
         *,
         summary: str | None = None,
         description: str | None = None,

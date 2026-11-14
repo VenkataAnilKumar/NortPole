@@ -1,14 +1,14 @@
-# EvolvXSI — North feature mapping
+# NortPole — North feature mapping
 
 Status: **draft; secondary sources only** · Updated: 2026-11-10
 
-This maps publicly described Cohere North capabilities to the [platform feature catalog](EvolvXSI_Feature-Spec.md#full-platform-feature-catalog). North details come from news coverage, release notes and third-party summaries, not from Cohere's own documentation or a hands-on review. Release dates conflict between sources. Treat each North row as a vendor-described capability, and mark anything unverified as untested. The mapping does not claim feature parity and does not change scope. All EvolvXSI features are proposed; none is implemented.
+This maps publicly described Cohere North capabilities to the [platform feature catalog](EvolvXSI_Feature-Spec.md#full-platform-feature-catalog). North details come from news coverage, release notes and third-party summaries, not from Cohere's own documentation or a hands-on review. Release dates conflict between sources. Treat each North row as a vendor-described capability, and mark anything unverified as untested. The mapping does not claim feature parity and does not change scope. All NortPole features are proposed; none is implemented.
 
 ## Mapping
 
-| North capability (as described) | EvolvXSI feature | First target | Fit and notes |
+| North capability (as described) | NortPole feature | First target | Fit and notes |
 | --- | --- | --- | --- |
-| Chat, with consolidated tools menu and recent chats | PF-01.03 chat, libraries and generated applications; PF-01.12 slash commands | Expansion | Partial. EvolvXSI treats tasks as primary and chat as a way into a task. |
+| Chat, with consolidated tools menu and recent chats | PF-01.03 chat, libraries and generated applications; PF-01.12 slash commands | Expansion | Partial. NortPole treats tasks as primary and chat as a way into a task. |
 | Search across company data | PF-01.02 search and artifact review; PF-06.01 ingestion and provenance; PF-06.02 hybrid retrieval | Pilot / Expansion | Strong. Citations resolve to versioned, permitted passages. |
 | Agents built from simple prompts | PF-02.01 agents and skills; PF-01.11 prompt-to-agent drafting | Pilot / Expansion | Strong. Drafts must pass evaluation and are never published automatically. |
 | Skills (reusable capabilities) | PF-02.01; PF-02.05 signed packages | Pilot / Expansion | Strong |
@@ -34,9 +34,9 @@ This maps publicly described Cohere North capabilities to the [platform feature 
 - Navigation: Knowledge is now Libraries. Skills, Memory and Connectors are sub-tabs (Agents, My Files, Settings) rather than top-level tabs; reconsider if visible parity with North matters. Usage is an admin tab but remains expansion scope, although spend controls are North's best-described admin area.
 - Personal and requested extensions: PF-08.06 covers Off, Request and Self-serve levels; North sources did not describe an equivalent.
 
-## EvolvXSI areas not seen in North sources
+## NortPole areas not seen in North sources
 
-The searches found nothing on these, which is not evidence that North lacks them: exact-version approval binding and revocation withholding (PF-04.02), sensitive-data redaction and an injection-defense suite (PF-04.04, PF-04.05), evaluation-gated publication bound to exact dependencies (PF-09.02), claim-to-source review (PF-01.02), compliance evidence reports (PF-04.06). EvolvXSI also adds user-selectable local and cloud routes (PF-07.03) and vertical pack lifecycle (PF-02.02, PF-02.03).
+The searches found nothing on these, which is not evidence that North lacks them: exact-version approval binding and revocation withholding (PF-04.02), sensitive-data redaction and an injection-defense suite (PF-04.04, PF-04.05), evaluation-gated publication bound to exact dependencies (PF-09.02), claim-to-source review (PF-01.02), compliance evidence reports (PF-04.06). NortPole also adds user-selectable local and cloud routes (PF-07.03) and vertical pack lifecycle (PF-02.02, PF-02.03).
 
 ## Suggested sequence
 

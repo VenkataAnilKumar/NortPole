@@ -429,7 +429,7 @@ class OpenURLTool(Tool):
             user: User context for ACL filtering, anonymous users only see public docs.
             content_provider: Optional content provider. If not provided,
                 will use the default provider from the database or fall back
-                to the built-in EvolvXSI web crawler.
+                to the built-in NortPole web crawler.
             web_fetch_disabled: When True (e.g. the user turned Web Search off
                 for the chat), URLs are only served from indexed documents —
                 the live-crawl path is never used.
@@ -451,7 +451,7 @@ class OpenURLTool(Tool):
                 raise RuntimeError(
                     "No web content provider available. "
                     "Please configure a content provider or ensure the "
-                    "built-in EvolvXSI web crawler can be initialized."
+                    "built-in NortPole web crawler can be initialized."
                 )
             self._provider = provider
 

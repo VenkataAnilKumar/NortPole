@@ -71,7 +71,7 @@ def _webapp_access_cache_key(session_id: UUID, user_id: UUID) -> str:
 
 # Response headers to skip when proxying back from the sandbox.
 # Hop-by-hop headers must not be forwarded, and set-cookie is stripped to
-# prevent LLM-generated apps from setting cookies on the parent EvolvXSI domain.
+# prevent LLM-generated apps from setting cookies on the parent NortPole domain.
 EXCLUDED_HEADERS = {
     "content-encoding",
     "content-length",
@@ -81,7 +81,7 @@ EXCLUDED_HEADERS = {
 }
 
 # Request headers stripped before forwarding to the sandbox. The sandbox runs
-# LLM-generated webapp code and must never receive the viewer's EvolvXSI
+# LLM-generated webapp code and must never receive the viewer's NortPole
 # credentials, CSRF tokens, or client-identity headers
 #
 # Entries must be lowercase — the filter compares against `key.lower()`.

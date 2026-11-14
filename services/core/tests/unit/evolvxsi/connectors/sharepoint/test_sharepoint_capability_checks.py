@@ -95,7 +95,7 @@ def _gateway() -> MagicMock:
     one page."""
     gateway: MagicMock = create_autospec(SharepointSourceOperations, instance=True)
     gateway.check_token.return_value = MicrosoftTokenInfo(
-        expires_in=3599, app_name="EvolvXSI"
+        expires_in=3599, app_name="NortPole"
     )
     gateway.list_site_urls.return_value = SiteUrlListing(
         site_urls=[SITE_URL, OTHER_SITE_URL], complete=True

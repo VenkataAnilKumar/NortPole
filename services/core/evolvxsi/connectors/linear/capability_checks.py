@@ -192,7 +192,7 @@ def _raise_for_linear_error(
         ) from error
     if isinstance(error, LinearUnreachableError):
         raise UnreachableValidationError(
-            f"EvolvXSI cannot connect to Linear: {error}",
+            f"NortPole cannot connect to Linear: {error}",
             summary="Cannot reach Linear",
             description=(
                 "The request failed before Linear answered, after retries.\n"

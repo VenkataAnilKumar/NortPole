@@ -1926,7 +1926,7 @@ echo "Session cleanup complete"
         """Restore a FileStore-backed snapshot through the sidecar filesystem API.
 
         Steps:
-        1. Read the snapshot from EvolvXSI FileStore in the api-server
+        1. Read the snapshot from NortPole FileStore in the api-server
         2. Stream it to the sidecar, which extracts it in the session workspace
         3. Regenerate configuration files (AGENTS.md, opencode.json)
         4. Rewrite ``start-webapp.sh`` with the re-allocated port (skipped

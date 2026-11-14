@@ -1556,7 +1556,7 @@ def _run_with_perm_sync(
 
 
 class TestPermissionSyncEntryPoint:
-    """EvolvXSI calls load_from_checkpoint_with_perm_sync only for a connector set
+    """NortPole calls load_from_checkpoint_with_perm_sync only for a connector set
     to SYNC access, and load_from_checkpoint for every other one. The two must
     not behave the same, or a connector that cannot use an access list still
     pays two to three extra Zoom calls for every document."""

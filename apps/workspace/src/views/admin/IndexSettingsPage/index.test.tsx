@@ -92,7 +92,7 @@ const mockAppSettings: AppSettings = {
   image_extraction_and_analysis_enabled: false,
   hide_provider_grouping: false,
   enterprise: null,
-  appName: "EvolvXSI",
+  appName: "NortPole",
   logoUrl: null,
   vectorDbEnabled: false,
   isLoading: false,

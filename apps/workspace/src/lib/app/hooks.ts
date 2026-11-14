@@ -15,7 +15,7 @@ export function useCustomFooterContent(): string {
   const t = useTranslations("common.appFooter");
   return (
     settings.enterprise?.custom_lower_disclaimer_content ||
-    `EvolvXSI ${settings.version ?? "dev"} - ${t("slogan")}`
+    `NortPole ${settings.version ?? "dev"} - ${t("slogan")}`
   );
 }
 

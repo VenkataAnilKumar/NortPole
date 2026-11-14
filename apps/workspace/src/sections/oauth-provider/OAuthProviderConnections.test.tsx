@@ -22,7 +22,7 @@ jest.mock("@/providers/UserProvider", () => ({
 
 const grant = {
   id: "00000000-0000-0000-0000-000000000001",
-  client_name: "EvolvXSI test client",
+  client_name: "NortPole test client",
   client_id: "client",
   resource: "https://evolvxsi.example/mcp/",
   scopes: ["read:search"],
@@ -76,9 +76,9 @@ test("disconnects only after confirmation and updates the list", async () => {
 
   render(<OAuthProviderConnections />);
 
-  await screen.findByText("EvolvXSI test client");
+  await screen.findByText("NortPole test client");
   await user.click(
-    screen.getByRole("button", { name: "Disconnect EvolvXSI test client" })
+    screen.getByRole("button", { name: "Disconnect NortPole test client" })
   );
   expect(deleted).toBe(false);
   const dialog = await screen.findByRole("dialog");

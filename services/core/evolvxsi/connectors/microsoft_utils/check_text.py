@@ -29,7 +29,7 @@ RATE_LIMITED_ROW = CheckRowText(
 UNREACHABLE_ROW = CheckRowText(
     summary="Cannot reach Microsoft",
     description=(
-        "The request did not reach Microsoft, after retries.\nCheck that EvolvXSI can "
+        "The request did not reach Microsoft, after retries.\nCheck that NortPole can "
         "reach Microsoft Graph, then re-run."
     ),
 )

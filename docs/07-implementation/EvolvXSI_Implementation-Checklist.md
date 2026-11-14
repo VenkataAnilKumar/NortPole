@@ -1,4 +1,4 @@
-# EvolvXSI — implementation checklist
+# NortPole — implementation checklist
 
 > **Where this lives in code (2026-11-14).** Service and package names here (`services/control-plane`, `services/execution`, `services/knowledge`, `packages/*`, `evaluations`) are logical owners from the design stage. [Decision 0006](../decisions/0006-scalable-repository-structure.md) maps them to the code: the three services are implemented inside `services/core`, and the packages and evaluations are planned modules in `modules.json`, created when their first code arrives.
 
@@ -9,7 +9,7 @@ The monorepo module skeletons and vertical template are in place. Those complete
 ## P00 — Confirm scope and technical decisions
 
 - [ ] Confirm one practitioner, workflow owner, first workflow, source type and output format. Keep research report production as an example until selected.
-- [ ] Select the implementation language/framework, initial deployment profile, model/provider and API-client SDK. Decide whether the agent loop is EvolvXSI-owned directly or uses an explicitly selected official agent-loop SDK.
+- [ ] Select the implementation language/framework, initial deployment profile, model/provider and API-client SDK. Decide whether the agent loop is NortPole-owned directly or uses an explicitly selected official agent-loop SDK.
 - [ ] Record tenant model, identity provider, data destination restrictions, retention, budget and review requirements. Select one approved inference route initially.
 - [ ] Agree on a representative test set and baseline process. Record numeric quality, latency, cost and recovery targets before pilot use; do not invent customer targets.
 - [ ] Publish deliverable: Decision records, first-workflow scope, initial backlog and acceptance worksheet.
@@ -27,7 +27,7 @@ The monorepo module skeletons and vertical template are in place. Those complete
 ## P02 — Minimal execution and direct provider integration
 
 - [ ] Implement draft saving with zero jobs and a separate authorized start. Atomically persist the run, job, outbox and idempotency result in execution-owned storage. Add worker leases, persisted events and basic status streaming. Start with one sequential agent loop.
-- [ ] Implement a deterministic adapter first and record the fixture gate independently. Then implement one official provider-client adapter behind the EvolvXSI inference contract. Preserve provider-specific streaming/tool behavior behind capability checks; do not assume protocol parity.
+- [ ] Implement a deterministic adapter first and record the fixture gate independently. Then implement one official provider-client adapter behind the NortPole inference contract. Preserve provider-specific streaming/tool behavior behind capability checks; do not assume protocol parity.
 - [ ] Enforce destination allowlists and run budgets before model calls. Record usage, request IDs, errors and safe diagnostic metadata.
 - [ ] Add a minimal workspace screen for submitting a task and seeing run status/text output. Support cancellation at safe boundaries and bounded retries.
 - [ ] Use controlled fixtures for most integration checks. Configure authorized credentials securely before any live provider test; do not place secrets in source or logs.
@@ -179,7 +179,7 @@ Use the [expansion delivery stages](EvolvXSI_Implementation-Phases.md#p11-expans
 
 - [ ] P00: Assign owners and select bounded studies with commercial evidence; retain supplemental local projects without promoting them automatically.
 - [ ] Each phase: Record official URL, immutable revision, inspected paths, local/web distinction, license boundaries and adoption evidence.
-- [ ] Each phase: Write the EvolvXSI design decision and original acceptance cases before implementing the selected behavior.
+- [ ] Each phase: Write the NortPole design decision and original acceptance cases before implementing the selected behavior.
 - [ ] Each phase: Keep downloaded application platforms outside imports, build contexts and deployment images; review new code/assets for unapproved copying.
 - [ ] Each dependency change: Record a separate purpose/version/license/maintenance decision; reference selection is not dependency approval.
 - [ ] P02: Complete the four initial studies and B01–B06 fixture evidence; keep B07 live verification separate.

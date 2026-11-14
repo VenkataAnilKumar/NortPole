@@ -5,7 +5,7 @@ import { buildUrl } from "@/lib/utilsSS";
 /** Server-side twin of useSettings().appName for server components. */
 export async function fetchAppName(): Promise<string> {
   const enterprise = await fetchEnterpriseSettingsSS();
-  return enterprise?.application_name?.trim() || "EvolvXSI";
+  return enterprise?.application_name?.trim() || "NortPole";
 }
 
 export async function generateFaviconMetadata(): Promise<Metadata["icons"]> {

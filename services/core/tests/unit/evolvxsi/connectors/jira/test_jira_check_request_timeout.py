@@ -31,7 +31,7 @@ _MYSELF_URL = f"{_SITE_URL}/rest/api/3/myself"
 _CLOUD_CREDENTIAL = {"jira_user_email": "bot@example.com", "jira_api_token": "t"}
 _SIGN_IN_DESCRIPTION = (
     "Jira did not answer the sign-in in time.\n"
-    "Re-run, or check that Jira is reachable from EvolvXSI."
+    "Re-run, or check that Jira is reachable from NortPole."
 )
 
 
@@ -147,7 +147,7 @@ def test_an_indexing_call_raises_the_timeout_unchanged() -> None:
 
 def test_the_checks_call_the_fast_client() -> None:
     gateway: MagicMock = _mock_gateway()
-    gateway.get_myself.return_value = {"displayName": "EvolvXSI Bot"}
+    gateway.get_myself.return_value = {"displayName": "NortPole Bot"}
 
     _run("jira_auth", gateway, form_run=True)
 

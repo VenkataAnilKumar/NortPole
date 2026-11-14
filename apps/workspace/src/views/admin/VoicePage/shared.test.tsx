@@ -4,7 +4,7 @@ import { VoiceProviderSetupModal } from "@/views/admin/VoicePage/shared";
 import { SWR_KEYS } from "@/lib/swr-keys";
 
 jest.mock("@/lib/settings/hooks", () => ({
-  useSettings: () => ({ appName: "EvolvXSI" }),
+  useSettings: () => ({ appName: "NortPole" }),
 }));
 
 afterEach(() => jest.restoreAllMocks());

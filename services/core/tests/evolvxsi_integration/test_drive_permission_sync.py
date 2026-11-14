@@ -73,7 +73,7 @@ def test_a_synced_document_is_readable_by_the_people_drive_named_and_nobody_else
     with get_session_with_current_tenant() as s:
         acl = get_access_for_document(world["synced"], s).to_acl()
         bob, carol = s.get(User, world["bob"]), s.get(User, world["carol"])
-        assert _get_acl_for_user(bob, s) & acl, "Bob is named on the file (his EvolvXSI address differs only in case)"
+        assert _get_acl_for_user(bob, s) & acl, "Bob is named on the file (his NortPole address differs only in case)"
         assert not (_get_acl_for_user(carol, s) & acl), "Carol is not named"
         assert get_access_for_document(world["synced"], s).is_public is False, "no anyone-with-the-link exception"
 

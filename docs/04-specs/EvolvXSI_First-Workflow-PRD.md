@@ -1,4 +1,4 @@
-# EvolvXSI — first workflow PRD
+# NortPole — first workflow PRD
 
 Status: **draft for discovery** · Updated: 2026-11-05
 
@@ -60,7 +60,7 @@ Use a question such as “Which operating procedures changed, and what should th
 ## 6. Release gates
 
 1. **Discovery gate:** name the buyer, practitioner, workflow, baseline process, and measurable pain from interviews.
-2. **Feasibility gate:** demonstrate source permissions, citations, approval, and an end-to-end run with the EvolvXSI-owned implementation.
+2. **Feasibility gate:** demonstrate source permissions, citations, approval, and an end-to-end run with the NortPole-owned implementation.
 3. **Pilot gate:** pass the agreed evaluation set and security review; document known failure modes and operator procedures.
 4. **Release gate:** repeated pilot use, acceptable cost and latency, support owner, incident path, and commercial terms.
 

@@ -54,7 +54,7 @@ jobs:
           if-no-files-found: error
 
   core-unit-tests:
-    name: Core unit tests (EvolvXSI-owned)
+    name: Core unit tests (NortPole-owned)
     if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
     defaults:
@@ -72,7 +72,7 @@ jobs:
         run: |
           uv sync --frozen --no-dev --no-install-project --group backend
           uv pip install pytest
-      - name: Unit tests for EvolvXSI's own modules
+      - name: Unit tests for NortPole's own modules
         env:
           PYTHONPATH: .
           DISABLE_VECTOR_DB: "true"

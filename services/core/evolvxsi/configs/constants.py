@@ -5,7 +5,7 @@ import re
 import socket
 from enum import Enum, auto
 
-EVOLVXSI_DEFAULT_APPLICATION_NAME = "EvolvXSI"
+EVOLVXSI_DEFAULT_APPLICATION_NAME = "NortPole"
 EVOLVXSI_DISCORD_URL = "https://discord.gg/4NA5SbzrWb"
 EVOLVXSI_UTM_SOURCE = "evolvxsi_app"
 SLACK_USER_TOKEN_PREFIX = "xoxp-"
@@ -276,7 +276,7 @@ TMP_DRALPHA_PERSONA_NAME = "KG Beta"
 
 
 class DocumentSource(str, Enum):
-    # Special case, document passed in via EvolvXSI APIs without specifying a source type
+    # Special case, document passed in via NortPole APIs without specifying a source type
     INGESTION_API = "ingestion_api"
     SLACK = "slack"
     WEB = "web"
@@ -421,7 +421,7 @@ class MessageType(str, Enum):
     ASSISTANT = "assistant"  # AIMessage - Can include tool_calls field for parallel tool calling
     SUMMARY = "summary"
     TOOL_CALL_RESPONSE = "tool_call_response"
-    USER_REMINDER = "user_reminder"  # Custom EvolvXSI message type which is translated into a USER message when passed to the LLM
+    USER_REMINDER = "user_reminder"  # Custom NortPole message type which is translated into a USER message when passed to the LLM
 
 
 class TokenRateLimitScope(str, Enum):

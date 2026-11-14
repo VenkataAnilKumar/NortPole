@@ -1,5 +1,5 @@
 """
-Standardized error codes for the EvolvXSI backend.
+Standardized error codes for the NortPole backend.
 
 Usage:
     from evolvxsi.error_handling.error_codes import EvolvXSIErrorCode

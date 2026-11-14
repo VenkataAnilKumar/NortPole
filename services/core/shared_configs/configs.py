@@ -31,7 +31,7 @@ INDEXING_MODEL_SERVER_PORT = int(
     os.environ.get("INDEXING_MODEL_SERVER_PORT") or MODEL_SERVER_PORT
 )
 
-# EvolvXSI custom Deep Learning Models
+# NortPole custom Deep Learning Models
 CONNECTOR_CLASSIFIER_MODEL_REPO = "Danswer/filter-extraction-model"
 CONNECTOR_CLASSIFIER_MODEL_TAG = "1.0.0"
 INTENT_MODEL_VERSION = "acme-corp/hybrid-intent-token-classifier"
@@ -199,9 +199,9 @@ MULTI_TENANT = os.environ.get("MULTI_TENANT", "").lower() == "true"
 # Air-gapped deployment: no outbound calls to evolvxsi-controlled endpoints
 # (recommended-models sync, remote model catalog lookup, release notes).
 # Inbound traffic and user-configured integrations are unaffected.
-# EvolvXSI: on by default. While on, the product does not fetch release notes, model price tables or
+# NortPole: on by default. While on, the product does not fetch release notes, model price tables or
 # recommended-model lists from the upstream project's GitHub repository. Set EVOLVXSI_AIRGAPPED=false
-# to allow those fetches (the release notes shown would then be the upstream project's, not EvolvXSI's).
+# to allow those fetches (the release notes shown would then be the upstream project's, not NortPole's).
 EVOLVXSI_AIRGAPPED = os.environ.get("EVOLVXSI_AIRGAPPED", "true").lower() == "true"
 
 # How often to check GitHub for updated evolvxsi-published LLM config

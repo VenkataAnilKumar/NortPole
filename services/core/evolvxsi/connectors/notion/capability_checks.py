@@ -173,7 +173,7 @@ def _raise_for_api_error(
         ) from error
     if status is None:
         raise UnreachableValidationError(
-            f"EvolvXSI cannot connect to the Notion API: {detail}",
+            f"NortPole cannot connect to the Notion API: {detail}",
             summary="Cannot reach Notion",
             description=(
                 "The request to the Notion API failed.\nCheck that the server can "
@@ -658,7 +658,7 @@ class _UserInfoCheck(_NotionCheck):
             required=False,
             remediation=(
                 f"{_CAPABILITIES_HINT} and select 'Read user information without "
-                "email addresses'. EvolvXSI does not need email addresses."
+                "email addresses'. NortPole does not need email addresses."
             ),
         )
 

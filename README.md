@@ -1,12 +1,12 @@
-# EvolvXSI
+# NortPole
 
 **The governed AI workspace for teams that cannot afford a wrong answer.**
 
-EvolvXSI lets people ask questions and run multi-step work over their company's own knowledge — policies, contracts, files in their drives — and get cited answers and drafts back. Every step is governed: you approve the plan before work runs, you approve the exact draft before anything leaves, the system only reads what each person is allowed to open, and every action lands in a tamper-evident audit log.
+NortPole lets people ask questions and run multi-step work over their company's own knowledge — policies, contracts, files in their drives — and get cited answers and drafts back. Every step is governed: you approve the plan before work runs, you approve the exact draft before anything leaves, the system only reads what each person is allowed to open, and every action lands in a tamper-evident audit log.
 
 > **Status: pilot preview.** The product runs end to end and is tested in a sandbox with local models. We are looking for **design partners** — one team, one workflow — for a first pilot. See [Work with us](#work-with-us).
 
-![The EvolvXSI AI workspace: ask a question or start a ready-made workflow, choose where it runs, and find your Inbox, Search, Workflows, Knowledge, Sources and agents in one place](docs/assets/readme/workspace.png)
+![The NortPole AI workspace: ask a question or start a ready-made workflow, choose where it runs, and find your Inbox, Search, Workflows, Knowledge, Sources and agents in one place](docs/assets/readme/workspace.png)
 
 ---
 
@@ -58,13 +58,13 @@ One place to ask, search and get work done over your company's knowledge:
 </tr>
 </table>
 
-## Why EvolvXSI
+## Why NortPole
 
 Most AI assistants are built to be helpful first and safe second. In finance, legal, HR, compliance and operations that order is backwards: an invented answer, a leaked document or an unreviewed email costs more than the time AI saves.
 
-EvolvXSI starts from the other end:
+NortPole starts from the other end:
 
-| You need | EvolvXSI gives you |
+| You need | NortPole gives you |
 |---|---|
 | Answers you can check | Every statement cites the passage it came from; unsupported sentences are flagged, and a draft with nothing to cite says so instead of guessing. |
 | People to stay in charge | A plan you accept before work runs, and approval of one exact draft before anything is sent — with an optional second approver. |
@@ -100,7 +100,7 @@ EvolvXSI starts from the other end:
 
 ```mermaid
 flowchart LR
-    P[Person] -->|asks or starts a workflow| W[EvolvXSI workspace]
+    P[Person] -->|asks or starts a workflow| W[NortPole workspace]
     W -->|plan| P
     P -->|accepts the plan| W
     W -->|searches as that person| K[(Company knowledge<br/>permission-aware)]
@@ -138,7 +138,7 @@ The full, honest list lives in the [pending-work checklist](docs/07-implementati
 
 ## Work with us
 
-We are looking for a **design partner**: a team with one high-stakes, document-heavy workflow — policy questions, contract review, audit evidence, compliance checks — that would pilot EvolvXSI on its own documents and models.
+We are looking for a **design partner**: a team with one high-stakes, document-heavy workflow — policy questions, contract review, audit evidence, compliance checks — that would pilot NortPole on its own documents and models.
 
 To talk about a pilot, email [vanilkumarch@gmail.com](mailto:vanilkumarch@gmail.com).
 

@@ -206,7 +206,7 @@ def _select_models(
             additional_headers=litellm_additional_headers,
             policy_fn=incognito_policy_fn,
         )
-        # EvolvXSI route policy: fail before any content reaches a blocked route.
+        # NortPole route policy: fail before any content reaches a blocked route.
         enforce_route(db_session, llm.config.model_configuration_id, actor=user, purpose="chat")
         check_llm_cost_limit_for_provider(
             db_session=db_session,

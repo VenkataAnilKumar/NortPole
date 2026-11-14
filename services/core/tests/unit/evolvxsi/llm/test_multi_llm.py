@@ -3697,7 +3697,7 @@ def test_invoke_stops_retrying_when_the_total_timeout_is_spent() -> None:
 
 
 def test_consume_stream_leaves_an_unmapped_error_unchanged() -> None:
-    """An error with no EvolvXSI equivalent is re-raised as-is, and never becomes
+    """An error with no NortPole equivalent is re-raised as-is, and never becomes
     its own cause."""
     failure = ValueError("boom")
 

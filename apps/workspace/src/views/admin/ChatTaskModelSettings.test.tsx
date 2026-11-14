@@ -17,7 +17,7 @@ import { SWR_KEYS } from "@/lib/swr-keys";
 
 jest.mock("@/lib/settings/hooks", () => ({
   useSettings: () => ({
-    appName: "EvolvXSI",
+    appName: "NortPole",
     hide_provider_grouping: false,
     model_routing_enabled: false,
   }),

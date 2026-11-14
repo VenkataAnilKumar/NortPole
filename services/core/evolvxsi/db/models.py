@@ -1303,7 +1303,7 @@ class Document(Base):
     # NOTE: if more sensitive data is added here for display, make sure to add user/group permission
 
     # this should correspond to the ID of the document
-    # (as is passed around in EvolvXSI)
+    # (as is passed around in NortPole)
     id: Mapped[str] = mapped_column(NullFilteredString, primary_key=True)
     from_ingestion_api: Mapped[bool] = mapped_column(
         Boolean, default=False, nullable=True
@@ -1361,7 +1361,7 @@ class Document(Base):
         Boolean, nullable=False, default=False, server_default=text("false")
     )
     # The following are not attached to User because the account/email may not be known
-    # within EvolvXSI
+    # within NortPole
     # Something like the document creator
     primary_owners: Mapped[list[str] | None] = mapped_column(
         postgresql.ARRAY(String), nullable=True
@@ -2001,7 +2001,7 @@ class ChunkStats(Base):
     # NOTE: if more sensitive data is added here for display, make sure to add user/group permission
 
     # this should correspond to the ID of the document
-    # (as is passed around in EvolvXSI)x
+    # (as is passed around in NortPole)x
     id: Mapped[str] = mapped_column(
         NullFilteredString,
         primary_key=True,
@@ -5492,11 +5492,11 @@ class Skill(Base):
 Enterprise Edition Models
 ************************************************************************
 
-These models are only used in Enterprise Edition only features in EvolvXSI.
+These models are only used in Enterprise Edition only features in NortPole.
 They are kept here to simplify the codebase and avoid having different assumptions
-on the shape of data being passed around between the MIT and EE versions of EvolvXSI.
+on the shape of data being passed around between the MIT and EE versions of NortPole.
 
-In the MIT version of EvolvXSI, assume these tables are always empty.
+In the MIT version of NortPole, assume these tables are always empty.
 """
 
 
@@ -5991,7 +5991,7 @@ class User__ExternalUserGroupId(Base):
     """Maps user info both internal and external to the name of the external group
     This maps the user to all of their external groups so that the external group name can be
     attached to the ACL list matching during query time. User level permissions can be handled by
-    directly adding the EvolvXSI user to the doc ACL list"""
+    directly adding the NortPole user to the doc ACL list"""
 
     __tablename__ = "user__external_user_group_id"
 
@@ -7714,7 +7714,7 @@ class ScimToken(Base):
 
 
 class ScimUserMapping(Base):
-    """Maps SCIM externalId from the IdP to an EvolvXSI User."""
+    """Maps SCIM externalId from the IdP to an NortPole User."""
 
     __tablename__ = "scim_user_mapping"
     __table_args__ = (
@@ -7753,7 +7753,7 @@ class ScimUserMapping(Base):
 
 
 class ScimGroupMapping(Base):
-    """Maps SCIM externalId from the IdP to an EvolvXSI UserGroup."""
+    """Maps SCIM externalId from the IdP to an NortPole UserGroup."""
 
     __tablename__ = "scim_group_mapping"
 
@@ -7935,7 +7935,7 @@ class ExternalApp(Base):
     # `external_apps.providers.PROVIDERS`.
     #
     # NOT unique — providers like self-hosted GitLab/Jira can have
-    # multiple distinct instances within one EvolvXSI (each with its own
+    # multiple distinct instances within one NortPole (each with its own
     # client_id + base URL) and would all share the same app_type.
     # Duplicate detection for the typical "one Slack" case happens
     # at the UI layer.

@@ -265,7 +265,7 @@ def value_error_handler(_: Request, exc: Exception) -> JSONResponse:
         # log stacktrace
         logger.exception("ValueError")
     # "message" is what this handler has always returned; the code and detail
-    # are added so a bare ValueError reads like any other EvolvXSI error.
+    # are added so a bare ValueError reads like any other NortPole error.
     return JSONResponse(
         status_code=400,
         content={
@@ -361,7 +361,7 @@ def validate_no_vector_db_settings() -> None:
     if ENABLE_CRAFT:
         raise RuntimeError(
             "DISABLE_VECTOR_DB cannot be used with ENABLE_CRAFT. "
-            "EvolvXSI Craft requires background workers for sandbox lifecycle "
+            "NortPole Craft requires background workers for sandbox lifecycle "
             "management, which are removed in no-vector-DB deployments. "
             "Disable Craft (ENABLE_CRAFT=false) when disabling the vector database."
         )
@@ -563,11 +563,11 @@ def log_http_error(request: Request, exc: Exception) -> JSONResponse:
 
 def get_application(lifespan_override: Lifespan | None = None) -> FastAPI:
     application = FastAPI(
-        title="EvolvXSI Backend",
+        title="NortPole Backend",
         version=__version__,
-        description="EvolvXSI API for AI-powered chat with search, document indexing, agents, actions, and more",
+        description="NortPole API for AI-powered chat with search, document indexing, agents, actions, and more",
         servers=[
-            {"url": f"{WEB_DOMAIN.rstrip('/')}/api", "description": "EvolvXSI API Server"}
+            {"url": f"{WEB_DOMAIN.rstrip('/')}/api", "description": "NortPole API Server"}
         ],
         # The interactive docs and schema are opt-in (see ENABLE_PUBLIC_DOCS).
         # When disabled, these routes are not registered at all (404), so the
@@ -879,7 +879,7 @@ app = fetch_versioned_implementation(module="evolvxsi.main", attribute="get_appl
 
 if __name__ == "__main__":
     logger.notice(
-        "Starting EvolvXSI Backend version %s on http://%s:%s/",
+        "Starting NortPole Backend version %s on http://%s:%s/",
         __version__,
         APP_HOST,
         str(APP_PORT),

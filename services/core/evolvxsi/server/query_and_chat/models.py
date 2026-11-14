@@ -61,7 +61,7 @@ class TagResponse(BaseModel):
 
 
 class UpdateChatSessionThreadRequest(BaseModel):
-    # If not specified, use EvolvXSI default persona
+    # If not specified, use NortPole default persona
     chat_session_id: UUID
     new_alternate_model: str
 
@@ -77,7 +77,7 @@ class UpdateChatSessionReasoningRequest(BaseModel):
 
 
 class ChatSessionCreationRequest(BaseModel):
-    # If not specified, use EvolvXSI default persona
+    # If not specified, use NortPole default persona
     persona_id: int = 0
     description: str | None = None
     project_id: int | None = None
@@ -102,7 +102,7 @@ class ChatFeedbackRequest(BaseModel):
         return self
 
 
-# NOTE: This model is used for the core flow of the EvolvXSI application, any changes to it should be reviewed and approved by an
+# NOTE: This model is used for the core flow of the NortPole application, any changes to it should be reviewed and approved by an
 # experienced team member. It is very important to 1. avoid bloat and 2. that this remains backwards compatible across versions.
 class SendMessageRequest(BaseModel):
     message: str

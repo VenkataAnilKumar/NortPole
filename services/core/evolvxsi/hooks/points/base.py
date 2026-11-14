@@ -24,7 +24,7 @@ class HookPointSpec:
     get_hook_point_spec() or get_all_specs() from the registry over direct
     instantiation.
 
-    Each hook point is a concrete subclass of this class. EvolvXSI engineers
+    Each hook point is a concrete subclass of this class. NortPole engineers
     own these definitions — customers never touch this code.
 
     Subclasses must define all attributes as class-level constants.

@@ -1,4 +1,4 @@
-"""HTTP client for ``opencode serve`` — the only transport EvolvXSI Craft
+"""HTTP client for ``opencode serve`` — the only transport NortPole Craft
 uses to drive in-sandbox agent turns.
 
 Public surface:
@@ -246,7 +246,7 @@ def _tool_title(tool: str) -> str:
 
 
 # opencode's tool status values → ToolCallStatus literal.
-# EvolvXSI schema: "pending" | "in_progress" | "completed" | "failed"
+# NortPole schema: "pending" | "in_progress" | "completed" | "failed"
 # opencode emits: "pending", "running", "completed", "error". "running" → "in_progress".
 _TOOL_STATUS_MAP: dict[str, str] = {
     "pending": "pending",
@@ -267,7 +267,7 @@ def _tool_status(opencode_status: Any) -> str:
 
 # ---------------------------------------------------------------------------
 # Tool-call ``content[]`` synthesis. Opencode serve does not emit a content
-# array on tool parts — only ``state.{input,output,metadata}``. EvolvXSI's
+# array on tool parts — only ``state.{input,output,metadata}``. NortPole's
 # frontend (and persistence path) reads from a content array, so we
 # synthesize the shape it expects from the empirical field names locked in
 # the test report.
@@ -1265,8 +1265,8 @@ class OpencodeServeClient:
     def delete_session(self, opencode_session_id: str, *, directory: str) -> bool:
         """Best-effort delete of an opencode session from the live serve process.
 
-        Product deletion is owned by EvolvXSI's BuildSession row. This cleanup is
-        opportunistic: failure should not block deleting the EvolvXSI session.
+        Product deletion is owned by NortPole's BuildSession row. This cleanup is
+        opportunistic: failure should not block deleting the NortPole session.
         """
         try:
             r = self._request(

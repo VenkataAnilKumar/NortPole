@@ -7,7 +7,7 @@ class TestXmlToolCallContentFilter:
         output = f.process(
             "prefix "
             '<function_calls><invoke name="internal_search">'
-            '<parameter name="queries" string="false">["EvolvXSI docs"]</parameter>'
+            '<parameter name="queries" string="false">["NortPole docs"]</parameter>'
             "</invoke></function_calls> suffix"
         )
         output += f.flush()
@@ -19,7 +19,7 @@ class TestXmlToolCallContentFilter:
             "Start ",
             "<function_",
             'calls><invoke name="internal_search">',
-            '<parameter name="queries" string="false">["EvolvXSI docs"]',
+            '<parameter name="queries" string="false">["NortPole docs"]',
             "</parameter></invoke></function_calls>",
             " End",
         ]

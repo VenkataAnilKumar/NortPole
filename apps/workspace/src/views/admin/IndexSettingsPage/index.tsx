@@ -156,7 +156,7 @@ function computeWontPortConnectors(
 
 /**
  * Wrapper that disables its children when either:
- * 1. The app is running on EvolvXSI Cloud (`NEXT_PUBLIC_CLOUD_ENABLED`), or
+ * 1. The app is running on NortPole Cloud (`NEXT_PUBLIC_CLOUD_ENABLED`), or
  * 2. A local `disabled` condition is true (e.g. a parent toggle is off).
  */
 interface CloudDisabledProps {

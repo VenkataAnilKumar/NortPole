@@ -92,7 +92,7 @@ def resolve_destination(
     """Validate existing upstream addresses, or resolve DNS once for a new connection.
 
     Internal MCP access requires source identity, exact origin, and tenant SSRF permission.
-    Missing context denies the exception. Public and EvolvXSI destinations need no MCP lookup.
+    Missing context denies the exception. Public and NortPole destinations need no MCP lookup.
     `sandbox` is an already verified identity (signed relay connections); without
     it the identity comes from the peer IP.
     """

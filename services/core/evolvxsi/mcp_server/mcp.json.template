@@ -1,7 +1,7 @@
 {
     "mcpServers": {
-      "EvolvXSI": {
-        "url": "https://YOUR-EVOLVXSI-DOMAIN/mcp",
+      "NortPole": {
+        "url": "https://YOUR-NORTPOLE-DOMAIN/mcp",
         "headers": {
           "Authorization": "Bearer [YOUR PAT OR API KEY HERE]"
         }

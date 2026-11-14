@@ -1,4 +1,4 @@
-# EvolvXSI — market assessment
+# NortPole — market assessment
 
 Status: **discovery plan; no market-size claim** · Updated: 2026-11-05
 

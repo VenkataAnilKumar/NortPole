@@ -1,4 +1,4 @@
-# EvolvXSI — Workflows (R6) and Knowledge (R7) design
+# NortPole — Workflows (R6) and Knowledge (R7) design
 
 Written 2026-11-14 after a review of Microsoft Copilot Studio, Google Gemini Enterprise, ChatGPT Enterprise, Claude Enterprise, Glean, Dust, Salesforce Agentforce and ServiceNow (sources at the end). It extends `EvolvXSI_Redesign-Plan.md` stages R6 and R7.
 
@@ -12,7 +12,7 @@ Written 2026-11-14 after a review of Microsoft Copilot Studio, Google Gemini Ent
 
 ## 2. What other platforms do, and what we take
 
-| Pattern | Seen in | EvolvXSI decision |
+| Pattern | Seen in | NortPole decision |
 |---|---|---|
 | Manual, scheduled and event triggers | Copilot Studio, Glean, Gemini, ChatGPT | Scheduled in R6; event triggers later (R6c), off by default |
 | Scheduling off by default, enabled for chosen groups | Glean | **Adopt** |

@@ -1,10 +1,10 @@
-"""Import boundaries between EvolvXSI's own domains and the inherited platform (decision 0006).
+"""Import boundaries between NortPole's own domains and the inherited platform (decision 0006).
 
 Rules:
 1. `governance` is the foundation: it imports none of `work`, `knowledge` or `insight`.
 2. `insight` is the top: no other domain imports it.
 3. `work` and `knowledge` may use each other and `governance`.
-4. Inherited platform code reaches EvolvXSI's domains only from the files and modules listed in `INHERITED_ENTRY_POINTS`.
+4. Inherited platform code reaches NortPole's domains only from the files and modules listed in `INHERITED_ENTRY_POINTS`.
    It is a ratchet: a new call from inherited code into our domains fails here until it is reviewed and listed, so the
    inherited code stays close to upstream and its dependence on our code stays visible.
 """
@@ -15,7 +15,7 @@ from pathlib import Path
 CORE = Path(__file__).resolve().parents[3]
 PACKAGE = CORE / "evolvxsi"
 DOMAINS = {"governance", "work", "knowledge", "insight"}
-# EvolvXSI modules that stay at the top level (inherited code looks them up by path, or they are not a domain).
+# NortPole modules that stay at the top level (inherited code looks them up by path, or they are not a domain).
 OWN_TOP_LEVEL = {"extensions", "external_permissions", "user_preferences"}
 
 FORBIDDEN = {
@@ -102,7 +102,7 @@ def test_inherited_code_reaches_domains_only_through_listed_entry_points() -> No
         if extra:
             problems.append(f"{rel} newly imports {sorted(extra)}")
     assert not problems, (
-        "Inherited code gained a dependency on EvolvXSI domains. Prefer a hook in evolvxsi/extensions; if the call is "
+        "Inherited code gained a dependency on NortPole domains. Prefer a hook in evolvxsi/extensions; if the call is "
         "right, add it to INHERITED_ENTRY_POINTS:\n" + "\n".join(sorted(problems))
     )
     stale = {f for f in INHERITED_ENTRY_POINTS if f not in seen}

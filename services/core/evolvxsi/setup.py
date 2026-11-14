@@ -78,7 +78,7 @@ from shared_configs.enums import EmbedTextType
 
 logger = setup_logger()
 
-_STARTUP_EMBED_TEXT = "EvolvXSI startup check"
+_STARTUP_EMBED_TEXT = "NortPole startup check"
 _STARTUP_RETRY_SECONDS = 10
 
 
@@ -88,7 +88,7 @@ def setup_evolvxsi(
     cohere_enabled: bool = False,  # noqa: ARG001
 ) -> None:
     """
-    Setup EvolvXSI for a particular tenant. In the Single Tenant case, it will set it up for the default schema
+    Setup NortPole for a particular tenant. In the Single Tenant case, it will set it up for the default schema
     on server startup. In the MT case, it will be called when the tenant is created.
 
     The Tenant Service calls the tenants/create endpoint which runs this.

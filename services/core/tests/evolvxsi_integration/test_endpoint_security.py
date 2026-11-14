@@ -1,4 +1,4 @@
-"""Access and privacy checks for the EvolvXSI endpoints, against the running API.
+"""Access and privacy checks for the NortPole endpoints, against the running API.
 
 * Nobody signed out can reach any of them.
 * A signed-in ordinary user can use their own tasks and preferences but not the

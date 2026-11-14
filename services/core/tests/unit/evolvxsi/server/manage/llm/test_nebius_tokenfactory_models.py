@@ -1,7 +1,7 @@
 """Tests for the Nebius Token Factory model fetcher.
 
 Verifies the mapping from the provider's /v1/models?verbose response to
-EvolvXSI model configs: context length and vision (from architecture.modality).
+NortPole model configs: context length and vision (from architecture.modality).
 """
 
 from typing import cast

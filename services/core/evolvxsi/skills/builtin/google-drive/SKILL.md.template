@@ -13,7 +13,7 @@ may pause for the user to approve.
 {{#IF_CLOUD_SCOPE}}
 This deployment's Google Drive grant is per-file (`drive.file`). The Drive
 commands in [drive.md](drive.md) (`search`, `list`, `get`, `read`, `update`,
-`trash`, ...) only see files that EvolvXSI itself created — through these helpers,
+`trash`, ...) only see files that NortPole itself created — through these helpers,
 in any session. Everything else in the user's Drive is invisible there, even
 files the user owns. Drive reports an invisible file as **HTTP 404 "File not
 found"** — never 403 — even though it exists. The Docs, Sheets, and Slides
@@ -26,7 +26,7 @@ open, by id. So:
   `gdrive_api.py read` answers 404.
 - An empty `search` result does not mean the file is absent — it may just be
   outside the grant.
-- PDFs, folders, and other non-native files not created through EvolvXSI are
+- PDFs, folders, and other non-native files not created through NortPole are
   unreachable; ask the user to attach the file to the session instead of
   passing a link.
 

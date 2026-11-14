@@ -34,7 +34,7 @@ jest.mock("@/hooks/useVoiceStatus", () => ({
   useVoiceStatus: () => ({ sttEnabled: false }),
 }));
 jest.mock("@/lib/settings/hooks", () => ({
-  useSettings: () => ({ appName: "EvolvXSI" }),
+  useSettings: () => ({ appName: "NortPole" }),
 }));
 jest.mock("next/navigation", () => ({
   ...jest.requireActual<typeof import("@tests/setup/mocks/nextNavigation")>(

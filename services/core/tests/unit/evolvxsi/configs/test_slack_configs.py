@@ -1,4 +1,4 @@
-"""SLACK_API_URL selects one Slack cloud for all of EvolvXSI.
+"""SLACK_API_URL selects one Slack cloud for all of NortPole.
 
 An unset or empty value is commercial Slack. A trusted cloud is normalized to
 its domain. Anything else logs and falls back, so no Slack token goes to an

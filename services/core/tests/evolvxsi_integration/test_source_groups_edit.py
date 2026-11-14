@@ -1,7 +1,7 @@
 """Changing a source's reading groups through the core's own edit path
 (`apply_access_change__no_commit`) on the real database.
 
-Before EvolvXSI filled them in, the functions this path calls were community
+Before NortPole filled them in, the functions this path calls were community
 no-ops: the change saved nothing and reported success.
 """
 

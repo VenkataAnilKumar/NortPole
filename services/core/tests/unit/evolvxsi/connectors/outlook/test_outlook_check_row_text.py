@@ -79,7 +79,7 @@ def test_the_rows_have_the_design_names() -> None:
 @pytest.mark.parametrize(
     ("check_id", "config", "summary"),
     [
-        ("outlook_token_auth", {}, "Signed in as EvolvXSI"),
+        ("outlook_token_auth", {}, "Signed in as NortPole"),
         ("outlook_mailbox_listing", {}, "Tenant user list is readable"),
         ("outlook_mailbox_count", {}, "Up to 1 mailbox"),
         (
