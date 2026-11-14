@@ -235,7 +235,10 @@ def test_decision_client_uses_selected_provider_and_model() -> None:
     assert client.url == "https://openrouter.ai/api/alpha/decisions"
     assert build.call_args.kwargs["api_key"] == "test-key"
     assert build.call_args.kwargs["extra_headers"]["X-Test"] == "value"
-    assert build.call_args.kwargs["extra_headers"]["HTTP-Referer"] == "https://onyx.app"
+    # The product identifies itself by its own address (the rebrand dropped the upstream one).
+    from evolvxsi.configs.app_configs import WEB_DOMAIN
+
+    assert build.call_args.kwargs["extra_headers"]["HTTP-Referer"] == WEB_DOMAIN
     cost.assert_called_once()
 
 

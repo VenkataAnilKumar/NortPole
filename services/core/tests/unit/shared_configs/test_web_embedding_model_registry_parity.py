@@ -7,17 +7,19 @@ copies must agree, and a model the backend treats as legacy must be marked
 legacy in the web registry (the picker hides it)."""
 
 import re
-from pathlib import Path
 
 from shared_configs.embedding_models import (
     EMBEDDING_MODEL_SPECS,
     EmbeddingModelStatus,
 )
 from shared_configs.enums import EmbeddingProvider
+from tests.common.paths import find_ancestor_containing
 
+# The web app lives in apps/workspace in the EvolvXSI monorepo.
 _WEB_REGISTRY = (
-    Path(__file__).resolve().parents[4]
-    / "web"
+    find_ancestor_containing("apps/workspace/src")
+    / "apps"
+    / "workspace"
     / "src"
     / "lib"
     / "searchSettings"

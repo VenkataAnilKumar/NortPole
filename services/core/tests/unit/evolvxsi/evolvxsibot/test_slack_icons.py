@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import pytest
 
 from evolvxsi.configs.constants import DocumentSource
@@ -9,10 +7,11 @@ from evolvxsi.evolvxsibot.slack.icons import (
     _SOURCE_IMAGE_FILENAMES,
     source_to_github_img_link,
 )
+from tests.common.paths import find_ancestor_containing
 
 SLACK_SUPPORTED_IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif"}
 SOURCE_ICON_DIR = (
-    Path(__file__).resolve().parents[5] / "web/public/slackbot-source-icons"
+    find_ancestor_containing("apps/workspace/public") / "apps/workspace/public/slackbot-source-icons"
 )
 
 

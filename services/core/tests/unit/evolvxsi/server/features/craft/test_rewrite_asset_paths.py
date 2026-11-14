@@ -27,7 +27,7 @@ SANDBOX_WEB_NEXT_CONFIG = (
     Path(api.__file__).resolve().parents[0]
     / "sandbox/image/templates/outputs/web/next.config.ts"
 )
-WEB_NEXT_CONFIG = find_ancestor_containing("web/next.config.js") / "web/next.config.js"
+WEB_NEXT_CONFIG = find_ancestor_containing("apps/workspace/next.config.js") / "apps/workspace/next.config.js"
 
 
 class TestNextjsProxyMountContract:

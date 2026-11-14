@@ -64,7 +64,7 @@ export default function SecondApproverQueue() {
                   className={secondary}
                   disabled={busy}
                   onClick={() => run(async () => {
-                    const res = await fetch(`/api/admin/actions/${q.id}/second-review`);
+                    const res = await fetch(`/api/admin/actions/${q.id}/second-review`, { method: "POST" });
                     const body = await res.json().catch(() => null);
                     if (!res.ok) throw new Error(typeof body?.detail === "string" ? body.detail : `Could not open it (HTTP ${res.status}).`);
                     setReview(body as Review);

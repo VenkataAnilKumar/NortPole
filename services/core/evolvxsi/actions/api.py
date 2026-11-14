@@ -450,7 +450,7 @@ def awaiting_second(
                             created_at=a.created_at) for a, email in rows]
 
 
-@router.get("/admin/actions/{action_id}/second-review")
+@router.post("/admin/actions/{action_id}/second-review")
 def second_review(
     action_id: UUID,
     user: User = Depends(require_permission(Permission.FULL_ADMIN_PANEL_ACCESS)),

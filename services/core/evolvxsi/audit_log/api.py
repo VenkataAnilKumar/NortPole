@@ -92,7 +92,7 @@ def _csv_cell(value: object) -> str:
     return "'" + text if text[:1] in ("=", "+", "-", "@", "\t", "\r") else text
 
 
-@router.get("/export")
+@router.post("/export")
 def export_events(
     format: str = Query("json", pattern="^(json|csv)$"),
     since_id: int | None = Query(None, ge=0),

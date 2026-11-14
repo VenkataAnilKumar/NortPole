@@ -143,8 +143,28 @@ export default function RetentionPanel() {
         >
           Show the latest head to save
         </button>
-        <a className={`${secondary} inline-flex items-center`} href="/api/admin/audit/export?format=csv" download>Download audit log (CSV)</a>
-        <a className={`${secondary} inline-flex items-center`} href="/api/admin/audit/export?format=json" download>Download audit log (JSON)</a>
+        {(["csv", "json"] as const).map((fmt) => (
+          <button
+            key={fmt}
+            type="button"
+            className={secondary}
+            disabled={busy}
+            onClick={() => run(async () => {
+              // A POST: the export is written to the audit log, and a GET must never write.
+              const res = await fetch(`/api/admin/audit/export?format=${fmt}`, { method: "POST" });
+              if (!res.ok) throw new Error(`The export failed (HTTP ${res.status}).`);
+              const url = globalThis.URL.createObjectURL(await res.blob());
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `audit-export.${fmt}`;
+              a.click();
+              globalThis.URL.revokeObjectURL(url);
+              return `Downloaded the audit log (${fmt.toUpperCase()}).`;
+            })}
+          >
+            Download audit log ({fmt.toUpperCase()})
+          </button>
+        ))}
       </div>
       <div className="mt-3 flex flex-wrap items-end gap-2">
         <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm text-text-04">
