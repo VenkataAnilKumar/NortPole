@@ -1,8 +1,5 @@
-EvolvXSI services/core and apps/workspace contain source adapted from the
-Onyx Community Edition (https://github.com/onyx-dot-app/onyx), commit
-919578e0408a2d739a16215c09844c6762793891.
-
-That software is licensed under the MIT Expat license:
+Portions of EvolvXSI services/core and apps/workspace are used under the
+following license (MIT):
 
 Copyright (c) 2023-present DanswerAI, Inc.
 
@@ -24,5 +21,4 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Content under the upstream "ee" directories (Onyx Enterprise License) was NOT
-copied. Third-party components keep their original licenses.
+Third-party components keep their original licenses.
