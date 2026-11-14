@@ -6,9 +6,24 @@ EvolvXSI lets people ask questions and run multi-step work over their company's 
 
 > **Status: pilot preview.** The product runs end to end and is tested in a sandbox with local models. We are looking for **design partners** — one team, one workflow — for a first pilot. See [Work with us](#work-with-us).
 
-![Start a workflow: ready-made, versioned workflows grouped in packs](docs/assets/readme/workflows.png)
+![The EvolvXSI AI workspace: ask a question or start a ready-made workflow, choose where it runs, and find your Inbox, Search, Workflows, Knowledge, Sources and agents in one place](docs/assets/readme/workspace.png)
 
 ---
+
+## The AI workspace
+
+One place to ask, search and get work done over your company's knowledge:
+
+| In the workspace | What it does |
+|---|---|
+| **New** | Ask a question or start a ready-made workflow (*Cited brief*, *Find the policy*, *Compare two documents*). Attach files and choose which knowledge to use. |
+| **Run on** | Choose where the work runs (local, private or cloud model), within what the administrator's route policy allows. A blocked route is shown with the reason and is never used. |
+| **Inbox** | Plans waiting for your yes, drafts ready to review, and updates on your requests. |
+| **Search** | One search over company knowledge, showing only what you may open. |
+| **Workflows** | Start versioned workflows from signed packs, keep them on a schedule, and find your drafts. |
+| **Knowledge** and **Sources** | What the workspace knows, which systems are connected, and what you can ask to have switched on. |
+| **Agents** and **Projects** | Chat assistants with the knowledge and tools they may use, and folders for related work. |
+| **Admin Panel** | For administrators: approvals, route policy, packs, tools, people, audit and quality. |
 
 ## Why EvolvXSI
 
@@ -32,6 +47,8 @@ EvolvXSI starts from the other end:
 - **Put work on a schedule.** A weekly check runs on its own, prepares the plan, and waits in your Inbox. Nothing runs further without your yes, and a schedule pauses itself if its plans keep going unaccepted.
 - **Keep track in one Inbox.** *To approve*, *To review* and *Updates* — plans waiting for you, drafts ready to check, decisions on your requests.
 - **Discover and request.** See which connectors, skills and tools exist but are not switched on, and ask for them. An administrator decides.
+
+![Start a workflow: ready-made, versioned workflows grouped in packs](docs/assets/readme/workflows.png)
 
 ![A draft under review: the agent's plan, the draft, and a review rule that blocks approval until a source is cited](docs/assets/readme/draft-review.png)
 
