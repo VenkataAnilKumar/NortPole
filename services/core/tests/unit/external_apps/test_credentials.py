@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from evolvxsi.external_apps.credentials import build_auth_headers
+from nortpole.external_apps.credentials import build_auth_headers
 
 
 def test_fills_placeholder_from_credentials() -> None:

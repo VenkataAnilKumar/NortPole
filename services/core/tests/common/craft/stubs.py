@@ -58,12 +58,12 @@ from datetime import datetime, timezone
 from typing import Any, cast
 from uuid import UUID
 
-from evolvxsi.server.features.build.sandbox.base import SandboxEvent, SandboxManager
-from evolvxsi.server.features.build.sandbox.image.sandbox_daemon.models import (
+from nortpole.server.features.build.sandbox.base import SandboxEvent, SandboxManager
+from nortpole.server.features.build.sandbox.image.sandbox_daemon.models import (
     FilesystemEntry,
     OutputsManifestResponse,
 )
-from evolvxsi.server.features.build.sandbox.models import (
+from nortpole.server.features.build.sandbox.models import (
     CraftLLMProviderConfig,
     CraftMCPServerConfig,
     FileSet,
@@ -73,7 +73,7 @@ from evolvxsi.server.features.build.sandbox.models import (
     SandboxResourceKind,
     SnapshotResult,
 )
-from evolvxsi.server.features.build.sandbox.serve_transport import (
+from nortpole.server.features.build.sandbox.serve_transport import (
     PromptSlot,
     ServeConnectionInfo,
 )

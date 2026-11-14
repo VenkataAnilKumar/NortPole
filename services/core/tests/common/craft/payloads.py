@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from evolvxsi.db.enums import ActionPolicy
-from evolvxsi.external_apps.matching.engine import MatchedAction
-from evolvxsi.server.features.build.sandbox.models import CraftLLMProviderConfig
+from nortpole.db.enums import ActionPolicy
+from nortpole.external_apps.matching.engine import MatchedAction
+from nortpole.server.features.build.sandbox.models import CraftLLMProviderConfig
 
 
 def default_llm_config(

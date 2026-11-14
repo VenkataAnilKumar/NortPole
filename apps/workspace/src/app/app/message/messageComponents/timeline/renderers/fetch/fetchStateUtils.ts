@@ -4,7 +4,7 @@ import {
   FetchToolUrls,
   FetchToolDocuments,
 } from "@/app/app/services/streamingModels";
-import { EvolvXSIDocument } from "@/lib/search/types";
+import { NortPoleDocument } from "@/lib/search/types";
 
 export const INITIAL_URLS_TO_SHOW = 3;
 export const URLS_PER_EXPANSION = 5;
@@ -13,7 +13,7 @@ export const READ_MIN_DURATION_MS = 1000;
 
 export interface FetchState {
   urls: string[];
-  documents: EvolvXSIDocument[];
+  documents: NortPoleDocument[];
   hasStarted: boolean;
   isLoading: boolean;
   isComplete: boolean;

@@ -9,7 +9,7 @@ the mounted roots into a single bundle and points `REQUESTS_CA_BUNDLE` /
 than replacing them) preserves TLS to public endpoints -- e.g. HuggingFace model
 downloads -- for operators who add only a private root.
 
-A no-op unless `EVOLVXSI_CUSTOM_CA_CERTS_DIR` is set, so default deployments are
+A no-op unless `NORTPOLE_CUSTOM_CA_CERTS_DIR` is set, so default deployments are
 unaffected and keep verifying against certifi directly.
 """
 
@@ -17,13 +17,13 @@ import os
 import tempfile
 from pathlib import Path
 
-from evolvxsi.utils.logger import setup_logger
+from nortpole.utils.logger import setup_logger
 
 logger = setup_logger()
 
 # Directory the custom CA Secret/ConfigMap is mounted at; each key becomes a file.
 # Set by the Helm model-server templates when customCACerts is enabled.
-CUSTOM_CA_CERTS_DIR_ENV = "EVOLVXSI_CUSTOM_CA_CERTS_DIR"
+CUSTOM_CA_CERTS_DIR_ENV = "NORTPOLE_CUSTOM_CA_CERTS_DIR"
 
 _MERGED_BUNDLE_NAME = "evolvxsi-model-server-ca-bundle.crt"
 _CERT_SUFFIXES = {".crt", ".pem"}

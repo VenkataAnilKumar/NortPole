@@ -13,10 +13,10 @@ group, and recomputes their permissions. It never creates users.
 """
 import sys
 
-from evolvxsi.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant
-from evolvxsi.db.models import User, User__UserGroup, UserGroup
-from evolvxsi.db.permissions import recompute_user_permissions__no_commit
-from evolvxsi.db.users import DEFAULT_ADMIN_GROUP_NAME, DEFAULT_BASIC_GROUP_NAME
+from nortpole.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant
+from nortpole.db.models import User, User__UserGroup, UserGroup
+from nortpole.db.permissions import recompute_user_permissions__no_commit
+from nortpole.db.users import DEFAULT_ADMIN_GROUP_NAME, DEFAULT_BASIC_GROUP_NAME
 
 
 def grant_admin(email: str) -> str:

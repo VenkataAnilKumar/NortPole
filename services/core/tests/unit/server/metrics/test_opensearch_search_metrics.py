@@ -4,8 +4,8 @@ from unittest.mock import patch
 
 import pytest
 
-from evolvxsi.document_index.opensearch.constants import OpenSearchSearchType
-from evolvxsi.server.metrics.opensearch_search import (
+from nortpole.document_index.opensearch.constants import OpenSearchSearchType
+from nortpole.server.metrics.opensearch_search import (
     _client_duration,
     _client_server_overhead,
     _search_errors,

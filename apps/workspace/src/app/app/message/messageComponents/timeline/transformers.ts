@@ -170,7 +170,7 @@ function callStep(
  * Shows code mode as the tool calls it makes. Each nested call of a program
  * becomes its own step, as a direct call would; the program itself has no
  * step. A call is its cell and sub_turn_index, as CodeModeRenderer in
- * backend/evolvxsi/chat/renderer.py states: a later report replaces an earlier one
+ * backend/nortpole/chat/renderer.py states: a later report replaces an earlier one
  * in place. A report of a running call
  * can hold only its start, so it replaces only a report with no more packets;
  * a complete report always replaces. Steps get sequential turn indices in

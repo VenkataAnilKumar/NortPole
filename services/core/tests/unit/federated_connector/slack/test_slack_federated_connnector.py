@@ -5,9 +5,9 @@ from unittest.mock import patch
 import pytest
 from pydantic import ValidationError
 
-from evolvxsi.federated_connectors.models import OAuthResult
-from evolvxsi.federated_connectors.slack.federated_connector import SlackFederatedConnector
-from evolvxsi.federated_connectors.slack.models import SlackEntities
+from nortpole.federated_connectors.models import OAuthResult
+from nortpole.federated_connectors.slack.federated_connector import SlackFederatedConnector
+from nortpole.federated_connectors.slack.models import SlackEntities
 
 # Constants for mock Slack OAuth response
 MOCK_APP_ID = "A093M5L7Q92"

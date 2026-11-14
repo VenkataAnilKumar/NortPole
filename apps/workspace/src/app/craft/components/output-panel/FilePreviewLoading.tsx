@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { EvolvXSILoader } from "@opal/components";
+import { NortPoleLoader } from "@opal/components";
 import { Section } from "@opal/layouts";
 
 /** Fast previews stay quiet; slower loads use the shared section loader. */
@@ -11,5 +11,5 @@ export function FilePreviewLoading() {
     const timer = window.setTimeout(() => setVisible(true), 300);
     return () => window.clearTimeout(timer);
   }, []);
-  return <Section gap={0}>{visible && <EvolvXSILoader size={32} />}</Section>;
+  return <Section gap={0}>{visible && <NortPoleLoader size={32} />}</Section>;
 }

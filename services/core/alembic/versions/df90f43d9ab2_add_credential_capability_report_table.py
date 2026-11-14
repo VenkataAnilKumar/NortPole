@@ -15,8 +15,8 @@ import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.dialects import postgresql
 
-from evolvxsi.configs.constants import DocumentSource
-from evolvxsi.db.enums import CapabilityCheckTrigger, CapabilityReportRunStatus
+from nortpole.configs.constants import DocumentSource
+from nortpole.db.enums import CapabilityCheckTrigger, CapabilityReportRunStatus
 
 # revision identifiers, used by Alembic.
 revision = "df90f43d9ab2"

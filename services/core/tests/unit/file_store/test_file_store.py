@@ -10,9 +10,9 @@ from sqlalchemy import DateTime, Enum, String, create_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, sessionmaker
 from sqlalchemy.sql import func
 
-from evolvxsi.configs.constants import FileOrigin
-from evolvxsi.file_store.file_store import S3BackedFileStore, get_default_file_store
-from evolvxsi.file_store.gcs_file_store import GCSBackedFileStore
+from nortpole.configs.constants import FileOrigin
+from nortpole.file_store.file_store import S3BackedFileStore, get_default_file_store
+from nortpole.file_store.gcs_file_store import GCSBackedFileStore
 
 
 class DBBaseTest(DeclarativeBase):
@@ -72,7 +72,7 @@ class TestExternalStorageFileStore:
 
     def test_get_default_file_store_s3(self) -> None:
         """Test that S3 file store is returned when backend is s3"""
-        with patch("evolvxsi.configs.app_configs.FILE_STORE_BACKEND", "s3"):
+        with patch("nortpole.configs.app_configs.FILE_STORE_BACKEND", "s3"):
             file_store = get_default_file_store()
             assert isinstance(file_store, S3BackedFileStore)
 
@@ -125,7 +125,7 @@ class TestExternalStorageFileStore:
     def test_s3_bucket_name_configuration(self) -> None:
         """Test S3 bucket name configuration"""
         with patch(
-            "evolvxsi.file_store.file_store.S3_FILE_STORE_BUCKET_NAME", "my-test-bucket"
+            "nortpole.file_store.file_store.S3_FILE_STORE_BUCKET_NAME", "my-test-bucket"
         ):
             file_store = S3BackedFileStore(bucket_name="my-test-bucket")
             bucket_name: str = file_store._get_bucket_name()
@@ -134,9 +134,9 @@ class TestExternalStorageFileStore:
     def test_s3_key_generation_default_prefix(self) -> None:
         """Test S3 key generation with default prefix"""
         with (
-            patch("evolvxsi.file_store.file_store.S3_FILE_STORE_PREFIX", "evolvxsi-files"),
+            patch("nortpole.file_store.file_store.S3_FILE_STORE_PREFIX", "evolvxsi-files"),
             patch(
-                "evolvxsi.file_store.file_store.get_current_tenant_id",
+                "nortpole.file_store.file_store.get_current_tenant_id",
                 return_value="test-tenant",
             ),
         ):
@@ -147,9 +147,9 @@ class TestExternalStorageFileStore:
     def test_s3_key_generation_custom_prefix(self) -> None:
         """Test S3 key generation with custom prefix"""
         with (
-            patch("evolvxsi.file_store.file_store.S3_FILE_STORE_PREFIX", "custom-prefix"),
+            patch("nortpole.file_store.file_store.S3_FILE_STORE_PREFIX", "custom-prefix"),
             patch(
-                "evolvxsi.file_store.file_store.get_current_tenant_id",
+                "nortpole.file_store.file_store.get_current_tenant_id",
                 return_value="test-tenant",
             ),
         ):
@@ -161,12 +161,12 @@ class TestExternalStorageFileStore:
 
     def test_s3_key_generation_with_different_tenant_ids(self) -> None:
         """Test S3 key generation with different tenant IDs"""
-        with patch("evolvxsi.file_store.file_store.S3_FILE_STORE_PREFIX", "evolvxsi-files"):
+        with patch("nortpole.file_store.file_store.S3_FILE_STORE_PREFIX", "evolvxsi-files"):
             file_store = S3BackedFileStore(bucket_name="test-bucket")
 
             # Test with tenant ID "tenant-1"
             with patch(
-                "evolvxsi.file_store.file_store.get_current_tenant_id",
+                "nortpole.file_store.file_store.get_current_tenant_id",
                 return_value="tenant-1",
             ):
                 s3_key = file_store._get_s3_key("document.pdf")
@@ -174,7 +174,7 @@ class TestExternalStorageFileStore:
 
             # Test with tenant ID "tenant-2"
             with patch(
-                "evolvxsi.file_store.file_store.get_current_tenant_id",
+                "nortpole.file_store.file_store.get_current_tenant_id",
                 return_value="tenant-2",
             ):
                 s3_key = file_store._get_s3_key("document.pdf")
@@ -182,7 +182,7 @@ class TestExternalStorageFileStore:
 
             # Test with default tenant (public)
             with patch(
-                "evolvxsi.file_store.file_store.get_current_tenant_id",
+                "nortpole.file_store.file_store.get_current_tenant_id",
                 return_value="public",
             ):
                 s3_key = file_store._get_s3_key("document.pdf")
@@ -207,14 +207,14 @@ class TestExternalStorageFileStore:
 
         with (
             patch(
-                "evolvxsi.file_store.file_store.S3_FILE_STORE_BUCKET_NAME", "test-bucket"
+                "nortpole.file_store.file_store.S3_FILE_STORE_BUCKET_NAME", "test-bucket"
             ),
-            patch("evolvxsi.file_store.file_store.S3_FILE_STORE_PREFIX", "evolvxsi-files"),
-            patch("evolvxsi.file_store.file_store.S3_AWS_ACCESS_KEY_ID", "test-key"),
-            patch("evolvxsi.file_store.file_store.S3_AWS_SECRET_ACCESS_KEY", "test-secret"),
+            patch("nortpole.file_store.file_store.S3_FILE_STORE_PREFIX", "evolvxsi-files"),
+            patch("nortpole.file_store.file_store.S3_AWS_ACCESS_KEY_ID", "test-key"),
+            patch("nortpole.file_store.file_store.S3_AWS_SECRET_ACCESS_KEY", "test-secret"),
         ):
             # Mock the database operation to avoid SQLAlchemy issues
-            with patch("evolvxsi.db.file_record.upsert_filerecord") as mock_upsert:
+            with patch("nortpole.db.file_record.upsert_filerecord") as mock_upsert:
                 mock_upsert.return_value = Mock()
 
                 file_store = S3BackedFileStore(bucket_name="test-bucket")
@@ -312,15 +312,15 @@ class TestFileStoreInterface:
 
     def test_file_store_s3_when_configured(self) -> None:
         """Test that S3 file store is returned when configured"""
-        with patch("evolvxsi.configs.app_configs.FILE_STORE_BACKEND", "s3"):
+        with patch("nortpole.configs.app_configs.FILE_STORE_BACKEND", "s3"):
             file_store = get_default_file_store()
             assert isinstance(file_store, S3BackedFileStore)
 
     def test_file_store_postgres_when_configured(self) -> None:
         """Test that Postgres file store is returned when configured"""
-        from evolvxsi.file_store.postgres_file_store import PostgresBackedFileStore
+        from nortpole.file_store.postgres_file_store import PostgresBackedFileStore
 
-        with patch("evolvxsi.configs.app_configs.FILE_STORE_BACKEND", "postgres"):
+        with patch("nortpole.configs.app_configs.FILE_STORE_BACKEND", "postgres"):
             file_store = get_default_file_store()
             assert isinstance(file_store, PostgresBackedFileStore)
 
@@ -332,9 +332,9 @@ class TestFileStoreInterface:
     def test_file_store_gcs_when_configured(self) -> None:
         """Test that GCS file store is returned when configured"""
         with (
-            patch("evolvxsi.configs.app_configs.FILE_STORE_BACKEND", "gcs"),
+            patch("nortpole.configs.app_configs.FILE_STORE_BACKEND", "gcs"),
             patch(
-                "evolvxsi.configs.app_configs.GCS_FILE_STORE_BUCKET_NAME",
+                "nortpole.configs.app_configs.GCS_FILE_STORE_BUCKET_NAME",
                 "test-gcs-bucket",
             ),
         ):
@@ -420,7 +420,7 @@ class TestGCSFileStore:
     def test_gcs_object_key_generation(self) -> None:
         """Test GCS object key generation reuses S3 key utilities"""
         with patch(
-            "evolvxsi.file_store.gcs_file_store.get_current_tenant_id",
+            "nortpole.file_store.gcs_file_store.get_current_tenant_id",
             return_value="test-tenant",
         ):
             file_store = GCSBackedFileStore(bucket_name="test-bucket")
@@ -430,7 +430,7 @@ class TestGCSFileStore:
     def test_gcs_object_key_generation_custom_prefix(self) -> None:
         """Test GCS object key generation with custom prefix"""
         with patch(
-            "evolvxsi.file_store.gcs_file_store.get_current_tenant_id",
+            "nortpole.file_store.gcs_file_store.get_current_tenant_id",
             return_value="test-tenant",
         ):
             file_store = GCSBackedFileStore(
@@ -455,7 +455,7 @@ class TestGCSFileStore:
         mock_db_session.commit = Mock()
         mock_db_session.rollback = Mock()
 
-        with patch("evolvxsi.db.file_record.upsert_filerecord") as mock_upsert:
+        with patch("nortpole.db.file_record.upsert_filerecord") as mock_upsert:
             mock_upsert.return_value = Mock()
 
             file_store = GCSBackedFileStore(bucket_name="test-gcs-bucket")
@@ -477,9 +477,9 @@ class TestGCSFileStore:
 
     def test_gcs_bucket_name_required(self) -> None:
         """Test that get_gcs_file_store raises when no bucket name is configured"""
-        from evolvxsi.file_store.file_store import get_gcs_file_store
+        from nortpole.file_store.file_store import get_gcs_file_store
 
-        with patch("evolvxsi.configs.app_configs.GCS_FILE_STORE_BUCKET_NAME", ""):
+        with patch("nortpole.configs.app_configs.GCS_FILE_STORE_BUCKET_NAME", ""):
             with pytest.raises(RuntimeError, match="GCS_FILE_STORE_BUCKET_NAME"):
                 get_gcs_file_store()
 
@@ -499,11 +499,11 @@ class TestGCSFileStore:
 
         with (
             patch(
-                "evolvxsi.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
+                "nortpole.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
                 return_value=nullcontext(mock_db_session),
             ),
             patch(
-                "evolvxsi.file_store.gcs_file_store.get_filerecord_by_file_id",
+                "nortpole.file_store.gcs_file_store.get_filerecord_by_file_id",
                 return_value=mock_record,
             ) as mock_get_record,
         ):
@@ -542,11 +542,11 @@ class TestGCSFileStore:
 
         with (
             patch(
-                "evolvxsi.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
+                "nortpole.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
                 return_value=nullcontext(mock_db_session),
             ),
             patch(
-                "evolvxsi.file_store.gcs_file_store.get_filerecord_by_file_id",
+                "nortpole.file_store.gcs_file_store.get_filerecord_by_file_id",
                 return_value=mock_record,
             ),
         ):
@@ -578,15 +578,15 @@ class TestGCSFileStore:
 
         with (
             patch(
-                "evolvxsi.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
+                "nortpole.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
                 return_value=nullcontext(mock_db_session),
             ),
             patch(
-                "evolvxsi.file_store.gcs_file_store.get_filerecord_by_file_id_for_update",
+                "nortpole.file_store.gcs_file_store.get_filerecord_by_file_id_for_update",
                 return_value=mock_record,
             ),
             patch(
-                "evolvxsi.file_store.gcs_file_store.delete_filerecord_by_file_id"
+                "nortpole.file_store.gcs_file_store.delete_filerecord_by_file_id"
             ) as mock_delete_record,
         ):
             file_store = GCSBackedFileStore(bucket_name="test-bucket")
@@ -618,15 +618,15 @@ class TestGCSFileStore:
 
         with (
             patch(
-                "evolvxsi.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
+                "nortpole.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
                 return_value=nullcontext(mock_db_session),
             ),
             patch(
-                "evolvxsi.file_store.gcs_file_store.get_filerecord_by_file_id_for_update",
+                "nortpole.file_store.gcs_file_store.get_filerecord_by_file_id_for_update",
                 return_value=mock_record,
             ),
             patch(
-                "evolvxsi.file_store.gcs_file_store.delete_filerecord_by_file_id"
+                "nortpole.file_store.gcs_file_store.delete_filerecord_by_file_id"
             ) as mock_delete_record,
         ):
             file_store = GCSBackedFileStore(bucket_name="test-bucket")
@@ -645,11 +645,11 @@ class TestGCSFileStore:
 
         with (
             patch(
-                "evolvxsi.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
+                "nortpole.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
                 return_value=nullcontext(mock_db_session),
             ),
             patch(
-                "evolvxsi.file_store.gcs_file_store.get_filerecord_by_file_id_for_update",
+                "nortpole.file_store.gcs_file_store.get_filerecord_by_file_id_for_update",
                 return_value=None,
             ),
         ):
@@ -668,11 +668,11 @@ class TestGCSFileStore:
 
         with (
             patch(
-                "evolvxsi.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
+                "nortpole.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
                 return_value=nullcontext(mock_db_session),
             ),
             patch(
-                "evolvxsi.file_store.gcs_file_store.get_filerecord_by_file_id_for_update",
+                "nortpole.file_store.gcs_file_store.get_filerecord_by_file_id_for_update",
                 return_value=None,
             ),
         ):
@@ -702,19 +702,19 @@ class TestGCSFileStore:
 
         with (
             patch(
-                "evolvxsi.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
+                "nortpole.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
                 return_value=nullcontext(mock_db_session),
             ),
             patch(
-                "evolvxsi.db.file_record.get_filerecord_by_file_id_for_update",
+                "nortpole.db.file_record.get_filerecord_by_file_id_for_update",
                 return_value=mock_record,
             ),
-            patch("evolvxsi.db.file_record.upsert_filerecord") as mock_upsert,
+            patch("nortpole.db.file_record.upsert_filerecord") as mock_upsert,
             patch(
-                "evolvxsi.db.file_record.delete_filerecord_by_file_id"
+                "nortpole.db.file_record.delete_filerecord_by_file_id"
             ) as mock_delete_record,
             patch(
-                "evolvxsi.file_store.gcs_file_store.get_current_tenant_id",
+                "nortpole.file_store.gcs_file_store.get_current_tenant_id",
                 return_value="public",
             ),
         ):
@@ -757,11 +757,11 @@ class TestGCSFileStore:
 
         with (
             patch(
-                "evolvxsi.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
+                "nortpole.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
                 return_value=nullcontext(mock_db_session),
             ),
             patch(
-                "evolvxsi.file_store.gcs_file_store.get_filerecord_by_file_id",
+                "nortpole.file_store.gcs_file_store.get_filerecord_by_file_id",
                 return_value=mock_record,
             ),
         ):
@@ -781,11 +781,11 @@ class TestGCSFileStore:
 
         with (
             patch(
-                "evolvxsi.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
+                "nortpole.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
                 return_value=nullcontext(mock_db_session),
             ),
             patch(
-                "evolvxsi.file_store.gcs_file_store.get_filerecord_by_file_id",
+                "nortpole.file_store.gcs_file_store.get_filerecord_by_file_id",
                 side_effect=RuntimeError("record missing"),
             ),
         ):

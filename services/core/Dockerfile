@@ -25,4 +25,4 @@ RUN HF_HUB_DISABLE_XET=1 python -c "from tokenizers import Tokenizer; \
 Tokenizer.from_pretrained('ibm-granite/granite-embedding-97m-multilingual-r2', revision='835ad14087e140460703cf0fae09f97d469d65c2')"
 EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=5s --retries=5 CMD python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=4).status == 200 else 1)"
-CMD ["sh", "-c", "alembic upgrade head && exec uvicorn evolvxsi.main:app --host 0.0.0.0 --port 8080"]
+CMD ["sh", "-c", "alembic upgrade head && exec uvicorn nortpole.main:app --host 0.0.0.0 --port 8080"]

@@ -2,9 +2,9 @@
 // Instructions / Reminders prompts. At chat time the backend substitutes each
 // with the current user's IdP directory attribute (or basic identity).
 // MUST stay in sync with the backend allow-list (enforced by
-// backend/tests/unit/evolvxsi/prompts/test_prompt_utils.py):
-//   - evolvxsi/prompts/prompt_utils.py `USER_PLACEHOLDER_KEYS`
-//   - evolvxsi/auth/login_claims_capture.py `_PROFILE_FIELDS`
+// backend/tests/unit/nortpole/prompts/test_prompt_utils.py):
+//   - nortpole/prompts/prompt_utils.py `USER_PLACEHOLDER_KEYS`
+//   - nortpole/auth/login_claims_capture.py `_PROFILE_FIELDS`
 
 export interface UserPlaceholder {
   key: string;

@@ -7,8 +7,8 @@ Create Date: 2025-02-16 18:21:41.330212
 """
 
 from alembic import op
-from evolvxsi.db.models import ConnectorCredentialPair
-from evolvxsi.db.enums import ConnectorCredentialPairStatus
+from nortpole.db.models import ConnectorCredentialPair
+from nortpole.db.enums import ConnectorCredentialPairStatus
 from sqlalchemy import update
 
 # revision identifiers, used by Alembic.

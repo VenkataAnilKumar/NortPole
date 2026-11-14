@@ -9,14 +9,14 @@ import pytest
 import requests
 from sqlalchemy.orm import Session
 
-from evolvxsi.auth.pkce import compute_s256_challenge
-from evolvxsi.db.enums import ExternalAppType
-from evolvxsi.db.models import ExternalApp, User
-from evolvxsi.error_handling.exceptions import EvolvXSIError
-from evolvxsi.external_apps.providers.base import OAuthExternalAppProvider
-from evolvxsi.external_apps.providers.registry import PROVIDERS
-from evolvxsi.server.features.build.external_apps import oauth as oauth_route
-from evolvxsi.server.features.build.external_apps.models import OAuthCallbackRequest
+from nortpole.auth.pkce import compute_s256_challenge
+from nortpole.db.enums import ExternalAppType
+from nortpole.db.models import ExternalApp, User
+from nortpole.error_handling.exceptions import NortPoleError
+from nortpole.external_apps.providers.base import OAuthExternalAppProvider
+from nortpole.external_apps.providers.registry import PROVIDERS
+from nortpole.server.features.build.external_apps import oauth as oauth_route
+from nortpole.server.features.build.external_apps.models import OAuthCallbackRequest
 from tests.unit.fakes import FakeCache
 
 
@@ -151,7 +151,7 @@ def test_attempt_is_owner_bound_and_claimed_before_token_exchange(
     state = _authorize_query(app=app, user=owner, db_session=db_session)["state"][0]
 
     with pytest.raises(
-        EvolvXSIError, match="Invalid or expired OAuth authorization attempt"
+        NortPoleError, match="Invalid or expired OAuth authorization attempt"
     ):
         oauth_route.handle_external_app_oauth_callback(
             OAuthCallbackRequest(code="stolen-code", state=state),
@@ -161,7 +161,7 @@ def test_attempt_is_owner_bound_and_claimed_before_token_exchange(
     token_post.assert_not_called()
 
     token_post.side_effect = requests.RequestException("provider unavailable")
-    with pytest.raises(EvolvXSIError, match="Could not reach Linear to complete OAuth"):
+    with pytest.raises(NortPoleError, match="Could not reach Linear to complete OAuth"):
         oauth_route.handle_external_app_oauth_callback(
             OAuthCallbackRequest(code="owner-code", state=state),
             user=owner,
@@ -170,7 +170,7 @@ def test_attempt_is_owner_bound_and_claimed_before_token_exchange(
     assert token_post.call_count == 1
 
     with pytest.raises(
-        EvolvXSIError, match="Invalid or expired OAuth authorization attempt"
+        NortPoleError, match="Invalid or expired OAuth authorization attempt"
     ):
         oauth_route.handle_external_app_oauth_callback(
             OAuthCallbackRequest(code="retried-code", state=state),
@@ -200,7 +200,7 @@ def test_callback_rejects_configuration_changed_after_start(
     credentials.values[field] = value
 
     with pytest.raises(
-        EvolvXSIError,
+        NortPoleError,
         match="External app OAuth configuration changed while authorization was pending",
     ):
         oauth_route.handle_external_app_oauth_callback(
@@ -353,7 +353,7 @@ def test_callback_rejects_non_object_token_response(
     owner = _user("owner")
     query = _authorize_query(app=app, user=owner, db_session=db_session)
     token_post.return_value.json.return_value = malformed_body
-    with pytest.raises(EvolvXSIError, match="invalid token response") as error:
+    with pytest.raises(NortPoleError, match="invalid token response") as error:
         oauth_route.handle_external_app_oauth_callback(
             OAuthCallbackRequest(code="code", state=query["state"][0]),
             user=owner,
@@ -370,7 +370,7 @@ def test_non_json_success_response_is_a_gateway_error(
     owner = _user("owner")
     query = _authorize_query(app=app, user=owner, db_session=db_session)
     token_post.return_value.json.side_effect = ValueError("invalid JSON")
-    with pytest.raises(EvolvXSIError, match="non-JSON") as error:
+    with pytest.raises(NortPoleError, match="non-JSON") as error:
         oauth_route.handle_external_app_oauth_callback(
             OAuthCallbackRequest(code="code", state=query["state"][0]),
             user=owner,
@@ -390,7 +390,7 @@ def test_callback_rechecks_app_availability(
         monkeypatch.setattr(oauth_route, "get_external_app_by_id", lambda *_: None)
     else:
         app.enabled = False
-    with pytest.raises(EvolvXSIError, match="no longer exists|disabled"):
+    with pytest.raises(NortPoleError, match="no longer exists|disabled"):
         oauth_route.handle_external_app_oauth_callback(
             OAuthCallbackRequest(code="code", state=query["state"][0]),
             user=owner,
@@ -454,14 +454,14 @@ def test_callback_rejects_invalid_provider_credentials(
     query = _authorize_query(app=app, user=owner, db_session=db_session)
     token_post.return_value.json.return_value = token_body
     callback = OAuthCallbackRequest(code="code", state=query["state"][0])
-    with pytest.raises(EvolvXSIError, match="invalid") as error:
+    with pytest.raises(NortPoleError, match="invalid") as error:
         oauth_route.handle_external_app_oauth_callback(
             callback, user=owner, db_session=db_session
         )
     assert error.value.status_code == 502
     persist.assert_not_called()
     db_session.commit.assert_not_called()
-    with pytest.raises(EvolvXSIError, match="Invalid or expired"):
+    with pytest.raises(NortPoleError, match="Invalid or expired"):
         oauth_route.handle_external_app_oauth_callback(
             callback, user=owner, db_session=db_session
         )
@@ -478,7 +478,7 @@ def test_callback_does_not_follow_token_redirects(
     owner = _user("owner")
     query = _authorize_query(app=app, user=owner, db_session=db_session)
     token_post.return_value.status_code = status_code
-    with pytest.raises(EvolvXSIError, match="redirected") as error:
+    with pytest.raises(NortPoleError, match="redirected") as error:
         oauth_route.handle_external_app_oauth_callback(
             OAuthCallbackRequest(code="code", state=query["state"][0]),
             user=owner,

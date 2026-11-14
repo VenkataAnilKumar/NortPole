@@ -6,7 +6,7 @@ import {
   InputSingleSelect,
   MessageCard,
   Modal,
-  EvolvXSILoader,
+  NortPoleLoader,
 } from "@opal/components";
 import { InputVertical } from "@opal/layouts";
 import { SvgZoom } from "@opal/logos";
@@ -64,7 +64,7 @@ export default function ZoomDecisionModal({
         />
         <Modal.Body>
           {isLoading ? (
-            <EvolvXSILoader size={24} />
+            <NortPoleLoader size={24} />
           ) : error || linkedId ? (
             <MessageCard variant="error" title={t("loadFailed")} />
           ) : (

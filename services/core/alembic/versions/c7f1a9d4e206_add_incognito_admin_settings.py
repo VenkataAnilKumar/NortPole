@@ -9,8 +9,8 @@ Create Date: 2026-08-12 09:40:00.000000
 import sqlalchemy as sa
 from alembic import op
 
-from evolvxsi.db.enums import IncognitoRecordMode
-from evolvxsi.server.security.models import IncognitoAvailability
+from nortpole.db.enums import IncognitoRecordMode
+from nortpole.server.security.models import IncognitoAvailability
 
 # revision identifiers, used by Alembic.
 revision = "c7f1a9d4e206"

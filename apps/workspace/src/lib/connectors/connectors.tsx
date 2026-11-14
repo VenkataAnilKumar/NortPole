@@ -274,7 +274,7 @@ export function translateConfiguration(
 }
 
 // Shared "Include Attachments" checkbox. Pair with an `include_attachments`
-// kwarg on the backend connector; see backend/evolvxsi/connectors/README.md for
+// kwarg on the backend connector; see backend/nortpole/connectors/README.md for
 // the convention, including how to pick the default.
 export function buildIncludeAttachmentsOption(
   defaultValue: boolean,

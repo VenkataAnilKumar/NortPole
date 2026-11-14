@@ -1,0 +1,75 @@
+"""Helpers for reading skill source content."""
+
+from collections.abc import Iterator
+from pathlib import Path
+
+from nortpole.db.models import Skill
+from nortpole.error_handling.error_codes import NortPoleErrorCode
+from nortpole.error_handling.exceptions import NortPoleError
+from nortpole.file_store.file_store import FileStore, get_default_file_store
+from nortpole.skills.built_in import BuiltInSkillDefinition
+from nortpole.skills.bundle import (
+    SKILL_MD_NAME,
+    TEMPLATE_SUFFIX,
+    read_custom_bundle_instructions,
+    strip_skill_md_frontmatter,
+)
+
+
+def iter_builtin_skill_files(source_dir: Path) -> Iterator[Path]:
+    """Yield source files, excluding hidden paths and Python caches."""
+    for path in sorted(source_dir.rglob("*")):
+        if not path.is_file():
+            continue
+        if any(
+            part == "__pycache__" or part.startswith(".")
+            for part in path.relative_to(source_dir).parts
+        ):
+            continue
+        yield path
+
+
+def read_builtin_skill_instructions(definition: BuiltInSkillDefinition) -> str:
+    source_path = definition.source_dir / SKILL_MD_NAME
+    if not source_path.is_file():
+        source_path = definition.source_dir / f"{SKILL_MD_NAME}{TEMPLATE_SUFFIX}"
+    if not source_path.is_file():
+        raise NortPoleError(
+            NortPoleErrorCode.INTERNAL_ERROR,
+            f"Built-in skill '{definition.built_in_skill_id}' has no SKILL.md source.",
+        )
+    try:
+        return strip_skill_md_frontmatter(source_path.read_text(encoding="utf-8"))
+    except OSError as exc:
+        raise NortPoleError(
+            NortPoleErrorCode.INTERNAL_ERROR,
+            f"Failed to read built-in skill '{definition.built_in_skill_id}'.",
+        ) from exc
+
+
+def read_custom_skill_bundle_instructions(
+    skill: Skill,
+    file_store: FileStore | None = None,
+) -> str:
+    bundle_bytes = read_custom_skill_bundle_bytes(skill, file_store)
+    return read_custom_bundle_instructions(bundle_bytes)
+
+
+def read_custom_skill_bundle_bytes(
+    skill: Skill,
+    file_store: FileStore | None = None,
+) -> bytes:
+    if skill.bundle_file_id is None:
+        raise NortPoleError(
+            NortPoleErrorCode.INTERNAL_ERROR,
+            f"Custom skill '{skill.name}' has no bundle.",
+        )
+    store = file_store or get_default_file_store()
+    try:
+        bundle_bytes = store.read_file(skill.bundle_file_id).read()
+    except Exception as exc:
+        raise NortPoleError(
+            NortPoleErrorCode.INTERNAL_ERROR,
+            f"Failed to read bundle for skill '{skill.name}'.",
+        ) from exc
+    return bundle_bytes

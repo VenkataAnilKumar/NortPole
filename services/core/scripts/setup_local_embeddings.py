@@ -22,7 +22,7 @@ import requests
 from sqlalchemy import text
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from evolvxsi.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant  # noqa: E402
+from nortpole.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant  # noqa: E402
 
 
 def main() -> None:

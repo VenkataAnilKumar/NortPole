@@ -11,7 +11,7 @@ import { DEFAULT_AGENT_ID } from "@/lib/constants";
  * query survives.
  */
 export function defaultAgentRedirectTarget(
-  searchParams: Record<string, string>
+  searchParams: Record<string, string>,
 ): "/app" | `/app?${string}` | null {
   if (searchParams[SEARCH_PARAM_NAMES.AGENT_ID] !== String(DEFAULT_AGENT_ID)) {
     return null;
@@ -24,9 +24,10 @@ export function defaultAgentRedirectTarget(
   return query ? `/app?${query}` : "/app";
 }
 
-/** The web server's version, from its EVOLVXSI_VERSION env var. Server-side only. */
+/** The web server's version, from its NORTPOLE_VERSION env var. Server-side only. */
 export function getWebVersion(): string {
-  return process.env.EVOLVXSI_VERSION || "dev";
+  // The old EVOLVXSI_VERSION name is still read (decision 0007).
+  return process.env.NORTPOLE_VERSION || process.env.EVOLVXSI_VERSION || "dev";
 }
 
 /** Where the About page's version links. */
@@ -34,5 +35,5 @@ export const CHANGELOG_URL = "/help/changelog";
 
 /** The GitHub page of a commit of the NortPole repo. */
 export function commitUrl(commit: string): string {
-  return `https://github.com/VenkataAnilKumar/EvolvXSI/commit/${commit}`;
+  return `https://github.com/VenkataAnilKumar/NortPole/commit/${commit}`;
 }

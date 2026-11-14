@@ -2,7 +2,7 @@ import React, { memo, JSX, useMemo, useCallback } from "react";
 import type { ExtraProps } from "react-markdown";
 import { SourceIcon } from "@/components/SourceIcon";
 import { WebResultIcon } from "@/components/WebResultIcon";
-import { MinimalEvolvXSIDocument, EvolvXSIDocument } from "@/lib/search/types";
+import { MinimalEvolvXSIDocument, NortPoleDocument } from "@/lib/search/types";
 import { SubQuestionDetail, CitationMap } from "@/app/app/types";
 import { ValidSources } from "@/lib/connectors/types/source";
 import { ProjectFile } from "@/lib/projects/types";
@@ -37,7 +37,7 @@ function getPlainLabel(children: React.ReactNode): string | null {
 }
 
 interface DocumentCardProps {
-  document: EvolvXSIDocument;
+  document: NortPoleDocument;
   updatePresentingDocument: (document: MinimalEvolvXSIDocument) => void;
   url?: string;
 }
@@ -59,7 +59,7 @@ export const MemoizedAnchor = memo(
   }: {
     subQuestions?: SubQuestionDetail[];
     openQuestion?: (question: SubQuestionDetail) => void;
-    docs?: EvolvXSIDocument[] | null;
+    docs?: NortPoleDocument[] | null;
     userFiles?: ProjectFile[] | null;
     citations?: CitationMap;
     updatePresentingDocument: (doc: MinimalEvolvXSIDocument) => void;
@@ -81,7 +81,7 @@ export const MemoizedAnchor = memo(
           // Use citation map to find the correct document
           // Citations map format: {citation_num: document_id}
           // e.g., {1: "doc_abc", 2: "doc_xyz", 3: "doc_123"}
-          let associatedDoc: EvolvXSIDocument | null = null;
+          let associatedDoc: NortPoleDocument | null = null;
           if (isDocument && docs && citations) {
             const document_id = citations[citation_num];
             if (document_id) {

@@ -66,7 +66,7 @@ backend = [
     "lxml==6.1.1",
     # NOTE: Do not update without understanding the patching behavior in
     # get_markitdown_converter in
-    # backend/evolvxsi/file_processing/extract_file_text.py and what impacts
+    # backend/nortpole/file_processing/extract_file_text.py and what impacts
     # updating might have on this behavior.
     "markitdown[pdf, docx, pptx, xlsx, xls]==0.1.7",
     "mcp[cli]==1.30.0",
@@ -233,7 +233,7 @@ override-dependencies = [
 [tool.ty.environment]
 python-version = "3.13"
 root = ["./backend"]
-# Ensure ty resolves evolvxsi.* from this project's backend directory first, even
+# Ensure ty resolves nortpole.* from this project's backend directory first, even
 # when PYTHONPATH contains another checkout (e.g. when working in a git worktree
 # alongside the main repo).
 extra-paths = ["backend"]
@@ -243,9 +243,9 @@ include = ["backend"]
 exclude = [
     "**/generated/**",
     "**/.venv/**",
-    "**/evolvxsi/server/features/build/sandbox/image/sandbox_daemon/**",
-    "**/evolvxsi/skills/builtin/**",
-    "**/evolvxsi/server/features/build/sandbox/image/templates/**",
+    "**/nortpole/server/features/build/sandbox/image/sandbox_daemon/**",
+    "**/nortpole/skills/builtin/**",
+    "**/nortpole/server/features/build/sandbox/image/templates/**",
 ]
 
 [tool.ty.rules]
@@ -273,8 +273,8 @@ pydantic-discarded-extra-argument = "ignore"
 include = ["backend"]
 exclude = [
     "backend/generated",
-    "backend/evolvxsi/server/features/build/sandbox/image/sandbox_daemon",
-    "backend/evolvxsi/skills/builtin/pptx",
+    "backend/nortpole/server/features/build/sandbox/image/sandbox_daemon",
+    "backend/nortpole/skills/builtin/pptx",
 ]
 typeCheckingMode = "off"
 
@@ -344,11 +344,11 @@ extend-immutable-calls = [
     "fastapi.File",
     "fastapi.Form",
     "fastapi.Query",
-    "evolvxsi.auth.permissions.require_permission",
+    "nortpole.auth.permissions.require_permission",
 ]
 
 [tool.ruff.lint.isort]
-known-first-party = ["evolvxsi", "ee", "tests", "shared_configs", "model_server"]
+known-first-party = ["nortpole", "ee", "tests", "shared_configs", "model_server"]
 
 [tool.ruff.lint.per-file-ignores]
 # alembic has a folder named `alembic` in backend/ which confuses import sorters.
@@ -370,66 +370,66 @@ known-first-party = ["evolvxsi", "ee", "tests", "shared_configs", "model_server"
 # number is the highest complexity in that file at the time. Remove an entry
 # once its functions are simplified. NOTE: the ignore is per file, so it also
 # hides new complex functions added to these files. Tracked in #2403.
-"backend/ee/evolvxsi/background/celery/tasks/doc_permission_syncing/tasks.py" = ["C901"] # 21
-"backend/ee/evolvxsi/external_permissions/google_drive/doc_sync.py" = ["C901"] # 21
-"backend/ee/evolvxsi/server/gateway/anthropic_passthrough.py" = ["C901"] # 23
-"backend/ee/evolvxsi/server/gateway/api.py" = ["C901"] # 27
-"backend/ee/evolvxsi/server/gateway/openai_passthrough.py" = ["C901"] # 32
-"backend/evolvxsi/auth/users.py" = ["C901"] # 30
-"backend/evolvxsi/background/celery/tasks/docfetching/tasks.py" = ["C901"] # 43
-"backend/evolvxsi/background/celery/tasks/docprocessing/tasks.py" = ["C901"] # 24
-"backend/evolvxsi/background/celery/tasks/port/tasks.py" = ["C901"] # 27
-"backend/evolvxsi/background/indexing/run_docfetching.py" = ["C901"] # 33
-"backend/evolvxsi/chat/citation_processor.py" = ["C901"] # 30
-"backend/evolvxsi/chat/llm_loop.py" = ["C901"] # 46
-"backend/evolvxsi/chat/llm_step.py" = ["C901"] # 51
-"backend/evolvxsi/chat/process_message.py" = ["C901"] # 47
-"backend/evolvxsi/connectors/blob/connector.py" = ["C901"] # 24
-"backend/evolvxsi/connectors/confluence/connector.py" = ["C901"] # 22
-"backend/evolvxsi/connectors/confluence/source_operations.py" = ["C901"] # 22
-"backend/evolvxsi/connectors/connector_runner.py" = ["C901"] # 26
-"backend/evolvxsi/connectors/drupal_wiki/connector.py" = ["C901"] # 21
-"backend/evolvxsi/connectors/github/connector.py" = ["C901"] # 28
-"backend/evolvxsi/connectors/gitlab/connector.py" = ["C901"] # 22
-"backend/evolvxsi/connectors/google_drive/connector.py" = ["C901"] # 22
-"backend/evolvxsi/connectors/google_drive/doc_conversion.py" = ["C901"] # 24
-"backend/evolvxsi/connectors/hubspot/connector.py" = ["C901"] # 23
-"backend/evolvxsi/connectors/notion/connector.py" = ["C901"] # 22
-"backend/evolvxsi/connectors/sharepoint/connector.py" = ["C901"] # 34
-"backend/evolvxsi/connectors/slack/connector.py" = ["C901"] # 26
-"backend/evolvxsi/connectors/testrail/connector.py" = ["C901"] # 21
-"backend/evolvxsi/connectors/web/connector.py" = ["C901"] # 23
-"backend/evolvxsi/context/search/federated/slack_search.py" = ["C901"] # 31
-"backend/evolvxsi/db/persona.py" = ["C901"] # 49
-"backend/evolvxsi/deep_research/dr_loop.py" = ["C901"] # 26
-"backend/evolvxsi/document_index/opensearch/search.py" = ["C901"] # 48
-"backend/evolvxsi/federated_connectors/federated_retrieval.py" = ["C901"] # 21
-"backend/evolvxsi/llm/multi_llm.py" = ["C901"] # 45
-"backend/evolvxsi/llm/utils.py" = ["C901"] # 30
-"backend/evolvxsi/evolvxsibot/slack/handlers/handle_message.py" = ["C901"] # 34
-"backend/evolvxsi/evolvxsibot/slack/handlers/handle_regular_answer.py" = ["C901"] # 22
-"backend/evolvxsi/evolvxsibot/slack/listener.py" = ["C901"] # 28
-"backend/evolvxsi/secondary_llm_flows/document_filter.py" = ["C901"] # 31
-"backend/evolvxsi/server/documents/connector.py" = ["C901"] # 28
-"backend/evolvxsi/server/features/build/interactive_turns/api.py" = ["C901"] # 22
-"backend/evolvxsi/server/features/build/interactive_turns/executor.py" = ["C901"] # 35
-"backend/evolvxsi/server/features/build/sandbox/opencode/serve_client.py" = ["C901"] # 56
-"backend/evolvxsi/server/features/build/session/streaming.py" = ["C901"] # 24
-"backend/evolvxsi/server/features/mcp/api.py" = ["C901"] # 33
-"backend/evolvxsi/server/manage/users.py" = ["C901"] # 22
-"backend/evolvxsi/server/manage/voice/websocket_api.py" = ["C901"] # 29
-"backend/evolvxsi/server/query_and_chat/session_loading.py" = ["C901"] # 42
-"backend/evolvxsi/skills/builtin/gmail/gmail_api.py" = ["C901"] # 23
-"backend/evolvxsi/skills/builtin/google-drive/gdrive_api.py" = ["C901"] # 26
-"backend/evolvxsi/skills/builtin/notion/notion_api.py" = ["C901"] # 28
-"backend/evolvxsi/skills/ingest_from_github.py" = ["C901"] # 27
-"backend/evolvxsi/tools/tool_constructor.py" = ["C901"] # 40
-"backend/evolvxsi/tools/tool_implementations/search/search_tool.py" = ["C901"] # 25
-"backend/evolvxsi/tools/tool_runner.py" = ["C901"] # 21
-"backend/evolvxsi/voice/providers/elevenlabs.py" = ["C901"] # 21
+"backend/ee/nortpole/background/celery/tasks/doc_permission_syncing/tasks.py" = ["C901"] # 21
+"backend/ee/nortpole/external_permissions/google_drive/doc_sync.py" = ["C901"] # 21
+"backend/ee/nortpole/server/gateway/anthropic_passthrough.py" = ["C901"] # 23
+"backend/ee/nortpole/server/gateway/api.py" = ["C901"] # 27
+"backend/ee/nortpole/server/gateway/openai_passthrough.py" = ["C901"] # 32
+"backend/nortpole/auth/users.py" = ["C901"] # 30
+"backend/nortpole/background/celery/tasks/docfetching/tasks.py" = ["C901"] # 43
+"backend/nortpole/background/celery/tasks/docprocessing/tasks.py" = ["C901"] # 24
+"backend/nortpole/background/celery/tasks/port/tasks.py" = ["C901"] # 27
+"backend/nortpole/background/indexing/run_docfetching.py" = ["C901"] # 33
+"backend/nortpole/chat/citation_processor.py" = ["C901"] # 30
+"backend/nortpole/chat/llm_loop.py" = ["C901"] # 46
+"backend/nortpole/chat/llm_step.py" = ["C901"] # 51
+"backend/nortpole/chat/process_message.py" = ["C901"] # 47
+"backend/nortpole/connectors/blob/connector.py" = ["C901"] # 24
+"backend/nortpole/connectors/confluence/connector.py" = ["C901"] # 22
+"backend/nortpole/connectors/confluence/source_operations.py" = ["C901"] # 22
+"backend/nortpole/connectors/connector_runner.py" = ["C901"] # 26
+"backend/nortpole/connectors/drupal_wiki/connector.py" = ["C901"] # 21
+"backend/nortpole/connectors/github/connector.py" = ["C901"] # 28
+"backend/nortpole/connectors/gitlab/connector.py" = ["C901"] # 22
+"backend/nortpole/connectors/google_drive/connector.py" = ["C901"] # 22
+"backend/nortpole/connectors/google_drive/doc_conversion.py" = ["C901"] # 24
+"backend/nortpole/connectors/hubspot/connector.py" = ["C901"] # 23
+"backend/nortpole/connectors/notion/connector.py" = ["C901"] # 22
+"backend/nortpole/connectors/sharepoint/connector.py" = ["C901"] # 34
+"backend/nortpole/connectors/slack/connector.py" = ["C901"] # 26
+"backend/nortpole/connectors/testrail/connector.py" = ["C901"] # 21
+"backend/nortpole/connectors/web/connector.py" = ["C901"] # 23
+"backend/nortpole/context/search/federated/slack_search.py" = ["C901"] # 31
+"backend/nortpole/db/persona.py" = ["C901"] # 49
+"backend/nortpole/deep_research/dr_loop.py" = ["C901"] # 26
+"backend/nortpole/document_index/opensearch/search.py" = ["C901"] # 48
+"backend/nortpole/federated_connectors/federated_retrieval.py" = ["C901"] # 21
+"backend/nortpole/llm/multi_llm.py" = ["C901"] # 45
+"backend/nortpole/llm/utils.py" = ["C901"] # 30
+"backend/nortpole/evolvxsibot/slack/handlers/handle_message.py" = ["C901"] # 34
+"backend/nortpole/evolvxsibot/slack/handlers/handle_regular_answer.py" = ["C901"] # 22
+"backend/nortpole/evolvxsibot/slack/listener.py" = ["C901"] # 28
+"backend/nortpole/secondary_llm_flows/document_filter.py" = ["C901"] # 31
+"backend/nortpole/server/documents/connector.py" = ["C901"] # 28
+"backend/nortpole/server/features/build/interactive_turns/api.py" = ["C901"] # 22
+"backend/nortpole/server/features/build/interactive_turns/executor.py" = ["C901"] # 35
+"backend/nortpole/server/features/build/sandbox/opencode/serve_client.py" = ["C901"] # 56
+"backend/nortpole/server/features/build/session/streaming.py" = ["C901"] # 24
+"backend/nortpole/server/features/mcp/api.py" = ["C901"] # 33
+"backend/nortpole/server/manage/users.py" = ["C901"] # 22
+"backend/nortpole/server/manage/voice/websocket_api.py" = ["C901"] # 29
+"backend/nortpole/server/query_and_chat/session_loading.py" = ["C901"] # 42
+"backend/nortpole/skills/builtin/gmail/gmail_api.py" = ["C901"] # 23
+"backend/nortpole/skills/builtin/google-drive/gdrive_api.py" = ["C901"] # 26
+"backend/nortpole/skills/builtin/notion/notion_api.py" = ["C901"] # 28
+"backend/nortpole/skills/ingest_from_github.py" = ["C901"] # 27
+"backend/nortpole/tools/tool_constructor.py" = ["C901"] # 40
+"backend/nortpole/tools/tool_implementations/search/search_tool.py" = ["C901"] # 25
+"backend/nortpole/tools/tool_runner.py" = ["C901"] # 21
+"backend/nortpole/voice/providers/elevenlabs.py" = ["C901"] # 21
 "backend/scripts/rotate_llm_provider_keys.py" = ["C901"] # 25
 "backend/scripts/tenant_cleanup/cleanup_tenants.py" = ["C901"] # 27
 "backend/scripts/tenant_cleanup/mark_connectors_for_deletion.py" = ["C901"] # 31
 "backend/scripts/tenant_cleanup/no_bastion_cleanup_tenants.py" = ["C901"] # 49
 "backend/scripts/tenant_cleanup/no_bastion_mark_connectors.py" = ["C901"] # 39
-"backend/tests/unit/evolvxsi/connectors/salesforce/test_salesforce_sqlite.py" = ["C901"] # 24
+"backend/tests/unit/nortpole/connectors/salesforce/test_salesforce_sqlite.py" = ["C901"] # 24

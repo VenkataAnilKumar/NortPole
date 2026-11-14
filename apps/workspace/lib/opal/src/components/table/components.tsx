@@ -33,10 +33,10 @@ import type {
   DataTableProps as BaseDataTableProps,
   DataTableFooterConfig,
   TableColumn,
-  EvolvXSIColumnDef,
-  EvolvXSIDataColumn,
-  EvolvXSIQualifierColumn,
-  EvolvXSIActionsColumn,
+  NortPoleColumnDef,
+  NortPoleDataColumn,
+  NortPoleQualifierColumn,
+  NortPoleActionsColumn,
 } from "@opal/components/table/types";
 import type { TableSize } from "@opal/components/table/TableSizeContext";
 
@@ -58,9 +58,9 @@ export type DataTableProps<TData> = BaseDataTableProps<TData> & {
 interface ProcessedColumns<TData> {
   tanstackColumns: ColumnDef<TData, any>[];
   widthConfig: WidthConfig;
-  qualifierColumn: EvolvXSIQualifierColumn<TData> | null;
-  /** Map from column ID → EvolvXSIColumnDef for dispatch in render loops. */
-  columnKindMap: Map<string, EvolvXSIColumnDef<TData>>;
+  qualifierColumn: NortPoleQualifierColumn<TData> | null;
+  /** Map from column ID → NortPoleColumnDef for dispatch in render loops. */
+  columnKindMap: Map<string, NortPoleColumnDef<TData>>;
 }
 
 function processColumns<TData>(
@@ -72,8 +72,8 @@ function processColumns<TData>(
   const fixedColumnIds = new Set<string>();
   const columnWeights: Record<string, number> = {};
   const columnMinWidths: Record<string, number> = {};
-  const columnKindMap = new Map<string, EvolvXSIColumnDef<TData>>();
-  let qualifierColumn: EvolvXSIQualifierColumn<TData> | null = null;
+  const columnKindMap = new Map<string, NortPoleColumnDef<TData>>();
+  let qualifierColumn: NortPoleQualifierColumn<TData> | null = null;
   let firstDataColumnSeen = false;
 
   for (const col of columns) {
@@ -428,7 +428,7 @@ export function Table<TData>(props: DataTableProps<TData>) {
 
                       // Actions header
                       if (colDef?.kind === "actions") {
-                        const actionsDef = colDef as EvolvXSIActionsColumn<TData>;
+                        const actionsDef = colDef as NortPoleActionsColumn<TData>;
                         return (
                           <ActionsContainer key={header.id} type="head">
                             {actionsDef.showColumnVisibility !== false && (
@@ -461,7 +461,7 @@ export function Table<TData>(props: DataTableProps<TData>) {
 
                       const dataCol =
                         colDef?.kind === "data"
-                          ? (colDef as EvolvXSIDataColumn<TData>)
+                          ? (colDef as NortPoleDataColumn<TData>)
                           : null;
 
                       return (
@@ -574,7 +574,7 @@ export function Table<TData>(props: DataTableProps<TData>) {
 
                       // Qualifier cell
                       if (cellColDef?.kind === "qualifier") {
-                        const qDef = cellColDef as EvolvXSIQualifierColumn<TData>;
+                        const qDef = cellColDef as NortPoleQualifierColumn<TData>;
 
                         return (
                           <QualifierContainer

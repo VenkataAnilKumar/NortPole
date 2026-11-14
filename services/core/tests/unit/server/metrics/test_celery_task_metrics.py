@@ -6,8 +6,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from evolvxsi.background.celery.apps.app_base import on_before_task_publish
-from evolvxsi.server.metrics.celery_task_metrics import (
+from nortpole.background.celery.apps.app_base import on_before_task_publish
+from nortpole.server.metrics.celery_task_metrics import (
     TASK_COMPLETED,
     TASK_DURATION,
     TASK_QUEUE_WAIT,

@@ -81,7 +81,7 @@ export interface CCPairFullInfo {
   queue_position: number | null;
 }
 
-/** Mirrors `IndexingHoldReason` in `backend/evolvxsi/connectors/capability_checks/indexing_hold_models.py`. */
+/** Mirrors `IndexingHoldReason` in `backend/nortpole/connectors/capability_checks/indexing_hold_models.py`. */
 export type IndexingHoldReason =
   | "checks_running"
   | "checks_failed_to_run"
@@ -104,13 +104,13 @@ export interface IndexingHold {
   index_attempt_id: number | null;
 }
 
-/** Mirrors `CCPairDataAccess` in `backend/ee/evolvxsi/server/documents/models.py`. */
+/** Mirrors `CCPairDataAccess` in `backend/ee/nortpole/server/documents/models.py`. */
 export interface CCPairDataAccess {
   /** Only the groups the caller can see. */
   groups: { id: number; name: string; is_default: boolean }[];
 }
 
-/** Mirrors `CCPairManageAccessRow` in `backend/ee/evolvxsi/server/documents/manage_access.py`. */
+/** Mirrors `CCPairManageAccessRow` in `backend/ee/nortpole/server/documents/manage_access.py`. */
 export interface CCPairManageAccessRow {
   group_id: number;
   group_name: string;
@@ -122,7 +122,7 @@ export interface CCPairManageAccessRow {
   manager_count: number;
 }
 
-/** Mirrors `PendingBackfillSnapshot` in `backend/evolvxsi/server/documents/models.py`. */
+/** Mirrors `PendingBackfillSnapshot` in `backend/nortpole/server/documents/models.py`. */
 export interface PendingBackfillSnapshot {
   window_start: string;
   window_end: string;
@@ -144,7 +144,7 @@ export interface PaginatedIndexAttempts {
 /**
  * One row of the document-permission-sync attempt history. Mirrors
  * `DocPermissionSyncAttemptSnapshot` in
- * `backend/evolvxsi/server/documents/models.py`.
+ * `backend/nortpole/server/documents/models.py`.
  *
  * Note: timestamps are pre-serialized to ISO strings on the backend
  * (matching `IndexAttemptSnapshot.time_started`/`time_updated`), so the
@@ -165,7 +165,7 @@ export interface DocPermissionSyncAttemptSnapshot {
 /**
  * One row of the external-group-sync attempt history. Mirrors
  * `ExternalGroupSyncAttemptSnapshot` in
- * `backend/evolvxsi/server/documents/models.py`. The progress fields differ
+ * `backend/nortpole/server/documents/models.py`. The progress fields differ
  * from the doc-sync shape because group sync tracks user/group/membership
  * counts rather than document-level counts.
  */
@@ -187,7 +187,7 @@ export interface ExternalGroupSyncAttemptSnapshot {
   time_finished: string | null;
 }
 
-/** Mirrors `CCPairRunKind` in `backend/evolvxsi/db/enums.py`. A list, so input such as a query param can be checked against it. */
+/** Mirrors `CCPairRunKind` in `backend/nortpole/db/enums.py`. A list, so input such as a query param can be checked against it. */
 export const CC_PAIR_RUN_KINDS = [
   "indexing",
   "doc_permission_sync",
@@ -208,7 +208,7 @@ export type PruneRunStatus = "in_progress" | "success" | "failed" | "canceled";
 /** Mirrors `CapabilityCheckRunStatus`. `failed` means a required check failed. */
 export type CheckRunStatus = "running" | "passed" | "failed" | "failed_to_run";
 
-/** One prune of the pair. Mirrors `PruneRunSnapshot` in `backend/evolvxsi/server/documents/models.py`. */
+/** One prune of the pair. Mirrors `PruneRunSnapshot` in `backend/nortpole/server/documents/models.py`. */
 export interface PruneRunSnapshot {
   id: number;
   status: PruneRunStatus;
@@ -241,7 +241,7 @@ export type CCPairRunStatusGroup =
   | "failed"
   | "canceled";
 
-/** Mirrors `HierarchyNodeType` in `backend/evolvxsi/db/enums.py`. */
+/** Mirrors `HierarchyNodeType` in `backend/nortpole/db/enums.py`. */
 export type HierarchyNodeType =
   | "folder"
   | "source"
@@ -392,10 +392,10 @@ export interface IndexAttemptError {
   error_type: string | null;
 }
 
-/** Mirrors `SyncEntityKind` in `backend/evolvxsi/db/enums.py`. */
+/** Mirrors `SyncEntityKind` in `backend/nortpole/db/enums.py`. */
 export type SyncEntityKind = "user" | "group";
 
-/** A user or group a group sync skipped whole. Mirrors `SyncAttemptErrorSnapshot` in `backend/ee/evolvxsi/server/documents/models.py`. */
+/** A user or group a group sync skipped whole. Mirrors `SyncAttemptErrorSnapshot` in `backend/ee/nortpole/server/documents/models.py`. */
 export interface SyncAttemptError {
   id: number;
   connector_credential_pair_id: number;

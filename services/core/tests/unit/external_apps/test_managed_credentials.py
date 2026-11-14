@@ -1,17 +1,17 @@
 """Each NortPole-managed provider resolves its NortPole-owned credentials from the
 per-field ``managed_org_credentials`` values
-(``EvolvXSIManagedExtApp.configured_managed_credentials``)."""
+(``NortPoleManagedExtApp.configured_managed_credentials``)."""
 
 from __future__ import annotations
 
 import pytest
 
-from evolvxsi.db.enums import ExternalAppType
-from evolvxsi.external_apps.providers.base import EvolvXSIManagedExtApp
-from evolvxsi.external_apps.providers.registry import PROVIDERS, get_evolvxsi_managed_provider
+from nortpole.db.enums import ExternalAppType
+from nortpole.external_apps.providers.base import NortPoleManagedExtApp
+from nortpole.external_apps.providers.registry import PROVIDERS, get_evolvxsi_managed_provider
 
 
-def _gmail() -> EvolvXSIManagedExtApp:
+def _gmail() -> NortPoleManagedExtApp:
     provider = get_evolvxsi_managed_provider(ExternalAppType.GMAIL)
     assert provider is not None
     return provider
@@ -21,7 +21,7 @@ def test_managed_credential_keys_match_required_fields() -> None:
     """Each NortPole-managed provider maps exactly its required credential fields.
     (Also enforced at class-definition time in ExternalAppProvider.__init_subclass__;
     this pins it as an explicit, readable invariant.)"""
-    managed = [p for p in PROVIDERS.values() if isinstance(p, EvolvXSIManagedExtApp)]
+    managed = [p for p in PROVIDERS.values() if isinstance(p, NortPoleManagedExtApp)]
     assert managed  # sanity: at least one managed provider exists
     for provider in managed:
         required = {

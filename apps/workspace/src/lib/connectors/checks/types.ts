@@ -4,7 +4,7 @@ import type { AccessType } from "@/lib/types";
 
 /**
  * Mirrors the backend's capability-check models
- * (`evolvxsi.connectors.capability_checks`), and the draft runs that
+ * (`nortpole.connectors.capability_checks`), and the draft runs that
  * `/manage/admin/connector-checks/runs` serves for an unsaved connector form.
  */
 

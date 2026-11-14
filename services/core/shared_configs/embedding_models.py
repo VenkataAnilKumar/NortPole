@@ -39,7 +39,7 @@ class LocalModelLoader(str, Enum):
 
 class EmbeddingModelSpec(BaseModel, frozen=True):
     """One known embedding model. LEGACY values only seed env defaults
-    (``evolvxsi.configs.model_configs``). Stored rows often differ (e.g. empty
+    (``nortpole.configs.model_configs``). Stored rows often differ (e.g. empty
     prefixes), so never compare a request or a row against them."""
 
     # None means self-hosted (the model server runs it).

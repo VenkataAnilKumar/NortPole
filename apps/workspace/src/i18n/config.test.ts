@@ -8,7 +8,7 @@ import {
 describe("SUPPORTED_LOCALES", () => {
   it("matches the backend SupportedLanguage enum", () => {
     // Pin the locale list that mirrors the backend `SupportedLanguage` enum
-    // (backend/evolvxsi/db/enums.py). If this test fails, update both places
+    // (backend/nortpole/db/enums.py). If this test fails, update both places
     // together.
     expect([...SUPPORTED_LOCALES]).toEqual([
       "en",

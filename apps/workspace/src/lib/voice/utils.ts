@@ -47,7 +47,7 @@ export interface VoiceProviderDetail {
   sttLanguageOptions?: Array<{ id: string; name: string }>;
 }
 
-/** Locale shape for STT languages; mirrors AZURE_LOCALE_PATTERN in backend/evolvxsi/voice/providers/azure.py. */
+/** Locale shape for STT languages; mirrors AZURE_LOCALE_PATTERN in backend/nortpole/voice/providers/azure.py. */
 export const STT_LOCALE_PATTERN = /^[A-Za-z]{2,3}(-[A-Za-z]{2,8}){1,2}$/;
 
 /** Azure's candidate caps for STT language auto-detect: continuous LID (cloud) vs at-start (self-hosted). */
@@ -60,7 +60,7 @@ const AZURE_CLOUD_HOST_SUFFIXES = [
   ".cognitiveservices.azure.com",
 ];
 
-/** Mirrors _is_azure_cloud_url in backend/evolvxsi/voice/providers/azure.py. */
+/** Mirrors _is_azure_cloud_url in backend/nortpole/voice/providers/azure.py. */
 function isAzureCloudUrl(uri: string): boolean {
   try {
     const hostname = new URL(uri).hostname.toLowerCase();

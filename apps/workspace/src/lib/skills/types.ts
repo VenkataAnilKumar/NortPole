@@ -1,6 +1,6 @@
 /**
  * Skills API response shapes; mirrors
- * `backend/evolvxsi/server/features/skill/models.py`.
+ * `backend/nortpole/server/features/skill/models.py`.
  */
 
 export type SkillInstallationPolicy = "AVAILABLE" | "DEFAULT" | "REQUIRED";

@@ -27,37 +27,37 @@ from mitmproxy.proxy import server_hooks
 from redis.exceptions import RedisError
 from sqlalchemy.orm import Session
 
-from evolvxsi.cache.interface import CacheBackend
-from evolvxsi.db.enums import (
+from nortpole.cache.interface import CacheBackend
+from nortpole.db.enums import (
     ActionPolicy,
     ApprovalDecidedVia,
     ApprovalDecision,
     GatedAppKind,
 )
-from evolvxsi.error_handling.error_codes import EvolvXSIErrorCode
-from evolvxsi.error_handling.exceptions import EvolvXSIError
-from evolvxsi.external_apps.matching.engine import (
+from nortpole.error_handling.error_codes import NortPoleErrorCode
+from nortpole.error_handling.exceptions import NortPoleError
+from nortpole.external_apps.matching.engine import (
     AllMatchedActions,
     GatedTarget,
     MatchedAction,
 )
-from evolvxsi.sandbox_proxy import destination_policy
-from evolvxsi.sandbox_proxy.addons import gate
-from evolvxsi.sandbox_proxy.addons.gate import GateAddon, ParkedApprovals
-from evolvxsi.sandbox_proxy.credential_injection import (
+from nortpole.sandbox_proxy import destination_policy
+from nortpole.sandbox_proxy.addons import gate
+from nortpole.sandbox_proxy.addons.gate import GateAddon, ParkedApprovals
+from nortpole.sandbox_proxy.credential_injection import (
     CredentialInjectionDispatcher,
     CredentialResolver,
     CredentialUnavailableError,
 )
-from evolvxsi.sandbox_proxy.destination_policy import parse_destination_policy
-from evolvxsi.sandbox_proxy.errors import SandboxProxyError
-from evolvxsi.sandbox_proxy.models import (
+from nortpole.sandbox_proxy.destination_policy import parse_destination_policy
+from nortpole.sandbox_proxy.errors import SandboxProxyError
+from nortpole.sandbox_proxy.models import (
     DestinationPolicyConfig,
     InjectionOutcome,
     McpProtocolRequest,
 )
-from evolvxsi.sandbox_proxy.request_evaluator import RequestEvaluator
-from evolvxsi.sandbox_proxy.sandbox_identity.models import ResolvedSandbox, SessionContext
+from nortpole.sandbox_proxy.request_evaluator import RequestEvaluator
+from nortpole.sandbox_proxy.sandbox_identity.models import ResolvedSandbox, SessionContext
 from tests.unit.sandbox_proxy.conftest import (
     RecordingCredentialResolver,
     StubResolver,
@@ -364,7 +364,7 @@ async def test_resolve_and_match_off_catalog_pass_through_is_not_logged(
     )
     flow = make_flow(host="registry.npmjs.org", proxy_auth=_basic_auth(_TAG_UUID))
 
-    with caplog.at_level(logging.DEBUG, logger="evolvxsi.utils.logger"):
+    with caplog.at_level(logging.DEBUG, logger="nortpole.utils.logger"):
         result = await addon._resolve_and_match(flow)
 
     assert result is None
@@ -1960,8 +1960,8 @@ async def test_inactive_scheduled_session_returns_authorization_error(
     monkeypatch: pytest.MonkeyPatch, protocol: bool
 ) -> None:
     def inactive_session(_db: Session, _session_id: UUID) -> None:
-        raise EvolvXSIError(
-            EvolvXSIErrorCode.INSUFFICIENT_PERMISSIONS, "Scheduled execution has ended"
+        raise NortPoleError(
+            NortPoleErrorCode.INSUFFICIENT_PERMISSIONS, "Scheduled execution has ended"
         )
 
     monkeypatch.setattr(gate, "get_active_scheduled_task_context", inactive_session)

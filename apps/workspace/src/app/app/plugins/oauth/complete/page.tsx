@@ -3,7 +3,7 @@
 import { useNavigation, useSearchParams } from "@opal/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Button, Card, EvolvXSILoader } from "@opal/components";
+import { Button, Card, NortPoleLoader } from "@opal/components";
 import { IllustrationContent } from "@opal/layouts";
 import { SvgConnected, SvgPlugBroken } from "@opal/illustrations";
 import { verifyMemberPluginConnection } from "@/lib/plugins/member";
@@ -61,7 +61,7 @@ export default function MemberPluginOAuthCompletePage() {
         >
           <div className="flex flex-col items-center gap-4">
             {status === "checking" ? (
-              <EvolvXSILoader />
+              <NortPoleLoader />
             ) : (
               <IllustrationContent
                 illustration={

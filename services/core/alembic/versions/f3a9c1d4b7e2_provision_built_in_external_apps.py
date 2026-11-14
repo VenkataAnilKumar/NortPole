@@ -14,7 +14,7 @@ admin enabled-state and per-action policy overrides on the built-in apps.
 The app catalog and env parsing are inlined rather than imported from
 application code, so the migration stays reproducible and independent of code
 that may change later. The catalog below is a frozen 2026-06 snapshot of
-``evolvxsi/external_apps/providers/*``.
+``nortpole/external_apps/providers/*``.
 
 Revision ID: f3a9c1d4b7e2
 Revises: 8f2c4a1d9e3b
@@ -31,7 +31,7 @@ import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.dialects import postgresql
 
-from evolvxsi.utils.encryption import encrypt_string_to_bytes
+from nortpole.utils.encryption import encrypt_string_to_bytes
 
 # revision identifiers, used by Alembic.
 revision = "f3a9c1d4b7e2"

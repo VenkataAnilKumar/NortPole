@@ -2,7 +2,7 @@
 
 import pytest
 
-from evolvxsi.server.metrics.deletion_metrics import (
+from nortpole.server.metrics.deletion_metrics import (
     DELETION_BLOCKED,
     DELETION_COMPLETED,
     DELETION_FENCE_RESET,

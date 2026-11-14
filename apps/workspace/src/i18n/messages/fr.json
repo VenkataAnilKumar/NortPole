@@ -1807,8 +1807,8 @@
       },
       "slackChannelChart": {
         "description": "Total des requêtes et requêtes résolues automatiquement",
-        "empty": "Aucune activité EvolvXSIBot dans cet espace de travail sur la période sélectionnée.",
-        "error": "Échec de la récupération des données EvolvXSIBot.",
+        "empty": "Aucune activité NortPoleBot dans cet espace de travail sur la période sélectionnée.",
+        "error": "Échec de la récupération des données NortPoleBot.",
         "series": {
           "autoResolved": {
             "label": "Résolues automatiquement"
@@ -8964,10 +8964,10 @@
     "slackBots": {
       "channelConfig": {
         "createError": {
-          "toast": "Erreur lors de la création de la configuration EvolvXSIBot : {error}"
+          "toast": "Erreur lors de la création de la configuration NortPoleBot : {error}"
         },
         "updateError": {
-          "toast": "Erreur lors de la mise à jour de la configuration EvolvXSIBot : {error}"
+          "toast": "Erreur lors de la mise à jour de la configuration NortPoleBot : {error}"
         }
       },
       "channels": {
@@ -9066,7 +9066,7 @@
         },
         "answerValidity": {
           "label": "Répondre uniquement si des citations sont trouvées",
-          "tooltip": "Si activé, EvolvXSIBot ne répond qu'aux questions pour lesquelles le modèle produit des citations"
+          "tooltip": "Si activé, NortPoleBot ne répond qu'aux questions pour lesquelles le modèle produit des citations"
         },
         "cancelButton": {
           "label": "Annuler"
@@ -9085,16 +9085,16 @@
         },
         "disableDefault": {
           "label": "Désactiver la configuration par défaut",
-          "warning": "Avertissement : si vous désactivez la configuration par défaut, EvolvXSIBot ne répond pas dans les canaux Slack, sauf s'ils sont explicitement configurés. De plus, EvolvXSIBot ne répond pas aux DM."
+          "warning": "Avertissement : si vous désactivez la configuration par défaut, NortPoleBot ne répond pas dans les canaux Slack, sauf s'ils sont explicitement configurés. De plus, NortPoleBot ne répond pas aux DM."
         },
         "documentSets": {
           "autoSyncedDisabled": {
-            "tooltip": "Impossible d'utiliser cet ensemble de documents car il contient un connecteur avec des autorisations de synchronisation automatique. Les réponses d'EvolvXSIBot dans ce canal sont visibles par tous les utilisateurs Slack : reproduire les autorisations de l'auteur de la question pourrait donc exposer par inadvertance des informations privées."
+            "tooltip": "Impossible d'utiliser cet ensemble de documents car il contient un connecteur avec des autorisations de synchronisation automatique. Les réponses d'NortPoleBot dans ce canal sont visibles par tous les utilisateurs Slack : reproduire les autorisations de l'auteur de la question pourrait donc exposer par inadvertance des informations privées."
           },
           "autoSyncedNote": {
             "text": "Ces ensembles de documents ne peuvent pas être joints car ils contiennent des documents synchronisés automatiquement :"
           },
-          "description": "Sélectionnez les ensembles de documents qu'EvolvXSIBot utilisera pour répondre aux questions dans Slack.",
+          "description": "Sélectionnez les ensembles de documents qu'NortPoleBot utilisera pour répondre aux questions dans Slack.",
           "hideUnselectableButton": {
             "label": "Masquer les ensembles de documents non sélectionnables"
           },
@@ -9119,12 +9119,12 @@
         },
         "isEphemeral": {
           "label": "Répondre à l'utilisateur dans un message privé (éphémère)",
-          "tooltip": "Si activé, EvolvXSIBot répond uniquement à l'utilisateur dans un message privé (éphémère). Si vous avez aussi choisi l'agent 'Recherche' ci-dessus, cette option rend les documents privés de l'utilisateur disponibles pour ses requêtes."
+          "tooltip": "Si activé, NortPoleBot répond uniquement à l'utilisateur dans un message privé (éphémère). Si vous avez aussi choisi l'agent 'Recherche' ci-dessus, cette option rend les documents privés de l'utilisateur disponibles pour ses requêtes."
         },
         "knowledgeSource": {
           "allPublic": {
             "label": "Toutes les connaissances de l'organisation",
-            "sublabel": "Laissez EvolvXSIBot répondre à partir des informations de tous les connecteurs de l'organisation"
+            "sublabel": "Laissez NortPoleBot répondre à partir des informations de tous les connecteurs de l'organisation"
           },
           "documentSets": {
             "label": "Ensembles de documents précis",
@@ -9141,7 +9141,7 @@
           }
         },
         "nonSearchAgent": {
-          "description": "Sélectionnez l'agent sans recherche qu'EvolvXSIBot utilisera pour répondre aux questions dans Slack."
+          "description": "Sélectionnez l'agent sans recherche qu'NortPoleBot utilisera pour répondre aux questions dans Slack."
         },
         "privacyAlert": {
           "connectors": {
@@ -9152,7 +9152,7 @@
         },
         "questionmarkPrefilter": {
           "label": "Répondre uniquement aux questions",
-          "tooltip": "Si activé, EvolvXSIBot ne répond qu'aux messages qui contiennent un point d'interrogation"
+          "tooltip": "Si activé, NortPoleBot ne répond qu'aux messages qui contiennent un point d'interrogation"
         },
         "removedDocumentSets": {
           "toast": "Nous avons retiré un ou plusieurs ensembles de documents de votre sélection car ils ne sont plus valides. Veuillez vérifier et mettre à jour votre configuration."
@@ -9162,15 +9162,15 @@
             "tooltip": "Désactivé tant que l'option 'Répondre à l'utilisateur dans un message privé (éphémère)' est active — les réponses éphémères ne ciblent qu'un seul utilisateur."
           },
           "label": "(Facultatif) Répondre à certains utilisateurs / groupes",
-          "subtext": "Si vous en indiquez, seuls ces utilisateurs / groupes peuvent solliciter EvolvXSIBot dans ce canal, et les réponses ne sont visibles que par eux."
+          "subtext": "Si vous en indiquez, seuls ces utilisateurs / groupes peuvent solliciter NortPoleBot dans ce canal, et les réponses ne sont visibles que par eux."
         },
         "respondTagOnly": {
-          "label": "Répondre uniquement à @EvolvXSIBot",
-          "tooltip": "Si activé, EvolvXSIBot ne répond que lorsqu'il est directement mentionné"
+          "label": "Répondre uniquement à @NortPoleBot",
+          "tooltip": "Si activé, NortPoleBot ne répond que lorsqu'il est directement mentionné"
         },
         "respondToBots": {
           "label": "Répondre aux messages des bots",
-          "tooltip": "Si désactivé, EvolvXSIBot ignore toujours les messages des bots"
+          "tooltip": "Si désactivé, NortPoleBot ignore toujours les messages des bots"
         },
         "responseType": {
           "detailed": {
@@ -9180,10 +9180,10 @@
           "standard": {
             "label": "Standard"
           },
-          "tooltip": "Contrôle le format des réponses d'EvolvXSIBot."
+          "tooltip": "Contrôle le format des réponses d'NortPoleBot."
         },
         "searchAgent": {
-          "description": "Sélectionnez l'agent avec recherche qu'EvolvXSIBot utilisera pour répondre aux questions dans Slack."
+          "description": "Sélectionnez l'agent avec recherche qu'NortPoleBot utilisera pour répondre aux questions dans Slack."
         },
         "searchConfig": {
           "section": {
@@ -9199,7 +9199,7 @@
           "section": {
             "prompt": "Configurer le bouton Toujours besoin d'aide"
           },
-          "tooltip": "La réponse d'EvolvXSIBot inclura en bas un bouton qui demande à l'utilisateur s'il a encore besoin d'aide."
+          "tooltip": "La réponse d'NortPoleBot inclura en bas un bouton qui demande à l'utilisateur s'il a encore besoin d'aide."
         },
         "syncEnabledAgents": {
           "hideButton": {
@@ -9220,17 +9220,17 @@
       },
       "intro": {
         "autoAnswer": {
-          "item": "Configurer EvolvXSIBot pour répondre automatiquement aux questions dans certains canaux."
+          "item": "Configurer NortPoleBot pour répondre automatiquement aux questions dans certains canaux."
         },
         "description": "Configurez des bots Slack connectés à {appName}. Une fois la configuration terminée, vous pourrez poser des questions à {appName} directement depuis Slack. Vous pouvez aussi :",
         "directMessage": {
-          "item": "Envoyer un message direct à EvolvXSIBot pour faire une recherche, comme dans l'interface web."
+          "item": "Envoyer un message direct à NortPoleBot pour faire une recherche, comme dans l'interface web."
         },
         "docsPrompt": {
           "text": "Suivez le <link>guide</link> de la documentation NortPole pour commencer !"
         },
         "documentSets": {
-          "item": "Choisir les ensembles de documents à partir desquels EvolvXSIBot doit répondre, selon le canal où la question est posée."
+          "item": "Choisir les ensembles de documents à partir desquels NortPoleBot doit répondre, selon le canal où la question est posée."
         }
       },
       "list": {
@@ -9248,7 +9248,7 @@
       },
       "newChannel": {
         "header": {
-          "title": "Configurer EvolvXSIBot pour un canal Slack"
+          "title": "Configurer NortPoleBot pour un canal Slack"
         }
       },
       "table": {

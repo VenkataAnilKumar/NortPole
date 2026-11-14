@@ -10,7 +10,7 @@ from unittest.mock import patch
 import httpx
 import pytest
 
-from evolvxsi.utils.variable_functionality import (
+from nortpole.utils.variable_functionality import (
     fetch_versioned_implementation,
     global_version,
 )
@@ -28,7 +28,7 @@ def _no_remote_catalog_fetch() -> Generator[None, None, None]:
     ``model_catalog._fetch_provider_file`` themselves. Patching that seam
     (rather than ``httpx.get``) keeps every other httpx caller working.
     """
-    from evolvxsi.llm import model_catalog
+    from nortpole.llm import model_catalog
 
     with patch.object(
         model_catalog,
@@ -42,7 +42,7 @@ def _no_remote_catalog_fetch() -> Generator[None, None, None]:
 def _reset_leaked_ee_state() -> Generator[None, None, None]:
     """Undoes EE state leaked into the process by import side effects.
 
-    ``set_is_ee_if_available()`` runs at module level in ``evolvxsi.main``
+    ``set_is_ee_if_available()`` runs at module level in ``nortpole.main``
     and every ``background/celery/versioned_apps`` module, and flips the
     process-global EE flag whenever the build ships the EE code. A
     unit test whose import chain reaches one of those modules therefore silently
@@ -73,17 +73,17 @@ def _evolvxsi_governance_neutral(request: pytest.FixtureRequest) -> Generator[No
     This gives every other unit test an in-memory store for the ``evolvxsi_`` keys only, holding neutral settings
     (no redaction, no MCP allowlist, every tool kind on), and passes the tool catalog's filter through. Other keys
     still reach the real store, as before. The governance itself is tested in its own unit folders (which opt out
-    of this fixture) and against a real database in ``tests/evolvxsi_integration``.
+    of this fixture) and against a real database in ``tests/nortpole_integration``.
     """
     parts = request.node.path.parts
     if any(d in parts for d in _GOVERNANCE_TEST_DIRS):
         yield
         return
 
-    from evolvxsi.key_value_store.interface import KvKeyNotFoundError
-    from evolvxsi.key_value_store.store import PgRedisKVStore
-    from evolvxsi.governance.route_policy.policy import RoutePolicy
-    from evolvxsi.governance.tool_catalog import catalog
+    from nortpole.key_value_store.interface import KvKeyNotFoundError
+    from nortpole.key_value_store.store import PgRedisKVStore
+    from nortpole.governance.route_policy.policy import RoutePolicy
+    from nortpole.governance.tool_catalog import catalog
 
     memory: dict[str, object] = {
         "evolvxsi_route_policy": RoutePolicy(redact_route_kinds=[]).model_dump(),

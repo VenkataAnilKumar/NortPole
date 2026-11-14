@@ -12,11 +12,11 @@ import json
 
 import pytest
 
-from evolvxsi.db.enums import ActionPolicy, ExternalAppType
-from evolvxsi.external_apps.matching.request import MatchContext, ProxiedRequest
-from evolvxsi.external_apps.matching.rules import rule_matches
-from evolvxsi.external_apps.providers.github import GitHubAction
-from evolvxsi.external_apps.providers.registry import get_endpoint_catalog
+from nortpole.db.enums import ActionPolicy, ExternalAppType
+from nortpole.external_apps.matching.request import MatchContext, ProxiedRequest
+from nortpole.external_apps.matching.rules import rule_matches
+from nortpole.external_apps.providers.github import GitHubAction
+from nortpole.external_apps.providers.registry import get_endpoint_catalog
 
 _CATALOG = get_endpoint_catalog(ExternalAppType.GITHUB)
 
@@ -60,7 +60,7 @@ def _graphql(query: str) -> bytes:
         ("GET", "/repos/evolvxsi/evolvxsi/git/ref/heads/main", {GitHubAction.REFS_READ}),
         (
             "GET",
-            "/repos/evolvxsi/evolvxsi/contents/backend/evolvxsi/main.py",
+            "/repos/evolvxsi/evolvxsi/contents/backend/nortpole/main.py",
             {GitHubAction.CONTENTS_READ},
         ),
         ("GET", "/repos/evolvxsi/evolvxsi/git/trees/abc123", {GitHubAction.GIT_DATA_READ}),
@@ -71,12 +71,12 @@ def _graphql(query: str) -> bytes:
         # Writes.
         (
             "PUT",
-            "/repos/evolvxsi/evolvxsi/contents/backend/evolvxsi/main.py",
+            "/repos/evolvxsi/evolvxsi/contents/backend/nortpole/main.py",
             {GitHubAction.CONTENTS_WRITE},
         ),
         (
             "DELETE",
-            "/repos/evolvxsi/evolvxsi/contents/backend/evolvxsi/main.py",
+            "/repos/evolvxsi/evolvxsi/contents/backend/nortpole/main.py",
             {GitHubAction.CONTENTS_WRITE},
         ),
         ("POST", "/repos/evolvxsi/evolvxsi/git/refs", {GitHubAction.REFS_WRITE}),

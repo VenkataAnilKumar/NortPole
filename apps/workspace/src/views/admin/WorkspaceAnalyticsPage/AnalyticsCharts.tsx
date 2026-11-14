@@ -93,7 +93,7 @@ export function SlackChannelChart({ timeRange }: TimeRangeProps) {
   const t = useTranslations("admin.analytics");
   const { data, isLoading, error } = useEvolvXSIBotAnalytics(timeRange);
 
-  useLoggedChartError("EvolvXSIBot", error);
+  useLoggedChartError("NortPoleBot", error);
 
   return (
     <AnalyticsChart

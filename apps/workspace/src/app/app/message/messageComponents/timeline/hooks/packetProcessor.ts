@@ -13,7 +13,7 @@ import {
   isCodeInterpreterToolType,
 } from "@/app/app/services/streamingModels";
 import { CitationMap } from "@/app/app/types";
-import { EvolvXSIDocument } from "@/lib/search/types";
+import { NortPoleDocument } from "@/lib/search/types";
 import {
   isActualToolCallPacket,
   isToolPacket,
@@ -50,7 +50,7 @@ export interface ProcessorState {
   citationMap: CitationMap;
 
   // Documents
-  documentMap: Map<string, EvolvXSIDocument>;
+  documentMap: Map<string, NortPoleDocument>;
 
   // Packet grouping
   groupedPacketsMap: Map<string, Packet[]>;

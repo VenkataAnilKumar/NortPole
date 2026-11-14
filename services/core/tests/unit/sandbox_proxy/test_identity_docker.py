@@ -6,7 +6,7 @@ from unittest.mock import MagicMock
 import pytest
 from docker import DockerClient
 
-from evolvxsi.sandbox_proxy.sandbox_identity.docker import (
+from nortpole.sandbox_proxy.sandbox_identity.docker import (
     DockerEventsLookup,
     _identity_from_container,
 )

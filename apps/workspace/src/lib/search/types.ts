@@ -61,7 +61,7 @@ export interface MinimalEvolvXSIDocument {
   semantic_identifier: string | null;
 }
 
-export interface EvolvXSIDocument extends MinimalEvolvXSIDocument {
+export interface NortPoleDocument extends MinimalEvolvXSIDocument {
   link: string;
   source_type: ValidSources;
   source_types?: ValidSources[] | null;
@@ -78,20 +78,20 @@ export interface EvolvXSIDocument extends MinimalEvolvXSIDocument {
   validationState?: null | "good" | "bad";
 }
 
-export interface LoadedEvolvXSIDocument extends EvolvXSIDocument {
+export interface LoadedEvolvXSIDocument extends NortPoleDocument {
   icon: React.FC<{ size?: number; className?: string }>;
 }
 
-export interface SearchEvolvXSIDocument extends EvolvXSIDocument {
+export interface SearchEvolvXSIDocument extends NortPoleDocument {
   is_relevant: boolean;
   relevance_explanation: string;
 }
 
-export interface FilteredEvolvXSIDocument extends EvolvXSIDocument {
+export interface FilteredEvolvXSIDocument extends NortPoleDocument {
   included: boolean;
 }
 export interface DocumentInfoPacket {
-  top_documents: EvolvXSIDocument[];
+  top_documents: NortPoleDocument[];
   predicted_flow: FlowType | null;
   predicted_search: SearchType | null;
   time_cutoff: string | null;
@@ -139,7 +139,7 @@ export interface SearchRequestArgs {
   updateDocumentRelevance: (relevance: any) => void;
   updateCurrentAnswer: (val: string) => void;
   updateQuotes: (quotes: Quote[]) => void;
-  updateDocs: (documents: EvolvXSIDocument[]) => void;
+  updateDocs: (documents: NortPoleDocument[]) => void;
   updateSelectedDocIndices: (docIndices: number[]) => void;
   updateSuggestedSearchType: (searchType: SearchType) => void;
   updateSuggestedFlowType: (flowType: FlowType) => void;
@@ -190,7 +190,7 @@ export interface SearchFlowClassificationResponse {
 
 /**
  * Base filters for search queries
- * Matches backend/evolvxsi/context/search/models.py BaseFilters
+ * Matches backend/nortpole/context/search/models.py BaseFilters
  */
 export interface BaseFilters {
   source_type?: ValidSources[] | null;

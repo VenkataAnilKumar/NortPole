@@ -24,7 +24,7 @@ INDEXING_REQUEST_ID_CONTEXTVAR: contextvars.ContextVar[str | None] = (
 )
 
 # set by every route in the API server
-EVOLVXSI_REQUEST_ID_CONTEXTVAR: contextvars.ContextVar[str | None] = contextvars.ContextVar(
+NORTPOLE_REQUEST_ID_CONTEXTVAR: contextvars.ContextVar[str | None] = contextvars.ContextVar(
     "evolvxsi_request_id", default=None
 )
 

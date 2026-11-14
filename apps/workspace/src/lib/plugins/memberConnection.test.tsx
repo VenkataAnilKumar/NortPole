@@ -36,7 +36,7 @@ afterEach(() => {
     configurable: true,
     value: originalBroadcastChannel,
   });
-  delete window.__EVOLVXSI_DESKTOP__;
+  delete window.__NORTPOLE_DESKTOP__;
   delete window.__TAURI_INTERNALS__;
   jest.restoreAllMocks();
 });
@@ -75,7 +75,7 @@ test("the web opens a new tab with the plugin return path", async () => {
 test("desktop sends authorization to the system browser and maps a failed callback", async () => {
   const invoke = jest.fn().mockResolvedValue(undefined);
   window.__TAURI_INTERNALS__ = { invoke };
-  window.__EVOLVXSI_DESKTOP__ = { oauthInBrowser: true };
+  window.__NORTPOLE_DESKTOP__ = { oauthInBrowser: true };
   const open = jest.spyOn(window, "open");
   const start = jest.fn().mockResolvedValue(authUrl);
 

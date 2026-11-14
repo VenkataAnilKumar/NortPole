@@ -3,7 +3,7 @@ import type { TaskAppActionPolicies } from "@/lib/plugins/types";
  * Shared types for the Scheduled Tasks feature.
  *
  * These mirror the backend Pydantic models defined in
- * ``backend/evolvxsi/server/features/build/scheduled_tasks/api.py``.
+ * ``backend/nortpole/server/features/build/scheduled_tasks/api.py``.
  */
 
 export type ScheduledTaskStatus = "ACTIVE" | "PAUSED";

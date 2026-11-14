@@ -239,8 +239,8 @@ export {
 
 /* Loader */
 export {
-  EvolvXSILoader,
-  type EvolvXSILoaderProps,
+  NortPoleLoader,
+  type NortPoleLoaderProps,
   type LoaderColor,
 } from "@opal/components/loader/components";
 

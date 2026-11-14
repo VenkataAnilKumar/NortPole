@@ -12,7 +12,7 @@ import {
 import { SvgPlug } from "@opal/icons";
 import { IconFunctionComponent } from "@opal/types";
 
-// Mirrors `evolvxsi.db.enums.ExternalAppType` on the backend.
+// Mirrors `nortpole.db.enums.ExternalAppType` on the backend.
 export type ExternalAppType =
   | "SLACK"
   | "GOOGLE_CALENDAR"
@@ -57,7 +57,7 @@ export interface OrgCredentialFieldDescriptor {
   secret: boolean;
 }
 
-// Mirrors `evolvxsi.db.enums.ActionPolicy` on the backend.
+// Mirrors `nortpole.db.enums.ActionPolicy` on the backend.
 export type ActionPolicy = "ALWAYS" | "ASK" | "DENY";
 
 export interface EndpointDescriptor {

@@ -4,14 +4,14 @@ calls. Reads are auto-approved (ALWAYS); mutations default to ASK."""
 
 from __future__ import annotations
 
-from evolvxsi.db.enums import ActionPolicy, ExternalAppType
-from evolvxsi.external_apps.providers.actions import RestRoute, path_matches
-from evolvxsi.external_apps.providers.base import EvolvXSIManagedExtApp
-from evolvxsi.external_apps.providers.google_drive import (
+from nortpole.db.enums import ActionPolicy, ExternalAppType
+from nortpole.external_apps.providers.actions import RestRoute, path_matches
+from nortpole.external_apps.providers.base import NortPoleManagedExtApp
+from nortpole.external_apps.providers.google_drive import (
     GoogleDriveAction,
     GoogleDriveProvider,
 )
-from evolvxsi.external_apps.providers.registry import PROVIDERS
+from nortpole.external_apps.providers.registry import PROVIDERS
 
 _READ_ACTIONS = {
     GoogleDriveAction.FILES_READ,
@@ -31,7 +31,7 @@ def _provider() -> GoogleDriveProvider:
 
 def test_registered_as_managed_drive_provider() -> None:
     provider = _provider()
-    assert isinstance(provider, EvolvXSIManagedExtApp)
+    assert isinstance(provider, NortPoleManagedExtApp)
     assert provider.spec.app_type == ExternalAppType.GOOGLE_DRIVE
 
 

@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 import pytest
 
-from evolvxsi.file_store import file_store as file_store_module
+from nortpole.file_store import file_store as file_store_module
 
 
 @pytest.fixture(autouse=True)

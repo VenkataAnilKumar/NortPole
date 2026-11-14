@@ -40,7 +40,7 @@ export function NRFPreferencesProvider({
   children: React.ReactNode;
 }) {
   const [useEvolvXSIAsNewTab, setUseEvolvXSIAsNewTab] = useLocalStorageState<boolean>(
-    LocalStorageKeys.USE_EVOLVXSI_AS_NEW_TAB,
+    LocalStorageKeys.USE_NORTPOLE_AS_NEW_TAB,
     true
   );
 

@@ -1,5 +1,5 @@
 import { ValidSources } from "@/lib/connectors/types/source";
-import { EvolvXSIDocument } from "@/lib/search/types";
+import { NortPoleDocument } from "@/lib/search/types";
 import {
   countDocumentsBySource,
   documentMatchesAnySource,
@@ -7,7 +7,7 @@ import {
   openDocument,
 } from "./utils";
 
-function makeDocument(overrides: Partial<EvolvXSIDocument>): EvolvXSIDocument {
+function makeDocument(overrides: Partial<NortPoleDocument>): NortPoleDocument {
   return {
     document_id: "doc-1",
     semantic_identifier: "doc.pdf",

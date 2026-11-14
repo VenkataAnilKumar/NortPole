@@ -11,8 +11,8 @@ import sqlalchemy as sa
 from urllib.parse import urlparse, urlunparse
 from httpx import HTTPStatusError
 import httpx
-from evolvxsi.db.search_settings import SearchSettings
-from evolvxsi.utils.logger import setup_logger
+from nortpole.db.search_settings import SearchSettings
+from nortpole.utils.logger import setup_logger
 import os
 from typing import cast
 

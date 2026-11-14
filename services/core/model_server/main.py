@@ -18,9 +18,9 @@ from model_server.ca_certs import configure_trusted_ca_bundle
 from model_server.encoders import router as encoders_router
 from model_server.management_endpoints import router as management_router
 from model_server.utils import get_cgroup_cpu_limit, get_gpu_type
-from evolvxsi import __version__
-from evolvxsi.utils.logger import setup_logger, setup_uvicorn_logger
-from evolvxsi.utils.middleware import (
+from nortpole import __version__
+from nortpole.utils.logger import setup_logger, setup_uvicorn_logger
+from nortpole.utils.middleware import (
     request_id_middleware,
     tenant_header_middleware,
 )
@@ -129,7 +129,7 @@ def get_model_app() -> FastAPI:
         title="NortPole Model Server", version=__version__, lifespan=lifespan
     )
     if SENTRY_DSN:
-        from evolvxsi.configs.sentry import init_sentry
+        from nortpole.configs.sentry import init_sentry
 
         init_sentry(
             traces_sample_rate=SENTRY_TRACES_SAMPLE_RATE,

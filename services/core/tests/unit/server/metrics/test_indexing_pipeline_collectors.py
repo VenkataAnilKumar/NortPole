@@ -9,15 +9,15 @@ from unittest.mock import MagicMock, patch
 import pytest
 from prometheus_client.core import GaugeMetricFamily
 
-import evolvxsi.server.metrics.indexing_pipeline as indexing_pipeline
-from evolvxsi.server.metrics.indexing_pipeline import QueueDepthCollector, _CachedCollector
+import nortpole.server.metrics.indexing_pipeline as indexing_pipeline
+from nortpole.server.metrics.indexing_pipeline import QueueDepthCollector, _CachedCollector
 
 
 @pytest.fixture(autouse=True)
 def _mock_broker_client() -> Iterator[None]:
     """Patch celery_get_broker_client for all collector tests."""
     with patch(
-        "evolvxsi.server.metrics.indexing_pipeline.celery_get_broker_client",
+        "nortpole.server.metrics.indexing_pipeline.celery_get_broker_client",
         return_value=MagicMock(),
     ):
         yield
@@ -184,11 +184,11 @@ class TestQueueDepthCollector:
 
         with (
             patch(
-                "evolvxsi.server.metrics.indexing_pipeline.celery_get_queue_length",
+                "nortpole.server.metrics.indexing_pipeline.celery_get_queue_length",
                 return_value=5,
             ),
             patch(
-                "evolvxsi.server.metrics.indexing_pipeline.celery_get_unacked_task_ids",
+                "nortpole.server.metrics.indexing_pipeline.celery_get_unacked_task_ids",
                 return_value={"task-1", "task-2"},
             ),
         ):
@@ -219,7 +219,7 @@ class TestQueueDepthCollector:
         collector.set_celery_app(MagicMock())
 
         with patch(
-            "evolvxsi.server.metrics.indexing_pipeline.celery_get_queue_length",
+            "nortpole.server.metrics.indexing_pipeline.celery_get_queue_length",
             side_effect=Exception("connection lost"),
         ):
             families = collector.collect()
@@ -234,11 +234,11 @@ class TestQueueDepthCollector:
 
         with (
             patch(
-                "evolvxsi.server.metrics.indexing_pipeline.celery_get_queue_length",
+                "nortpole.server.metrics.indexing_pipeline.celery_get_queue_length",
                 return_value=5,
             ),
             patch(
-                "evolvxsi.server.metrics.indexing_pipeline.celery_get_unacked_task_ids",
+                "nortpole.server.metrics.indexing_pipeline.celery_get_unacked_task_ids",
                 return_value=set(),
             ),
         ):
@@ -246,7 +246,7 @@ class TestQueueDepthCollector:
 
         # Second call within TTL should return cached result without calling Redis
         with patch(
-            "evolvxsi.server.metrics.indexing_pipeline.celery_get_queue_length",
+            "nortpole.server.metrics.indexing_pipeline.celery_get_queue_length",
             side_effect=Exception("should not be called"),
         ):
             second = collector.collect()
@@ -261,11 +261,11 @@ class TestQueueDepthCollector:
         # First call succeeds
         with (
             patch(
-                "evolvxsi.server.metrics.indexing_pipeline.celery_get_queue_length",
+                "nortpole.server.metrics.indexing_pipeline.celery_get_queue_length",
                 return_value=10,
             ),
             patch(
-                "evolvxsi.server.metrics.indexing_pipeline.celery_get_unacked_task_ids",
+                "nortpole.server.metrics.indexing_pipeline.celery_get_unacked_task_ids",
                 return_value=set(),
             ),
         ):
@@ -276,7 +276,7 @@ class TestQueueDepthCollector:
 
         # Second call fails — should return stale cache, not empty
         with patch(
-            "evolvxsi.server.metrics.indexing_pipeline.celery_get_queue_length",
+            "nortpole.server.metrics.indexing_pipeline.celery_get_queue_length",
             side_effect=Exception("Redis down"),
         ):
             stale_result = collector.collect()

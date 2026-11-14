@@ -7,7 +7,7 @@ import {
   Button,
   Card,
   MessageCard,
-  EvolvXSILoader,
+  NortPoleLoader,
   SelectCard,
   Text,
   useCreateModal,
@@ -256,7 +256,7 @@ function DecisionModelsContent() {
       />
     );
   }
-  if (!providers || !llmProviders) return <EvolvXSILoader size={24} />;
+  if (!providers || !llmProviders) return <NortPoleLoader size={24} />;
 
   return (
     <>

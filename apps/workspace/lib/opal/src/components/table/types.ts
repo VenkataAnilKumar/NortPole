@@ -32,7 +32,7 @@ export type ColumnWidth = DataColumnWidth | FixedColumnWidth;
 
 export type QualifierContentType = "checkbox" | "icon" | "image";
 
-export type EvolvXSIColumnKind = "qualifier" | "data" | "display" | "actions";
+export type NortPoleColumnKind = "qualifier" | "data" | "display" | "actions";
 
 // ---------------------------------------------------------------------------
 // Public columns: plain literals, discriminated on `kind`
@@ -156,8 +156,8 @@ export type TableColumn<TData> =
 
 export type ColumnAlignment = "left" | "center" | "right";
 
-interface EvolvXSIColumnBase<TData> {
-  kind: EvolvXSIColumnKind;
+interface NortPoleColumnBase<TData> {
+  kind: NortPoleColumnKind;
   /** Stable column identifier (mirrors the TanStack column ID). */
   id: string;
   def: ColumnDef<TData, any>;
@@ -165,7 +165,7 @@ interface EvolvXSIColumnBase<TData> {
 }
 
 /** Qualifier column — leading avatar/icon/checkbox column. */
-export interface EvolvXSIQualifierColumn<TData> extends EvolvXSIColumnBase<TData> {
+export interface NortPoleQualifierColumn<TData> extends NortPoleColumnBase<TData> {
   kind: "qualifier";
   alignment?: never;
   /** Content type for body-row `<TableQualifier>`. */
@@ -183,7 +183,7 @@ export interface EvolvXSIQualifierColumn<TData> extends EvolvXSIColumnBase<TData
 }
 
 /** Data column — accessor-based column with sorting/resizing. */
-export interface EvolvXSIDataColumn<TData> extends EvolvXSIColumnBase<TData> {
+export interface NortPoleDataColumn<TData> extends NortPoleColumnBase<TData> {
   kind: "data";
   alignment?: ColumnAlignment;
   truncate?: boolean;
@@ -192,13 +192,13 @@ export interface EvolvXSIDataColumn<TData> extends EvolvXSIColumnBase<TData> {
 }
 
 /** Display column — non-accessor column with custom rendering. */
-export interface EvolvXSIDisplayColumn<TData> extends EvolvXSIColumnBase<TData> {
+export interface NortPoleDisplayColumn<TData> extends NortPoleColumnBase<TData> {
   kind: "display";
   alignment?: ColumnAlignment;
 }
 
 /** Actions column — fixed column with visibility/sorting popovers. */
-export interface EvolvXSIActionsColumn<TData> extends EvolvXSIColumnBase<TData> {
+export interface NortPoleActionsColumn<TData> extends NortPoleColumnBase<TData> {
   kind: "actions";
   alignment?: never;
   /** Show column visibility popover. @default true */
@@ -210,11 +210,11 @@ export interface EvolvXSIActionsColumn<TData> extends EvolvXSIColumnBase<TData> 
 }
 
 /** Discriminated union of all column types. */
-export type EvolvXSIColumnDef<TData> =
-  | EvolvXSIQualifierColumn<TData>
-  | EvolvXSIDataColumn<TData>
-  | EvolvXSIDisplayColumn<TData>
-  | EvolvXSIActionsColumn<TData>;
+export type NortPoleColumnDef<TData> =
+  | NortPoleQualifierColumn<TData>
+  | NortPoleDataColumn<TData>
+  | NortPoleDisplayColumn<TData>
+  | NortPoleActionsColumn<TData>;
 
 // ---------------------------------------------------------------------------
 // Server-side pagination / sorting / search

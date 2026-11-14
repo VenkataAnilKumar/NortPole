@@ -1,13 +1,13 @@
 import { render, screen } from "@tests/setup/test-utils";
 import userEvent from "@testing-library/user-event";
 import { MemoizedAnchor } from "@/app/app/message/MemoizedTextComponents";
-import { EvolvXSIDocument } from "@/lib/search/types";
+import { NortPoleDocument } from "@/lib/search/types";
 import { ValidSources } from "@/lib/connectors/types/source";
 
 const FILE_ID = "3f2a9c1e-0000-4000-8000-000000000000";
 const FILE_URL = `https://evolvxsi.example.com/api/chat/file/${FILE_ID}`;
 
-const citedDoc: EvolvXSIDocument = {
+const citedDoc: NortPoleDocument = {
   document_id: "doc_abc",
   semantic_identifier: "Quarterly Report",
   link: "https://docs.example.com/report",

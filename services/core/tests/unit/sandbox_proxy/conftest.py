@@ -26,18 +26,18 @@ from cryptography.x509.oid import NameOID
 from mitmproxy import http
 from mitmproxy.tools.dump import DumpMaster
 
-from evolvxsi.cache.interface import CacheBackend
-from evolvxsi.db.enums import ActionPolicy, GatedAppKind
-from evolvxsi.external_apps.matching.engine import (
+from nortpole.cache.interface import CacheBackend
+from nortpole.db.enums import ActionPolicy, GatedAppKind
+from nortpole.external_apps.matching.engine import (
     AllMatchedActions,
     GatedTarget,
     MatchedAction,
 )
-from evolvxsi.sandbox_proxy.credential_injection import CredentialResolver
-from evolvxsi.sandbox_proxy.models import InjectionContext
-from evolvxsi.sandbox_proxy.request_evaluator import RequestEvaluator
-from evolvxsi.sandbox_proxy.sandbox_identity.models import ResolvedSandbox, SandboxIdentity
-from evolvxsi.sandbox_proxy.sandbox_identity.resolution import (
+from nortpole.sandbox_proxy.credential_injection import CredentialResolver
+from nortpole.sandbox_proxy.models import InjectionContext
+from nortpole.sandbox_proxy.request_evaluator import RequestEvaluator
+from nortpole.sandbox_proxy.sandbox_identity.models import ResolvedSandbox, SandboxIdentity
+from nortpole.sandbox_proxy.sandbox_identity.resolution import (
     SandboxIdentityResolver,
     SandboxIPLookup,
 )
@@ -274,7 +274,7 @@ def unused_cache(_tenant_id: str) -> CacheBackend:
 @pytest.fixture
 def mcp_ssrf_settings(monkeypatch: pytest.MonkeyPatch) -> MagicMock:
     """Allow test loopback servers through the real SSRF address checks."""
-    from evolvxsi.server.security.models import SSRFProtectionLevel
+    from nortpole.server.security.models import SSRFProtectionLevel
 
     settings = MagicMock(ssrf_protection_level=SSRFProtectionLevel.DISABLED)
 
@@ -283,7 +283,7 @@ def mcp_ssrf_settings(monkeypatch: pytest.MonkeyPatch) -> MagicMock:
         return settings
 
     monkeypatch.setattr(
-        "evolvxsi.sandbox_proxy.destination_policy.get_security_settings", read_settings
+        "nortpole.sandbox_proxy.destination_policy.get_security_settings", read_settings
     )
     return settings
 

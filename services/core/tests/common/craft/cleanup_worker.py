@@ -9,9 +9,9 @@ from uuid import uuid4
 import pytest
 from kubernetes import client
 
-from evolvxsi.background.celery.apps.client import celery_app
-from evolvxsi.configs.constants import EvolvXSICeleryQueues, EvolvXSICeleryTask
-from evolvxsi.server.features.build.configs import (
+from nortpole.background.celery.apps.client import celery_app
+from nortpole.configs.constants import NortPoleCeleryQueues, NortPoleCeleryTask
+from nortpole.server.features.build.configs import (
     SANDBOX_BACKEND,
     SANDBOX_RESOURCE_GRACE_SECONDS,
     SandboxBackend,
@@ -45,10 +45,10 @@ def isolated_cleanup_deployment(k8s_client: client.CoreV1Api) -> None:
 def _send_cleanup() -> str:
     task_id = str(uuid4())
     celery_app.send_task(
-        EvolvXSICeleryTask.CLEANUP_IDLE_SANDBOXES,
+        NortPoleCeleryTask.CLEANUP_IDLE_SANDBOXES,
         task_id=task_id,
         kwargs={"tenant_id": "public"},
-        queue=EvolvXSICeleryQueues.SANDBOX,
+        queue=NortPoleCeleryQueues.SANDBOX,
         expires=120,
     )
     return task_id

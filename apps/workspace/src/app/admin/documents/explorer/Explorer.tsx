@@ -5,7 +5,7 @@ import { IconLoader } from "@opal/loaders";
 import { adminSearch } from "@/lib/searchFilters/svc";
 import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
-import { EvolvXSIDocument } from "@/lib/search/types";
+import { NortPoleDocument } from "@/lib/search/types";
 import { buildDocumentSummaryDisplay } from "@/components/search/DocumentDisplay";
 import { InputCheckbox } from "@opal/components";
 import { updateHiddenStatus } from "../lib";
@@ -26,7 +26,7 @@ const DocumentDisplay = ({
   document,
   refresh,
 }: {
-  document: EvolvXSIDocument;
+  document: NortPoleDocument;
   refresh: () => void;
 }) => {
   const t = useTranslations("admin.documents");
@@ -128,7 +128,7 @@ export function Explorer({
 
   const [query, setQuery] = useState(initialSearchValue || "");
   const [timeoutId, setTimeoutId] = useState<number | null>(null);
-  const [results, setResults] = useState<EvolvXSIDocument[]>([]);
+  const [results, setResults] = useState<NortPoleDocument[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const filterManager = useSearchFilters();

@@ -1,6 +1,6 @@
 import { Text } from "@opal/components";
 import { SourceIcon } from "@/components/SourceIcon";
-import { MinimalEvolvXSIDocument, EvolvXSIDocument } from "@/lib/search/types";
+import { MinimalEvolvXSIDocument, NortPoleDocument } from "@/lib/search/types";
 import { SvgTag } from "@opal/icons";
 import { buildDocumentSummaryDisplay } from "@/components/search/DocumentDisplay";
 import { DocumentUpdatedAtBadge } from "@/components/search/DocumentUpdatedAtBadge";
@@ -13,7 +13,7 @@ import { cn, richNodes } from "@opal/utils";
 
 interface DocumentMetadataBlockProps {
   modal?: boolean;
-  document: EvolvXSIDocument;
+  document: NortPoleDocument;
 }
 
 function DocumentMetadataBlock({
@@ -52,7 +52,7 @@ function DocumentMetadataBlock({
 }
 
 export interface ChatDocumentDisplayProps {
-  document: EvolvXSIDocument;
+  document: NortPoleDocument;
   modal?: boolean;
   isSelected: boolean;
   setPresentingDocument: Dispatch<SetStateAction<MinimalEvolvXSIDocument | null>>;

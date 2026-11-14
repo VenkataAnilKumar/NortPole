@@ -3,7 +3,7 @@
 import { useNavigation, useSearchParams } from "@opal/navigation";
 import { useEffect, useRef, useState } from "react";
 import type { Route } from "next";
-import { Button, Card, EvolvXSILoader, Text } from "@opal/components";
+import { Button, Card, NortPoleLoader, Text } from "@opal/components";
 import { IllustrationContent } from "@opal/layouts";
 import {
   SvgBrokenKey,
@@ -212,7 +212,7 @@ function MCPOAuthCallbackPageContent() {
               <div className="flex flex-col items-center gap-3 p-5 text-center">
                 {/* Match the illustration footprint so success/error don't shift layout */}
                 <div className="flex h-30 w-30 items-center justify-center">
-                  <EvolvXSILoader />
+                  <NortPoleLoader />
                 </div>
                 <div className="flex flex-col items-center text-center">
                   <Text font="main-content-emphasis" color="text-04" as="p">

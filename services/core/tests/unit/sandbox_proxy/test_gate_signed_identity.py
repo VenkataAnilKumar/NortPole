@@ -8,15 +8,15 @@ from uuid import UUID, uuid4
 import pytest
 from mitmproxy import http
 
-from evolvxsi.cache.interface import CacheBackend
-from evolvxsi.sandbox_proxy.addons import gate
-from evolvxsi.sandbox_proxy.addons.gate import GateAddon
-from evolvxsi.sandbox_proxy.credential_injection import CredentialInjectionDispatcher
-from evolvxsi.sandbox_proxy.destination_policy import parse_destination_policy
-from evolvxsi.sandbox_proxy.errors import SandboxProxyError
-from evolvxsi.sandbox_proxy.request_evaluator import RequestEvaluator
-from evolvxsi.sandbox_proxy.sandbox_identity.models import ResolvedSandbox
-from evolvxsi.sandbox_proxy.sandbox_identity.signed import (
+from nortpole.cache.interface import CacheBackend
+from nortpole.sandbox_proxy.addons import gate
+from nortpole.sandbox_proxy.addons.gate import GateAddon
+from nortpole.sandbox_proxy.credential_injection import CredentialInjectionDispatcher
+from nortpole.sandbox_proxy.destination_policy import parse_destination_policy
+from nortpole.sandbox_proxy.errors import SandboxProxyError
+from nortpole.sandbox_proxy.request_evaluator import RequestEvaluator
+from nortpole.sandbox_proxy.sandbox_identity.models import ResolvedSandbox
+from nortpole.sandbox_proxy.sandbox_identity.signed import (
     SESSION_HINT_HEADER,
     SandboxClaims,
     SignedIdentityError,

@@ -16,7 +16,7 @@ packs/
 | [everyday-brief](horizontal/everyday-brief/README.md) | horizontal | Cited brief, find the policy, compare two documents |
 | [finance-policy-review](vertical/finance/finance-policy-review/README.md) | vertical: finance | Receipt rules, approval limits, policy changes |
 
-**Rules** (checked by `services/core/tests/unit/evolvxsi/packs/test_pack_sources.py` and `tools/validate_structure.py`):
+**Rules** (checked by `services/core/tests/unit/nortpole/packs/test_pack_sources.py` and `tools/validate_structure.py`):
 
 - Every manifest validates against the server's own manifest model, so a pack that passes installs.
 - The folder name equals the pack `id`; horizontal packs have `vertical: general`; vertical packs sit in their

@@ -35,10 +35,10 @@ const COLOR_CLASS: Record<LoaderColor, string> = {
 };
 
 // ---------------------------------------------------------------------------
-// EvolvXSILoader
+// NortPoleLoader
 // ---------------------------------------------------------------------------
 
-interface EvolvXSILoaderProps {
+interface NortPoleLoaderProps {
   /** Size of the animated mark, in pixels. @default 64 */
   size?: number;
 
@@ -78,7 +78,7 @@ const MARK_PATHS = [
  * under `prefers-reduced-motion`. Uses `currentColor`, so `color` themes it.
  * For a full-page loading state with a label, use `PageLoader`.
  */
-function EvolvXSILoader({ size = 64, color = "border-02" }: EvolvXSILoaderProps) {
+function NortPoleLoader({ size = 64, color = "border-02" }: NortPoleLoaderProps) {
   const strings = useOpalStrings();
   return (
     <div
@@ -118,4 +118,4 @@ function EvolvXSILoader({ size = 64, color = "border-02" }: EvolvXSILoaderProps)
   );
 }
 
-export { EvolvXSILoader, type EvolvXSILoaderProps, type LoaderColor };
+export { NortPoleLoader, type NortPoleLoaderProps, type LoaderColor };

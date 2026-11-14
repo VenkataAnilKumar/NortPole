@@ -1,4 +1,4 @@
-import { EvolvXSIDocument } from "@/lib/search/types";
+import { NortPoleDocument } from "@/lib/search/types";
 import { getSourceDisplayName } from "@/lib/connectors/utils";
 import { SubQuestionDetail } from "@/app/app/types";
 import { StreamingCitation } from "@/app/app/services/streamingModels";
@@ -13,9 +13,9 @@ function truncateText(str: string, maxLength: number): string {
 }
 
 /**
- * Convert an EvolvXSIDocument to a SourceInfo object for use with SourceTag
+ * Convert an NortPoleDocument to a SourceInfo object for use with SourceTag
  */
-export function documentToSourceInfo(doc: EvolvXSIDocument): SourceInfo {
+export function documentToSourceInfo(doc: NortPoleDocument): SourceInfo {
   const sourceType = doc.source_type as ValidSources;
 
   return {
@@ -55,7 +55,7 @@ export function questionToSourceInfo(
  */
 export function citationsToSourceInfoArray(
   citations: StreamingCitation[],
-  documentMap: Map<string, EvolvXSIDocument>
+  documentMap: Map<string, NortPoleDocument>
 ): SourceInfo[] {
   const sources: SourceInfo[] = [];
   const seenDocIds = new Set<string>();
@@ -85,7 +85,7 @@ export function citationsToSourceInfoArray(
 /**
  * Get a display name for a source, used for inline citations
  */
-export function getDisplayNameForSource(doc: EvolvXSIDocument): string {
+export function getDisplayNameForSource(doc: NortPoleDocument): string {
   const sourceType = doc.source_type as ValidSources;
 
   if (sourceType === ValidSources.Web || doc.is_internet) {

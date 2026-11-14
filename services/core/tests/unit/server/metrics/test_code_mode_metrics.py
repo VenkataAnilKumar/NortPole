@@ -5,8 +5,8 @@ from unittest.mock import patch
 import pytest
 from prometheus_client import REGISTRY
 
-from evolvxsi.server.metrics import code_mode as metrics
-from evolvxsi.tools.tool_implementations.code_mode import sandbox
+from nortpole.server.metrics import code_mode as metrics
+from nortpole.tools.tool_implementations.code_mode import sandbox
 
 
 def _value(name: str) -> float:

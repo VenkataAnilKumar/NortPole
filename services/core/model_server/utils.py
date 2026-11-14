@@ -8,7 +8,7 @@ from typing import Any, TypeVar, cast
 import torch
 
 from model_server.constants import GPUStatus
-from evolvxsi.utils.logger import setup_logger
+from nortpole.utils.logger import setup_logger
 
 logger = setup_logger()
 

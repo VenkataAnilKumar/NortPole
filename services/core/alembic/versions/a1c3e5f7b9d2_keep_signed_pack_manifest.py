@@ -26,7 +26,7 @@ depends_on = None
 
 
 def _canonical(manifest: dict) -> str:
-    # Same as evolvxsi.work.packs.manifest.canonical_bytes; written out so the migration does not move with app code.
+    # Same as nortpole.work.packs.manifest.canonical_bytes; written out so the migration does not move with app code.
     return json.dumps(manifest, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
 
 

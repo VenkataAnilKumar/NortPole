@@ -7,7 +7,7 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session, class_mapper
 
-from evolvxsi.db.models import (
+from nortpole.db.models import (
     ExternalApp,
     ExternalAppUserCredential,
     GatedApp,

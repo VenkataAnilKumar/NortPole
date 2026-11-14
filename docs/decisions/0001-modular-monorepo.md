@@ -12,4 +12,4 @@ Consequences: enforce dependency direction and service-owned records; validate a
 
 This decision approves layout only. It does not select a stack, approve a pilot vertical, add dependencies, authorize deployment, or make reference projects runtime dependencies.
 
-The [repository specification](../06-technical/EvolvXSI_Repo-Structure.md) records the detailed layout and migration.
+The [repository specification](../06-technical/NortPole_Repo-Structure.md) records the detailed layout and migration.

@@ -17,7 +17,7 @@ from alembic import op
 import httpx
 import sqlalchemy as sa
 
-from evolvxsi.db.search_settings import SearchSettings
+from nortpole.db.search_settings import SearchSettings
 from shared_configs.configs import MULTI_TENANT
 
 logger = logging.getLogger("alembic.runtime.migration")

@@ -71,7 +71,7 @@ interface TauriInternals {
 
 declare global {
   interface Window {
-    __EVOLVXSI_DESKTOP__?: DesktopBridge;
+    __NORTPOLE_DESKTOP__?: DesktopBridge;
     __TAURI_INTERNALS__?: TauriInternals;
   }
 }
@@ -85,7 +85,7 @@ function tauriInternals(): TauriInternals | null {
 export function opensOAuthInSystemBrowser(): boolean {
   return (
     tauriInternals() !== null &&
-    window.__EVOLVXSI_DESKTOP__?.oauthInBrowser === true
+    window.__NORTPOLE_DESKTOP__?.oauthInBrowser === true
   );
 }
 
@@ -161,7 +161,7 @@ export function closeOAuthCallbackWindow(state: string, ok = true): boolean {
     launched = window.sessionStorage.getItem(LAUNCHED_TAB_KEY) === state;
     if (launched) window.sessionStorage.removeItem(LAUNCHED_TAB_KEY);
   } catch {}
-  if (!launched && !(ok && window.__EVOLVXSI_DESKTOP__?.oauthCallbackWindow)) {
+  if (!launched && !(ok && window.__NORTPOLE_DESKTOP__?.oauthCallbackWindow)) {
     return false;
   }
   window.close();
@@ -197,7 +197,7 @@ function awaitDesktopCallback(
   complete: (callback: URL) => void
 ): () => void {
   pendingDesktopCallbacks.set(state, complete);
-  window.__EVOLVXSI_DESKTOP__ = Object.assign(window.__EVOLVXSI_DESKTOP__ ?? {}, {
+  window.__NORTPOLE_DESKTOP__ = Object.assign(window.__NORTPOLE_DESKTOP__ ?? {}, {
     claimOAuthCallback: claimDesktopOAuthCallback,
   });
   return () => {
@@ -212,7 +212,7 @@ function awaitDesktopCallback(
  * main window already holds the page the user came from.
  */
 export function leaveOAuthCallback(navigate: () => void): void {
-  if (window.__EVOLVXSI_DESKTOP__?.oauthCallbackWindow) window.close();
+  if (window.__NORTPOLE_DESKTOP__?.oauthCallbackWindow) window.close();
   else navigate();
 }
 

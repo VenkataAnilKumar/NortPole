@@ -110,13 +110,13 @@ export interface Settings {
   // are unavailable.
   vector_db_enabled?: boolean;
 
-  // HIDE_EVOLVXSI_BRANDING env var, honored only on the Enterprise tier.
+  // HIDE_NORTPOLE_BRANDING env var, honored only on the Enterprise tier.
   hide_evolvxsi_branding?: boolean;
 
   // True when hooks are available: single-tenant deployments only.
   hooks_enabled?: boolean;
 
-  // Application version from the EVOLVXSI_VERSION env var on the server.
+  // Application version from the NORTPOLE_VERSION env var on the server.
   version?: string | null;
   // Git details of the server's build: commit, ISO 8601 commit date, tag or branch.
   commit?: string | null;

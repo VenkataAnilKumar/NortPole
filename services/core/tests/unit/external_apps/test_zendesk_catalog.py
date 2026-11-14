@@ -9,11 +9,11 @@ from __future__ import annotations
 
 import pytest
 
-from evolvxsi.db.enums import ActionPolicy, ExternalAppType
-from evolvxsi.external_apps.matching.request import MatchContext, ProxiedRequest
-from evolvxsi.external_apps.matching.rules import rule_matches
-from evolvxsi.external_apps.providers.registry import get_endpoint_catalog
-from evolvxsi.external_apps.providers.zendesk import ZendeskAction
+from nortpole.db.enums import ActionPolicy, ExternalAppType
+from nortpole.external_apps.matching.request import MatchContext, ProxiedRequest
+from nortpole.external_apps.matching.rules import rule_matches
+from nortpole.external_apps.providers.registry import get_endpoint_catalog
+from nortpole.external_apps.providers.zendesk import ZendeskAction
 
 _CATALOG = get_endpoint_catalog(ExternalAppType.ZENDESK)
 

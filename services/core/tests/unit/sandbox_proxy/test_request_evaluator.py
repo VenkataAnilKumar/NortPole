@@ -8,9 +8,9 @@ the DB. CUSTOM apps author globs; built-in providers author regexes.
 
 from __future__ import annotations
 
-from evolvxsi.db.enums import ExternalAppType
-from evolvxsi.db.models import ExternalApp
-from evolvxsi.sandbox_proxy.request_evaluator import resolve_app_for_url
+from nortpole.db.enums import ExternalAppType
+from nortpole.db.models import ExternalApp
+from nortpole.sandbox_proxy.request_evaluator import resolve_app_for_url
 
 
 def _app(

@@ -12,16 +12,16 @@ from mitmproxy import tls
 from mitmproxy.proxy import server_hooks
 from mitmproxy.tools.dump import DumpMaster
 
-from evolvxsi.sandbox_proxy import server
-from evolvxsi.sandbox_proxy.addons.gate import GateAddon
-from evolvxsi.sandbox_proxy.credential_injection import CredentialInjectionDispatcher
-from evolvxsi.sandbox_proxy.destination_policy import (
+from nortpole.sandbox_proxy import server
+from nortpole.sandbox_proxy.addons.gate import GateAddon
+from nortpole.sandbox_proxy.credential_injection import CredentialInjectionDispatcher
+from nortpole.sandbox_proxy.destination_policy import (
     UpstreamEventLoop,
     parse_destination_policy,
 )
-from evolvxsi.sandbox_proxy.resolvers.mcp_matching import CraftMCPTarget
-from evolvxsi.sandbox_proxy.resolvers.mcp_server import MCPServerResolver
-from evolvxsi.server.features.build import configs
+from nortpole.sandbox_proxy.resolvers.mcp_matching import CraftMCPTarget
+from nortpole.sandbox_proxy.resolvers.mcp_server import MCPServerResolver
+from nortpole.server.features.build import configs
 from tests.unit.sandbox_proxy.conftest import (
     NoMatchedRequest,
     RecordingCredentialResolver,

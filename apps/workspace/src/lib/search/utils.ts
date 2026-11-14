@@ -1,5 +1,5 @@
 import { ValidSources } from "@/lib/connectors/types/source";
-import { MinimalEvolvXSIDocument, EvolvXSIDocument } from "@/lib/search/types";
+import { MinimalEvolvXSIDocument, NortPoleDocument } from "@/lib/search/types";
 import { transformLinkUri } from "@/lib/utils";
 
 export const openExternalLink = (url: string) => {
@@ -10,7 +10,7 @@ export const openExternalLink = (url: string) => {
 };
 
 export function getDocumentSourceTypes(
-  document: Pick<EvolvXSIDocument, "source_type" | "source_types">
+  document: Pick<NortPoleDocument, "source_type" | "source_types">
 ): ValidSources[] {
   return document.source_types?.length
     ? [...new Set(document.source_types)]
@@ -18,7 +18,7 @@ export function getDocumentSourceTypes(
 }
 
 export function documentMatchesAnySource(
-  document: Pick<EvolvXSIDocument, "source_type" | "source_types">,
+  document: Pick<NortPoleDocument, "source_type" | "source_types">,
   selectedSources: ValidSources[]
 ): boolean {
   return (
@@ -30,7 +30,7 @@ export function documentMatchesAnySource(
 }
 
 export function countDocumentsBySource(
-  documents: Pick<EvolvXSIDocument, "source_type" | "source_types">[]
+  documents: Pick<NortPoleDocument, "source_type" | "source_types">[]
 ): Map<ValidSources, number> {
   const counts = new Map<ValidSources, number>();
   for (const document of documents) {
@@ -44,7 +44,7 @@ export function countDocumentsBySource(
 // If we have a link, open it in a new tab (including if it's a file)
 // If above fails and we have a file, update the presenting document
 export const openDocument = (
-  document: EvolvXSIDocument,
+  document: NortPoleDocument,
   updatePresentingDocument?: (document: MinimalEvolvXSIDocument) => void
 ) => {
   if (document.link) {

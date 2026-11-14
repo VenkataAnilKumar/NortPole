@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Button, MessageCard, EvolvXSILoader } from "@opal/components";
+import { Button, MessageCard, NortPoleLoader } from "@opal/components";
 import { InputHorizontal, Section, toast } from "@opal/layouts";
 import { useDecisionModel } from "@/lib/languageModels/hooks";
 import { SimpleModelSelector } from "@/lib/languageModels/components";
@@ -61,7 +61,7 @@ export default function DecisionModelSetting() {
           }
         />
       ) : !providers ? (
-        <EvolvXSILoader size={24} />
+        <NortPoleLoader size={24} />
       ) : (
         <Section
           role="group"

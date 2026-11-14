@@ -24,7 +24,7 @@ from alembic.migration import MigrationContext
 from alembic.operations import Operations
 import sqlalchemy as sa
 
-from evolvxsi.db.enums import CCPairRunKind, IndexAttemptErrorResolvedReason
+from nortpole.db.enums import CCPairRunKind, IndexAttemptErrorResolvedReason
 
 
 # revision identifiers, used by Alembic.

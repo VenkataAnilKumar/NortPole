@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 
-from evolvxsi.external_apps.token_utils import needs_refresh, stamp_expires_at
+from nortpole.external_apps.token_utils import needs_refresh, stamp_expires_at
 
 _NOW = datetime(2026, 5, 29, 12, 0, 0, tzinfo=timezone.utc)
 

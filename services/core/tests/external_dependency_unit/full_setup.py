@@ -4,12 +4,12 @@ import os
 from pathlib import Path
 from typing import Optional
 
-from evolvxsi.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant
-from evolvxsi.db.search_settings import get_active_search_settings
-from evolvxsi.document_index.factory import get_default_document_index
-from evolvxsi.file_store.file_store import get_default_file_store
-from evolvxsi.indexing.models import IndexingSetting
-from evolvxsi.setup import setup_document_index, setup_postgres
+from nortpole.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant
+from nortpole.db.search_settings import get_active_search_settings
+from nortpole.document_index.factory import get_default_document_index
+from nortpole.file_store.file_store import get_default_file_store
+from nortpole.indexing.models import IndexingSetting
+from nortpole.setup import setup_document_index, setup_postgres
 from shared_configs import configs as shared_configs_module
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from shared_configs.contextvars import CURRENT_TENANT_ID_CONTEXTVAR

@@ -1,7 +1,7 @@
 # Decision 0006: scalable repository structure
 
 Date: 2026-11-14. Status: **accepted** by the product owner, delivered phase by phase. It replaces the target layout in
-[decision 0001](0001-modular-monorepo.md) and the [repository structure](../06-technical/EvolvXSI_Repo-Structure.md) document,
+[decision 0001](0001-modular-monorepo.md) and the [repository structure](../06-technical/NortPole_Repo-Structure.md) document,
 which described service skeletons that were never built.
 
 ## Context
@@ -17,7 +17,7 @@ vertical editions, connectors, a cloud offering and partners, so the repository 
 1. **One repository, one core deployable.** Split a service out only when it needs its own scaling, release cycle or
    security boundary. Background workers already scale separately as processes.
 2. **Folders exist only with code.** Future areas are listed in `modules.json` under `planned_modules`, not created empty.
-3. **NortPole's own modules are grouped by domain** inside `services/core/evolvxsi`: `governance/`, `work/`, `knowledge/`
+3. **NortPole's own modules are grouped by domain** inside `services/core/nortpole`: `governance/`, `work/`, `knowledge/`
    and `insight/`. Inherited modules stay where they are, so upstream fixes can still be compared file by file. Two of our
    modules stay at the top level because inherited code looks them up by path: `extensions` (the hook point) and
    `external_permissions` (the permission-sync implementation).
@@ -36,12 +36,12 @@ vertical editions, connectors, a cloud offering and partners, so the repository 
 ```text
 apps/workspace/                 web app: user side and admin console
 services/core/                  API + background workers
-  evolvxsi/governance/          route_policy, redaction, tool_catalog, admin_changes, action_binding, audit_log, retention
-  evolvxsi/work/                tasks, workflow_schedules, packs, actions
-  evolvxsi/knowledge/           knowledge_access, source_requests
-  evolvxsi/insight/             quality, overview, inventory
-  evolvxsi/extensions/          hook point (fixed path)
-  evolvxsi/external_permissions/ permission sync (fixed path)
+  nortpole/governance/          route_policy, redaction, tool_catalog, admin_changes, action_binding, audit_log, retention
+  nortpole/work/                tasks, workflow_schedules, packs, actions
+  nortpole/knowledge/           knowledge_access, source_requests
+  nortpole/insight/             quality, overview, inventory
+  nortpole/extensions/          hook point (fixed path)
+  nortpole/external_permissions/ permission sync (fixed path)
   evolvxsi/…                    inherited platform modules, unchanged
 services/model-gateway/         mock model server used by tests and the sandbox
 packs/horizontal/<pack>/        domain-neutral packs (manifest.yaml)

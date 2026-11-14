@@ -2,9 +2,9 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from evolvxsi.sandbox_proxy.certificate_authority import bootstrap as ca_mod
-from evolvxsi.sandbox_proxy.sandbox_identity import resolution as identity_mod
-from evolvxsi.server.features.build.configs import SandboxBackend
+from nortpole.sandbox_proxy.certificate_authority import bootstrap as ca_mod
+from nortpole.sandbox_proxy.sandbox_identity import resolution as identity_mod
+from nortpole.server.features.build.configs import SandboxBackend
 
 # Each test patches only the single constructor the dispatch branch is expected
 # to hit. The unpatched branch's concrete class would require live config (kube
@@ -15,7 +15,7 @@ def test_build_ca_store_kubernetes_dispatches_k8s_store() -> None:
     expected = MagicMock()
     with (
         patch(
-            "evolvxsi.sandbox_proxy.certificate_authority.kubernetes.K8sSecretCAStore",
+            "nortpole.sandbox_proxy.certificate_authority.kubernetes.K8sSecretCAStore",
             return_value=expected,
         ),
         patch.object(ca_mod, "SANDBOX_BACKEND", SandboxBackend.KUBERNETES),
@@ -27,7 +27,7 @@ def test_build_ca_store_docker_dispatches_file_store() -> None:
     expected = MagicMock()
     with (
         patch(
-            "evolvxsi.sandbox_proxy.certificate_authority.docker.FileCAStore",
+            "nortpole.sandbox_proxy.certificate_authority.docker.FileCAStore",
             return_value=expected,
         ),
         patch.object(ca_mod, "SANDBOX_BACKEND", SandboxBackend.DOCKER),
@@ -39,7 +39,7 @@ def test_build_ip_lookup_kubernetes_dispatches_informer() -> None:
     expected = MagicMock()
     with (
         patch(
-            "evolvxsi.sandbox_proxy.sandbox_identity.kubernetes.K8sInformerLookup",
+            "nortpole.sandbox_proxy.sandbox_identity.kubernetes.K8sInformerLookup",
             return_value=expected,
         ),
         patch.object(identity_mod, "SANDBOX_BACKEND", SandboxBackend.KUBERNETES),
@@ -51,7 +51,7 @@ def test_build_ip_lookup_docker_dispatches_events_lookup() -> None:
     expected = MagicMock()
     with (
         patch(
-            "evolvxsi.sandbox_proxy.sandbox_identity.docker.DockerEventsLookup",
+            "nortpole.sandbox_proxy.sandbox_identity.docker.DockerEventsLookup",
             return_value=expected,
         ),
         patch.object(identity_mod, "SANDBOX_BACKEND", SandboxBackend.DOCKER),

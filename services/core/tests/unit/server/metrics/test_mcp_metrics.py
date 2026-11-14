@@ -6,19 +6,19 @@ import pytest
 from fastapi.testclient import TestClient
 from mcp.types import CallToolResult, TextContent
 
-from evolvxsi.agents.tools import ToolInvocation, ToolResult, ToolUpdate
-from evolvxsi.db.enums import MCPAuthenticationType, MCPOAuthProviderMode
-from evolvxsi.db.models import MCPServer
-from evolvxsi.llm.cancellation import CancellationSignal
-from evolvxsi.mcp_server.api import create_mcp_fastapi_app
-from evolvxsi.mcp_server.auth import EvolvXSITokenVerifier
-from evolvxsi.mcp_server.tools import search
-from evolvxsi.server.features.mcp.oauth import MCPReauthenticationRequired
-from evolvxsi.server.metrics import mcp_client, metrics_auth
-from evolvxsi.server.metrics.mcp_common import MCPToolCallStatus
-from evolvxsi.server.metrics.mcp_server import MCPAuthResult, MCPServerToolName
-from evolvxsi.tools.models import ToolContext
-from evolvxsi.tools.tool_implementations.mcp.mcp_tool import MCPTool
+from nortpole.agents.tools import ToolInvocation, ToolResult, ToolUpdate
+from nortpole.db.enums import MCPAuthenticationType, MCPOAuthProviderMode
+from nortpole.db.models import MCPServer
+from nortpole.llm.cancellation import CancellationSignal
+from nortpole.mcp_server.api import create_mcp_fastapi_app
+from nortpole.mcp_server.auth import NortPoleTokenVerifier
+from nortpole.mcp_server.tools import search
+from nortpole.server.features.mcp.oauth import MCPReauthenticationRequired
+from nortpole.server.metrics import mcp_client, metrics_auth
+from nortpole.server.metrics.mcp_common import MCPToolCallStatus
+from nortpole.server.metrics.mcp_server import MCPAuthResult, MCPServerToolName
+from nortpole.tools.models import ToolContext
+from nortpole.tools.tool_implementations.mcp.mcp_tool import MCPTool
 
 
 def _mcp_tool(
@@ -57,13 +57,13 @@ def test_client_records_success_once() -> None:
     tool = _mcp_tool()
     with (
         patch(
-            "evolvxsi.tools.tool_implementations.mcp.mcp_tool.call_mcp_tool",
+            "nortpole.tools.tool_implementations.mcp.mcp_tool.call_mcp_tool",
             return_value=CallToolResult(
                 content=[TextContent(type="text", text='{"ok": true}')]
             ),
         ),
         patch(
-            "evolvxsi.tools.tool_implementations.mcp.mcp_tool."
+            "nortpole.tools.tool_implementations.mcp.mcp_tool."
             "record_mcp_client_tool_outcome"
         ) as record,
     ):
@@ -78,7 +78,7 @@ def test_client_records_success_once() -> None:
 def test_client_records_missing_credentials_as_auth_error() -> None:
     tool = _mcp_tool(MCPAuthenticationType.API_TOKEN)
     with patch(
-        "evolvxsi.tools.tool_implementations.mcp.mcp_tool.record_mcp_client_tool_outcome"
+        "nortpole.tools.tool_implementations.mcp.mcp_tool.record_mcp_client_tool_outcome"
     ) as record:
         response = tool.run(_invocation(), ToolContext())
 
@@ -92,11 +92,11 @@ def test_client_records_reauthentication_required_as_auth_error() -> None:
     tool = _mcp_tool()
     with (
         patch(
-            "evolvxsi.tools.tool_implementations.mcp.mcp_tool.call_mcp_tool",
+            "nortpole.tools.tool_implementations.mcp.mcp_tool.call_mcp_tool",
             side_effect=MCPReauthenticationRequired(),
         ),
         patch(
-            "evolvxsi.tools.tool_implementations.mcp.mcp_tool."
+            "nortpole.tools.tool_implementations.mcp.mcp_tool."
             "record_mcp_client_tool_outcome"
         ) as record,
     ):
@@ -113,11 +113,11 @@ def test_client_records_execution_failure_once() -> None:
     tool = _mcp_tool()
     with (
         patch(
-            "evolvxsi.tools.tool_implementations.mcp.mcp_tool.call_mcp_tool",
+            "nortpole.tools.tool_implementations.mcp.mcp_tool.call_mcp_tool",
             side_effect=RuntimeError("tool execution failed"),
         ),
         patch(
-            "evolvxsi.tools.tool_implementations.mcp.mcp_tool."
+            "nortpole.tools.tool_implementations.mcp.mcp_tool."
             "record_mcp_client_tool_outcome"
         ) as record,
     ):
@@ -195,10 +195,10 @@ def test_auth_verifier_records_success() -> None:
     client = MagicMock()
     client.get = AsyncMock(return_value=MagicMock(status_code=200))
     with (
-        patch("evolvxsi.mcp_server.auth.get_http_client", return_value=client),
-        patch("evolvxsi.mcp_server.auth.record_mcp_auth_result") as record,
+        patch("nortpole.mcp_server.auth.get_http_client", return_value=client),
+        patch("nortpole.mcp_server.auth.record_mcp_auth_result") as record,
     ):
-        token = asyncio.run(EvolvXSITokenVerifier().verify_token("token"))
+        token = asyncio.run(NortPoleTokenVerifier().verify_token("token"))
 
     assert token is not None
     record.assert_called_once_with(MCPAuthResult.SUCCESS)
@@ -208,18 +208,18 @@ def test_auth_verifier_records_rejection_and_backend_error() -> None:
     client = MagicMock()
     client.get = AsyncMock(return_value=MagicMock(status_code=401))
     with (
-        patch("evolvxsi.mcp_server.auth.get_http_client", return_value=client),
-        patch("evolvxsi.mcp_server.auth.record_mcp_auth_result") as record,
+        patch("nortpole.mcp_server.auth.get_http_client", return_value=client),
+        patch("nortpole.mcp_server.auth.record_mcp_auth_result") as record,
     ):
-        assert asyncio.run(EvolvXSITokenVerifier().verify_token("token")) is None
+        assert asyncio.run(NortPoleTokenVerifier().verify_token("token")) is None
     record.assert_called_once_with(MCPAuthResult.REJECTED)
 
     client.get = AsyncMock(side_effect=RuntimeError("offline"))
     with (
-        patch("evolvxsi.mcp_server.auth.get_http_client", return_value=client),
-        patch("evolvxsi.mcp_server.auth.record_mcp_auth_result") as record,
+        patch("nortpole.mcp_server.auth.get_http_client", return_value=client),
+        patch("nortpole.mcp_server.auth.record_mcp_auth_result") as record,
     ):
-        assert asyncio.run(EvolvXSITokenVerifier().verify_token("token")) is None
+        assert asyncio.run(NortPoleTokenVerifier().verify_token("token")) is None
     record.assert_called_once_with(MCPAuthResult.ERROR)
 
 

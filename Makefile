@@ -2,11 +2,11 @@
 .PHONY: help check core-test core-test-all core-run web-install web-typecheck web-dev packs contracts
 
 CORE_ENV = PYTHONPATH=. DISABLE_VECTOR_DB=true CACHE_BACKEND=postgres AUTH_TYPE=basic FILE_STORE_BACKEND=postgres \
-	EVOLVXSI_OFFLINE_TOKENIZER=true HF_HUB_OFFLINE=1
+	NORTPOLE_OFFLINE_TOKENIZER=true HF_HUB_OFFLINE=1
 
 help:
 	@echo "make check          structure, links and tool tests"
-	@echo "make core-test      NortPole unit tests (services/core/tests/unit/evolvxsi)"
+	@echo "make core-test      NortPole unit tests (services/core/tests/unit/nortpole)"
 	@echo "make core-test-all  every backend unit test (needs the dev dependency group)"
 	@echo "make core-run       start the API on port 8080 (needs Postgres; see infrastructure/profiles/local)"
 	@echo "make web-install    install the web app's dependencies"
@@ -20,13 +20,13 @@ check:
 	python -m pytest -q tools/tests
 
 core-test:
-	cd services/core && $(CORE_ENV) uv run --no-sync python -m pytest -q tests/unit/evolvxsi
+	cd services/core && $(CORE_ENV) uv run --no-sync python -m pytest -q tests/unit/nortpole
 
 core-test-all:
 	cd services/core && PYTHONPATH=. uv run --no-sync python -m pytest -q -n auto tests/unit --ignore=tests/unit/model_server
 
 core-run:
-	cd services/core && $(CORE_ENV) uv run --no-sync uvicorn evolvxsi.main:app --port 8080
+	cd services/core && $(CORE_ENV) uv run --no-sync uvicorn nortpole.main:app --port 8080
 
 web-install:
 	cd apps/workspace && bun install
@@ -38,7 +38,7 @@ web-dev:
 	cd apps/workspace && INTERNAL_URL=http://127.0.0.1:8080 npx next dev -p 3000
 
 packs:
-	cd packages/pack-sdk && python -m evolvxsi_pack_sdk validate $(abspath $(wildcard packs/horizontal/*) $(wildcard packs/vertical/*/*))
+	cd packages/pack-sdk && python -m nortpole_pack_sdk validate $(abspath $(wildcard packs/horizontal/*) $(wildcard packs/vertical/*/*))
 
 contracts:
 	cd services/core && $(CORE_ENV) uv run --no-sync python scripts/generate_contracts.py

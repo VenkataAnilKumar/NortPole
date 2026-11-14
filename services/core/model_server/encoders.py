@@ -9,7 +9,7 @@ from fastapi import APIRouter, HTTPException, Request
 
 from model_server.embedding_model_loader import load_embedding_model
 from model_server.utils import simple_log_function_time
-from evolvxsi.utils.logger import setup_logger
+from nortpole.utils.logger import setup_logger
 from shared_configs.embedding_models import get_local_model_spec
 from shared_configs.enums import EmbedTextType
 from shared_configs.model_server_models import Embedding, EmbedRequest, EmbedResponse

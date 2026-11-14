@@ -30,7 +30,7 @@ afterEach(() => {
     configurable: true,
     value: originalBroadcastChannel,
   });
-  delete window.__EVOLVXSI_DESKTOP__;
+  delete window.__NORTPOLE_DESKTOP__;
   delete window.__TAURI_INTERNALS__;
   jest.restoreAllMocks();
   jest.useRealTimers();
@@ -153,7 +153,7 @@ test("cancels on abort and times out", async () => {
 test("desktop opens the system browser with a marked state", async () => {
   const invoke = jest.fn().mockResolvedValue(undefined);
   window.__TAURI_INTERNALS__ = { invoke };
-  window.__EVOLVXSI_DESKTOP__ = { oauthInBrowser: true };
+  window.__NORTPOLE_DESKTOP__ = { oauthInBrowser: true };
   const open = jest.spyOn(window, "open");
   const promise = launchOAuth(async () => authUrl);
   await flush();
@@ -169,10 +169,10 @@ test("desktop completes a claimed callback in a hidden frame of the waiting page
   window.__TAURI_INTERNALS__ = {
     invoke: jest.fn().mockResolvedValue(undefined),
   };
-  window.__EVOLVXSI_DESKTOP__ = { oauthInBrowser: true };
+  window.__NORTPOLE_DESKTOP__ = { oauthInBrowser: true };
   const promise = launchOAuth(async () => authUrl);
   await flush();
-  const claim = window.__EVOLVXSI_DESKTOP__?.claimOAuthCallback;
+  const claim = window.__NORTPOLE_DESKTOP__?.claimOAuthCallback;
   const callback = `${window.location.origin}/mcp/oauth/callback?code=c1&state=abc_123`;
   expect(claim?.("https://evil.example/mcp/oauth/callback?state=abc_123")).toBe(
     false
@@ -196,18 +196,18 @@ test("a claimed desktop callback that fails or never reports rejects", async () 
   window.__TAURI_INTERNALS__ = {
     invoke: jest.fn().mockResolvedValue(undefined),
   };
-  window.__EVOLVXSI_DESKTOP__ = { oauthInBrowser: true };
+  window.__NORTPOLE_DESKTOP__ = { oauthInBrowser: true };
   const callback = `${window.location.origin}/mcp/oauth/callback?state=abc_123`;
 
   const failed = launchOAuth(async () => authUrl);
   await flush();
-  window.__EVOLVXSI_DESKTOP__?.claimOAuthCallback?.(callback);
+  window.__NORTPOLE_DESKTOP__?.claimOAuthCallback?.(callback);
   notifyOAuthComplete("abc_123", false);
   await expect(failed).rejects.toMatchObject({ reason: "failed" });
 
   const silent = launchOAuth(async () => authUrl);
   await flush();
-  window.__EVOLVXSI_DESKTOP__?.claimOAuthCallback?.(callback);
+  window.__NORTPOLE_DESKTOP__?.claimOAuthCallback?.(callback);
   jest.advanceTimersByTime(60 * 1000);
   await expect(silent).rejects.toMatchObject({ reason: "failed" });
   expect(document.querySelector("iframe")).toBeNull();
@@ -258,7 +258,7 @@ test("only a tab that launchOAuth opened closes itself", () => {
   expect(reportOAuthCallback("abc_123.desktop", true)).toBe(true);
   expect(window.sessionStorage.getItem("evolvxsi:oauth-launch")).toBeNull();
   expect(close).toHaveBeenCalledTimes(1);
-  window.__EVOLVXSI_DESKTOP__ = { oauthCallbackWindow: true };
+  window.__NORTPOLE_DESKTOP__ = { oauthCallbackWindow: true };
   expect(reportOAuthCallback("abc_123", true)).toBe(true);
   expect(reportOAuthCallback("abc_123", false)).toBe(false);
 });

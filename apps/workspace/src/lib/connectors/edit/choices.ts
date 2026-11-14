@@ -38,7 +38,7 @@ const COVERED_BY: Record<ExtraStep, EditStepKind[]> = {
   prune: ["prune", "full_reindex_then_prune"],
 };
 
-// Mirrors `normalize_steps` in `evolvxsi/connectors/edit_plan/planner.py`.
+// Mirrors `normalize_steps` in `nortpole/connectors/edit_plan/planner.py`.
 const STEP_ORDER: EditStepKind[] = [
   "access_groups",
   "access_type",

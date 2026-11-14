@@ -7,8 +7,8 @@ from collections.abc import Mapping
 from typing import Any
 from unittest.mock import patch
 
-from evolvxsi.utils import fleet_telemetry
-from evolvxsi.utils.fleet_telemetry import BoundedTelemetry
+from nortpole.utils import fleet_telemetry
+from nortpole.utils.fleet_telemetry import BoundedTelemetry
 
 TEST_KEY: str = "a" * 64
 # What the fleet service answers to `/v1/enroll`.

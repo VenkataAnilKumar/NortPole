@@ -34,7 +34,7 @@ import {
 import { MinimalAgent } from "@/lib/agents/types";
 import { SEARCH_PARAM_NAMES } from "@/app/app/services/searchParams";
 import { SEARCH_TOOL_ID } from "@/lib/tools/constants";
-import { EvolvXSIDocument } from "@/lib/search/types";
+import { NortPoleDocument } from "@/lib/search/types";
 import { LlmDescriptor, LlmManager } from "@/lib/hooks";
 import {
   BackendMessage,
@@ -138,7 +138,7 @@ interface UseChatControllerProps {
   memberPlugins?: readonly MemberPlugin[];
   availableAgents: MinimalAgent[];
   existingChatSessionId: string | null;
-  selectedDocuments: EvolvXSIDocument[];
+  selectedDocuments: NortPoleDocument[];
   searchParams: URLSearchParams;
   resetInputBar: () => void;
   /** Puts a message and its files back after a send fails before it starts. */
@@ -857,7 +857,7 @@ export default function useChatController({
         selectedDocuments.length > 0
           ? RetrievalType.SelectedDocs
           : RetrievalType.None;
-      let documents: EvolvXSIDocument[] = selectedDocuments;
+      let documents: NortPoleDocument[] = selectedDocuments;
       let citations: CitationMap = {};
       let aiMessageImages: FileDescriptor[] | null = null;
       let error: string | null = null;
@@ -883,7 +883,7 @@ export default function useChatController({
       const packetsPerModel: Packet[][] = isMultiModel
         ? Array.from({ length: numModels }, () => [])
         : [];
-      const documentsPerModel: EvolvXSIDocument[][] = isMultiModel
+      const documentsPerModel: NortPoleDocument[][] = isMultiModel
         ? Array.from({ length: numModels }, () => [])
         : [];
       const citationsPerModel: CitationMap[] = isMultiModel

@@ -30,29 +30,29 @@ from sqlalchemy import delete
 from sqlalchemy.orm import Session
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
-from evolvxsi.auth.permissions import require_permission
-from evolvxsi.auth.schemas import AuthBackend
-from evolvxsi.auth.users import (
+from nortpole.auth.permissions import require_permission
+from nortpole.auth.schemas import AuthBackend
+from nortpole.auth.users import (
     TenantAwareRedisStrategy,
     auth_backend,
     fastapi_users,
     get_redis_strategy,
 )
-from evolvxsi.configs import app_configs
-from evolvxsi.configs.constants import FASTAPI_USERS_AUTH_COOKIE_NAME
-from evolvxsi.db.engine.async_sql_engine import reset_sqlalchemy_async_engine
-from evolvxsi.db.engine.sql_engine import (
+from nortpole.configs import app_configs
+from nortpole.configs.constants import FASTAPI_USERS_AUTH_COOKIE_NAME
+from nortpole.db.engine.async_sql_engine import reset_sqlalchemy_async_engine
+from nortpole.db.engine.sql_engine import (
     SqlEngine,
     get_catalog_session,
     get_session_with_current_tenant,
 )
-from evolvxsi.db.enums import Permission
-from evolvxsi.db.models import OAuthProviderClient, OAuthProviderGrant, User
-from evolvxsi.error_handling.exceptions import register_evolvxsi_exception_handlers
-from evolvxsi.oauth_provider import config as oauth_config
-from evolvxsi.redis.redis_pool import get_async_redis_connection
-from evolvxsi.server.oauth_provider.api import router as user_router
-from evolvxsi.server.oauth_provider.protocol import router as protocol_router
+from nortpole.db.enums import Permission
+from nortpole.db.models import OAuthProviderClient, OAuthProviderGrant, User
+from nortpole.error_handling.exceptions import register_evolvxsi_exception_handlers
+from nortpole.oauth_provider import config as oauth_config
+from nortpole.redis.redis_pool import get_async_redis_connection
+from nortpole.server.oauth_provider.api import router as user_router
+from nortpole.server.oauth_provider.protocol import router as protocol_router
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from shared_configs.contextvars import CURRENT_TENANT_ID_CONTEXTVAR
 from tests.external_dependency_unit.conftest import create_test_user, delete_test_user
@@ -637,8 +637,8 @@ def native_oauth_server(
         session_token=session_token,
     )
 
-    from evolvxsi.mcp_server import api as mcp_api
-    from evolvxsi.mcp_server import auth as mcp_auth
+    from nortpole.mcp_server import api as mcp_api
+    from nortpole.mcp_server import auth as mcp_auth
 
     mcp_api: ModuleType
     mcp_auth: ModuleType

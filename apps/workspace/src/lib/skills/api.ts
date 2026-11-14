@@ -1,8 +1,8 @@
 /**
  * Thin client wrappers around the skills API.
  *
- * Pairs with `backend/evolvxsi/server/features/skill/api.py`. All mutations bubble
- * server-side `EvolvXSIError` detail strings as Error messages so callers can hand
+ * Pairs with `backend/nortpole/server/features/skill/api.py`. All mutations bubble
+ * server-side `NortPoleError` detail strings as Error messages so callers can hand
  * them to `toast.error` directly.
  */
 

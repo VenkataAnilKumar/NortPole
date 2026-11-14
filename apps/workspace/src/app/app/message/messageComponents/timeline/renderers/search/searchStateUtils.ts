@@ -9,7 +9,7 @@ import {
   SearchToolDocumentsDelta,
   SectionEnd,
 } from "@/app/app/services/streamingModels";
-import { EvolvXSIDocument } from "@/lib/search/types";
+import { NortPoleDocument } from "@/lib/search/types";
 import { ValidSources } from "@/lib/connectors/types/source";
 
 export const MAX_TITLE_LENGTH = 25;
@@ -38,7 +38,7 @@ export interface TimeFilter {
 
 export interface SearchState {
   queries: string[];
-  results: EvolvXSIDocument[];
+  results: NortPoleDocument[];
   sourceFilters: string[];
   timeFilter: TimeFilter | null;
   isSearching: boolean;

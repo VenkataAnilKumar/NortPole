@@ -3,7 +3,7 @@
 import pytest
 from pydantic import ValidationError
 
-from evolvxsi.external_apps.providers.actions import RestRoute, path_matches
+from nortpole.external_apps.providers.actions import RestRoute, path_matches
 
 
 def test_non_trailing_wildcard_rejected_at_construction() -> None:
@@ -67,7 +67,7 @@ def test_non_trailing_wildcard_rejected_at_construction() -> None:
         ("/repos/{o}/{r}/contents/{path...}", "/repos/o/r/contents/README.md", True),
         (
             "/repos/{o}/{r}/contents/{path...}",
-            "/repos/o/r/contents/backend/evolvxsi/main.py",
+            "/repos/o/r/contents/backend/nortpole/main.py",
             True,
         ),
         ("/repos/{o}/{r}/git/ref/{ref...}", "/repos/o/r/git/ref/heads/feature/x", True),

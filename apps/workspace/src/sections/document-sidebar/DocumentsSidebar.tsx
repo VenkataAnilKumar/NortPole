@@ -1,6 +1,6 @@
 "use client";
 
-import { MinimalEvolvXSIDocument, EvolvXSIDocument } from "@/lib/search/types";
+import { MinimalEvolvXSIDocument, NortPoleDocument } from "@/lib/search/types";
 import ChatDocumentDisplay from "@/sections/document-sidebar/ChatDocumentDisplay";
 import { removeDuplicateDocs } from "@/lib/documentUtils";
 import { Dispatch, SetStateAction, useMemo, memo } from "react";
@@ -13,12 +13,12 @@ import {
 import { Text, Button, Divider } from "@opal/components";
 import { SvgSearchMenu, SvgX } from "@opal/icons";
 
-// Build an EvolvXSIDocument from basic file info
+// Build an NortPoleDocument from basic file info
 const buildEvolvXSIDocumentFromFile = (
   id: string,
   name?: string | null,
   appendProjectPrefix?: boolean
-): EvolvXSIDocument => {
+): NortPoleDocument => {
   const document_id = appendProjectPrefix ? `project_file__${id}` : id;
   return {
     document_id,
@@ -82,7 +82,7 @@ function ChatDocumentDisplayWrapper({
 
 interface DocumentsSidebarProps {
   closeSidebar: () => void;
-  selectedDocuments: EvolvXSIDocument[] | null;
+  selectedDocuments: NortPoleDocument[] | null;
   modal: boolean;
   setPresentingDocument: Dispatch<SetStateAction<MinimalEvolvXSIDocument | null>>;
 }

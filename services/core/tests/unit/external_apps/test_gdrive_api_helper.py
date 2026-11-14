@@ -15,7 +15,7 @@ import pytest
 
 _HELPER = (
     Path(__file__).resolve().parents[3]
-    / "evolvxsi/skills/builtin"
+    / "nortpole/skills/builtin"
     / "google-drive/gdrive_api.py"
 )
 

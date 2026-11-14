@@ -21,8 +21,8 @@ import { SEARCH_PARAM_NAMES } from "@/app/app/services/searchParams";
 import { useLlmManager } from "@/lib/hooks";
 import { useFederatedConnectors } from "@/lib/connectors/hooks";
 import { useSendChatMessageFromURL } from "@/lib/chat/hooks";
-import EvolvXSIInitializingLoader from "@/components/EvolvXSIInitializingLoader";
-import { EvolvXSIDocument, MinimalEvolvXSIDocument } from "@/lib/search/types";
+import NortPoleInitializingLoader from "@/components/NortPoleInitializingLoader";
+import { NortPoleDocument, MinimalEvolvXSIDocument } from "@/lib/search/types";
 import { useToolConfiguration } from "@/lib/tools/hooks";
 import { useMemberPlugins } from "@/lib/plugins/member";
 import {
@@ -372,7 +372,7 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
   const loadedIdSessionRef = useRef<string | null>(currentChatSessionId);
   const submitOnLoadPerformed = useRef<boolean>(false);
 
-  const [selectedDocuments, setSelectedDocuments] = useState<EvolvXSIDocument[]>(
+  const [selectedDocuments, setSelectedDocuments] = useState<NortPoleDocument[]>(
     []
   );
 
@@ -840,7 +840,7 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
             : "1fr auto 1fr",
   };
 
-  if (!isReady) return <EvolvXSIInitializingLoader />;
+  if (!isReady) return <NortPoleInitializingLoader />;
 
   return (
     <>

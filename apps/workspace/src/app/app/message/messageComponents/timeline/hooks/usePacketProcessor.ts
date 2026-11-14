@@ -9,7 +9,7 @@ import {
   StopReason,
 } from "@/app/app/services/streamingModels";
 import { CitationMap } from "@/app/app/types";
-import { EvolvXSIDocument } from "@/lib/search/types";
+import { NortPoleDocument } from "@/lib/search/types";
 import {
   ProcessorState,
   GroupedPacket,
@@ -32,7 +32,7 @@ export interface UsePacketProcessorResult {
   codeModeWorking: boolean;
   citations: StreamingCitation[];
   citationMap: CitationMap;
-  documentMap: Map<string, EvolvXSIDocument>;
+  documentMap: Map<string, NortPoleDocument>;
 
   // Status (derived from packets)
   stopPacketSeen: boolean;
