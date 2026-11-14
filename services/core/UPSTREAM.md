@@ -18,6 +18,28 @@ Adapted from the Onyx Community Edition, commit `919578e0408a2d739a16215c09844c6
 - Rebranded with `tools/rebrand_onyx.py` (Onyx to EvolvXSI). Re-run it on a fresh copy when taking a newer upstream commit.
 - Community stubs replace `ee` imports in the web app: `src/lib/community/*`, `src/sections/SearchUI.tsx` and the hooks admin page.
 
+## Restored later from the same commit (2026-11-14)
+
+The first copy left out every markdown file and the integration tests, which also dropped some files the product or
+its unit tests need. These were taken from the same upstream commit (`919578e`) and rebranded with
+`tools/rebrand_onyx.py`; none comes from an `ee` directory:
+
+- Craft runtime templates: `evolvxsi/server/features/build/AGENTS.template.md` and
+  `evolvxsi/server/features/build/sandbox/image/templates/outputs/web/AGENTS.md` (without them Craft wrote empty
+  agent instructions).
+- Dev scripts with unit tests: `scripts/env_inventory.py` (and its baseline), `sync_price_table.py`,
+  `check_migration_determinism.py`, `run_enterpriserag_bench_questions.py`, `update_recommended_models.py`,
+  `update_recommended_models_agent.py` (and its rules file and `openai_agent.py` helper),
+  `generate_credential_bound_fields.py` (pointed at `apps/workspace`).
+- Test helpers: `tests/integration/mock_services/mock_llm_server/`, `tests/external_dependency_unit/` (`conftest.py`,
+  `full_setup.py`, `session_state_guard.py`, `oauth_provider/test_native_clients.py`) and
+  `tests/unit/evolvxsi/connectors/source_operation_harnesses.py` (adapted to work without `ee`).
+
+Tests for upstream deployment files that EvolvXSI does not ship now check EvolvXSI's own deployment
+(`infrastructure/profiles/staging/docker-compose.retrieval.yml`) where it has the same thing (worker queues, the
+index image) and were removed where it does not (the Craft compose file and CLI copy, the model-server image).
+Tests that switch on Enterprise mode are skipped with a stated reason.
+
 ## Brand assets and documents
 
 - Upstream brand assets were removed and replaced with new EvolvXSI placeholder assets: `public/logo*.png`, `logo.svg`, `logotype*.png`, `evolvxsi.ico`, `OpenSource.png`, the chat background images and thumbnails, the inline logo components in `lib/opal/src/logos` and `lib/opal/src/icons`, and the favicon and app icons in the sandbox web template. The wordmark text uses a system font; final brand artwork and typeface are still open.

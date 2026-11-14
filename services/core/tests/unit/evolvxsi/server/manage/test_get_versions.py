@@ -1,5 +1,6 @@
 """Tests for the public /versions endpoint, with DockerHub mocked out."""
 
+import re
 import threading
 import traceback
 from collections.abc import Generator
@@ -15,12 +16,12 @@ from evolvxsi.error_handling.error_codes import EvolvXSIErrorCode
 from evolvxsi.error_handling.exceptions import EvolvXSIError
 from evolvxsi.server.manage import get_state
 from evolvxsi.server.manage.get_state import DOCUMENT_INDEX_IMAGE, get_versions
+from tests.common.paths import find_ancestor_containing
 
+# EvolvXSI deploys the document index from its retrieval compose profile.
 _COMPOSE_TEMPLATE = (
-    Path(__file__).resolve().parents[6]
-    / "deployment"
-    / "docker_compose"
-    / "docker-compose.template.yml"
+    find_ancestor_containing("infrastructure/profiles/staging")
+    / "infrastructure/profiles/staging/docker-compose.retrieval.yml"
 )
 
 
@@ -67,7 +68,9 @@ def test_versions_report_the_opensearch_index_image() -> None:
 def test_index_image_matches_the_docker_compose_deployment() -> None:
     """The /versions index image must be the one docker compose deploys."""
     template = _COMPOSE_TEMPLATE.read_text()
-    assert f"/{DOCUMENT_INDEX_IMAGE}\n" in template
+    images = re.findall(r"^\s*image:\s*(\S+)\s*$", template, re.MULTILINE)
+    # A registry prefix (docker.io/...) is allowed; the image and tag must match exactly.
+    assert any(i == DOCUMENT_INDEX_IMAGE or i.endswith(f"/{DOCUMENT_INDEX_IMAGE}") for i in images), images
 
 
 def test_versions_are_cached_across_calls() -> None:
