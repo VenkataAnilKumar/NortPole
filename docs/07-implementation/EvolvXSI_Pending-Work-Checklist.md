@@ -64,7 +64,7 @@ Status: Working list, 2026-11-13 (pending-work list below saved 2026-11-13 after
 - [x] R5. Inbox filters.
 - [ ] R6. Scheduled workflows (design in `docs/05-design/EvolvXSI_Workflows-and-Knowledge-Design.md`): R6a runner and rules (done), R6b screens and sharing (done), R6c event triggers (after the connector). Follow-up: per-run cost in money (runs store tokens, not the model used).
 - [ ] R7. Knowledge (same design): R7a domains, R7b My files and requests, R7c verification and freshness (after the search index and the Google Drive connector).
-- [ ] R8. Quality pass of each stage.
+- [x] R8. Quality pass for R1–R6: 24 pages in light and dark at 1280 and 390 pixels (96 runs, all clean) and a keyboard pass. Repeat for R7.
 
 ## Inherited test suite (2026-11-14)
 
