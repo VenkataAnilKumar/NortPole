@@ -7,7 +7,18 @@ import re
 import sys
 
 IGNORED = {'.git', '.venv', 'venv', 'node_modules', '__pycache__', '.pytest_cache', 'dist', 'build', 'coverage'}
-SERVICES = ('control-plane', 'execution', 'knowledge', 'model-gateway')
+# Placeholder files that do not make a folder real (decision 0006: folders exist only with code).
+PLACEHOLDERS = {'README.md', '.gitkeep', '.gitignore'}
+# packs/horizontal/<pack> or packs/vertical/<industry>/<pack>
+ACTIVE_PACK = re.compile(r'packs/(horizontal/[a-z0-9][a-z0-9-]*|vertical/[a-z0-9][a-z0-9-]*/[a-z0-9][a-z0-9-]*)')
+
+def _has_content(folder):
+    for directory, folders, files in os.walk(folder):
+        folders[:] = [d for d in folders if d not in IGNORED]
+        if any(f not in PLACEHOLDERS for f in files):
+            return True
+    return False
+
 
 def validate(root):
     root = Path(root).resolve()
@@ -55,14 +66,15 @@ def validate(root):
                 errors.append(f'Planned module has non-planned maturity: {value}')
             if group == 'modules' and (maturity == 'planned' or not dest.is_dir()):
                 errors.append(f'Missing or incorrectly classified existing module: {value}')
+            elif group == 'modules' and not _has_content(dest):
+                errors.append(f'Existing module holds only placeholders; list it under planned_modules: {value}')
+            if group == 'planned_modules' and dest.exists():
+                errors.append(f'Planned module folder already exists; move it to modules: {value}')
             if not entry.get('responsibility'):
                 errors.append(f'Missing responsibility: {value}')
 
-    for name in SERVICES:
-        for area in ('domain', 'application', 'interfaces', 'adapters'):
-            if not (root / 'services' / name / 'src' / area).is_dir():
-                errors.append(f'Missing service area: {name}/{area}')
-    for obsolete in ('apps/api', 'evaluations/runners', 'infrastructure/environments', 'infrastructure/infrastructure', 'infrastructure/monitoring'):
+    for obsolete in ('apps/api', 'evaluations/runners', 'infrastructure/environments', 'infrastructure/infrastructure', 'infrastructure/monitoring',
+                     'services/control-plane', 'services/execution', 'services/knowledge'):
         if (root / obsolete).exists():
             errors.append(f'Obsolete directory: {obsolete}')
     packs = inventory.get('packs', {})
@@ -80,7 +92,7 @@ def validate(root):
         else:
             for value in active:
                 dest = local_path(value)
-                if dest is None or not re.fullmatch(r'packs/(horizontal|vertical)/[^/]+', value) or not (dest / 'manifest.yaml').is_file():
+                if dest is None or not ACTIVE_PACK.fullmatch(value) or not (dest / 'manifest.yaml').is_file():
                     errors.append(f'Invalid active pack or missing manifest: {value!r}')
 
     for directory, folders, files in os.walk(root, followlinks=False):
@@ -123,5 +135,5 @@ def validate(root):
 
 if __name__ == '__main__':
     issues = validate(Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parents[1])
-    print('\n'.join(issues) if issues else 'PASS: inventory, service layout, pack locations and supported local Markdown links.')
+    print('\n'.join(issues) if issues else 'PASS: inventory, module content, pack locations and supported local Markdown links.')
     sys.exit(bool(issues))

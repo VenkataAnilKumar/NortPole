@@ -16,7 +16,7 @@
     "start": "next start",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
-    "types:check": "next typegen && node tools/type-check/index.ts",
+    "types:check": "next typegen && tsc --noEmit -p tsconfig.app.json",
     "format": "oxfmt src",
     "format:check": "oxfmt --check src",
     "playwright": "playwright test",

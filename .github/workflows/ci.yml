@@ -1,13 +1,15 @@
-# Checks that run on every pull request and on pushes to main.
-# The first two jobs were run locally with the same commands. The third (core unit tests) has not run on GitHub yet, so it
-# is allowed to fail until it has: remove `continue-on-error` after its first green run.
-# Actions are pinned by version tag, not by commit SHA; pin them by SHA when your organisation requires it.
+# Checks that run on every pull request and on pushes to main, plus a nightly run of the whole backend unit suite.
+# Every job was run locally with the same commands first. Actions are pinned by version tag, not by commit SHA; pin them
+# by SHA when your organisation requires it.
 name: ci
 
 on:
   pull_request:
   push:
     branches: [main]
+  schedule:
+    - cron: "17 2 * * *"   # nightly full backend suite
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -52,8 +54,8 @@ jobs:
 
   core-unit-tests:
     name: Core unit tests (EvolvXSI-owned)
+    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
-    continue-on-error: true
     defaults:
       run:
         working-directory: services/core
@@ -69,7 +71,7 @@ jobs:
         run: |
           uv sync --frozen --no-dev --no-install-project --group backend
           uv pip install pytest
-      - name: Unit tests for packs, actions, redaction, extensions, tasks and the audit log
+      - name: Unit tests for EvolvXSI's own modules
         env:
           PYTHONPATH: .
           DISABLE_VECTOR_DB: "true"
@@ -80,5 +82,61 @@ jobs:
           HF_HUB_OFFLINE: "1"
         run: >
           uv run --no-sync python -m pytest -q
-          tests/unit/evolvxsi/packs tests/unit/evolvxsi/actions tests/unit/evolvxsi/redaction
-          tests/unit/evolvxsi/extensions tests/unit/evolvxsi/tasks tests/unit/evolvxsi/audit_log
+          tests/unit/evolvxsi/action_binding tests/unit/evolvxsi/actions tests/unit/evolvxsi/audit_log
+          tests/unit/evolvxsi/extensions tests/unit/evolvxsi/external_permissions tests/unit/evolvxsi/knowledge_access
+          tests/unit/evolvxsi/packs tests/unit/evolvxsi/redaction tests/unit/evolvxsi/route_policy
+          tests/unit/evolvxsi/tasks tests/unit/evolvxsi/tool_catalog tests/unit/evolvxsi/user_preferences
+          tests/unit/evolvxsi/test_schedule_cadence.py tests/unit/evolvxsi/skills/test_bundled_skill_scripts.py
+
+  core-unit-tests-full:
+    name: Core unit tests (whole suite, nightly)
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: services/core
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.9.5"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install the locked backend dependencies
+        run: |
+          uv sync --frozen --no-dev --no-install-project --group backend
+          uv pip install pytest pytest-xdist
+      - name: Every backend unit test
+        env:
+          PYTHONPATH: .
+          DISABLE_VECTOR_DB: "true"
+          CACHE_BACKEND: postgres
+          AUTH_TYPE: basic
+          FILE_STORE_BACKEND: postgres
+          EVOLVXSI_OFFLINE_TOKENIZER: "true"
+        # The model-server tests need the separate model-server dependencies (torch); they are not part of this suite.
+        run: uv run --no-sync python -m pytest -q -n auto tests/unit --ignore=tests/unit/model_server
+
+  web-typecheck:
+    name: Web app type check
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/workspace
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.4.4"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install the locked web dependencies
+        run: bun install --frozen-lockfile
+      - name: Build the shared web libraries
+        run: cd lib/shared && bun run build && cd ../opal && bun run build
+      - name: Type-check the app code (test files are typed separately; see the pending-work checklist)
+        run: npx next typegen && npx tsc --noEmit -p tsconfig.app.json

@@ -1,5 +1,7 @@
 # EvolvXSI — delivery plan on the adopted core
 
+> **Where this lives in code (2026-11-14).** Service and package names here (`services/control-plane`, `services/execution`, `services/knowledge`, `packages/*`, `evaluations`) are logical owners from the design stage. [Decision 0006](../decisions/0006-scalable-repository-structure.md) maps them to the code: the three services are implemented inside `services/core`, and the packages and evaluations are planned modules in `modules.json`, created when their first code arrives.
+
 Status: **proposed; supersedes the sequencing (not the scope) of the fixture-first plan** · Updated: 2026-11-11
 
 This plan rebuilds the delivery sequence around [decision 0004](../decisions/0004-adopt-community-source-as-pilot-core.md): the pilot runs on the adapted upstream open-source core in `services/core` and `apps/workspace`, with EvolvXSI-owned governance added in separate modules. The earlier [P00–P11 plan](EvolvXSI_Implementation-Phases.md) stays valid as the scope reference and the source of acceptance wording; this document records what is actually done and the order of what remains. It commits no dates, no staffing and no customer.

@@ -1,5 +1,7 @@
 # EvolvXSI — deployment architecture
 
+> **Where this lives in code (2026-11-14).** Service and package names here (`services/control-plane`, `services/execution`, `services/knowledge`, `packages/*`, `evaluations`) are logical owners from the design stage. [Decision 0006](../decisions/0006-scalable-repository-structure.md) maps them to the code: the three services are implemented inside `services/core`, and the packages and evaluations are planned modules in `modules.json`, created when their first code arrives.
+
 Status: proposed target topology; not implemented · Updated: 2026-11-05
 
 This document specifies deployable units, processes, persistence, network boundaries and scaling. The system architecture document describes the logical responsibilities. The monorepo groups the product modules. Deployment groups processes by isolation, workload and recovery needs. This is a target for EvolvXSI-owned services; downloaded projects are reference material and are not implementation foundations.
