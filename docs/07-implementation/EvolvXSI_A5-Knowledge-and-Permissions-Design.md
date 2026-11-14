@@ -185,3 +185,25 @@ What this settles and what it does not:
 - Web pages and uploaded files are usable now as sources, with group-based access.
 - A shared-drive or wiki source with per-document sharing needs its own permission mapping. That source is still the first open decision (the customer's), and nothing here replaces it. Whichever is chosen, the work is: map the source's sharing to our groups and emails, add a test per sharing rule (inherited folders, link sharing, nested groups), and fail closed where the meaning is unclear.
 - Not checked: crawling with scrolling, sitemaps, sign-in pages, large sites, scheduled refresh through the workers in this sandbox.
+
+## Google Drive permission sync (built 2026-11-14, checklist 7(a))
+
+The first per-source permission sync, written for EvolvXSI (the upstream one is in the Enterprise package, which is
+not shipped). It runs when a Google Drive source uses "sync" access.
+
+- **Reading Drive's sharing:** `evolvxsi/external_permissions/google_drive/doc_sync.py` implements the two functions the
+  Drive connector already calls for files and folders. Permissions listed with a file are used as they are; shared-drive
+  items list only permission ids, so their permissions are fetched, page by page, as the person whose access found the
+  file, then the fallback reader, then the administrator account.
+- **Mapping (fails closed):** named people (owner, writer, commenter, reader) may read; groups are recorded but grant
+  nothing until group membership is synced; domain sharing grants nothing yet; **"anyone with the link" and "public on
+  the web" never make a file public** (the recommended default, not yet confirmed by the owner: only the people named can find it); removed permissions grant
+  nothing; addresses are lowercased; if no one can read a file's permissions, only the person whose access found it is
+  granted; an unreadable folder grants nothing.
+- **Honouring it:** the indexing pipeline already stored a "sync" source's access list on each document; the community
+  access builder ignored it. It now adds those people (and any external group ids) to the document's access list, and a
+  person's own access list also carries the lowercase form of their address, so `Ann@Example.com` matches Drive's
+  `ann@example.com`. Documents from other sources are unchanged.
+- **Not built yet:** syncing Google group membership (needs a Workspace tenant), domain-wide sharing, refreshing access
+  between re-indexes (a change in Drive takes effect at the next indexing pass), and the live test against a real Drive
+  (checklist 7(c)).
