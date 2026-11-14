@@ -99,7 +99,7 @@ Status: Working list, updated 2026-11-14 (after the redesign stages R1–R6b and
 ## Waiting for the owner's yes
 
 - [ ] 8. **Agents in the UI:** a hint on the agents page that agents answer in chat only; check "Turn into a draft" in an agent chat; list custom agents with their route and data class in the admin Inventory.
-- [ ] 9. **Horizontal and vertical packs:** plan only. Not built until approved and the open decisions are answered. Partial work is kept outside the repo.
+- [ ] 9. **Horizontal and vertical packs:** the repository side is done (decision 0006 phase 3): packs live in `packs/horizontal/` and `packs/vertical/<industry>/`, bundled by `packs/editions/`, validated and signed with the pack SDK. Still waiting for your yes: letting a vertical pack *use* a horizontal pack at run time (dependency checks before activation); a partial patch for that is kept outside the repository.
 
 ## Blocked on the owner or outside the sandbox
 
