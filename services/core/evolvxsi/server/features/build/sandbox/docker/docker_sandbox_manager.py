@@ -592,7 +592,7 @@ def build_container_create_kwargs(
       ``firewall-init.sh`` to read ``ca.crt``. That volume also contains
       root-only ``ca.key``; the agent runs as UID 1000 after init.
 
-    ``EVOLVXSI_SERVER_URL`` is the complete API base used by evolvxsi-cli inside the
+    ``EVOLVXSI_SERVER_URL`` is the complete API base used by the skill scripts inside the
     sandbox. The default ``evolvxsi-craft-api`` alias is attached to the sandbox
     bridge; we warn about other Compose DNS names because they exist only on the
     default network.

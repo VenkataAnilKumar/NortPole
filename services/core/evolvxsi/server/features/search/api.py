@@ -5,7 +5,7 @@ returns ranked results with no LLM answer.
 /search/raw runs the same retrieval with no LLM step, for callers that rank
 results themselves.
 
-Intended for programmatic consumers (evolvxsi-cli, Craft sandbox, integrations).
+Intended for programmatic consumers (the company-search skill script, Craft sandbox, integrations).
 
 Not the same as the EvolvXSI Search UI backend at /api/search/send-search-message
 (ee/evolvxsi/server/query_and_chat/search_backend.py), which calls search_pipeline()

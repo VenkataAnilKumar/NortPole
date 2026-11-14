@@ -1,19 +1,19 @@
 ---
 name: image-generation
-description: Generate or edit raster images (photos, illustrations, textures, sprites, mockups, logos, infographics) using the workspace's configured image-generation provider via `evolvxsi-cli image`. Use when the task should produce a brand-new bitmap image, transform an existing image, or derive variants from references — not when the output is better as code-native SVG/vector or built directly in HTML/CSS/canvas. If no image provider is configured, tell the user to set one up at /admin/configuration/image-generation.
+description: Generate or edit raster images (photos, illustrations, textures, sprites, mockups, logos, infographics) using the workspace's configured image-generation provider via the bundled `image_gen.py` script. Use when the task should produce a brand-new bitmap image, transform an existing image, or derive variants from references — not when the output is better as code-native SVG/vector or built directly in HTML/CSS/canvas. If no image provider is configured, tell the user to set one up at /admin/configuration/image-generation.
 ---
 
 # Image Generation Skill
 
 Generate or edit images for the current project (website assets, game assets,
 UI and product mockups, wireframes, logos, photorealistic images, infographics)
-using `evolvxsi-cli image`. Generation runs server-side with whatever provider the
+using the bundled `image_gen.py` script. Generation runs server-side with whatever provider the
 admin configured at `/admin/configuration/image-generation` (OpenAI, Gemini, or
 Azure) — **no API key is needed here.**
 
 ## When a provider isn't configured
 
-If `evolvxsi-cli image …` exits with "no image generation provider is configured",
+If `python .opencode/skills/image-generation/image_gen.py …` exits with "no image generation provider is configured",
 stop and tell the user: *image generation is unavailable until an admin
 configures a provider at `/admin/configuration/image-generation`.* Do not try to
 work around it with another tool.
@@ -46,7 +46,7 @@ Assume the user wants a new image unless they clearly ask to change an existing 
 ### Generate (text-to-image)
 
 ```bash
-evolvxsi-cli image generate \
+python .opencode/skills/image-generation/image_gen.py generate \
   -p "A minimal hero of a ceramic coffee mug, clean product photography, soft studio lighting, wide composition with negative space, no text, no watermark" \
   --shape landscape \
   -o assets/hero.png
@@ -58,7 +58,7 @@ evolvxsi-cli image generate \
 primary edit source.
 
 ```bash
-evolvxsi-cli image edit \
+python .opencode/skills/image-generation/image_gen.py edit \
   -i assets/product.png \
   -p "Replace only the background with a warm sunset gradient; keep the product and its edges unchanged" \
   -o assets/product-sunset.png
@@ -73,7 +73,7 @@ affects `edit`; plain `generate` has a tiny request body.
 ### Variants of one prompt
 
 ```bash
-evolvxsi-cli image generate -p "Abstract colorful album cover art" -n 3 -o art.png
+python .opencode/skills/image-generation/image_gen.py generate -p "Abstract colorful album cover art" -n 3 -o art.png
 ```
 
 `-n > 1` requires a model that supports multiple images per request (e.g.
@@ -99,7 +99,7 @@ single targeted prompt change.
 1. Decide intent (`generate` vs `edit`) and execution (single vs repeated commands).
 2. Collect inputs up front: prompt(s), exact in-image text (verbatim), constraints/avoid list, and any input images with their roles.
 3. Shape the prompt by specificity: if it's already detailed, normalize it; if generic, add tasteful detail only when it materially improves the result.
-4. Run `evolvxsi-cli image …`, saving project-bound assets into the workspace. Don't overwrite an existing asset unless asked — use a sibling version (e.g. `hero-v2.png`).
+4. Run `python .opencode/skills/image-generation/image_gen.py …`, saving project-bound assets into the workspace. Don't overwrite an existing asset unless asked — use a sibling version (e.g. `hero-v2.png`).
 5. `view_image` the output; inspect subject, style, composition, and text accuracy; iterate with one targeted change.
 6. Report the saved path(s) and the final prompt(s).
 

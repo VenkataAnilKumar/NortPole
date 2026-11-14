@@ -1,6 +1,6 @@
 ---
 name: company-search
-description: Search company knowledge with the company-search command-line tool. Returns permissioned, citation-rich results from connected sources.
+description: Search company knowledge with the bundled company_search.py script. Returns permissioned, citation-rich results from connected sources.
 ---
 
 # company-search
@@ -17,7 +17,7 @@ assume it exists.
 
 ## Usage
 
-    onyx-cli search "<query>" ["<query>" ...]
+    python .opencode/skills/company-search/company_search.py search "<query>" ["<query>" ...]
 
 Each query is a full search pass that takes tens of seconds. Queries passed
 in one invocation (up to 3) run concurrently, so batch independent questions
