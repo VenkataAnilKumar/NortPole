@@ -1,100 +1,40 @@
 {
   "modules": [
     {
-      "implemented": false,
       "path": "apps/workspace",
-      "responsibility": "Practitioner workspace, Agent and Automation Studio, administration and developer views.",
-      "maturity": "skeleton"
+      "responsibility": "Web app: the user workspace (New, Inbox, Search, Workflows, Knowledge, Sources, Agents) and the admin console.",
+      "maturity": "implemented",
+      "implemented": true
     },
     {
-      "implemented": false,
       "path": "services/core",
-      "responsibility": "Adopted community backend (chat, retrieval, connectors, agents, model routing) used as the combined pilot service until the control-plane, execution, knowledge and model-gateway owners are carved out. See decision 0004.",
-      "maturity": "skeleton"
+      "responsibility": "API and background workers. EvolvXSI's own code is grouped by domain (governance, work, knowledge, insight); inherited platform modules stay in place.",
+      "maturity": "implemented",
+      "implemented": true
     },
     {
-      "implemented": false,
-      "path": "services/control-plane",
-      "responsibility": "Public API routing and control-plane ownership of tenants, memberships, projects, task drafts, registry, policies and approval decisions.",
-      "maturity": "skeleton"
-    },
-    {
-      "implemented": false,
-      "path": "services/execution",
-      "responsibility": "Run creation and state, jobs, outbox, worker leases, checkpoints, scheduling, artifacts and exports.",
-      "maturity": "skeleton"
-    },
-    {
-      "implemented": false,
-      "path": "services/knowledge",
-      "responsibility": "Source ingestion, permissions, passages, citations, context and scoped memory.",
-      "maturity": "skeleton"
-    },
-    {
-      "implemented": false,
       "path": "services/model-gateway",
-      "responsibility": "Processing destination policy, provider adapters, fallback, budgets and usage accounting.",
-      "maturity": "skeleton"
+      "responsibility": "Mock OpenAI-compatible model server used by tests and the local profile. A real gateway is planned only if routing must run apart from the core.",
+      "maturity": "skeleton",
+      "implemented": false
     },
     {
-      "implemented": false,
-      "path": "packages/contracts",
-      "responsibility": "Versioned API and event schemas, manifests, compatibility and generated clients.",
-      "maturity": "skeleton"
-    },
-    {
-      "implemented": false,
-      "path": "packages/identity-policy",
-      "responsibility": "Shared verification and authorization primitives. Control-plane records remain owned by services/control-plane.",
-      "maturity": "skeleton"
-    },
-    {
-      "implemented": false,
-      "path": "packages/integrations",
-      "responsibility": "Connector and tool contracts, credential references and remote receipt/reconciliation adapters.",
-      "maturity": "skeleton"
-    },
-    {
-      "implemented": false,
-      "path": "packages/agents",
-      "responsibility": "Shared immutable agent definitions with pinned skills and tool requirements.",
-      "maturity": "skeleton"
-    },
-    {
-      "implemented": false,
-      "path": "packages/skills",
-      "responsibility": "Shared capabilities, schemas, permission declarations and local evaluation cases.",
-      "maturity": "skeleton"
-    },
-    {
-      "implemented": false,
-      "path": "packages/pack-sdk",
-      "responsibility": "Pack authoring and validation using canonical manifest schemas.",
-      "maturity": "skeleton"
-    },
-    {
-      "implemented": false,
-      "path": "packages/ui",
-      "responsibility": "Shared accessible interface components and design tokens.",
-      "maturity": "skeleton"
-    },
-    {
-      "implemented": false,
-      "path": "evaluations",
-      "responsibility": "Cross-module evaluation suites, immutable results and publication evidence.",
-      "maturity": "skeleton"
-    },
-    {
-      "implemented": false,
       "path": "infrastructure",
-      "responsibility": "Local and production deployment profiles, release manifests, telemetry and recovery.",
-      "maturity": "skeleton"
+      "responsibility": "Deployment profiles: local runbook and the staging profile (Compose, TLS, retrieval overlay, backup, restore, release manifest).",
+      "maturity": "implemented",
+      "implemented": true
+    },
+    {
+      "path": "tools",
+      "responsibility": "Repository checks: structure and links, licence screen, software bill of materials.",
+      "maturity": "implemented",
+      "implemented": true
     }
   ],
-  "status": "structure-and-design-baseline",
-  "updated": "2026-11-05",
+  "status": "pilot",
+  "updated": "2026-11-14",
   "product": "EvolvXSI",
-  "structure": "modular-monorepo",
+  "structure": "modular-monorepo (decision 0006)",
   "packs": {
     "template": "packs/_template",
     "active": [],
@@ -110,34 +50,70 @@
   },
   "planned_modules": [
     {
-      "path": "apps/developer-portal",
-      "implemented": false,
+      "path": "packages/contracts",
+      "responsibility": "Generated contracts: pack manifest JSON Schema and the OpenAPI description of EvolvXSI routes (phase 4).",
       "maturity": "planned",
-      "responsibility": "Developer guides, API examples and extension discovery."
+      "implemented": false
+    },
+    {
+      "path": "packages/pack-sdk",
+      "responsibility": "Validate, build and sign packs from packs/ source (phase 4).",
+      "maturity": "planned",
+      "implemented": false
+    },
+    {
+      "path": "packages/connector-sdk",
+      "responsibility": "Interface and test kit for connectors built by partners; create when a partner builds one.",
+      "maturity": "planned",
+      "implemented": false
+    },
+    {
+      "path": "packages/sdk",
+      "responsibility": "Public client SDK generated from packages/contracts; create on customer demand.",
+      "maturity": "planned",
+      "implemented": false
+    },
+    {
+      "path": "packages/ui",
+      "responsibility": "Shared design system; create when a second app needs it.",
+      "maturity": "planned",
+      "implemented": false
+    },
+    {
+      "path": "services/indexer",
+      "responsibility": "Indexing split out of the core; create only when indexing load needs its own scaling.",
+      "maturity": "planned",
+      "implemented": false
+    },
+    {
+      "path": "evaluations",
+      "responsibility": "Cross-pack evaluation suites and reports; evaluation currently runs inside the core's pack gate.",
+      "maturity": "planned",
+      "implemented": false
+    },
+    {
+      "path": "infrastructure/profiles/kubernetes",
+      "responsibility": "Helm chart for larger self-hosted customers.",
+      "maturity": "planned",
+      "implemented": false
+    },
+    {
+      "path": "infrastructure/profiles/cloud",
+      "responsibility": "Multi-tenant cloud profile; after the tenancy decision.",
+      "maturity": "planned",
+      "implemented": false
+    },
+    {
+      "path": "apps/developer-portal",
+      "responsibility": "Developer guides, API examples and extension discovery.",
+      "maturity": "planned",
+      "implemented": false
     },
     {
       "path": "apps/public-site",
-      "implemented": false,
+      "responsibility": "Product, trust and support entry points.",
       "maturity": "planned",
-      "responsibility": "Public product, trust and support entry points."
-    },
-    {
-      "path": "packages/telemetry",
-      "implemented": false,
-      "maturity": "planned",
-      "responsibility": "Shared correlation and safe telemetry instrumentation."
-    },
-    {
-      "path": "packages/testing",
-      "implemented": false,
-      "maturity": "planned",
-      "responsibility": "Shared fixtures and contract-testing utilities."
-    },
-    {
-      "path": "sdks",
-      "implemented": false,
-      "maturity": "planned",
-      "responsibility": "Supported external developer clients consuming canonical contracts."
+      "implemented": false
     }
   ]
 }

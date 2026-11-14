@@ -5,7 +5,7 @@ import tempfile
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from validate_structure import SERVICES, validate
+from validate_structure import validate
 
 
 class StructureChecks(unittest.TestCase):
@@ -13,11 +13,10 @@ class StructureChecks(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
-        for name in SERVICES:
-            for area in ('domain', 'application', 'interfaces', 'adapters'):
-                (self.root / 'services' / name / 'src' / area).mkdir(parents=True)
+        (self.root / 'services/core').mkdir(parents=True)
+        (self.root / 'services/core/main.py').write_text('')
         (self.root / 'packs/_template').mkdir(parents=True)
-        self.data = {'modules': [{'path': 'services/control-plane', 'maturity': 'skeleton', 'implemented': False, 'responsibility': 'Control plane'}], 'planned_modules': [], 'packs': {'template': 'packs/_template', 'namespaces': ['packs/horizontal', 'packs/vertical'], 'manifest_file': 'manifest.yaml', 'active': []}}
+        self.data = {'modules': [{'path': 'services/core', 'maturity': 'implemented', 'implemented': True, 'responsibility': 'API and workers'}], 'planned_modules': [], 'packs': {'template': 'packs/_template', 'namespaces': ['packs/horizontal', 'packs/vertical'], 'manifest_file': 'manifest.yaml', 'active': []}}
 
     def check(self):
         (self.root / 'modules.json').write_text(json.dumps(self.data))
@@ -35,7 +34,7 @@ class StructureChecks(unittest.TestCase):
         self.assertTrue(any('Invalid module path' in e for e in self.check()))
 
     def test_false_implementation_claim(self):
-        self.data['modules'][0]['implemented'] = True
+        self.data['modules'][0]['implemented'] = False
         self.assertTrue(any('Inconsistent maturity' in e for e in self.check()))
 
     def test_generated_dependencies_excluded(self):
@@ -56,8 +55,38 @@ class StructureChecks(unittest.TestCase):
         self.assertTrue(any('missing missing.md' in e for e in errors))
 
     def test_active_pack_requires_manifest(self):
-        self.data['packs']['active'] = ['packs/vertical/example']
+        self.data['packs']['active'] = ['packs/vertical/finance/example']
         self.assertTrue(any('Invalid active pack' in e for e in self.check()))
+
+    def test_placeholder_only_module_is_rejected(self):
+        (self.root / 'packages/empty').mkdir(parents=True)
+        (self.root / 'packages/empty/README.md').write_text('# soon')
+        (self.root / 'packages/empty/.gitkeep').write_text('')
+        self.data['modules'].append({'path': 'packages/empty', 'maturity': 'skeleton', 'implemented': False, 'responsibility': 'Soon'})
+        self.assertTrue(any('only placeholders' in e for e in self.check()))
+
+    def test_planned_module_must_not_exist(self):
+        (self.root / 'apps/portal').mkdir(parents=True)
+        self.data['planned_modules'] = [{'path': 'apps/portal', 'maturity': 'planned', 'implemented': False, 'responsibility': 'Portal'}]
+        self.assertTrue(any('already exists' in e for e in self.check()))
+
+    def test_nested_vertical_pack_is_accepted(self):
+        pack = self.root / 'packs/vertical/finance/policy-review'
+        pack.mkdir(parents=True)
+        (pack / 'manifest.yaml').write_text('id: policy-review\n')
+        self.data['packs']['active'] = ['packs/vertical/finance/policy-review']
+        self.assertEqual(self.check(), [])
+
+    def test_vertical_pack_needs_an_industry_folder(self):
+        pack = self.root / 'packs/vertical/policy-review'
+        pack.mkdir(parents=True)
+        (pack / 'manifest.yaml').write_text('id: policy-review\n')
+        self.data['packs']['active'] = ['packs/vertical/policy-review']
+        self.assertTrue(any('Invalid active pack' in e for e in self.check()))
+
+    def test_removed_placeholder_service_is_obsolete(self):
+        (self.root / 'services/execution').mkdir(parents=True)
+        self.assertTrue(any('Obsolete directory: services/execution' in e for e in self.check()))
 
     def test_invalid_inventory_reports_error(self):
         (self.root / 'modules.json').write_text('{')

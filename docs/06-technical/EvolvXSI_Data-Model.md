@@ -1,5 +1,7 @@
 # EvolvXSI — data model
 
+> **Where this lives in code (2026-11-14).** Service and package names here (`services/control-plane`, `services/execution`, `services/knowledge`, `packages/*`, `evaluations`) are logical owners from the design stage. [Decision 0006](../decisions/0006-scalable-repository-structure.md) maps them to the code: the three services are implemented inside `services/core`, and the packages and evaluations are planned modules in `modules.json`, created when their first code arrives.
+
 Status: **conceptual model; PostgreSQL proposed for authoritative state; final selection in P00** · Updated: 2026-11-08
 
 ## Core entities

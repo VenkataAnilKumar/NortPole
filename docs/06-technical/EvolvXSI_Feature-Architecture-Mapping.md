@@ -1,5 +1,7 @@
 # EvolvXSI — feature and architecture mapping
 
+> **Where this lives in code (2026-11-14).** Service and package names here (`services/control-plane`, `services/execution`, `services/knowledge`, `packages/*`, `evaluations`) are logical owners from the design stage. [Decision 0006](../decisions/0006-scalable-repository-structure.md) maps them to the code: the three services are implemented inside `services/core`, and the packages and evaluations are planned modules in `modules.json`, created when their first code arrives.
+
 Reviewed: 2026-11-05 · Status: ownership mapped; application features not implemented
 
 The module skeletons in modules.json cover the proposed shared platform boundaries. Each currently contains a skeleton, not working product behavior. The vertical area contains a template rather than an active domain repository. This matrix records the primary owner and required collaborators so that coverage is not mistaken for implementation.

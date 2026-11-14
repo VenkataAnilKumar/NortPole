@@ -1,7 +1,12 @@
-# EvolvXSI — services/model-gateway
+# EvolvXSI — model gateway (mock)
 
-Processing destination policy, provider adapters, fallback, budgets and usage accounting.
+Today this folder holds `src/adapters/mock/mock_openai_server.py`: a small OpenAI-compatible server with deterministic
+replies. Tests and the [local profile](../../infrastructure/profiles/local/README.md) use it as stand-in local and cloud
+model routes, so no model or API key is needed.
 
-This is a module in the EvolvXSI monorepo. Its implementation is pending. Module ownership and acceptance criteria are recorded in docs/06-technical/EvolvXSI_Repo-Structure.md and docs/06-technical/EvolvXSI_Feature-Architecture-Mapping.md at the repository root.
+Model routing, route policy, redaction and usage accounting run inside `services/core`. A separate gateway service is
+planned only if routing must scale or run apart from the core (see [decision 0006](../../docs/decisions/0006-scalable-repository-structure.md)).
 
-Use explicit contracts across business boundaries. Each state owner keeps its migrations and tests. Shared packages contain reusable code or definitions and receive no authority from their location. Downloaded source projects serve as references only.
+```bash
+python src/adapters/mock/mock_openai_server.py --name local-mock --port 18001
+```

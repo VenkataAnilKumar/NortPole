@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig.types.json",
+  "exclude": ["node_modules", "lib/opal", "lib/shared", "tests", "**/*.test.ts", "**/*.test.tsx", "**/__tests__/**"]
+}

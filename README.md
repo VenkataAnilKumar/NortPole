@@ -152,4 +152,4 @@ To talk about a pilot, email [vanilkumarch@gmail.com](mailto:vanilkumarch@gmail.
 | Deployment profiles | [infrastructure/profiles](infrastructure/profiles) |
 | Product and architecture documents | [Document index](docs/README.md), [Product definition](docs/02-product/EvolvXSI_Product-Definition.md), [System architecture](docs/06-technical/EvolvXSI_System-Architecture.md) |
 
-Run `python tools/validate_structure.py` to check the repository layout and document links.
+Run `make help` for common commands and `make check` to check the repository layout and document links. The layout and its rules are in the [repository structure](docs/06-technical/EvolvXSI_Repo-Structure.md).

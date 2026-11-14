@@ -1,5 +1,7 @@
 # EvolvXSI — implementation checklist
 
+> **Where this lives in code (2026-11-14).** Service and package names here (`services/control-plane`, `services/execution`, `services/knowledge`, `packages/*`, `evaluations`) are logical owners from the design stage. [Decision 0006](../decisions/0006-scalable-repository-structure.md) maps them to the code: the three services are implemented inside `services/core`, and the packages and evaluations are planned modules in `modules.json`, created when their first code arrives.
+
 Updated: 2026-11-05 · Status: execution checklist; phases not started
 
 The monorepo module skeletons and vertical template are in place. Those completed setup actions do not satisfy any implementation gate below. Builds and dependency installation remain paused. This checklist follows the [phased plan](EvolvXSI_Implementation-Phases.md).

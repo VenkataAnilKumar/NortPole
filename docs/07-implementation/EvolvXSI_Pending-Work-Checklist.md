@@ -79,12 +79,20 @@ Status: Working list, updated 2026-11-14 (after the redesign stages R1–R6b and
 - The local 7B model obeyed hostile text in 31% of injection tests; guides' effect on a real model is not measured.
 - No real document source has been connected; retrieval, agent search results and connectors are tested only in code tests.
 - Tools that are switched on still run in chat with no approval step; web tools can carry text out in a web address.
-- Not tried live: an MCP server (the safety system blocked turning off the SSRF check), a real OpenAPI tool, the Slack bot path, CI on GitHub.
-- The web unit tests cannot run as configured (the Jest setup file is missing); they run with a scratch config that skips it.
+- Not tried live: an MCP server (the safety system blocked turning off the SSRF check), a real OpenAPI tool, the Slack bot path.
+- The web unit tests cannot run as configured (the Jest setup file `tests/setup/jest.setup.ts` is missing); they run with a scratch config that skips it, and the same gap leaves 372 type errors in test files, so CI type-checks app code only (`tsconfig.app.json`).
+- The web app's `dev`, `build` and `lint` scripts call files in an `apps/workspace/tools/` folder that was never copied (PDF asset preparation, the type-check wrapper, an i18n lint plugin). The Dockerfile and `make` targets call Next.js and `tsc` directly; restore or replace those scripts.
 - Sandbox services stopping: the database stops were caused by the sandbox restart script deleting a running Postgres's lock file (fixed 2026-11-14 in the sandbox scripts, which are not in the repository); the local model container and the API still stop after session restarts, so test runs check them first.
-- About 292 references to upstream domains still need review before release (`services/core/UPSTREAM.md`).
 - Sandbox leftovers (test accounts, demo packs) are listed in `docs/REVIEW.md`.
 - All testing is sandbox-only, with the local 7B model or stand-in models.
+
+## Repository structure (decision 0006, 2026-11-14)
+
+- [x] Phase 1: placeholders removed, `modules.json` true, structure check updated, `CODEOWNERS`, `Makefile`, CI for the web app and a nightly full suite.
+- [ ] Phase 2: EvolvXSI modules grouped by domain in `services/core/evolvxsi`, with an import-boundary test.
+- [ ] Phase 3: first-party packs as source in `packs/horizontal` and `packs/vertical/<industry>`, editions.
+- [ ] Phase 4: generated contracts in `packages/contracts` and `packages/pack-sdk`.
+- [ ] Phase 5 (when needed): tenancy decision, Kubernetes and cloud profiles, service splits, connector SDK.
 
 ## Waiting for the owner's yes
 

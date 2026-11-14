@@ -1,7 +1,11 @@
 # EvolvXSI — infrastructure
 
-Local and production deployment profiles, release manifests, telemetry and recovery.
+Deployment profiles for EvolvXSI.
 
-This is a module in the EvolvXSI monorepo. Its implementation is pending. Module ownership and acceptance criteria are recorded in docs/06-technical/EvolvXSI_Repo-Structure.md and docs/06-technical/EvolvXSI_Feature-Architecture-Mapping.md at the repository root.
+| Profile | What it is |
+|---|---|
+| [local](profiles/local/README.md) | Runbook for running the API and web app on one machine, in lite mode or with indexing. |
+| [staging](profiles/staging/README.md) | Docker Compose profile with TLS, a retrieval overlay, backup and restore, and a release manifest. Checked in a sandbox. |
 
-Use explicit contracts across business boundaries. Each state owner keeps its migrations and tests. Shared packages contain reusable code or definitions and receive no authority from their location. Downloaded source projects serve as references only.
+Kubernetes (Helm) and multi-tenant cloud profiles are planned in `modules.json` and will be added with their first
+working version.

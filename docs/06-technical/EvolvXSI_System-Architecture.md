@@ -1,5 +1,7 @@
 # EvolvXSI — system architecture
 
+> **Where this lives in code (2026-11-14).** Service and package names here (`services/control-plane`, `services/execution`, `services/knowledge`, `packages/*`, `evaluations`) are logical owners from the design stage. [Decision 0006](../decisions/0006-scalable-repository-structure.md) maps them to the code: the three services are implemented inside `services/core`, and the packages and evaluations are planned modules in `modules.json`, created when their first code arrives.
+
 Status: proposed for review; implementation paused · Updated: 2026-11-05
 
 For deployable services, storage, network boundaries and scaling, see the [deployment architecture](EvolvXSI_Deployment-Architecture.md).
