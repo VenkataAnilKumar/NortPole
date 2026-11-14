@@ -1,5 +1,5 @@
 # Common commands. Run `make help` for the list. Backend commands use services/core's locked environment (uv).
-.PHONY: help check core-test core-test-all core-run web-install web-typecheck web-dev
+.PHONY: help check core-test core-test-all core-run web-install web-typecheck web-dev packs contracts
 
 CORE_ENV = PYTHONPATH=. DISABLE_VECTOR_DB=true CACHE_BACKEND=postgres AUTH_TYPE=basic FILE_STORE_BACKEND=postgres \
 	EVOLVXSI_OFFLINE_TOKENIZER=true HF_HUB_OFFLINE=1
@@ -12,6 +12,8 @@ help:
 	@echo "make web-install    install the web app's dependencies"
 	@echo "make web-typecheck  type-check the web app"
 	@echo "make web-dev        start the web app on port 3000"
+	@echo "make packs          validate every workflow pack with the pack SDK"
+	@echo "make contracts      regenerate packages/contracts from the code"
 
 check:
 	python tools/validate_structure.py
@@ -34,3 +36,9 @@ web-typecheck:
 
 web-dev:
 	cd apps/workspace && INTERNAL_URL=http://127.0.0.1:8080 npx next dev -p 3000
+
+packs:
+	cd packages/pack-sdk && python -m evolvxsi_pack_sdk validate $(abspath $(wildcard packs/horizontal/*) $(wildcard packs/vertical/*/*))
+
+contracts:
+	cd services/core && $(CORE_ENV) uv run --no-sync python scripts/generate_contracts.py

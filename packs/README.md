@@ -25,4 +25,5 @@ packs/
   of their own industry or horizontal ones.
 - Horizontal packs never depend on vertical ones. Packs never contain customer data or secrets.
 
-To install a pack, build and sign it (pack SDK, decision 0006 phase 4) and upload the signed package in the admin console.
+To install a pack, sign it with the [pack SDK](../packages/pack-sdk/README.md) and upload the signed package in the admin
+console (**Packs**). `make packs` validates every pack here with the SDK.

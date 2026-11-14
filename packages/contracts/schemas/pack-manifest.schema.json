@@ -1,0 +1,421 @@
+{
+  "$defs": {
+    "AgentSpec": {
+      "additionalProperties": false,
+      "description": "A workflow agent: a planner with instructions that proposes tool steps, which the person accepts and code runs.\nIt acts as the person asking, can only propose sends, and never calls anything itself.",
+      "properties": {
+        "description": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "guides": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 3,
+          "title": "Guides",
+          "type": "array"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "instructions": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Instructions",
+          "type": "string"
+        },
+        "max_searches": {
+          "default": 3,
+          "maximum": 4,
+          "minimum": 1,
+          "title": "Max Searches",
+          "type": "integer"
+        },
+        "name": {
+          "maxLength": 80,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "tools": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 1,
+          "minItems": 1,
+          "title": "Tools",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "instructions",
+        "tools"
+      ],
+      "title": "AgentSpec",
+      "type": "object"
+    },
+    "EvalCase": {
+      "additionalProperties": false,
+      "description": "One check a model must pass before the pack runs on it. The case carries\nits own evidence passages, so it runs the same on any route. With no\nevidence the case expects the \"no source covers this\" notice. `expect` must\nappear in the draft (case-insensitive); with evidence, the draft must also\ncite at least one of the passages.",
+      "properties": {
+        "evidence": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 3,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "expect": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Expect",
+          "type": "string"
+        },
+        "question": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Question",
+          "type": "string"
+        },
+        "template": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Template"
+        }
+      },
+      "required": [
+        "question",
+        "expect"
+      ],
+      "title": "EvalCase",
+      "type": "object"
+    },
+    "Guide": {
+      "additionalProperties": false,
+      "description": "Written know-how a template can use: how to do this kind of work. Text only: a guide cannot run anything,\nadd a source, widen access or change a rule. It is shown in full when the pack is reviewed.",
+      "properties": {
+        "body": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Body",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 80,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "body"
+      ],
+      "title": "Guide",
+      "type": "object"
+    },
+    "Requests": {
+      "additionalProperties": false,
+      "description": "Permissions the pack would like. Listing one grants nothing: an\nadministrator's own settings decide, and today none of these is honoured\nautomatically.",
+      "properties": {
+        "personal_connectors": {
+          "default": false,
+          "title": "Personal Connectors",
+          "type": "boolean"
+        },
+        "send_destinations": {
+          "default": false,
+          "title": "Send Destinations",
+          "type": "boolean"
+        }
+      },
+      "title": "Requests",
+      "type": "object"
+    },
+    "Requirements": {
+      "additionalProperties": false,
+      "description": "Where the pack may run. The workspace's data class must be listed, and\nthe model route in use must be one of the listed kinds.",
+      "properties": {
+        "data_classes": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Data Classes",
+          "type": "array"
+        },
+        "route_kinds": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Route Kinds",
+          "type": "array"
+        }
+      },
+      "required": [
+        "data_classes",
+        "route_kinds"
+      ],
+      "title": "Requirements",
+      "type": "object"
+    },
+    "ReviewRule": {
+      "additionalProperties": false,
+      "description": "A check on a draft, before it can be approved. Declarative only: a rule names one of\nthe built-in kinds, so no pack runs code. A \"block\" rule that fails stops approval; a\n\"warn\" rule is shown to the reviewer and does not.",
+      "properties": {
+        "kind": {
+          "enum": [
+            "min_citations",
+            "max_words",
+            "must_include",
+            "must_not_include",
+            "all_claims_supported"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "message": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "severity": {
+          "default": "block",
+          "enum": [
+            "block",
+            "warn"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "required": [
+        "kind",
+        "message"
+      ],
+      "title": "ReviewRule",
+      "type": "object"
+    },
+    "Template": {
+      "additionalProperties": false,
+      "properties": {
+        "agent": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Agent"
+        },
+        "desired_output": {
+          "default": "",
+          "maxLength": 2000,
+          "title": "Desired Output",
+          "type": "string"
+        },
+        "guides": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 3,
+          "title": "Guides",
+          "type": "array"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "request": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Request",
+          "type": "string"
+        },
+        "review_rules": {
+          "items": {
+            "$ref": "#/$defs/ReviewRule"
+          },
+          "maxItems": 10,
+          "title": "Review Rules",
+          "type": "array"
+        },
+        "style": {
+          "default": "",
+          "maxLength": 800,
+          "title": "Style",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "request"
+      ],
+      "title": "Template",
+      "type": "object"
+    }
+  },
+  "$id": "https://evolvxsi.local/contracts/pack-manifest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "agents": {
+      "items": {
+        "$ref": "#/$defs/AgentSpec"
+      },
+      "maxItems": 10,
+      "title": "Agents",
+      "type": "array"
+    },
+    "autonomy": {
+      "default": "act_with_approval",
+      "enum": [
+        "draft_only",
+        "act_with_approval"
+      ],
+      "title": "Autonomy",
+      "type": "string"
+    },
+    "description": {
+      "default": "",
+      "maxLength": 2000,
+      "title": "Description",
+      "type": "string"
+    },
+    "evaluation_cases": {
+      "items": {
+        "$ref": "#/$defs/EvalCase"
+      },
+      "maxItems": 100,
+      "title": "Evaluation Cases",
+      "type": "array"
+    },
+    "guides": {
+      "items": {
+        "$ref": "#/$defs/Guide"
+      },
+      "maxItems": 20,
+      "title": "Guides",
+      "type": "array"
+    },
+    "id": {
+      "pattern": "^[a-z0-9][a-z0-9-]{1,62}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "requests": {
+      "$ref": "#/$defs/Requests",
+      "default": {
+        "personal_connectors": false,
+        "send_destinations": false
+      }
+    },
+    "requires": {
+      "$ref": "#/$defs/Requirements"
+    },
+    "review_rules": {
+      "items": {
+        "$ref": "#/$defs/ReviewRule"
+      },
+      "maxItems": 10,
+      "title": "Review Rules",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "templates": {
+      "items": {
+        "$ref": "#/$defs/Template"
+      },
+      "maxItems": 25,
+      "minItems": 1,
+      "title": "Templates",
+      "type": "array"
+    },
+    "version": {
+      "pattern": "^\\d{1,4}\\.\\d{1,4}\\.\\d{1,4}$",
+      "title": "Version",
+      "type": "string"
+    },
+    "vertical": {
+      "maxLength": 60,
+      "minLength": 1,
+      "title": "Vertical",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "id",
+    "name",
+    "version",
+    "vertical",
+    "templates",
+    "requires"
+  ],
+  "title": "Manifest",
+  "type": "object"
+}

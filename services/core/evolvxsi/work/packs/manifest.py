@@ -182,9 +182,10 @@ class EvalCase(_Strict):
 
 class Manifest(_Strict):
     schema_version: Literal[1]
-    id: str
+    # The validators below enforce these patterns; json_schema_extra publishes them in the generated schema too.
+    id: str = Field(json_schema_extra={"pattern": SLUG.pattern})
     name: str = Field(min_length=1, max_length=120)
-    version: str
+    version: str = Field(json_schema_extra={"pattern": SEMVER.pattern})
     vertical: str = Field(min_length=1, max_length=60)
     description: str = Field(default="", max_length=2000)
     templates: list[Template] = Field(min_length=1, max_length=25)

@@ -69,3 +69,9 @@ evaluations/  infrastructure/  tools/  docs/
 - Imports of EvolvXSI modules change once (phase 2). Inherited code changes only where it already called our code.
 - Contributors find our code by domain, and reviews can be assigned per folder.
 - Pack authors work in `packs/` with a validator, and a vertical edition is a file, not a fork.
+
+## Delivery
+
+Phases 1–4 were delivered on 2026-11-14 in pull requests #94 (tidy), #95 (domains), #96 (packs as source) and the
+phase 4 pull request (contracts and pack SDK), each with the tests listed above; details are in the
+[review log](../REVIEW.md). Phase 5 items are done when a need arises.

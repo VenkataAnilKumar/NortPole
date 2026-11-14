@@ -29,6 +29,18 @@
       "responsibility": "Repository checks: structure and links, licence screen, software bill of materials.",
       "maturity": "implemented",
       "implemented": true
+    },
+    {
+      "path": "packages/contracts",
+      "responsibility": "Generated contracts: the pack manifest JSON Schema and the OpenAPI description of EvolvXSI's routes, checked for drift.",
+      "maturity": "implemented",
+      "implemented": true
+    },
+    {
+      "path": "packages/pack-sdk",
+      "responsibility": "Validate, build and sign workflow packs from packs/ source without the server; same digest and signature the server verifies.",
+      "maturity": "implemented",
+      "implemented": true
     }
   ],
   "status": "pilot",
@@ -53,18 +65,6 @@
     "location": "V:/AI Engineer/Agentic AI and Autonmous AI/EvolvXSI/sources"
   },
   "planned_modules": [
-    {
-      "path": "packages/contracts",
-      "responsibility": "Generated contracts: pack manifest JSON Schema and the OpenAPI description of EvolvXSI routes (phase 4).",
-      "maturity": "planned",
-      "implemented": false
-    },
-    {
-      "path": "packages/pack-sdk",
-      "responsibility": "Validate, build and sign packs from packs/ source (phase 4).",
-      "maturity": "planned",
-      "implemented": false
-    },
     {
       "path": "packages/connector-sdk",
       "responsibility": "Interface and test kit for connectors built by partners; create when a partner builds one.",
