@@ -90,7 +90,7 @@ The full, honest list lives in the [pending-work checklist](docs/07-implementati
 
 We are looking for a **design partner**: a team with one high-stakes, document-heavy workflow — policy questions, contract review, audit evidence, compliance checks — that would pilot EvolvXSI on its own documents and models.
 
-To talk about a pilot, open an issue in this repository or contact the maintainers.
+To talk about a pilot, email [vanilkumarch@gmail.com](mailto:vanilkumarch@gmail.com).
 
 ## For developers
 
