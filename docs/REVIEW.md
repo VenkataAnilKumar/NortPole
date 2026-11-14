@@ -340,3 +340,5 @@ Company-search and image-generation scripts, 2026-11-14: the Craft sandbox's two
 README contact, 2026-11-14: the "Work with us" section now gives the owner's contact email instead of asking people to open an issue.
 
 README workspace, 2026-11-14: the README now opens with a screenshot of the AI workspace home (the New page with its sidebar, workflow cards, the question box and the Run on route picker) and a short "The AI workspace" table of what each area does; the workflows screenshot moved under "What people can do". The screenshot was taken in light mode at double resolution; the sidebar's recent-chat titles (sandbox test data) and the development-mode badge were hidden for the capture.
+
+README core features, 2026-11-14: added a "Core features" table after "The AI workspace", grouping thirteen built features under Trust, Control, Work and Insight; each line matches what is described and tested elsewhere in this log.
