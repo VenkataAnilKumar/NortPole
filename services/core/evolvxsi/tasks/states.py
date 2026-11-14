@@ -14,6 +14,7 @@ class TaskState(str, Enum):
     RUN_FAILED = "run_failed"  # the run stopped; can be retried
     APPROVED = "approved"  # the owner approved one exact draft; export is separate
     CANCELLED = "cancelled"
+    SUPERSEDED = "superseded"  # a scheduled run's plan, replaced by the next run before it was accepted
 
 
 class TaskAction(str, Enum):
@@ -27,6 +28,7 @@ class TaskAction(str, Enum):
     DRAFT_DONE = "draft_done"
     RUN_FAILED = "run_failed"
     APPROVE = "approve"
+    SUPERSEDE = "supersede"
 
 
 ALLOWED: dict[tuple[TaskState, TaskAction], TaskState] = {
@@ -37,6 +39,7 @@ ALLOWED: dict[tuple[TaskState, TaskAction], TaskState] = {
     (TaskState.PLAN_REVIEW, TaskAction.ACCEPT): TaskState.PLAN_ACCEPTED,
     (TaskState.PLAN_REVIEW, TaskAction.REVISE): TaskState.DRAFT,
     (TaskState.PLAN_REVIEW, TaskAction.CANCEL): TaskState.CANCELLED,
+    (TaskState.PLAN_REVIEW, TaskAction.SUPERSEDE): TaskState.SUPERSEDED,
     (TaskState.PLAN_FAILED, TaskAction.REVISE): TaskState.DRAFT,
     (TaskState.PLAN_FAILED, TaskAction.CANCEL): TaskState.CANCELLED,
     (TaskState.PLAN_ACCEPTED, TaskAction.RUN): TaskState.RUNNING,

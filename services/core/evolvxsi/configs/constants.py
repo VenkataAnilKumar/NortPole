@@ -374,6 +374,7 @@ class NotificationType(str, Enum):
     SCHEDULED_TASK_PRE_APPROVED_ACTION = "scheduled_task_pre_approved_action"
     APPROVAL_REQUESTED = "approval_requested"
     SOURCE_REQUEST_DECIDED = "source_request_decided"  # a Discover request was approved or declined
+    SCHEDULE_PAUSED = "schedule_paused"  # a scheduled workflow was paused (not accepted, failing, or by an administrator)
 
 
 class BlobType(str, Enum):
@@ -714,6 +715,7 @@ class EvolvXSICeleryTask:
 
     CLEANUP_OAUTH_PROVIDER_GRANTS = "cleanup_oauth_provider_grants"
     EVOLVXSI_RETENTION_PRUNE = "evolvxsi_retention_prune"
+    EVOLVXSI_WORKFLOW_SCHEDULES = "evolvxsi_workflow_schedules"
     CLEANUP_OAUTH_PROVIDER_CLIENTS = "cleanup_oauth_provider_clients"
 
     # Old-index reclamation (post-reindex deletion of the now-PAST index)

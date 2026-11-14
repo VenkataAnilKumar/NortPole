@@ -58,6 +58,18 @@ beat_task_templates: list[dict] = [
         },
     },
     {
+        "name": "evolvxsi-workflow-schedules",
+        "task": EvolvXSICeleryTask.EVOLVXSI_WORKFLOW_SCHEDULES,
+        "schedule": timedelta(minutes=5),
+        "options": {
+            "queue": EvolvXSICeleryQueues.PRIMARY,
+            "priority": EvolvXSICeleryPriority.MEDIUM,
+            "expires": BEAT_EXPIRES_DEFAULT,
+            "skip_gated": False,
+            "work_gated": False,
+        },
+    },
+    {
         "name": "cleanup-oauth-provider-grants",
         "task": EvolvXSICeleryTask.CLEANUP_OAUTH_PROVIDER_GRANTS,
         "schedule": timedelta(days=1),

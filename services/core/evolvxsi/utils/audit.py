@@ -116,6 +116,10 @@ class AuditAction(str, Enum):
     ADMIN_CHANGE_DECIDE = "admin.change_decide"
     SOURCE_REQUEST = "source.request"
     SOURCE_REQUEST_DECIDE = "source.request_decide"
+    SCHEDULE_CHANGE = "schedule.change"
+    SCHEDULE_STATE = "schedule.state"
+    SCHEDULE_FIRE = "schedule.fire"
+    SCHEDULE_CONTROLS = "schedule.controls"
     AUDIT_EXPORT = "audit.export"
     EXTENSION_CHANGE = "extension.change"
     EXTENSION_BLOCKED = "extension.blocked"
@@ -194,6 +198,10 @@ _OCSF_CLASS_BY_ACTION: dict[AuditAction, OCSFEventClass] = {
     AuditAction.ADMIN_CHANGE_DECIDE: OCSFEventClass.API_ACTIVITY,
     AuditAction.SOURCE_REQUEST: OCSFEventClass.API_ACTIVITY,
     AuditAction.SOURCE_REQUEST_DECIDE: OCSFEventClass.API_ACTIVITY,
+    AuditAction.SCHEDULE_CHANGE: OCSFEventClass.API_ACTIVITY,
+    AuditAction.SCHEDULE_STATE: OCSFEventClass.API_ACTIVITY,
+    AuditAction.SCHEDULE_FIRE: OCSFEventClass.API_ACTIVITY,
+    AuditAction.SCHEDULE_CONTROLS: OCSFEventClass.API_ACTIVITY,
     AuditAction.AUDIT_EXPORT: OCSFEventClass.API_ACTIVITY,
     AuditAction.EXTENSION_CHANGE: OCSFEventClass.API_ACTIVITY,
     AuditAction.EXTENSION_BLOCKED: OCSFEventClass.API_ACTIVITY,

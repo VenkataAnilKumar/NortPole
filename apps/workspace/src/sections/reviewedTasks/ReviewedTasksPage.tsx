@@ -8,7 +8,7 @@ import TaskActions from "@/sections/reviewedTasks/TaskActions";
 
 const URL = "/api/tasks";
 
-type State = "draft" | "planning" | "plan_review" | "plan_accepted" | "plan_failed" | "running" | "draft_ready" | "run_failed" | "approved" | "cancelled";
+type State = "draft" | "planning" | "plan_review" | "plan_accepted" | "plan_failed" | "running" | "draft_ready" | "run_failed" | "approved" | "cancelled" | "superseded";
 
 interface Task {
   id: string;
@@ -48,6 +48,7 @@ const STATE_LABEL: Record<State, string> = {
   run_failed: "Run failed",
   approved: "Approved",
   cancelled: "Cancelled",
+  superseded: "Replaced by a newer scheduled run",
 };
 const ROUTE_LABEL: Record<string, string> = { local: "Local", private: "Private", cloud: "Cloud" };
 

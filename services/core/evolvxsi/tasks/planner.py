@@ -34,6 +34,8 @@ _STEP = re.compile(r"^\s*(\d{1,2})[.)]\s+(.+?)\s*$")
 class PlanResult:
     steps: list[str]
     route_kind: str | None
+    input_tokens: int = 0
+    output_tokens: int = 0
 
 
 class PlanError(Exception):
@@ -70,7 +72,7 @@ def draft_plan(db_session: Session, user: User, title: str, request: str, desire
     steps = parse_plan(reply.text or "")
     if not steps:
         raise PlanError("The model did not return a numbered plan. Edit the request and start again.")
-    return PlanResult(steps=steps, route_kind=decision.kind)
+    return PlanResult(steps=steps, route_kind=decision.kind, **_tokens(reply))
 
 
 def _GUIDE_RULE() -> str:  # noqa: N802 - the same rule as the drafter's, read lazily to avoid an import cycle
@@ -96,4 +98,15 @@ def draft_agent_plan(db_session: Session, user: User, title: str, request: str, 
     steps = parse_agent_plan(reply.text or "", agent)
     if not steps:
         raise PlanError("The agent did not propose any search it is allowed to run. Edit the request and start again.")
-    return PlanResult(steps=steps, route_kind=decision.kind)
+    return PlanResult(steps=steps, route_kind=decision.kind, **_tokens(reply))
+
+
+def _tokens(reply) -> dict[str, int]:  # type: ignore[no-untyped-def]
+    """The call's token counts, for a scheduled run's cost. Zero when the provider reports none."""
+    u = getattr(reply, "usage", None)
+
+    def count(name: str) -> int:
+        v = getattr(u, name, 0)
+        return v if isinstance(v, int) and not isinstance(v, bool) else 0
+
+    return {"input_tokens": count("prompt_tokens"), "output_tokens": count("completion_tokens")}
