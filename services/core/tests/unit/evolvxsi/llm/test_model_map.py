@@ -683,13 +683,13 @@ def test_latest_models_read_the_remote_supplement() -> None:
 
 @pytest.fixture(autouse=True)
 def _allow_upstream_fetch():  # type: ignore[no-untyped-def]
-    """These tests exercise the remote catalog; EvolvXSI turns remote fetches off by default."""
+    """These tests exercise the remote catalog; NortPole turns remote fetches off by default."""
     with patch.object(model_catalog, "EVOLVXSI_AIRGAPPED", False):
         yield
 
 
 def test_upstream_fetches_are_off_unless_explicitly_allowed() -> None:
-    """EvolvXSI does not call the upstream project's GitHub repository by default."""
+    """NortPole does not call the upstream project's GitHub repository by default."""
     import importlib
     import os
     from unittest.mock import patch as p

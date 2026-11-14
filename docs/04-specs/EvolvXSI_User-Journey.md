@@ -1,4 +1,4 @@
-# EvolvXSI — user journey
+# NortPole — user journey
 
 Status: **proposed journey for a candidate research report workflow** · Updated: 2026-11-05
 

@@ -1,4 +1,4 @@
-# EvolvXSI — UI plan (tabs, names and order)
+# NortPole — UI plan (tabs, names and order)
 
 Status: Plan, 2026-11-13. Builds on the [UI specification](EvolvXSI_UI-Spec.md). Pack dependency work (horizontal packs building on others) is **not** part of this plan; it waits for the concept decision and a second domain pack.
 

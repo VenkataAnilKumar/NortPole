@@ -137,7 +137,7 @@ def _attempt_payload(
         ):
             raise EvolvXSIError(
                 EvolvXSIErrorCode.INVALID_INPUT,
-                "OAuth return URL must use the EvolvXSI application origin",
+                "OAuth return URL must use the NortPole application origin",
             )
         desired_return_url = urlunsplit(
             ("", "", return_url.path or "/", return_url.query, return_url.fragment)

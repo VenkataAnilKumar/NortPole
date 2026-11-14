@@ -459,7 +459,7 @@ class SwitchoverType(str, PyEnum):
     INSTANT = "instant"
 
 
-# EvolvXSI Build Mode Enums
+# NortPole Build Mode Enums
 class BuildSessionStatus(str, PyEnum):
     """Lifecycle of a build session.
 

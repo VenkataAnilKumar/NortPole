@@ -51,7 +51,7 @@ def zoom_slim_documents(
     sources: list[DiscoverySource],
     resolve_access: AccessResolver | None,
 ) -> GenerateSlimDocumentOutput:
-    """Rebuilds each batch on the way out. EvolvXSI types a slim batch as a list that
+    """Rebuilds each batch on the way out. NortPole types a slim batch as a list that
     may hold a HierarchyNode, and a list is invariant, so this copy is what lets
     everything below say what it really produces."""
     for batch in _slim_batches(client, sources, resolve_access):

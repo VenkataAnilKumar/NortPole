@@ -1,4 +1,4 @@
-# EvolvXSI — A7 design proposal: agents, skills and connectors in packs
+# NortPole — A7 design proposal: agents, skills and connectors in packs
 
 Status: **Proposal, 2026-11-13, reviewed the same day (section 9), and the direction agreed the same day (section 11: govern the core's agents, skills, tools and connectors instead of building new ones). Steps 1 to 4 and 6 are built (step 3 with search only, step 4 for chat); step 5, the pilot connector, waits for the source system.** The review changes the execution model, adds a step before A7a and reorders the phases; read section 9 before section 6. The decisions in section 8, as revised in section 9, need an answer before any build starts. It covers checklist item 6 (A7) and the open question of horizontal and vertical packs.
 
@@ -38,7 +38,7 @@ Most sources below are vendor pages or trade press; where a claim rests on one s
 4. **The model must not be the control.** Limits and approvals sit in the platform.
 5. **Builders come and go** (OpenAI's wind-down, IBM's reported purchase of Langflow's owner). Definitions should be portable data.
 
-## 3. Principles for EvolvXSI
+## 3. Principles for NortPole
 
 1. **Declarative first.** A pack carries text and settings, never code. (Already the rule; this keeps it.)
 2. **A pack can ask; only an administrator can grant.** Installation and grants stay separate (already the rule). A pack lists the skills it ships and the tools and connectors it **requests**; an administrator sees the request at install and grants some, all or none.
@@ -140,7 +140,7 @@ The agent is offered only on models where its exact version passed, and the Qual
 | **A7d** | Agents may propose sends through destinations (never execute). | Small to medium | none |
 | **A7e** | MCP pinning and change detection; call log; per-tool ceilings. | Medium | an MCP server to test against (a local one is enough) |
 | **A7f** | Studio editor for administrators; request level for people. | Medium | decision 2 |
-| **Later** | Horizontal and vertical `extends`; sandboxed code skills; A2A card export; exposing EvolvXSI as an MCP server; scheduled agent identities. | Large | first customer, identity provider |
+| **Later** | Horizontal and vertical `extends`; sandboxed code skills; A2A card export; exposing NortPole as an MCP server; scheduled agent identities. | Large | first customer, identity provider |
 
 A7a to A7d are what the pilot needs. Nothing here needs a cloud model, but the injection and tool-use evaluations are only meaningful on a real model (A8).
 
@@ -165,7 +165,7 @@ A7a to A7d are what the pilot needs. Nothing here needs a cloud model, but the i
 3. **Manifest v2 now?** Recommended: yes, so a first vertical can be written against the final shape.
 4. **Depth one?** Recommended: agents do not call agents in the pilot.
 5. **Horizontal and vertical `extends` now or after the first vertical?** Recommended: after.
-6. **Interop (A2A card, EvolvXSI as an MCP server)?** Recommended: not now.
+6. **Interop (A2A card, NortPole as an MCP server)?** Recommended: not now.
 7. **Agent identity** is a label in the log and inventory, not a credential, until your identity provider is chosen. Confirm.
 
 ## 9. Review, 2026-11-13 (by the author, against the code)

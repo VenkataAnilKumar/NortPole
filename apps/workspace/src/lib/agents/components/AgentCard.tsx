@@ -194,7 +194,7 @@ export function AgentCard({ agent, onView, viewing = false }: AgentCardProps) {
                   <Content
                     font="secondary-body"
                     icon={SvgUser}
-                    title={agent.owner?.email || "EvolvXSI"}
+                    title={agent.owner?.email || "NortPole"}
                     titleColor="text-03"
                   />
                   <Content

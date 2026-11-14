@@ -10,7 +10,7 @@ GatewayModality: TypeAlias = Literal["text", "audio", "image", "video", "pdf"]
 
 
 class GatewayModelCapabilities(BaseModel):
-    """Effective capabilities exposed by the EvolvXSI OpenAI-compatible gateway."""
+    """Effective capabilities exposed by the NortPole OpenAI-compatible gateway."""
 
     model_config = ConfigDict(frozen=True)
 

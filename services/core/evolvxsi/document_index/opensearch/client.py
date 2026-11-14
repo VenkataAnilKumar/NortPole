@@ -671,7 +671,7 @@ class OpenSearchIndexClient(OpenSearchClient):
 
     OpenSearch's Python module has pretty bad typing support so this client
     attempts to protect the rest of the codebase from this. As a consequence,
-    most methods here return the minimum data needed for the rest of EvolvXSI, and
+    most methods here return the minimum data needed for the rest of NortPole, and
     tend to rely on Exceptions to handle errors.
 
     TODO(andrei): This class currently assumes the structure of the database
@@ -1084,7 +1084,7 @@ class OpenSearchIndexClient(OpenSearchClient):
         """Indexes a document.
 
         Args:
-            document: The document to index. In EvolvXSI this is a chunk of a
+            document: The document to index. In NortPole this is a chunk of a
                 document, OpenSearch simply refers to this as a document as
                 well.
             tenant_state: The tenant state of the caller.
@@ -1170,7 +1170,7 @@ class OpenSearchIndexClient(OpenSearchClient):
         Retries on 429 too many requests.
 
         Args:
-            documents: The documents to index. In EvolvXSI this is a chunk of a
+            documents: The documents to index. In NortPole this is a chunk of a
                 document, OpenSearch simply refers to this as a document as
                 well.
             tenant_state: The tenant state of the caller.

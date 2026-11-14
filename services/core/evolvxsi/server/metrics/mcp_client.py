@@ -9,7 +9,7 @@ logger = setup_logger()
 
 MCP_CLIENT_TOOL_TOTAL = Counter(
     "evolvxsi_mcp_client_tool_calls_total",
-    "External MCP tool calls made by EvolvXSI",
+    "External MCP tool calls made by NortPole",
     ["server_name", "tool_name", "status"],
 )
 MCP_CLIENT_TOOL_LATENCY = Histogram(

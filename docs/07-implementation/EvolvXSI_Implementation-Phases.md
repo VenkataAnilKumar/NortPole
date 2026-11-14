@@ -1,4 +1,4 @@
-# EvolvXSI — phased implementation plan
+# NortPole — phased implementation plan
 
 > **Where this lives in code (2026-11-14).** Service and package names here (`services/control-plane`, `services/execution`, `services/knowledge`, `packages/*`, `evaluations`) are logical owners from the design stage. [Decision 0006](../decisions/0006-scalable-repository-structure.md) maps them to the code: the three services are implemented inside `services/core`, and the packages and evaluations are planned modules in `modules.json`, created when their first code arrives.
 
@@ -6,9 +6,9 @@ Updated: 2026-11-05 · Status: phased delivery proposal; application implementat
 
 ## Baseline and implementation rules
 
-The workspace contains module skeletons in the EvolvXSI monorepo, a vertical-pack template, product/architecture documents, and a separate external collection of downloaded source references. Repository structure and its tested validation tooling exist; application logic, dependency manifests, CI pipelines, deployment configuration and working product features do not yet exist.
+The workspace contains module skeletons in the NortPole monorepo, a vertical-pack template, product/architecture documents, and a separate external collection of downloaded source references. Repository structure and its tested validation tooling exist; application logic, dependency manifests, CI pipelines, deployment configuration and working product features do not yet exist.
 
-EvolvXSI owns the platform implementation. Use official provider SDKs behind internal adapters; downloaded agent/application platforms remain references. The [provider SDK decision](EvolvXSI_Provider-SDK-Decision.md) supersedes older fork/runtime-reuse suggestions. Ordinary infrastructure and language dependencies remain necessary. This plan neither installs packages nor authorizes a live API test or production release.
+NortPole owns the platform implementation. Use official provider SDKs behind internal adapters; downloaded agent/application platforms remain references. The [provider SDK decision](EvolvXSI_Provider-SDK-Decision.md) supersedes older fork/runtime-reuse suggestions. Ordinary infrastructure and language dependencies remain necessary. This plan neither installs packages nor authorizes a live API test or production release.
 
 The [first-workflow PRD](../04-specs/EvolvXSI_First-Workflow-PRD.md) owns acceptance; [repository structure](../06-technical/EvolvXSI_Repo-Structure.md) owns code boundaries; [deployment architecture](../06-technical/EvolvXSI_Deployment-Architecture.md) owns service/data responsibilities. Keep exact SDK/library versions and implementation selections in the reference/decision documents rather than product positioning.
 
@@ -16,7 +16,7 @@ No delivery dates or effort estimates are committed. Estimate after P00 selects 
 
 ## Delivery milestones
 
-This plan delivers the complete ten-layer EvolvXSI direction through gated increments. Cohere North remains a product benchmark; these phases are EvolvXSI engineering decisions, not a claim about North internals. All application phases below are planned. The completed repository/documentation work is a starting baseline, not completion of P00 or P01.
+This plan delivers the complete ten-layer NortPole direction through gated increments. Cohere North remains a product benchmark; these phases are NortPole engineering decisions, not a claim about North internals. All application phases below are planned. The completed repository/documentation work is a starting baseline, not completion of P00 or P01.
 
 | Milestone | Phases | Demonstrable outcome | Accountable role |
 | --- | --- | --- | --- |
@@ -89,7 +89,7 @@ Domain discovery may continue alongside domain-independent foundation work. Prot
 **Prerequisites:** None. Architecture and repository skeletons already exist.
 
 1. Confirm one practitioner, workflow owner, first workflow, source type and output format. Keep research report production as an example until selected.
-2. Select the implementation language/framework, initial deployment profile, model/provider and API-client SDK. Decide whether the agent loop is EvolvXSI-owned directly or uses an explicitly selected official agent-loop SDK.
+2. Select the implementation language/framework, initial deployment profile, model/provider and API-client SDK. Decide whether the agent loop is NortPole-owned directly or uses an explicitly selected official agent-loop SDK.
 3. Record tenant model, identity provider, data destination restrictions, retention, budget and review requirements. Select one approved inference route initially.
 4. Agree on a representative test set and baseline process. Record numeric quality, latency, cost and recovery targets before pilot use; do not invent customer targets.
 
@@ -119,7 +119,7 @@ Domain discovery may continue alongside domain-independent foundation work. Prot
 **Prerequisites:** P01.
 
 1. Implement draft saving with zero jobs and a separate authorized start. Atomically persist the run, job, outbox and idempotency result in execution-owned storage. Add worker leases, persisted events and basic status streaming. Start with one sequential agent loop.
-2. Implement a deterministic adapter first and record the fixture gate independently. Then implement one official provider-client adapter behind the EvolvXSI inference contract. Preserve provider-specific streaming/tool behavior behind capability checks; do not assume protocol parity.
+2. Implement a deterministic adapter first and record the fixture gate independently. Then implement one official provider-client adapter behind the NortPole inference contract. Preserve provider-specific streaming/tool behavior behind capability checks; do not assume protocol parity.
 3. Enforce destination allowlists and run budgets before model calls. Record usage, request IDs, errors and safe diagnostic metadata.
 4. Add a minimal workspace screen for submitting a task and seeing run status/text output. Support cancellation at safe boundaries and bounded retries.
 5. Use controlled fixtures for most integration checks. Configure authorized credentials securely before any live provider test; do not place secrets in source or logs.
@@ -372,16 +372,16 @@ See [learning environments](../06-technical/EvolvXSI_Learning-Environments.md). 
 
 ## Reference-only implementation workstream
 
-**Owner direction confirmed: 2026-11-05.** The owner selected the attached local/web reference approach. This supersedes the intervening fork, copy and rebrand proposals. EvolvXSI will study product behavior and source implementations, then implement its own contracts, modules, interfaces and tests. No build-versus-fork prototype is scheduled by this plan.
+**Owner direction confirmed: 2026-11-05.** The owner selected the attached local/web reference approach. This supersedes the intervening fork, copy and rebrand proposals. NortPole will study product behavior and source implementations, then implement its own contracts, modules, interfaces and tests. No build-versus-fork prototype is scheduled by this plan.
 
 ### Boundaries
 
 - Product and source research are allowed. Downloaded application platforms stay outside the product build and Git tree.
-- Do not copy or adapt upstream implementation files, snippets, prompts/skills, tests, frontend assets or deployment templates into EvolvXSI under this workstream. Renaming symbols or branding does not change that boundary.
-- Write original EvolvXSI code and acceptance cases from our requirements and documented design decisions. Credit the references in the design record without claiming their code as ours.
+- Do not copy or adapt upstream implementation files, snippets, prompts/skills, tests, frontend assets or deployment templates into NortPole under this workstream. Renaming symbols or branding does not change that boundary.
+- Write original NortPole code and acceptance cases from our requirements and documented design decisions. Credit the references in the design record without claiming their code as ours.
 - Ordinary libraries, databases and official provider clients remain separately selectable dependencies. Record purpose, version, license, maintenance and integration boundary before adoption. A reference-study entry never silently authorizes a dependency.
 - No application-platform fork, runtime adoption, copied connector or enterprise component is selected. Any future departure requires a new explicit owner decision; it is outside the planned work below.
-- Preserve the existing local collection and provenance manifests. Do not relabel all local projects commercially proven. NorthWritX remains outside EvolvXSI scope.
+- Preserve the existing local collection and provenance manifests. Do not relabel all local projects commercially proven. NorthWritX remains outside NortPole scope.
 
 ### Evidence and reference selection
 
@@ -389,25 +389,25 @@ Use the [commercial research](EvolvXSI_Commercial_Reference_Research.md) and [lo
 
 Temporal, LiteLLM, Langfuse, Qdrant, Infisical, E2B, Appsmith, Dify, n8n and Airbyte are web-reviewed references, not newly acquired local checkouts. Their roles below are design-study assignments, not dependencies. Dify, n8n and Airbyte must be labeled source-available/restricted rather than treated as unrestricted open-source foundations. Mixed-license projects require component/edition boundaries in the record.
 
-For each selected study, verify official source availability and license at the exact revision, a commercial offering, named organizational adoption evidence, and a specific EvolvXSI feature question. Prefer detailed customer accounts; label named-user lists as weaker evidence. A customer story does not establish which edition or public-code feature was used. If evidence cannot be verified, record the limitation and use a stronger primary reference; do not delay independent implementation waiting for optional research.
+For each selected study, verify official source availability and license at the exact revision, a commercial offering, named organizational adoption evidence, and a specific NortPole feature question. Prefer detailed customer accounts; label named-user lists as weaker evidence. A customer story does not establish which edition or public-code feature was used. If evidence cannot be verified, record the limitation and use a stronger primary reference; do not delay independent implementation waiting for optional research.
 
 Local snapshots are historical evidence. Record the manifest revision separately from current upstream findings; do not claim a local checkout contains a feature shown on a newer website. Refresh official evidence at the relevant phase. Research conclusions are engineering judgments, not performance guarantees or license clearance for copying.
 
 ### Phase-by-phase study and implementation
 
-| Phase | Primary references to study | EvolvXSI-owned output | Required acceptance |
+| Phase | Primary references to study | NortPole-owned output | Required acceptance |
 | --- | --- | --- | --- |
 | P00: Scope and decisions | Sim/upstream-core product journeys; commercial register | Selected fixture/pilot scope, reference shortlist, dependency decision register, owner assignments | Every primary reference has provenance, commercial-evidence grade and a concrete study question; unresolved decisions remain explicit |
 | P01: Contracts and foundation | Sim authorization and API boundaries; Infisical identity concepts | Tenant/task/run contracts, state ownership, authentication primitives, local setup and root CI | Invalid contracts and cross-tenant access fail; dependencies are explicitly selected and pinned |
-| P02: First working slice | Temporal recovery semantics; Sim task/run UX; LiteLLM adapter behavior; Langfuse trace concepts | EvolvXSI atomic start, worker lifecycle, deterministic adapter, original workspace and run events | B01–B06 fixture tests pass, including zero-job draft, duplicate start and worker failure; B07 live evidence remains separate |
+| P02: First working slice | Temporal recovery semantics; Sim task/run UX; LiteLLM adapter behavior; Langfuse trace concepts | NortPole atomic start, worker lifecycle, deterministic adapter, original workspace and run events | B01–B06 fixture tests pass, including zero-job draft, duplicate start and worker failure; B07 live evidence remains separate |
 | P03: Secure actions | Temporal recovery; Infisical scoped credentials; E2B isolation lifecycle | Approval bindings, policy checks, isolated tool boundary and reconciliation states | Changed payload and revoked authority fail; cancellation/resource limits work; uncertain writes are reconciled before retry |
 | P04: Knowledge fabric | Local upstream-core ingestion/indexing; Qdrant retrieval concepts; Airbyte sync lifecycle | Original connector contract, ingestion, access-aware retrieval, source versions and derived-content dependencies | Denied/revoked documents remain unavailable in passages, generated text, traces and exports; sync/deletion cases pass |
-| P05: Definitions and quality gates | Sim/Dify publication journey; Langfuse datasets and evaluation flow | EvolvXSI agent/skill/pack manifests, registry, runner and publication gate | Failed, stale or mismatched evidence blocks publication; manifest permissions never grant authority |
+| P05: Definitions and quality gates | Sim/Dify publication journey; Langfuse datasets and evaluation flow | NortPole agent/skill/pack manifests, registry, runner and publication gate | Failed, stale or mismatched evidence blocks publication; manifest permissions never grant authority |
 | P06: Complete workspace | Sim/upstream-core evidence interaction; Appsmith operational screen patterns | Original review/edit/approve/export experience and accessible components | User completes the evidence workflow; edits invalidate approval; export rechecks access; keyboard flow passes |
-| P07: Automation and ecosystem | n8n trigger/operator journeys; Temporal durable scheduling; Airbyte connector failures | EvolvXSI schedules, events, integration adapters and manual recovery controls | Duplicate/replayed events do not repeat completed writes; disabled resources cannot start work; expired credentials fail safely |
-| P08: Hybrid inference | LiteLLM routing/capability concepts | EvolvXSI policy-preserving routing, budget accounting and selected adapters | Prohibited fallback fails before transmission; unknown usage is explicit; each enabled route has real compatibility evidence |
+| P07: Automation and ecosystem | n8n trigger/operator journeys; Temporal durable scheduling; Airbyte connector failures | NortPole schedules, events, integration adapters and manual recovery controls | Duplicate/replayed events do not repeat completed writes; disabled resources cannot start work; expired credentials fail safely |
+| P08: Hybrid inference | LiteLLM routing/capability concepts | NortPole policy-preserving routing, budget accounting and selected adapters | Prohibited fallback fails before transmission; unknown usage is explicit; each enabled route has real compatibility evidence |
 | P09: First vertical pack | Relevant Dify workflow/Appsmith view patterns plus selected domain evidence | Original domain workflow, template, reviewer rules and evaluation suite | Domain owner accepts the recorded sample and agreed targets; generic reference products are not treated as complete vertical packs |
-| P10: Controlled production | Selected references' official deployment/recovery documentation; Langfuse operational experience | EvolvXSI release manifests, quotas, safe telemetry, runbooks and support controls | Tested restore, rollback, tenant isolation and release acceptance for the selected deployment |
+| P10: Controlled production | Selected references' official deployment/recovery documentation; Langfuse operational experience | NortPole release manifests, quotas, safe telemetry, runbooks and support controls | Tested restore, rollback, tenant isolation and release acceptance for the selected deployment |
 | P11A–P11G: Expansion | Sim/Dify Studio; n8n automations; Appsmith views; upstream-core context; LiteLLM/Langfuse operations | Original self-service Studio, horizontal-pack reuse, collaboration, developer surfaces and scale controls | Apply each P11 subphase gate; prove reuse across verticals and validate every added deployment profile separately |
 
 The existing phase specifications and PF/FR mappings remain authoritative for detailed acceptance. The study matrix adds research inputs, not new requirements to integrate those products. Study only the selected component behavior needed for the current phase.
@@ -417,8 +417,8 @@ The existing phase specifications and PF/FR mappings remain authoritative for de
 1. **Scope:** Select PF/FR IDs and a bounded design question. Assign a module owner and reviewer.
 2. **Inspect:** Read the relevant official docs, pinned source paths and upstream tests; record what was actually inspected versus merely located.
 3. **Decide:** Describe our required behavior, state owner, failure modes, differences from the references and any separate dependency proposal.
-4. **Implement:** Write EvolvXSI code against its own contracts, using the approved repository boundaries. Keep research checkouts out of imports, build contexts and deployment images.
-5. **Verify:** Run original acceptance tests through the relevant persistence, authorization and service boundaries. A reference product's passing tests are not EvolvXSI evidence.
+4. **Implement:** Write NortPole code against its own contracts, using the approved repository boundaries. Keep research checkouts out of imports, build contexts and deployment images.
+5. **Verify:** Run original acceptance tests through the relevant persistence, authorization and service boundaries. A reference product's passing tests are not NortPole evidence.
 6. **Review:** Check origin of added files/assets and dependency changes; reject unapproved upstream imports or copied platform material. Record the phase evidence and remaining gaps.
 
 ### Reference record template
@@ -435,15 +435,15 @@ Store a concise record alongside the affected architecture decision or reference
 | Commercial evidence | Official offering and named adoption link; case study versus vendor list; edition uncertainty |
 | License boundary | Relevant revision's license files, enterprise exceptions and source-available classification; reference-only disposition |
 | Findings | Observed behavior and limitations; distinguish inspected code from documentation claims |
-| EvolvXSI decision | Original design, state owner, contracts, rejected alternatives and differences |
+| NortPole decision | Original design, state owner, contracts, rejected alternatives and differences |
 | Dependencies | None selected, or link to a separate approved dependency decision |
 | Acceptance | Tests, suite/input versions, results and candidate commit; evidence location without customer data/secrets |
 
 ### Immediate next scope
 
-Begin with P00 fixture decisions and four bounded studies: explicit task/run lifecycle in Sim, crash/retry semantics in Temporal, capability/destination boundaries in LiteLLM, and run correlation in Langfuse. Produce an EvolvXSI contract sketch and B01–B06 backlog before coding. Live provider choice can remain separate until B07. Upstream-core/Qdrant studies become active with P04; do not study every reference exhaustively before delivering the fixture.
+Begin with P00 fixture decisions and four bounded studies: explicit task/run lifecycle in Sim, crash/retry semantics in Temporal, capability/destination boundaries in LiteLLM, and run correlation in Langfuse. Produce an NortPole contract sketch and B01–B06 backlog before coding. Live provider choice can remain separate until B07. Upstream-core/Qdrant studies become active with P04; do not study every reference exhaustively before delivering the fixture.
 
-This strategy trades some initial implementation effort for direct control over EvolvXSI behavior. Estimates must include research, original implementation, integration and verification; no fork-based time saving is assumed. Dates remain unset until stack, staffing and pilot decisions are accepted.
+This strategy trades some initial implementation effort for direct control over NortPole behavior. Estimates must include research, original implementation, integration and verification; no fork-based time saving is assumed. Dates remain unset until stack, staffing and pilot decisions are accepted.
 
 ## Feature acceptance tracking
 

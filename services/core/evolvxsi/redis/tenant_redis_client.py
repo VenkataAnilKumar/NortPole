@@ -1207,7 +1207,7 @@ class TenantRedisPipeline:
     """Tenant-aware wrapper around ``redis.client.Pipeline``.
 
     Mirrors the explicit-prefix-on-write contract of ``TenantRedisClient`` for
-    pipeline usage. Only the methods EvolvXSI actually uses inside pipelines are
+    pipeline usage. Only the methods NortPole actually uses inside pipelines are
     exposed; expand this class when a new pipeline call is needed.
     """
 

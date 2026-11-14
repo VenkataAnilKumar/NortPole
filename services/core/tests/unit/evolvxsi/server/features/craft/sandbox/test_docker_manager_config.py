@@ -860,4 +860,4 @@ def test_proxy_kwargs_requires_ca_volume() -> None:
 
 
 # The upstream Craft compose file and its CLI copy (deployment/docker_compose/docker-compose.craft.yml) are not part
-# of EvolvXSI, which does not deploy Craft; the tests that read them were removed with that file.
+# of NortPole, which does not deploy Craft; the tests that read them were removed with that file.

@@ -89,7 +89,7 @@ class AuditAction(str, Enum):
     DEFAULT_LANGUAGE_CHANGE = "settings.default_language_change"
     LLM_GATEWAY_ENABLED_CHANGE = "settings.llm_gateway_enabled_change"
     SECURITY_SETTINGS_CHANGE = "settings.security_settings_change"
-    # EvolvXSI route policy (append-only taxonomy)
+    # NortPole route policy (append-only taxonomy)
     ROUTE_POLICY_CHANGE = "route_policy.change"
     ROUTE_BLOCKED = "route.blocked"
     APPROVAL_DECISION = "approval.decision"

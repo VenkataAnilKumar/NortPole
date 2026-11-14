@@ -10,13 +10,13 @@ import { SvgEvolvXSILogo, SvgEvolvXSILogoWordmark, SvgEvolvXSIWordmark } from "@
 import { IconProps } from "@opal/types";
 
 export interface LogoProps extends IconProps {
-  // Always render the real EvolvXSI mark, ignoring the enterprise custom logo.
-  // Used by EvolvXSI-branded surfaces like Craft.
+  // Always render the real NortPole mark, ignoring the enterprise custom logo.
+  // Used by NortPole-branded surfaces like Craft.
   evolvxsiBranded?: boolean;
 }
 
 /**
- * The app mark alone: the uploaded custom logo when one is set, the EvolvXSI
+ * The app mark alone: the uploaded custom logo when one is set, the NortPole
  * mark otherwise. Shaped like an Opal icon, so it fits any `icon` slot and
  * honours the size or style the slot passes.
  */
@@ -116,7 +116,7 @@ export function FoldableLogo({
     );
   };
 
-  // No custom name: the EvolvXSI wordmark beside the mark, which a custom logo
+  // No custom name: the NortPole wordmark beside the mark, which a custom logo
   // overrides.
   if (!applicationName) {
     if (folded) return <Logo size={resolvedSize} className={className} />;
@@ -138,7 +138,7 @@ export function FoldableLogo({
     );
   }
 
-  // A custom name, with the custom logo or the EvolvXSI mark. The display style
+  // A custom name, with the custom logo or the NortPole mark. The display style
   // can leave out either one.
   return renderNameAndPoweredBy({
     includeLogo: logoDisplayStyle !== "name_only",
@@ -147,7 +147,7 @@ export function FoldableLogo({
 }
 
 /**
- * The sidebar's logo mark: the workspace's custom logo, or the EvolvXSI mark.
+ * The sidebar's logo mark: the workspace's custom logo, or the NortPole mark.
  * Renders nothing when a workspace with a custom name shows the name only.
  */
 export function SidebarLogoMark({ size }: { size: number }) {
@@ -163,8 +163,8 @@ export function SidebarLogoMark({ size }: { size: number }) {
 
 /**
  * The sidebar's wordmark, beside the mark: the custom name, which overrides
- * the EvolvXSI wordmark, with the "Powered by" line unless EvolvXSI branding is
- * hidden. Without a custom name, the EvolvXSI wordmark.
+ * the NortPole wordmark, with the "Powered by" line unless NortPole branding is
+ * hidden. Without a custom name, the NortPole wordmark.
  */
 export function SidebarWordmark({ size }: { size: number }) {
   const t = useTranslations("common");

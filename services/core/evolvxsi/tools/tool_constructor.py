@@ -188,7 +188,7 @@ def construct_tools(
             allowed_tool_ids=allowed_tool_ids,
             search_usage_forcing_setting=search_usage_forcing_setting,
         )
-        # EvolvXSI: the tool catalog decides which of these a chat may use (see tool_catalog/catalog.py).
+        # NortPole: the tool catalog decides which of these a chat may use (see tool_catalog/catalog.py).
         return filter_tools(tools, db_session)
 
 
@@ -346,7 +346,7 @@ def _construct_tools_impl(
                 except ValueError as e:
                     logger.error("Failed to initialize Internet Search Tool: %s", e)
                     raise ValueError(
-                        "Internet search tool requires a search provider API key, please contact your EvolvXSI admin to get it added!"
+                        "Internet search tool requires a search provider API key, please contact your NortPole admin to get it added!"
                     ) from e
 
             # Handle Open URL Tool
@@ -371,7 +371,7 @@ def _construct_tools_impl(
                 except RuntimeError as e:
                     logger.error("Failed to initialize Open URL Tool: %s", e)
                     raise ValueError(
-                        "Open URL tool requires a web content provider, please contact your EvolvXSI admin to get it configured!"
+                        "Open URL tool requires a web content provider, please contact your NortPole admin to get it configured!"
                     ) from e
 
             # Handle Python/Code Interpreter Tool

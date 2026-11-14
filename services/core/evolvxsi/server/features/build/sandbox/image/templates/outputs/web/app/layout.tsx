@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "EvolvXSI Craft",
+  title: "NortPole Craft",
   description: "Crafting your next great idea.",
 };
 

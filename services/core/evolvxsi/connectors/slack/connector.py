@@ -320,7 +320,7 @@ def get_latest_message_time(thread: ThreadType) -> datetime:
 
 
 def build_slack_doc_id(channel_id: str, thread_ts: str) -> str:
-    """Id of the EvolvXSI document made from a Slack thread."""
+    """Id of the NortPole document made from a Slack thread."""
     return f"{channel_id}__{thread_ts}"
 
 

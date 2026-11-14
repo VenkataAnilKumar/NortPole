@@ -30,12 +30,12 @@ _DC_CREDENTIAL = {"jira_api_token": "pat"}
 def _gateway(*, is_cloud: bool = True) -> MagicMock:
     gateway: MagicMock = create_autospec(JiraSourceOperations, instance=True)
     gateway._is_cloud.return_value = is_cloud
-    gateway.get_myself.return_value = {"displayName": "EvolvXSI Bot"}
+    gateway.get_myself.return_value = {"displayName": "NortPole Bot"}
     gateway.list_projects.return_value = [
-        {"key": "AS", "name": "EvolvXSI Support"},
+        {"key": "AS", "name": "NortPole Support"},
         {"key": "ENG", "name": "Engineering"},
     ]
-    gateway.get_project.return_value = {"key": "AS", "name": "EvolvXSI Support"}
+    gateway.get_project.return_value = {"key": "AS", "name": "NortPole Support"}
     gateway.search_issue_ids.return_value = JiraIssueIdPage(
         issue_ids=["1"], next_page_token=None
     )
@@ -67,18 +67,18 @@ def _run(
 def test_passing_checks_give_the_values_they_found() -> None:
     gateway = _gateway()
 
-    assert _run("jira_auth", gateway).summary == "Signed in as EvolvXSI Bot"
+    assert _run("jira_auth", gateway).summary == "Signed in as NortPole Bot"
     assert _run("jira_projects_visible", gateway).summary == "2 projects visible"
     assert (
         _run("jira_configured_project", gateway, project_key="AS").summary
-        == "Found project EvolvXSI Support"
+        == "Found project NortPole Support"
     )
     assert _run("jira_issue_read", gateway).summary == "Read an issue from AS"
 
 
 def test_one_visible_project_is_singular() -> None:
     gateway = _gateway()
-    gateway.list_projects.return_value = [{"key": "AS", "name": "EvolvXSI Support"}]
+    gateway.list_projects.return_value = [{"key": "AS", "name": "NortPole Support"}]
 
     assert _run("jira_projects_visible", gateway).summary == "1 project visible"
 

@@ -149,7 +149,7 @@ export function APIKeyField({
 /**
  * Builds the API Base URL `subDescription` for self-hosted and custom
  * providers. These point at a service on the admin's own machine, which
- * `localhost` does not reach from inside a container — so when EvolvXSI is
+ * `localhost` does not reach from inside a container — so when NortPole is
  * containerized, a note about `host.docker.internal` goes between
  * `description` and `suffix`.
  */

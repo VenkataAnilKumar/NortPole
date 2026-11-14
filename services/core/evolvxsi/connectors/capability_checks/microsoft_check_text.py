@@ -65,7 +65,7 @@ SIGN_IN_UNREACHABLE_ROW = CheckRowText(
     summary="Cannot reach Microsoft sign-in",
     description=(
         "The sign-in request did not reach Microsoft, after retries.\nCheck that "
-        "EvolvXSI can reach the authority host, then re-run."
+        "NortPole can reach the authority host, then re-run."
     ),
 )
 SIGN_IN_REFUSED_ROW = CheckRowText(
@@ -91,7 +91,7 @@ def raise_for_sign_in_error(error: MicrosoftGraphError) -> NoReturn:
     if is_transport_failure(error):
         raise_with_row(
             UnreachableValidationError,
-            f"EvolvXSI cannot reach Microsoft's token endpoint ({error.code}).",
+            f"NortPole cannot reach Microsoft's token endpoint ({error.code}).",
             SIGN_IN_UNREACHABLE_ROW,
             error,
         )

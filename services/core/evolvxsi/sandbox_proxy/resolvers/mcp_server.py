@@ -135,7 +135,7 @@ class MCPServerResolver(CredentialResolver):
             raise CredentialUnavailableError(
                 str(e),
                 sandbox_detail=(
-                    "Multiple MCP servers in EvolvXSI are configured with the same "
+                    "Multiple MCP servers in NortPole are configured with the same "
                     "URL, so Craft cannot tell which one's credentials to use. "
                     "Ask a workspace admin to remove the duplicate MCP server "
                     "configuration."
@@ -147,7 +147,7 @@ class MCPServerResolver(CredentialResolver):
                 f"request path {path!r} on MCP host {request.host} matches no "
                 "configured server_url prefix",
                 sandbox_detail=(
-                    "This host belongs to an MCP server configured in EvolvXSI, but "
+                    "This host belongs to an MCP server configured in NortPole, but "
                     "the request path is outside the server's MCP endpoint, so "
                     "it was blocked. Only the configured MCP endpoint is "
                     "reachable on this host."
@@ -301,7 +301,7 @@ def _refresh_oauth_headers(
 def _fix_instruction(admin_managed: bool, *, reconnect: bool) -> str:
     verb = "reconnect" if reconnect else "connect"
     if admin_managed:
-        return f"Ask a workspace admin to {verb} it on the MCP actions page in EvolvXSI."
+        return f"Ask a workspace admin to {verb} it on the MCP actions page in NortPole."
     return f"Ask the user to {verb} it from the Apps page in Craft, then retry."
 
 

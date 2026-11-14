@@ -164,7 +164,7 @@ class TestCredentialBaseUrlSSRF:
         self._load("https://github.example.com")
 
     def test_private_server_allowed_when_admin_relaxes_the_level(self) -> None:
-        """Self-hosted EvolvXSI usually reaches Enterprise Server over the LAN."""
+        """Self-hosted NortPole usually reaches Enterprise Server over the LAN."""
         self._load("https://10.0.0.1", level=SSRFProtectionLevel.VALIDATE_LLM)
 
     def test_metadata_stays_blocked_even_when_relaxed(self) -> None:

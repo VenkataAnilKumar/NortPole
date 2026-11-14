@@ -24,7 +24,7 @@ def fetch_current_pair_state(db_session: Session, cc_pair_id: int) -> CurrentPai
             EvolvXSIErrorCode.CONNECTOR_NOT_FOUND,
             f"Connector-credential pair {cc_pair_id} does not exist.",
         )
-    # EvolvXSI: read the real groups (the community copy returned none).
+    # NortPole: read the real groups (the community copy returned none).
     from evolvxsi.knowledge.knowledge_access.source_groups import fetch_data_access_groups_for_cc_pair
 
     data_access_groups: list[UserGroup] = fetch_data_access_groups_for_cc_pair(db_session, cc_pair_id)

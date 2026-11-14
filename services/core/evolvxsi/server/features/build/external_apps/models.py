@@ -51,9 +51,9 @@ class UpdateExternalAppRequest(BaseModel):
     (``PATCH /admin/apps/{id}``). Every field is optional; ``None`` means "leave
     untouched", so a narrow request won't blank the rest.
 
-    This is the single update path for all apps. For EvolvXSI-managed built-ins
+    This is the single update path for all apps. For NortPole-managed built-ins
     (cloud) the gateway-config fields (``upstream_url_patterns``,
-    ``auth_template``, ``organization_credentials``) are EvolvXSI-owned and ignored —
+    ``auth_template``, ``organization_credentials``) are NortPole-owned and ignored —
     only ``enabled`` and ``action_policies`` take effect.
     """
 
@@ -92,7 +92,7 @@ class ExternalAppAdminResponse(BaseModel):
     actions: list[ActionPolicyView]
     users_can_manage_policies: bool = True
     associated_skills: list[ExternalAppAssociatedSkill]
-    # EvolvXSI-managed built-in (cloud): creds/config EvolvXSI-owned and blanked above;
+    # NortPole-managed built-in (cloud): creds/config NortPole-owned and blanked above;
     # admin may only set availability and policies. UI hides the rest.
     is_evolvxsi_managed: bool = False
 

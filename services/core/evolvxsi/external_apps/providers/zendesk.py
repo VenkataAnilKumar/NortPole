@@ -325,7 +325,7 @@ class ZendeskProvider(OAuthExternalAppProvider):
     """Zendesk Support, connected with the deployment's own OAuth client.
 
     Not an ``EvolvXSIManagedExtApp``: Zendesk registers OAuth clients per account on
-    that account's own host, so there is no client for EvolvXSI to own centrally."""
+    that account's own host, so there is no client for NortPole to own centrally."""
 
     spec = OAuthProviderSpec(
         app_type=ExternalAppType.ZENDESK,
@@ -371,18 +371,18 @@ class ZendeskProvider(OAuthExternalAppProvider):
             ],
             setup_instructions=(
                 "In Zendesk, open Admin Center → APIs → OAuth clients and add a client. "
-                "Set Client kind to Confidential. EvolvXSI uses PKCE together with the client secret. "
+                "Set Client kind to Confidential. NortPole uses PKCE together with the client secret. "
                 "Add these allowed scopes to the client: "
                 f"{', '.join(_SCOPES)}. "
                 "The read scope allows reading all Zendesk data and is required for search and ticket audits. "
                 "The tickets:write scope allows creating, updating, and deleting tickets. "
                 "The hc:write scope allows Help Center changes, side_conversations:write allows ticket side conversations, "
                 "and macros:write allows saved reply changes. "
-                "EvolvXSI asks for approval before writes by default. "
+                "NortPole asks for approval before writes by default. "
                 "Help Center and side conversations also require the relevant Zendesk features and user permissions. "
                 "All listed scopes must be allowed, even if you do not use every feature. "
-                "After changing allowed scopes, reconnect Zendesk in EvolvXSI to grant them. "
-                "Set the Redirect URL to this EvolvXSI instance's full callback URL "
+                "After changing allowed scopes, reconnect Zendesk in NortPole to grant them. "
+                "Set the Redirect URL to this NortPole instance's full callback URL "
                 "(https://<your-evolvxsi-domain>/craft/v1/apps/oauth/callback). "
                 "Copy the Secret when Zendesk shows it; it is shown only once. "
                 "Then enter your subdomain, the client's Unique identifier, and the Secret below. "

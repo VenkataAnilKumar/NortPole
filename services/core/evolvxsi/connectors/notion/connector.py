@@ -210,7 +210,7 @@ class NotionConnector(LoadConnector, PollConnector, SlimConnector):
                 logger.error(
                     "Unable to access block with ID '%s'. "
                     "This is likely due to the block not being shared "
-                    "with the EvolvXSI integration. Exact exception:\n\n%s",
+                    "with the NortPole integration. Exact exception:\n\n%s",
                     block_id,
                     e,
                 )
@@ -298,7 +298,7 @@ class NotionConnector(LoadConnector, PollConnector, SlimConnector):
                 logger.error(
                     "Unable to access database with ID '%s'. "
                     "This is likely due to the database not being shared "
-                    "with the EvolvXSI integration. Exact exception:\n%s",
+                    "with the NortPole integration. Exact exception:\n%s",
                     database_id,
                     e,
                 )
@@ -329,7 +329,7 @@ class NotionConnector(LoadConnector, PollConnector, SlimConnector):
                 logger.error(
                     "Unable to access data source with ID '%s'. "
                     "This is likely due to it not being shared "
-                    "with the EvolvXSI integration. Exact exception:\n%s",
+                    "with the NortPole integration. Exact exception:\n%s",
                     data_source_id,
                     e,
                 )

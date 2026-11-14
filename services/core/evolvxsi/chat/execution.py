@@ -726,7 +726,7 @@ def create_chat_agent(
             agent_id=agent_id,
             messages=list(setup.messages),
             tools=tools,
-            # EvolvXSI: code mode runs code, so it also needs the catalog's "code" kind on.
+            # NortPole: code mode runs code, so it also needs the catalog's "code" kind on.
             code_mode=CODE_MODE_ENABLED and code_allowed(),
             custom_agent_prompt=setup.custom_agent_prompt,
             additional_context=setup.additional_context,

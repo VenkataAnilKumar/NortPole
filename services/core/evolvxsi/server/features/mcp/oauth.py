@@ -119,7 +119,7 @@ class MCPReauthenticationRequired(OAuthFlowError):
     """A non-interactive MCP operation requires a new browser grant."""
 
     def __init__(self) -> None:
-        super().__init__("Please reconnect to the server through EvolvXSI.")
+        super().__init__("Please reconnect to the server through NortPole.")
 
 
 def _refresh_log_context(
@@ -1116,7 +1116,7 @@ def make_oauth_provider_with_storage(
         refresh_log_context=_refresh_log_context(mcp_server, connection_config_id),
         server_url=mcp_server.server_url,
         client_metadata=OAuthClientMetadata(
-            client_name=f"EvolvXSI - {mcp_server.name}",
+            client_name=f"NortPole - {mcp_server.name}",
             redirect_uris=[AnyUrl(mcp_oauth_redirect_uri())],
             grant_types=["authorization_code", "refresh_token"],
             response_types=["code"],

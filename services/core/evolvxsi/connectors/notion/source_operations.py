@@ -1,6 +1,6 @@
 """The Notion source-operations gateway: every Notion API call goes through here.
 
-EvolvXSI calls the Notion REST API with ``requests``, and this is the only module in
+NortPole calls the Notion REST API with ``requests``, and this is the only module in
 ``notion/`` that imports it. Operations return the raw JSON of the API, or
 ``NotionSearchResponse`` pages for a search. An error response, a network
 error, or a rate limit leaves the gateway as ``NotionApiError``, so callers

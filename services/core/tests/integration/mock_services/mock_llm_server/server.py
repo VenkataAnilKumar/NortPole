@@ -301,7 +301,7 @@ def create_app() -> FastAPI:
         recorded = _parse_request(body)
         entry.requests.append(recorded)
         reply = _serve(entry, recorded)
-        # EvolvXSI retries a 400 whose message names a request parameter, so the
+        # NortPole retries a 400 whose message names a request parameter, so the
         # message never quotes the prompt or names a parameter.
         if reply is None and recorded.error == "no reply matched":
             return _error("mock_llm_server: no scripted reply matched this request")

@@ -227,7 +227,7 @@ def fetch_github_skill_bundles(
                     name=document.metadata.name,
                     description=document.metadata.description,
                     bundle_bytes=None,
-                    unavailable_reason="A built-in EvolvXSI skill already uses this name.",
+                    unavailable_reason="A built-in NortPole skill already uses this name.",
                 )
             )
             continue

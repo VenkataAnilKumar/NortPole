@@ -11,7 +11,7 @@ from openai.types.responses.response_function_tool_call import ResponseFunctionT
 from openai.types.responses.response_output_message import ResponseOutputMessage
 from openai.types.responses.response_output_text import ResponseOutputText
 
-# Via the singleton, so importing this module applies EvolvXSI's litellm config and
+# Via the singleton, so importing this module applies NortPole's litellm config and
 # monkey patches rather than leaving a bare litellm for the rest of the session.
 from evolvxsi.llm.litellm_singleton import litellm
 from evolvxsi.llm.model_response import from_litellm_model_response

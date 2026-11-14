@@ -162,7 +162,7 @@ class _WorkspaceCheck(_AsanaCheck):
         workspace_id: str = _workspace_id(_config(context))
         workspace: dict[str, Any] = _probe(
             lambda: read_workspace(_gateway(context), workspace_id),
-            "EvolvXSI could not read the workspace.",
+            "NortPole could not read the workspace.",
         )
         return CheckOutput(
             summary=fit_summary(
@@ -192,7 +192,7 @@ class _TeamCheck(_AsanaCheck):
             raise CheckNotApplicableError("No team filter applies.")
         team: dict[str, Any] = _probe(
             lambda: read_team(_gateway(context), team_id, _workspace_id(config)),
-            "EvolvXSI could not read the team.",
+            "NortPole could not read the team.",
         )
         return CheckOutput(
             summary=fit_summary("Found team ", str(team.get("name") or team_id))
@@ -219,14 +219,14 @@ class _ProjectsCheck(_AsanaCheck):
             lambda: check_projects(
                 _gateway(context), project_ids, _workspace_id(config)
             ),
-            "EvolvXSI could not read the selected projects.",
+            "NortPole could not read the selected projects.",
         )
         advisories: list[CheckAdvisory] = []
         if archived:
             advisories.append(
                 CheckAdvisory(
                     message=(
-                        f"EvolvXSI skips archived projects: {', '.join(archived)}. "
+                        f"NortPole skips archived projects: {', '.join(archived)}. "
                         "Unarchive them to index their tasks."
                     )
                 )
@@ -267,7 +267,7 @@ class _TasksCheck(_AsanaCheck):
             )
             return _probe(
                 lambda: next((p for p in projects if not p.get("archived")), None),
-                "EvolvXSI could not read the selected projects.",
+                "NortPole could not read the selected projects.",
             )
         team_id: str | None = _team_id(config)
         sampled: list[dict[str, Any]] = _probe(
@@ -279,7 +279,7 @@ class _TasksCheck(_AsanaCheck):
                     limit=_PROJECT_SAMPLE_SIZE,
                 )
             ),
-            "EvolvXSI could not list the workspace's projects.",
+            "NortPole could not list the workspace's projects.",
         )
         in_scope = (p for p in sampled if not project_skipped_for_team(p, team_id))
         project: dict[str, Any] | None = next(in_scope, None)
@@ -318,7 +318,7 @@ class _TasksCheck(_AsanaCheck):
         )
         task: dict[str, Any] | None = _probe(
             lambda: next(tasks, None),
-            f"EvolvXSI could not read the tasks of project {project_name}.",
+            f"NortPole could not read the tasks of project {project_name}.",
         )
         if task is None:
             return CheckOutput(
@@ -340,14 +340,14 @@ class _TasksCheck(_AsanaCheck):
                 (s for s in stories if s.get("resource_subtype") == "comment_added"),
                 None,
             ),
-            "EvolvXSI could not read the task's comments.",
+            "NortPole could not read the task's comments.",
         )
         if comment is not None:
             _probe(
                 lambda: gateway.get_story(
                     story_gid=str(comment["gid"]), opt_fields="text,created_by"
                 ),
-                "EvolvXSI could not read a comment of the task.",
+                "NortPole could not read a comment of the task.",
             )
         creator: dict[str, Any] = task.get("created_by") or {}
         if creator.get("gid"):
@@ -355,7 +355,7 @@ class _TasksCheck(_AsanaCheck):
                 lambda: gateway.get_user(
                     user_gid=str(creator["gid"]), opt_fields="name,email"
                 ),
-                "EvolvXSI could not read the task's creator.",
+                "NortPole could not read the task's creator.",
             )
         return CheckOutput(
             summary=fit_summary("Read task ", str(task.get("name") or task["gid"]))

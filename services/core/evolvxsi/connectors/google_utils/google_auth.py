@@ -48,7 +48,7 @@ def _token_request() -> Iterator[None]:
         yield
     except _TOKEN_CONNECTION_ERRORS as e:
         raise GoogleUnreachableError(
-            f"EvolvXSI cannot reach Google to refresh the token: {e}"
+            f"NortPole cannot reach Google to refresh the token: {e}"
         ) from e
     except RefreshError as e:
         # google-auth marks a 5xx that outlasted its retries as retryable: the

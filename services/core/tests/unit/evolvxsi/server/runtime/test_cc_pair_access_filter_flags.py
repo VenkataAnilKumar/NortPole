@@ -31,7 +31,7 @@ def test_cc_pair_access_flags_fall_back_when_the_cache_fails() -> None:
 
 
 def test_evolvxsi_defaults_turn_the_filter_on_and_enforce_it() -> None:
-    """With no cache override, the EvolvXSI defaults apply."""
+    """With no cache override, the NortPole defaults apply."""
     cache = MagicMock()
     cache.get.return_value = None
     with patch.object(evolvxsi_runtime, "get_cache_backend", return_value=cache):

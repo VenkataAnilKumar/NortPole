@@ -1,4 +1,4 @@
-"""Python stubs that expose EvolvXSI tools to code mode programs as async functions."""
+"""Python stubs that expose NortPole tools to code mode programs as async functions."""
 
 import builtins
 import json

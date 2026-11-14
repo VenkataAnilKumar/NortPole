@@ -79,7 +79,7 @@ def parse_mdx_to_release_note_entries(mdx_content: str) -> list[ReleaseNoteEntry
                 ReleaseNoteEntry(
                     version=version,
                     date=date,
-                    title=f"EvolvXSI {version} is available!",
+                    title=f"NortPole {version} is available!",
                 )
             )
 

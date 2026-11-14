@@ -1,10 +1,10 @@
-# EvolvXSI — product overview
+# NortPole — product overview
 
 Status: **proposed** · Updated: 2026-11-05
 
 ## Product thesis
 
-EvolvXSI is a proposed platform for organizations to build, run, govern, and improve AI agents that complete real workflows. A shared horizontal platform supplies knowledge access, agent execution, model access, tools, approvals, evaluation, and operations. Vertical solutions package domain workflows, data connectors, policies, output formats, and evaluation sets on that foundation.
+NortPole is a proposed platform for organizations to build, run, govern, and improve AI agents that complete real workflows. A shared horizontal platform supplies knowledge access, agent execution, model access, tools, approvals, evaluation, and operations. Vertical solutions package domain workflows, data connectors, policies, output formats, and evaluation sets on that foundation.
 
 The product should make a customer's specific workflow usable and trustworthy, rather than ask the customer to assemble an agent stack themselves.
 
@@ -14,7 +14,7 @@ A team should be able to ask a question, search a permitted library, and turn th
 
 The first offer pairs one approved source with one reviewed deliverable. For example, an operations team could ask what changed in a set of internal procedures. The agent prepares a brief with passages for each change. The reviewer checks each passage, corrects the brief, and approves a specific version. The example gives discovery interviews a concrete task. The launch segment remains open.
 
-Cohere North supplies the market comparison for enterprise workspace breadth. EvolvXSI's proposed reason to buy is measurable reduction in the effort to produce **and verify** a recurring deliverable. See the [competitive analysis](../03-market/EvolvXSI_Competitive-Analysis.md).
+Cohere North supplies the market comparison for enterprise workspace breadth. NortPole's proposed reason to buy is measurable reduction in the effort to produce **and verify** a recurring deliverable. See the [competitive analysis](../03-market/EvolvXSI_Competitive-Analysis.md).
 
 ## The problem
 

@@ -1,4 +1,4 @@
-"""The standalone provider fixture must not load the EvolvXSI application."""
+"""The standalone provider fixture must not load the NortPole application."""
 
 import subprocess
 import sys

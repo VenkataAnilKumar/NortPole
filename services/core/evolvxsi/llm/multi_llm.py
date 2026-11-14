@@ -412,13 +412,13 @@ def _provider_scope(
 
 
 def _as_evolvxsi_llm_error(error: Exception) -> Exception:
-    """Translate a litellm exception into the EvolvXSI one callers catch.
+    """Translate a litellm exception into the NortPole one callers catch.
 
     litellm raises a failure during a stream as ``MidStreamFallbackError`` (a
     ``ServiceUnavailableError``), including 429s. It keeps the real cause in
     ``original_exception``, but leaves ``__cause__`` empty and puts only a
     message in ``args``. Chat's error classifier follows ``__cause__``, so we
-    set it on the wrapper, whether or not the cause maps to an EvolvXSI error.
+    set it on the wrapper, whether or not the cause maps to an NortPole error.
 
     A mapped error also has its ``__cause__`` set to the real cause, so raise
     the result without ``from``.
@@ -951,16 +951,16 @@ class LitellmLLM(LLM):
 
     def _track_llm_cost(self, usage: Usage, routed_model: str | None = None) -> None:
         """
-        Track LLM usage cost for EvolvXSI-managed API keys.
+        Track LLM usage cost for NortPole-managed API keys.
 
         This is called after every LLM call completes (streaming or non-streaming).
         Cost is only tracked if:
         1. Usage limits are enabled for this deployment
-        2. The API key is one of EvolvXSI's managed default keys
+        2. The API key is one of NortPole's managed default keys
         """
 
-        # EvolvXSI's own counter of tokens and estimated cost by route. It never raises and runs for every
-        # key, unlike the usage-limit tracking below, which only covers EvolvXSI-managed keys.
+        # NortPole's own counter of tokens and estimated cost by route. It never raises and runs for every
+        # key, unlike the usage-limit tracking below, which only covers NortPole-managed keys.
         from evolvxsi.governance.route_policy.usage import record_tokens
 
         record_tokens(
@@ -1135,7 +1135,7 @@ class LitellmLLM(LLM):
             tool_choice = ToolChoiceOptions.AUTO
 
         # These native adapters drop NONE. Omit schemas but retain history;
-        # EvolvXSI or LiteLLM serializes prior calls and results for each provider.
+        # NortPole or LiteLLM serializes prior calls and results for each provider.
         if tool_choice == ToolChoiceOptions.NONE and self._model_provider in {
             LlmProviderNames.BEDROCK,
             LlmProviderNames.BEDROCK_CONVERSE,
@@ -1887,7 +1887,7 @@ class LitellmLLM(LLM):
             routed_model: str | None = self._routed_model(model_response.model)
             if routed_model:
                 record_llm_routed_model(routed_model)
-            # Track LLM cost for EvolvXSI-managed API keys
+            # Track LLM cost for NortPole-managed API keys
             if model_response.usage:
                 self._track_llm_cost(model_response.usage, routed_model)
 
@@ -2109,7 +2109,7 @@ class LitellmLLM(LLM):
         self, request: GenerationRequest
     ) -> tuple[list[ChatCompletionMessage], dict[str, str]]:
         config = self.config
-        # EvolvXSI: replace listed sensitive patterns before the request leaves, per route policy.
+        # NortPole: replace listed sensitive patterns before the request leaves, per route policy.
         from evolvxsi.governance.redaction.request import redact_request
 
         request = redact_request(request, config.model_configuration_id)

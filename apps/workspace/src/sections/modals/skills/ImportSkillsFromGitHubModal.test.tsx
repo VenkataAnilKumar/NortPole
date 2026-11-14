@@ -76,7 +76,7 @@ const preview: GitHubSkillsPreview = {
       path: "skills/pptx",
       name: "pptx",
       description: "Create presentations",
-      unavailable_reason: "A built-in EvolvXSI skill already uses this name.",
+      unavailable_reason: "A built-in NortPole skill already uses this name.",
     },
   ],
 };
@@ -139,7 +139,7 @@ describe("ImportSkillsFromGitHubModal", () => {
     expect(screen.getByText("Enabled")).toBeInTheDocument();
     expect(screen.getByText("Not imported")).toBeInTheDocument();
     expect(
-      screen.getByText("A built-in EvolvXSI skill already uses this name.")
+      screen.getByText("A built-in NortPole skill already uses this name.")
     ).toBeInTheDocument();
     expect(screen.getByText(/1 not selected/)).toBeInTheDocument();
     expect(onImported).toHaveBeenCalledTimes(1);

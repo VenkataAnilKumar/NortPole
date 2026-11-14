@@ -86,7 +86,7 @@ class TestPeoplePropertyExtraction:
                     {
                         "object": "user",
                         "id": "bot-uuid-1",
-                        "name": "EvolvXSI Integration",
+                        "name": "NortPole Integration",
                         "type": "bot",
                         "bot": {},
                     }
@@ -94,8 +94,8 @@ class TestPeoplePropertyExtraction:
             }
         }
         result = NotionConnector._properties_to_str(properties)
-        assert "EvolvXSI Integration" in result, (
-            f"Expected 'EvolvXSI Integration' in extracted text, got: {result!r}"
+        assert "NortPole Integration" in result, (
+            f"Expected 'NortPole Integration' in extracted text, got: {result!r}"
         )
 
     def test_person_without_person_details(self) -> None:

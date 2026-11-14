@@ -558,7 +558,7 @@ class TestValidateOutboundHttpUrl:
     def test_blocks_dns_name_resolving_to_aws_metadata_with_floor(self) -> None:
         """The canonical SSRF attack: an attacker-controlled DNS record
         pointing at 169.254.169.254 must not let the LLM tool exfiltrate
-        IAM credentials from a cloud-hosted EvolvXSI deployment, even when the
+        IAM credentials from a cloud-hosted NortPole deployment, even when the
         operator has opted into private networks for their internal docs."""
         with patch("evolvxsi.utils.url.socket.getaddrinfo") as mock_getaddrinfo:
             mock_getaddrinfo.return_value = [(2, 1, 6, "", ("169.254.169.254", 80))]

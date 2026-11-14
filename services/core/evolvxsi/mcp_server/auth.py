@@ -1,4 +1,4 @@
-"""Authentication helpers for the EvolvXSI MCP server."""
+"""Authentication helpers for the NortPole MCP server."""
 
 import time
 from typing import Optional

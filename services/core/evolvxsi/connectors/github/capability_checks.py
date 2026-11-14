@@ -354,7 +354,7 @@ class _AuthCheck(_GitHubCheck):
             ) from e
         except requests.ConnectionError as e:
             raise UnreachableValidationError(
-                "EvolvXSI cannot connect to GitHub. Check the Enterprise Server URL, "
+                "NortPole cannot connect to GitHub. Check the Enterprise Server URL, "
                 "if one is set.",
                 summary="Cannot reach GitHub",
                 description=(
@@ -375,7 +375,7 @@ class _AuthCheck(_GitHubCheck):
                     ),
                 ),
                 not_found=(
-                    "EvolvXSI found no GitHub API at the configured URL. For GitHub "
+                    "NortPole found no GitHub API at the configured URL. For GitHub "
                     "Enterprise Server, enter the server URL "
                     "(https://github.example.com)"
                 ),
@@ -427,7 +427,7 @@ class _TokenScopesCheck(_GitHubCheck):
         if _lacks_private_scope(token):
             raise InsufficientPermissionsError(
                 "The classic token has no `repo` scope "
-                f"(scopes: {', '.join(token.scopes) or 'none'}), so EvolvXSI "
+                f"(scopes: {', '.join(token.scopes) or 'none'}), so NortPole "
                 "can index only public repositories.",
                 summary="Classic token lacks the repo scope",
                 description=(
@@ -893,7 +893,7 @@ def _target_repositories(
 
 def _no_repositories_error() -> NothingToCheckError:
     return NothingToCheckError(
-        "No repository to index is readable, so EvolvXSI cannot run this probe. "
+        "No repository to index is readable, so NortPole cannot run this probe. "
         "github_repositories_visible or github_configured_repositories "
         "reports why.",
         summary="No repositories to test",
@@ -1072,7 +1072,7 @@ class _PullRequestsCheck(_GitHubCheck):
         if not pull_requests:
             raise InconclusiveValidationError(
                 f"`{repository.full_name}` has no pull requests in the state "
-                f"`{config.state_filter}`, so EvolvXSI could not read one.",
+                f"`{config.state_filter}`, so NortPole could not read one.",
                 summary="No pull requests found to test",
                 description=(
                     "The first repository has no pull requests in the selected state."
@@ -1148,7 +1148,7 @@ class _IssuesCheck(_GitHubCheck):
         if issue is None:
             raise InconclusiveValidationError(
                 f"The first page of `{repository.full_name}` has no issues in the "
-                f"state `{config.state_filter}`, so EvolvXSI could not read one.",
+                f"state `{config.state_filter}`, so NortPole could not read one.",
                 summary="No issues found to test",
                 description=(
                     "The first page of the first repository has no issues in the "
@@ -1197,14 +1197,14 @@ class _FilesCheck(_GitHubCheck):
             if e.status_code == _EMPTY_REPOSITORY_STATUS:
                 # An empty repository has no tree; indexing skips it.
                 raise InconclusiveValidationError(
-                    f"`{repository.full_name}` is empty, so EvolvXSI could not read a "
+                    f"`{repository.full_name}` is empty, so NortPole could not read a "
                     "file.",
                     summary=f"No files found in {repository.full_name}",
                     description="The first repository is empty, and indexing skips it.",
                 ) from e
             if e.status_code == 404 and _branch(config) is not None:
                 raise UnexpectedValidationError(
-                    f"`{repository.full_name}` has no branch `{ref}`, so EvolvXSI "
+                    f"`{repository.full_name}` has no branch `{ref}`, so NortPole "
                     "cannot read its files. github_branch reports why.",
                     summary=f"No branch {ref} in {repository.full_name}",
                     description=(
@@ -1260,7 +1260,7 @@ def build_github_indexing_checks() -> list[CapabilityCheck]:
 # map to their collaborators group, internal ones to their organization group.
 # Group sync reads the collaborators of each private repository, the members of
 # the organization of each internal repository, and the public email of each
-# user. Both map GitHub users to EvolvXSI users by that email.
+# user. Both map GitHub users to NortPole users by that email.
 
 _VISIBILITY_PUBLIC = "public"
 _VISIBILITY_INTERNAL = "internal"
@@ -1286,7 +1286,7 @@ _MEMBERS_HINT = (
 )
 _EMAIL_HINT = (
     "GitHub returns only the public email of a profile (Settings > Public "
-    "email). Users without one get no access in EvolvXSI."
+    "email). Users without one get no access in NortPole."
 )
 
 
@@ -1479,7 +1479,7 @@ class _CollaboratorsCheck(_GitHubCheck):
         if repository is None and sample.cut:
             raise InconclusiveValidationError(
                 f"The first {len(sample.repositories)} repositories include no "
-                "private repository, so EvolvXSI cannot verify what group sync reads "
+                "private repository, so NortPole cannot verify what group sync reads "
                 "for the others.",
                 summary=f"No private repo in the first {len(sample.repositories)}",
                 description=(
@@ -1586,7 +1586,7 @@ class _OrganizationMembersCheck(_GitHubCheck):
             raise InsufficientPermissionsError(
                 f"The classic token has no `{_ORG_READ_SCOPE}` scope, so GitHub "
                 f"lists only the public members of `{org_login}`, and the other "
-                "members lose access to its internal repositories in EvolvXSI.",
+                "members lose access to its internal repositories in NortPole.",
                 summary="Classic token lacks read:org",
                 description=(
                     "Private organization members would lose access to internal "
@@ -1604,7 +1604,7 @@ class _OrganizationMembersCheck(_GitHubCheck):
 
 class _UserEmailsCheck(_GitHubCheck):
     """Some sampled users have a public email. Group sync maps GitHub users
-    to EvolvXSI users by the public email of the profile. Fails only when no
+    to NortPole users by the public email of the profile. Fails only when no
     sampled user has one and the sample covers every user of the first
     group; a partial sample is INCOMPLETE."""
 
@@ -1638,7 +1638,7 @@ class _UserEmailsCheck(_GitHubCheck):
         if private is None and not organizations and sample.cut:
             raise InconclusiveValidationError(
                 f"The first {len(sample.repositories)} repositories include no "
-                "private or internal repository, so EvolvXSI cannot verify what "
+                "private or internal repository, so NortPole cannot verify what "
                 "group sync reads for the others.",
                 summary=(
                     f"No private or internal repo in first {len(sample.repositories)}"
@@ -1658,12 +1658,12 @@ class _UserEmailsCheck(_GitHubCheck):
             )
         except ConnectorValidationError as e:
             raise UnexpectedValidationError(
-                "EvolvXSI cannot read the users of a group, so this check cannot run. "
+                "NortPole cannot read the users of a group, so this check cannot run. "
                 "github_repository_collaborators or github_organization_members "
                 "reports why.",
                 summary="Cannot read the group's users",
                 description=(
-                    "EvolvXSI could not list the users to test.\nSee List "
+                    "NortPole could not list the users to test.\nSee List "
                     "collaborators or List org members."
                 ),
             ) from e
@@ -1700,7 +1700,7 @@ class _UserEmailsCheck(_GitHubCheck):
         if len(logins) > _SAMPLE_USERS:
             raise InconclusiveValidationError(
                 f"The {_SAMPLE_USERS} sampled users have no public email. Group sync "
-                f"reads more users, so EvolvXSI cannot verify the rest. {_EMAIL_HINT}",
+                f"reads more users, so NortPole cannot verify the rest. {_EMAIL_HINT}",
                 summary=f"First {_SAMPLE_USERS} users have no public email",
                 description=(
                     "The sampled users cannot map to users here, and the rest of "
@@ -1709,7 +1709,7 @@ class _UserEmailsCheck(_GitHubCheck):
             )
         raise InsufficientPermissionsError(
             f"No user of the sampled group has a public email, so their access "
-            f"cannot map to EvolvXSI users. {_EMAIL_HINT}",
+            f"cannot map to NortPole users. {_EMAIL_HINT}",
             summary="No sampled user has a public email",
             description=(
                 "Users without a public email would get no access.\nAsk them to "

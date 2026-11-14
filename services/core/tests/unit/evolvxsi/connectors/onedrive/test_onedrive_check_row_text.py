@@ -53,7 +53,7 @@ _OWNER = OneDriveUser(
 
 def _gateway() -> MagicMock:
     gateway: MagicMock = create_autospec(OneDriveSourceOperations, instance=True)
-    gateway.check_token.return_value = MicrosoftTokenInfo(app_name="EvolvXSI")
+    gateway.check_token.return_value = MicrosoftTokenInfo(app_name="NortPole")
     gateway.list_users.return_value = OneDriveUserPage(users=[_OWNER])
     gateway.get_user.return_value = _OWNER
     gateway.get_default_drive.return_value = OneDriveDrive(id="d", name="Documents")
@@ -113,7 +113,7 @@ def test_the_rows_have_the_design_names() -> None:
 @pytest.mark.parametrize(
     ("check_id", "summary"),
     [
-        ("onedrive_token_auth", "Signed in as EvolvXSI"),
+        ("onedrive_token_auth", "Signed in as NortPole"),
         ("onedrive_users", "Tenant user list is readable"),
         ("onedrive_drive_count", "Up to 1 OneDrive"),
         ("onedrive_drive", "Opened the OneDrive of Owner"),

@@ -28,7 +28,7 @@ def create_webhook_app() -> FastAPI:
     set_is_ee_if_available()
 
     app = FastAPI(
-        title="EvolvXSI Webhook Server",
+        title="NortPole Webhook Server",
         description="Receives connector events from event-based sources",
         # No browser reaches this app, so interactive docs only widen the surface.
         openapi_url=None,

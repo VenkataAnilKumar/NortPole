@@ -201,7 +201,7 @@ def main() -> None:
     from evolvxsi.db.engine.sql_engine import SqlEngine
     from evolvxsi.utils.variable_functionality import set_is_ee_if_available
 
-    logger.info("Starting EvolvXSI Discord Bot...")
+    logger.info("Starting NortPole Discord Bot...")
 
     # Initialize the database engine (required before any DB operations)
     SqlEngine.init_engine(pool_size=20, max_overflow=5)

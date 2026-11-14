@@ -138,7 +138,7 @@ def _access_hint(
     if config.scoped_token:
         return (
             f"The scoped API token needs the `{scope}` scope. Create a token with "
-            "the scopes in the EvolvXSI Jira docs."
+            "the scopes in the NortPole Jira docs."
         )
     return f"The token acts as its Jira account. Give that account {user_permission}."
 
@@ -376,7 +376,7 @@ class _SiteAuthCheck(_JiraCheck):
                 and response.status_code != _RATE_LIMITED_STATUS
             ):
                 raise ConnectorValidationError(
-                    "EvolvXSI cannot get the Atlassian cloud id of "
+                    "NortPole cannot get the Atlassian cloud id of "
                     f"{config.jira_base_url} (`{_TENANT_INFO_PATH}`). Scoped API "
                     "tokens work only with Jira Cloud; check the site URL.",
                     summary="Site is not a Jira Cloud site",
@@ -403,7 +403,7 @@ class _SiteAuthCheck(_JiraCheck):
             ) from e
         except requests.ConnectionError as e:
             raise UnreachableValidationError(
-                f"EvolvXSI cannot connect to {self.config(context).jira_base_url}. "
+                f"NortPole cannot connect to {self.config(context).jira_base_url}. "
                 "Check the site URL.",
                 summary="Cannot reach Jira",
                 description="The connection to Jira Base URL failed.\nCheck Jira Base URL.",
@@ -412,7 +412,7 @@ class _SiteAuthCheck(_JiraCheck):
             self._raise_for_sign_in_error(context, gateway, e)
         except JiraCloudIdError as e:
             raise ConnectorValidationError(
-                "EvolvXSI cannot get the Atlassian cloud id of "
+                "NortPole cannot get the Atlassian cloud id of "
                 f"{self.config(context).jira_base_url} (`{_TENANT_INFO_PATH}`). "
                 "Scoped API tokens work only with Jira Cloud; check the site URL.",
                 summary="Site returned no cloud ID",
@@ -824,7 +824,7 @@ def build_jira_indexing_checks() -> list[CapabilityCheck]:
 # Permission sync. The EE registry registers these checks. Doc sync reads the
 # Browse Projects grants of each project's permission scheme, the actors of its
 # project roles, and the email of each user. Group sync lists the groups and
-# the members of each group. Both map Jira users to EvolvXSI users by email.
+# the members of each group. Both map Jira users to NortPole users by email.
 
 _PERMISSION_SYNC_SCOPES = "`read:jira-user` and `manage:jira-configuration`"
 _PUBLIC_HOLDER_TYPES = frozenset({HOLDER_TYPE_ANYONE, HOLDER_TYPE_APPLICATION_ROLE})
@@ -843,7 +843,7 @@ _ADMIN_HINT = (
 _CLOUD_EMAIL_HINT = (
     "Atlassian returns a user's email only when the user's profile shows it "
     "(Profile and visibility > Contact), or when the organization makes emails "
-    "visible to apps. Users without a visible email get no access in EvolvXSI."
+    "visible to apps. Users without a visible email get no access in NortPole."
 )
 _DC_EMAIL_HINT = (
     "Jira Data Center returns emails only when 'User email visibility' "
@@ -957,7 +957,7 @@ def _probe_projects(
             _raise_for_timeout(e)
         except JiraApiError as e:
             raise UnexpectedValidationError(
-                "EvolvXSI cannot run the JQL query, so it cannot pick a project to "
+                "NortPole cannot run the JQL query, so it cannot pick a project to "
                 "probe. jira_jql_query reports why.",
                 summary="Cannot run the JQL query",
                 description="Run JQL query reports why.",
@@ -972,7 +972,7 @@ def _probe_projects(
         if not sample.project_keys:
             raise UnexpectedValidationError(
                 "Jira returned the issues of the JQL query without their "
-                "project, so EvolvXSI cannot pick a project to probe.",
+                "project, so NortPole cannot pick a project to probe.",
                 summary="Sample issue came back without a project",
                 description=(
                     "Jira returned the query's issues without their project.\n"
@@ -993,7 +993,7 @@ def _probe_projects(
         )
     if not projects:
         raise UnexpectedValidationError(
-            "No Jira project is visible, so EvolvXSI cannot read a permission scheme. "
+            "No Jira project is visible, so NortPole cannot read a permission scheme. "
             "jira_projects_visible reports why.",
             summary="No project to read",
             description="List projects reports why.",
@@ -1077,7 +1077,7 @@ def _read_scheme_for_dependent_check(
         return sample, _read_permission_scheme(context, config, sample.project_keys[0])
     except ConnectorValidationError as e:
         raise UnexpectedValidationError(
-            "EvolvXSI cannot read the permission scheme, so this check cannot run. "
+            "NortPole cannot read the permission scheme, so this check cannot run. "
             "jira_permission_scheme_read reports why.",
             summary="Cannot read the permission scheme",
             description="Read permission schemes reports why.",
@@ -1097,7 +1097,7 @@ def _check_sampled_projects(
     result of the first that has something to test. ``check_project`` raises
     ``NothingToCheckError`` for a project with nothing to test. When no project
     has anything, the check skips only if it read the full scope. A later
-    project whose scheme EvolvXSI cannot read is left out, not failed."""
+    project whose scheme NortPole cannot read is left out, not failed."""
     sample, scheme = _read_scheme_for_dependent_check(context, config)
     skipped: list[NothingToCheckError] = []
     unreadable: int = 0
@@ -1138,7 +1138,7 @@ def _check_sampled_projects(
     if unreadable:
         checked += f" ({unreadable} more could not be read)"
     raise InconclusiveValidationError(
-        f"{checked}. None of them {missing}, so EvolvXSI cannot verify the rest.",
+        f"{checked}. None of them {missing}, so NortPole cannot verify the rest.",
         summary=incomplete_summary,
         description=f"{checked}; none {missing}.",
     )
@@ -1181,7 +1181,7 @@ class _PermissionSchemeReadCheck(_JiraCheck):
 
 class _ProjectAccessMappableCheck(_JiraCheck):
     """Warns when Browse Projects is granted only through holders that have no
-    static EvolvXSI equivalent (Reporter, Assignee, Project Lead, user fields)."""
+    static NortPole equivalent (Reporter, Assignee, Project Lead, user fields)."""
 
     def __init__(self) -> None:
         super().__init__(
@@ -1190,9 +1190,9 @@ class _ProjectAccessMappableCheck(_JiraCheck):
             display_name="Map project access",
             required=False,
             remediation=(
-                "Grant Browse Projects to users, groups or project roles. EvolvXSI "
+                "Grant Browse Projects to users, groups or project roles. NortPole "
                 "cannot map Reporter, Assignee, Project Lead or user-field grants, "
-                "so those users get no access in EvolvXSI."
+                "so those users get no access in NortPole."
             ),
         )
 
@@ -1206,8 +1206,8 @@ class _ProjectAccessMappableCheck(_JiraCheck):
         if unsupported:
             raise ConnectorValidationError(
                 f"The project `{project_key}` grants Browse Projects through "
-                f"{', '.join(unsupported)}. EvolvXSI cannot map these grants, so the "
-                "users they cover get no access to the project's issues in EvolvXSI.",
+                f"{', '.join(unsupported)}. NortPole cannot map these grants, so the "
+                "users they cover get no access to the project's issues in NortPole.",
                 summary="Some grants cannot map to users",
                 description=(
                     f"{project_key} grants Browse Projects through "
@@ -1386,7 +1386,7 @@ def _is_group_actor(actor: dict[str, Any]) -> bool:
 
 class _PermissionUserEmailsCheck(_JiraCheck):
     """People who hold Browse Projects, directly or through a project role,
-    have emails. Permission sync maps them to EvolvXSI users by email.
+    have emails. Permission sync maps them to NortPole users by email.
 
     Moves to the next sampled project past a public project (``anyone`` or
     ``applicationRole``), which syncs without reading users, and past a project
@@ -1458,7 +1458,7 @@ class _PermissionUserEmailsCheck(_JiraCheck):
             ]
         except ConnectorValidationError as e:
             raise UnexpectedValidationError(
-                "EvolvXSI cannot read the project roles, so this check cannot run. "
+                "NortPole cannot read the project roles, so this check cannot run. "
                 "jira_project_roles_read reports why.",
                 summary="Cannot read project roles",
                 description="Read project roles reports why.",
@@ -1505,14 +1505,14 @@ class _PermissionUserEmailsCheck(_JiraCheck):
                 )
             account_type: Any = details.get("accountType")
             if account_type is not None and account_type != _ATLASSIAN_ACCOUNT_TYPE:
-                # Apps and customers never map to EvolvXSI users.
+                # Apps and customers never map to NortPole users.
                 continue
             emails.append(details.get("emailAddress"))
         if not emails:
             if not complete_sample:
                 raise InconclusiveValidationError(
                     f"The sampled grants of the project `{project_key}` hold no "
-                    "user account. Permission sync reads more users, so EvolvXSI "
+                    "user account. Permission sync reads more users, so NortPole "
                     "cannot verify the rest.",
                     summary="No user accounts in the sample",
                     description=(
@@ -1522,8 +1522,8 @@ class _PermissionUserEmailsCheck(_JiraCheck):
                 )
             raise ConnectorValidationError(
                 f"The Browse Projects grants of the project `{project_key}` hold "
-                "no user, group, or public access that EvolvXSI can map, so no user "
-                "would get access to its issues in EvolvXSI. Grant Browse Projects "
+                "no user, group, or public access that NortPole can map, so no user "
+                "would get access to its issues in NortPole. Grant Browse Projects "
                 "to users, groups or project roles with members.",
                 summary="Grants hold no users to map",
                 description=(
@@ -1537,7 +1537,7 @@ class _PermissionUserEmailsCheck(_JiraCheck):
                 raise InconclusiveValidationError(
                     f"The sampled users who can browse the project `{project_key}` "
                     "have no visible email. Permission sync reads more users, so "
-                    f"EvolvXSI cannot verify the rest. {_email_hint(gateway)}",
+                    f"NortPole cannot verify the rest. {_email_hint(gateway)}",
                     summary="Sampled users show no email",
                     description=(
                         f"The sampled users of {project_key} show no email, and "
@@ -1546,11 +1546,11 @@ class _PermissionUserEmailsCheck(_JiraCheck):
                 )
             raise InsufficientPermissionsError(
                 f"No user who can browse the project `{project_key}` has a visible "
-                "email, so their access cannot map to EvolvXSI users. "
+                "email, so their access cannot map to NortPole users. "
                 f"{_email_hint(gateway)}",
                 summary="No user shows an email",
                 description=(
-                    f"Users with access to {project_key} would get none in EvolvXSI.\n"
+                    f"Users with access to {project_key} would get none in NortPole.\n"
                     f"{_EMAIL_NEED}"
                 ),
             )
@@ -1603,14 +1603,14 @@ def _list_groups_for_dependent_check(
         group_names: list[str] = _list_groups(context, config).group_names
     except ConnectorValidationError as e:
         raise UnexpectedValidationError(
-            "EvolvXSI cannot list Jira groups, so this check cannot run. "
+            "NortPole cannot list Jira groups, so this check cannot run. "
             "jira_group_listing reports why.",
             summary="Cannot list groups",
             description="List groups reports why.",
         ) from e
     if not group_names:
         raise UnexpectedValidationError(
-            "Jira listed no groups, so EvolvXSI cannot read group members. "
+            "Jira listed no groups, so NortPole cannot read group members. "
             "jira_group_listing reports why.",
             summary="No groups to read",
             description="List groups reports why.",
@@ -1733,7 +1733,7 @@ class _GroupListingCompleteCheck(_JiraCheck):
             ),
             remediation=(
                 "Group sync skips the groups after the limit, so their members "
-                "lose access in EvolvXSI. A Jira administrator can raise the "
+                "lose access in NortPole. A Jira administrator can raise the "
                 "jira.ajax.autocomplete.limit setting (Data Center)."
             ),
         )
@@ -1744,7 +1744,7 @@ class _GroupListingCompleteCheck(_JiraCheck):
             page: JiraGroupPage = _list_groups(context, config)
         except ConnectorValidationError as e:
             raise UnexpectedValidationError(
-                "EvolvXSI cannot list Jira groups, so this check cannot run. "
+                "NortPole cannot list Jira groups, so this check cannot run. "
                 "jira_group_listing reports why.",
                 summary="Cannot list groups",
                 description="List groups reports why.",
@@ -1752,7 +1752,7 @@ class _GroupListingCompleteCheck(_JiraCheck):
         returned: int = len(page.group_names)
         if page.total is None:
             raise InconclusiveValidationError(
-                "Jira did not report how many groups match, so EvolvXSI cannot tell "
+                "Jira did not report how many groups match, so NortPole cannot tell "
                 "whether the listing is complete.",
                 summary="Jira did not report a group total",
                 description="A cut-off group list cannot be detected.",
@@ -1793,7 +1793,7 @@ class _GroupMembershipCheck(_JiraCheck):
         if not sample.members:
             # The reads succeeded: the first groups can be empty.
             raise InconclusiveValidationError(
-                "The sampled groups have no members, so EvolvXSI did not verify that "
+                "The sampled groups have no members, so NortPole did not verify that "
                 "group members are readable.",
                 summary="No members found to test",
                 description="The first groups have no active members.",
@@ -1823,7 +1823,7 @@ class _GroupMemberEmailsCheck(_JiraCheck):
             sample: JiraGroupMemberSample = _sample_group_members(context, config)
         except ConnectorValidationError as e:
             raise UnexpectedValidationError(
-                "EvolvXSI cannot read group members, so this check cannot run. "
+                "NortPole cannot read group members, so this check cannot run. "
                 "jira_group_membership reports why.",
                 summary="Cannot read group members",
                 description="Read group members reports why.",
@@ -1836,7 +1836,7 @@ class _GroupMemberEmailsCheck(_JiraCheck):
         ]
         if not people:
             raise InconclusiveValidationError(
-                "The sampled groups have no user members, so EvolvXSI did not verify "
+                "The sampled groups have no user members, so NortPole did not verify "
                 "that group members have emails.",
                 summary="No user members found to test",
                 description="The sampled groups hold no user accounts.",
@@ -1846,7 +1846,7 @@ class _GroupMemberEmailsCheck(_JiraCheck):
             if not sample.complete:
                 raise InconclusiveValidationError(
                     "The sampled group members have no visible email. Group sync "
-                    "reads more groups and members, so EvolvXSI cannot verify the "
+                    "reads more groups and members, so NortPole cannot verify the "
                     f"rest. {_email_hint(_gateway(context))}",
                     summary="Sampled members show no email",
                     description=(
@@ -1856,7 +1856,7 @@ class _GroupMemberEmailsCheck(_JiraCheck):
                 )
             raise InsufficientPermissionsError(
                 "No member of the sampled group has a visible email, so group "
-                f"members cannot map to EvolvXSI users. {_email_hint(_gateway(context))}",
+                f"members cannot map to NortPole users. {_email_hint(_gateway(context))}",
                 summary="No member shows an email",
                 description=f"Group access would reach no one.\n{_EMAIL_NEED}",
             )

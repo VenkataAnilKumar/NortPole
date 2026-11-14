@@ -1,20 +1,20 @@
-# EvolvXSI — brand identity
+# NortPole — brand identity
 
 Status: **product name confirmed; visual identity proposed** · Updated: 2026-11-05
 
 ## Name decision
 
-The owner selected **EvolvXSI** as the product name on 2026-11-02. Use this spelling in product copy and document filenames. Earlier chat titles retain their historical wording for traceability. Visual identity, domain availability, and trademark checks remain open. The workspace directory is now EvolvXSI.
+The owner selected **NortPole** as the product name on 2026-11-02. Use this spelling in product copy and document filenames. Earlier chat titles retain their historical wording for traceability. Visual identity, domain availability, and trademark checks remain open. The workspace directory is now NortPole.
 
 ## Brand promise
 
 **Working promise:** help organizations turn their knowledge, tools, and policies into agent workflows that people can review, approve, and improve.
 
-**One-line description:** EvolvXSI is a proposed platform for building and operating governed AI agent workflows, with specialized solutions for specific industries and business functions.
+**One-line description:** NortPole is a proposed platform for building and operating governed AI agent workflows, with specialized solutions for specific industries and business functions.
 
 ## Positioning statement
 
-For teams responsible for repeatable, evidence-heavy work, EvolvXSI provides a shared way to run AI-assisted workflows with source visibility, human control, and measurable quality. The first market and buyer remain to be validated.
+For teams responsible for repeatable, evidence-heavy work, NortPole provides a shared way to run AI-assisted workflows with source visibility, human control, and measurable quality. The first market and buyer remain to be validated.
 
 ## Messaging pillars
 
@@ -43,4 +43,4 @@ Complete domain and legal checks; choose the launch audience; test the one-line 
 
 ## Platform naming
 
-Use EvolvXSI for the horizontal platform. Name vertical packs by the workflow or industry they serve. Use the [surface inventory](../05-design/EvolvXSI_UI-Spec.md#portal-and-surface-inventory-l01) for consistent product navigation terms.
+Use NortPole for the horizontal platform. Name vertical packs by the workflow or industry they serve. Use the [surface inventory](../05-design/EvolvXSI_UI-Spec.md#portal-and-surface-inventory-l01) for consistent product navigation terms.

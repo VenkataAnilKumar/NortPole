@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Slack Web API wrapper for the EvolvXSI Craft sandbox.
+"""Slack Web API wrapper for the NortPole Craft sandbox.
 
 Common Slack operations exposed as subcommands. Output is JSON on stdout.
 Slack signals failure with {"ok": false, "error": "..."} (still HTTP 200).
@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import Any
 
 # Rendered beside this script at push time from `cloud.txt.template`: the Web
-# API base on line 1 and the file-upload host on line 2. EvolvXSI writes the cloud
+# API base on line 1 and the file-upload host on line 2. NortPole writes the cloud
 # that SLACK_API_URL selects, so GovSlack works without arguments.
 _CLOUD_FILE = Path(__file__).with_name("cloud.txt")
 _TRUSTED_DOMAINS = ("slack.com", "slack-gov.com")

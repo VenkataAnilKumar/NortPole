@@ -1,4 +1,4 @@
-# EvolvXSI pack SDK
+# NortPole pack SDK
 
 Validate, build and sign workflow packs from source. It does not need the server: it validates against
 [the generated manifest schema](../contracts/README.md) and the `packs/` folder rules, and signs the same canonical bytes

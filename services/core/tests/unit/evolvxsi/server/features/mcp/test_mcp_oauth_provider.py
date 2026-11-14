@@ -90,7 +90,7 @@ def _provider(
     provider = oauth.EvolvXSIOAuthClientProvider(
         server_url="https://mcp.example.com/mcp",
         client_metadata=oauth.OAuthClientMetadata(
-            client_name="EvolvXSI",
+            client_name="NortPole",
             redirect_uris=[oauth.AnyUrl(_REDIRECT_URI)],
             scope="files:read offline_access",
         ),
@@ -427,6 +427,6 @@ def test_noninteractive_provider_requires_reconnection() -> None:
 
     with pytest.raises(
         oauth.MCPReauthenticationRequired,
-        match="Please reconnect to the server through EvolvXSI",
+        match="Please reconnect to the server through NortPole",
     ):
         asyncio.run(run())

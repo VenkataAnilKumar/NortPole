@@ -1,4 +1,4 @@
-"""The normalized model adapter works without EvolvXSI chat types."""
+"""The normalized model adapter works without NortPole chat types."""
 
 import threading
 from collections.abc import Generator, Iterator

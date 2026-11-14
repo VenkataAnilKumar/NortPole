@@ -2154,7 +2154,7 @@ def _get_ollama_available_model_names(api_base: str) -> set[str]:
     """Fetch available model names from an Ollama server.
 
     An unreachable address surfaces as 400, not 502: the admin supplied the
-    URL, so a server EvolvXSI can't route to is a client misconfiguration.
+    URL, so a server NortPole can't route to is a client misconfiguration.
     """
     tags_url = f"{api_base}/api/tags"
     try:
@@ -2171,7 +2171,7 @@ def _get_ollama_available_model_names(api_base: str) -> set[str]:
         raise EvolvXSIError(
             EvolvXSIErrorCode.VALIDATION_ERROR,
             f"Could not reach an Ollama server at {api_base}. Check that the URL "
-            f"is correct and reachable from EvolvXSI ({type(e).__name__}).",
+            f"is correct and reachable from NortPole ({type(e).__name__}).",
         )
     except Exception as e:
         raise EvolvXSIError(
@@ -2298,7 +2298,7 @@ def _get_openrouter_models_response(
     headers: dict[str, str] = {
         # Optional headers recommended by OpenRouter for attribution
         "HTTP-Referer": WEB_DOMAIN,
-        "X-Title": "EvolvXSI",
+        "X-Title": "NortPole",
     }
     if api_key:
         headers["Authorization"] = f"Bearer {api_key}"
@@ -2705,7 +2705,7 @@ def _get_openai_compatible_models_response(
     headers = {
         "Authorization": f"Bearer {api_key}",
         "HTTP-Referer": WEB_DOMAIN,
-        "X-Title": "EvolvXSI",
+        "X-Title": "NortPole",
     }
     if not api_key:
         headers.pop("Authorization")
@@ -2739,7 +2739,7 @@ def _get_openai_compatible_models_response(
         raise EvolvXSIError(
             EvolvXSIErrorCode.VALIDATION_ERROR,
             f"Could not reach {source_name} at {url}. Check that the URL is "
-            f"correct and reachable from EvolvXSI ({type(e).__name__}).",
+            f"correct and reachable from NortPole ({type(e).__name__}).",
         )
     except ValueError as e:
         logger.warning(

@@ -18,7 +18,7 @@ from evolvxsi.server.manage import get_state
 from evolvxsi.server.manage.get_state import DOCUMENT_INDEX_IMAGE, get_versions
 from tests.common.paths import find_ancestor_containing
 
-# EvolvXSI deploys the document index from its retrieval compose profile.
+# NortPole deploys the document index from its retrieval compose profile.
 _COMPOSE_TEMPLATE = (
     find_ancestor_containing("infrastructure/profiles/staging")
     / "infrastructure/profiles/staging/docker-compose.retrieval.yml"

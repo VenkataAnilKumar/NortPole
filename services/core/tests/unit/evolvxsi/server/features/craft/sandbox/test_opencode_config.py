@@ -28,7 +28,7 @@ def _gateway(*, default: str = "7/gpt-6.1-sol") -> CraftLLMProviderConfig:
         model_name=default,
         api_key="proxy-placeholder",
         api_base="https://evolvxsi.test/api/gateway/v1",
-        display_name="EvolvXSI",
+        display_name="NortPole",
         models=[
             GatewayModelDescriptor(
                 id="7/gpt-6.1-sol",

@@ -336,7 +336,7 @@ def test_mail_read_check_samples_from_the_configured_groups() -> None:
     )
 
     _run(
-        "outlook_mail_read", check_context(gateway, {"mailbox_groups": ["EvolvXSI Users"]})
+        "outlook_mail_read", check_context(gateway, {"mailbox_groups": ["NortPole Users"]})
     )
 
     gateway.list_mailbox_users.assert_not_called()
@@ -362,7 +362,7 @@ def test_mail_read_check_moves_on_to_the_next_group_when_the_first_is_denied() -
 
     _run(
         "outlook_mail_read",
-        check_context(gateway, {"mailbox_groups": ["Sales", "EvolvXSI Users"]}),
+        check_context(gateway, {"mailbox_groups": ["Sales", "NortPole Users"]}),
     )
 
     assert gateway.read_any_message.call_args.kwargs["mailbox_id"] == "readable"
@@ -588,7 +588,7 @@ def test_groups_check_lists_every_group_that_does_not_resolve() -> None:
 
     (result,) = run_capability_checks(
         [_CHECKS_BY_ID["outlook_configured_groups"]],
-        check_context(gateway, {"mailbox_groups": ["Ghost", "Sales", "EvolvXSI Users"]}),
+        check_context(gateway, {"mailbox_groups": ["Ghost", "Sales", "NortPole Users"]}),
     )
 
     assert result.status is CapabilityCheckStatus.INCOMPLETE
@@ -596,7 +596,7 @@ def test_groups_check_lists_every_group_that_does_not_resolve() -> None:
     assert result.summary == "2 of 3 groups not found"
     assert result.description is not None
     assert "Ghost, Sales" in result.description
-    assert "EvolvXSI Users" not in result.description
+    assert "NortPole Users" not in result.description
 
 
 def test_groups_check_maps_a_denied_listing_to_the_group_permission() -> None:

@@ -215,7 +215,7 @@ PERMISSION_REGISTRY: list[PermissionRegistryEntry] = [
     PermissionRegistryEntry(
         id="manage_bots",
         display_name="Manage Slack/Discord Bots",
-        description="Add and update EvolvXSI integrations with Slack or Discord.",
+        description="Add and update NortPole integrations with Slack or Discord.",
         permissions=[Permission.MANAGE_BOTS],
         group=1,
     ),

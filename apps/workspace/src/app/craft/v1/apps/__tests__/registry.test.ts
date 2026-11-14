@@ -74,7 +74,7 @@ describe("availableBuiltInDescriptors", () => {
     ]);
   });
 
-  it("hides configured EvolvXSI-managed built-ins", () => {
+  it("hides configured NortPole-managed built-ins", () => {
     const available = availableBuiltInDescriptors(ALL_DESCRIPTORS, [
       configuredApp("GMAIL", { is_evolvxsi_managed: true }),
     ]);

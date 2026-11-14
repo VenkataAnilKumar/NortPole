@@ -52,7 +52,7 @@ export function useQueryController(): QueryControllerValue {
   return useContext(QueryControllerContext);
 }
 
-/** Community build: passthrough. EvolvXSI supplies its own query controller. */
+/** Community build: passthrough. NortPole supplies its own query controller. */
 export function QueryControllerProvider({ children }: { children?: ReactNode }) {
   return <>{children}</>;
 }

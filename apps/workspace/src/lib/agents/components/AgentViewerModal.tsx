@@ -281,7 +281,7 @@ export function AgentViewerModal({ agent, onClose }: AgentViewerModalProps) {
             <Content
               font="main-ui-body"
               icon={SvgUser}
-              title={agent.owner?.email ?? "EvolvXSI"}
+              title={agent.owner?.email ?? "NortPole"}
               titleColor="text-03"
               width="fit"
             />

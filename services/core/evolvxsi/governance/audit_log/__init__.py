@@ -1,1 +1,1 @@
-"""Administrator view of the EvolvXSI audit trail."""
+"""Administrator view of the NortPole audit trail."""

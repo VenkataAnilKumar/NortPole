@@ -2,7 +2,7 @@
 
 Unlike Portkey and Bifrost, this provider is reached through LiteLLM's own
 integration rather than an OpenAI-compatible surface, so it has no
-`api_surfaces` entry. LiteLLM owns the base URL and the wire protocol; EvolvXSI
+`api_surfaces` entry. LiteLLM owns the base URL and the wire protocol; NortPole
 only has to hand it a correctly prefixed model string. The gateway namespaces
 its models as `vendor/model`, which nests inside LiteLLM's own
 `provider/model` convention, so these tests lock that spelling down.
@@ -48,7 +48,7 @@ def test_namespaced_model_keeps_the_provider_prefix() -> None:
 
 
 def test_base_url_is_left_to_litellm_when_unset() -> None:
-    """LiteLLM defaults the base to the gateway, so EvolvXSI must not invent one."""
+    """LiteLLM defaults the base to the gateway, so NortPole must not invent one."""
     llm = _make_llm()
     assert llm._api_base is None
     assert _completion_kwargs(llm)["base_url"] is None

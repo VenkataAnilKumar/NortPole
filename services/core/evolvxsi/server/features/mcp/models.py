@@ -242,7 +242,7 @@ class MCPToolCreateRequest(BaseModel):
     oauth_cimd_enabled: bool = Field(
         default=True,
         description=(
-            "Let auto-discovery identify EvolvXSI by its Client ID Metadata Document. "
+            "Let auto-discovery identify NortPole by its Client ID Metadata Document. "
             "False registers through Dynamic Client Registration instead, for "
             "deployments the authorization server cannot reach."
         ),

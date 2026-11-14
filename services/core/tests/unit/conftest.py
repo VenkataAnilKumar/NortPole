@@ -58,14 +58,14 @@ def _reset_leaked_ee_state() -> Generator[None, None, None]:
     yield
 
 
-# EvolvXSI's own governance tests: they exercise the real settings readers, including failing closed when the
+# NortPole's own governance tests: they exercise the real settings readers, including failing closed when the
 # store cannot be read, so the neutral settings below are not applied to them.
 _GOVERNANCE_TEST_DIRS = ("route_policy", "redaction", "tool_catalog", "extensions")
 
 
 @pytest.fixture(autouse=True)
 def _evolvxsi_governance_neutral(request: pytest.FixtureRequest) -> Generator[None, None, None]:
-    """Unit tests have no database. EvolvXSI added governance that reads its settings from the key-value store on
+    """Unit tests have no database. NortPole added governance that reads its settings from the key-value store on
     the request path (route policy and redaction, the MCP allowlist, the tool catalog), and with no store those
     readers fail closed: the inherited tests then see blocked MCP servers, withheld tools or a crashed model call
     instead of the behaviour they test.

@@ -207,7 +207,7 @@ def read_text_file(
     ignore_evolvxsi_metadata: bool = True,
 ) -> tuple[str, dict]:
     """
-    For plain text files. Optionally extracts EvolvXSI metadata from the first line.
+    For plain text files. Optionally extracts NortPole metadata from the first line.
     """
     metadata = {}
     file_content_raw = ""

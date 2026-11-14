@@ -286,11 +286,11 @@ def test_table_cell_alignment_follows_column_spec() -> None:
 
 
 def test_link_becomes_real_hyperlink() -> None:
-    doc = _render("See [EvolvXSI](https://example.com) for details.")
+    doc = _render("See [NortPole](https://example.com) for details.")
     xml = doc.element.xml
     assert "w:hyperlink" in xml
     # The visible link text is preserved.
-    assert "EvolvXSI" in xml
+    assert "NortPole" in xml
 
 
 def _hyperlink_targets(doc: DocxDocument) -> list[str]:
@@ -343,7 +343,7 @@ def test_paren_wrapped_link_url_is_not_over_extended() -> None:
 def test_hyperlink_uses_pandoc_style_without_underline() -> None:
     # pandoc styles links with the muted "Hyperlink" char style and no underline,
     # not python-docx's brighter underlined default.
-    doc = _render("See [EvolvXSI](https://example.com).")
+    doc = _render("See [NortPole](https://example.com).")
     link_props = doc.element.xml.split("w:hyperlink")[1]
     assert 'w:val="Hyperlink"' in link_props  # applies the character style
     assert "<w:u " not in link_props  # no underline

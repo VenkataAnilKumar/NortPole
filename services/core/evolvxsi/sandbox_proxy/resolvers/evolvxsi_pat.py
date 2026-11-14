@@ -1,6 +1,6 @@
-"""EvolvXSI-API PAT credential resolver.
+"""NortPole-API PAT credential resolver.
 
-Claims requests bound for the EvolvXSI API host (the host of ``EVOLVXSI_SERVER_URL``)
+Claims requests bound for the NortPole API host (the host of ``EVOLVXSI_SERVER_URL``)
 and sets both auth headers to the sandbox's real per-sandbox PAT, read
 encrypted off ``Sandbox.encrypted_pat``. The tenant is embedded in the PAT
 itself, so no separate tenant header is injected.
@@ -32,7 +32,7 @@ logger = setup_logger()
 
 
 class EvolvXSIPatResolver(CredentialResolver):
-    """Injects the sandbox's EvolvXSI API PAT on requests to the configured API host."""
+    """Injects the sandbox's NortPole API PAT on requests to the configured API host."""
 
     def __init__(self) -> None:
         parsed = urlparse(EVOLVXSI_SERVER_URL) if EVOLVXSI_SERVER_URL else None

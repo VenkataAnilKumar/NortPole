@@ -44,13 +44,13 @@ def _check_bot_config_api_access() -> None:
     """Raise 403 if bot config cannot be managed via API.
 
     Bot config endpoints are disabled:
-    - On Cloud (managed by EvolvXSI)
+    - On Cloud (managed by NortPole)
     - When DISCORD_BOT_TOKEN env var is set (managed via env)
     """
     if MULTI_TENANT:
         raise EvolvXSIError(
             EvolvXSIErrorCode.INSUFFICIENT_PERMISSIONS,
-            "Discord bot configuration is managed by EvolvXSI on Cloud.",
+            "Discord bot configuration is managed by NortPole on Cloud.",
         )
     if DISCORD_BOT_TOKEN:
         raise EvolvXSIError(
@@ -138,7 +138,7 @@ def delete_service_api_key_endpoint(
     """Delete the Discord service API key.
 
     This endpoint allows manual deletion of the service API key used by the
-    Discord bot to authenticate with the EvolvXSI API. The key is also automatically
+    Discord bot to authenticate with the NortPole API. The key is also automatically
     deleted when:
     - Bot config is deleted (self-hosted)
     - All guild configs are deleted (Cloud)

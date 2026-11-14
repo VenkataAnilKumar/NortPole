@@ -163,7 +163,7 @@ def parse_box_folder_id(folder_id_or_url: str) -> str:
 
 
 def normalize_box_login(login: str) -> str:
-    """Box logins are emails; lowercase them so stored ACLs match EvolvXSI's
+    """Box logins are emails; lowercase them so stored ACLs match NortPole's
     lowercased user identities (access filters compare emails exactly)."""
     return login.strip().lower()
 

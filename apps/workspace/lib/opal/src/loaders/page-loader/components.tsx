@@ -15,7 +15,7 @@ interface PageLoaderProps {
 }
 
 /**
- * Full-page loading state: the animated EvolvXSI mark with a label, centred in
+ * Full-page loading state: the animated NortPole mark with a label, centred in
  * the page body by `PageCenter`. Use for page/route-level loading. For an inline or
  * section-level loader without a label, use `EvolvXSILoader` directly.
  */

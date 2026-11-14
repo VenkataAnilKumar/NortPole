@@ -61,11 +61,11 @@ def _build_provider_extra_headers(
             )
         }
 
-    # Passing these will put EvolvXSI on the OpenRouter leaderboard
+    # Passing these will put NortPole on the OpenRouter leaderboard
     elif provider == LlmProviderNames.OPENROUTER:
         return {
             "HTTP-Referer": WEB_DOMAIN,
-            "X-Title": "EvolvXSI",
+            "X-Title": "NortPole",
         }
 
     return {}

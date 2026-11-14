@@ -1,8 +1,8 @@
 {
   "mcpOAuth": {
     "consent": {
-      "title": "Conectar ao EvolvXSI",
-      "request": "Permitir que {clientName} pesquise no EvolvXSI?",
+      "title": "Conectar ao NortPole",
+      "request": "Permitir que {clientName} pesquise no NortPole?",
       "account": "Conectado como {email}",
       "workspace": "Espaço de trabalho: {workspaceName}",
       "appAddress": "Endereço do aplicativo: {origin}",
@@ -16,13 +16,13 @@
       "signInRequired": "Entre para autorizar este aplicativo.",
       "signIn": "Entrar",
       "forbidden": "Você não pode autorizar este aplicativo. Contate o administrador do seu espaço de trabalho.",
-      "loadFailed": "O EvolvXSI não conseguiu carregar esta solicitação. Tente novamente.",
+      "loadFailed": "O NortPole não conseguiu carregar esta solicitação. Tente novamente.",
       "retry": "Tentar novamente"
     },
     "connections": {
       "cancel": "Cancelar",
       "title": "Aplicativos conectados",
-      "description": "Aplicativos que você autorizou a pesquisar no EvolvXSI.",
+      "description": "Aplicativos que você autorizou a pesquisar no NortPole.",
       "empty": "Nenhum aplicativo conectado.",
       "loading": "Carregando aplicativos conectados...",
       "expires": "Expira em {date}",
@@ -32,7 +32,7 @@
       "failed": "Não foi possível desconectar o aplicativo. Tente novamente.",
       "loadFailed": "Não foi possível carregar os aplicativos conectados.",
       "confirmTitle": "Desconectar {clientName}?",
-      "confirmDescription": "Este aplicativo perderá o acesso ao EvolvXSI. Você poderá conectá-lo novamente mais tarde."
+      "confirmDescription": "Este aplicativo perderá o acesso ao NortPole. Você poderá conectá-lo novamente mais tarde."
     }
   },
   "accountPopover": {
@@ -192,7 +192,7 @@
         "planNote": "O acesso por grupos exige um plano Business."
       },
       "defaultChat": {
-        "title": "Disponível no chat padrão do EvolvXSI"
+        "title": "Disponível no chat padrão do NortPole"
       }
     },
     "addOpenApiModal": {
@@ -2048,7 +2048,7 @@
           "label": "Chave de licença expirada"
         },
         "keyField": {
-          "description": "Cole ou anexe o arquivo da chave de licença que você recebeu da EvolvXSI.",
+          "description": "Cole ou anexe o arquivo da chave de licença que você recebeu da NortPole.",
           "title": "Chave de licença"
         },
         "updateKey": {
@@ -3265,7 +3265,7 @@
         "resolveAll": {
           "button": "Resolver tudo",
           "title": "Resolver todas as atividades exibidas",
-          "body": "{count, plural, one {Isso resolve # atividade que corresponde ao filtro atual: {failures} e {errors}. O EvolvXSI não tenta novamente os itens com falha. A atividade mantém o status e passa para Resolvidas.} other {Isso resolve # atividades que correspondem ao filtro atual: {failures} e {errors}. O EvolvXSI não tenta novamente os itens com falha. As atividades mantêm o status e passam para Resolvidas.}}",
+          "body": "{count, plural, one {Isso resolve # atividade que corresponde ao filtro atual: {failures} e {errors}. O NortPole não tenta novamente os itens com falha. A atividade mantém o status e passa para Resolvidas.} other {Isso resolve # atividades que correspondem ao filtro atual: {failures} e {errors}. O NortPole não tenta novamente os itens com falha. As atividades mantêm o status e passam para Resolvidas.}}",
           "body2": "Uma execução ainda em andamento pode relatar novos erros. Eles aparecem como abertos novamente. Você pode tentar novamente um documento resolvido mais tarde, na lista de documentos com falha.",
           "failures": "{count, plural, =0 {nenhuma falha} one {# falha} other {# falhas}}",
           "errors": "{count, plural, =0 {nenhuma execução com erros} one {# execução com erros} other {# execuções com erros}}",
@@ -3339,7 +3339,7 @@
         },
         "organizationLinks": {
           "label": "Tratar links da organização como públicos",
-          "description": "Torne os arquivos compartilhados por um link de toda a organização visíveis para todos os usuários do EvolvXSI."
+          "description": "Torne os arquivos compartilhados por um link de toda a organização visíveis para todos os usuários do NortPole."
         },
         "authorityHost": {
           "label": "Host de autoridade",
@@ -3360,7 +3360,7 @@
           "label": "Projetos",
           "description": "Nomes ou URLs de projetos do Linear a indexar. Deixe vazio para indexar todos os projetos. Com equipes definidas também, um issue deve corresponder a ambos."
         },
-        "syncNotice": "Conecte-se como membro do workspace, não como convidado, que pertença a todas as equipes privadas que você quer indexar. O EvolvXSI não vê equipes privadas das quais o usuário conectado não faz parte. Issues de equipes públicas podem ser pesquisados por todos os membros do workspace, e os de equipes privadas ou restritas, por seus membros."
+        "syncNotice": "Conecte-se como membro do workspace, não como convidado, que pertença a todas as equipes privadas que você quer indexar. O NortPole não vê equipes privadas das quais o usuário conectado não faz parte. Issues de equipes públicas podem ser pesquisados por todos os membros do workspace, e os de equipes privadas ou restritas, por seus membros."
       },
       "add": {
         "authorizeButton": {
@@ -3840,7 +3840,7 @@
             },
             "treat_link_access_as_public": {
               "label": "Tratar acesso por link como público",
-              "description": "Só importa com a sincronização de permissões. Quando ativado, uma gravação cujo Acesso por link é \"Qualquer pessoa com o link\" ou uma regra de login fica visível para todos os usuários do EvolvXSI, e uma regra de domínio para os usuários desses domínios. Quando desativado, cada transcrição fica visível somente para o proprietário da gravação, pois o Zoom não informa quem está em \"Pessoas com acesso\"."
+              "description": "Só importa com a sincronização de permissões. Quando ativado, uma gravação cujo Acesso por link é \"Qualquer pessoa com o link\" ou uma regra de login fica visível para todos os usuários do NortPole, e uma regra de domínio para os usuários desses domínios. Quando desativado, cada transcrição fica visível somente para o proprietário da gravação, pois o Zoom não informa quem está em \"Pessoas com acesso\"."
             },
             "plan_tier": {
               "label": "Plano do Zoom",
@@ -3953,7 +3953,7 @@
             },
             "everything": {
               "label": "Indexar tudo",
-              "description": "O EvolvXSI indexará todos os repositórios encontrados para o proprietário {owner}."
+              "description": "O NortPole indexará todos os repositórios encontrados para o proprietário {owner}."
             },
             "include_prs": {
               "label": "Incluir pull requests",
@@ -4054,7 +4054,7 @@
             },
             "workspace_tab": {
               "label": "Indexa todos os repositórios do workspace",
-              "description": "O EvolvXSI indexa todos os repositórios do workspace que a conta selecionada pode ler. Para indexar menos, escolha outra aba."
+              "description": "O NortPole indexa todos os repositórios do workspace que a conta selecionada pode ler. Para indexar menos, escolha outra aba."
             }
           }
         },
@@ -4086,8 +4086,8 @@
             "include_shared_drives": {
               "label": "Incluir drives compartilhados",
               "description": {
-                "oauth": "Isso permite que o EvolvXSI indexe tudo nos drives compartilhados aos quais você tem acesso.",
-                "serviceAccount": "Isso permite que o EvolvXSI indexe tudo nos drives compartilhados da sua organização."
+                "oauth": "Isso permite que o NortPole indexe tudo nos drives compartilhados aos quais você tem acesso.",
+                "serviceAccount": "Isso permite que o NortPole indexe tudo nos drives compartilhados da sua organização."
               }
             },
             "include_my_drives": {
@@ -4096,12 +4096,12 @@
                 "serviceAccount": "Incluir o Meu Drive de todos"
               },
               "description": {
-                "oauth": "Isso permite que o EvolvXSI indexe tudo no seu Meu Drive.",
-                "serviceAccount": "Isso permite que o EvolvXSI indexe tudo no Meu Drive de todos."
+                "oauth": "Isso permite que o NortPole indexe tudo no seu Meu Drive.",
+                "serviceAccount": "Isso permite que o NortPole indexe tudo no Meu Drive de todos."
               }
             },
             "include_files_shared_with_me": {
-              "description": "Isso permite que o EvolvXSI indexe todos os arquivos compartilhados com você.",
+              "description": "Isso permite que o NortPole indexe todos os arquivos compartilhados com você.",
               "label": "Incluir todos os arquivos compartilhados com você"
             },
             "shared_drive_urls": {
@@ -4125,7 +4125,7 @@
             },
             "exclude_domain_link_only": {
               "label": "Ocultar arquivos acessíveis só por link de domínio",
-              "description": "Quando ativado, o EvolvXSI ignora arquivos compartilhados de forma ampla (domínio ou público), mas que exigem o link para acesso."
+              "description": "Quando ativado, o NortPole ignora arquivos compartilhados de forma ampla (domínio ou público), mas que exigem o link para acesso."
             }
           }
         },
@@ -4177,7 +4177,7 @@
             },
             "everything": {
               "label": "Indexar tudo",
-              "description": "O EvolvXSI indexará todos os espaços e páginas aos quais a conta selecionada tem acesso."
+              "description": "O NortPole indexará todos os espaços e páginas aos quais a conta selecionada tem acesso."
             },
             "space": {
               "label": "Espaços",
@@ -4198,7 +4198,7 @@
             },
             "cql_query": {
               "label": "Consulta CQL",
-              "description": "Retorne apenas páginas. Mantenha `type=page` como o único filtro de tipo.\nEvite ordenação e filtros de data. `order by` ou `lastModified` quebrarão a consulta do próprio EvolvXSI. [Referência de CQL](https://developer.atlassian.com/server/confluence/advanced-searching-using-cql/)",
+              "description": "Retorne apenas páginas. Mantenha `type=page` como o único filtro de tipo.\nEvite ordenação e filtros de data. `order by` ou `lastModified` quebrarão a consulta do próprio NortPole. [Referência de CQL](https://developer.atlassian.com/server/confluence/advanced-searching-using-cql/)",
               "testButton": {
                 "label": "Testar consulta"
               },
@@ -4232,7 +4232,7 @@
             },
             "everything": {
               "label": "Indexa todas as issues que a conta pode ler",
-              "description": "O EvolvXSI indexa todas as issues de cada projeto que a conta selecionada pode ler. Para indexar menos, escolha outra aba."
+              "description": "O NortPole indexa todas as issues de cada projeto que a conta selecionada pode ler. Para indexar menos, escolha outra aba."
             },
             "project_key": {
               "label": "Chave do projeto",
@@ -4264,7 +4264,7 @@
             },
             "requested_objects": {
               "label": "Objetos solicitados",
-              "description": "Especifique os tipos de objeto do Salesforce que você quer indexar. Se não tiver certeza, não especifique nenhum objeto e o EvolvXSI indexará 'Account' por padrão.\n\nDica: Use a forma singular do nome do objeto (por exemplo, 'Opportunity' em vez de 'Opportunities')."
+              "description": "Especifique os tipos de objeto do Salesforce que você quer indexar. Se não tiver certeza, não especifique nenhum objeto e o NortPole indexará 'Account' por padrão.\n\nDica: Use a forma singular do nome do objeto (por exemplo, 'Opportunity' em vez de 'Opportunities')."
             },
             "custom_query_config": {
               "label": "Configuração de consulta personalizada",
@@ -4277,7 +4277,7 @@
           "fields": {
             "sites": {
               "label": "Sites",
-              "description": "- Se nenhum site for especificado, todos os sites da sua organização serão indexados (permissão `Sites.Read.All` necessária).\n- Especificar `https://evolvxsiai.sharepoint.com/sites/support`, por exemplo, indexa somente este site.\n- Especificar `https://evolvxsiai.sharepoint.com/sites/support/subfolder`, por exemplo, indexa somente esta pasta.\n- Para indexar os sites pessoais dos usuários, use o [conector do OneDrive]({docsAdminsPath}/connectors/official/onedrive).\n- Especificar sites funciona atualmente para instâncias do SharePoint em inglês, espanhol ou alemão. Fale com a equipe do EvolvXSI se precisar de suporte a outro idioma."
+              "description": "- Se nenhum site for especificado, todos os sites da sua organização serão indexados (permissão `Sites.Read.All` necessária).\n- Especificar `https://evolvxsiai.sharepoint.com/sites/support`, por exemplo, indexa somente este site.\n- Especificar `https://evolvxsiai.sharepoint.com/sites/support/subfolder`, por exemplo, indexa somente esta pasta.\n- Para indexar os sites pessoais dos usuários, use o [conector do OneDrive]({docsAdminsPath}/connectors/official/onedrive).\n- Especificar sites funciona atualmente para instâncias do SharePoint em inglês, espanhol ou alemão. Fale com a equipe do NortPole se precisar de suporte a outro idioma."
             },
             "include_site_documents": {
               "label": "Indexar documentos",
@@ -4289,7 +4289,7 @@
             },
             "treat_sharing_link_as_public": {
               "label": "Tratar links de compartilhamento como públicos",
-              "description": "Quando ativado, documentos com um link de compartilhamento (anônimo ou para toda a organização) são tratados como públicos (visíveis para todos os usuários do EvolvXSI). Quando desativado, somente usuários e grupos com atribuições de função explícitas podem ver o documento."
+              "description": "Quando ativado, documentos com um link de compartilhamento (anônimo ou para toda a organização) são tratados como públicos (visíveis para todos os usuários do NortPole). Quando desativado, somente usuários e grupos com atribuições de função explícitas podem ver o documento."
             },
             "excluded_sites": {
               "label": "Sites excluídos",
@@ -4358,7 +4358,7 @@
             },
             "mailbox_groups": {
               "label": "Grupos de caixas de correio",
-              "description": "Nomes de exibição ou IDs de objeto de grupos do Entra. A caixa de correio de cada membro é indexada, incluindo membros de grupos aninhados, de modo que um tenant possa ser limitado às pessoas que usam o EvolvXSI. Exige a permissão de aplicativo GroupMember.Read.All."
+              "description": "Nomes de exibição ou IDs de objeto de grupos do Entra. A caixa de correio de cada membro é indexada, incluindo membros de grupos aninhados, de modo que um tenant possa ser limitado às pessoas que usam o NortPole. Exige a permissão de aplicativo GroupMember.Read.All."
             },
             "include_attachments": {
               "description": "Indexa o texto dos anexos de arquivo. Imagens embutidas, itens aninhados e links da nuvem são ignorados."
@@ -4420,7 +4420,7 @@
             },
             "everything_description": {
               "label": "Indexa todos os espaços que a conta pode ler",
-              "description": "O EvolvXSI indexa todas as páginas de cada espaço que a conta selecionada pode ler. Para indexar menos, escolha outra aba."
+              "description": "O NortPole indexa todas as páginas de cada espaço que a conta selecionada pode ler. Para indexar menos, escolha outra aba."
             },
             "spaces": {
               "label": "IDs de spaces",
@@ -4878,7 +4878,7 @@
             },
             "everything_description": {
               "label": "Indexa todas as bases que o token pode ler",
-              "description": "O EvolvXSI encontra e indexa todas as bases e tabelas que o token de API pode ler. Para indexar menos, escolha outra aba."
+              "description": "O NortPole encontra e indexa todas as bases e tabelas que o token de API pode ler. Para indexar menos, escolha outra aba."
             },
             "airtable_url": {
               "label": "URL do Airtable",
@@ -4918,7 +4918,7 @@
             },
             "everything": {
               "label": "Indexa todos os spots que a conta pode ler",
-              "description": "O EvolvXSI indexa todos os spots que a conta selecionada pode ler. Para indexar menos, escolha outra aba."
+              "description": "O NortPole indexa todos os spots que a conta selecionada pode ler. Para indexar menos, escolha outra aba."
             }
           }
         },
@@ -5068,7 +5068,7 @@
         "title": "Nenhum usuário encontrado"
       },
       "header": {
-        "description": "Controle quem pode usar o Craft, o criador de aplicativos com agentes do EvolvXSI.",
+        "description": "Controle quem pode usar o Craft, o criador de aplicativos com agentes do NortPole.",
         "title": "Acesso"
       },
       "perUserAccess": {
@@ -5099,7 +5099,7 @@
         }
       },
       "unavailable": {
-        "description": "O Craft é ativado por implantação pela EvolvXSI. Entre em contato com seu representante EvolvXSI para obter acesso.",
+        "description": "O Craft é ativado por implantação pela NortPole. Entre em contato com seu representante NortPole para obter acesso.",
         "title": "O Craft não está disponível nesta implantação"
       },
       "usersLoadError": {
@@ -5179,7 +5179,7 @@
         "label": "Testar no Craft"
       },
       "unavailable": {
-        "description": "O Craft é ativado por implantação pela EvolvXSI. Entre em contato com seu representante EvolvXSI para obter acesso.",
+        "description": "O Craft é ativado por implantação pela NortPole. Entre em contato com seu representante NortPole para obter acesso.",
         "title": "O Craft não está disponível nesta implantação"
       }
     },
@@ -5883,7 +5883,7 @@
         "title": "Exportar logs"
       },
       "header": {
-        "description": "Baixe um zip com os arquivos de log do servidor para anexar a um chamado de suporte da EvolvXSI."
+        "description": "Baixe um zip com os arquivos de log do servidor para anexar a um chamado de suporte da NortPole."
       },
       "receipt": {
         "duplicateHost": {
@@ -6361,7 +6361,7 @@
         }
       },
       "tokenLimits": {
-        "disabledTooltip": "Os limites de taxa de tokens estão disponíveis apenas na [versão Enterprise do EvolvXSI](/admin/billing)."
+        "disabledTooltip": "Os limites de taxa de tokens estão disponíveis apenas na [versão Enterprise do NortPole](/admin/billing)."
       },
       "builtIn": {
         "admin": {
@@ -6869,7 +6869,7 @@
     "indexSettings": {
       "advanced": {
         "title": "Opções avançadas",
-        "description": "Estas configurações alteram a eficiência com que o {appName} aplica as permissões de documentos na pesquisa. Elas não alteram quais documentos cada usuário pode ver. Não as altere sem orientação explícita da equipe EvolvXSI."
+        "description": "Estas configurações alteram a eficiência com que o {appName} aplica as permissões de documentos na pesquisa. Elas não alteram quais documentos cada usuário pode ver. Não as altere sem orientação explícita da equipe NortPole."
       },
       "actions": {
         "applyForward": {
@@ -6958,7 +6958,7 @@
           "label": "ou"
         },
         "quantizationOnly": {
-          "description": "Somente a quantização de vetores mudou, então o EvolvXSI reconstrói o índice a partir dos vetores armazenados, sem gerar embeddings novamente. Isso é muito mais rápido do que uma reindexação completa.",
+          "description": "Somente a quantização de vetores mudou, então o NortPole reconstrói o índice a partir dos vetores armazenados, sem gerar embeddings novamente. Isso é muito mais rápido do que uma reindexação completa.",
           "title": "O índice será reconstruído."
         },
         "reindex": {
@@ -6970,7 +6970,7 @@
         }
       },
       "cloudDisabled": {
-        "tooltip": "Esta configuração é gerenciada pelo EvolvXSI Cloud."
+        "tooltip": "Esta configuração é gerenciada pelo NortPole Cloud."
       },
       "contextualModel": {
         "description": "Este modelo será usado para gerar contexto para os chunks.",
@@ -6987,7 +6987,7 @@
       },
       "embeddingModel": {
         "cloudManaged": {
-          "title": "O modelo de embedding e as configurações são gerenciados pelo EvolvXSI Cloud."
+          "title": "O modelo de embedding e as configurações são gerenciados pelo NortPole Cloud."
         },
         "description": "O {appName} usa este modelo para codificar documentos para pesquisa e recuperação.",
         "title": "Modelo de embedding"
@@ -7136,7 +7136,7 @@
         }
       },
       "modelPicker": {
-        "cpuEstimateHint": "As velocidades de CPU são estimativas e variam conforme o hardware e o tamanho dos documentos. A RAM recomendada cobre um modelo carregado, não toda a infraestrutura do EvolvXSI. Reserve mais memória durante a reindexação.",
+        "cpuEstimateHint": "As velocidades de CPU são estimativas e variam conforme o hardware e o tamanho dos documentos. A RAM recomendada cobre um modelo carregado, não toda a infraestrutura do NortPole. Reserve mais memória durante a reindexação.",
         "addCustomModel": {
           "label": "Adicionar modelo personalizado"
         },
@@ -7203,7 +7203,7 @@
         },
         "copyTitle": "Reconstruindo o índice…",
         "description": {
-          "copy": "O EvolvXSI está reconstruindo o índice a partir dos vetores armazenados, sem gerar embeddings novamente. Isso é muito mais rápido do que gerar os embeddings de novo.",
+          "copy": "O NortPole está reconstruindo o índice a partir dos vetores armazenados, sem gerar embeddings novamente. Isso é muito mais rápido do que gerar os embeddings de novo.",
           "withModel": "As novas configurações de embedding (**{model}**) são aplicadas conforme a reindexação avança. Isso pode levar **horas ou dias** dependendo do tamanho do corpus.",
           "withoutModel": "As novas configurações de embedding são aplicadas conforme a reindexação avança. Isso pode levar **horas ou dias** dependendo do tamanho do corpus."
         },
@@ -8125,7 +8125,7 @@
         },
         "requestSentBody": "Sua solicitação de entrada foi enviada. Você pode explorar como sua própria equipe enquanto espera que um administrador de {domain} aprove sua solicitação.",
         "tryEvolvXSIButton": {
-          "label": "Testar o EvolvXSI enquanto espera"
+          "label": "Testar o NortPole enquanto espera"
         }
       },
       "newTenant": {
@@ -8938,7 +8938,7 @@
         }
       },
       "liteModeNotice": {
-        "description": "Esta implantação executa o EvolvXSI Lite, que não tem banco de dados vetorial — os conectores e a indexação de documentos estão desativados, e nada é indexado. Para conectar fontes de dados e indexar documentos, implante o EvolvXSI no **modo Standard**. Consulte o [guia de implantação]({docsUrl}) para começar.",
+        "description": "Esta implantação executa o NortPole Lite, que não tem banco de dados vetorial — os conectores e a indexação de documentos estão desativados, e nada é indexado. Para conectar fontes de dados e indexar documentos, implante o NortPole no **modo Standard**. Consulte o [guia de implantação]({docsUrl}) para começar.",
         "title": "A indexação não está disponível no modo Lite"
       },
       "providerCard": {
@@ -9227,7 +9227,7 @@
           "item": "Enviar uma mensagem direta ao EvolvXSIBot para pesquisar como você faria na interface web."
         },
         "docsPrompt": {
-          "text": "Siga o <link>guia</link> da documentação do EvolvXSI para começar!"
+          "text": "Siga o <link>guia</link> da documentação do NortPole para começar!"
         },
         "documentSets": {
           "item": "Escolher de quais conjuntos de documentos o EvolvXSIBot deve responder, conforme o canal em que a pergunta é feita."
@@ -9770,7 +9770,7 @@
         "label": "Aviso pop-up na primeira visita"
       },
       "appName": {
-        "description": "Este nome aparecerá em todo o aplicativo e substituirá \"EvolvXSI\" na interface.",
+        "description": "Este nome aparecerá em todo o aplicativo e substituirá \"NortPole\" na interface.",
         "label": "Nome de exibição do aplicativo"
       },
       "chatFooter": {
@@ -9796,7 +9796,7 @@
         "label": "Mensagem de saudação"
       },
       "helpLink": {
-        "description": "Adicione um link de ajuda personalizado no menu do usuário, além da documentação do EvolvXSI.",
+        "description": "Adicione um link de ajuda personalizado no menu do usuário, além da documentação do NortPole.",
         "enterpriseTooltip": "O link de ajuda personalizado é um recurso do plano Enterprise.",
         "label": "Link de ajuda personalizado"
       },
@@ -9949,7 +9949,7 @@
             "project": {
               "label": "Nome do projeto",
               "description": "Nome do projeto do Braintrust onde os traces são registrados.",
-              "placeholder": "EvolvXSI"
+              "placeholder": "NortPole"
             },
             "apiUrl": {
               "label": "URL da API",
@@ -11674,7 +11674,7 @@
         "label": "Criar nova organização"
       },
       "createTeamOption": {
-        "text": "Criar uma nova equipe do EvolvXSI"
+        "text": "Criar uma nova equipe do NortPole"
       },
       "differentEmailPrompt": {
         "text": "Tem uma conta com outro e-mail?"
@@ -11683,10 +11683,10 @@
         "title": "Conta não encontrada"
       },
       "inviteOption": {
-        "text": "Ser convidado para uma equipe do EvolvXSI existente"
+        "text": "Ser convidado para uma equipe do NortPole existente"
       },
       "notFound": {
-        "description": "Não encontramos sua conta em nossos registros. Para acessar o EvolvXSI, você precisa de uma destas opções:"
+        "description": "Não encontramos sua conta em nossos registros. Para acessar o NortPole, você precisa de uma destas opções:"
       },
       "signInLink": {
         "label": "Entrar"
@@ -11755,7 +11755,7 @@
         "description": "Restrições de acesso ou permissões da conta"
       },
       "cloudSupportPrompt": {
-        "text": "Se o problema continuar, entre em contato com a equipe do EvolvXSI em <link>support@evolvxsi.local</link>"
+        "text": "Se o problema continuar, entre em contato com a equipe do NortPole em <link>support@evolvxsi.local</link>"
       },
       "code": {
         "accessDenied": "Seu provedor de identidade negou o acesso.",
@@ -12175,7 +12175,7 @@
       },
       "modal": {
         "title": "Conectar ferramentas",
-        "description": "Adicione suas credenciais para usar estas ferramentas no EvolvXSI.",
+        "description": "Adicione suas credenciais para usar estas ferramentas no NortPole.",
         "hint": "Você pode continuar conversando sem conectar estas ferramentas, mas os recursos do seu agente podem ficar limitados."
       },
       "connect": {
@@ -14224,7 +14224,7 @@
         "alt": "Logotipo"
       },
       "poweredBy": {
-        "label": "Desenvolvido com EvolvXSI"
+        "label": "Desenvolvido com NortPole"
       }
     },
     "modelSelectors": {
@@ -14250,9 +14250,9 @@
         "message": "Falha ao concluir a autorização"
       },
       "desktopHandoff": {
-        "button": "Abrir o EvolvXSI",
-        "description": "Seu navegador abre o aplicativo de desktop do EvolvXSI para concluir a conexão. Você pode fechar esta guia depois que o aplicativo abrir.",
-        "title": "Voltar ao EvolvXSI"
+        "button": "Abrir o NortPole",
+        "description": "Seu navegador abre o aplicativo de desktop do NortPole para concluir a conexão. Você pode fechar esta guia depois que o aplicativo abrir.",
+        "title": "Voltar ao NortPole"
       },
       "genericError": {
         "description": "Ocorreu um erro durante o processo de OAuth. Tente novamente.",
@@ -14301,11 +14301,11 @@
       },
       "business": {
         "title": "Plano Business",
-        "tooltip": "Este recurso está disponível apenas na [versão Business ou Enterprise do EvolvXSI](/admin/billing)."
+        "tooltip": "Este recurso está disponível apenas na [versão Business ou Enterprise do NortPole](/admin/billing)."
       },
       "enterprise": {
         "title": "Plano Enterprise",
-        "tooltip": "Este recurso está disponível apenas na [versão Enterprise do EvolvXSI](/admin/billing)."
+        "tooltip": "Este recurso está disponível apenas na [versão Enterprise do NortPole](/admin/billing)."
       },
       "upgrade": {
         "label": "Fazer upgrade do plano"
@@ -14514,8 +14514,8 @@
             "label": "Nome"
           }
         },
-        "managedDescription": "Fornecido pela EvolvXSI: configure o que o agente pode fazer.",
-        "managedNote": "O EvolvXSI gerencia as credenciais. Defina as políticas de ações em Permissões. Os membros se conectam em Plugins.",
+        "managedDescription": "Fornecido pela NortPole: configure o que o agente pode fazer.",
+        "managedNote": "O NortPole gerencia as credenciais. Defina as políticas de ações em Permissões. Os membros se conectam em Plugins.",
         "saveButton": "Salvar"
       },
       "customApp": {
@@ -14596,7 +14596,7 @@
           "title": "Nada para conectar ainda"
         },
         "header": {
-          "description": "Conecte as ferramentas que o EvolvXSI Craft pode usar como contexto enquanto trabalha.",
+          "description": "Conecte as ferramentas que o NortPole Craft pode usar como contexto enquanto trabalha.",
           "title": "Apps"
         },
         "loading": {
@@ -15009,7 +15009,7 @@
       },
       "llmLocked": {
         "backToChatButton": "Voltar ao chat",
-        "description": "O EvolvXSI Craft precisa de um provedor de modelos e somente administradores podem configurá-lo. Peça ao seu administrador para conectar Anthropic, OpenAI ou OpenRouter.",
+        "description": "O NortPole Craft precisa de um provedor de modelos e somente administradores podem configurá-lo. Peça ao seu administrador para conectar Anthropic, OpenAI ou OpenRouter.",
         "title": "É necessário um provedor de LLM"
       },
       "llmSetup": {
@@ -17611,7 +17611,7 @@
     "disk": "O uso de disco do OpenSearch é de pelo menos 85% em um nó de dados. A indexação pode parar se o disco ficar cheio.",
     "jvmMemory": "O uso de memória JVM do OpenSearch permaneceu acima de 85% em verificações repetidas. A pesquisa e a indexação podem falhar.",
     "vectorMemory": "A memória vetorial do OpenSearch está quase cheia ou atingiu seu limite. A pesquisa e a indexação podem falhar.",
-    "contact": "Entre em contato com o administrador do sistema ou com a equipe EvolvXSI em [support@evolvxsi.local](mailto:support@evolvxsi.local).",
+    "contact": "Entre em contato com o administrador do sistema ou com a equipe NortPole em [support@evolvxsi.local](mailto:support@evolvxsi.local).",
     "stale": "A última verificação está indisponível. Este aviso reflete a última verificação bem-sucedida; a recuperação não foi confirmada.",
     "dismiss": "Fechar",
     "diskTitle": "Espaço em disco",

@@ -1,4 +1,4 @@
-"""Exercise the runtime without EvolvXSI rendering, storage, or a provider."""
+"""Exercise the runtime without NortPole rendering, storage, or a provider."""
 
 import threading
 from collections.abc import Callable

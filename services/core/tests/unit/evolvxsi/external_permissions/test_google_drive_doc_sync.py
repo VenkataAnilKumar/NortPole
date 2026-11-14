@@ -1,4 +1,4 @@
-"""Google Drive sharing to an EvolvXSI access list, on recorded Drive API response shapes (no network).
+"""Google Drive sharing to an NortPole access list, on recorded Drive API response shapes (no network).
 
 Rules under test: named people may read; groups are recorded but grant nothing until group sync exists; domain sharing
 and "anyone" links grant nothing (a link never makes a file public here); removed permissions grant nothing; addresses

@@ -315,13 +315,13 @@ def fetch_visible_model_names_for_provider_as_set(
 
 
 def get_provider_display_name(provider_name: str) -> str:
-    """Get human-friendly display name for an EvolvXSI-supported provider.
+    """Get human-friendly display name for an NortPole-supported provider.
 
-    First checks EvolvXSI-specific display names, then falls back to
+    First checks NortPole-specific display names, then falls back to
     PROVIDER_DISPLAY_NAMES from constants.
     """
-    # Display names for EvolvXSI-supported LLM providers (used in admin UI provider selection).
-    # These override PROVIDER_DISPLAY_NAMES for EvolvXSI-specific branding.
+    # Display names for NortPole-supported LLM providers (used in admin UI provider selection).
+    # These override PROVIDER_DISPLAY_NAMES for NortPole-specific branding.
     _EVOLVXSI_PROVIDER_DISPLAY_NAMES: dict[str, str] = {
         OPENAI_PROVIDER_NAME: "ChatGPT (OpenAI)",
         OLLAMA_PROVIDER_NAME: "Ollama",

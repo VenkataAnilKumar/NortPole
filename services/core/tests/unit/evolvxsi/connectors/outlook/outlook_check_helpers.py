@@ -24,7 +24,7 @@ def healthy_gateway() -> MagicMock:
     """A healthy tenant: one user with a readable mailbox holding one message."""
     gateway = create_autospec(OutlookSourceOperations, instance=True)
     gateway.check_token.return_value = MicrosoftTokenInfo(
-        expires_in=3599, app_name="EvolvXSI"
+        expires_in=3599, app_name="NortPole"
     )
     gateway.list_mailbox_users.return_value = OutlookMailboxPage(mailboxes=[mailbox()])
     gateway.resolve_mailbox.return_value = mailbox()

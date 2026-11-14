@@ -1,7 +1,7 @@
 """Plain-data shapes the Outlook gateway returns.
 
 The gateway hands these to the connector and the capability checks instead of
-raw Graph JSON, so the field names EvolvXSI depends on are spelled out once and a
+raw Graph JSON, so the field names NortPole depends on are spelled out once and a
 schema change in Graph surfaces here rather than deep in a document builder.
 """
 

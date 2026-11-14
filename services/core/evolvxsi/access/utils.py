@@ -6,7 +6,7 @@ EXTERNAL_GROUP_ACL_PREFIX = "external_group:"
 
 def prefix_user_email(user_email: str) -> str:
     """Prefixes a user email to eliminate collision with group names.
-    This applies to both a EvolvXSI user and an External user, this is to make the query time
+    This applies to both a NortPole user and an External user, this is to make the query time
     more efficient"""
     return f"{USER_EMAIL_ACL_PREFIX}{user_email}"
 
@@ -18,7 +18,7 @@ def prefix_user_group(user_group_name: str) -> str:
 
 
 def prefix_external_group(ext_group_name: str) -> str:
-    """Prefixes an external group name to eliminate collision with user emails / EvolvXSI groups."""
+    """Prefixes an external group name to eliminate collision with user emails / NortPole groups."""
     return f"{EXTERNAL_GROUP_ACL_PREFIX}{ext_group_name}"
 
 

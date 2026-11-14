@@ -6,19 +6,19 @@ Status: **proposed** · Date: 2026-11-11 · Phase: A5 in the [delivery plan](Evo
 
 Read from `services/core/evolvxsi` on 2026-11-11:
 
-- **An access model per document.** `access/models.py` defines `DocumentAccess` with EvolvXSI user emails, user groups, external user emails, external group ids and an `is_public` flag. It converts to a list of access-control strings (`to_acl`) that retrieval filters on.
+- **An access model per document.** `access/models.py` defines `DocumentAccess` with NortPole user emails, user groups, external user emails, external group ids and an `is_public` flag. It converts to a list of access-control strings (`to_acl`) that retrieval filters on.
 - **Many source connectors** (Google Drive, Confluence, Box, Dropbox, GitHub, Gmail, Jira, Linear, Slack-type sources and more) under `connectors/`.
 - **A retrieval index interface** (`document_index/`) with an OpenSearch implementation and a disabled stub used by lite mode.
 - **Not present:** automatic per-user permission sync from a source. Upstream keeps that in its enterprise edition, which we excluded. Connectors can record who a document is shared with, but nothing keeps that in step with the source over time.
 
-- **Groups are not applied for the asking user.** The community `_get_acl_for_user` returns the user's email addresses and the public marker only. Group and external-group access is added by the excluded enterprise code, so EvolvXSI has to supply it.
+- **Groups are not applied for the asking user.** The community `_get_acl_for_user` returns the user's email addresses and the public marker only. Group and external-group access is added by the excluded enterprise code, so NortPole has to supply it.
 
 Lite mode runs with `DISABLE_VECTOR_DB=true`, so nothing can be indexed or retrieved there. Any retrieval test needs a real index service.
 
 ## Proposed approach
 
 1. **Treat the access list as the single source of truth for what a user may see.** Retrieval filters by the asking user's emails and groups, as upstream does. Citations and exports re-check the same list at open time.
-2. **Build our own permission sync, one source at a time.** For the first source, read the source's own sharing data, map people to EvolvXSI users and groups, and refresh on a schedule and on change events where the source offers them. Unmapped people get no access.
+2. **Build our own permission sync, one source at a time.** For the first source, read the source's own sharing data, map people to NortPole users and groups, and refresh on a schedule and on change events where the source offers them. Unmapped people get no access.
 3. **Fail closed.** A document with no known access list is visible to administrators only. A sync that fails or times out leaves the last known list in place and raises an alert; it never widens access.
 4. **Revocation withholds.** When access to a source is removed, answers and reports that depended on it are withheld until regenerated. Downloaded files cannot be recalled; say so in the pilot agreement.
 
@@ -36,7 +36,7 @@ Lite mode runs with `DISABLE_VECTOR_DB=true`, so nothing can be indexed or retri
 
 1. **First source system.** Shared drive, wiki or document store. This sets the permission semantics.
 2. **Where the retrieval index runs** (managed, customer cloud or on premises) and who operates it.
-3. **Identity mapping.** How source identities map to EvolvXSI users and groups (email match, SSO subject, SCIM).
+3. **Identity mapping.** How source identities map to NortPole users and groups (email match, SSO subject, SCIM).
 
 ## Risks
 
@@ -70,7 +70,7 @@ Limits: embeddings are deterministic test vectors because the embedding model ho
 
 ## Progress (2026-11-12): group access wired into real search
 
-The community code left groups out on both sides: users' access lists carried only email addresses, documents were indexed with no groups, and the query-time source check returned false for groups. EvolvXSI now fills all three (`services/core/evolvxsi/knowledge/knowledge_access/groups.py`, used from `access/access.py` and `db/connector_credential_pair.py`):
+The community code left groups out on both sides: users' access lists carried only email addresses, documents were indexed with no groups, and the query-time source check returned false for groups. NortPole now fills all three (`services/core/evolvxsi/knowledge/knowledge_access/groups.py`, used from `access/access.py` and `db/connector_credential_pair.py`):
 
 - A person's access list includes every group they belong to, read on each request.
 - A document's access list includes the data-access groups of the PRIVATE sources it came from (`UserGroup__CCPairDataAccess`).
@@ -103,7 +103,7 @@ Known window: between the change and the background sync, the index still holds 
 
 ## Progress (2026-11-12): search-time source check on by default
 
-The core can decide at search time which sources a person may read, from the database, instead of relying only on the access list stored on each document. Upstream shipped it switched off. EvolvXSI now turns it on and enforces it by default (`ENABLE_CC_PAIR_ACCESS_FILTER` and `ENFORCE_CC_PAIR_ACCESS_FILTER`, both default true; set either to `false` to turn it off; a cache override still wins).
+The core can decide at search time which sources a person may read, from the database, instead of relying only on the access list stored on each document. Upstream shipped it switched off. NortPole now turns it on and enforces it by default (`ENABLE_CC_PAIR_ACCESS_FILTER` and `ENFORCE_CC_PAIR_ACCESS_FILTER`, both default true; set either to `false` to turn it off; a cache override still wins).
 
 Enforcement takes effect only once every indexed chunk carries its source ids (the core's backfill). Until then search stays in shadow mode: results still use the document access list, as before, and a second comparison query is logged per search. So the new default is never less strict than the old one.
 
@@ -125,7 +125,7 @@ Correction to an earlier note: the community copy does have a way to change a so
 
 Documents were also re-synced only when the source's access type changed, not when only its groups changed.
 
-EvolvXSI now implements all three (`services/core/evolvxsi/knowledge/knowledge_access/source_groups.py`), called directly from `connectors/edit_plan/state.py` and `db/connector_edit_requests.py`. Saving marks the source's documents for the access re-sync whenever the groups change. A scoped editor changes only the groups they can see, and the groups they cannot see are kept.
+NortPole now implements all three (`services/core/evolvxsi/knowledge/knowledge_access/source_groups.py`), called directly from `connectors/edit_plan/state.py` and `db/connector_edit_requests.py`. Saving marks the source's documents for the access re-sync whenever the groups change. A scoped editor changes only the groups they can see, and the groups they cannot see are kept.
 
 Checked on the real database (42 integration checks pass, 5 new): the edit reads the real current groups; a scoped editor replaced one group while a group they could not see stayed; adding an unseen group was refused; a permission-synced source with no group was refused and left unchanged; making a source public removed its groups. The 234 existing unit tests for the edit flow pass. The edit form itself was not opened in a browser, because no source can be connected in the lite sandbox.
 
@@ -166,7 +166,7 @@ Checked (100 integration checks pass): with a real embedding model, a reworded q
 
 ## Progress (2026-11-12): first end-to-end run on the real stack
 
-With the API in full mode (vector database on), Celery workers, OpenSearch, Redis, a real embedding model and a real 7B chat model (runbook: `infrastructure/profiles/local/README.md`), the core's own ingestion pipeline indexed the 24-passage synthetic corpus (24 chunks, access lists computed by EvolvXSI's group-aware code). Six finance passages sat in a PRIVATE source readable by a Finance group; the rest in the public source. Over HTTP:
+With the API in full mode (vector database on), Celery workers, OpenSearch, Redis, a real embedding model and a real 7B chat model (runbook: `infrastructure/profiles/local/README.md`), the core's own ingestion pipeline indexed the 24-passage synthetic corpus (24 chunks, access lists computed by NortPole's group-aware code). Six finance passages sat in a PRIVATE source readable by a Finance group; the rest in the public source. Over HTTP:
 
 - A Finance member's task found the receipts passage through the real index; the relevance check kept it; the 7B draft cited it with both claims supported (21 seconds).
 - An outsider's identical task found nothing and got the no-source notice (3 seconds).
@@ -188,7 +188,7 @@ What this settles and what it does not:
 
 ## Google Drive permission sync (built 2026-11-14, checklist 7(a))
 
-The first per-source permission sync, written for EvolvXSI (the upstream one is in the Enterprise package, which is
+The first per-source permission sync, written for NortPole (the upstream one is in the Enterprise package, which is
 not shipped). It runs when a Google Drive source uses "sync" access.
 
 - **Reading Drive's sharing:** `evolvxsi/external_permissions/google_drive/doc_sync.py` implements the two functions the

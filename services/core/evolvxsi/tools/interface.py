@@ -231,7 +231,7 @@ class Tool(abc.ABC):
                 )
 
                 observation.tool_started(is_search=isinstance(self, SearchTool))
-            # EvolvXSI: every call to an outside tool (MCP, OpenAPI) is logged, without its arguments or result.
+            # NortPole: every call to an outside tool (MCP, OpenAPI) is logged, without its arguments or result.
             from evolvxsi.governance.tool_catalog.calls import is_outside, logged
 
             if is_outside(self):

@@ -15,10 +15,10 @@ jest.mock("@/lib/oauth-provider/api", () => ({
 const submit = jest.mocked(submitOAuthProviderConsent);
 const requestId = "a".repeat(43);
 const details = {
-  client_name: "EvolvXSI test client",
+  client_name: "NortPole test client",
   redirect_origin: "http://127.0.0.1:9876",
   account_email: "user@example.com",
-  workspace_name: "EvolvXSI workspace",
+  workspace_name: "NortPole workspace",
   scopes: ["read:search"],
   csrf_token: "c".repeat(43),
 };
@@ -40,7 +40,7 @@ test.each(["allow", "deny"] as const)(
 
     render(<OAuthProviderConsent requestId={requestId} userId="owner" />);
 
-    await screen.findByText("Allow EvolvXSI test client to search EvolvXSI?");
+    await screen.findByText("Allow NortPole test client to search NortPole?");
     expect(submit).not.toHaveBeenCalled();
     await user.click(
       screen.getByRole("button", {
@@ -111,6 +111,6 @@ test("renders client-supplied names as text", async () => {
     <OAuthProviderConsent requestId={requestId} userId="owner" />
   );
 
-  await screen.findByText("Allow <img src=x onerror=alert(1)> to search EvolvXSI?");
+  await screen.findByText("Allow <img src=x onerror=alert(1)> to search NortPole?");
   expect(container.querySelector("img")).toBeNull();
 });

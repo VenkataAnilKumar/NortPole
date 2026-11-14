@@ -10,7 +10,7 @@ jest.mock("@/providers/UserProvider", () => ({
 }));
 
 jest.mock("@/lib/settings/hooks", () => ({
-  useSettings: () => ({ appName: "EvolvXSI" }),
+  useSettings: () => ({ appName: "NortPole" }),
 }));
 
 function builtIn(

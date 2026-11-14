@@ -1,4 +1,4 @@
-# EvolvXSI — feature specification
+# NortPole — feature specification
 
 Status: **platform catalog and first-workflow specification** · Updated: 2026-11-08
 
@@ -139,7 +139,7 @@ Use the [feature architecture mapping](../06-technical/EvolvXSI_Feature-Architec
 
 ## Full platform feature catalog
 
-**Fixture** proves the engineering foundation using synthetic inputs. **Pilot** proves a governed workflow with one customer, source and approved model route. **Expansion** describes the broader EvolvXSI product target informed by the North benchmark; it does not claim verified feature parity or knowledge of North internals. Each entry states an observable outcome. The F-01–F-09 sections retain detailed behavior for the first workflow.
+**Fixture** proves the engineering foundation using synthetic inputs. **Pilot** proves a governed workflow with one customer, source and approved model route. **Expansion** describes the broader NortPole product target informed by the North benchmark; it does not claim verified feature parity or knowledge of North internals. Each entry states an observable outcome. The F-01–F-09 sections retain detailed behavior for the first workflow.
 
 | Feature ID | Layer | Capability | First target | Acceptance evidence |
 | --- | --- | --- | --- | --- |

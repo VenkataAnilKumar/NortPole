@@ -81,7 +81,7 @@ class ZoomRateLimitError(requests.HTTPError):
 
     It carries the 429 response so fails_the_whole_run reads it as systemic.
     Anything that function does not recognise ends the attempt as
-    COMPLETED_WITH_ERRORS, which EvolvXSI counts as a success, so the throttled
+    COMPLETED_WITH_ERRORS, which NortPole counts as a success, so the throttled
     occurrence would never be retried.
     """
 

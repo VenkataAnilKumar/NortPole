@@ -16,7 +16,7 @@ def configure_litellm_settings() -> None:
     litellm.add_function_to_prompt = False
     litellm.suppress_debug_info = True
     # LiteLLM submits a threadpool task per streamed chunk that spins up a new
-    # asyncio event loop to run success callbacks and cache writes. EvolvXSI
+    # asyncio event loop to run success callbacks and cache writes. NortPole
     # registers neither (tracing and cost accounting are our own), so skip it.
     # Removing it cuts ~60% of the CPU spent consuming a stream.
     litellm.disable_streaming_logging = True

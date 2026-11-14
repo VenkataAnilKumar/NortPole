@@ -1,4 +1,4 @@
-# EvolvXSI — UI specification
+# NortPole — UI specification
 
 Status: **platform surfaces and proposed first-workflow screens** · Updated: 2026-11-09
 

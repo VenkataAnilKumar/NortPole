@@ -2,7 +2,7 @@
 a provider row (fixed ACS), the callback request data OneLogin checks against that
 ACS, fail-closed resolution by name and by issuer, the issuer and InResponseTo
 extraction that routes the single callback, the one-time binding of a response
-to the AuthnRequest EvolvXSI issued, the ticketed handoff to /complete that ties the
+to the AuthnRequest NortPole issued, the ticketed handoff to /complete that ties the
 session to the browser that started sign-in, assertion replay rejection, the per-provider
 email-domain gate, and email extraction from SAML attributes. No DB or live IdP."""
 

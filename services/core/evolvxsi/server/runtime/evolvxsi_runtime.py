@@ -248,7 +248,7 @@ class EvolvXSIRuntime:
     @staticmethod
     def get_cc_pair_access_filter_enforce() -> bool:
         """Should search use the cc-pair access filter for results, in tenants
-        whose index is ready for it? EvolvXSI default: on
+        whose index is ready for it? NortPole default: on
         (`ENFORCE_CC_PAIR_ACCESS_FILTER`), overridable in the cache. Only
         meaningful when `get_cc_pair_access_filter_enabled()` is also True."""
         return EvolvXSIRuntime._read_request_path_bool_flag(

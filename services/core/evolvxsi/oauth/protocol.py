@@ -17,7 +17,7 @@ OAUTH_PKCE_CHALLENGE_METHOD_S256 = "S256"
 _OFFLINE_ACCESS_AUTH_PARAMS_BY_HOST: dict[str, dict[str, str]] = {
     # `prompt=consent` because Google issues a refresh token only on flows
     # that show the consent screen; a silent re-auth would leave a reconnected
-    # config without one. Matches EvolvXSI's own Google login flow.
+    # config without one. Matches NortPole's own Google login flow.
     "accounts.google.com": {"access_type": "offline", "prompt": "consent"},
 }
 

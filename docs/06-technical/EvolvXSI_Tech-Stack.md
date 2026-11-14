@@ -1,8 +1,8 @@
-# EvolvXSI — tech stack
+# NortPole — tech stack
 
 Status: current as built · Updated: 2026-11-12
 
-What the product runs on today, read from the repository (`apps/workspace/package.json`, `services/core/pyproject.toml`). "Adopted" means it came with the copied upstream open-source core ([decision 0004](../decisions/0004-adopt-community-source-as-pilot-core.md)); "EvolvXSI" means it was built in this project. Everything below has been run only in a sandbox with mock model routes.
+What the product runs on today, read from the repository (`apps/workspace/package.json`, `services/core/pyproject.toml`). "Adopted" means it came with the copied upstream open-source core ([decision 0004](../decisions/0004-adopt-community-source-as-pilot-core.md)); "NortPole" means it was built in this project. Everything below has been run only in a sandbox with mock model routes.
 
 ## Web app (`apps/workspace`)
 
@@ -13,7 +13,7 @@ What the product runs on today, read from the repository (`apps/workspace/packag
 | Data and state | SWR for server data, Zustand for local state | Adopted |
 | Themes and languages | next-themes (Light, Dark, System); next-intl with 9 locales (new labels are English placeholders) | Adopted |
 | UI primitives | Radix UI | Adopted |
-| Fonts | Inter, Newsreader, DM Mono, bundled with the app; no font fetched from Google | EvolvXSI |
+| Fonts | Inter, Newsreader, DM Mono, bundled with the app; no font fetched from Google | NortPole |
 | Tests | Jest (unit), Playwright (browser checks) | Adopted |
 
 ## Backend (`services/core`)
@@ -30,7 +30,7 @@ What the product runs on today, read from the repository (`apps/workspace/packag
 | Sign-in | fastapi-users (basic login in use; SSO and SCIM code present, not configured) | Adopted |
 | File storage | Postgres in lite mode; object storage in a full deployment | Adopted |
 
-## EvolvXSI-owned parts
+## NortPole-owned parts
 
 | Part | Where | What it does |
 | --- | --- | --- |

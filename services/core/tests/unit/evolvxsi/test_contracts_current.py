@@ -25,4 +25,4 @@ def test_operation_ids_are_unique_so_clients_can_be_generated() -> None:
     spec = json.loads(generate_contracts.OPENAPI_PATH.read_text(encoding="utf-8"))
     ids = Counter(op["operationId"] for item in spec["paths"].values() for op in item.values())
     assert not [i for i, n in ids.items() if n > 1]
-    assert len(spec["paths"]) > 50, "the description should cover EvolvXSI's routes"
+    assert len(spec["paths"]) > 50, "the description should cover NortPole's routes"

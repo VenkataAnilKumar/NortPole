@@ -1,4 +1,4 @@
-# EvolvXSI repository structure
+# NortPole repository structure
 
 Updated: 2026-11-14. Status: current layout, per [decision 0006](../decisions/0006-scalable-repository-structure.md). The
 [module inventory](../../modules.json) is the machine-checked list of what exists and what is planned.
@@ -9,7 +9,7 @@ Updated: 2026-11-14. Status: current layout, per [decision 0006](../decisions/00
 apps/workspace/                 Web app: the user workspace and the admin console (Next.js)
 services/core/                  API and background workers (FastAPI, Celery): one deployable
 services/model-gateway/         Mock model server for tests and the local profile
-packages/contracts/             Generated: pack manifest JSON Schema, OpenAPI of EvolvXSI routes
+packages/contracts/             Generated: pack manifest JSON Schema, OpenAPI of NortPole routes
 packages/pack-sdk/              Validate, build and sign packs without the server
 packs/                          Workflow packs as source: horizontal/, vertical/<industry>/, editions/, _template/
 infrastructure/profiles/        local runbook; staging profile (Compose, TLS, retrieval, backup, restore, release)
@@ -26,7 +26,7 @@ modules.json                    Existing and planned modules, with maturity
    rejects a listed module that holds only placeholders and a planned module whose folder already exists.
 2. **One core deployable.** API, workers, indexing and the scheduler already run as separate processes and scale
    separately. A service is split out only for its own scaling, release cycle or security boundary.
-3. **EvolvXSI code is grouped by domain inside `services/core/evolvxsi`**; inherited platform modules stay where they are
+3. **NortPole code is grouped by domain inside `services/core/evolvxsi`**; inherited platform modules stay where they are
    so upstream fixes can still be compared file by file. `tests/unit/evolvxsi/test_domain_boundaries.py` enforces the
    layers (below) and lists the only places where inherited code calls into our domains.
 4. **Packs are source**: `packs/horizontal/<pack>/` and `packs/vertical/<industry>/<pack>/`, each with `manifest.yaml`,
@@ -35,7 +35,7 @@ modules.json                    Existing and planned modules, with maturity
 5. **Contracts are generated** into `packages/contracts` (`make contracts`) and a test fails when they drift; the
    [pack SDK](../../packages/pack-sdk/README.md) validates and signs packs against them (`make packs`).
 
-## EvolvXSI domains in `services/core/evolvxsi`
+## NortPole domains in `services/core/evolvxsi`
 
 | Domain | Modules | May import |
 |---|---|---|

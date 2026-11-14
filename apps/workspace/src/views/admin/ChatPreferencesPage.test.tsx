@@ -63,7 +63,7 @@ const settings: AppSettings = {
   query_history_type: QueryHistoryType.NORMAL,
   company_name: "Example team",
   enterprise: null,
-  appName: "EvolvXSI",
+  appName: "NortPole",
   logoUrl: null,
   vectorDbEnabled: false,
   isLoading: false,

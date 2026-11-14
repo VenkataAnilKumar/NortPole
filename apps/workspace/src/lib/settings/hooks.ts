@@ -118,7 +118,7 @@ export function useSettings(): AppSettings {
   return {
     ...core,
     enterprise: enterprise ?? null,
-    appName: enterprise?.application_name?.trim() || "EvolvXSI",
+    appName: enterprise?.application_name?.trim() || "NortPole",
     logoUrl: enterprise?.use_custom_logo
       ? `/api/enterprise-settings/logo?v=${logoBuster}`
       : null,

@@ -60,13 +60,13 @@ def _check_for_notifications_to_create(
     user: User,  # noqa: ARG001
     db_session: Session,  # noqa: ARG001
 ) -> None:
-    """EvolvXSI creates no upstream-seeded notifications.
+    """NortPole creates no upstream-seeded notifications.
 
     The upstream build-mode intro, the permissions-migration announcement and the
     release-notes poll are disabled here: the last one fetched the upstream
     project's changelog from the network on every poll. Admin-authored system
     announcements still work (see ``_ensure_system_announcement_notification``),
-    and EvolvXSI's own events (approvals, updates) are added by later phases.
+    and NortPole's own events (approvals, updates) are added by later phases.
     """
     return
 

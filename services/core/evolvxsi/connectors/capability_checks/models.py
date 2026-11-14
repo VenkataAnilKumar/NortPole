@@ -377,7 +377,7 @@ def sign_in_timeout_text(source_name: str) -> CheckRowText:
         summary="Sign-in timed out",
         description=(
             f"{source_name} did not answer the sign-in in time.\nRe-run, or "
-            f"check that {source_name} is reachable from EvolvXSI."
+            f"check that {source_name} is reachable from NortPole."
         ),
     )
 
@@ -628,7 +628,7 @@ class CapabilityCheck(ABC, Generic[ConfigT]):
         self.validates_binding = validates_binding
         self.reports_field = reports_field
         # A sign-in check: on a form run, a timeout or an unreachable source
-        # FAILS it, because EvolvXSI cannot use the account. Other runs keep it
+        # FAILS it, because NortPole cannot use the account. Other runs keep it
         # INCOMPLETE, so a slow source never holds indexing.
         self.fails_when_unreachable = fails_when_unreachable
         # The check_ids this check runs after. A dependency that FAILED, is

@@ -1,4 +1,4 @@
-# EvolvXSI — Pack signing and key rotation runbook
+# NortPole — Pack signing and key rotation runbook
 
 Status: Current (checked in a sandbox against the real database; no production key ceremony has been run).
 

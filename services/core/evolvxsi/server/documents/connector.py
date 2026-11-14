@@ -2372,7 +2372,7 @@ def submit_connector_request(
     # Send email notification (only if email and a recipient are configured)
     if EMAIL_CONFIGURED and CONNECTOR_REQUEST_EMAIL:
         try:
-            subject = "EvolvXSI Craft Connector Request"
+            subject = "NortPole Craft Connector Request"
             email_body_text = f"""A new connector request has been submitted:
 
 Connector Name: {connector_name}

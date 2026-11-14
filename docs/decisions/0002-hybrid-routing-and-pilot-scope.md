@@ -4,7 +4,7 @@ Date: 2026-11-10. Status: **proposed**, recorded from the product owner's stated
 
 ## Direction
 
-EvolvXSI is a North-like whole product with hybrid intelligence: a user can choose a local, private or cloud model route, and vertical packs run on top. This extends the existing statement in the [product definition](../02-product/EvolvXSI_Product-Definition.md) that users choose among local, private and cloud routes within the same policy.
+NortPole is a North-like whole product with hybrid intelligence: a user can choose a local, private or cloud model route, and vertical packs run on top. This extends the existing statement in the [product definition](../02-product/EvolvXSI_Product-Definition.md) that users choose among local, private and cloud routes within the same policy.
 
 ## Decision
 

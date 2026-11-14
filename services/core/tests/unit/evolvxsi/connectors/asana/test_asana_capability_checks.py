@@ -118,7 +118,7 @@ def test_archived_projects_pass_with_an_advisory() -> None:
 
     assert output is not None
     assert output.summary == "Found all 2 projects"
-    assert "EvolvXSI skips archived projects: P3" in output.advisories[0].message
+    assert "NortPole skips archived projects: P3" in output.advisories[0].message
 
 
 def test_tasks_sample_reads_a_comment_and_the_creator() -> None:

@@ -8,7 +8,7 @@ The catalog is refreshed by ``backend/scripts/sync_price_table.py`` (weekly CI
 job), which aggregates models.dev (canonical chat pricing), litellm's cost map
 (``mode``, per-image/per-second pricing, the 1h cache-write tier, non-chat
 models), and OpenRouter (gap-fill pricing for its section).
-``model_metadata_enrichments.json`` adds EvolvXSI-owned display fields
+``model_metadata_enrichments.json`` adds NortPole-owned display fields
 (display_name / model_vendor / model_version) on top.
 """
 

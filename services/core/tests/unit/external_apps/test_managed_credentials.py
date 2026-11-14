@@ -1,4 +1,4 @@
-"""Each EvolvXSI-managed provider resolves its EvolvXSI-owned credentials from the
+"""Each NortPole-managed provider resolves its NortPole-owned credentials from the
 per-field ``managed_org_credentials`` values
 (``EvolvXSIManagedExtApp.configured_managed_credentials``)."""
 
@@ -18,7 +18,7 @@ def _gmail() -> EvolvXSIManagedExtApp:
 
 
 def test_managed_credential_keys_match_required_fields() -> None:
-    """Each EvolvXSI-managed provider maps exactly its required credential fields.
+    """Each NortPole-managed provider maps exactly its required credential fields.
     (Also enforced at class-definition time in ExternalAppProvider.__init_subclass__;
     this pins it as an explicit, readable invariant.)"""
     managed = [p for p in PROVIDERS.values() if isinstance(p, EvolvXSIManagedExtApp)]

@@ -458,7 +458,7 @@ class PythonTool(Tool):
                             guess_mime_type(filename) or "application/octet-stream"
                         )
 
-                        # Save to EvolvXSI file store
+                        # Save to NortPole file store
                         evolvxsi_file_id = file_store.save_file(
                             content=BytesIO(file_content),
                             display_name=filename,

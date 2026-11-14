@@ -198,7 +198,7 @@ def _parse_html_to_web_content(url: str, html: str) -> WebContent:
         title = parsed.title or ""
     except Exception as exc:
         logger.warning(
-            "EvolvXSI crawler failed to parse %s (%s)", url, exc.__class__.__name__
+            "NortPole crawler failed to parse %s (%s)", url, exc.__class__.__name__
         )
         return _failed_result(url, FailureReason.EMPTY_OR_UNPARSEABLE)
 
@@ -289,7 +289,7 @@ class EvolvXSIWebCrawler(WebContentProvider):
             return self._fetch_url(url)
         except Exception as exc:
             logger.warning(
-                "EvolvXSI crawler unexpected error for %s (%s)",
+                "NortPole crawler unexpected error for %s (%s)",
                 url,
                 exc.__class__.__name__,
             )
@@ -313,7 +313,7 @@ class EvolvXSIWebCrawler(WebContentProvider):
             return _failed_result(url, FailureReason.SSRF_BLOCKED)
         except Exception as exc:
             logger.warning(
-                "EvolvXSI crawler failed to fetch %s (%s)",
+                "NortPole crawler failed to fetch %s (%s)",
                 url,
                 exc.__class__.__name__,
             )
@@ -341,7 +341,7 @@ class EvolvXSIWebCrawler(WebContentProvider):
 
             if try_fallback:
                 logger.info(
-                    "EvolvXSI crawler got %s for %s; retrying via Playwright "
+                    "NortPole crawler got %s for %s; retrying via Playwright "
                     "(cf_signals=%s)",
                     response.status_code,
                     url,
@@ -354,7 +354,7 @@ class EvolvXSIWebCrawler(WebContentProvider):
                     # fallback's own result is the truth.
                     return fallback
 
-            logger.warning("EvolvXSI crawler received %s for %s", response.status_code, url)
+            logger.warning("NortPole crawler received %s for %s", response.status_code, url)
             return _failed_result(
                 url, _failure_reason_for_status(response, has_cf_signals)
             )
@@ -367,11 +367,11 @@ class EvolvXSIWebCrawler(WebContentProvider):
                 deadline_seconds=self._body_deadline_seconds,
             )
         except _BodyReadError as exc:
-            logger.warning("EvolvXSI crawler rejected body of %s: %s", url, exc)
+            logger.warning("NortPole crawler rejected body of %s: %s", url, exc)
             return _failed_result(url, exc.failure_reason)
         except (requests.RequestException, urllib3.exceptions.HTTPError) as exc:
             logger.warning(
-                "EvolvXSI crawler failed to read %s (%s)", url, exc.__class__.__name__
+                "NortPole crawler failed to read %s (%s)", url, exc.__class__.__name__
             )
             return _failed_result(url, FailureReason.NETWORK_ERROR)
 
@@ -399,7 +399,7 @@ class EvolvXSIWebCrawler(WebContentProvider):
             )
         except Exception as exc:
             logger.warning(
-                "EvolvXSI crawler failed to decode %s (%s)", url, exc.__class__.__name__
+                "NortPole crawler failed to decode %s (%s)", url, exc.__class__.__name__
             )
             return _failed_result(url, FailureReason.DECODE_ERROR)
 

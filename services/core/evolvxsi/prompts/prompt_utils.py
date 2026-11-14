@@ -122,7 +122,7 @@ def apply_prompt_placeholders(
     include_all_guidance: bool = False,
     append_citation_if_missing: bool = False,
 ) -> tuple[str, bool]:
-    """Apply standard EvolvXSI prompt placeholders to any prompt string.
+    """Apply standard NortPole prompt placeholders to any prompt string.
 
     Supported placeholders:
     - {{CURRENT_DATETIME}}

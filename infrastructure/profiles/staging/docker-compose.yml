@@ -1,4 +1,4 @@
-# EvolvXSI single-host profile, lite mode: web + API + PostgreSQL + Redis.
+# NortPole single-host profile, lite mode: web + API + PostgreSQL + Redis.
 # No search index and no model server (see README.md next to this file).
 # Required environment (no defaults, so a missing secret stops the start):
 #   POSTGRES_PASSWORD, USER_AUTH_SECRET (random hex, e.g. `openssl rand -hex 32`)

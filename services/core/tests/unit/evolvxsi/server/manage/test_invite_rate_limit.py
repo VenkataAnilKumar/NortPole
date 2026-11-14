@@ -284,7 +284,7 @@ def test_invite_tenant_bucket_is_isolated_across_tenants() -> None:
 
 
 def test_invite_fails_open_when_redis_unavailable() -> None:
-    """EvolvXSI Lite deployments ship without Redis; invite flow must still work."""
+    """NortPole Lite deployments ship without Redis; invite flow must still work."""
     stub = _StubRedis()
     stub.eval_fail = RedisConnectionError("Redis not reachable")
     redis_client = cast(TenantRedisClient, stub)

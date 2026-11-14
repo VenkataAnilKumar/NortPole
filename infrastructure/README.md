@@ -1,6 +1,6 @@
-# EvolvXSI — infrastructure
+# NortPole — infrastructure
 
-Deployment profiles for EvolvXSI.
+Deployment profiles for NortPole.
 
 | Profile | What it is |
 |---|---|

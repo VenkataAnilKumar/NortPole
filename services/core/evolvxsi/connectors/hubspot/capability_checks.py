@@ -198,7 +198,7 @@ def _raise_for_error(
         ) from error
     if isinstance(error, HubSpotConnectionError):
         raise UnreachableValidationError(
-            f"EvolvXSI cannot connect to HubSpot: {error}",
+            f"NortPole cannot connect to HubSpot: {error}",
             summary=_UNREACHABLE_ROW.summary,
             description=_UNREACHABLE_ROW.description,
         ) from error
@@ -207,7 +207,7 @@ def _raise_for_error(
     status: int | None = error.status_code
     if status == 401:
         raise CredentialInvalidError(
-            f"HubSpot rejected the access token when EvolvXSI tried to {denied}.",
+            f"HubSpot rejected the access token when NortPole tried to {denied}.",
             summary=_REJECTED_ROW.summary,
             description=_REJECTED_ROW.description,
         ) from error
@@ -279,7 +279,7 @@ def _first_readable_record(context: CapabilityCheckContext) -> _Sample:
     if denied:
         names: str = ", ".join(object_type.value for object_type in denied)
         raise InconclusiveValidationError(
-            f"No readable type has a record, and HubSpot denied {names}, so EvolvXSI "
+            f"No readable type has a record, and HubSpot denied {names}, so NortPole "
             "has no record to probe.",
             summary="No readable records to test",
             description=(
@@ -475,7 +475,7 @@ class _RecordsReadableCheck(_HubSpotCheck):
                 ),
             )
         raise NothingToCheckError(
-            f"HubSpot has no {object_type.value}, so EvolvXSI could not read one.",
+            f"HubSpot has no {object_type.value}, so NortPole could not read one.",
             summary=f"No {object_type.value} in HubSpot",
             description=(
                 f"Listing and search work, and HubSpot has no {object_type.value}."
@@ -568,7 +568,7 @@ class _NotesCheck(_HubSpotCheck):
             )
         if not note_ids:
             raise InconclusiveValidationError(
-                f"The sample HubSpot {_noun(object_type)} has no notes, so EvolvXSI "
+                f"The sample HubSpot {_noun(object_type)} has no notes, so NortPole "
                 "could not read one.",
                 summary="No notes found to test",
                 description="The sample record has no notes.",
@@ -609,7 +609,7 @@ class _UsersCheck(_HubSpotCheck):
             )
         if not page.items:
             raise InconclusiveValidationError(
-                "HubSpot listed no users, so EvolvXSI could not read one.",
+                "HubSpot listed no users, so NortPole could not read one.",
                 summary="No users found to test",
                 description="HubSpot listed no users of the account.",
             )

@@ -73,7 +73,7 @@ def _call(path: str, call: Callable[[], T]) -> T:
         # The SDK wraps a connection or TLS failure as status 0.
         if not e.status:
             raise UnreachableValidationError(
-                f"EvolvXSI cannot connect to Asana for GET {path}: {e.reason}"
+                f"NortPole cannot connect to Asana for GET {path}: {e.reason}"
             ) from e
         raw: Any = e.body
         body: str | None = raw.decode("utf-8", errors="replace") if raw else None
@@ -116,7 +116,7 @@ def _call(path: str, call: Callable[[], T]) -> T:
                 f"Asana did not answer GET {path} in time."
             ) from e
         raise UnreachableValidationError(
-            f"EvolvXSI cannot connect to Asana for GET {path}: {e}"
+            f"NortPole cannot connect to Asana for GET {path}: {e}"
         ) from e
 
 

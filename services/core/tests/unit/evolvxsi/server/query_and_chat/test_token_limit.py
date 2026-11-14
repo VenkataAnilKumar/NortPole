@@ -1,7 +1,7 @@
 """Unit tests for token-rate-limit enforcement (in-memory SQLite).
 
 Guards the admin-facing unit: a stored ``token_budget`` of N is in thousands,
-so it enforces at N * 1000 tokens (the EvolvXSI convention).
+so it enforces at N * 1000 tokens (the NortPole convention).
 """
 
 import datetime
@@ -79,7 +79,7 @@ def _usage(token_count: int) -> list[TokenUsageBucket]:
 
 class TestIsRateLimitedUnit:
     def test_budget_is_in_thousands(self) -> None:
-        # token_budget=12 means 12,000 tokens (the EvolvXSI thousands convention).
+        # token_budget=12 means 12,000 tokens (the NortPole thousands convention).
         limit = _make_limit(token_budget=12)
         assert _is_rate_limited([limit], _usage(11_999)) is False
         assert _is_rate_limited([limit], _usage(12_000)) is True

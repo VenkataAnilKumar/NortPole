@@ -1,10 +1,10 @@
-# EvolvXSI — deployment architecture
+# NortPole — deployment architecture
 
 > **Where this lives in code (2026-11-14).** Service and package names here (`services/control-plane`, `services/execution`, `services/knowledge`, `packages/*`, `evaluations`) are logical owners from the design stage. [Decision 0006](../decisions/0006-scalable-repository-structure.md) maps them to the code: the three services are implemented inside `services/core`, and the packages and evaluations are planned modules in `modules.json`, created when their first code arrives.
 
 Status: proposed target topology; not implemented · Updated: 2026-11-05
 
-This document specifies deployable units, processes, persistence, network boundaries and scaling. The system architecture document describes the logical responsibilities. The monorepo groups the product modules. Deployment groups processes by isolation, workload and recovery needs. This is a target for EvolvXSI-owned services; downloaded projects are reference material and are not implementation foundations.
+This document specifies deployable units, processes, persistence, network boundaries and scaling. The system architecture document describes the logical responsibilities. The monorepo groups the product modules. Deployment groups processes by isolation, workload and recovery needs. This is a target for NortPole-owned services; downloaded projects are reference material and are not implementation foundations.
 
 ## Physical topology
 
@@ -151,7 +151,7 @@ Initial availability comes from restartable services, durable checkpoints and te
 
 ## Current implementation direction
 
-EvolvXSI owns the service logic and public contracts. Use official provider clients behind internal adapters. Downloaded application and agent-framework sources are reference material; earlier extraction suggestions are not selected dependencies. The optional agent-loop SDK choice remains separate from the API client choice. See the [dependency decision](../07-implementation/EvolvXSI_Provider-SDK-Decision.md).
+NortPole owns the service logic and public contracts. Use official provider clients behind internal adapters. Downloaded application and agent-framework sources are reference material; earlier extraction suggestions are not selected dependencies. The optional agent-loop SDK choice remains separate from the API client choice. See the [dependency decision](../07-implementation/EvolvXSI_Provider-SDK-Decision.md).
 
 ## Start and event ownership
 

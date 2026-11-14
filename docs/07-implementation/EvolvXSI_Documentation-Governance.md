@@ -1,10 +1,10 @@
-# EvolvXSI — documentation governance
+# NortPole — documentation governance
 
 Status: documentation tracked in the product monorepo; release approval remains pending · Updated: 2026-11-05
 
 ## Repository and ownership
 
-The EvolvXSI monorepo tracks docs/ alongside the product modules. Pin release documentation to the exact product Git commit.
+The NortPole monorepo tracks docs/ alongside the product modules. Pin release documentation to the exact product Git commit.
 
 The product owner owns product scope and the PRD; the technical owner owns architecture, API/data contracts and technical decisions; the delivery owner owns phase evidence; the release owner records acceptance of the combined baseline. Named individuals are assigned in P00. Reference research stays in reference documents and cannot silently select a production dependency.
 

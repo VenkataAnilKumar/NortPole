@@ -1,4 +1,4 @@
-# EvolvXSI — plan for the pending work in A4, A7 and A9
+# NortPole — plan for the pending work in A4, A7 and A9
 
 Status: Plan, written 2026-11-12, before any of this is built. It rests on what is built and checked today (see [REVIEW.md](../REVIEW.md) and the [delivery plan](EvolvXSI_Adopted-Core-Delivery-Plan.md)); all of that was checked in a sandbox only.
 
@@ -36,7 +36,7 @@ Status: Plan, written 2026-11-12, before any of this is built. It rests on what 
 
 **6. Pack review rules (A7).** A pack template can list declarative rules on its drafts (for example "must cite at least two sources", "must not contain these phrases"), checked before the draft can be approved. No code runs. Pack-supplied agents or tools that run code stay out of scope until a sandbox exists.
 
-**7. Interface quality pass (A4).** Light, dark and 390-pixel screenshots of every EvolvXSI page, a keyboard-only path, contrast and axe accessibility checks, with findings fixed.
+**7. Interface quality pass (A4).** Light, dark and 390-pixel screenshots of every NortPole page, a keyboard-only path, contrast and axe accessibility checks, with findings fixed.
 
 **8. Injection suite (A9).** A fixed set of hostile source passages run through the real drafter on the local model; the report states how many produced an injected citation, an obeyed instruction or a leaked prompt. Small models fail such tests, so the number may be poor; it is recorded as measured.
 

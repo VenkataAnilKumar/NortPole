@@ -192,7 +192,7 @@ export default function WebSearchPage() {
       if (providerType === "evolvxsi_web_crawler") {
         return {
           id: -1,
-          name: "EvolvXSI Web Crawler",
+          name: "NortPole Web Crawler",
           provider_type: "evolvxsi_web_crawler",
           is_active: true,
           config: null,

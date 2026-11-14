@@ -144,7 +144,7 @@ def gateway_fence_paths(
     assert module_file is not None, "Gateway modules always have a file."
     gateway_file = Path(module_file).resolve()
     oss_dir = gateway_file.parent
-    # EvolvXSI ships without the Enterprise package, so there is no permission-sync directory to fence as well.
+    # NortPole ships without the Enterprise package, so there is no permission-sync directory to fence as well.
     return gateway_file, [oss_dir]
 
 

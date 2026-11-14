@@ -581,7 +581,7 @@ def test_push_missing_public_key_raises_evolvxsi_error(
     """Daemon without the public-key env var returns a 500 with a descriptive
     detail.
 
-    Note: the in-pod daemon is standalone Python (no EvolvXSI imports) so it
+    Note: the in-pod daemon is standalone Python (no NortPole imports) so it
     surfaces this via ``HTTPException(status_code=500, ...)`` rather than
     ``EvolvXSIError``. The behavior asserted here is the operator-facing error
     when the key is missing, as observed through the FastAPI TestClient.

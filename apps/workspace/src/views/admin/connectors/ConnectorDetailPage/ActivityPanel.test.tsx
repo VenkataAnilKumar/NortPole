@@ -388,7 +388,7 @@ describe("AC-7: Resolve all asks to confirm", () => {
         "This resolves the 5 activities that match the current filter: 2 failures and 3 runs with errors."
       )
     );
-    expect(dialog).toHaveTextContent("EvolvXSI does not retry their failed items.");
+    expect(dialog).toHaveTextContent("NortPole does not retry their failed items.");
     expect(dialog).toHaveTextContent(
       "A run that is still running can report new errors. They show as open again."
     );

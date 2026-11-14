@@ -1,4 +1,4 @@
-"""Reading (data-access) groups of a source: EvolvXSI implementations of the
+"""Reading (data-access) groups of a source: NortPole implementations of the
 three functions the connector edit flow calls. Upstream kept them in its
 enterprise edition; in the community copy they were silent no-ops, so an edit
 that changed a source's reading groups saved nothing and reported success.

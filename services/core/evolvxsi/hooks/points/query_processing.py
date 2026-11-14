@@ -50,7 +50,7 @@ class QueryProcessingSpec(HookPointSpec):
     - Access control: reject queries from certain users or groups
     - Query auditing: log or track queries based on business rules
 
-    Scope: chat queries submitted through the EvolvXSI app only. Requests to the
+    Scope: chat queries submitted through the NortPole app only. Requests to the
     LLM gateway (/api/gateway/*) never fire this hook — content that external
     tools send to model providers through the gateway bypasses it entirely.
     """

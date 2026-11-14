@@ -177,12 +177,12 @@ def _access_hint(
     if OAUTH_REFRESH_TOKEN_KEY in context.credential_json:
         return (
             f"The OAuth token needs the `{oauth_scope}` scope. Connect Confluence "
-            "again and accept every scope EvolvXSI asks for."
+            "again and accept every scope NortPole asks for."
         )
     if config.scoped_token:
         return (
             f"The scoped API token needs the `{scoped_token_scope or oauth_scope}` "
-            "scope. Create a token with the read scopes in the EvolvXSI Confluence "
+            "scope. Create a token with the read scopes in the NortPole Confluence "
             "docs."
         )
     return f"The token acts as its Confluence user. Give that user {user_permission}."
@@ -486,7 +486,7 @@ class _SiteAuthCheck(_ConfluenceCheck):
                 and response.status_code != _RATE_LIMITED_STATUS
             ):
                 raise ConnectorValidationError(
-                    "EvolvXSI cannot get the Atlassian cloud id of "
+                    "NortPole cannot get the Atlassian cloud id of "
                     f"{config.wiki_base} (`{_TENANT_INFO_PATH}`). Scoped API "
                     "tokens work only with Confluence Cloud; check the site URL.",
                     summary="Site URL is not a Confluence Cloud site",
@@ -531,7 +531,7 @@ class _SiteAuthCheck(_ConfluenceCheck):
             ) from e
         except requests.ConnectionError as e:
             raise UnreachableValidationError(
-                f"EvolvXSI cannot connect to {config.wiki_base}. Check the site URL.",
+                f"NortPole cannot connect to {config.wiki_base}. Check the site URL.",
                 summary=f"Cannot reach {urlparse(config.wiki_base).hostname}",
                 description=(
                     "The server could not connect to the Site URL.\nCheck the Site URL."
@@ -906,7 +906,7 @@ class _CqlQueryCheck(_ConfluenceCheck):
             # connector would index nothing.
             raise ConnectorValidationError(
                 "The CQL query matches no page that this credential can read, so "
-                "EvolvXSI cannot verify it. Check the query if pages exist.",
+                "NortPole cannot verify it. Check the query if pages exist.",
                 summary="No pages match the query",
                 description=(
                     "The query matches no page the account can read.\n"
@@ -920,7 +920,7 @@ class _CqlQueryCheck(_ConfluenceCheck):
             raise ConnectorValidationError(
                 "The CQL query selects content that is not a page (found: "
                 f"{', '.join(other_types)}). Join `type=page` to the other "
-                "filters with AND. EvolvXSI indexes pages, and reads the comments "
+                "filters with AND. NortPole indexes pages, and reads the comments "
                 "and attachments of each page itself.",
                 summary=f"Query returns {', '.join(other_types)}, not only pages",
                 description=(
@@ -992,7 +992,7 @@ class _ContentReadCheck(_ConfluenceCheck):
             # connector would index nothing.
             raise ConnectorValidationError(
                 "The indexing scope has no page that this credential can read, so "
-                f"EvolvXSI cannot verify that page content is readable. {hint}",
+                f"NortPole cannot verify that page content is readable. {hint}",
                 summary="No pages in the selected scope",
                 description=f"The scope has no page the account can read.\n{need}",
             )
@@ -1062,7 +1062,7 @@ class _CommentsReadCheck(_ConfluenceCheck):
             )
         if comment is None:
             raise InconclusiveValidationError(
-                "The sampled page has no comments, so EvolvXSI cannot verify that "
+                "The sampled page has no comments, so NortPole cannot verify that "
                 "comments are readable.",
                 summary="No comments found to test",
                 description="The sample page has no comments.",
@@ -1175,7 +1175,7 @@ class _AttachmentsReadCheck(_ConfluenceCheck):
         if found_unsuitable:
             raise InconclusiveValidationError(
                 "No sampled attachment has a known size small enough to "
-                "download, so EvolvXSI listed attachments but did not read one.",
+                "download, so NortPole listed attachments but did not read one.",
                 summary="No attachment small enough to test",
                 description=(
                     "No attachment on the sample pages is small enough to download."
@@ -1183,7 +1183,7 @@ class _AttachmentsReadCheck(_ConfluenceCheck):
             )
         raise InconclusiveValidationError(
             f"The first {_SAMPLE_PAGES} pages in scope have no attachments, so "
-            "EvolvXSI cannot verify that attachments are readable.",
+            "NortPole cannot verify that attachments are readable.",
             summary="No attachments found to test",
             description=f"The first {_SAMPLE_PAGES} pages in scope have no attachments.",
         )
@@ -1247,7 +1247,7 @@ class _UserNamesCheck(_ConfluenceCheck):
         user_id = _author_id(page)
         if user_id is None:
             raise InconclusiveValidationError(
-                "The sampled page names no author, so EvolvXSI cannot verify that "
+                "The sampled page names no author, so NortPole cannot verify that "
                 "user names are readable.",
                 summary="No page author found to test",
                 description="The sample page names no author.",
@@ -1284,7 +1284,7 @@ class _UserNamesCheck(_ConfluenceCheck):
             ) from e
         except requests.ConnectionError as e:
             raise UnreachableValidationError(
-                f"EvolvXSI cannot connect to {config.wiki_base} to read user details.",
+                f"NortPole cannot connect to {config.wiki_base} to read user details.",
                 summary=f"Cannot reach {urlparse(config.wiki_base).hostname}",
                 description="The server could not connect to the Site URL.",
             ) from e
@@ -1296,7 +1296,7 @@ class _UserNamesCheck(_ConfluenceCheck):
                 user_permission="permission to view user profiles",
             )
             raise InsufficientPermissionsError(
-                "EvolvXSI cannot read the name of a page author, so user mentions "
+                "NortPole cannot read the name of a page author, so user mentions "
                 "index as 'Unknown Confluence User'. The author's account can also "
                 f"be deactivated. {hint}",
                 summary="Cannot read user names",
@@ -1327,7 +1327,7 @@ def build_confluence_indexing_checks() -> list[CapabilityCheck]:
 # Permission sync. The EE registry registers these checks. Doc sync reads the
 # read restrictions of each page and the permissions of every visible space.
 # Group sync lists the users and the groups of each user. Both map Confluence
-# users to EvolvXSI users by email.
+# users to NortPole users by email.
 #
 # Cloud and Data Center use different APIs, so a check that depends on the
 # deployment has one instance for each, selected by ``is_cloud``.
@@ -1350,7 +1350,7 @@ _DC_EMAIL_HINT = (
 _CLOUD_EMAIL_HINT = (
     "Atlassian returns a user's email only when the user's profile shows it to "
     "anyone (Profile and visibility > Contact), or when the organization makes "
-    "emails visible to apps. Users without a visible email get no access in EvolvXSI."
+    "emails visible to apps. Users without a visible email get no access in NortPole."
 )
 _SPACE_ADMIN_NEED = (
     "Make the token's user a space admin of every space to sync, or a Confluence admin."
@@ -1391,7 +1391,7 @@ def _probe_space_key(
     key = space.get("key") if space is not None else None
     if not key:
         raise UnexpectedValidationError(
-            "No Confluence space is visible, so EvolvXSI cannot read space "
+            "No Confluence space is visible, so NortPole cannot read space "
             "permissions. confluence_spaces_visible reports why.",
             summary="No space to read",
             description="The account sees no space. List spaces reports why.",
@@ -1626,7 +1626,7 @@ class _RestrictionsBatchReadCheck(_ConfluenceCheck):
             )
         except HTTPError as e:
             raise UnexpectedValidationError(
-                "EvolvXSI cannot read page restrictions, so this check cannot run. "
+                "NortPole cannot read page restrictions, so this check cannot run. "
                 "confluence_page_restrictions_read reports why.",
                 summary="Cannot read page restrictions",
                 description="Read page restrictions reports why.",
@@ -1845,7 +1845,7 @@ class _PermissionUserEmailsCheck(_ConfluenceCheck):
         if not with_email:
             raise InsufficientPermissionsError(
                 f"No user in the permissions of the space `{space_key}` has a "
-                f"visible email, so their access cannot map to EvolvXSI users. "
+                f"visible email, so their access cannot map to NortPole users. "
                 f"{_CLOUD_EMAIL_HINT if self._is_cloud else _DC_EMAIL_HINT}",
                 summary="No user email is visible",
                 description=(
@@ -1879,7 +1879,7 @@ class _PermissionUserEmailsCheck(_ConfluenceCheck):
             permissions = _read_cloud_space_permissions(context, space_key)
         except ConnectorValidationError as e:
             raise UnexpectedValidationError(
-                "EvolvXSI cannot read the space permissions, so this check cannot "
+                "NortPole cannot read the space permissions, so this check cannot "
                 "run. confluence_space_permissions_read reports why.",
                 summary="Cannot read space permissions",
                 description="Read space permissions reports why.",
@@ -1902,7 +1902,7 @@ class _PermissionUserEmailsCheck(_ConfluenceCheck):
             subjects = read_dc_space_subjects(gateway, space_key)
         except (HTTPError, ConnectorValidationError) as e:
             raise UnexpectedValidationError(
-                "EvolvXSI cannot read the space permissions, so this check cannot "
+                "NortPole cannot read the space permissions, so this check cannot "
                 "run. The space-permission checks report why.",
                 summary="Cannot read space permissions",
                 description="Read space permissions reports why.",
@@ -1945,7 +1945,7 @@ class _AnonymousSpaceAccessCheck(_ConfluenceCheck):
             subjects = read_dc_space_subjects(gateway, space_key)
         except (HTTPError, ConnectorValidationError) as e:
             raise UnexpectedValidationError(
-                "EvolvXSI cannot read the space permissions, so this check cannot "
+                "NortPole cannot read the space permissions, so this check cannot "
                 "run. The space-permission checks report why.",
                 summary="Cannot read space permissions",
                 description="Read space permissions reports why.",
@@ -2113,7 +2113,7 @@ class _GroupMembershipCheck(_GroupSyncCheck):
         users = _sample_users(context, config, self._is_cloud)
         if not users:
             raise UnexpectedValidationError(
-                "Confluence listed no users, so EvolvXSI cannot read group "
+                "Confluence listed no users, so NortPole cannot read group "
                 "memberships. confluence_user_listing reports why.",
                 summary="No users to sample",
                 description="List users reports why.",
@@ -2137,7 +2137,7 @@ class _GroupMembershipCheck(_GroupSyncCheck):
         # The reads succeeded: the sampled users can have no groups, and group
         # sync reads every user.
         raise InconclusiveValidationError(
-            "The first listed users are in no group, so EvolvXSI cannot verify that "
+            "The first listed users are in no group, so NortPole cannot verify that "
             f"group memberships are readable. {hint}",
             summary=(
                 "The listed user is in no group"
@@ -2170,7 +2170,7 @@ class _GroupUserEmailsCheck(_GroupSyncCheck):
         if not people and len(users) >= _SAMPLE_USERS:
             # The sample stopped at its cap, so people can come later.
             raise InconclusiveValidationError(
-                f"The first {len(users)} listed users are apps, so EvolvXSI found no "
+                f"The first {len(users)} listed users are apps, so NortPole found no "
                 "person whose email it can check.",
                 summary=f"First {len(users)} users are apps",
                 description="The sampled users are all apps, so no email was checked.",
@@ -2200,7 +2200,7 @@ class _GroupUserEmailsCheck(_GroupSyncCheck):
         if not with_email:
             raise InsufficientPermissionsError(
                 "No listed user has an email, so group members cannot map to "
-                f"EvolvXSI users. {_CLOUD_EMAIL_HINT if self._is_cloud else _DC_EMAIL_HINT}",
+                f"NortPole users. {_CLOUD_EMAIL_HINT if self._is_cloud else _DC_EMAIL_HINT}",
                 summary="No user email is visible",
                 description=(
                     "Members without a visible email would be left out of synced "

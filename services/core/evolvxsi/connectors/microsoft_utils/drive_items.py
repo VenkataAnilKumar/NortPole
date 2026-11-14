@@ -2,7 +2,7 @@
 
 Covers the item model, the delta and folder walks, the time-window filter, the
 size-capped download with its log redaction, and the extraction of an item's
-bytes into EvolvXSI sections.
+bytes into NortPole sections.
 Assembling the final ``Document`` stays with each connector, because the source,
 the permission lookup and the metadata are the connector's identity.
 """
@@ -538,7 +538,7 @@ def extract_drive_item_content(
     access_token: str | None = None,
     raw_file_callback: RawFileCallback | None = None,
 ) -> DriveItemContent | None:
-    """Download an item and extract it into EvolvXSI sections.
+    """Download an item and extract it into NortPole sections.
 
     Returns None when the item should be skipped (excluded mime type, over the
     size threshold, or a download that hit the cap). Raises

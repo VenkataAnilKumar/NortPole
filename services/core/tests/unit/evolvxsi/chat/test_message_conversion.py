@@ -143,7 +143,7 @@ class TestExtractToolCallsFromResponseText:
         response_text = """
 <function_calls>
 <invoke name="internal_search">
-<parameter name="queries" string="false">["EvolvXSI documentation", "EvolvXSI docs", "EvolvXSI platform"]</parameter>
+<parameter name="queries" string="false">["NortPole documentation", "NortPole docs", "NortPole platform"]</parameter>
 </invoke>
 </function_calls>
 """
@@ -154,14 +154,14 @@ class TestExtractToolCallsFromResponseText:
         assert len(tool_calls) == 1
         assert tool_calls[0].name == "internal_search"
         assert tool_calls[0].arguments == {
-            "queries": ["EvolvXSI documentation", "EvolvXSI docs", "EvolvXSI platform"]
+            "queries": ["NortPole documentation", "NortPole docs", "NortPole platform"]
         }
 
     def test_ignores_unknown_tool_in_xml_style_invoke(self) -> None:
         response_text = """
 <function_calls>
 <invoke name="unknown_tool">
-<parameter name="queries" string="false">["EvolvXSI docs"]</parameter>
+<parameter name="queries" string="false">["NortPole docs"]</parameter>
 </invoke>
 </function_calls>
 """

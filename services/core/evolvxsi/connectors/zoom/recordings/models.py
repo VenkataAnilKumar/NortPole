@@ -138,7 +138,7 @@ class ZoomListingIncomplete(Exception):
 
 
 def fails_the_whole_run(error: Exception) -> bool:
-    """A ConnectorFailure ends the attempt COMPLETED_WITH_ERRORS, which EvolvXSI
+    """A ConnectorFailure ends the attempt COMPLETED_WITH_ERRORS, which NortPole
     counts as successful, so the next run rebuilds the checkpoint over a newer
     poll window and never revisits the skipped work. Raising instead fails the
     attempt and keeps the checkpoint, so the next run resumes on the same item.

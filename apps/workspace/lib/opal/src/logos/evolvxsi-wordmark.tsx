@@ -6,7 +6,7 @@ const SvgEvolvXSIWordmark = ({ size, ...props }: IconProps) => (
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     role="img"
-    aria-label="EvolvXSI"
+    aria-label="NortPole"
     {...props}
   >
     <text
@@ -19,7 +19,7 @@ const SvgEvolvXSIWordmark = ({ size, ...props }: IconProps) => (
       lengthAdjust="spacingAndGlyphs"
       fill="var(--theme-primary-05)"
     >
-      EvolvXSI
+      NortPole
     </text>
   </svg>
 );

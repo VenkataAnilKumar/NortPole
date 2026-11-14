@@ -12,14 +12,14 @@ const NOTICE_INTERVAL_MS = 60_000;
 
 function convergeNotice(minutesLeft: number): string {
   return (
-    `[EvolvXSI turn budget] About ${minutesLeft} minute(s) of turn budget left. ` +
+    `[NortPole turn budget] About ${minutesLeft} minute(s) of turn budget left. ` +
     "Stop opening new research or subagent work; converge on the final " +
     "deliverable with what you already have."
   );
 }
 
 const FINISH_NOW_NOTICE =
-  "[EvolvXSI turn budget] Finish now: write any pending outputs to disk and " +
+  "[NortPole turn budget] Finish now: write any pending outputs to disk and " +
   "reply immediately with what was delivered and what remains. Do not report " +
   "work as complete if it is not — separate what is done from what remains. " +
   "If you are a subagent, return your findings immediately.";

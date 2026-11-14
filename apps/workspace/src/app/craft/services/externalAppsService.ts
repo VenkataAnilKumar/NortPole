@@ -94,7 +94,7 @@ interface UpdateExternalAppBody {
 }
 
 /**
- * Partial update of any app (PATCH /admin/apps/{id}). For EvolvXSI-managed built-ins
+ * Partial update of any app (PATCH /admin/apps/{id}). For NortPole-managed built-ins
  * the gateway-config fields are ignored server-side (only policies
  * apply).
  */

@@ -136,7 +136,7 @@ def uses_user_managed_headers(
     """Whether a rejected request identifies credentials the user can replace."""
     if auth_type == MCPAuthenticationType.API_TOKEN:
         return auth_performer == MCPAuthenticationPerformer.PER_USER
-    # OAuth rejection can concern a refreshable grant or the EvolvXSI login token.
+    # OAuth rejection can concern a refreshable grant or the NortPole login token.
     return auth_type in (None, MCPAuthenticationType.NONE) and bool(
         auth_template and auth_template.required_fields
     )

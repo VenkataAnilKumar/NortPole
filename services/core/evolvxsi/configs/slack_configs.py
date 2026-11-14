@@ -1,4 +1,4 @@
-"""The Slack cloud that every Slack feature in EvolvXSI talks to.
+"""The Slack cloud that every Slack feature in NortPole talks to.
 
 Commercial Slack runs on slack.com. GovSlack, Slack's FedRAMP cloud, runs on
 slack-gov.com. One deployment uses one cloud, set by SLACK_API_URL. All Slack

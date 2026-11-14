@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Zendesk Support (REST API v2) wrapper for the EvolvXSI Craft sandbox.
+"""Zendesk Support (REST API v2) wrapper for the NortPole Craft sandbox.
 
 The egress proxy injects the connected user's bearer token, so this script
 sends no credentials itself. User input rides as query params or JSON bodies;
@@ -60,7 +60,7 @@ class ZendeskError(Exception):
 
 def _base_url() -> str:
     """The connected account's API base URL, written beside this script when
-    the skill is pushed. One EvolvXSI workspace connects one Zendesk account, so
+    the skill is pushed. One NortPole workspace connects one Zendesk account, so
     this is configuration rather than an argument."""
     try:
         value = _ACCOUNT_FILE.read_text().strip()

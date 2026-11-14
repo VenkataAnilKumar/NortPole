@@ -23,15 +23,15 @@ from evolvxsi.connectors.microsoft_utils.graph_client import GraphApiClient
 from tests.utils.aws_secrets import get_secrets
 from tests.utils.secret_names import TestSecret
 
-VISIBLE_GROUP_NAME = "EvolvXSI OneDrive Visible Test Group"
+VISIBLE_GROUP_NAME = "NortPole OneDrive Visible Test Group"
 VISIBLE_GROUP_ALIAS = "evolvxsi-onedrive-visible-test"
-HIDDEN_GROUP_NAME = "EvolvXSI OneDrive Hidden Test Group"
+HIDDEN_GROUP_NAME = "NortPole OneDrive Hidden Test Group"
 HIDDEN_GROUP_ALIAS = "evolvxsi-onedrive-hidden-test"
 DEFAULT_OWNER_UPN = "test@danswerai.onmicrosoft.com"
 DEFAULT_PRIMARY_UPN = "subash@evolvxsi.local"
 DEFAULT_SECOND_OWNER_UPN = DEFAULT_PRIMARY_UPN
 DEFAULT_ALTERNATE_UPN = "raunak@evolvxsi.local"
-FIXTURE_ROOT_NAME = "EvolvXSI OneDrive Connector Tests"
+FIXTURE_ROOT_NAME = "NortPole OneDrive Connector Tests"
 IDENTITY_FOLDER_NAME = "90-identity"
 IDENTITY_FILE_NAME = "cross-drive-duplicate.docx"
 GRAPH_API_VERSION = "v1.0"

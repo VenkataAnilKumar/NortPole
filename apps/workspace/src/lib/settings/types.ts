@@ -64,7 +64,7 @@ export interface Settings {
   // Default Assistant settings
   disable_default_assistant?: boolean;
 
-  // EvolvXSI Craft (Build Mode) feature flag
+  // NortPole Craft (Build Mode) feature flag
   evolvxsi_craft_enabled?: boolean;
 
   // Deployment-level Craft availability, ignoring workspace/per-user policy.
@@ -213,10 +213,10 @@ export function toSettings({
 export interface AppSettings extends Settings {
   /** Raw enterprise settings — null when EE is disabled or not yet loaded. */
   enterprise: EnterpriseSettings | null;
-  /** Resolved display name: enterprise.application_name || "EvolvXSI". */
+  /** Resolved display name: enterprise.application_name || "NortPole". */
   appName: string;
   /**
-   * URL of the logo image to render, or `null` to use the default EvolvXSI SVG.
+   * URL of the logo image to render, or `null` to use the default NortPole SVG.
    * Includes a cache-buster that updates whenever enterprise settings are
    * revalidated, forcing the browser to re-fetch after an admin uploads a
    * new logo.

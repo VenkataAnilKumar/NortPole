@@ -373,8 +373,8 @@ def _jwt(claims: dict[str, str]) -> str:
     ("access_token", "summary"),
     [
         (
-            _jwt({"app_displayname": "EvolvXSI Indexer", "appid": "a1"}),
-            "Signed in as EvolvXSI Indexer",
+            _jwt({"app_displayname": "NortPole Indexer", "appid": "a1"}),
+            "Signed in as NortPole Indexer",
         ),
         (_jwt({"appid": "a1"}), "Signed in as app a1"),
         ("opaque-token", "Signed in to Microsoft"),
@@ -519,10 +519,10 @@ def test_a_throttled_sign_in_stops_the_run(connector: _Connector) -> None:
 @pytest.mark.parametrize("connector", _CONNECTORS, ids=lambda c: c.source.value)
 def test_sign_in_names_the_app(connector: _Connector) -> None:
     gateway: MagicMock = create_autospec(connector.gateway_class, instance=True)
-    gateway.check_token.return_value = MicrosoftTokenInfo(app_name="EvolvXSI Indexer")
+    gateway.check_token.return_value = MicrosoftTokenInfo(app_name="NortPole Indexer")
 
     result = _run(connector, gateway)[connector.sign_in_id]
 
     assert result.status == CapabilityCheckStatus.PASSED
-    assert result.summary == "Signed in as EvolvXSI Indexer"
+    assert result.summary == "Signed in as NortPole Indexer"
     assert result.validates_binding

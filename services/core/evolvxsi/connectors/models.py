@@ -194,7 +194,7 @@ class BasicExpertInfo(BaseModel):
 
 
 class DocumentBase(BaseModel):
-    """Used for EvolvXSI ingestion api, the ID is inferred before use if not provided"""
+    """Used for NortPole ingestion api, the ID is inferred before use if not provided"""
 
     id: str | None = None
     sections: Sequence[TextSection | ImageSection | TabularSection]
@@ -397,7 +397,7 @@ def convert_metadata_list_of_strings_to_dict(
 
 
 class Document(DocumentBase):
-    """Used for EvolvXSI ingestion api, the ID is required"""
+    """Used for NortPole ingestion api, the ID is required"""
 
     id: str
     source: DocumentSource

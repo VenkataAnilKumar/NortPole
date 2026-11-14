@@ -1,7 +1,7 @@
 """Zoom AI Services Scribe voice provider.
 
-Zoom currently provides Live streaming STT for EvolvXSI voice mode. The Fast API
-requires a public media URL, so EvolvXSI uses the Live WebSocket endpoint only.
+Zoom currently provides Live streaming STT for NortPole voice mode. The Fast API
+requires a public media URL, so NortPole uses the Live WebSocket endpoint only.
 """
 
 import asyncio
@@ -40,7 +40,7 @@ ZOOM_HANDSHAKE_TIMEOUT_SECONDS = 10.0
 ZOOM_CLOSE_DRAIN_SECONDS = 3.0
 # Teardown after a cancelled or failed transcribe must not outlive the session cap.
 ZOOM_CLOSE_TIMEOUT_SECONDS: float = 10.0
-# Zoom limits concurrent Scribe sessions per account, so EvolvXSI admits sessions
+# Zoom limits concurrent Scribe sessions per account, so NortPole admits sessions
 # locally and caps their duration. The cap stays under the Redis member TTL.
 ZOOM_VOICE_SESSION_MAX_SECONDS: int = 10 * 60
 ZOOM_VOICE_SESSION_TENANT_LIMIT: int = 16
@@ -431,7 +431,7 @@ class ZoomVoiceProvider(VoiceProviderInterface):
 
     async def transcribe(self, audio_data: bytes, audio_format: str) -> str:
         if audio_format.lower() != "pcm16":
-            raise ValueError("Zoom Scribe only supports pcm16 audio in EvolvXSI.")
+            raise ValueError("Zoom Scribe only supports pcm16 audio in NortPole.")
         if not self.api_key or not self.api_secret:
             raise ValueError("Zoom API key and API secret are required for STT.")
 
@@ -477,7 +477,7 @@ class ZoomVoiceProvider(VoiceProviderInterface):
         self, text: str, voice: str | None = None, speed: float = 1.0
     ) -> AsyncIterator[bytes]:
         _ = (text, voice, speed)
-        raise NotImplementedError("Zoom Scribe does not support TTS in EvolvXSI.")
+        raise NotImplementedError("Zoom Scribe does not support TTS in NortPole.")
         yield b""
 
     async def validate_credentials(self) -> None:
@@ -527,7 +527,7 @@ class ZoomVoiceProvider(VoiceProviderInterface):
         self, audio_format: str = "pcm16"
     ) -> ZoomStreamingTranscriber:
         if audio_format.lower() != "pcm16":
-            raise ValueError("Zoom Scribe only supports pcm16 audio in EvolvXSI.")
+            raise ValueError("Zoom Scribe only supports pcm16 audio in NortPole.")
         if not self.api_key or not self.api_secret:
             raise ValueError(
                 "Zoom API key and API secret are required for streaming STT."

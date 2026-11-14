@@ -1,4 +1,4 @@
-"""The Google Drive built-in provider: full read/write, EvolvXSI-managed, and its
+"""The Google Drive built-in provider: full read/write, NortPole-managed, and its
 action catalog matches the request paths the bundled ``gdrive_api.py`` helper
 calls. Reads are auto-approved (ALWAYS); mutations default to ASK."""
 

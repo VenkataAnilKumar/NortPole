@@ -8,7 +8,7 @@ jest.mock("@/views/admin/UsersPage/svc", () => ({
 }));
 
 jest.mock("@/lib/settings/hooks", () => ({
-  useSettings: () => ({ appName: "EvolvXSI" }),
+  useSettings: () => ({ appName: "NortPole" }),
 }));
 
 const mockResetPassword = resetPassword as jest.MockedFunction<

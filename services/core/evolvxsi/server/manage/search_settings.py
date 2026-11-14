@@ -162,7 +162,7 @@ def set_new_search_settings(
     # Disallow contextual RAG for cloud deployments.
     if MULTI_TENANT and search_settings_new.enable_contextual_rag:
         raise EvolvXSIError(
-            EvolvXSIErrorCode.INVALID_INPUT, "Contextual RAG disabled in EvolvXSI Cloud"
+            EvolvXSIErrorCode.INVALID_INPUT, "Contextual RAG disabled in NortPole Cloud"
         )
 
     spec = find_embedding_model_spec(
@@ -395,7 +395,7 @@ def _validate_cloud_embedding_model(
         )
 
 
-# Providers whose model list EvolvXSI owns. Only SELECTABLE registry models are valid
+# Providers whose model list NortPole owns. Only SELECTABLE registry models are valid
 # new targets for them. LiteLLM, Azure, Bifrost and OpenAI-compatible take
 # free-form names, so they stay open.
 _REGISTRY_ONLY_CLOUD_PROVIDERS = frozenset(
@@ -436,7 +436,7 @@ def _not_selectable_error(
             "working, but it can't be chosen for a new index."
         )
     else:
-        reason = f"{model} is not an embedding model that EvolvXSI supports."
+        reason = f"{model} is not an embedding model that NortPole supports."
     return EvolvXSIError(
         EvolvXSIErrorCode.INVALID_INPUT,
         f"{reason} Choose one of these models: {_selectable_embedding_models_hint()}. "
@@ -460,7 +460,7 @@ def _validate_selectable_embedding_request(
         problems.append(f"passage_prefix must be {spec.passage_prefix!r}")
     if request.reduced_dimension is not None:
         if MULTI_TENANT:
-            problems.append("reduced_dimension is not supported in EvolvXSI Cloud")
+            problems.append("reduced_dimension is not supported in NortPole Cloud")
         elif not spec.supports_reduced_dimension:
             problems.append("this model does not support reduced_dimension")
         elif not 0 < request.reduced_dimension < spec.model_dim:
@@ -480,7 +480,7 @@ def _check_embedding_model_target(
 ) -> None:
     """Upgrade-only rules for a new embedding target. Allowed: the PRESENT model
     (legacy included), a selectable model with the registry settings, and any
-    model of a provider whose list EvolvXSI does not own (custom HF models, LiteLLM,
+    model of a provider whose list NortPole does not own (custom HF models, LiteLLM,
     Azure, Bifrost). Other OpenAI, Cohere, Google and Voyage models and legacy
     self-hosted models raise EvolvXSIError(INVALID_INPUT)."""
     spec = find_embedding_model_spec(request.provider_type, request.model_name)
@@ -526,7 +526,7 @@ def _check_embedding_model_target(
         if MULTI_TENANT and request.reduced_dimension != present.reduced_dimension:
             raise EvolvXSIError(
                 EvolvXSIErrorCode.INVALID_INPUT,
-                "reduced_dimension can't be changed in EvolvXSI Cloud: "
+                "reduced_dimension can't be changed in NortPole Cloud: "
                 "all tenants on a model share its index.",
             )
         return
@@ -1168,7 +1168,7 @@ def update_saved_search_settings(
     if MULTI_TENANT and search_settings.enable_contextual_rag:
         raise EvolvXSIError(
             EvolvXSIErrorCode.INVALID_INPUT,
-            "Contextual RAG disabled in EvolvXSI Cloud",
+            "Contextual RAG disabled in NortPole Cloud",
         )
 
     # Locked before the guards, so a re-index submitted meanwhile (it locks

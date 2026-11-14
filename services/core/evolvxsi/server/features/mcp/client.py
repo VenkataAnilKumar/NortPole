@@ -269,7 +269,7 @@ def _call_mcp_tool(
     async def call_tool(session: ClientSession) -> CallToolResult:
         await session.initialize()
         # python-sdk#3513: an unknown tool makes call_tool fetch tools/list to
-        # validate output. EvolvXSI does not rely on that validation, so skip it.
+        # validate output. NortPole does not rely on that validation, so skip it.
         session._tool_output_schemas[tool_name] = None
         return await session.call_tool(tool_name, arguments)
 

@@ -223,7 +223,7 @@ def fetch_settings(
     if user is None:
         general_settings.craft_instructions = None
 
-    # Check if EvolvXSI Craft is enabled for this user (used for server-side
+    # Check if NortPole Craft is enabled for this user (used for server-side
     # redirects). The deployment gate and already-loaded settings are shared.
     evolvxsi_craft_available = is_craft_available_for_deployment(user) if user else False
     evolvxsi_craft_enabled_for_user = (

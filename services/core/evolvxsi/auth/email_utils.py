@@ -353,7 +353,7 @@ def send_subscription_cancellation_email(user_email: str) -> None:
     text_content = (
         "We're sorry to see you go.\n"
         "Your subscription has been canceled and will end on your next billing date.\n"
-        "If you change your mind, contact your EvolvXSI administrator."
+        "If you change your mind, contact your NortPole administrator."
     )
     send_email(
         user_email,

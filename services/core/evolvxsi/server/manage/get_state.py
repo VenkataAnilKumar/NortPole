@@ -391,7 +391,7 @@ def _get_cached_versions() -> AllVersions:
 @router.get("/versions", tags=PUBLIC_API_TAGS)
 def get_versions() -> AllVersions:
     """
-    Fetches the latest stable and beta versions of EvolvXSI Docker images.
+    Fetches the latest stable and beta versions of NortPole Docker images.
     Since DockerHub does not explicitly flag stable and beta images,
     this endpoint can be used to programmatically check for new images.
     """

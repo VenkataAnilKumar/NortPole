@@ -65,9 +65,9 @@ export function AppPopup() {
   const logoDisplayStyle = settings.enterprise?.logo_display_style;
 
   // Header icon rules:
-  // - If neither app name nor custom logo exists -> show EvolvXSI icon
+  // - If neither app name nor custom logo exists -> show NortPole icon
   // - If logo display is "name_only" -> show alert icon
-  // - Otherwise -> show uploaded custom logo (fallback to EvolvXSI icon)
+  // - Otherwise -> show uploaded custom logo (fallback to NortPole icon)
   const headerIcon =
     !hasApplicationName && !hasCustomLogo
       ? (props: IconProps) => <SvgEvolvXSILogo size={24} {...props} />

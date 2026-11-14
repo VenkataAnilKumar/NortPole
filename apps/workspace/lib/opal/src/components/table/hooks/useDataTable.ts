@@ -32,7 +32,7 @@ export type EvolvXSISelectionState = "none" | "partial" | "all";
 // ---------------------------------------------------------------------------
 
 /**
- * Convert a TanStack sort direction to an EvolvXSI sort direction string.
+ * Convert a TanStack sort direction to an NortPole sort direction string.
  *
  * This is a **named export** (not on the return object) because it is used
  * statically inside JSX header loops, not tied to hook state.
@@ -129,7 +129,7 @@ interface UseDataTableReturn<TData extends RowData> {
   /** Full TanStack table instance for rendering. */
   table: Table<TData>;
 
-  // Pagination (1-based, matching EvolvXSI Footer)
+  // Pagination (1-based, matching NortPole Footer)
   /** Current page number (1-based). */
   currentPage: number;
   /** Total number of pages. */
@@ -143,7 +143,7 @@ interface UseDataTableReturn<TData extends RowData> {
   /** Whether pagination is active (pageSize is finite). */
   isPaginated: boolean;
 
-  // Selection (pre-computed for EvolvXSI Footer)
+  // Selection (pre-computed for NortPole Footer)
   /** Aggregate selection state for the current page. */
   selectionState: EvolvXSISelectionState;
   /** Number of selected rows. */
@@ -175,7 +175,7 @@ interface UseDataTableReturn<TData extends RowData> {
 // ---------------------------------------------------------------------------
 
 /**
- * Wraps TanStack `useReactTable` with EvolvXSI-specific defaults and derived
+ * Wraps TanStack `useReactTable` with NortPole-specific defaults and derived
  * state so that consumers only need to provide `data` + `columns`.
  *
  * @example

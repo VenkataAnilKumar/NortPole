@@ -30,7 +30,7 @@ _ALL_CHECK_IDS = [check.check_id for check in build_notion_indexing_checks()]
 _BOT_USER = {
     "object": "user",
     "type": "bot",
-    "name": "EvolvXSI",
+    "name": "NortPole",
     "bot": {"owner": {"type": "workspace"}, "workspace_name": "Acme"},
 }
 
@@ -114,7 +114,7 @@ def test_rows_have_the_design_names() -> None:
 
 
 def test_sign_in_names_the_bot_and_workspace() -> None:
-    assert _run("notion_auth", _titled_gateway()).summary == "Signed in as EvolvXSI in Acme"
+    assert _run("notion_auth", _titled_gateway()).summary == "Signed in as NortPole in Acme"
 
 
 def test_a_rejected_token_says_so() -> None:

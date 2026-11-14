@@ -2,7 +2,7 @@
 
 The provider points OAuth and its default egress at the configured cloud. The skill
 helper gets that cloud through a rendered ``cloud.txt``, because it runs in the
-sandbox without EvolvXSI imports, and it refuses any host that is not a Slack cloud.
+sandbox without NortPole imports, and it refuses any host that is not a Slack cloud.
 """
 
 from __future__ import annotations

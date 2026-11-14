@@ -3,7 +3,7 @@ LiteLLM Model Name Parser
 
 Parses LiteLLM model strings and returns structured metadata for UI display.
 All metadata comes from the vendored model catalog (evolvxsi.llm.model_catalog)
-plus the EvolvXSI-owned fields in model_metadata_enrichments.json.
+plus the NortPole-owned fields in model_metadata_enrichments.json.
 
 Enrichment fields:
 - display_name: Human-friendly name (e.g., "Claude 3.5 Sonnet")

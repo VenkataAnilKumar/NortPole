@@ -7,7 +7,7 @@ results themselves.
 
 Intended for programmatic consumers (the company-search skill script, Craft sandbox, integrations).
 
-Not the same as the EvolvXSI Search UI backend at /api/search/send-search-message
+Not the same as the NortPole Search UI backend at /api/search/send-search-message
 (ee/evolvxsi/server/query_and_chat/search_backend.py), which calls search_pipeline()
 directly — a lighter-weight flow with optional query expansion.
 """
@@ -90,7 +90,7 @@ def search(
     db_session: Session = Depends(get_session),
 ) -> SearchResponse:
     """
-    Search the EvolvXSI index and get back ranked document sections.
+    Search the NortPole index and get back ranked document sections.
 
     Runs the same multi-stage retrieval as the Search action in chat — query
     expansion, hybrid retrieval, reranking and section merging — and returns the
@@ -185,7 +185,7 @@ def raw_search(
     db_session: Session = Depends(get_session),
 ) -> SearchResponse:
     """
-    Search the EvolvXSI index with no LLM calls and get back document sections.
+    Search the NortPole index with no LLM calls and get back document sections.
 
     Runs hybrid retrieval on the query as written, with no query expansion,
     filter detection, federated Slack search or LLM document selection. Returns
