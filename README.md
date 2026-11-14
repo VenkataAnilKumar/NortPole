@@ -103,7 +103,3 @@ To talk about a pilot, open an issue in this repository or contact the maintaine
 | Product and architecture documents | [Document index](docs/README.md), [Product definition](docs/02-product/EvolvXSI_Product-Definition.md), [System architecture](docs/06-technical/EvolvXSI_System-Architecture.md) |
 
 Run `python tools/validate_structure.py` to check the repository layout and document links.
-
-## Credits and licence
-
-EvolvXSI's core and workspace build on MIT-licensed open-source code; see [services/core/NOTICE](services/core/NOTICE) and [services/core/UPSTREAM.md](services/core/UPSTREAM.md) for what was taken, what was left out and what changed. EvolvXSI's own additions — governance, workflows, packs, agents, scheduling and permission sync — are developed in this repository. The EvolvXSI name and licensing for EvolvXSI's own code are pending legal review.
