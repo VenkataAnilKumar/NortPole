@@ -1,17 +1,109 @@
 # EvolvXSI
 
-Enterprise agentic AI workspace with a shared horizontal platform and versioned vertical packs.
+**The governed AI workspace for teams that cannot afford a wrong answer.**
 
-This monorepo contains the product documents and module skeletons. The product is at the design stage. The first customer workflow, technology choices and deployment acceptance targets remain open.
+EvolvXSI lets people ask questions and run multi-step work over their company's own knowledge — policies, contracts, files in their drives — and get cited answers and drafts back. Every step is governed: you approve the plan before work runs, you approve the exact draft before anything leaves, the system only reads what each person is allowed to open, and every action lands in a tamper-evident audit log.
 
-- [Product definition](docs/02-product/EvolvXSI_Product-Definition.md)
-- [System architecture](docs/06-technical/EvolvXSI_System-Architecture.md)
-- [Repository structure](docs/06-technical/EvolvXSI_Repo-Structure.md)
-- [Module inventory](modules.json)
-- [Document index](docs/README.md)
+> **Status: pilot preview.** The product runs end to end and is tested in a sandbox with local models. We are looking for **design partners** — one team, one workflow — for a first pilot. See [Work with us](#work-with-us).
 
-Downloaded source references are maintained outside this product tree. Their provenance and design mappings are recorded in the reference documents. EvolvXSI owns its product code, contracts and runtime decisions.
+![Start a workflow: ready-made, versioned workflows grouped in packs](docs/assets/readme/workflows.png)
 
-## Repository validation
+---
 
-Run `python tools/validate_structure.py` to check layout and document links. The inventory separates existing skeletons from future modules. See the [accepted structure decision](docs/decisions/0001-modular-monorepo.md). Application implementation remains pending.
+## Why EvolvXSI
+
+Most AI assistants are built to be helpful first and safe second. In finance, legal, HR, compliance and operations that order is backwards: an invented answer, a leaked document or an unreviewed email costs more than the time AI saves.
+
+EvolvXSI starts from the other end:
+
+| You need | EvolvXSI gives you |
+|---|---|
+| Answers you can check | Every statement cites the passage it came from; unsupported sentences are flagged, and a draft with nothing to cite says so instead of guessing. |
+| People to stay in charge | A plan you accept before work runs, and approval of one exact draft before anything is sent — with an optional second approver. |
+| Data to stay where it belongs | A route policy decides which model (local, private or cloud) may see which class of data, and redacts sensitive patterns before anything goes to the cloud. |
+| Answers to respect access | The system only reads what each person may open in the source system (Google Drive sharing is applied per document; the live Drive pilot is next). |
+| Proof for auditors | A hash-chained audit log of refusals, approvals, sends, policy changes and exports, with integrity checks and export. |
+
+## What people can do
+
+- **Ask, with sources.** Chat over company knowledge; answers cite what they used.
+- **Run a workflow.** Pick a ready-made workflow (a cited brief, find the policy that covers a question, compare two documents), review the plan, get a cited draft, approve it, export or send it.
+- **Let an agent prepare the work.** Workflow agents plan their searches first and run only what you accept — as you, over the sources you can open, and they can never send anything.
+- **Put work on a schedule.** A weekly check runs on its own, prepares the plan, and waits in your Inbox. Nothing runs further without your yes, and a schedule pauses itself if its plans keep going unaccepted.
+- **Keep track in one Inbox.** *To approve*, *To review* and *Updates* — plans waiting for you, drafts ready to check, decisions on your requests.
+- **Discover and request.** See which connectors, skills and tools exist but are not switched on, and ask for them. An administrator decides.
+
+![A draft under review: the agent's plan, the draft, and a review rule that blocks approval until a source is cited](docs/assets/readme/draft-review.png)
+
+## What administrators control
+
+- **Model routes and data classes.** Mark each model as local, private or cloud; decide which data may go where; turn on redaction per route. A blocked request fails before anything is sent.
+- **Signed workflow packs.** Workflows ship as signed, versioned packs that run only on models they passed evaluation on, with review rules and house style built in. A Studio form lets administrators build their own.
+- **Tools and outside systems.** A tool catalog decides what chat assistants may use; outside tools (MCP, OpenAPI) are off until approved, their definition is pinned, and a changed definition stops the tool until approved again.
+- **Approvals in one place.** Sends that need a second approver, changes that need a second administrator, requests from people, tool definitions.
+- **Scheduling, retention and audit.** Who may schedule; how long records are kept and a legal hold; audit-log integrity checks, a head you can save off the machine and compare later, and export.
+- **Quality and cost.** Draft and approval rates, unsupported-claim share, evaluation results per model, scheduled-run counts, and tokens and estimated cost per route.
+
+![Route policy: which model routes may process which data, and redaction before the cloud](docs/assets/readme/route-policy.png)
+
+## How it works
+
+```mermaid
+flowchart LR
+    P[Person] -->|asks or starts a workflow| W[EvolvXSI workspace]
+    W -->|plan| P
+    P -->|accepts the plan| W
+    W -->|searches as that person| K[(Company knowledge<br/>permission-aware)]
+    W -->|route policy and redaction| M{{Model routes<br/>local · private · cloud}}
+    W -->|cited draft + review rules| P
+    P -->|approves the exact draft| S[Export or send<br/>to an approved destination]
+    W -.->|every step| A[(Hash-chained audit log)]
+```
+
+1. **Request.** A question, a workflow from a signed pack, or a scheduled run.
+2. **Plan.** The model proposes the steps — drafted on a route the policy allows — and you accept or revise it.
+3. **Gather.** Searches run as you, over the sources you may open.
+4. **Draft.** A cited draft is checked against the pack's review rules; unsupported claims are flagged.
+5. **Approve.** You approve one exact version; sending to an outside system can require a second person.
+6. **Record.** Each step is written to the audit log.
+
+![Inbox: plans waiting for your yes, drafts to review, and updates](docs/assets/readme/inbox.png)
+
+## Built for your environment
+
+- **Self-hosted.** Docker Compose profile with TLS, backup and restore, version pinning and a release manifest ([staging profile](infrastructure/profiles/staging/README.md)).
+- **Your models.** Run local models (for example through Ollama) for sensitive data and add private or cloud routes as policy allows.
+- **Your knowledge.** Connectors bring company documents into search with their access rules; Google Drive permission sync is built, and more sources follow per customer.
+- **Accessible.** Light and dark themes, phone-width layouts and keyboard navigation, checked against WCAG 2.1 AA with axe.
+
+## Status and roadmap
+
+**Built and tested (sandbox, local models):** workspace and admin console, reviewed workflows with plans and approvals, workflow agents, scheduled workflows, signed packs and Studio, route policy and redaction, tool catalog and outside-tool approval, second approver and two-administrator rules, audit log with integrity checks, retention and legal hold, Discover and requests, Inbox, Quality, and Google Drive permission sync.
+
+**Next:** a live Google Drive pilot with a search index, knowledge domains (open or restricted areas with verified documents), event-triggered workflows, and hardening for a first customer deployment (identity provider and MFA, hosting, a cloud model route).
+
+**Not yet:** a production deployment, single sign-on, and a third-party security review. All results so far come from sandbox testing.
+
+The full, honest list lives in the [pending-work checklist](docs/07-implementation/EvolvXSI_Pending-Work-Checklist.md), and what each piece checked is in the [review log](docs/REVIEW.md).
+
+## Work with us
+
+We are looking for a **design partner**: a team with one high-stakes, document-heavy workflow — policy questions, contract review, audit evidence, compliance checks — that would pilot EvolvXSI on its own documents and models.
+
+To talk about a pilot, open an issue in this repository or contact the maintainers.
+
+## For developers
+
+| Part | Where |
+|---|---|
+| API and core services (Python, FastAPI) | [services/core](services/core) |
+| Web workspace (Next.js) | [apps/workspace](apps/workspace) |
+| Workflow packs | [packs](packs) |
+| Deployment profiles | [infrastructure/profiles](infrastructure/profiles) |
+| Product and architecture documents | [Document index](docs/README.md), [Product definition](docs/02-product/EvolvXSI_Product-Definition.md), [System architecture](docs/06-technical/EvolvXSI_System-Architecture.md) |
+
+Run `python tools/validate_structure.py` to check the repository layout and document links.
+
+## Credits and licence
+
+EvolvXSI's core and workspace are adapted from the [Onyx Community Edition](https://github.com/onyx-dot-app/onyx) (MIT licence); see [services/core/NOTICE](services/core/NOTICE) and [services/core/UPSTREAM.md](services/core/UPSTREAM.md) for what was taken, what was left out and what changed. EvolvXSI's own additions — governance, workflows, packs, agents, scheduling and permission sync — are developed in this repository. The EvolvXSI name and licensing for EvolvXSI's own code are pending legal review.
