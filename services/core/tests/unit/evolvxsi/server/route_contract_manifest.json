@@ -112,6 +112,7 @@
   "GET /admin/overview": "admin",
   "GET /admin/pack-signers": "manage:connectors",
   "GET /admin/packs": "manage:connectors",
+  "GET /admin/packs/verify": "manage:connectors",
   "GET /admin/persona": "read:agents +scope",
   "GET /admin/quality": "admin",
   "GET /admin/retention": "admin",
