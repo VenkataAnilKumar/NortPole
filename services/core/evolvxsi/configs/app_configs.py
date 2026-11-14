@@ -2161,8 +2161,7 @@ if _runs_on_legacy_minio(FILE_STORE_BACKEND, S3_ENDPOINT_URL):
     logger.warning(
         "Files are still stored in the legacy MinIO service, which a later "
         "release removes. Set S3_ENDPOINT_URL=http://object-store:8333 and "
-        "S3_LEGACY_ENDPOINT_URL=%s in .env and run `docker compose up -d`, "
-        "or run `evolvxsi-cli deploy upgrade`.",
+        "S3_LEGACY_ENDPOINT_URL=%s in .env and run `docker compose up -d`.",
         BUNDLED_LEGACY_MINIO_ENDPOINT_URL,
     )
 

@@ -2,7 +2,7 @@
 
 EVOLVXSI_SERVER_URL is the full base URL a client uses, any API path prefix
 included. The classic misconfiguration is a public URL without its /api
-prefix, which fails far from the cause: every LLM-gateway and evolvxsi-cli call
+prefix, which fails far from the cause: every LLM-gateway and skill-script call
 inside the sandbox 404s. Probe once per process at provision time and fail
 with the corrected value instead.
 """
