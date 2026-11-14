@@ -30,8 +30,8 @@ from evolvxsi.external_apps.matching.engine import (
 )
 from evolvxsi.external_apps.presentation.decode import decode_payload
 from evolvxsi.sandbox_proxy import approval_cache
-from evolvxsi.action_binding.binding import action_fingerprint
-from evolvxsi.route_policy.audit import record_audit
+from evolvxsi.governance.action_binding.binding import action_fingerprint
+from evolvxsi.governance.route_policy.audit import record_audit
 from evolvxsi.server.features.build.configs import (
     APPROVAL_SESSION_GRANTS_ENABLED,
     SANDBOX_APPROVAL_WAIT_TIMEOUT_SECONDS,

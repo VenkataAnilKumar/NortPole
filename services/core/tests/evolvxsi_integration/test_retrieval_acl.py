@@ -31,7 +31,7 @@ from evolvxsi.document_index.opensearch.opensearch_document_index import (
     OpenSearchDocumentIndex,
 )
 from evolvxsi.indexing.models import ChunkEmbedding, DocMetadataAwareIndexChunk
-from evolvxsi.knowledge_access.decisions import SourceDocument, Viewer, may_see, viewer_acl
+from evolvxsi.knowledge.knowledge_access.decisions import SourceDocument, Viewer, may_see, viewer_acl
 
 DIM = 16
 TENANT = "public"

@@ -65,7 +65,7 @@ from evolvxsi.server.query_and_chat.streaming_models import (
     StreamingError,
 )
 from evolvxsi.server.settings.store import load_settings
-from evolvxsi.tool_catalog.catalog import code_allowed
+from evolvxsi.governance.tool_catalog.catalog import code_allowed
 from evolvxsi.tools.tool_constructor import (
     CustomToolConfig,
     FileReaderToolConfig,

@@ -48,7 +48,7 @@ Lite mode runs with `DISABLE_VECTOR_DB=true`, so nothing can be indexed or retri
 
 Step 1 is done and part of step 2 exists without an index:
 
-- `services/core/evolvxsi/knowledge_access/decisions.py` holds the access rules as pure functions: the viewer's access strings (emails, groups, external groups), who may see a document, evidence filtering that counts hidden documents without describing them, citation re-checks, and the withhold rule.
+- `services/core/evolvxsi/knowledge/knowledge_access/decisions.py` holds the access rules as pure functions: the viewer's access strings (emails, groups, external groups), who may see a document, evidence filtering that counts hidden documents without describing them, citation re-checks, and the withhold rule.
 - `services/core/tests/unit/evolvxsi/knowledge_access/a5_test_set.json` is the fixed test set (invented content): a permitted document, a restricted one, a superseded version, a public one, a document with unknown access and an unanswerable question.
 - The unit tests pass (39 passed with the existing access tests, 4 skipped as not applicable).
 
@@ -70,7 +70,7 @@ Limits: embeddings are deterministic test vectors because the embedding model ho
 
 ## Progress (2026-11-12): group access wired into real search
 
-The community code left groups out on both sides: users' access lists carried only email addresses, documents were indexed with no groups, and the query-time source check returned false for groups. EvolvXSI now fills all three (`services/core/evolvxsi/knowledge_access/groups.py`, used from `access/access.py` and `db/connector_credential_pair.py`):
+The community code left groups out on both sides: users' access lists carried only email addresses, documents were indexed with no groups, and the query-time source check returned false for groups. EvolvXSI now fills all three (`services/core/evolvxsi/knowledge/knowledge_access/groups.py`, used from `access/access.py` and `db/connector_credential_pair.py`):
 
 - A person's access list includes every group they belong to, read on each request.
 - A document's access list includes the data-access groups of the PRIVATE sources it came from (`UserGroup__CCPairDataAccess`).
@@ -85,7 +85,7 @@ Not done: removing a group from a source changes stored document access lists on
 
 The community code already lets an administrator add reading groups to a source from the source's own settings, and refuses the built-in role groups there. What was missing was managing the groups themselves, which upstream kept in its enterprise edition. Added:
 
-- `services/core/evolvxsi/knowledge_access/group_admin.py`: `GET` and `POST /admin/access-groups`, `PATCH` and `DELETE /admin/access-groups/{id}` (needs the manage-user-groups permission). Each change is audited.
+- `services/core/evolvxsi/knowledge/knowledge_access/group_admin.py`: `GET` and `POST /admin/access-groups`, `PATCH` and `DELETE /admin/access-groups/{id}` (needs the manage-user-groups permission). Each change is audited.
 - Safety rules: a group that reads any source cannot be renamed or deleted, because documents carry the group's name on their access lists and a new group given the old name would inherit that access. Names are unique whatever the case. Built-in role groups are not managed here. Unknown users are refused.
 - `apps/workspace/src/views/admin/AccessGroupsPage.tsx` at `/admin/access-groups`, listed as Groups in the admin sidebar: create a group, pick members, rename, delete, and see which sources each group reads.
 
@@ -125,7 +125,7 @@ Correction to an earlier note: the community copy does have a way to change a so
 
 Documents were also re-synced only when the source's access type changed, not when only its groups changed.
 
-EvolvXSI now implements all three (`services/core/evolvxsi/knowledge_access/source_groups.py`), called directly from `connectors/edit_plan/state.py` and `db/connector_edit_requests.py`. Saving marks the source's documents for the access re-sync whenever the groups change. A scoped editor changes only the groups they can see, and the groups they cannot see are kept.
+EvolvXSI now implements all three (`services/core/evolvxsi/knowledge/knowledge_access/source_groups.py`), called directly from `connectors/edit_plan/state.py` and `db/connector_edit_requests.py`. Saving marks the source's documents for the access re-sync whenever the groups change. A scoped editor changes only the groups they can see, and the groups they cannot see are kept.
 
 Checked on the real database (42 integration checks pass, 5 new): the edit reads the real current groups; a scoped editor replaced one group while a group they could not see stayed; adding an unseen group was refused; a permission-synced source with no group was refused and left unchanged; making a source public removed its groups. The 234 existing unit tests for the edit flow pass. The edit form itself was not opened in a browser, because no source can be connected in the lite sandbox.
 
@@ -145,7 +145,7 @@ Limits: the corpus is small, short and easy, so this shows the pipeline works an
 
 End-to-end with real retrieval (nomic-embed-text, OpenSearch) and a real model, three questions on the synthetic corpus showed a gap that search scores cannot close: passages that answer the question score 0.79 to 0.92 and topically close passages that do not score up to 0.84, so no cutoff separates them. A staff member asking about the restricted board memo (which they cannot see) got the two nearest unrelated policies, and the 1.5B model confidently answered "the takeover price limit is 5,000 euros".
 
-Added a relevance check (`services/core/evolvxsi/tasks/relevance.py`, on by default, `EVOLVXSI_RELEVANCE_CHECK=false` turns it off): each candidate passage is judged yes or no by the default model through the route policy, and only "yes" passages reach drafting. A judge that fails, or says anything but yes, drops the passage. With nothing left, the run states that no source covers the request, without asking the model to draft.
+Added a relevance check (`services/core/evolvxsi/work/tasks/relevance.py`, on by default, `EVOLVXSI_RELEVANCE_CHECK=false` turns it off): each candidate passage is judged yes or no by the default model through the route policy, and only "yes" passages reach drafting. A judge that fails, or says anything but yes, drops the passage. With nothing left, the run states that no source covers the request, without asking the model to draft.
 
 Measured on 24 questions with their top 3 retrieved passages (72 pairs, `/tmp`-style script, not yet a repo test because it needs a downloaded 7B model):
 
@@ -160,7 +160,7 @@ Costs and limits: one extra model call per candidate passage (about 15 seconds o
 
 ## Progress (2026-11-12): the task evidence step uses meaning-based search
 
-`gather_evidence` (`services/core/evolvxsi/tasks/evidence.py`) now embeds the question with the deployment's own configured embedding model (the core's `get_query_embedding`, so the vector matches the index), runs meaning-based retrieval with the owner's access filters, adds keyword hits the first search missed, and passes up to four candidate documents to the relevance check. If embedding is unavailable it logs and falls back to keyword search alone, so a model-server outage lowers recall instead of failing runs.
+`gather_evidence` (`services/core/evolvxsi/work/tasks/evidence.py`) now embeds the question with the deployment's own configured embedding model (the core's `get_query_embedding`, so the vector matches the index), runs meaning-based retrieval with the owner's access filters, adds keyword hits the first search missed, and passes up to four candidate documents to the relevance check. If embedding is unavailable it logs and falls back to keyword search alone, so a model-server outage lowers recall instead of failing runs.
 
 Checked (100 integration checks pass): with a real embedding model, a reworded question ("Can a guest walk around the building alone?") found the visitor policy through `gather_evidence`; a staff viewer never got the restricted board memo; a board viewer did; with no embedding model the step used keyword search. Not done: the full task flow in the browser with indexed sources (lite mode has no index and no background workers to index documents); the embedding model configured in this sandbox is Ollama's nomic-embed-text, used only by the tests, not by the core's own indexing.
 

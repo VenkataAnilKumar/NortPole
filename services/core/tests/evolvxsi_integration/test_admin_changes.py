@@ -7,16 +7,16 @@ import uuid
 import pytest
 from sqlalchemy import text
 
-from evolvxsi.admin_changes import api as changes_api
-from evolvxsi.admin_changes import controls, service
-from evolvxsi.admin_changes.models import EvolvXSIAdminChange
+from evolvxsi.governance.admin_changes import api as changes_api
+from evolvxsi.governance.admin_changes import controls, service
+from evolvxsi.governance.admin_changes.models import EvolvXSIAdminChange
 from evolvxsi.db.engine.sql_engine import get_session_with_current_tenant
 from evolvxsi.db.models import User
 from evolvxsi.error_handling.exceptions import EvolvXSIError
-from evolvxsi.retention import api as ret_api
-from evolvxsi.retention.settings import load as load_ret, save as save_ret
-from evolvxsi.route_policy import api as rp_api
-from evolvxsi.route_policy.policy import load_policy, save_policy
+from evolvxsi.governance.retention import api as ret_api
+from evolvxsi.governance.retention.settings import load as load_ret, save as save_ret
+from evolvxsi.governance.route_policy import api as rp_api
+from evolvxsi.governance.route_policy.policy import load_policy, save_policy
 from tests.evolvxsi_integration.test_tasks_flow import _up
 
 pytestmark = pytest.mark.skipif(not _up(), reason="needs Postgres")

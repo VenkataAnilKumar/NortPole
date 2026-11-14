@@ -2,8 +2,8 @@
 
 import pytest
 
-from evolvxsi.actions.autonomy import at_least, lowest
-from evolvxsi.packs.manifest import Manifest
+from evolvxsi.work.actions.autonomy import at_least, lowest
+from evolvxsi.work.packs.manifest import Manifest
 
 
 def test_the_lower_tier_wins() -> None:

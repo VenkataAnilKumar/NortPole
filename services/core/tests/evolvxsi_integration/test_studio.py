@@ -13,8 +13,8 @@ from evolvxsi.db.models import User
 from evolvxsi.error_handling.exceptions import EvolvXSIError
 from evolvxsi.key_value_store.factory import get_kv_store
 from evolvxsi.key_value_store.interface import KvKeyNotFoundError
-from evolvxsi.packs import studio
-from evolvxsi.packs.models import EvolvXSIPackSigner, EvolvXSIPackVersion
+from evolvxsi.work.packs import studio
+from evolvxsi.work.packs.models import EvolvXSIPackSigner, EvolvXSIPackVersion
 from tests.evolvxsi_integration.test_tasks_flow import _up
 
 pytestmark = pytest.mark.skipif(not _up(), reason="needs Postgres")

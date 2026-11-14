@@ -47,7 +47,7 @@ from evolvxsi.db.models import (
 )
 from evolvxsi.db.user_file import fetch_user_files_with_access_relationships
 from evolvxsi.db.engine.sql_engine import get_session_with_current_tenant_if_none
-from evolvxsi.knowledge_access.groups import (
+from evolvxsi.knowledge.knowledge_access.groups import (
     group_names_for_documents,
     group_names_for_user,
 )

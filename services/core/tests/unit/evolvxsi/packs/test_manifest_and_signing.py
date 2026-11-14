@@ -7,8 +7,8 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from pydantic import ValidationError
 
-from evolvxsi.packs.manifest import Manifest, canonical_bytes, digest, version_key
-from evolvxsi.packs.signing import SignatureProblem, verify
+from evolvxsi.work.packs.manifest import Manifest, canonical_bytes, digest, version_key
+from evolvxsi.work.packs.signing import SignatureProblem, verify
 
 SAMPLE = json.loads((Path(__file__).parents[4] / "scripts/sample_packs/finance-policy-review.json").read_text())
 

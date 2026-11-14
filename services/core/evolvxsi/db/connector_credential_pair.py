@@ -63,7 +63,7 @@ def _build_user_group_cc_pair_access_clause(
     user_id: UUID,
 ) -> ColumnElement[bool]:
     """EvolvXSI: grants pairs linked to a group the user belongs to."""
-    from evolvxsi.knowledge_access.groups import user_group_cc_pair_clause
+    from evolvxsi.knowledge.knowledge_access.groups import user_group_cc_pair_clause
 
     return user_group_cc_pair_clause(user_id)
 

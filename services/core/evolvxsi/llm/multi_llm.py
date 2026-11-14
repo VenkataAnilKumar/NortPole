@@ -961,7 +961,7 @@ class LitellmLLM(LLM):
 
         # EvolvXSI's own counter of tokens and estimated cost by route. It never raises and runs for every
         # key, unlike the usage-limit tracking below, which only covers EvolvXSI-managed keys.
-        from evolvxsi.route_policy.usage import record_tokens
+        from evolvxsi.governance.route_policy.usage import record_tokens
 
         record_tokens(
             model_configuration_id=self._model_configuration_id,
@@ -2110,7 +2110,7 @@ class LitellmLLM(LLM):
     ) -> tuple[list[ChatCompletionMessage], dict[str, str]]:
         config = self.config
         # EvolvXSI: replace listed sensitive patterns before the request leaves, per route policy.
-        from evolvxsi.redaction.request import redact_request
+        from evolvxsi.governance.redaction.request import redact_request
 
         request = redact_request(request, config.model_configuration_id)
         messages, request_prefix = serialize_request(request, config)

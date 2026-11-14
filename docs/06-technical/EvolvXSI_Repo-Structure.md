@@ -24,11 +24,22 @@ modules.json                    Existing and planned modules, with maturity
    rejects a listed module that holds only placeholders and a planned module whose folder already exists.
 2. **One core deployable.** API, workers, indexing and the scheduler already run as separate processes and scale
    separately. A service is split out only for its own scaling, release cycle or security boundary.
-3. **EvolvXSI code is grouped by domain inside `services/core/evolvxsi`** (phase 2 of decision 0006); inherited platform
-   modules stay where they are so upstream fixes can still be compared file by file.
+3. **EvolvXSI code is grouped by domain inside `services/core/evolvxsi`**; inherited platform modules stay where they are
+   so upstream fixes can still be compared file by file. `tests/unit/evolvxsi/test_domain_boundaries.py` enforces the
+   layers (below) and lists the only places where inherited code calls into our domains.
 4. **Packs are source**: `packs/horizontal/<pack>/` and `packs/vertical/<industry>/<pack>/`, each with `manifest.yaml`,
    bundled per industry by `packs/editions/<industry>.json` (phase 3).
 5. **Contracts are generated** into `packages/contracts` and checked for drift (phase 4).
+
+## EvolvXSI domains in `services/core/evolvxsi`
+
+| Domain | Modules | May import |
+|---|---|---|
+| `governance/` | `route_policy`, `redaction`, `tool_catalog`, `admin_changes`, `action_binding`, `audit_log`, `retention` | platform only |
+| `work/` | `tasks`, `workflow_schedules`, `packs`, `actions` | governance, knowledge |
+| `knowledge/` | `knowledge_access`, `source_requests` | governance, work |
+| `insight/` | `quality`, `overview`, `inventory` | governance, work, knowledge (nothing imports insight) |
+| top level | `extensions` (hook point), `external_permissions` (permission sync), `user_preferences` | fixed paths the inherited code looks up |
 
 ## Where the design-stage owners live
 

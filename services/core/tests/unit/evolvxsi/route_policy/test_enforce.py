@@ -5,8 +5,8 @@ import pytest
 
 from evolvxsi.error_handling.error_codes import EvolvXSIErrorCode
 from evolvxsi.error_handling.exceptions import EvolvXSIError
-from evolvxsi.route_policy import enforce
-from evolvxsi.route_policy.policy import RoutePolicy
+from evolvxsi.governance.route_policy import enforce
+from evolvxsi.governance.route_policy.policy import RoutePolicy
 
 
 def session_with_provider(provider_id: int | None) -> MagicMock:

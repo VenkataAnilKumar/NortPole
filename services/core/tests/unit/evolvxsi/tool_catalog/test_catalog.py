@@ -2,8 +2,8 @@
 
 from types import SimpleNamespace
 
-from evolvxsi.tool_catalog import catalog
-from evolvxsi.tool_catalog.catalog import CatalogPolicy, filter_tools, kind_of_row
+from evolvxsi.governance.tool_catalog import catalog
+from evolvxsi.governance.tool_catalog.catalog import CatalogPolicy, filter_tools, kind_of_row
 
 
 class Fake:

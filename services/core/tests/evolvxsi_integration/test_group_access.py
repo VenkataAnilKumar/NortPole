@@ -41,7 +41,7 @@ from evolvxsi.db.models import (
 )
 from evolvxsi.document_index.interfaces import IndexingMetadata, MetadataUpdateRequest, TenantState
 from evolvxsi.error_handling.exceptions import EvolvXSIError
-from evolvxsi.knowledge_access.group_admin import SourceGroupsUpdate, set_source_groups
+from evolvxsi.knowledge.knowledge_access.group_admin import SourceGroupsUpdate, set_source_groups
 from evolvxsi.document_index.opensearch.opensearch_document_index import (
     OpenSearchDocumentIndex,
 )

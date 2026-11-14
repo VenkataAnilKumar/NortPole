@@ -137,24 +137,24 @@ from evolvxsi.server.manage.get_state import router as state_router
 from evolvxsi.server.manage.image_generation.api import (
     admin_router as image_generation_admin_router,
 )
-from evolvxsi.route_policy.api import router as route_policy_router
+from evolvxsi.governance.route_policy.api import router as route_policy_router
 from evolvxsi.user_preferences.api import router as user_preferences_router
-from evolvxsi.knowledge_access.group_admin import router as access_groups_router
-from evolvxsi.tasks.api import router as tasks_router
-from evolvxsi.actions.api import router as actions_router
-from evolvxsi.audit_log.api import router as audit_log_router
-from evolvxsi.retention.api import router as retention_router
-from evolvxsi.inventory.api import router as inventory_router
+from evolvxsi.knowledge.knowledge_access.group_admin import router as access_groups_router
+from evolvxsi.work.tasks.api import router as tasks_router
+from evolvxsi.work.actions.api import router as actions_router
+from evolvxsi.governance.audit_log.api import router as audit_log_router
+from evolvxsi.governance.retention.api import router as retention_router
+from evolvxsi.insight.inventory.api import router as inventory_router
 from evolvxsi.extensions.api import router as extensions_router
-from evolvxsi.admin_changes.api import router as admin_changes_router
-from evolvxsi.source_requests.api import router as source_requests_router
-from evolvxsi.workflow_schedules.api import router as workflow_schedules_router
-from evolvxsi.overview.api import router as overview_router
-from evolvxsi.packs.studio import router as studio_router
-from evolvxsi.tool_catalog.api import member_router as tool_catalog_member_router
-from evolvxsi.tool_catalog.api import router as tool_catalog_router
-from evolvxsi.quality.api import router as quality_router
-from evolvxsi.packs.api import router as packs_router
+from evolvxsi.governance.admin_changes.api import router as admin_changes_router
+from evolvxsi.knowledge.source_requests.api import router as source_requests_router
+from evolvxsi.work.workflow_schedules.api import router as workflow_schedules_router
+from evolvxsi.insight.overview.api import router as overview_router
+from evolvxsi.work.packs.studio import router as studio_router
+from evolvxsi.governance.tool_catalog.api import member_router as tool_catalog_member_router
+from evolvxsi.governance.tool_catalog.api import router as tool_catalog_router
+from evolvxsi.insight.quality.api import router as quality_router
+from evolvxsi.work.packs.api import router as packs_router
 from evolvxsi.server.manage.llm.api import admin_router as llm_admin_router
 from evolvxsi.server.manage.llm.api import basic_router as llm_router
 from evolvxsi.server.manage.oauth_test import router as oauth_test_admin_router

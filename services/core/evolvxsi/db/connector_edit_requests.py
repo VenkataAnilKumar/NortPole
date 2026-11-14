@@ -564,7 +564,7 @@ def apply_access_change__no_commit(
 
     # EvolvXSI implementations; in the community copy these were no-ops, so a
     # change of reading groups saved nothing.
-    from evolvxsi.knowledge_access.source_groups import (
+    from evolvxsi.knowledge.knowledge_access.source_groups import (
         assert_restricted_cc_pairs_keep_a_group,
         set_cc_pair_data_access_groups__no_commit,
     )

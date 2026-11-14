@@ -1,4 +1,4 @@
-from evolvxsi.tasks.claims import open_unsupported, split_claims, visible_text
+from evolvxsi.work.tasks.claims import open_unsupported, split_claims, visible_text
 
 
 def test_sentences_with_citations_are_supported() -> None:
@@ -21,7 +21,7 @@ def test_decimal_numbers_do_not_split_sentences() -> None:
 
 
 def test_decisions_carry_only_to_unchanged_unsupported_sentences() -> None:
-    from evolvxsi.tasks.claims import carry_decisions
+    from evolvxsi.work.tasks.claims import carry_decisions
 
     old = split_claims("A is true [1]. B is a guess. C is a guess.")
     old[1]["decision"] = "keep"
@@ -31,6 +31,6 @@ def test_decisions_carry_only_to_unchanged_unsupported_sentences() -> None:
 
 
 def test_unknown_citations_are_listed() -> None:
-    from evolvxsi.tasks.claims import unknown_citations
+    from evolvxsi.work.tasks.claims import unknown_citations
 
     assert unknown_citations("x [1] y [3] z [9]", {1, 2, 3}) == [9]

@@ -3,7 +3,7 @@
 import datetime
 from types import SimpleNamespace
 
-from evolvxsi.audit_log.chain import GENESIS, check_rows, link
+from evolvxsi.governance.audit_log.chain import GENESIS, check_rows, link
 
 
 def _chain(n: int, start_prev: str = GENESIS, start_id: int = 1) -> list[SimpleNamespace]:

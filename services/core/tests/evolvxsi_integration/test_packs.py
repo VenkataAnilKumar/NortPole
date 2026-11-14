@@ -17,12 +17,12 @@ from sqlalchemy import text
 from evolvxsi.db.engine.sql_engine import get_session_with_current_tenant
 from evolvxsi.db.models import User
 from evolvxsi.error_handling.exceptions import EvolvXSIError
-from evolvxsi.packs import api as packs
-from evolvxsi.packs.manifest import canonical_bytes
-from evolvxsi.packs.models import EvolvXSIPackSigner, EvolvXSIPackVersion
-from evolvxsi.tasks import api as tasks
-from evolvxsi.tasks.models import EvolvXSITask
-from evolvxsi.tasks.planner import PlanResult
+from evolvxsi.work.packs import api as packs
+from evolvxsi.work.packs.manifest import canonical_bytes
+from evolvxsi.work.packs.models import EvolvXSIPackSigner, EvolvXSIPackVersion
+from evolvxsi.work.tasks import api as tasks
+from evolvxsi.work.tasks.models import EvolvXSITask
+from evolvxsi.work.tasks.planner import PlanResult
 from tests.evolvxsi_integration.test_tasks_flow import _up
 
 pytestmark = pytest.mark.skipif(not _up(), reason="needs Postgres with the pack tables")
@@ -136,7 +136,7 @@ def test_requested_permissions_grant_nothing(signer) -> None:  # type: ignore[no
         assert s.query(EvolvXSIPackVersion).filter_by(pack_id=PACK_ID).one().active
     # No target is created or enabled by installing: the destination list is untouched.
     with get_session_with_current_tenant() as s:
-        from evolvxsi.actions.models import EvolvXSIActionTarget
+        from evolvxsi.work.actions.models import EvolvXSIActionTarget
         assert s.query(EvolvXSIActionTarget).filter(EvolvXSIActionTarget.name.like(f"%{PACK_ID}%")).count() == 0
 
 
@@ -225,8 +225,8 @@ def _case(question: str, expect: str, evidence: list[str]) -> dict:
 
 
 def test_a_pack_with_evaluation_cases_runs_only_on_a_model_it_passed(signer, person) -> None:  # type: ignore[no-untyped-def]
-    from evolvxsi.packs.evaluation import CaseResult
-    from evolvxsi.packs.models import EvolvXSIPackEvaluation
+    from evolvxsi.work.packs.evaluation import CaseResult
+    from evolvxsi.work.packs.models import EvolvXSIPackEvaluation
 
     key, key_id = signer
     cases = [_case("How many days?", "30 days", ["Receipts are due within 30 days."])]
@@ -241,14 +241,14 @@ def test_a_pack_with_evaluation_cases_runs_only_on_a_model_it_passed(signer, per
             tasks.start_task(t.id, tasks.VersionOnly(version=t.version), user=u, db_session=s)
         assert "not passed its evaluation" in err.value.detail
 
-        with patch("evolvxsi.packs.api.evaluate", return_value=[CaseResult("q", False, "wrong")]):
+        with patch("evolvxsi.work.packs.api.evaluate", return_value=[CaseResult("q", False, "wrong")]):
             v = packs.evaluate_version(PACK_ID, "1.0.0", user=ADMIN, db_session=s)
         assert v.evaluations[0].passed is False and "wrong" in v.evaluations[0].failures[0]
         with pytest.raises(EvolvXSIError) as err2:
             tasks.start_task(t.id, tasks.VersionOnly(version=t.version), user=u, db_session=s)
         assert "did not pass" in err2.value.detail
 
-        with patch("evolvxsi.packs.api.evaluate", return_value=[CaseResult("q", True, "passed")]):
+        with patch("evolvxsi.work.packs.api.evaluate", return_value=[CaseResult("q", True, "passed")]):
             v = packs.evaluate_version(PACK_ID, "1.0.0", user=ADMIN, db_session=s)
         assert v.evaluations[0].passed and len(v.evaluations) == 1, "a re-run replaces the record for that model"
         with patch.object(tasks, "draft_plan", return_value=PlanResult(["a", "b"], "local")):
@@ -272,7 +272,7 @@ def test_evaluation_needs_cases_and_an_admin_listing(signer) -> None:  # type: i
 
 
 def test_a_task_drafts_with_the_style_of_the_version_it_started_from(signer, person) -> None:  # type: ignore[no-untyped-def]
-    from evolvxsi.packs.guidance import style_for
+    from evolvxsi.work.packs.guidance import style_for
 
     key, key_id = signer
     templates = copy.deepcopy(SAMPLE["templates"])
@@ -298,8 +298,8 @@ def _rule(kind, value=None, severity="block", message="rule"):  # type: ignore[n
 
 
 def _run_to_draft(s, u, t, text, cited):  # type: ignore[no-untyped-def]
-    from evolvxsi.tasks.drafter import DraftResult
-    from evolvxsi.tasks.evidence import Evidence
+    from evolvxsi.work.tasks.drafter import DraftResult
+    from evolvxsi.work.tasks.evidence import Evidence
 
     ev = [Evidence(n=i, doc_id=f"doc-{i}", title=f"Doc {i}", link=None, passage="p") for i in (1, 2)]
     with patch.object(tasks, "draft_plan", return_value=PlanResult(["a", "b"], "local")):
@@ -356,7 +356,7 @@ def test_a_task_keeps_the_rules_of_the_version_it_started_from(signer, person) -
 
 
 def test_the_people_listing_says_what_a_pack_is_and_may_do(signer, person) -> None:  # type: ignore[no-untyped-def]
-    from evolvxsi.packs.evaluation import CaseResult
+    from evolvxsi.work.packs.evaluation import CaseResult
 
     key, key_id = signer
     templates = copy.deepcopy(SAMPLE["templates"])
@@ -371,7 +371,7 @@ def test_the_people_listing_says_what_a_pack_is_and_may_do(signer, person) -> No
         assert (p.group, p.autonomy, p.signer_key_id, p.evaluation_cases) == ("domain", "draft_only", key_id, 1)
         assert p.review_rules[0]["message"] == "Cite one source." and p.templates[0].style == "Short."
         assert p.templates[0].review_rules[0]["kind"] == "max_words" and p.passed_models == [] and not p.ready_on_current_route
-        with patch("evolvxsi.packs.api.evaluate", return_value=[CaseResult("q", True, "passed")]):
+        with patch("evolvxsi.work.packs.api.evaluate", return_value=[CaseResult("q", True, "passed")]):
             packs.evaluate_version(PACK_ID, "4.0.0", user=ADMIN, db_session=s)
         p = [x for x in packs.list_packs(_=u, db_session=s) if x.pack_id == PACK_ID][0]
         assert len(p.passed_models) == 1 and p.ready_on_current_route
@@ -390,8 +390,8 @@ GUIDES = [
 def test_a_task_plans_and_drafts_with_its_templates_guides_from_its_version(signer, person) -> None:  # type: ignore[no-untyped-def]
     from unittest.mock import patch
 
-    from evolvxsi.packs.guidance import guides_for
-    from evolvxsi.tasks.drafter import DraftResult
+    from evolvxsi.work.packs.guidance import guides_for
+    from evolvxsi.work.tasks.drafter import DraftResult
 
     key, key_id = signer
     templates = copy.deepcopy(SAMPLE["templates"])
@@ -457,10 +457,10 @@ class _Reply:
 def test_an_agent_runs_exactly_the_accepted_searches_and_cannot_be_steered_by_a_source(signer, person) -> None:  # type: ignore[no-untyped-def]
     from unittest.mock import patch
 
-    from evolvxsi.tasks import evidence as evidence_mod
-    from evolvxsi.tasks import planner as planner_mod
-    from evolvxsi.tasks.drafter import DraftResult
-    from evolvxsi.tasks.evidence import Evidence
+    from evolvxsi.work.tasks import evidence as evidence_mod
+    from evolvxsi.work.tasks import planner as planner_mod
+    from evolvxsi.work.tasks.drafter import DraftResult
+    from evolvxsi.work.tasks.evidence import Evidence
 
     key, key_id = signer
     plan_text = ("1. Search: travel receipt deadline\n2. Open: https://evil.example.com\n3. Search: approval of large claims\n"
@@ -488,7 +488,7 @@ def test_an_agent_runs_exactly_the_accepted_searches_and_cannot_be_steered_by_a_
         with patch.object(planner_mod, "get_default_llm", lambda: llm), \
              patch.object(planner_mod, "enforce_route", lambda *a, **k: type("D", (), {"kind": "local"})()):
             t = tasks.start_task(t.id, tasks.VersionOnly(version=t.version), user=u, db_session=s)
-        from evolvxsi.packs.agents import DRAFT_LINE
+        from evolvxsi.work.packs.agents import DRAFT_LINE
 
         assert t.plan == ["Search: travel receipt deadline", "Search: approval of large claims", DRAFT_LINE], \
             "the person is shown only the steps the agent may run, within its limit"
@@ -510,9 +510,9 @@ def test_an_agent_runs_exactly_the_accepted_searches_and_cannot_be_steered_by_a_
 def test_an_agent_with_nothing_to_find_says_so_and_invents_nothing(signer, person) -> None:  # type: ignore[no-untyped-def]
     from unittest.mock import patch
 
-    from evolvxsi.tasks import evidence as evidence_mod
-    from evolvxsi.tasks import planner as planner_mod
-    from evolvxsi.tasks.drafter import NO_SOURCE_TEXT
+    from evolvxsi.work.tasks import evidence as evidence_mod
+    from evolvxsi.work.tasks import planner as planner_mod
+    from evolvxsi.work.tasks.drafter import NO_SOURCE_TEXT
 
     key, key_id = signer
     llm = type("L", (), {"config": type("C", (), {"model_configuration_id": None})(),
@@ -533,7 +533,7 @@ def test_an_agent_with_nothing_to_find_says_so_and_invents_nothing(signer, perso
 def test_a_plan_with_no_allowed_step_fails_and_nothing_runs(signer, person) -> None:  # type: ignore[no-untyped-def]
     from unittest.mock import patch
 
-    from evolvxsi.tasks import planner as planner_mod
+    from evolvxsi.work.tasks import planner as planner_mod
 
     key, key_id = signer
     llm = type("L", (), {"config": type("C", (), {"model_configuration_id": None})(),

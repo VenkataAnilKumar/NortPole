@@ -68,7 +68,7 @@ def test_a_call_to_a_server_off_the_allowlist_is_not_made() -> None:
     audited: list = []
     fake = SimpleNamespace(mcp_server=SimpleNamespace(server_url="https://bad.example/sse", name="srv", id=3), _name="lookup",
                            _error_result=lambda msg: ("error", msg))
-    with patch("evolvxsi.extensions.policy.load", return_value=_p("ok.example")), patch("evolvxsi.route_policy.audit.record_audit", lambda *a, **k: audited.append(k)):
+    with patch("evolvxsi.extensions.policy.load", return_value=_p("ok.example")), patch("evolvxsi.governance.route_policy.audit.record_audit", lambda *a, **k: audited.append(k)):
         out = MCPTool._run(fake, None, None)  # type: ignore[arg-type]
     assert out[0] == "error" and "allowlist" in out[1] and len(audited) == 1
 

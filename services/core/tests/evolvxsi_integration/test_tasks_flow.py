@@ -12,9 +12,9 @@ from sqlalchemy import text
 from evolvxsi.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant
 from evolvxsi.db.models import User
 from evolvxsi.error_handling.exceptions import EvolvXSIError
-from evolvxsi.tasks import api
-from evolvxsi.tasks.models import EvolvXSITask
-from evolvxsi.tasks.states import TaskState
+from evolvxsi.work.tasks import api
+from evolvxsi.work.tasks.models import EvolvXSITask
+from evolvxsi.work.tasks.states import TaskState
 
 
 def _up() -> bool:
@@ -86,7 +86,7 @@ def test_start_drafts_a_plan_through_the_routed_model_then_accept(people) -> Non
 
 
 def test_a_second_start_is_refused(people) -> None:  # type: ignore[no-untyped-def]
-    from evolvxsi.tasks.planner import PlanResult
+    from evolvxsi.work.tasks.planner import PlanResult
 
     with get_session_with_current_tenant() as s, patch.object(api, "draft_plan", return_value=PlanResult(["a", "b", "c"], "local")):
         u = _user(s, people[0])
@@ -118,7 +118,7 @@ def test_others_cannot_see_or_change_the_task(people) -> None:  # type: ignore[n
 
 
 def test_revise_returns_to_draft_and_keeps_the_note(people) -> None:  # type: ignore[no-untyped-def]
-    from evolvxsi.tasks.planner import PlanResult
+    from evolvxsi.work.tasks.planner import PlanResult
 
     with get_session_with_current_tenant() as s, patch.object(api, "draft_plan", return_value=PlanResult(["a"], "local")):
         u = _user(s, people[0])
@@ -144,8 +144,8 @@ def test_a_blocked_route_fails_the_plan_without_sending(people) -> None:  # type
             sent.append(1)
 
     with get_session_with_current_tenant() as s, \
-         patch("evolvxsi.tasks.planner.get_default_llm", return_value=FakeLLM()), \
-         patch("evolvxsi.tasks.planner.enforce_route", side_effect=blocked):
+         patch("evolvxsi.work.tasks.planner.get_default_llm", return_value=FakeLLM()), \
+         patch("evolvxsi.work.tasks.planner.enforce_route", side_effect=blocked):
         u = _user(s, people[0])
         t = _draft(s, people[0])
         r = api.start_task(t.id, api.VersionOnly(version=t.version), user=u, db_session=s)

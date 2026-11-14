@@ -1,6 +1,6 @@
 import pytest
 
-from evolvxsi.route_policy.policy import (
+from evolvxsi.governance.route_policy.policy import (
     DATA_CLASSES,
     RoutePolicy,
     decide,

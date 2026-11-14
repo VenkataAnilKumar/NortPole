@@ -43,7 +43,7 @@ from evolvxsi.db.models import (
 )
 from evolvxsi.document_index.interfaces import IndexingMetadata, TenantState
 from evolvxsi.document_index.opensearch.opensearch_document_index import OpenSearchDocumentIndex
-from evolvxsi.knowledge_access.group_admin import SourceGroupsUpdate, set_source_groups
+from evolvxsi.knowledge.knowledge_access.group_admin import SourceGroupsUpdate, set_source_groups
 from tests.evolvxsi_integration.test_group_access import _doc, _source, _up
 from tests.evolvxsi_integration.test_retrieval_acl import DIM, TENANT, _chunk, _vector
 

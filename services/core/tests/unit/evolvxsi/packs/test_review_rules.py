@@ -3,8 +3,8 @@
 import pytest
 from pydantic import ValidationError
 
-from evolvxsi.packs.manifest import ReviewRule
-from evolvxsi.packs.review_rules import blocking_failures, evaluate
+from evolvxsi.work.packs.manifest import ReviewRule
+from evolvxsi.work.packs.review_rules import blocking_failures, evaluate
 
 SRC = [{"n": 1}, {"n": 2}]
 

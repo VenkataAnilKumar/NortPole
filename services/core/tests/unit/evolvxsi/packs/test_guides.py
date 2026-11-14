@@ -5,10 +5,10 @@ from unittest.mock import patch
 import pytest
 from pydantic import ValidationError
 
-from evolvxsi.packs import evaluation
-from evolvxsi.packs.manifest import Manifest
-from evolvxsi.tasks.drafter import GUIDE_RULE, build_prompt, guide_lines
-from evolvxsi.tasks.planner import _prompt as plan_prompt
+from evolvxsi.work.packs import evaluation
+from evolvxsi.work.packs.manifest import Manifest
+from evolvxsi.work.tasks.drafter import GUIDE_RULE, build_prompt, guide_lines
+from evolvxsi.work.tasks.planner import _prompt as plan_prompt
 
 
 def _m(**over):  # type: ignore[no-untyped-def]

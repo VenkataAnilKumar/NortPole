@@ -3,9 +3,9 @@
 from types import SimpleNamespace
 from unittest.mock import patch
 
-from evolvxsi.packs import evaluation
-from evolvxsi.packs.manifest import EvalCase
-from evolvxsi.tasks.drafter import NO_SOURCE_TEXT
+from evolvxsi.work.packs import evaluation
+from evolvxsi.work.packs.manifest import EvalCase
+from evolvxsi.work.tasks.drafter import NO_SOURCE_TEXT
 
 
 def _run(case: EvalCase, text: str, cited: list[int]):  # type: ignore[no-untyped-def]
@@ -34,7 +34,7 @@ def test_a_model_failure_fails_the_case_instead_of_crashing() -> None:
 
 
 def test_house_style_is_added_below_the_rules_and_only_when_present() -> None:
-    from evolvxsi.tasks.drafter import STYLE_RULE, build_prompt
+    from evolvxsi.work.tasks.drafter import STYLE_RULE, build_prompt
 
     plain = build_prompt("T", "R", ["a"], [])
     styled = build_prompt("T", "R", ["a"], [], style="  Three   short\nsentences.  ")
@@ -47,7 +47,7 @@ def test_a_style_longer_than_the_limit_is_refused() -> None:
     import pytest
     from pydantic import ValidationError
 
-    from evolvxsi.packs.manifest import Template
+    from evolvxsi.work.packs.manifest import Template
 
     with pytest.raises(ValidationError):
         Template(id="t", title="T", request="R", style="x" * 801)
@@ -60,7 +60,7 @@ def test_a_case_runs_with_its_templates_style_and_must_name_a_real_template() ->
     import pytest
     from pydantic import ValidationError
 
-    from evolvxsi.packs.manifest import Manifest
+    from evolvxsi.work.packs.manifest import Manifest
 
     raw = json.loads((Path(__file__).parents[4] / "scripts/sample_packs/finance-policy-review.json").read_text())
     m = Manifest.model_validate(raw)

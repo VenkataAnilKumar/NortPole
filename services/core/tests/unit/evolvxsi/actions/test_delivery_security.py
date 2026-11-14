@@ -7,8 +7,8 @@ from unittest.mock import patch
 
 import pytest
 
-from evolvxsi.actions import delivery
-from evolvxsi.actions.delivery import UnsafeTarget, check_target_url, deliver, resolve_safe
+from evolvxsi.work.actions import delivery
+from evolvxsi.work.actions.delivery import UnsafeTarget, check_target_url, deliver, resolve_safe
 
 
 def _info(*addrs: str):  # type: ignore[no-untyped-def]
@@ -144,7 +144,7 @@ def test_redirects_are_not_followed() -> None:
 
 
 def test_https_keeps_the_real_host_name_for_certificate_checks() -> None:
-    from evolvxsi.actions.delivery import _PinnedAdapter
+    from evolvxsi.work.actions.delivery import _PinnedAdapter
 
     adapter = _PinnedAdapter("hooks.example.test", "93.184.216.34", 443)
     kw = adapter.poolmanager.connection_pool_kw

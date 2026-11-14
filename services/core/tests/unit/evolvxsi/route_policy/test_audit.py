@@ -1,5 +1,5 @@
-from evolvxsi.route_policy.audit import describe_policy_change
-from evolvxsi.route_policy.policy import RoutePolicy
+from evolvxsi.governance.route_policy.audit import describe_policy_change
+from evolvxsi.governance.route_policy.policy import RoutePolicy
 
 
 def base() -> RoutePolicy:

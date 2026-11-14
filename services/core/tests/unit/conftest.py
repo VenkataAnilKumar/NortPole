@@ -82,8 +82,8 @@ def _evolvxsi_governance_neutral(request: pytest.FixtureRequest) -> Generator[No
 
     from evolvxsi.key_value_store.interface import KvKeyNotFoundError
     from evolvxsi.key_value_store.store import PgRedisKVStore
-    from evolvxsi.route_policy.policy import RoutePolicy
-    from evolvxsi.tool_catalog import catalog
+    from evolvxsi.governance.route_policy.policy import RoutePolicy
+    from evolvxsi.governance.tool_catalog import catalog
 
     memory: dict[str, object] = {
         "evolvxsi_route_policy": RoutePolicy(redact_route_kinds=[]).model_dump(),

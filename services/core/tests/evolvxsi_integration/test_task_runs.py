@@ -16,11 +16,11 @@ from evolvxsi.db.models import User
 from evolvxsi.document_index.interfaces import IndexingMetadata, TenantState
 from evolvxsi.document_index.opensearch.opensearch_document_index import OpenSearchDocumentIndex
 from evolvxsi.error_handling.exceptions import EvolvXSIError
-from evolvxsi.tasks import api, evidence
-from evolvxsi.tasks.evidence import Evidence
-from evolvxsi.tasks.models import EvolvXSITask
-from evolvxsi.tasks.planner import PlanResult
-from evolvxsi.tasks.states import TaskState
+from evolvxsi.work.tasks import api, evidence
+from evolvxsi.work.tasks.evidence import Evidence
+from evolvxsi.work.tasks.models import EvolvXSITask
+from evolvxsi.work.tasks.planner import PlanResult
+from evolvxsi.work.tasks.states import TaskState
 from tests.evolvxsi_integration.test_retrieval_acl import DIM, TENANT, _chunk, _opensearch_up
 from tests.evolvxsi_integration.test_tasks_flow import _mock_model_up, _up
 
@@ -59,7 +59,7 @@ def _sources_are_open():  # type: ignore[no-untyped-def]
     """These tests are about running and drafting. Their made-up document ids
     are not in the database, so the owner-access recheck is stubbed to open;
     the recheck itself is covered in test_task_approval_export.py."""
-    from evolvxsi.tasks.export import AccessCheck
+    from evolvxsi.work.tasks.export import AccessCheck
 
     with patch.object(api, "recheck_cited_sources", return_value=AccessCheck(open_doc_ids=[], withheld=0)):
         yield

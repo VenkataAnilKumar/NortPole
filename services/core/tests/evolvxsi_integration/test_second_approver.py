@@ -6,8 +6,8 @@ import uuid
 import pytest
 from sqlalchemy import text
 
-from evolvxsi.actions import api as actions
-from evolvxsi.actions.models import EvolvXSIAction, EvolvXSIActionTarget
+from evolvxsi.work.actions import api as actions
+from evolvxsi.work.actions.models import EvolvXSIAction, EvolvXSIActionTarget
 from evolvxsi.db.engine.sql_engine import get_session_with_current_tenant
 from evolvxsi.db.models import User, User__UserGroup
 from evolvxsi.error_handling.exceptions import EvolvXSIError

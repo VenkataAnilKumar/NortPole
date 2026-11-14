@@ -7,8 +7,8 @@ import pytest
 from evolvxsi.db.engine.sql_engine import get_session_with_current_tenant
 from evolvxsi.llm.factory import get_default_llm
 from evolvxsi.llm.models import GenerationRequest, UserMessage
-from evolvxsi.redaction import request as req
-from evolvxsi.redaction.request import EvolvXSIRedactionCount
+from evolvxsi.governance.redaction import request as req
+from evolvxsi.governance.redaction.request import EvolvXSIRedactionCount
 from tests.evolvxsi_integration.test_tasks_flow import _up
 
 pytestmark = pytest.mark.skipif(not _up(), reason="needs Postgres and a default model")

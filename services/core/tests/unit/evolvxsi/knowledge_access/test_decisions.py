@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 
 from evolvxsi.access.models import DocumentAccess
-from evolvxsi.knowledge_access.decisions import (
+from evolvxsi.knowledge.knowledge_access.decisions import (
     CitationState,
     SourceDocument,
     Viewer,

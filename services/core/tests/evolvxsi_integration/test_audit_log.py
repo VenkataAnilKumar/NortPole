@@ -5,7 +5,7 @@ import uuid
 import pytest
 from sqlalchemy import text
 
-from evolvxsi.audit_log import api as audit_api
+from evolvxsi.governance.audit_log import api as audit_api
 from evolvxsi.db.engine.sql_engine import get_session_with_current_tenant
 from tests.evolvxsi_integration.test_tasks_flow import _up
 

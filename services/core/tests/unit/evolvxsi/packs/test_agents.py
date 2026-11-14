@@ -3,8 +3,8 @@
 import pytest
 from pydantic import ValidationError
 
-from evolvxsi.packs.agents import DRAFT_LINE, AgentRun, parse_agent_plan, plan_prompt, plan_system_prompt, planned_searches
-from evolvxsi.packs.manifest import Manifest
+from evolvxsi.work.packs.agents import DRAFT_LINE, AgentRun, parse_agent_plan, plan_prompt, plan_system_prompt, planned_searches
+from evolvxsi.work.packs.manifest import Manifest
 
 AGENT = AgentRun(pack_id="p", version="1.0.0", id="researcher", name="Policy researcher", instructions="Look for the current policy first.",
                  tools=("search",), max_searches=2, guides=(("Citing", "Cite each rule."),))
