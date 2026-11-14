@@ -2,7 +2,7 @@ from collections.abc import Mapping
 
 from nortpole.configs.constants import DocumentSource
 
-_PUBLIC_SOURCE_IMAGE_BASE_URL = "https://raw.githubusercontent.com/VenkataAnilKumar/EvolvXSI/main/apps/workspace/public/slackbot-source-icons"
+_PUBLIC_SOURCE_IMAGE_BASE_URL = "https://raw.githubusercontent.com/VenkataAnilKumar/NortPole/main/apps/workspace/public/slackbot-source-icons"
 _DEFAULT_SOURCE_IMAGE_FILENAME = "File.png"
 
 _SOURCE_IMAGE_FILENAMES: Mapping[DocumentSource, str] = {

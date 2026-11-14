@@ -52,7 +52,7 @@ class DocumentIngestionPayload(BaseModel):
         description=(
             "Connector source type (e.g. confluence, slack, google_drive). "
             "Read-only — changes are ignored. "
-            "Full list of values: https://github.com/VenkataAnilKumar/EvolvXSI/blob/main/services/core/nortpole/configs/constants.py"
+            "Full list of values: https://github.com/VenkataAnilKumar/NortPole/blob/main/services/core/nortpole/configs/constants.py"
         )
     )
     sections: list[DocumentIngestionSection] = Field(

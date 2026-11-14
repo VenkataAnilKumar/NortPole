@@ -1871,7 +1871,7 @@ except json.JSONDecodeError:
 # Auto LLM Configuration - fetches model configs from GitHub for providers in Auto mode
 AUTO_LLM_CONFIG_URL = os.environ.get(
     "AUTO_LLM_CONFIG_URL",
-    "https://raw.githubusercontent.com/VenkataAnilKumar/EvolvXSI/main/services/core/nortpole/llm/well_known_providers/recommended-models.json",
+    "https://raw.githubusercontent.com/VenkataAnilKumar/NortPole/main/services/core/nortpole/llm/well_known_providers/recommended-models.json",
 )
 
 #####

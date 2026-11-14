@@ -372,7 +372,7 @@ _LOCAL_PROVIDERS = frozenset({"ollama_chat", "lm_studio"})
 # ---------------------------------------------------------------------------
 
 _REMOTE_CATALOG_URL = (
-    "https://raw.githubusercontent.com/VenkataAnilKumar/EvolvXSI/main/"
+    "https://raw.githubusercontent.com/VenkataAnilKumar/NortPole/main/"
     "services/core/nortpole/llm/price_table"
 )
 _REMOTE_FETCH_TIMEOUT_SECONDS = 5.0

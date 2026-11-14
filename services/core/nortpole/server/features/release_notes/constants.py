@@ -2,7 +2,7 @@
 
 # GitHub source: docs/live holds the docs of the latest stable release (docs-publish.yml)
 GITHUB_RAW_BASE_URL = (
-    "https://raw.githubusercontent.com/VenkataAnilKumar/EvolvXSI/main/docs/release-notes"
+    "https://raw.githubusercontent.com/VenkataAnilKumar/NortPole/main/docs/release-notes"
 )
 GITHUB_CHANGELOG_RAW_URL = f"{GITHUB_RAW_BASE_URL}/changelog.mdx"
 

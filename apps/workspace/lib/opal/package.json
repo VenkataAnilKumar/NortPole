@@ -2,11 +2,11 @@
   "name": "@evolvxsi-ai/opal",
   "version": "0.0.0",
   "description": "Opal \u2014 NortPole's Typescript component library and design system.",
-  "homepage": "https://github.com/VenkataAnilKumar/EvolvXSI/tree/main/apps/workspace/lib/opal",
+  "homepage": "https://github.com/VenkataAnilKumar/NortPole/tree/main/apps/workspace/lib/opal",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/VenkataAnilKumar/EvolvXSI.git",
+    "url": "https://github.com/VenkataAnilKumar/NortPole.git",
     "directory": "web/lib/opal"
   },
   "files": [

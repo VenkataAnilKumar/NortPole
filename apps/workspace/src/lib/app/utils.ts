@@ -35,5 +35,5 @@ export const CHANGELOG_URL = "/help/changelog";
 
 /** The GitHub page of a commit of the NortPole repo. */
 export function commitUrl(commit: string): string {
-  return `https://github.com/VenkataAnilKumar/EvolvXSI/commit/${commit}`;
+  return `https://github.com/VenkataAnilKumar/NortPole/commit/${commit}`;
 }
