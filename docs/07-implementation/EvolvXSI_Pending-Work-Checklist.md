@@ -93,7 +93,8 @@ Status: Working list, updated 2026-11-14 (after the redesign stages R1–R6b and
 - [x] Phase 3: first-party packs as source in `packs/horizontal` and `packs/vertical/<industry>`, editions.
 - [x] Phase 4: generated contracts in `packages/contracts` and `packages/pack-sdk`.
 - [ ] Phase 5 (when needed): tenancy decision, Kubernetes and cloud profiles, service splits, connector SDK.
-- [ ] Pack signatures cannot be re-checked from the database: the server signs and hashes the manifest as uploaded but stores a copy with defaults filled in (`install_pack`). Store the signed bytes and add an integrity check; existing rows keep only the normalized copy.
+- [x] Pack signatures re-checkable from the database (done 2026-11-14): each version keeps its exact signed bytes (`signed_manifest`, migration `a1c3e5f7b9d2`) and `GET /admin/packs/verify` re-checks digest, signature and content. Versions installed earlier whose bytes could not be recovered are reported as unverifiable until the same signed package is uploaded again.
+- [ ] Packs admin page: show the integrity check's result and the "signed bytes kept" flag (the API is built; the screen is not).
 
 ## Waiting for the owner's yes
 

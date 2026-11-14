@@ -55,3 +55,24 @@ def test_the_sdk_schema_rejects_what_the_server_rejects(change: str, tmp_path: P
     (pack / "manifest.yaml").write_text(yaml.safe_dump(manifest))
     with pytest.raises(sdk.PackError):
         sdk.validate(pack)
+
+
+@pytest.mark.parametrize("pack", PACKS, ids=lambda p: p.name)
+def test_a_stored_version_re_verifies_from_the_sdk_signed_bytes(pack: Path) -> None:
+    """The server keeps the SDK's exact canonical bytes beside the normalized copy it reads, and those re-verify
+    (digest, signature, content). everyday-brief leaves defaults out, so its normalized copy alone could not."""
+    from evolvxsi.work.packs.integrity import check_version
+    from evolvxsi.work.packs.models import EvolvXSIPackSigner, EvolvXSIPackVersion
+
+    manifest = sdk.validate(pack)
+    normalized = Manifest.model_validate(manifest).model_dump(mode="json")
+    if pack.name == "everyday-brief":
+        assert server_digest(normalized) != sdk.digest(manifest), "everyday-brief is expected to leave defaults out"
+    key = sdk.keygen("re-verify")
+    package = sdk.sign(manifest, key["private_key"], key["key_id"])
+    row = EvolvXSIPackVersion(pack_id=manifest["id"], version=manifest["version"], manifest=normalized,
+                              signed_manifest=server_canonical_bytes(package["manifest"]).decode("utf-8"),
+                              digest=server_digest(package["manifest"]), signature=package["signature"], signer_key_id=key["key_id"])
+    assert row.signed_manifest.encode("utf-8") == sdk.canonical_bytes(manifest)
+    check = check_version(row, EvolvXSIPackSigner(key_id=key["key_id"], public_key=key["public_key"], revoked=False))
+    assert check.status == "verified", check.problems

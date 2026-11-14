@@ -20,6 +20,7 @@ from evolvxsi.error_handling.error_codes import EvolvXSIErrorCode
 from evolvxsi.error_handling.exceptions import EvolvXSIError
 from evolvxsi.work.packs.manifest import Manifest, canonical_bytes, digest, version_key
 from evolvxsi.work.packs.evaluation import evaluate
+from evolvxsi.work.packs.integrity import IntegrityReport, check_all
 from evolvxsi.work.packs.models import EvolvXSIPackEvaluation, EvolvXSIPackSigner, EvolvXSIPackVersion
 from evolvxsi.work.packs.signing import SignatureProblem, parse_public_key, verify
 from evolvxsi.governance.route_policy.audit import record_audit
@@ -109,6 +110,9 @@ class VersionView(BaseModel):
     signer_revoked: bool
     digest: str
     installed_at: datetime.datetime
+    # False for a version installed before the signed bytes were kept, whose bytes could not be recovered: its
+    # signature cannot be re-checked (see GET /admin/packs/verify).
+    signed_bytes_kept: bool = True
     evaluation_cases: int = 0
     evaluations: list[EvalView] = []
     guides: list[GuideView] = []
@@ -172,7 +176,7 @@ def _vview(db: Session, v: EvolvXSIPackVersion) -> VersionView:
     return VersionView(
         pack_id=v.pack_id, version=v.version, name=m["name"], vertical=m["vertical"], active=v.active,
         signer_key_id=v.signer_key_id, signer_revoked=_revoked(db, v.signer_key_id), digest=v.digest, installed_at=v.installed_at,
-        evaluation_cases=len(m.get("evaluation_cases", [])), evaluations=_evals(db, v.pack_id, v.version),
+        signed_bytes_kept=v.signed_manifest is not None, evaluation_cases=len(m.get("evaluation_cases", [])), evaluations=_evals(db, v.pack_id, v.version),
         guides=[GuideView(id=g["id"], name=g["name"], description=g["description"], body=g["body"],
                           used_by=[t["id"] for t in m["templates"] if g["id"] in t.get("guides", [])]) for g in m.get("guides", [])],
         agents=[_card(m, a, True) for a in m.get("agents", [])],
@@ -259,6 +263,18 @@ def list_versions(
     return [_vview(db_session, v) for v in rows]
 
 
+@router.get("/admin/packs/verify")
+def verify_versions(
+    _: User = Depends(require_permission(Permission.MANAGE_CONNECTORS)),
+    db_session: Session = Depends(get_session),
+) -> IntegrityReport:
+    """Re-check every installed version from the database: the signed bytes hash to the stored digest, the stored
+    signature verifies with the signer's registered key, and the manifest people are offered is the signed one with
+    defaults filled in. Versions installed before the signed bytes were kept, and not recovered, are reported as
+    unverifiable."""
+    return check_all(db_session)
+
+
 @router.post("/admin/packs")
 def install_pack(
     pkg: Package,
@@ -286,11 +302,26 @@ def install_pack(
     except ValidationError as e:
         first = e.errors()[0]
         raise EvolvXSIError(EvolvXSIErrorCode.INVALID_INPUT, f"The manifest is not valid: {'.'.join(str(x) for x in first['loc'])}: {first['msg']}") from e
-    if db_session.scalar(select(EvolvXSIPackVersion.row_id).where(
-            EvolvXSIPackVersion.pack_id == manifest.id, EvolvXSIPackVersion.version == manifest.version)):
+    signed = canonical_bytes(pkg.manifest)
+    existing = db_session.scalar(select(EvolvXSIPackVersion).where(
+        EvolvXSIPackVersion.pack_id == manifest.id, EvolvXSIPackVersion.version == manifest.version))
+    if existing is not None:
+        if (existing.signed_manifest is None and existing.digest == digest(pkg.manifest)
+                and existing.signer_key_id == pkg.key_id):
+            # A version installed before the signed bytes were kept: the same signed package, uploaded again,
+            # restores them. Nothing else about the version changes.
+            existing.signed_manifest = signed.decode("utf-8")
+            existing.signature = pkg.signature
+            db_session.commit()
+            _audit(user, AuditAction.PACK_INSTALL, f"Restored the signed manifest of {manifest.id} {manifest.version} "
+                   f"(digest {existing.digest[:12]}, signer {pkg.key_id})", manifest.id)
+            return _vview(db_session, existing)
         raise EvolvXSIError(EvolvXSIErrorCode.CONFLICT, "That version is already installed. A change needs a new version number.")
+    # The product reads the copy with defaults filled in; the exact signed bytes are kept beside it so the digest
+    # and the signature can be re-checked from the database.
     row = EvolvXSIPackVersion(pack_id=manifest.id, version=manifest.version, manifest=manifest.model_dump(mode="json"),
-                              digest=digest(pkg.manifest), signature=pkg.signature, signer_key_id=pkg.key_id, active=False)
+                              signed_manifest=signed.decode("utf-8"), digest=digest(pkg.manifest),
+                              signature=pkg.signature, signer_key_id=pkg.key_id, active=False)
     db_session.add(row)
     db_session.commit()
     _audit(user, AuditAction.PACK_INSTALL, f"Installed {manifest.id} {manifest.version} (digest {row.digest[:12]}, signer {pkg.key_id})", manifest.id)

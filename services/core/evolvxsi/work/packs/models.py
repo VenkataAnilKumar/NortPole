@@ -30,7 +30,12 @@ class EvolvXSIPackVersion(Base):
     row_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     pack_id: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
     version: Mapped[str] = mapped_column(String(20), nullable=False)
+    # The manifest with every default filled in: what the product reads.
     manifest: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
+    # The exact canonical JSON that was signed and hashed (sorted keys, no whitespace, UTF-8). Kept as text, not
+    # JSONB, so the bytes come back unchanged and the signature and digest can be re-checked from the database.
+    # Null on a version installed before this was kept whose original bytes could not be recovered.
+    signed_manifest: Mapped[str | None] = mapped_column(Text, nullable=True)
     digest: Mapped[str] = mapped_column(String(64), nullable=False)
     signature: Mapped[str] = mapped_column(Text, nullable=False)
     signer_key_id: Mapped[str] = mapped_column(String(80), nullable=False)
