@@ -383,7 +383,7 @@ class ZendeskProvider(OAuthExternalAppProvider):
                 "All listed scopes must be allowed, even if you do not use every feature. "
                 "After changing allowed scopes, reconnect Zendesk in NortPole to grant them. "
                 "Set the Redirect URL to this NortPole instance's full callback URL "
-                "(https://<your-evolvxsi-domain>/craft/v1/apps/oauth/callback). "
+                "(https://<your-nortpole-domain>/craft/v1/apps/oauth/callback). "
                 "Copy the Secret when Zendesk shows it; it is shown only once. "
                 "Then enter your subdomain, the client's Unique identifier, and the Secret below. "
                 "The subdomain selects the Zendesk account this app can access."

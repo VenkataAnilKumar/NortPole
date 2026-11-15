@@ -82,7 +82,7 @@ _STARTUP_EMBED_TEXT = "NortPole startup check"
 _STARTUP_RETRY_SECONDS = 10
 
 
-def setup_evolvxsi(
+def setup_nortpole(
     db_session: Session,
     tenant_id: str,  # noqa: ARG001
     cohere_enabled: bool = False,  # noqa: ARG001
@@ -397,7 +397,7 @@ def update_default_multipass_indexing(db_session: Session) -> None:
         )
 
 
-def setup_multitenant_evolvxsi() -> None:
+def setup_multitenant_nortpole() -> None:
     if DISABLE_VECTOR_DB:
         logger.notice(
             "DISABLE_VECTOR_DB is set — skipping multitenant document index setup."

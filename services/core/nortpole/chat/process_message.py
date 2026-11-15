@@ -78,7 +78,7 @@ from nortpole.deep_research.tool_definitions import (
     RESEARCH_AGENT_IN_CODE_ID,
 )
 from nortpole.error_handling.error_codes import NortPoleErrorCode
-from nortpole.error_handling.exceptions import NortPoleError, log_evolvxsi_error
+from nortpole.error_handling.exceptions import NortPoleError, log_nortpole_error
 from nortpole.file_store.utils import verify_user_files
 from nortpole.hooks.executor import HookSkipped, HookSoftFailed, execute_hook
 from nortpole.hooks.points.query_processing import (
@@ -94,7 +94,7 @@ from nortpole.llm.models import ReasoningEffort
 from nortpole.llm.override_models import LLMOverride
 from nortpole.governance.route_policy.enforce import enforce_route
 from nortpole.natural_language_processing.utils import get_tokenizer
-from nortpole.evolvxsibot.slack.models import SlackContext
+from nortpole.nortpolebot.slack.models import SlackContext
 from nortpole.prompts.prompt_utils import substitute_user_placeholders
 from nortpole.server.query_and_chat.models import (
     MessageResponseIDInfo,
@@ -597,7 +597,7 @@ def _stream_chat_turn(
     except Exception as error:
         if isinstance(error, NortPoleError):
             if error.error_code is not NortPoleErrorCode.QUERY_REJECTED:
-                log_evolvxsi_error(error)
+                log_nortpole_error(error)
         else:
             logger.exception("Chat request failed")
         yield chat_error(error, setup.responses[0].llm if setup else None)

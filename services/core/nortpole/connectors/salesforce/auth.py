@@ -18,7 +18,7 @@ from nortpole.connectors.salesforce.models import (
     parse_salesforce_credentials,
     validate_salesforce_my_domain_url,
 )
-from nortpole.connectors.salesforce.evolvxsi_salesforce import NortPoleSalesforce
+from nortpole.connectors.salesforce.nortpole_salesforce import NortPoleSalesforce
 from nortpole.utils.redaction import scrub_sensitive_values
 from nortpole.utils.retry_wrapper import request_with_retries
 

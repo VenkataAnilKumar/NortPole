@@ -20,7 +20,7 @@ from __future__ import annotations
 from typing import Any
 
 from nortpole.access.models import ExternalAccess
-from nortpole.access.utils import build_ext_group_name_for_evolvxsi
+from nortpole.access.utils import build_ext_group_name_for_nortpole
 from nortpole.configs.constants import DocumentSource
 from nortpole.connectors.google_drive.file_retrieval import PERMISSION_FULL_DESCRIPTION
 from nortpole.connectors.google_drive.source_operations import GoogleDriveSourceOperations
@@ -43,7 +43,7 @@ def access_from_permissions(permissions: list[dict[str, Any]], add_prefix: bool 
         if kind == "user" and email:
             emails.add(email)
         elif kind == "group" and email:
-            groups.add(build_ext_group_name_for_evolvxsi(email, DocumentSource.GOOGLE_DRIVE) if add_prefix else email)
+            groups.add(build_ext_group_name_for_nortpole(email, DocumentSource.GOOGLE_DRIVE) if add_prefix else email)
         # "domain" and "anyone" grant nothing (see the module notes).
     return ExternalAccess(external_user_emails=emails, external_user_group_ids=groups, is_public=False)
 

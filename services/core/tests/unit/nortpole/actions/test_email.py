@@ -81,7 +81,7 @@ def test_a_message_reaches_only_the_registered_recipients() -> None:
     headers = sink.data.split("\n\n")[0].split("\n")
     assert not any(h.lower().startswith("bcc:") for h in headers), "the title cannot add a header"
     assert "Subject: Q3 Bcc: evil@example.com" in sink.data  # folded into one line, not a header
-    assert "Message-ID: <key123@evolvxsi.local>" in sink.data and "Body line" in sink.data
+    assert "Message-ID: <key123@nortpole.local>" in sink.data and "Body line" in sink.data
 
 
 def test_a_refused_connection_is_a_failure_that_warns_about_duplicates() -> None:

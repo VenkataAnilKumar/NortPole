@@ -333,7 +333,7 @@ export default function ServiceAccountsPage() {
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement("a");
                     a.href = url;
-                    a.download = "evolvxsi-api-key.txt";
+                    a.download = "nortpole-api-key.txt";
                     a.click();
                     URL.revokeObjectURL(url);
                   }}

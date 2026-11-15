@@ -5,11 +5,11 @@
  *   - The `.font-main-content-body strong` weight override
  *
  * The typography PRESETS (the `@utility font-*` blocks) are now design tokens in
- * @evolvxsi-ai/shared and are generated into `@evolvxsi-ai/shared/typography.css`, imported
+ * @nortpole-ai/shared and are generated into `@nortpole-ai/shared/typography.css`, imported
  * via _reference.css (which leads the bundle). The font-family CSS variables and the
- * height metrics they reference also live in @evolvxsi-ai/shared (tokens.css).
+ * height metrics they reference also live in @nortpole-ai/shared (tokens.css).
  *
- * Automatically included when consumers import `@evolvxsi-ai/opal/root.css`.
+ * Automatically included when consumers import `@nortpole-ai/opal/root.css`.
  */
 
 .font-main-content-body strong {

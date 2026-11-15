@@ -23,15 +23,15 @@ def test_single_origin_keeps_credentials() -> None:
 
 def test_multiple_origins_parsed_and_stripped() -> None:
     origins = parse_cors_allowed_origins(
-        " https://evolvxsi.example.com , http://localhost:3000 ,"
+        " https://nortpole.example.com , http://localhost:3000 ,"
     )
-    assert origins == ["https://evolvxsi.example.com", "http://localhost:3000"]
+    assert origins == ["https://nortpole.example.com", "http://localhost:3000"]
     assert cors_allow_credentials(origins) is True
 
 
 def test_wildcard_mixed_with_explicit_origins_disables_credentials() -> None:
-    origins = parse_cors_allowed_origins("https://evolvxsi.example.com,*")
-    assert origins == ["https://evolvxsi.example.com", "*"]
+    origins = parse_cors_allowed_origins("https://nortpole.example.com,*")
+    assert origins == ["https://nortpole.example.com", "*"]
     assert cors_allow_credentials(origins) is False
 
 

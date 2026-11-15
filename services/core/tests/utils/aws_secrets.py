@@ -16,7 +16,7 @@ Usage:
 
         @pytest.fixture(scope="session")
         def test_secrets(request) -> dict[TestSecret, str]:
-            needed = getattr(request.config, "_evolvxsi_test_secrets_needed", set())
+            needed = getattr(request.config, "_nortpole_test_secrets_needed", set())
             return get_secrets(sorted(needed, key=lambda s: s.value))
 
     Then in a test module:

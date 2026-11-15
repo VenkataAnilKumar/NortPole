@@ -46,7 +46,7 @@ CLOUD_DOC_PERMISSION_SYNC_MULTIPLIER_DEFAULT = 1.0
 # tasks that run in either self-hosted on cloud
 beat_task_templates: list[dict] = [
     {
-        "name": "evolvxsi-retention-prune",
+        "name": "nortpole-retention-prune",
         "task": NortPoleCeleryTask.NORTPOLE_RETENTION_PRUNE,
         "schedule": timedelta(days=1),
         "options": {
@@ -58,7 +58,7 @@ beat_task_templates: list[dict] = [
         },
     },
     {
-        "name": "evolvxsi-workflow-schedules",
+        "name": "nortpole-workflow-schedules",
         "task": NortPoleCeleryTask.NORTPOLE_WORKFLOW_SCHEDULES,
         "schedule": timedelta(minutes=5),
         "options": {

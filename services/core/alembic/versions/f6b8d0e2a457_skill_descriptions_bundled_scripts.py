@@ -25,18 +25,18 @@ _DESCRIPTIONS = {
     ),
     "image-generation": (
         "Generate or edit images with the bundled image_gen.py script, using the image generation "
-        "provider configured in EvolvXSI."
+        "provider configured in NortPole."
     ),
 }
 
 _OLD_DESCRIPTIONS = {
     "company-search": (
-        "Search company knowledge using evolvxsi-cli. Returns permissioned, "
+        "Search company knowledge using nortpole-cli. Returns permissioned, "
         "citation-rich results from connected sources."
     ),
     "image-generation": (
-        "Generate or edit images with evolvxsi-cli using the image generation provider "
-        "configured in EvolvXSI."
+        "Generate or edit images with nortpole-cli using the image generation provider "
+        "configured in NortPole."
     ),
 }
 

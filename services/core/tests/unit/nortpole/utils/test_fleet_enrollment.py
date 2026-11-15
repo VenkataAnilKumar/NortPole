@@ -123,7 +123,7 @@ def test_cloud_key_comes_from_the_web_domain(
     monkeypatch.setattr(fleet, "WEB_DOMAIN", "https://cloud.example")
     assert (
         fleet.deployment_key()
-        == hashlib.sha256(b"evolvxsi-cloud:https://cloud.example").hexdigest()
+        == hashlib.sha256(b"nortpole-cloud:https://cloud.example").hexdigest()
     )
 
 

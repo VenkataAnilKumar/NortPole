@@ -94,7 +94,7 @@ class ExternalAppAdminResponse(BaseModel):
     associated_skills: list[ExternalAppAssociatedSkill]
     # NortPole-managed built-in (cloud): creds/config NortPole-owned and blanked above;
     # admin may only set availability and policies. UI hides the rest.
-    is_evolvxsi_managed: bool = False
+    is_nortpole_managed: bool = False
 
 
 class UpsertUserCredentialsRequest(BaseModel):

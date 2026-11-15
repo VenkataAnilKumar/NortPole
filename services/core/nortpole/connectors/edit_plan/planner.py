@@ -642,7 +642,7 @@ def compute_edit_plan(
 
     credential_choice: CredentialChoice | None = None
     if credential_changed:
-        # TODO(evan-evolvxsi): when the new credential has the same access as the
+        # TODO(evan-nortpole): when the new credential has the same access as the
         # old one, the plan can skip the choice.
         credential_choice = CredentialChoice()
         if current.source in CREDENTIAL_SWAP_FULL_PATH_SOURCES:

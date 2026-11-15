@@ -25,7 +25,7 @@ from nortpole.server.manage.web_search.models import (
 )
 from nortpole.tools.models import LlmOpenUrlResult, LlmWebSearchResult
 from nortpole.tools.tool_implementations.open_url.models import WebContentProvider
-from nortpole.tools.tool_implementations.open_url.evolvxsi_web_crawler import (
+from nortpole.tools.tool_implementations.open_url.nortpole_web_crawler import (
     DEFAULT_MAX_HTML_SIZE_BYTES,
     DEFAULT_MAX_PDF_SIZE_BYTES,
     NortPoleWebCrawler,

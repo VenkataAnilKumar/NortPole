@@ -27,12 +27,12 @@ export const SUBMIT_MESSAGE_TYPES = {
 };
 
 export const LocalStorageKeys = {
-  THEME: "evolvxsiTheme",
+  THEME: "nortpoleTheme",
   LIGHT_BG_URL: "lightBgUrl",
   DARK_BG_URL: "darkBgUrl",
   SHORTCUTS: "shortCuts",
   SHOW_SHORTCUTS: "showShortcuts",
-  USE_NORTPOLE_AS_NEW_TAB: "useEvolvXSIAsDefaultNewTab",
+  USE_NORTPOLE_AS_NEW_TAB: "useNortPoleAsDefaultNewTab",
 };
 
 export const SEARCH_PARAMS = {

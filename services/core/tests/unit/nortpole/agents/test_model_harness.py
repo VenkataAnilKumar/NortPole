@@ -414,7 +414,7 @@ class TestToolRecovery:
         assert recover_tool_calls(prose, self.context(ToolChoiceOptions.AUTO)) is prose
 
 
-def test_signed_thinking_survives_evolvxsi_projection_and_details_serialize() -> None:
+def test_signed_thinking_survives_nortpole_projection_and_details_serialize() -> None:
     from pydantic import BaseModel
 
     from nortpole.llm.model_request import serialize_request

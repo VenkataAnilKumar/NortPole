@@ -7,7 +7,7 @@ to avoid disrupting the caller's business logic.
 Gauge metrics (error state, last success timestamp) are per-process.
 With multiple worker pods, use max() aggregation in PromQL to get the
 correct value across instances, e.g.:
-    max by (cc_pair_id, connector_name) (evolvxsi_connector_in_error_state)
+    max by (cc_pair_id, connector_name) (nortpole_connector_in_error_state)
 
 Unlike the per-task counters in indexing_task_metrics.py, these metrics
 include connector_name because their cardinality is bounded by the number
@@ -26,7 +26,7 @@ _CONNECTOR_LABELS = ["tenant_id", "source", "cc_pair_id", "connector_name"]
 # --- Index attempt lifecycle ---
 
 INDEX_ATTEMPT_STATUS = Counter(
-    "evolvxsi_index_attempt_transitions_total",
+    "nortpole_index_attempt_transitions_total",
     "Index attempt status transitions",
     [*_CONNECTOR_LABELS, "status"],
 )
@@ -34,25 +34,25 @@ INDEX_ATTEMPT_STATUS = Counter(
 # --- Connector health ---
 
 CONNECTOR_IN_ERROR_STATE = Gauge(
-    "evolvxsi_connector_in_error_state",
+    "nortpole_connector_in_error_state",
     "Whether the connector is in a repeated error state (1=yes, 0=no)",
     _CONNECTOR_LABELS,
 )
 
 CONNECTOR_LAST_SUCCESS_TIMESTAMP = Gauge(
-    "evolvxsi_connector_last_success_timestamp_seconds",
+    "nortpole_connector_last_success_timestamp_seconds",
     "Unix timestamp of last successful indexing for this connector",
     _CONNECTOR_LABELS,
 )
 
 CONNECTOR_DOCS_INDEXED = Counter(
-    "evolvxsi_connector_docs_indexed_total",
+    "nortpole_connector_docs_indexed_total",
     "Total documents indexed per connector (monotonic)",
     _CONNECTOR_LABELS,
 )
 
 CONNECTOR_INDEXING_ERRORS = Counter(
-    "evolvxsi_connector_indexing_errors_total",
+    "nortpole_connector_indexing_errors_total",
     "Total failed index attempts per connector (monotonic)",
     _CONNECTOR_LABELS,
 )

@@ -49,7 +49,7 @@ interface ViewConfig {
 // FooterLinks (inlined)
 // ----------------------------------------------------------------------------
 
-const SUPPORT_EMAIL = "support@evolvxsi.local";
+const SUPPORT_EMAIL = "support@nortpole.local";
 
 function FooterLinks({
   hasSubscription,

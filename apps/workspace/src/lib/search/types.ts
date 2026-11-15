@@ -56,12 +56,12 @@ export interface Quote {
 export interface QuotesInfoPacket {
   quotes: Quote[];
 }
-export interface MinimalEvolvXSIDocument {
+export interface MinimalNortPoleDocument {
   document_id: string;
   semantic_identifier: string | null;
 }
 
-export interface NortPoleDocument extends MinimalEvolvXSIDocument {
+export interface NortPoleDocument extends MinimalNortPoleDocument {
   link: string;
   source_type: ValidSources;
   source_types?: ValidSources[] | null;
@@ -78,16 +78,16 @@ export interface NortPoleDocument extends MinimalEvolvXSIDocument {
   validationState?: null | "good" | "bad";
 }
 
-export interface LoadedEvolvXSIDocument extends NortPoleDocument {
+export interface LoadedNortPoleDocument extends NortPoleDocument {
   icon: React.FC<{ size?: number; className?: string }>;
 }
 
-export interface SearchEvolvXSIDocument extends NortPoleDocument {
+export interface SearchNortPoleDocument extends NortPoleDocument {
   is_relevant: boolean;
   relevance_explanation: string;
 }
 
-export interface FilteredEvolvXSIDocument extends NortPoleDocument {
+export interface FilteredNortPoleDocument extends NortPoleDocument {
   included: boolean;
 }
 export interface DocumentInfoPacket {
@@ -116,7 +116,7 @@ export interface SearchResponse {
   suggestedFlowType: FlowType | null;
   answer: string | null;
   quotes: Quote[] | null;
-  documents: SearchEvolvXSIDocument[] | null;
+  documents: SearchNortPoleDocument[] | null;
   selectedDocIndices: number[] | null;
   error: string | null;
   messageId: number | null;

@@ -184,7 +184,7 @@ def test_load_serve_connection_info_yields_none_password_for_legacy() -> None:
     mgr = _bare_manager()
     fake_container = MagicMock()
     fake_container.attrs = {
-        "Config": {"Env": ["NORTPOLE_PAT=pat", "NORTPOLE_SERVER_URL=https://evolvxsi.example.com"]}
+        "Config": {"Env": ["NORTPOLE_PAT=pat", "NORTPOLE_SERVER_URL=https://nortpole.example.com"]}
     }
     mgr._docker = MagicMock()
     mgr._docker.containers.get.return_value = fake_container
@@ -273,10 +273,10 @@ def test_setup_writes_fresh_gateway_catalog_before_instance_start(
         manager, "_build_agents_md", MagicMock(return_value="instructions")
     )
     gateway = CraftLLMProviderConfig(
-        provider="evolvxsi",
+        provider="nortpole",
         model_name="13/gpt-6-luna",
         api_key="proxy-placeholder",
-        api_base="https://evolvxsi.example.com/gateway/v1",
+        api_base="https://nortpole.example.com/gateway/v1",
         models=[
             GatewayModelDescriptor(
                 id="13/gpt-6-luna",
@@ -368,7 +368,7 @@ def test_provision_generates_fresh_password_and_injects_into_container_env(
     every later request 401s.
     """
     monkeypatch.setattr(dsm, "DEV_MODE", True)
-    monkeypatch.setattr(dsm, "NORTPOLE_SERVER_URL", "https://evolvxsi.example.com/api")
+    monkeypatch.setattr(dsm, "NORTPOLE_SERVER_URL", "https://nortpole.example.com/api")
     monkeypatch.setattr(dsm, "validate_sandbox_api_url", lambda *_: None)
     # Skip the actual readiness HTTP probe — that needs a real container.
     monkeypatch.setattr(
@@ -380,8 +380,8 @@ def test_provision_generates_fresh_password_and_injects_into_container_env(
     mgr = _bare_manager()
     # Mock the Docker client surface used by provision().
     mgr._docker = MagicMock()
-    mgr._image = "evolvxsidotapp/sandbox:test"
-    mgr._network_name = "evolvxsi_craft_sandbox"
+    mgr._image = "nortpoledotapp/sandbox:test"
+    mgr._network_name = "nortpole_craft_sandbox"
     mgr._memory_limit = "2g"
     mgr._cpu_limit = 1.0
     mgr._compose_project = None
@@ -413,7 +413,7 @@ def test_provision_generates_fresh_password_and_injects_into_container_env(
         sandbox_id=_SBX,
         user_id=UUID("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
         tenant_id="tenant-abc",
-        evolvxsi_pat="pat-redacted",
+        nortpole_pat="pat-redacted",
         provisioning_attempt_number=1,
     )
 
@@ -529,13 +529,13 @@ def test_provision_removes_container_when_history_restore_fails(
     home.
     """
     monkeypatch.setattr(dsm, "DEV_MODE", True)
-    monkeypatch.setattr(dsm, "NORTPOLE_SERVER_URL", "https://evolvxsi.example.com/api")
+    monkeypatch.setattr(dsm, "NORTPOLE_SERVER_URL", "https://nortpole.example.com/api")
     monkeypatch.setattr(dsm, "validate_sandbox_api_url", lambda *_: None)
 
     mgr = _bare_manager()
     mgr._docker = MagicMock()
-    mgr._image = "evolvxsidotapp/sandbox:test"
-    mgr._network_name = "evolvxsi_craft_sandbox"
+    mgr._image = "nortpoledotapp/sandbox:test"
+    mgr._network_name = "nortpole_craft_sandbox"
     mgr._memory_limit = "2g"
     mgr._cpu_limit = 1.0
     mgr._compose_project = None
@@ -558,7 +558,7 @@ def test_provision_removes_container_when_history_restore_fails(
             sandbox_id=_SBX,
             user_id=UUID("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
             tenant_id="tenant-abc",
-            evolvxsi_pat="pat-redacted",
+            nortpole_pat="pat-redacted",
             provisioning_attempt_number=1,
         )
 

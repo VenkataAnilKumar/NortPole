@@ -199,17 +199,17 @@ class TestQueueDepthCollector:
         unacked_family = families[1]
         age_family = families[2]
 
-        assert depth_family.name == "evolvxsi_queue_depth"
+        assert depth_family.name == "nortpole_queue_depth"
         assert len(depth_family.samples) > 0
         for sample in depth_family.samples:
             assert sample.value == 5
 
-        assert unacked_family.name == "evolvxsi_queue_unacked"
+        assert unacked_family.name == "nortpole_queue_unacked"
         unacked_labels = {s.labels["queue"] for s in unacked_family.samples}
         assert "docfetching" in unacked_labels
         assert "docprocessing" in unacked_labels
 
-        assert age_family.name == "evolvxsi_queue_oldest_task_age_seconds"
+        assert age_family.name == "nortpole_queue_oldest_task_age_seconds"
         for sample in unacked_family.samples:
             assert sample.value == 2
 

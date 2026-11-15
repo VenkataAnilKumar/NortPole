@@ -30,19 +30,19 @@ beforeEach(() => {
     });
   }
   sessionStorage.setItem("unrelated-preference", "keep");
-  sessionStorage.setItem("evolvxsi:draft:craft:new", "legacy draft");
-  sessionStorage.setItem("evolvxsi:draft:craft:user:new", "welcome draft");
-  sessionStorage.setItem("evolvxsi:draft:craft:user:session", "session draft");
+  sessionStorage.setItem("nortpole:draft:craft:new", "legacy draft");
+  sessionStorage.setItem("nortpole:draft:craft:user:new", "welcome draft");
+  sessionStorage.setItem("nortpole:draft:craft:user:session", "session draft");
   sessionStorage.setItem(
-    "evolvxsi:craft:directories:v1:user:session",
+    "nortpole:craft:directories:v1:user:session",
     "private names"
   );
   sessionStorage.setItem(
-    "evolvxsi:craft:outputs:v1:user:session",
+    "nortpole:craft:outputs:v1:user:session",
     "private outputs"
   );
   sessionStorage.setItem(
-    "evolvxsi:craft:output-thumbnails:v1:user",
+    "nortpole:craft:output-thumbnails:v1:user",
     "private bytes"
   );
   retainOutputThumbnailCache(
@@ -79,7 +79,7 @@ test("failed logout retains the signed-in user's saved tabs", async () => {
   expect(readOutputPanelPreferences("second-session")?.panelTabs).toHaveLength(
     1
   );
-  expect(sessionStorage.getItem("evolvxsi:draft:craft:user:new")).toBe(
+  expect(sessionStorage.getItem("nortpole:draft:craft:user:new")).toBe(
     "welcome draft"
   );
   expect(mutate).not.toHaveBeenCalled();

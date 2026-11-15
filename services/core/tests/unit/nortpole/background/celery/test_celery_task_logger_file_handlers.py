@@ -1,4 +1,4 @@
-"""Celery worker logging must reach the evolvxsi log files (the only logs the admin
+"""Celery worker logging must reach the nortpole log files (the only logs the admin
 log export collects on Kubernetes): task_logger and root-logger lines land in
 them once each, and setup_logger lines are not written twice via the root."""
 
@@ -27,7 +27,7 @@ _MODULE_LOGGER_NAME = "test_celery_task_logger_file_handlers.module"
 def log_dir(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> Generator[Path, None, None]:
-    """Route the evolvxsi file handlers to tmp_path/log and restore every logger
+    """Route the nortpole file handlers to tmp_path/log and restore every logger
     on_setup_logging and setup_logger touch."""
     monkeypatch.chdir(tmp_path)
     monkeypatch.setattr(logger_module, "LOG_TO_FILE", True)

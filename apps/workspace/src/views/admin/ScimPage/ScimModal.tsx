@@ -115,7 +115,7 @@ export default function ScimModal({
                     prominence="secondary"
                     icon={SvgDownload}
                     onClick={() =>
-                      downloadFile(`evolvxsi-scim-token-${Date.now()}.txt`, {
+                      downloadFile(`nortpole-scim-token-${Date.now()}.txt`, {
                         content: view.rawToken,
                       })
                     }

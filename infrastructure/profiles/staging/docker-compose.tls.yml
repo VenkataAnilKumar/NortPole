@@ -3,7 +3,7 @@
 #   HTTP_PORT, HTTPS_PORT  published ports (default 80 and 443); bind address defaults to all interfaces
 #                          because this overlay is meant to be reached from outside; set BIND_ADDRESS to narrow it
 # Start:  docker compose -f docker-compose.yml -f docker-compose.tls.yml up -d
-name: evolvxsi
+name: nortpole
 services:
   proxy:
     volumes:

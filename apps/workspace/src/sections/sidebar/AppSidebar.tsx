@@ -88,7 +88,7 @@ import {
   SvgEditBig,
   SvgFolderPlus,
   SvgMoreHorizontal,
-  SvgEvolvXSIOctagon,
+  SvgNortPoleOctagon,
   SvgSearchMenu,
   SvgSettings,
 } from "@opal/icons";
@@ -295,25 +295,25 @@ export default function AppSidebar() {
 
   // Check if NortPole Craft is enabled via settings (backed by PostHog feature flag)
   // Only explicit true enables the feature; false or undefined = disabled
-  const isEvolvXSICraftEnabled = combinedSettingsData?.evolvxsi_craft_enabled === true;
-  const isEvolvXSICraftUpsell =
-    !isEvolvXSICraftEnabled &&
-    combinedSettingsData?.evolvxsi_craft_requires_upgrade === true;
+  const isNortPoleCraftEnabled = combinedSettingsData?.nortpole_craft_enabled === true;
+  const isNortPoleCraftUpsell =
+    !isNortPoleCraftEnabled &&
+    combinedSettingsData?.nortpole_craft_requires_upgrade === true;
   // Gated like a Business admin page: below that tier the tab is disabled.
   const hasCraftTier = useTierAtLeast(Tier.BUSINESS);
   const tTasks = useTranslations("craft.tasks");
   const unviewedTaskCount = useUnviewedScheduledTaskCount(
-    isEvolvXSICraftEnabled && hasCraftTier
+    isNortPoleCraftEnabled && hasCraftTier
   );
   const plans = usePlans();
 
   // Fetch notifications for build mode intro
   const { notifications, refresh: mutateNotifications } = useNotifications({
-    enabled: isEvolvXSICraftEnabled,
+    enabled: isNortPoleCraftEnabled,
   });
 
   // Find build_mode feature announcement notification (only if NortPole Craft is enabled)
-  const buildModeNotification = isEvolvXSICraftEnabled
+  const buildModeNotification = isNortPoleCraftEnabled
     ? notifications?.find(
         (n) =>
           n.notif_type === NotificationType.FEATURE_ANNOUNCEMENT &&
@@ -337,7 +337,7 @@ export default function AppSidebar() {
   const hasTenantModal = !!(newTenantInfo || invitationInfo);
   useEffect(() => {
     if (
-      isEvolvXSICraftEnabled &&
+      isNortPoleCraftEnabled &&
       buildModeNotification &&
       !hasAutoTriggeredRef.current &&
       !hasTenantModal &&
@@ -348,7 +348,7 @@ export default function AppSidebar() {
     }
   }, [
     buildModeNotification,
-    isEvolvXSICraftEnabled,
+    isNortPoleCraftEnabled,
     hasTenantModal,
     isCraftAnimationDisabled,
   ]);
@@ -548,7 +548,7 @@ export default function AppSidebar() {
       <SidebarTab
         icon={
           folded || visibleAgents.length === 0
-            ? SvgEvolvXSIOctagon
+            ? SvgNortPoleOctagon
             : SvgMoreHorizontal
         }
         {...navigation.linkTo("/app/agents", { scroll: false })}
@@ -707,7 +707,7 @@ export default function AppSidebar() {
           >
             {t("appSidebar.sources.label")}
           </SidebarTab>
-          {(isEvolvXSICraftEnabled || isEvolvXSICraftUpsell) && (
+          {(isNortPoleCraftEnabled || isNortPoleCraftUpsell) && (
             <div data-testid="AppSidebar/build">
               <Disabled
                 disabled={!hasCraftTier}
@@ -730,7 +730,7 @@ export default function AppSidebar() {
                       : undefined
                   }
                   rightChildren={
-                    isEvolvXSICraftUpsell ? (
+                    isNortPoleCraftUpsell ? (
                       <PlanTag plan={Tier.BUSINESS} />
                     ) : (
                       <Section
@@ -847,7 +847,7 @@ export default function AppSidebar() {
             )}
             <AccountPopover
               onShowBuildIntro={
-                isEvolvXSICraftEnabled ? handleShowBuildIntro : undefined
+                isNortPoleCraftEnabled ? handleShowBuildIntro : undefined
               }
             />
           </div>

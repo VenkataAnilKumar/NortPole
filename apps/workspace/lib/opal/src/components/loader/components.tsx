@@ -46,7 +46,7 @@ interface NortPoleLoaderProps {
   color?: LoaderColor;
 }
 
-// Geometry matches the @opal/icons `evolvxsi-octagon`/`evolvxsi-logo` paths. Stroke
+// Geometry matches the @opal/icons `nortpole-octagon`/`nortpole-logo` paths. Stroke
 // is defined here, not reused from them, so weight can be tuned: ~2.5px at
 // the default 64px, scaling with `size`.
 const STROKE_WIDTH = 0.625;

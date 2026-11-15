@@ -33,15 +33,15 @@ services:
 
   workers:
     profiles: ["workers"]
-    image: evolvxsi-core:${NORTPOLE_VERSION:-${EVOLVXSI_VERSION:-dev}}
+    image: nortpole-core:${NORTPOLE_VERSION:-${NORTPOLE_VERSION:-dev}}
     depends_on:
       api: {condition: service_healthy}
     environment:
       <<: *retrieval
       POSTGRES_HOST: db
-      POSTGRES_USER: evolvxsi
+      POSTGRES_USER: nortpole
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
-      POSTGRES_DB: evolvxsi
+      POSTGRES_DB: nortpole
       REDIS_HOST: redis
       USER_AUTH_SECRET: ${USER_AUTH_SECRET:?set USER_AUTH_SECRET}
       AUTH_TYPE: basic

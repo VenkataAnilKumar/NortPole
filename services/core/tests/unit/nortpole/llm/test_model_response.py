@@ -583,12 +583,12 @@ def test_provider_payload_tolerance(
     "payload, expected_text",
     [
         (
-            'Searching now. {"name":"search","arguments":{"query":"evolvxsi"}}',
-            'Searching now. {"name":"search","arguments":{"query":"evolvxsi"}}',
+            'Searching now. {"name":"search","arguments":{"query":"nortpole"}}',
+            'Searching now. {"name":"search","arguments":{"query":"nortpole"}}',
         ),
         (
             'Searching now.<function_calls><invoke name="search">'
-            '<parameter name="query">evolvxsi</parameter></invoke></function_calls>',
+            '<parameter name="query">nortpole</parameter></invoke></function_calls>',
             "Searching now.",
         ),
     ],
@@ -617,7 +617,7 @@ def test_recovered_calls_preserve_text_and_signed_thinking(
     assert message.thinking == "plan"
     assert message.thinking_blocks == [signed]
     assert [call.name for call in message.tool_calls] == ["search"]
-    assert message.tool_calls[0].arguments == {"query": "evolvxsi"}
+    assert message.tool_calls[0].arguments == {"query": "nortpole"}
 
 
 @pytest.mark.parametrize(

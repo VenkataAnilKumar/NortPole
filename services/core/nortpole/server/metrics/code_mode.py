@@ -19,85 +19,85 @@ WorkerLossReason = Literal["crashed", "killed", "out_of_memory"]
 SuspensionOutcome = Literal["dumped", "over_budget", "over_memory"]
 
 SANDBOX_WORKERS_BUSY = Gauge(
-    "evolvxsi_code_mode_sandbox_workers_busy",
+    "nortpole_code_mode_sandbox_workers_busy",
     "Sandbox worker processes checked out by programs.",
 )
 SANDBOX_WORKERS_LIMIT = Gauge(
-    "evolvxsi_code_mode_sandbox_workers_limit",
+    "nortpole_code_mode_sandbox_workers_limit",
     "Sandbox worker processes the pool can start.",
 )
 PROGRAMS_WAITING_FOR_WORKER = Gauge(
-    "evolvxsi_code_mode_programs_waiting_for_worker",
+    "nortpole_code_mode_programs_waiting_for_worker",
     "Programs waiting to check out a sandbox worker.",
 )
 SANDBOX_BUSY_REJECTIONS = Counter(
-    "evolvxsi_code_mode_sandbox_busy_rejections_total",
+    "nortpole_code_mode_sandbox_busy_rejections_total",
     "New programs that got no sandbox worker in time and did not run, by tenant.",
     ["tenant_id"],
 )
 SANDBOX_WORKER_SECONDS = Counter(
-    "evolvxsi_code_mode_sandbox_worker_seconds_total",
+    "nortpole_code_mode_sandbox_worker_seconds_total",
     "Seconds that programs held a sandbox worker, by tenant.",
     ["tenant_id"],
 )
 SANDBOX_WORKERS_LOST = Counter(
-    "evolvxsi_code_mode_sandbox_workers_lost_total",
+    "nortpole_code_mode_sandbox_workers_lost_total",
     "Sandbox workers that the pool replaces: crashed, killed on Stop or a "
     "deadline, or out of memory while dumping a program.",
     ["reason"],
 )
 SUSPENDED_BYTES = Gauge(
-    "evolvxsi_code_mode_suspended_bytes",
+    "nortpole_code_mode_suspended_bytes",
     "Bytes of dumped programs held in the process while they wait for tool calls.",
 )
 SUSPENDED_BYTES_LIMIT = Gauge(
-    "evolvxsi_code_mode_suspended_bytes_limit",
+    "nortpole_code_mode_suspended_bytes_limit",
     "Budget of dumped program bytes held in the process.",
 )
 SUSPENSIONS = Counter(
-    "evolvxsi_code_mode_suspensions_total",
+    "nortpole_code_mode_suspensions_total",
     "Waiting programs dumped to free their worker, or kept on it: over the dump "
     "byte budget, or with too much memory in the worker to dump.",
     ["outcome"],
 )
 TOOL_CALL_THREADS_IN_USE = Gauge(
-    "evolvxsi_code_mode_tool_call_threads_in_use",
+    "nortpole_code_mode_tool_call_threads_in_use",
     "Threads running tool calls of programs.",
 )
 TOOL_CALL_THREADS_HELD_AFTER_END = Gauge(
-    "evolvxsi_code_mode_tool_call_threads_held_after_end",
+    "nortpole_code_mode_tool_call_threads_held_after_end",
     "Tool call threads still held by calls whose program ended: calls that "
     "ignore cancellation, such as hung tools.",
 )
 TOOL_CALL_THREADS_LIMIT = Gauge(
-    "evolvxsi_code_mode_tool_call_threads_limit",
+    "nortpole_code_mode_tool_call_threads_limit",
     "Budget of threads for tool calls of programs.",
 )
 CELLS_RUNNING = Gauge(
-    "evolvxsi_code_mode_cells_running",
+    "nortpole_code_mode_cells_running",
     "Cells whose program has not ended, each with a driver thread.",
 )
 CELLS_LIMIT = Gauge(
-    "evolvxsi_code_mode_cells_limit",
+    "nortpole_code_mode_cells_limit",
     "Cells whose program has not ended that the process allows.",
 )
 CELL_BUSY_REJECTIONS = Counter(
-    "evolvxsi_code_mode_cell_busy_rejections_total",
+    "nortpole_code_mode_cell_busy_rejections_total",
     "New cells refused because the process had its limit of running cells, by tenant.",
     ["tenant_id"],
 )
 CELL_SECONDS = Counter(
-    "evolvxsi_code_mode_cell_seconds_total",
+    "nortpole_code_mode_cell_seconds_total",
     "Seconds that programs held a running-cell slot, by tenant.",
     ["tenant_id"],
 )
 PROGRAMS = Counter(
-    "evolvxsi_code_mode_programs_total",
+    "nortpole_code_mode_programs_total",
     "Programs that ended, by tenant and status.",
     ["tenant_id", "status"],
 )
 PROGRAM_DURATION = Histogram(
-    "evolvxsi_code_mode_program_duration_seconds",
+    "nortpole_code_mode_program_duration_seconds",
     "Time from a program's start to its end, waiting for tool calls included.",
     # Dense from 2.5 s to 10 s, where the p95 of typical programs falls.
     buckets=(
@@ -121,7 +121,7 @@ PROGRAM_DURATION = Histogram(
     ),
 )
 PROGRAM_START_DURATION = Histogram(
-    "evolvxsi_code_mode_program_start_duration_seconds",
+    "nortpole_code_mode_program_start_duration_seconds",
     "Time to type-check a program and run it to its first wait or end.",
     buckets=(0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0),
 )

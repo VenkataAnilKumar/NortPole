@@ -155,8 +155,8 @@ from nortpole.db.users import (
 from nortpole.error_handling.error_codes import NortPoleErrorCode
 from nortpole.error_handling.exceptions import (
     NortPoleError,
-    log_evolvxsi_error,
-    evolvxsi_error_to_json_response,
+    log_nortpole_error,
+    nortpole_error_to_json_response,
 )
 from nortpole.oauth_provider.auth import (
     authenticate_oauth_provider_request,
@@ -448,7 +448,7 @@ def verify_email_domain(
                 "Gmail addresses with '.' are not allowed. Please use your base email address.",
             )
 
-        if "+" in local_part and domain != "evolvxsi.local":
+        if "+" in local_part and domain != "nortpole.local":
             raise NortPoleError(
                 NortPoleErrorCode.INVALID_INPUT,
                 "Email addresses with '+' are not allowed. Please use your base email address.",
@@ -1423,7 +1423,7 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
             # to also be semantically correct.
             properties = {
                 "email": user.email,
-                "evolvxsi_cloud_user_id": str(user.id),
+                "nortpole_cloud_user_id": str(user.id),
                 "tenant_id": str(tenant_id) if tenant_id else None,
                 "account_type": user.account_type.value,
                 "is_first_user": user_count == 1,
@@ -3056,7 +3056,7 @@ async def complete_login_flow(
 
 
 # refer to https://github.com/fastapi-users/fastapi-users/blob/42ddc241b965475390e2bce887b084152ae1a2cd/fastapi_users/fastapi_users.py#L91
-def create_evolvxsi_oauth_router(
+def create_nortpole_oauth_router(
     oauth_client: BaseOAuth2,
     backend: AuthenticationBackend,
     state_secret: SecretType,
@@ -3276,8 +3276,8 @@ def get_oauth_router(
                 )
 
         def build_error_response(exc: NortPoleError) -> JSONResponse:
-            log_evolvxsi_error(exc)
-            error_response = evolvxsi_error_to_json_response(exc)
+            log_nortpole_error(exc)
+            error_response = nortpole_error_to_json_response(exc)
             delete_pkce_cookie(error_response)
             return error_response
 

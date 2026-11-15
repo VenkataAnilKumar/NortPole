@@ -79,7 +79,7 @@ class AzureBlobBackedFileStore(PresignableFileStore):
         self._user_delegation_key_expiry = datetime.min.replace(tzinfo=UTC)
         self._user_delegation_key_lock = threading.Lock()
         self._container_name = container_name
-        self._azure_prefix = azure_prefix or "evolvxsi-files"
+        self._azure_prefix = azure_prefix or "nortpole-files"
         self._connection_string = connection_string
 
         # Validate auth config eagerly so misconfiguration fails at

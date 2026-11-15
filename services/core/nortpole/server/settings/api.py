@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from nortpole import __version__ as evolvxsi_version
+from nortpole import __version__ as nortpole_version
 from nortpole.auth.permissions import require_permission
 from nortpole.auth.users import is_user_admin
 from nortpole.configs.app_configs import (
@@ -225,18 +225,18 @@ def fetch_settings(
 
     # Check if NortPole Craft is enabled for this user (used for server-side
     # redirects). The deployment gate and already-loaded settings are shared.
-    evolvxsi_craft_available = is_craft_available_for_deployment(user) if user else False
-    evolvxsi_craft_enabled_for_user = (
+    nortpole_craft_available = is_craft_available_for_deployment(user) if user else False
+    nortpole_craft_enabled_for_user = (
         is_craft_enabled_for_user(
             user,
-            deployment_available=evolvxsi_craft_available,
+            deployment_available=nortpole_craft_available,
             workspace_default=general_settings.craft_default_enabled,
         )
         if user
         else False
     )
-    evolvxsi_craft_requires_upgrade = (
-        user is not None and not evolvxsi_craft_available and is_craft_locked_by_tier(user)
+    nortpole_craft_requires_upgrade = (
+        user is not None and not nortpole_craft_available and is_craft_locked_by_tier(user)
     )
 
     # Dev/debug flag: tail-the-pod-logs button gated by an env var. Same
@@ -250,15 +250,15 @@ def fetch_settings(
         oauth_provider_enabled=OAUTH_PROVIDER_SETTINGS is not None,
         notifications=settings_notifications,
         needs_reindexing=needs_reindexing,
-        evolvxsi_craft_enabled=evolvxsi_craft_enabled_for_user,
-        evolvxsi_craft_available=evolvxsi_craft_available,
-        evolvxsi_craft_requires_upgrade=evolvxsi_craft_requires_upgrade,
+        nortpole_craft_enabled=nortpole_craft_enabled_for_user,
+        nortpole_craft_available=nortpole_craft_available,
+        nortpole_craft_requires_upgrade=nortpole_craft_requires_upgrade,
         opencode_debugging_enabled=ENABLE_OPENCODE_DEBUGGING,
         vector_db_enabled=not DISABLE_VECTOR_DB,
-        hide_evolvxsi_branding=HIDE_NORTPOLE_BRANDING
+        hide_nortpole_branding=HIDE_NORTPOLE_BRANDING
         and tier_at_least(resolved_tier, Tier.ENTERPRISE),
         hooks_enabled=not MULTI_TENANT,
-        version=evolvxsi_version,
+        version=nortpole_version,
         commit=build_info.commit,
         commit_date=build_info.commit_date,
         git_ref=build_info.ref,

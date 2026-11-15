@@ -79,16 +79,16 @@ export function useUserAnalytics(timeRange: InputDateRangePickerValue) {
   };
 }
 
-export function useEvolvXSIBotAnalytics(timeRange: InputDateRangePickerValue) {
+export function useNortPoleBotAnalytics(timeRange: InputDateRangePickerValue) {
   const url = buildApiPath(
-    "/api/analytics/admin/evolvxsibot",
+    "/api/analytics/admin/nortpolebot",
     analyticsRange(timeRange)
   );
   const swrResponse = useSWR<NortPoleBotAnalytics[]>(url, errorHandlingFetcher);
 
   return {
     ...swrResponse,
-    refreshEvolvXSIBotAnalytics: () => mutate(url),
+    refreshNortPoleBotAnalytics: () => mutate(url),
   };
 }
 

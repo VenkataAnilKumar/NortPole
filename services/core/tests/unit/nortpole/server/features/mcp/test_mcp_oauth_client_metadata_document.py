@@ -5,7 +5,7 @@ from fastapi.testclient import TestClient
 from nortpole.server.auth_check import PUBLIC_ENDPOINT_SPECS, is_route_in_spec_list
 from nortpole.server.features.mcp import client_metadata
 
-TEST_WEB_DOMAIN = "https://evolvxsi.example.com"
+TEST_WEB_DOMAIN = "https://nortpole.example.com"
 METADATA_ROUTE = "/mcp/oauth/client-metadata"
 
 
@@ -46,8 +46,8 @@ def test_mcp_oauth_client_metadata_document_is_public_and_cacheable(
     ("web_domain", "expected_url"),
     [
         (
-            "https://evolvxsi.example.com",
-            "https://evolvxsi.example.com/api/mcp/oauth/client-metadata",
+            "https://nortpole.example.com",
+            "https://nortpole.example.com/api/mcp/oauth/client-metadata",
         ),
         ("http://localhost:3000", None),
     ],
@@ -65,9 +65,9 @@ def test_mcp_oauth_client_metadata_url_requires_https(
 @pytest.mark.parametrize(
     ("client_id", "expected"),
     [
-        ("https://evolvxsi.example.com/api/mcp/oauth/client-metadata", True),
+        ("https://nortpole.example.com/api/mcp/oauth/client-metadata", True),
         ("https://old-domain.example.com/api/mcp/oauth/client-metadata", True),
-        ("http://evolvxsi.example.com/api/mcp/oauth/client-metadata", False),
+        ("http://nortpole.example.com/api/mcp/oauth/client-metadata", False),
         ("mock-client-3f2a9c", False),
         (None, False),
     ],

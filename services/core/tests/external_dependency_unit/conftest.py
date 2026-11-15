@@ -62,11 +62,11 @@ from tests.utils.pytest_secrets import test_secrets as test_secrets
 
 @pytest.fixture
 def audit_stream(caplog: pytest.LogCaptureFixture) -> Generator[None, None, None]:
-    """``evolvxsi.audit`` sets ``propagate=False``, so caplog's root handler never sees
+    """``nortpole.audit`` sets ``propagate=False``, so caplog's root handler never sees
     its records; hang caplog's handler below that barrier instead. Not autouse — it
     would feed audit records to tests that capture logs for other reasons.
     """
-    audit_logger = logging.getLogger("evolvxsi.audit")
+    audit_logger = logging.getLogger("nortpole.audit")
     audit_logger.addHandler(caplog.handler)
     try:
         yield

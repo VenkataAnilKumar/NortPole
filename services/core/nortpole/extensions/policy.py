@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field, field_validator
 from nortpole.key_value_store.factory import get_kv_store
 from nortpole.key_value_store.interface import KvKeyNotFoundError
 
-KV_KEY = "evolvxsi_extensions"
+KV_KEY = "nortpole_extensions"
 _HOST = re.compile(r"^(\*\.)?[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$")
 
 

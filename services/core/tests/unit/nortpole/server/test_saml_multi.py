@@ -31,7 +31,7 @@ _IDP = {
     "idp_entity_id": "https://idp.example.com/entity",
     "idp_sso_url": "https://idp.example.com/sso",
     "idp_x509_cert": "IDPCERT",
-    "sp_entity_id": "https://evolvxsi.example.com/saml",
+    "sp_entity_id": "https://nortpole.example.com/saml",
 }
 # Test doubles: the router functions never touch the real Session, only pass it
 # to the monkeypatched fetch.
@@ -84,8 +84,8 @@ def _callback_request(cookie: str | None = None) -> Request:
 @pytest.mark.parametrize(
     "web_domain",
     [
-        "https://evolvxsi.example.com:3000",
-        "https://evolvxsi.example.com",
+        "https://nortpole.example.com:3000",
+        "https://nortpole.example.com",
         "http://localhost:3000",
     ],
 )

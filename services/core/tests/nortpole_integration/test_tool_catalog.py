@@ -42,7 +42,7 @@ def world():  # type: ignore[no-untyped-def]
     with get_session_with_current_tenant() as s:
         s.query(Tool).filter_by(id=ids["tool"]).delete()
         s.query(MCPServer).filter_by(id=ids["server"]).delete()
-        s.execute(text("delete from evolvxsi_audit_event where actor_email = :e and row_hash is null"), {"e": f"cat-admin-{TAG}@example.com"})
+        s.execute(text("delete from nortpole_audit_event where actor_email = :e and row_hash is null"), {"e": f"cat-admin-{TAG}@example.com"})
         s.query(User).filter_by(id=ids["admin"]).delete()
         s.commit()
 
@@ -68,7 +68,7 @@ def test_a_chat_loses_an_outside_tool_until_it_is_turned_on(world) -> None:  # t
         admin = s.get(User, world["admin"])
         cat_api.put_catalog(cat_api.CatalogUpdate(kinds={"outside": True}, tools={str(world["tool"]): True}), user=admin, db_session=s)
         assert sorted(catalog.filter_tools(tools, s)) == sorted([search_id, world["tool"]])
-        n = s.execute(text("select count(*) from evolvxsi_audit_event where resource_type='tool_catalog' and actor_email=:e and summary like :p"),
+        n = s.execute(text("select count(*) from nortpole_audit_event where resource_type='tool_catalog' and actor_email=:e and summary like :p"),
                       {"e": admin.email, "p": f"%tool {world['tool']} on%"}).scalar()
         assert n == 1
 
@@ -116,12 +116,12 @@ def test_a_call_to_an_outside_tool_is_logged_without_its_arguments(world) -> Non
     with pytest.raises(RuntimeError):
         logged(tool, {}, lambda: (_ for _ in ()).throw(RuntimeError("boom")))
     with get_session_with_current_tenant() as s:
-        rows = s.execute(text("select outcome, summary, details::text from evolvxsi_audit_event where action='tool.call' and resource_id=:i order by id"),
+        rows = s.execute(text("select outcome, summary, details::text from nortpole_audit_event where action='tool.call' and resource_id=:i order by id"),
                          {"i": str(world["tool"])}).all()
         assert [r[0] for r in rows[-2:]] == ["success", "failure"]
         joined = " ".join(r[1] + r[2] for r in rows)
         assert f"private words {TAG}" not in joined and f"secret-{TAG}" not in joined and f"tools-{TAG}.example.com" in joined
-        s.execute(text("delete from evolvxsi_audit_event where action='tool.call' and resource_id=:i and row_hash is null"), {"i": str(world["tool"])})
+        s.execute(text("delete from nortpole_audit_event where action='tool.call' and resource_id=:i and row_hash is null"), {"i": str(world["tool"])})
         s.commit()
 
 
@@ -158,7 +158,7 @@ def test_check_now_finds_a_tool_changed_on_its_server_and_withholds_it(world) ->
         with patch.object(mcp_api, "_discover_mcp_server_tools", lambda *a, **k: (None, [])):
             result = {r.name: r.status for r in cat_api.check_server(world["server"], user=admin, db_session=s)}
         assert result[row.name] == "missing on the server"
-        n = s.execute(text("select count(*) from evolvxsi_audit_event where resource_type='tool_catalog' and actor_email=:e and summary like 'Checked MCP server%'"),
+        n = s.execute(text("select count(*) from nortpole_audit_event where resource_type='tool_catalog' and actor_email=:e and summary like 'Checked MCP server%'"),
                       {"e": admin.email}).scalar()
         assert n == 3
 

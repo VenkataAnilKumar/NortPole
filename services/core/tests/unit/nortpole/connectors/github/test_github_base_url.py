@@ -59,7 +59,7 @@ def _base_url_of(connector: GithubConnector) -> str:
 
 
 def _connector() -> GithubConnector:
-    return GithubConnector(repo_owner="acme-corp", repositories="evolvxsi")
+    return GithubConnector(repo_owner="acme-corp", repositories="nortpole")
 
 
 def test_credential_base_url_is_used(monkeypatch: pytest.MonkeyPatch) -> None:

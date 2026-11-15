@@ -19,7 +19,7 @@ from nortpole.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manage
 
 def _mgr() -> tuple[KubernetesSandboxManager, MagicMock]:
     mgr: KubernetesSandboxManager = object.__new__(KubernetesSandboxManager)
-    mgr._namespace = "evolvxsi-sandboxes"
+    mgr._namespace = "nortpole-sandboxes"
     core_api = MagicMock()
     mgr._core_api = core_api
     return mgr, core_api
@@ -34,7 +34,7 @@ def test_numeric_host_returned_unchanged(monkeypatch: pytest.MonkeyPatch) -> Non
 
 def test_fqdn_resolved_to_clusterip_via_api(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(
-        ksm, "SANDBOX_PROXY_HOST", "evolvxsi-sandbox-proxy.evolvxsi.svc.cluster.local"
+        ksm, "SANDBOX_PROXY_HOST", "nortpole-sandbox-proxy.nortpole.svc.cluster.local"
     )
     mgr, core_api = _mgr()
     svc = MagicMock()
@@ -43,15 +43,15 @@ def test_fqdn_resolved_to_clusterip_via_api(monkeypatch: pytest.MonkeyPatch) -> 
 
     assert mgr._resolve_proxy_ip() == "10.96.188.108"
     core_api.read_namespaced_service.assert_called_once_with(
-        name="evolvxsi-sandbox-proxy", namespace="evolvxsi"
+        name="nortpole-sandbox-proxy", namespace="nortpole"
     )
 
 
 def test_namespace_parsed_from_fqdn(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(
-        ksm, "SANDBOX_PROXY_HOST", "evolvxsi-sandbox-proxy.myrelease.svc.cluster.local"
+        ksm, "SANDBOX_PROXY_HOST", "nortpole-sandbox-proxy.myrelease.svc.cluster.local"
     )
-    monkeypatch.setattr(ksm, "SANDBOX_PROXY_NAMESPACE", "evolvxsi")
+    monkeypatch.setattr(ksm, "SANDBOX_PROXY_NAMESPACE", "nortpole")
     mgr, core_api = _mgr()
     svc = MagicMock()
     svc.spec.cluster_ip = "10.0.0.5"
@@ -59,14 +59,14 @@ def test_namespace_parsed_from_fqdn(monkeypatch: pytest.MonkeyPatch) -> None:
 
     assert mgr._resolve_proxy_ip() == "10.0.0.5"
     core_api.read_namespaced_service.assert_called_once_with(
-        name="evolvxsi-sandbox-proxy", namespace="myrelease"
+        name="nortpole-sandbox-proxy", namespace="myrelease"
     )
 
 
 def test_namespace_falls_back_to_config_for_bare_host(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setattr(ksm, "SANDBOX_PROXY_HOST", "evolvxsi-sandbox-proxy")
+    monkeypatch.setattr(ksm, "SANDBOX_PROXY_HOST", "nortpole-sandbox-proxy")
     monkeypatch.setattr(ksm, "SANDBOX_PROXY_NAMESPACE", "proxy-ns")
     mgr, core_api = _mgr()
     svc = MagicMock()
@@ -75,13 +75,13 @@ def test_namespace_falls_back_to_config_for_bare_host(
 
     assert mgr._resolve_proxy_ip() == "10.0.0.6"
     core_api.read_namespaced_service.assert_called_once_with(
-        name="evolvxsi-sandbox-proxy", namespace="proxy-ns"
+        name="nortpole-sandbox-proxy", namespace="proxy-ns"
     )
 
 
 def test_missing_clusterip_raises(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(
-        ksm, "SANDBOX_PROXY_HOST", "evolvxsi-sandbox-proxy.evolvxsi.svc.cluster.local"
+        ksm, "SANDBOX_PROXY_HOST", "nortpole-sandbox-proxy.nortpole.svc.cluster.local"
     )
     monkeypatch.setattr(ksm, "_PROXY_RESOLVE_RETRY_ATTEMPTS", 1)
     mgr, core_api = _mgr()
@@ -95,7 +95,7 @@ def test_missing_clusterip_raises(monkeypatch: pytest.MonkeyPatch) -> None:
 
 def test_api_error_raises(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(
-        ksm, "SANDBOX_PROXY_HOST", "evolvxsi-sandbox-proxy.evolvxsi.svc.cluster.local"
+        ksm, "SANDBOX_PROXY_HOST", "nortpole-sandbox-proxy.nortpole.svc.cluster.local"
     )
     monkeypatch.setattr(ksm, "_PROXY_RESOLVE_RETRY_ATTEMPTS", 1)
     mgr, core_api = _mgr()

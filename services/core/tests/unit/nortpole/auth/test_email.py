@@ -3,7 +3,7 @@ import pytest
 from nortpole.auth.email_utils import build_user_email_invite, send_email
 from nortpole.configs.constants import NORTPOLE_DEFAULT_APPLICATION_NAME
 from nortpole.db.engine.sql_engine import SqlEngine
-from nortpole.server.runtime.evolvxsi_runtime import NortPoleRuntime
+from nortpole.server.runtime.nortpole_runtime import NortPoleRuntime
 
 
 @pytest.mark.skip(
@@ -14,12 +14,12 @@ def test_send_user_email_invite() -> None:
 
     application_name = NORTPOLE_DEFAULT_APPLICATION_NAME
 
-    evolvxsi_file = NortPoleRuntime.get_emailable_logo()
+    nortpole_file = NortPoleRuntime.get_emailable_logo()
 
     subject = f"Invitation to Join {application_name} Organization"
 
-    FROM_EMAIL = "noreply@evolvxsi.local"
-    TO_EMAIL = "support@evolvxsi.local"
+    FROM_EMAIL = "noreply@nortpole.local"
+    TO_EMAIL = "support@nortpole.local"
     text_content, html_content = build_user_email_invite(
         FROM_EMAIL, TO_EMAIL, NORTPOLE_DEFAULT_APPLICATION_NAME
     )
@@ -30,5 +30,5 @@ def test_send_user_email_invite() -> None:
         html_content,
         text_content,
         mail_from=FROM_EMAIL,
-        inline_png=("logo.png", evolvxsi_file.data),
+        inline_png=("logo.png", nortpole_file.data),
     )

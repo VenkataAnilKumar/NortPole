@@ -39,7 +39,7 @@ def test_each_user_has_their_own_record() -> None:
 
 def test_damaged_record_falls_back_to_defaults() -> None:
     with patch.object(
-        store, "get_kv_store", return_value=_kv({"evolvxsi_user_prefs:u1": {"default_route": "moon"}})
+        store, "get_kv_store", return_value=_kv({"nortpole_user_prefs:u1": {"default_route": "moon"}})
     ):
         assert store.load_preferences("u1").default_route == "auto"
 

@@ -31,14 +31,14 @@ def _canonical(manifest: dict) -> str:
 
 
 def upgrade() -> None:
-    op.add_column("evolvxsi_pack_version", sa.Column("signed_manifest", sa.Text(), nullable=True))
+    op.add_column("nortpole_pack_version", sa.Column("signed_manifest", sa.Text(), nullable=True))
     conn = op.get_bind()
-    rows = conn.execute(sa.text("select row_id, manifest, digest from evolvxsi_pack_version")).fetchall()
+    rows = conn.execute(sa.text("select row_id, manifest, digest from nortpole_pack_version")).fetchall()
     for row_id, manifest, digest in rows:
         text = _canonical(manifest)
         if hashlib.sha256(text.encode("utf-8")).hexdigest() == digest:
-            conn.execute(sa.text("update evolvxsi_pack_version set signed_manifest = :t where row_id = :r"), {"t": text, "r": row_id})
+            conn.execute(sa.text("update nortpole_pack_version set signed_manifest = :t where row_id = :r"), {"t": text, "r": row_id})
 
 
 def downgrade() -> None:
-    op.drop_column("evolvxsi_pack_version", "signed_manifest")
+    op.drop_column("nortpole_pack_version", "signed_manifest")

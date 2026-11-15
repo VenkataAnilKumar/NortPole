@@ -57,7 +57,7 @@ def test_negative_token_counts_are_not_stored() -> None:
 
 def test_the_table_holds_no_person_or_text_column() -> None:
     with get_session_with_current_tenant() as s:
-        cols = {r[0] for r in s.execute(text("select column_name from information_schema.columns where table_name='evolvxsi_route_tokens'"))}
+        cols = {r[0] for r in s.execute(text("select column_name from information_schema.columns where table_name='nortpole_route_tokens'"))}
     assert cols == {"row_id", "day", "route_kind", "provider_id", "model_name", "calls", "prompt_tokens", "completion_tokens",
                     "cost_cents", "unpriced_calls"}
 

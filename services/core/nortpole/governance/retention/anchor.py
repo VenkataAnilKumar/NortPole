@@ -5,7 +5,7 @@ from __future__ import annotations
 from nortpole.key_value_store.factory import get_kv_store
 from nortpole.key_value_store.interface import KvKeyNotFoundError
 
-KV_KEY = "evolvxsi_audit_anchor"
+KV_KEY = "nortpole_audit_anchor"
 
 
 def load_anchor() -> str | None:

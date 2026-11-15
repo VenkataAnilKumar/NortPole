@@ -70,7 +70,7 @@ def verify(db: Any, batch: int = 2000) -> dict:
     return out
 
 
-CHECKPOINT_KEY = "evolvxsi_audit_verified"
+CHECKPOINT_KEY = "nortpole_audit_verified"
 FULL_EVERY_HOURS = 24
 
 

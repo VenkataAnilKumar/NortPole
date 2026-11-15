@@ -52,7 +52,7 @@ def _embed(texts: list[str], kind: str) -> list[list[float]]:
 
 @pytest.fixture(scope="module")
 def index():  # type: ignore[no-untyped-def]
-    name = f"evolvxsi_quality_{uuid.uuid4().hex[:8]}"
+    name = f"nortpole_quality_{uuid.uuid4().hex[:8]}"
     idx = OpenSearchDocumentIndex(TenantState(tenant_id=TENANT, multitenant=False), name, DIM, VectorQuantization.NONE)
     idx.verify_and_create_index_if_necessary(embedding_dim=DIM)
     docs = SET["documents"]

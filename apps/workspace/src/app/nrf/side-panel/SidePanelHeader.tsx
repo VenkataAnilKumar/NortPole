@@ -17,7 +17,7 @@ export default function SidePanelHeader({
 }: SidePanelHeaderProps) {
   const t = useTranslations("chat");
   const { appName } = useSettings();
-  const handleOpenInEvolvXSI = () => {
+  const handleOpenInNortPole = () => {
     const path = chatSessionId ? `/app?chatId=${chatSessionId}` : "/app";
     window.open(`${window.location.origin}${path}`, "_blank");
   };
@@ -35,8 +35,8 @@ export default function SidePanelHeader({
         <Button
           prominence="tertiary"
           icon={SvgExternalLink}
-          onClick={handleOpenInEvolvXSI}
-          tooltip={t("nrf.sidePanelHeader.openInEvolvXSIButton.tooltip", {
+          onClick={handleOpenInNortPole}
+          tooltip={t("nrf.sidePanelHeader.openInNortPoleButton.tooltip", {
             appName,
           })}
         />

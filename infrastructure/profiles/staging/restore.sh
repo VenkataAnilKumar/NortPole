@@ -20,8 +20,8 @@ if [ "${2:-}" != "--yes" ]; then
   [ "$ans" = "replace" ] || { echo "cancelled"; exit 1; }
 fi
 docker compose stop api web >/dev/null
-docker compose exec -T db psql -U evolvxsi -d postgres -v ON_ERROR_STOP=1 -c "drop database if exists evolvxsi with (force)" -c "create database evolvxsi owner evolvxsi" >/dev/null
-docker compose exec -T db pg_restore -U evolvxsi -d evolvxsi --no-owner --exit-on-error < "$dump"
+docker compose exec -T db psql -U nortpole -d postgres -v ON_ERROR_STOP=1 -c "drop database if exists nortpole with (force)" -c "create database nortpole owner nortpole" >/dev/null
+docker compose exec -T db pg_restore -U nortpole -d nortpole --no-owner --exit-on-error < "$dump"
 docker compose up -d api web >/dev/null
 echo "restored; waiting for the API"
 for i in $(seq 1 60); do

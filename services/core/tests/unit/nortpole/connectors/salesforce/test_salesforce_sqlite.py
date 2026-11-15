@@ -15,7 +15,7 @@ from nortpole.configs.constants import DocumentSource
 from nortpole.connectors.cross_connector_utils.miscellaneous_utils import time_str_to_utc
 from nortpole.connectors.models import BasicExpertInfo, Document, ImageSection, TextSection
 from nortpole.connectors.salesforce.doc_conversion import ID_PREFIX, _extract_section
-from nortpole.connectors.salesforce.evolvxsi_salesforce import NortPoleSalesforce
+from nortpole.connectors.salesforce.nortpole_salesforce import NortPoleSalesforce
 from nortpole.connectors.salesforce.salesforce_calls import (
     _bulk_retrieve_from_salesforce,
     _make_time_filter_for_sf_type,
@@ -30,7 +30,7 @@ from nortpole.connectors.salesforce.utils import (
 )
 from nortpole.utils.logger import setup_logger
 
-# from nortpole.connectors.salesforce.evolvxsi_salesforce_type import NortPoleSalesforceType
+# from nortpole.connectors.salesforce.nortpole_salesforce_type import NortPoleSalesforceType
 # from nortpole.connectors.salesforce.salesforce_calls import get_children_of_sf_type
 
 logger = setup_logger()
@@ -825,7 +825,7 @@ def test_salesforce_bulk_retrieve() -> None:
         domain=None,
     )
 
-    # evolvxsi_sf_type = NortPoleSalesforceType("Contact", sf_client)
+    # nortpole_sf_type = NortPoleSalesforceType("Contact", sf_client)
     sf_object_name = "Contact"
     queryable_fields = sf_client.get_queryable_fields_by_type(sf_object_name)
 
@@ -991,7 +991,7 @@ def test_salesforce_connector_single() -> None:
         domain=None,
     )
 
-    # evolvxsi_parent_sf_type = NortPoleSalesforceType(parent_type, sf_client)
+    # nortpole_parent_sf_type = NortPoleSalesforceType(parent_type, sf_client)
 
     child_types: set[str] = set()
     parent_to_child_types: dict[str, set[str]] = {}  # map from parent to child types
@@ -1014,7 +1014,7 @@ def test_salesforce_connector_single() -> None:
         )
 
         for child_type, child_relationship in child_types_working.items():
-            # evolvxsi_sf_type = NortPoleSalesforceType(child_type, sf_client)
+            # nortpole_sf_type = NortPoleSalesforceType(child_type, sf_client)
 
             # map parent to child type
             if parent_type_working not in parent_to_child_types:

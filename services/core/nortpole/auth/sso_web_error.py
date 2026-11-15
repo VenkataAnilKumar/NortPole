@@ -22,8 +22,8 @@ from nortpole.auth.users import get_pkce_cookie_name
 from nortpole.configs.app_configs import WEB_DOMAIN
 from nortpole.error_handling.exceptions import (
     NortPoleError,
-    log_evolvxsi_error,
-    evolvxsi_error_to_json_response,
+    log_nortpole_error,
+    nortpole_error_to_json_response,
 )
 
 _COOKIE_SECURE = WEB_DOMAIN.startswith("https")
@@ -61,7 +61,7 @@ def redirect_sso_errors_to_web(
             request = kwargs.get("request")
             if not isinstance(request, Request):
                 raise
-            log_evolvxsi_error(error)
+            log_nortpole_error(error)
             accept = request.headers.get("accept", "")
             # Only browser navigations get the page. Mobile and API clients keep
             # the JSON error they can parse.
@@ -75,7 +75,7 @@ def redirect_sso_errors_to_web(
                     status_code=302,
                 )
             else:
-                response = evolvxsi_error_to_json_response(error)
+                response = nortpole_error_to_json_response(error)
             _delete_flow_pkce_cookie(request, response)
             return response
 

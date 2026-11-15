@@ -334,7 +334,7 @@ async def test_b2c_policy_query_authorize_url_keeps_one_query() -> None:
     client = _build_client(_b2c_discovery(), config_url=_B2C_CONFIG_URL)
 
     url = await client.get_authorization_url(
-        "https://evolvxsi.example.com/auth/oidc/callback", state="s"
+        "https://nortpole.example.com/auth/oidc/callback", state="s"
     )
 
     parsed = httpx.URL(url)
@@ -342,7 +342,7 @@ async def test_b2c_policy_query_authorize_url_keeps_one_query() -> None:
     assert parsed.params["p"] == "b2c_1a_signin"
     assert parsed.params["state"] == "s"
     assert (
-        parsed.params["redirect_uri"] == "https://evolvxsi.example.com/auth/oidc/callback"
+        parsed.params["redirect_uri"] == "https://nortpole.example.com/auth/oidc/callback"
     )
 
 

@@ -56,16 +56,16 @@ def test_an_edited_row_and_a_removed_row_are_found_and_the_chain_can_be_restored
     with get_session_with_current_tenant() as s:
         a, b, c = _mine(s)[-3:]
         original = b.summary
-        s.execute(text("update evolvxsi_audit_event set summary=:x where id=:i"), {"x": "something else", "i": b.id}); s.commit()
+        s.execute(text("update nortpole_audit_event set summary=:x where id=:i"), {"x": "something else", "i": b.id}); s.commit()
         try:
             v = _fresh_verify(s)
             assert not v["ok"] and v["first_break"]["id"] == b.id and "content" in v["first_break"]["reason"]
         finally:  # never leave the shared chain broken
-            s.execute(text("update evolvxsi_audit_event set summary=:x where id=:i"), {"x": original, "i": b.id}); s.commit()
+            s.execute(text("update nortpole_audit_event set summary=:x where id=:i"), {"x": original, "i": b.id}); s.commit()
         assert _fresh_verify(s)["ok"]
 
         saved = {col: getattr(b, col) for col in ("id", "created_at", "action", "outcome", "actor_user_id", "actor_email", "resource_type", "resource_id", "summary", "details", "prev_hash", "row_hash")}
-        s.execute(text("delete from evolvxsi_audit_event where id=:i"), {"i": b.id}); s.commit()
+        s.execute(text("delete from nortpole_audit_event where id=:i"), {"i": b.id}); s.commit()
         try:
             v = _fresh_verify(s)
             assert not v["ok"] and v["first_break"]["id"] == c.id and "link" in v["first_break"]["reason"]
@@ -103,12 +103,12 @@ def test_the_quick_check_does_a_full_one_first_then_only_new_events_and_catches_
             cp = chain._load_checkpoint()
             row = s.get(NortPoleAuditEvent, cp["last_id"])
             original = row.summary
-            s.execute(text("update evolvxsi_audit_event set summary='changed' where id=:i"), {"i": row.id}); s.commit()
+            s.execute(text("update nortpole_audit_event set summary='changed' where id=:i"), {"i": row.id}); s.commit()
             try:
                 s.expire_all()
                 assert chain.verify_quick(s)["mode"] == "full", "a changed checkpoint row forces a full check"
             finally:
-                s.execute(text("update evolvxsi_audit_event set summary=:x where id=:i"), {"x": original, "i": row.id}); s.commit()
+                s.execute(text("update nortpole_audit_event set summary=:x where id=:i"), {"x": original, "i": row.id}); s.commit()
     finally:
         if saved:
             chain._save_checkpoint(saved)

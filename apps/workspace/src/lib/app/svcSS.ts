@@ -13,7 +13,7 @@ export async function generateFaviconMetadata(): Promise<Metadata["icons"]> {
   return {
     icon: enterprise?.use_custom_logo
       ? "/api/enterprise-settings/logo"
-      : "/evolvxsi.ico",
+      : "/nortpole.ico",
   };
 }
 

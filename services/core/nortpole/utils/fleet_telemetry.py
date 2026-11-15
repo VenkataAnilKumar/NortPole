@@ -339,7 +339,7 @@ def deployment_key() -> str:
     """The deployment's stable key. The fleet service takes it as a write credential."""
     if MULTI_TENANT:
         # Cloud has no instance-level key-value store. Its web domain names it.
-        return fingerprint("evolvxsi-cloud:" + WEB_DOMAIN)
+        return fingerprint("nortpole-cloud:" + WEB_DOMAIN)
     from nortpole.db.fleet_enrollment import get_or_create_deployment_key
 
     return get_or_create_deployment_key()

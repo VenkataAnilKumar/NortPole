@@ -123,7 +123,7 @@ const externalApp: ExternalAppAdminResponse = {
   credential_placeholder_keys: [],
   actions: [],
   associated_skills: [],
-  is_evolvxsi_managed: false,
+  is_nortpole_managed: false,
   users_can_manage_policies: true,
 };
 
@@ -146,7 +146,7 @@ function mockNetwork({
     const url = String(input);
     if (url === "/api/settings" || url === "/api/enterprise-settings")
       return new Response(
-        JSON.stringify({ evolvxsi_craft_available: mockCraftAvailable })
+        JSON.stringify({ nortpole_craft_available: mockCraftAvailable })
       );
     if (url === "/api/admin/default-assistant/configuration")
       return new Response(

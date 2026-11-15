@@ -232,17 +232,17 @@ class QueueDepthCollector(_CachedCollector):
         redis_client = celery_get_broker_client(self._celery_app)
 
         depth = GaugeMetricFamily(
-            "evolvxsi_queue_depth",
+            "nortpole_queue_depth",
             "Number of tasks waiting in Celery queue",
             labels=["queue"],
         )
         unacked = GaugeMetricFamily(
-            "evolvxsi_queue_unacked",
+            "nortpole_queue_unacked",
             "Number of prefetched (unacked) tasks for queue",
             labels=["queue"],
         )
         queue_age = GaugeMetricFamily(
-            "evolvxsi_queue_oldest_task_age_seconds",
+            "nortpole_queue_oldest_task_age_seconds",
             "Age of the oldest task in the queue (seconds since enqueue)",
             labels=["queue"],
         )
@@ -322,19 +322,19 @@ class RedisHealthCollector(_CachedCollector):
         redis_client = celery_get_broker_client(self._celery_app)
 
         memory_used = GaugeMetricFamily(
-            "evolvxsi_redis_memory_used_bytes",
+            "nortpole_redis_memory_used_bytes",
             "Redis used memory in bytes",
         )
         memory_peak = GaugeMetricFamily(
-            "evolvxsi_redis_memory_peak_bytes",
+            "nortpole_redis_memory_peak_bytes",
             "Redis peak used memory in bytes",
         )
         memory_frag = GaugeMetricFamily(
-            "evolvxsi_redis_memory_fragmentation_ratio",
+            "nortpole_redis_memory_fragmentation_ratio",
             "Redis memory fragmentation ratio (>1.5 indicates fragmentation)",
         )
         connected_clients = GaugeMetricFamily(
-            "evolvxsi_redis_connected_clients",
+            "nortpole_redis_connected_clients",
             "Number of connected Redis clients",
         )
 
@@ -489,7 +489,7 @@ class WorkerHealthCollector(_CachedCollector):
             return []
 
         active_workers = GaugeMetricFamily(
-            "evolvxsi_celery_active_worker_count",
+            "nortpole_celery_active_worker_count",
             "Number of active Celery workers with recent heartbeats",
         )
         # Celery hostnames are ``{worker_type}@{nodename}`` (see supervisord.conf).
@@ -499,7 +499,7 @@ class WorkerHealthCollector(_CachedCollector):
         # the pieces into separate labels so each replica is distinct; callers
         # can still ``sum by (worker_type)`` to recover the old aggregated view.
         worker_up = GaugeMetricFamily(
-            "evolvxsi_celery_worker_up",
+            "nortpole_celery_worker_up",
             "Whether a specific Celery worker is alive (1=up, 0=down)",
             labels=["worker_type", "hostname"],
         )

@@ -110,7 +110,7 @@ from nortpole.server.manage.models import (
     VectorQuantizationSupport,
 )
 from nortpole.server.models import IdReturn
-from nortpole.server.runtime.evolvxsi_runtime import NortPoleRuntime
+from nortpole.server.runtime.nortpole_runtime import NortPoleRuntime
 from nortpole.server.utils_vector_db import require_vector_db
 from nortpole.utils.audit import (
     AuditAction,

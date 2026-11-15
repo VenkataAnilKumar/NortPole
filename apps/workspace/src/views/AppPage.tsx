@@ -22,7 +22,7 @@ import { useLlmManager } from "@/lib/hooks";
 import { useFederatedConnectors } from "@/lib/connectors/hooks";
 import { useSendChatMessageFromURL } from "@/lib/chat/hooks";
 import NortPoleInitializingLoader from "@/components/NortPoleInitializingLoader";
-import { NortPoleDocument, MinimalEvolvXSIDocument } from "@/lib/search/types";
+import { NortPoleDocument, MinimalNortPoleDocument } from "@/lib/search/types";
 import { useToolConfiguration } from "@/lib/tools/hooks";
 import { useMemberPlugins } from "@/lib/plugins/member";
 import {
@@ -304,7 +304,7 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
     !isLoadingProjects && activeProject === null && deepResearchEnabled;
 
   const [presentingDocument, setPresentingDocument] =
-    useState<MinimalEvolvXSIDocument | null>(null);
+    useState<MinimalNortPoleDocument | null>(null);
 
   const llmManager = useLlmManager(
     currentChatSession ?? undefined,
@@ -680,7 +680,7 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
   }, [incognitoEnabled, setAppMode]);
 
   const handleSearchDocumentClick = useCallback(
-    (doc: MinimalEvolvXSIDocument) => setPresentingDocument(doc),
+    (doc: MinimalNortPoleDocument) => setPresentingDocument(doc),
     []
   );
 

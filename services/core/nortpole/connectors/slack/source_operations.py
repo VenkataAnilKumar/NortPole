@@ -364,14 +364,14 @@ def make_slack_web_client(
     # NOTE: Slack has a built in RateLimitErrorRetryHandler, but it isn't
     # designed for concurrent workers. We've extended it with
     # NortPoleRedisSlackRetryHandler.
-    evolvxsi_rate_limit_error_retry_handler = NortPoleRedisSlackRetryHandler(
+    nortpole_rate_limit_error_retry_handler = NortPoleRedisSlackRetryHandler(
         max_retry_count=max_retry_count,
         delay_key=delay_key,
         r=r,
     )
     custom_retry_handlers: list[RetryHandler] = [
         _connection_error_retry_handler(max_retry_count),
-        evolvxsi_rate_limit_error_retry_handler,
+        nortpole_rate_limit_error_retry_handler,
     ]
 
     client = NortPoleSlackWebClient(
@@ -810,7 +810,7 @@ class SlackSourceOperations(SourceOperations):
         """
         ``users.info``. Positional ``user_id`` on purpose: the bound method
         doubles as the ``FetchUserInfo`` callable that user-resolving helpers
-        (shared with evolvxsibot) take injected.
+        (shared with nortpolebot) take injected.
         """
         return _validated(
             self._client().users_info(user=user_id), SlackUserInfoResponse

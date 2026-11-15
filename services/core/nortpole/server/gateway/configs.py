@@ -5,7 +5,7 @@ from nortpole.server.settings.models import Tier
 GATEWAY_PATH_PREFIX = "/gateway"
 # Set by the per-session opencode config on every sandbox LLM call so the
 # gateway can tag its traces with the originating Craft session.
-CRAFT_SESSION_HEADER = "X-EvolvXSI-Craft-Session"
+CRAFT_SESSION_HEADER = "X-NortPole-Craft-Session"
 LLM_GATEWAY_MIN_TIER = Tier.BUSINESS
 
 # Kill switch, default ON: set to "false" to send Anthropic-backed providers

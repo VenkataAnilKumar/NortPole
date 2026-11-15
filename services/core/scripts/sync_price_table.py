@@ -289,12 +289,12 @@ def build_price_table(api: dict[str, Any]) -> dict[str, Any]:
 
     providers: dict[str, Any] = {}
     missing: list[str] = []
-    for evolvxsi_key, slugs in PROVIDER_MAP.items():
+    for nortpole_key, slugs in PROVIDER_MAP.items():
         section = _build_provider_section(api, slugs)
         if section is None:
-            missing.append(evolvxsi_key)
+            missing.append(nortpole_key)
         else:
-            providers[evolvxsi_key] = section
+            providers[nortpole_key] = section
 
     if missing:
         print(
@@ -394,7 +394,7 @@ _LITELLM_CHAT_GAP_FILL_TAGS = frozenset(
 )
 
 
-def _litellm_evolvxsi_providers(tag: str | None) -> tuple[str, ...]:
+def _litellm_nortpole_providers(tag: str | None) -> tuple[str, ...]:
     if not tag:
         return ()
     if tag.startswith("vertex_ai"):
@@ -483,8 +483,8 @@ def merge_litellm(providers: dict[str, Any], litellm_map: dict[str, Any]) -> Non
     for model_key, entry in litellm_map.items():
         if not isinstance(entry, dict):
             continue
-        evolvxsi_keys = _litellm_evolvxsi_providers(entry.get("litellm_provider"))
-        if not evolvxsi_keys:
+        nortpole_keys = _litellm_nortpole_providers(entry.get("litellm_provider"))
+        if not nortpole_keys:
             continue
 
         # litellm keys are bare model ids or "<litellm_provider>/<id>".
@@ -493,8 +493,8 @@ def merge_litellm(providers: dict[str, Any], litellm_map: dict[str, Any]) -> Non
         if model_key.startswith(f"{provider_tag}/"):
             model_id = model_key[len(provider_tag) + 1 :]
 
-        for evolvxsi_key in evolvxsi_keys:
-            section = providers.get(evolvxsi_key)
+        for nortpole_key in nortpole_keys:
+            section = providers.get(nortpole_key)
             if section is None:
                 continue
             models = section["models"]
@@ -732,7 +732,7 @@ def _fetch_json(url: str, timeout: int = 60) -> Any:
     assert url.startswith("https://"), f"refusing non-https source: {url}"
     # models.dev's edge blocks the default Python-urllib UA with a 403.
     req = urllib.request.Request(  # noqa: S310
-        url, headers={"User-Agent": "evolvxsi-price-sync"}
+        url, headers={"User-Agent": "nortpole-price-sync"}
     )
     with urllib.request.urlopen(req, timeout=timeout) as resp:  # noqa: S310
         return json.loads(resp.read())

@@ -17,7 +17,7 @@ from nortpole.server.features.build.configs import (
     SandboxBackend,
 )
 
-APP_NAMESPACE = os.environ.get("HELM_RELEASE_NAMESPACE", "evolvxsi")
+APP_NAMESPACE = os.environ.get("HELM_RELEASE_NAMESPACE", "nortpole")
 
 
 def require_isolated_cleanup_deployment() -> None:
@@ -38,7 +38,7 @@ def isolated_cleanup_deployment(k8s_client: client.CoreV1Api) -> None:
     run_id = os.environ.get("SANDBOX_TEST_RUN_ID")
     assert run_id, "SANDBOX_TEST_RUN_ID must identify the disposable CI deployment"
     assert (namespace.metadata.labels or {}).get(
-        "evolvxsi.local/cleanup-test-run"
+        "nortpole.local/cleanup-test-run"
     ) == run_id, "The target namespace does not belong to this cleanup test run"
 
 

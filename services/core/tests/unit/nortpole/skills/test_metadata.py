@@ -121,10 +121,10 @@ def test_skill_document_round_trip_preserves_optional_and_unknown_fields() -> No
         "license: Apache-2.0\n"
         "compatibility: Requires git\n"
         "metadata:\n"
-        "  author: evolvxsi\n"
+        "  author: nortpole\n"
         "  version: '1.0'\n"
         "allowed-tools: Bash(git:*) Read\n"
-        "x-evolvxsi-setting:\n"
+        "x-nortpole-setting:\n"
         "  enabled: true",
         "# Instructions\n\nDo the work.",
     )
@@ -141,7 +141,7 @@ def test_skill_document_round_trip_preserves_optional_and_unknown_fields() -> No
     reparsed = parse_skill_document(serialized)
 
     assert reparsed == document
-    assert reparsed.metadata.model_extra == {"x-evolvxsi-setting": {"enabled": True}}
+    assert reparsed.metadata.model_extra == {"x-nortpole-setting": {"enabled": True}}
 
 
 def test_parse_skill_document_requires_directory_name_match() -> None:

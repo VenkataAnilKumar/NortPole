@@ -7,7 +7,7 @@
 #   - warm spinup: image already on kind node → pod create → Ready
 #
 # Each scenario runs $REPS times; min/median/max reported. Pods are created in
-# $NS (default evolvxsi-sandboxes) running `sleep` so we measure only the platform
+# $NS (default nortpole-sandboxes) running `sleep` so we measure only the platform
 # overhead. The full session-spinup path (KubernetesSandboxManager.provision +
 # setup_session_workspace) is more than this measures — but image-pull and
 # basic container start dominate the cold-start latency, and that's what
@@ -18,13 +18,13 @@
 #
 # Examples:
 #   # Compare current dev image against a candidate
-#   bench-sandbox-spinup.sh evolvxsidotapp/sandbox:dev evolvxsidotapp/sandbox:candidate
+#   bench-sandbox-spinup.sh nortpoledotapp/sandbox:dev nortpoledotapp/sandbox:candidate
 #
 #   # Override defaults
-#   REPS=5 NS=evolvxsi-sandboxes \
-#     bench-sandbox-spinup.sh evolvxsidotapp/sandbox:dev
+#   REPS=5 NS=nortpole-sandboxes \
+#     bench-sandbox-spinup.sh nortpoledotapp/sandbox:dev
 #
-# Env knobs: REPS (3), NS (evolvxsi-sandboxes), KIND_CLUSTER (evolvxsi-dev),
+# Env knobs: REPS (3), NS (nortpole-sandboxes), KIND_CLUSTER (nortpole-dev),
 # KIND_NODE (<cluster>-control-plane), WAIT_TIMEOUT (300s).
 #
 # Caveats: `kind load` (docker save → tar → crictl load) is much slower than a
@@ -32,12 +32,12 @@
 # number. Warm spinup is nearly independent of image size.
 #
 # Requires: docker, kind, kubectl, python3. Cluster context must be
-# kind-evolvxsi-dev — see deployment/helm/dev/README.md for the local setup.
+# kind-nortpole-dev — see deployment/helm/dev/README.md for the local setup.
 set -euo pipefail
 
-KIND_CLUSTER="${KIND_CLUSTER:-evolvxsi-dev}"
+KIND_CLUSTER="${KIND_CLUSTER:-nortpole-dev}"
 KIND_NODE="${KIND_NODE:-${KIND_CLUSTER}-control-plane}"
-NS="${NS:-evolvxsi-sandboxes}"
+NS="${NS:-nortpole-sandboxes}"
 REPS="${REPS:-3}"
 WAIT_TIMEOUT="${WAIT_TIMEOUT:-300s}"
 

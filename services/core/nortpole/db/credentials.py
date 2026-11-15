@@ -70,7 +70,7 @@ def _build_credential_group_access_clause(
 ) -> ColumnElement[bool]:
     """CE has no user groups, so group sharing grants nothing.
 
-    NOTE: EE version in ee.evolvxsi.db.credentials."""
+    NOTE: EE version in ee.nortpole.db.credentials."""
     return false()
 
 
@@ -133,7 +133,7 @@ def validate_credential_group_ids(
 ) -> None:
     """CE has no user groups, so a credential cannot be shared with one.
 
-    NOTE: EE version in ee.evolvxsi.db.credentials."""
+    NOTE: EE version in ee.nortpole.db.credentials."""
     if group_ids:
         raise NortPoleError(
             NortPoleErrorCode.FEATURE_NOT_AVAILABLE,

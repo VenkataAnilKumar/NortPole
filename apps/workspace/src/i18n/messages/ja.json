@@ -4277,7 +4277,7 @@
           "fields": {
             "sites": {
               "label": "サイト",
-              "description": "- サイトを指定しない場合、組織内のすべてのサイトがインデックスされます(`Sites.Read.All` 権限が必要)。\n- たとえば `https://evolvxsiai.sharepoint.com/sites/support` を指定すると、このサイトのみがインデックスされます。\n- たとえば `https://evolvxsiai.sharepoint.com/sites/support/subfolder` を指定すると、このフォルダーのみがインデックスされます。\n- ユーザーの個人サイトをインデックスするには、[OneDrive コネクター]({docsAdminsPath}/connectors/official/onedrive)を使用してください。\n- サイトの指定は現在、英語、スペイン語、ドイツ語を使用する SharePoint インスタンスで動作します。他の言語への対応が必要な場合は、NortPole チームにお問い合わせください。"
+              "description": "- サイトを指定しない場合、組織内のすべてのサイトがインデックスされます(`Sites.Read.All` 権限が必要)。\n- たとえば `https://nortpoleai.sharepoint.com/sites/support` を指定すると、このサイトのみがインデックスされます。\n- たとえば `https://nortpoleai.sharepoint.com/sites/support/subfolder` を指定すると、このフォルダーのみがインデックスされます。\n- ユーザーの個人サイトをインデックスするには、[OneDrive コネクター]({docsAdminsPath}/connectors/official/onedrive)を使用してください。\n- サイトの指定は現在、英語、スペイン語、ドイツ語を使用する SharePoint インスタンスで動作します。他の言語への対応が必要な場合は、NortPole チームにお問い合わせください。"
             },
             "include_site_documents": {
               "label": "ドキュメントをインデックス",
@@ -4318,7 +4318,7 @@
           "fields": {
             "teams": {
               "label": "チーム",
-              "description": "インデックスするチームを 0 個以上指定します。たとえば、'evolvxsiai' 組織の 'Support' チームを指定すると、'Support' チームに属するチャンネルで送信されたメッセージのみがインデックスされます。チームを指定しない場合は、組織内のすべてのチームがインデックスされます。"
+              "description": "インデックスするチームを 0 個以上指定します。たとえば、'nortpoleai' 組織の 'Support' チームを指定すると、'Support' チームに属するチャンネルで送信されたメッセージのみがインデックスされます。チームを指定しない場合は、組織内のすべてのチームがインデックスされます。"
             },
             "include_attachments": {
               "description": "各チャンネルの「ファイル」タブにあるファイルを、SharePoint が付与する閲覧者付きの独立したドキュメントとしてインデックスします。証明書認証情報、Graph の Files.Read.All または Sites.Read.All、および各ファイルの閲覧者を読み取るための SharePoint API の Sites.FullControl.All が必要です。Sites.Selected を使用する場合は、各チャンネルサイトでアプリにフルコントロールを付与してください。"
@@ -4478,7 +4478,7 @@
           "fields": {
             "base_url": {
               "label": "ベース URL",
-              "description": "Slab チームのベース URL を指定します。次のような形式です: https://evolvxsi.slab.com/"
+              "description": "Slab チームのベース URL を指定します。次のような形式です: https://nortpole.slab.com/"
             }
           }
         },
@@ -8124,7 +8124,7 @@
           "responseFallback": "招待のリクエストに失敗しました"
         },
         "requestSentBody": "参加リクエストを送信しました。{domain} の管理者が承認するまで、自分のチームで操作を試すことができます。",
-        "tryEvolvXSIButton": {
+        "tryNortPoleButton": {
           "label": "待っている間に NortPole を試す"
         }
       },
@@ -8754,7 +8754,7 @@
       },
       "placeholders": {
         "jwksUrl": "https://idp.example.com/.well-known/jwks.json",
-        "audience": "evolvxsi",
+        "audience": "nortpole",
         "issuer": "https://idp.example.com"
       }
     },
@@ -9540,7 +9540,7 @@
         "spEntityId": {
           "label": "SP エンティティ ID",
           "description": "IdP に登録されたこのインスタンスのエンティティ ID。",
-          "placeholder": "evolvxsi"
+          "placeholder": "nortpole"
         },
         "spX509Cert": {
           "label": "SP X.509 証明書",
@@ -10620,7 +10620,7 @@
         "message": "予期しないエラーが発生しました。"
       },
       "contentProviders": {
-        "evolvxsiWebCrawler": {
+        "nortpoleWebCrawler": {
           "subtitle": "組み込みのウェブクローラー。ほとんどのページで動作しますが、特殊なケースでは性能が落ちます。"
         },
         "firecrawl": {
@@ -11755,7 +11755,7 @@
         "description": "アカウントのアクセス制限または権限"
       },
       "cloudSupportPrompt": {
-        "text": "問題が解決しない場合は、NortPole チーム（<link>support@evolvxsi.local</link>）までご連絡ください"
+        "text": "問題が解決しない場合は、NortPole チーム（<link>support@nortpole.local</link>）までご連絡ください"
       },
       "code": {
         "accessDenied": "ID プロバイダーによってアクセスが拒否されました。",
@@ -11839,7 +11839,7 @@
     },
     "impersonate": {
       "adminNote": {
-        "text": "注：この機能は @evolvxsi.local の管理者のみが利用できます"
+        "text": "注：この機能は @nortpole.local の管理者のみが利用できます"
       },
       "apiKeyField": {
         "label": "API キー",
@@ -13590,7 +13590,7 @@
         "newChatButton": {
           "tooltip": "新しいチャット"
         },
-        "openInEvolvXSIButton": {
+        "openInNortPoleButton": {
           "tooltip": "{appName} で開く"
         }
       }
@@ -13942,7 +13942,7 @@
     "errorPages": {
       "accessRestricted": {
         "billingAdminHint": {
-          "text": "管理者の場合は、<billingLink>管理者請求</billingLink>ページでライセンスを{hadLicense, select, true {更新} other {有効化}}するか、Stripe経由で登録するか、請求に関するサポートは<supportLink>support@evolvxsi.local</supportLink>までお問い合わせください。"
+          "text": "管理者の場合は、<billingLink>管理者請求</billingLink>ページでライセンスを{hadLicense, select, true {更新} other {有効化}}するか、Stripe経由で登録するか、請求に関するサポートは<supportLink>support@nortpole.local</supportLink>までお問い合わせください。"
         },
         "downgradeButton": {
           "label": "Community にダウングレード"
@@ -17611,7 +17611,7 @@
     "disk": "OpenSearchのデータノードでディスク使用率が85%以上です。ディスクがいっぱいになるとインデックス作成が停止する可能性があります。",
     "jvmMemory": "OpenSearchのJVMメモリ使用率が複数回のチェックで85%を超えています。検索やインデックス作成が失敗する可能性があります。",
     "vectorMemory": "OpenSearchのベクトルメモリがほぼ満杯、または上限に達しています。検索やインデックス作成が失敗する可能性があります。",
-    "contact": "システム管理者、またはNortPoleチーム（[support@evolvxsi.local](mailto:support@evolvxsi.local)）にお問い合わせください。",
+    "contact": "システム管理者、またはNortPoleチーム（[support@nortpole.local](mailto:support@nortpole.local)）にお問い合わせください。",
     "stale": "最新のチェックを利用できません。この警告は最後に成功したチェックに基づいており、復旧は確認されていません。",
     "dismiss": "閉じる",
     "diskTitle": "ディスク容量",

@@ -355,7 +355,7 @@ export default function AccountPopover({ onShowBuildIntro }: SettingsProps) {
     >
       <Dropdown.Trigger asChild>
         {/* The wrapper is a plain div, so the menu attributes the trigger adds are not valid on it: they go on the button inside. */}
-        <div id="evolvxsi-user-dropdown" aria-expanded={undefined} aria-haspopup={undefined} aria-controls={undefined}>
+        <div id="nortpole-user-dropdown" aria-expanded={undefined} aria-haspopup={undefined} aria-controls={undefined}>
           <SidebarTab
             icon={(props) => (
               <div className="w-[16px] flex flex-col justify-center items-center">

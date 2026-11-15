@@ -13,7 +13,7 @@ from nortpole.connectors.confluence.connector import (
     ConfluenceConnector,
 )
 from nortpole.connectors.confluence.source_operations import (
-    _EvolvXSIConfluence,
+    _NortPoleConfluence,
 )
 from nortpole.connectors.exceptions import (
     CredentialExpiredError,
@@ -49,17 +49,17 @@ def space_key() -> str:
 
 
 @pytest.fixture
-def mock_confluence_client() -> _EvolvXSIConfluence:
+def mock_confluence_client() -> _NortPoleConfluence:
     """Create a mock Confluence client with proper typing"""
     # Server mode just Also updates the start value
-    return _EvolvXSIConfluence(
+    return _NortPoleConfluence(
         is_cloud=False, url="test", credentials_provider=MagicMock(), timeout=None
     )
 
 
 @pytest.fixture
 def confluence_connector(
-    confluence_base_url: str, space_key: str, mock_confluence_client: _EvolvXSIConfluence
+    confluence_base_url: str, space_key: str, mock_confluence_client: _NortPoleConfluence
 ) -> Generator[ConfluenceConnector, None, None]:
     """Create a Confluence connector with a mock client"""
     # NOTE: we test with is_cloud=False for all tests, which is generally fine because the behavior
@@ -390,7 +390,7 @@ def test_validate_connector_settings_errors(
     error = HTTPError(response=MagicMock(status_code=status_code))
 
     with patch(
-        "nortpole.connectors.confluence.source_operations._EvolvXSIConfluence.retrieve_confluence_spaces"
+        "nortpole.connectors.confluence.source_operations._NortPoleConfluence.retrieve_confluence_spaces"
     ) as mock_retrieve:
         mock_retrieve.side_effect = error
 

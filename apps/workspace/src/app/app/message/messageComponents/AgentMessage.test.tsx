@@ -312,7 +312,7 @@ test.each([undefined, 0])(
       expect(
         screen.getByText("Restored answer is already visible.")
       ).toBeInTheDocument();
-      expect(screen.queryByTestId("evolvxsi-ai-message")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("nortpole-ai-message")).not.toBeInTheDocument();
     } finally {
       view.unmount();
     }
@@ -790,7 +790,7 @@ test("generated images from earlier tool steps lead the answer once", async () =
   const image = {
     file_id: "generated-1",
     url: "/api/chat/file/generated-1",
-    revised_prompt: "An evolvxsi stone",
+    revised_prompt: "An nortpole stone",
   };
   const packets: Packet[] = [
     {
@@ -853,7 +853,7 @@ function generatedImageStep(turnIndex: number, fileId: string): Packet[] {
           {
             file_id: fileId,
             url: `/api/chat/file/${fileId}`,
-            revised_prompt: "An evolvxsi stone",
+            revised_prompt: "An nortpole stone",
           },
         ],
       },

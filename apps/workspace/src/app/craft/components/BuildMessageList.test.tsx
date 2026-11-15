@@ -10,7 +10,7 @@ import type {
 import type { StreamItem } from "@/app/craft/types/displayTypes";
 
 jest.mock("@/lib/app/components", () => ({
-  FoldableLogo: () => <div data-testid="evolvxsi-logo" />,
+  FoldableLogo: () => <div data-testid="nortpole-logo" />,
 }));
 
 jest.mock("@/components/chat/MinimalMarkdown", () => ({
@@ -388,7 +388,7 @@ test("keeps one assistant cursor during finalization and removes it when finaliz
     </TooltipProvider>
   );
   expect(screen.getAllByText("Final answer")).toHaveLength(1);
-  expect(screen.getAllByTestId("evolvxsi-logo")).toHaveLength(1);
+  expect(screen.getAllByTestId("nortpole-logo")).toHaveLength(1);
   expect(screen.getAllByTestId("blinking-bar")).toHaveLength(1);
   rerender(
     <TooltipProvider>

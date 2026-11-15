@@ -18,7 +18,7 @@ depends_on = None
 
 def upgrade() -> None:
     op.create_table(
-        "evolvxsi_source_request",
+        "nortpole_source_request",
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
         sa.Column("kind", sa.String(length=20), nullable=False),
         sa.Column("item_key", sa.String(length=120), nullable=False),
@@ -32,11 +32,11 @@ def upgrade() -> None:
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
         sa.Column("decided_at", sa.DateTime(timezone=True), nullable=True),
     )
-    op.create_index("ix_evolvxsi_source_request_state", "evolvxsi_source_request", ["state"])
-    op.create_index("ix_evolvxsi_source_request_requester", "evolvxsi_source_request", ["requested_by_id"])
+    op.create_index("ix_nortpole_source_request_state", "nortpole_source_request", ["state"])
+    op.create_index("ix_nortpole_source_request_requester", "nortpole_source_request", ["requested_by_id"])
 
 
 def downgrade() -> None:
-    op.drop_index("ix_evolvxsi_source_request_requester", table_name="evolvxsi_source_request")
-    op.drop_index("ix_evolvxsi_source_request_state", table_name="evolvxsi_source_request")
-    op.drop_table("evolvxsi_source_request")
+    op.drop_index("ix_nortpole_source_request_requester", table_name="nortpole_source_request")
+    op.drop_index("ix_nortpole_source_request_state", table_name="nortpole_source_request")
+    op.drop_table("nortpole_source_request")

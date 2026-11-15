@@ -9,7 +9,7 @@ from nortpole.error_handling.exceptions import NortPoleError
 from nortpole.server.features.mcp import oauth_discovery
 from nortpole.server.features.mcp.models import MCPOAuthDiscoveryRequest
 
-_CIMD_CLIENT_ID = "https://evolvxsi.example/api/mcp/oauth/client-metadata"
+_CIMD_CLIENT_ID = "https://nortpole.example/api/mcp/oauth/client-metadata"
 
 
 @pytest.mark.parametrize(
@@ -139,7 +139,7 @@ def test_registration_error_is_sanitized_through_nested_task_groups() -> None:
     assert "html" not in error.detail
 
 
-def test_evolvxsi_error_survives_nested_task_groups() -> None:
+def test_nortpole_error_survives_nested_task_groups() -> None:
     rejected = NortPoleError(
         NortPoleErrorCode.INVALID_INPUT,
         "client metadata rejected",
@@ -312,13 +312,13 @@ def test_discovery_route_authorizes_in_worker_and_closes_session_before_http(
     from sqlalchemy.orm import Session
 
     from nortpole.db.models import MCPServer, User
-    from nortpole.error_handling.exceptions import register_evolvxsi_exception_handlers
+    from nortpole.error_handling.exceptions import register_nortpole_exception_handlers
     from nortpole.server.features.mcp import api
     from nortpole.server.features.mcp.models import MCPOAuthDiscoveryResponse
 
     app = FastAPI()
     app.include_router(api.admin_router)
-    register_evolvxsi_exception_handlers(app)
+    register_nortpole_exception_handlers(app)
     route = next(
         route
         for route in app.routes

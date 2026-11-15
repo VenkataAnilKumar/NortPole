@@ -208,7 +208,7 @@ def test_server_url_change_invalidates_old_credentials_without_losing_new_client
     client_information = OAuthClientInformationFull(
         client_id="client-id",
         client_secret="client-secret",
-        redirect_uris=["https://evolvxsi.example.com/mcp/oauth/callback"],
+        redirect_uris=["https://nortpole.example.com/mcp/oauth/callback"],
     )
     server = _server()
     server.admin_connection_config = SimpleNamespace(id=100)
@@ -304,7 +304,7 @@ def test_setup_mode_update_preserves_concurrently_refreshed_credentials(
     client = OAuthClientInformationFull(
         client_id="client-id",
         client_secret="client-secret",
-        redirect_uris=["https://evolvxsi.example.com/mcp/oauth/callback"],
+        redirect_uris=["https://nortpole.example.com/mcp/oauth/callback"],
     )
     initial_data = MCPConnectionData(
         headers={},

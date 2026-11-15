@@ -58,7 +58,7 @@ logger = setup_logger()
 # users: users are a count. A container name can still name a person, for
 # example a personal Confluence space.
 
-# TODO(evan-evolvxsi): a search endpoint for sources whose listings exceed this.
+# TODO(evan-nortpole): a search endpoint for sources whose listings exceed this.
 MAX_FINDING_OPTIONS: int = 1000
 # Longest option value, label or detail. Bounds the stored report and every
 # draft snapshot write.

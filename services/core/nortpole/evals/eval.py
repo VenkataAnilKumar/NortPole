@@ -317,7 +317,7 @@ def _get_multi_turn_answer_with_tools(
                 description="Multi-turn eval session",
                 user_id=user_id,
                 persona_id=DEFAULT_PERSONA_ID,
-                evolvxsibot_flow=True,
+                nortpolebot_flow=True,
             )
             chat_session_id = chat_session.id
 

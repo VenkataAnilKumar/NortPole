@@ -56,7 +56,7 @@ def test_reclassified_actions_keep_their_new_class() -> None:
 def test_class_selects_the_child_logger(caplog: pytest.LogCaptureFixture) -> None:
     """``ocsf_class`` drives the logger name, which is what makes a class routable
     without parsing the JSON body."""
-    with caplog.at_level(logging.INFO, logger="evolvxsi.audit"):
+    with caplog.at_level(logging.INFO, logger="nortpole.audit"):
         emit_audit_event(
             AuditAction.USER_GROUP_PERMISSION_CHANGE,
             AuditOutcome.SUCCESS,
@@ -64,13 +64,13 @@ def test_class_selects_the_child_logger(caplog: pytest.LogCaptureFixture) -> Non
             resource_id=7,
         )
 
-    records = [r for r in caplog.records if r.name.startswith("evolvxsi.audit")]
+    records = [r for r in caplog.records if r.name.startswith("nortpole.audit")]
     assert len(records) == 1
-    assert records[0].name == "evolvxsi.audit.group_management"
+    assert records[0].name == "nortpole.audit.group_management"
 
 
 def test_emits_stable_ocsf_shaped_schema(caplog: pytest.LogCaptureFixture) -> None:
-    with caplog.at_level(logging.INFO, logger="evolvxsi.audit"):
+    with caplog.at_level(logging.INFO, logger="nortpole.audit"):
         emit_audit_event(
             AuditAction.LLM_PROVIDER_UPDATE,
             AuditOutcome.SUCCESS,
@@ -114,10 +114,10 @@ def test_emits_stable_ocsf_shaped_schema(caplog: pytest.LogCaptureFixture) -> No
 
 
 def test_routes_to_per_class_child_logger(caplog: pytest.LogCaptureFixture) -> None:
-    with caplog.at_level(logging.INFO, logger="evolvxsi.audit"):
+    with caplog.at_level(logging.INFO, logger="nortpole.audit"):
         emit_audit_event(AuditAction.LOGIN, AuditOutcome.SUCCESS)
 
-    auth_records = [r for r in caplog.records if r.name == "evolvxsi.audit.authentication"]
+    auth_records = [r for r in caplog.records if r.name == "nortpole.audit.authentication"]
     assert len(auth_records) == 1
 
 
@@ -126,7 +126,7 @@ def test_never_logs_a_secret_passed_nowhere(caplog: pytest.LogCaptureFixture) ->
     # passed can never appear. Assert the rendered line for a typical event does
     # not contain anything resembling a credential value.
     secret = "sk-super-secret-value"
-    with caplog.at_level(logging.INFO, logger="evolvxsi.audit"):
+    with caplog.at_level(logging.INFO, logger="nortpole.audit"):
         emit_audit_event(
             AuditAction.CREDENTIAL_ACCESS,
             AuditOutcome.SUCCESS,
@@ -153,7 +153,7 @@ def test_never_raises_on_missing_context(
     monkeypatch.setattr(audit, "_safe_get_client_ip", lambda: _boom())
 
     # Must not raise.
-    with caplog.at_level(logging.INFO, logger="evolvxsi.audit"):
+    with caplog.at_level(logging.INFO, logger="nortpole.audit"):
         emit_audit_event(AuditAction.LOGOUT, AuditOutcome.SUCCESS)
 
 
@@ -171,7 +171,7 @@ def test_dedup_suppresses_within_window(
 
     monkeypatch.setattr(audit, "should_emit", fake_should_emit)
 
-    with caplog.at_level(logging.INFO, logger="evolvxsi.audit"):
+    with caplog.at_level(logging.INFO, logger="nortpole.audit"):
         emit_audit_event(
             AuditAction.CREDENTIAL_ACCESS, AuditOutcome.SUCCESS, dedup_key="k1"
         )
@@ -197,7 +197,7 @@ def test_dedup_degrades_to_emit_when_redis_down(
 
 def test_no_dedup_key_always_emits(caplog: pytest.LogCaptureFixture) -> None:
     # Low-volume events omit dedup_key and should always emit, even repeated.
-    with caplog.at_level(logging.INFO, logger="evolvxsi.audit"):
+    with caplog.at_level(logging.INFO, logger="nortpole.audit"):
         emit_audit_event(AuditAction.USER_ROLE_CHANGE, AuditOutcome.SUCCESS)
         emit_audit_event(AuditAction.USER_ROLE_CHANGE, AuditOutcome.SUCCESS)
 
@@ -211,7 +211,7 @@ def test_audit_logger_self_contained_without_root_handler() -> None:
     audit_root = logging.getLogger(AUDIT_LOGGER_ROOT)
 
     own_handlers = [h for h in audit_root.handlers if h.name == AUDIT_HANDLER_NAME]
-    assert own_handlers, "evolvxsi.audit must attach its own handler"
+    assert own_handlers, "nortpole.audit must attach its own handler"
     assert audit_root.propagate is False
 
     # Simulate uvicorn (no root handlers); capture via a temporary handler.
@@ -232,7 +232,7 @@ def test_audit_logger_self_contained_without_root_handler() -> None:
         audit_root.removeHandler(capture)
 
     lines = [ln for ln in buf.getvalue().splitlines() if ln.strip()]
-    assert lines, "audit event must reach evolvxsi.audit handlers without root"
+    assert lines, "audit event must reach nortpole.audit handlers without root"
     payload = json.loads(lines[-1])
     assert payload["action"] == "auth.login"
 

@@ -86,7 +86,7 @@ function parseThumbnail(value: unknown): SavedThumbnail | null {
 type ThumbnailState = State<FilePreviewResult<FileContentResponse>, Error>;
 
 function thumbnailStorageKey(userId: string) {
-  return `evolvxsi:craft:output-thumbnails:v1:${userId}`;
+  return `nortpole:craft:output-thumbnails:v1:${userId}`;
 }
 
 function readSavedThumbnails(userId?: string): SavedThumbnail[] {

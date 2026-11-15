@@ -9,7 +9,7 @@
         {
           "id": "<fixture-root-item-id>",
           "name": "NortPole OneDrive Connector Tests",
-          "webUrl": "https://<tenant-host>/personal/<owner-personal-path>/Documents/EvolvXSI%20OneDrive%20Connector%20Tests",
+          "webUrl": "https://<tenant-host>/personal/<owner-personal-path>/Documents/NortPole%20OneDrive%20Connector%20Tests",
           "size": 0,
           "folder": {
             "childCount": 10
@@ -78,7 +78,7 @@
             "driveId": "<owner-drive-id>",
             "driveType": "business",
             "id": "<folder-direct-id>",
-            "path": "/drives/<owner-drive-id>/root:/EvolvXSI OneDrive Connector Tests/10-direct",
+            "path": "/drives/<owner-drive-id>/root:/NortPole OneDrive Connector Tests/10-direct",
             "siteId": "<site-id-1>",
             "sharepointIds": {
               "listId": "<list-id-1>",
@@ -103,7 +103,7 @@
         {
           "id": "<folder-inherited-id>",
           "name": "20-inherited-subash",
-          "webUrl": "https://<tenant-host>/personal/<owner-personal-path>/Documents/EvolvXSI%20OneDrive%20Connector%20Tests/20-inherited-subash",
+          "webUrl": "https://<tenant-host>/personal/<owner-personal-path>/Documents/NortPole%20OneDrive%20Connector%20Tests/20-inherited-subash",
           "size": 0,
           "folder": {
             "childCount": 3
@@ -125,7 +125,7 @@
             "driveId": "<owner-drive-id>",
             "driveType": "business",
             "id": "<fixture-root-item-id>",
-            "path": "/drives/<owner-drive-id>/root:/EvolvXSI OneDrive Connector Tests",
+            "path": "/drives/<owner-drive-id>/root:/NortPole OneDrive Connector Tests",
             "siteId": "<site-id-1>",
             "sharepointIds": {
               "listId": "<list-id-1>",
@@ -149,7 +149,7 @@
         {
           "id": "<folder-restricted-id>",
           "name": "restricted-raunak",
-          "webUrl": "https://<tenant-host>/personal/<owner-personal-path>/Documents/EvolvXSI%20OneDrive%20Connector%20Tests/20-inherited-subash/restricted-raunak",
+          "webUrl": "https://<tenant-host>/personal/<owner-personal-path>/Documents/NortPole%20OneDrive%20Connector%20Tests/20-inherited-subash/restricted-raunak",
           "size": 0,
           "folder": {
             "childCount": 1
@@ -168,7 +168,7 @@
             "driveId": "<owner-drive-id>",
             "driveType": "business",
             "id": "<folder-inherited-id>",
-            "path": "/drives/<owner-drive-id>/root:/EvolvXSI OneDrive Connector Tests/20-inherited-subash",
+            "path": "/drives/<owner-drive-id>/root:/NortPole OneDrive Connector Tests/20-inherited-subash",
             "siteId": "<site-id-1>",
             "sharepointIds": {
               "listId": "<list-id-1>",
@@ -218,7 +218,7 @@
             "driveId": "<owner-drive-id>",
             "driveType": "business",
             "id": "<folder-restricted-id>",
-            "path": "/drives/<owner-drive-id>/root:/EvolvXSI OneDrive Connector Tests/20-inherited-subash/restricted-raunak",
+            "path": "/drives/<owner-drive-id>/root:/NortPole OneDrive Connector Tests/20-inherited-subash/restricted-raunak",
             "siteId": "<site-id-1>",
             "sharepointIds": {
               "listId": "<list-id-1>",
@@ -266,7 +266,7 @@
             "driveId": "<owner-drive-id>",
             "driveType": "business",
             "id": "<folder-inherited-id>",
-            "path": "/drives/<owner-drive-id>/root:/EvolvXSI OneDrive Connector Tests/20-inherited-subash",
+            "path": "/drives/<owner-drive-id>/root:/NortPole OneDrive Connector Tests/20-inherited-subash",
             "siteId": "<site-id-1>",
             "sharepointIds": {
               "listId": "<list-id-1>",
@@ -317,7 +317,7 @@
             "driveId": "<owner-drive-id>",
             "driveType": "business",
             "id": "<folder-groups-id>",
-            "path": "/drives/<owner-drive-id>/root:/EvolvXSI OneDrive Connector Tests/30-groups",
+            "path": "/drives/<owner-drive-id>/root:/NortPole OneDrive Connector Tests/30-groups",
             "siteId": "<site-id-1>",
             "sharepointIds": {
               "listId": "<list-id-1>",
@@ -368,7 +368,7 @@
             "driveId": "<owner-drive-id>",
             "driveType": "business",
             "id": "<folder-links-id>",
-            "path": "/drives/<owner-drive-id>/root:/EvolvXSI OneDrive Connector Tests/40-links",
+            "path": "/drives/<owner-drive-id>/root:/NortPole OneDrive Connector Tests/40-links",
             "siteId": "<site-id-1>",
             "sharepointIds": {
               "listId": "<list-id-1>",
@@ -416,7 +416,7 @@
             "driveId": "<owner-drive-id>",
             "driveType": "business",
             "id": "<folder-move-source-id>",
-            "path": "/drives/<owner-drive-id>/root:/EvolvXSI OneDrive Connector Tests/50-move/source-subash",
+            "path": "/drives/<owner-drive-id>/root:/NortPole OneDrive Connector Tests/50-move/source-subash",
             "siteId": "<site-id-1>",
             "sharepointIds": {
               "listId": "<list-id-1>",
@@ -441,7 +441,7 @@
         {
           "id": "<folder-move-destination-id>",
           "name": "destination-raunak",
-          "webUrl": "https://<tenant-host>/personal/<owner-personal-path>/Documents/EvolvXSI%20OneDrive%20Connector%20Tests/50-move/destination-raunak",
+          "webUrl": "https://<tenant-host>/personal/<owner-personal-path>/Documents/NortPole%20OneDrive%20Connector%20Tests/50-move/destination-raunak",
           "size": 0,
           "folder": {
             "childCount": 0
@@ -463,7 +463,7 @@
             "driveId": "<owner-drive-id>",
             "driveType": "business",
             "id": "<folder-move-id>",
-            "path": "/drives/<owner-drive-id>/root:/EvolvXSI OneDrive Connector Tests/50-move",
+            "path": "/drives/<owner-drive-id>/root:/NortPole OneDrive Connector Tests/50-move",
             "siteId": "<site-id-1>",
             "sharepointIds": {
               "listId": "<list-id-1>",
@@ -513,7 +513,7 @@
             "driveId": "<owner-drive-id>",
             "driveType": "business",
             "id": "<folder-remove-share-id>",
-            "path": "/drives/<owner-drive-id>/root:/EvolvXSI OneDrive Connector Tests/60-permission-mutations/remove-share",
+            "path": "/drives/<owner-drive-id>/root:/NortPole OneDrive Connector Tests/60-permission-mutations/remove-share",
             "siteId": "<site-id-1>",
             "sharepointIds": {
               "listId": "<list-id-1>",
@@ -564,7 +564,7 @@
             "driveId": "<owner-drive-id>",
             "driveType": "business",
             "id": "<folder-restore-parent-id>",
-            "path": "/drives/<owner-drive-id>/root:/EvolvXSI OneDrive Connector Tests/60-permission-mutations/restore-parent-subash",
+            "path": "/drives/<owner-drive-id>/root:/NortPole OneDrive Connector Tests/60-permission-mutations/restore-parent-subash",
             "siteId": "<site-id-1>",
             "sharepointIds": {
               "listId": "<list-id-1>",
@@ -612,7 +612,7 @@
             "driveId": "<owner-drive-id>",
             "driveType": "business",
             "id": "<folder-content-mutations-id>",
-            "path": "/drives/<owner-drive-id>/root:/EvolvXSI OneDrive Connector Tests/70-content-mutations",
+            "path": "/drives/<owner-drive-id>/root:/NortPole OneDrive Connector Tests/70-content-mutations",
             "siteId": "<site-id-1>",
             "sharepointIds": {
               "listId": "<list-id-1>",
@@ -660,7 +660,7 @@
             "driveId": "<owner-drive-id>",
             "driveType": "business",
             "id": "<folder-content-mutations-id>",
-            "path": "/drives/<owner-drive-id>/root:/EvolvXSI OneDrive Connector Tests/70-content-mutations",
+            "path": "/drives/<owner-drive-id>/root:/NortPole OneDrive Connector Tests/70-content-mutations",
             "siteId": "<site-id-1>",
             "sharepointIds": {
               "listId": "<list-id-1>",
@@ -695,7 +695,7 @@
         {
           "id": "<fixture-root-item-id>",
           "name": "NortPole OneDrive Connector Tests",
-          "webUrl": "https://<tenant-host>/personal/<owner-personal-path>/Documents/EvolvXSI%20OneDrive%20Connector%20Tests",
+          "webUrl": "https://<tenant-host>/personal/<owner-personal-path>/Documents/NortPole%20OneDrive%20Connector%20Tests",
           "size": 0,
           "folder": {
             "childCount": 10
@@ -738,7 +738,7 @@
         {
           "id": "<folder-move-destination-id>",
           "name": "destination-raunak",
-          "webUrl": "https://<tenant-host>/personal/<owner-personal-path>/Documents/EvolvXSI%20OneDrive%20Connector%20Tests/50-move/destination-raunak",
+          "webUrl": "https://<tenant-host>/personal/<owner-personal-path>/Documents/NortPole%20OneDrive%20Connector%20Tests/50-move/destination-raunak",
           "size": 36635,
           "folder": {
             "childCount": 1
@@ -760,7 +760,7 @@
             "driveId": "<owner-drive-id>",
             "driveType": "business",
             "id": "<folder-move-id>",
-            "path": "/drives/<owner-drive-id>/root:/EvolvXSI OneDrive Connector Tests/50-move",
+            "path": "/drives/<owner-drive-id>/root:/NortPole OneDrive Connector Tests/50-move",
             "siteId": "<site-id-1>",
             "sharepointIds": {
               "listId": "<list-id-1>",
@@ -807,7 +807,7 @@
             "driveId": "<owner-drive-id>",
             "driveType": "business",
             "id": "<folder-move-destination-id>",
-            "path": "/drives/<owner-drive-id>/root:/EvolvXSI OneDrive Connector Tests/50-move/destination-raunak",
+            "path": "/drives/<owner-drive-id>/root:/NortPole OneDrive Connector Tests/50-move/destination-raunak",
             "siteId": "<site-id-1>",
             "sharepointIds": {
               "listId": "<list-id-1>",
@@ -856,7 +856,7 @@
             "driveId": "<owner-drive-id>",
             "driveType": "business",
             "id": "<folder-remove-share-id>",
-            "path": "/drives/<owner-drive-id>/root:/EvolvXSI OneDrive Connector Tests/60-permission-mutations/remove-share",
+            "path": "/drives/<owner-drive-id>/root:/NortPole OneDrive Connector Tests/60-permission-mutations/remove-share",
             "siteId": "<site-id-1>",
             "sharepointIds": {
               "listId": "<list-id-1>",
@@ -904,7 +904,7 @@
             "driveId": "<owner-drive-id>",
             "driveType": "business",
             "id": "<folder-restore-parent-id>",
-            "path": "/drives/<owner-drive-id>/root:/EvolvXSI OneDrive Connector Tests/60-permission-mutations/restore-parent-subash",
+            "path": "/drives/<owner-drive-id>/root:/NortPole OneDrive Connector Tests/60-permission-mutations/restore-parent-subash",
             "siteId": "<site-id-1>",
             "sharepointIds": {
               "listId": "<list-id-1>",
@@ -987,7 +987,7 @@
             "driveId": "<owner-drive-id>",
             "driveType": "business",
             "id": "<folder-content-mutations-id>",
-            "path": "/drives/<owner-drive-id>/root:/EvolvXSI OneDrive Connector Tests/70-content-mutations",
+            "path": "/drives/<owner-drive-id>/root:/NortPole OneDrive Connector Tests/70-content-mutations",
             "siteId": "<site-id-1>",
             "sharepointIds": {
               "listId": "<list-id-1>",

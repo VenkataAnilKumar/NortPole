@@ -65,14 +65,14 @@ export interface Settings {
   disable_default_assistant?: boolean;
 
   // NortPole Craft (Build Mode) feature flag
-  evolvxsi_craft_enabled?: boolean;
+  nortpole_craft_enabled?: boolean;
 
   // Deployment-level Craft availability, ignoring workspace/per-user policy.
   // Gates visibility of the admin Craft-access controls.
-  evolvxsi_craft_available?: boolean;
+  nortpole_craft_available?: boolean;
 
   // Craft is switched on but the tier is too low: show the upgrade prompt.
-  evolvxsi_craft_requires_upgrade?: boolean;
+  nortpole_craft_requires_upgrade?: boolean;
 
   // Workspace default for Craft access; per-user overrides win.
   craft_default_enabled?: boolean;
@@ -111,7 +111,7 @@ export interface Settings {
   vector_db_enabled?: boolean;
 
   // HIDE_NORTPOLE_BRANDING env var, honored only on the Enterprise tier.
-  hide_evolvxsi_branding?: boolean;
+  hide_nortpole_branding?: boolean;
 
   // True when hooks are available: single-tenant deployments only.
   hooks_enabled?: boolean;

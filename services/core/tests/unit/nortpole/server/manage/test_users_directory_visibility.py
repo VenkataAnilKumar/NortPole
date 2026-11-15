@@ -103,7 +103,7 @@ def test_me_service_account_skips_tenant_mapping_lookup() -> None:
     account (its synthetic email has no UserTenantMapping row and the lookup
     raises). team_name is the key's own tenant."""
     user = _fake_user(
-        "API_KEY__key@abc123evolvxsiapikey.ai",
+        "API_KEY__key@abc123nortpoleapikey.ai",
         account_type=AccountType.SERVICE_ACCOUNT,
     )
     user.oidc_expiry = None

@@ -304,7 +304,7 @@ class TestProxyRequestWiring:
         # from the deny-list while leaving it here surfaces as a leak below.
         # Mixed-case keys exercise the case-insensitive comparator.
         sensitive_headers = {
-            "host": "app.evolvxsi.local",
+            "host": "app.nortpole.local",
             "content-length": "7",
             "Connection": "keep-alive",
             "Keep-Alive": "timeout=5",
@@ -340,11 +340,11 @@ class TestProxyRequestWiring:
             "Sec-Fetch-Site": "same-origin",
             "Sec-Fetch-Dest": "empty",
             "Sec-Fetch-User": "?1",
-            # x-evolvxsi-* prefix matcher (not literal deny-list entries).
-            "X-EvolvXSI-Authorization": "Bearer alt-victim-token",
-            "X-EvolvXSI-Tenant-ID": "victim-tenant",
-            "X-EvolvXSI-Request-ID": "abc-123",
-            "X-EvolvXSI-Future-Header": "should-be-stripped-by-prefix",
+            # x-nortpole-* prefix matcher (not literal deny-list entries).
+            "X-NortPole-Authorization": "Bearer alt-victim-token",
+            "X-NortPole-Tenant-ID": "victim-tenant",
+            "X-NortPole-Request-ID": "abc-123",
+            "X-NortPole-Future-Header": "should-be-stripped-by-prefix",
         }
 
         # Completeness check: every literal deny-list entry is covered above.

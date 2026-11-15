@@ -4277,7 +4277,7 @@
           "fields": {
             "sites": {
               "label": "Sitios",
-              "description": "- Si no se especifica ningún sitio, se indexarán todos los sitios de tu organización (requiere el permiso `Sites.Read.All`).\n- Especificar `https://evolvxsiai.sharepoint.com/sites/support`, por ejemplo, indexa solo este sitio.\n- Especificar `https://evolvxsiai.sharepoint.com/sites/support/subfolder`, por ejemplo, indexa solo esta carpeta.\n- Para indexar los sitios personales de los usuarios, usa el [conector de OneDrive]({docsAdminsPath}/connectors/official/onedrive).\n- Especificar sitios funciona actualmente con instancias de SharePoint en inglés, español o alemán. Contacta con el equipo de NortPole si necesitas compatibilidad con otro idioma."
+              "description": "- Si no se especifica ningún sitio, se indexarán todos los sitios de tu organización (requiere el permiso `Sites.Read.All`).\n- Especificar `https://nortpoleai.sharepoint.com/sites/support`, por ejemplo, indexa solo este sitio.\n- Especificar `https://nortpoleai.sharepoint.com/sites/support/subfolder`, por ejemplo, indexa solo esta carpeta.\n- Para indexar los sitios personales de los usuarios, usa el [conector de OneDrive]({docsAdminsPath}/connectors/official/onedrive).\n- Especificar sitios funciona actualmente con instancias de SharePoint en inglés, español o alemán. Contacta con el equipo de NortPole si necesitas compatibilidad con otro idioma."
             },
             "include_site_documents": {
               "label": "Indexar documentos",
@@ -4318,7 +4318,7 @@
           "fields": {
             "teams": {
               "label": "Equipos",
-              "description": "Especifica 0 o más equipos a indexar. Por ejemplo, especificar el equipo 'Support' de la organización 'evolvxsiai' hará que solo se indexen los mensajes enviados en canales que pertenecen al equipo 'Support'. Si no se especifica ningún equipo, se indexarán todos los equipos de tu organización."
+              "description": "Especifica 0 o más equipos a indexar. Por ejemplo, especificar el equipo 'Support' de la organización 'nortpoleai' hará que solo se indexen los mensajes enviados en canales que pertenecen al equipo 'Support'. Si no se especifica ningún equipo, se indexarán todos los equipos de tu organización."
             },
             "include_attachments": {
               "description": "Indexa los archivos de la pestaña Archivos de cada canal como documentos independientes, con los lectores que les concede SharePoint. Requiere una credencial de certificado, Files.Read.All o Sites.Read.All en Graph, y Sites.FullControl.All en la API de SharePoint para leer los lectores de cada archivo. Con Sites.Selected, concede a la aplicación control total en el sitio de cada canal."
@@ -4478,7 +4478,7 @@
           "fields": {
             "base_url": {
               "label": "URL base",
-              "description": "Especifica la URL base de tu equipo de Slab. Será algo como: https://evolvxsi.slab.com/"
+              "description": "Especifica la URL base de tu equipo de Slab. Será algo como: https://nortpole.slab.com/"
             }
           }
         },
@@ -8124,7 +8124,7 @@
           "responseFallback": "No se pudo solicitar la invitación"
         },
         "requestSentBody": "Tu solicitud de unión se ha enviado. Puedes explorar con tu propio equipo mientras un administrador de {domain} aprueba tu solicitud.",
-        "tryEvolvXSIButton": {
+        "tryNortPoleButton": {
           "label": "Prueba NortPole mientras esperas"
         }
       },
@@ -8754,7 +8754,7 @@
       },
       "placeholders": {
         "jwksUrl": "https://idp.example.com/.well-known/jwks.json",
-        "audience": "evolvxsi",
+        "audience": "nortpole",
         "issuer": "https://idp.example.com"
       }
     },
@@ -9540,7 +9540,7 @@
         "spEntityId": {
           "label": "ID de entidad del SP",
           "description": "El ID de entidad de esta instancia, registrado en el IdP.",
-          "placeholder": "evolvxsi"
+          "placeholder": "nortpole"
         },
         "spX509Cert": {
           "label": "Certificado X.509 del SP",
@@ -10620,7 +10620,7 @@
         "message": "Ocurrió un error inesperado."
       },
       "contentProviders": {
-        "evolvxsiWebCrawler": {
+        "nortpoleWebCrawler": {
           "subtitle": "Rastreador web integrado. Funciona con la mayoría de las páginas, pero rinde menos en casos límite."
         },
         "firecrawl": {
@@ -11755,7 +11755,7 @@
         "description": "Restricciones de acceso o permisos de la cuenta"
       },
       "cloudSupportPrompt": {
-        "text": "Si el problema continúa, contacta al equipo de NortPole en <link>support@evolvxsi.local</link>"
+        "text": "Si el problema continúa, contacta al equipo de NortPole en <link>support@nortpole.local</link>"
       },
       "code": {
         "accessDenied": "Tu proveedor de identidad denegó el acceso.",
@@ -11839,7 +11839,7 @@
     },
     "impersonate": {
       "adminNote": {
-        "text": "Nota: esta función solo está disponible para administradores de @evolvxsi.local"
+        "text": "Nota: esta función solo está disponible para administradores de @nortpole.local"
       },
       "apiKeyField": {
         "label": "Clave de API",
@@ -13590,7 +13590,7 @@
         "newChatButton": {
           "tooltip": "Nuevo chat"
         },
-        "openInEvolvXSIButton": {
+        "openInNortPoleButton": {
           "tooltip": "Abrir en {appName}"
         }
       }
@@ -13942,7 +13942,7 @@
     "errorPages": {
       "accessRestricted": {
         "billingAdminHint": {
-          "text": "Si eres el administrador, visita la página de <billingLink>Facturación de administración</billingLink> para {hadLicense, select, true {renovar} other {activar}} tu licencia, regístrate a través de Stripe o escribe a <supportLink>support@evolvxsi.local</supportLink> para obtener ayuda con la facturación."
+          "text": "Si eres el administrador, visita la página de <billingLink>Facturación de administración</billingLink> para {hadLicense, select, true {renovar} other {activar}} tu licencia, regístrate a través de Stripe o escribe a <supportLink>support@nortpole.local</supportLink> para obtener ayuda con la facturación."
         },
         "downgradeButton": {
           "label": "Cambiar a Community"
@@ -17611,7 +17611,7 @@
     "disk": "El uso de disco de OpenSearch es de al menos el 85 % en un nodo de datos. La indexación puede detenerse si el disco se llena.",
     "jvmMemory": "El uso de memoria JVM de OpenSearch se mantuvo por encima del 85 % en comprobaciones repetidas. La búsqueda y la indexación pueden fallar.",
     "vectorMemory": "La memoria vectorial de OpenSearch está casi llena o ha alcanzado su límite. La búsqueda y la indexación pueden fallar.",
-    "contact": "Contacta con el administrador del sistema o con el equipo de NortPole en [support@evolvxsi.local](mailto:support@evolvxsi.local).",
+    "contact": "Contacta con el administrador del sistema o con el equipo de NortPole en [support@nortpole.local](mailto:support@nortpole.local).",
     "stale": "La última comprobación no está disponible. Esta advertencia refleja la última comprobación correcta; no se ha confirmado la recuperación.",
     "dismiss": "Cerrar",
     "diskTitle": "Espacio en disco",

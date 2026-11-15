@@ -225,7 +225,7 @@ export function MemberPluginDetailContent({
 }: MemberPluginDetailModalProps) {
   const t = useTranslations("actions.memberPlugins");
   const navigation = useNavigation();
-  const craftEnabled = useSettings().evolvxsi_craft_enabled === true;
+  const craftEnabled = useSettings().nortpole_craft_enabled === true;
   const actions = useTranslations("actions");
   const switchCopy = useTranslations("skills.page.switchModal");
   const { data: skills } = useUserSkills(

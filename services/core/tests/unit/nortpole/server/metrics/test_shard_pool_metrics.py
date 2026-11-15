@@ -74,7 +74,7 @@ def test_existing_shard_engines_register_at_setup(
         engines={"sync": _make_engine()}
     )
 
-    assert _gauge_labels("evolvxsi_db_pool_checked_out") == {"sync", "sync_s1"}
+    assert _gauge_labels("nortpole_db_pool_checked_out") == {"sync", "sync_s1"}
 
 
 @pytest.mark.usefixtures("clean_metrics_state")
@@ -82,11 +82,11 @@ def test_shard_engines_created_later_register_too() -> None:
     pool_metrics.setup_postgres_connection_pool_metrics(
         engines={"sync": _make_engine()}
     )
-    assert _gauge_labels("evolvxsi_db_pool_checked_out") == {"sync"}
+    assert _gauge_labels("nortpole_db_pool_checked_out") == {"sync"}
 
     shard_registry.shard_engine_hooks.notify("s2", _make_engine())
 
-    assert _gauge_labels("evolvxsi_db_pool_checked_out") == {"sync", "sync_s2"}
+    assert _gauge_labels("nortpole_db_pool_checked_out") == {"sync", "sync_s2"}
 
 
 @pytest.mark.usefixtures("clean_metrics_state")
@@ -101,7 +101,7 @@ def test_default_async_shard_keeps_its_historical_label() -> None:
     async_sql_engine.async_engine_hooks.notify(default, _make_async_engine())
     async_sql_engine.async_engine_hooks.notify("s3", _make_async_engine())
 
-    assert _gauge_labels("evolvxsi_db_pool_checked_out") == {"async", "async_s3"}
+    assert _gauge_labels("nortpole_db_pool_checked_out") == {"async", "async_s3"}
 
 
 @pytest.mark.usefixtures("clean_metrics_state")
@@ -111,12 +111,12 @@ def test_nullpool_engine_gets_lifecycle_events_but_no_state_gauges() -> None:
     engine = create_engine("sqlite://", poolclass=NullPool)
     pool_metrics.setup_postgres_connection_pool_metrics(engines={"sync": engine})
 
-    assert _gauge_labels("evolvxsi_db_pool_checked_out") == set()
+    assert _gauge_labels("nortpole_db_pool_checked_out") == set()
 
     def checkouts() -> float:
         return (
             pool_metrics.REGISTRY.get_sample_value(
-                "evolvxsi_db_pool_checkout_total", {"engine": "sync"}
+                "nortpole_db_pool_checkout_total", {"engine": "sync"}
             )
             or 0.0
         )
@@ -137,7 +137,7 @@ def test_rebuilt_engine_replaces_stale_registration() -> None:
 
     def checked_out() -> float:
         for family in pool_metrics._collector.collect():
-            if family.name == "evolvxsi_db_pool_checked_out":
+            if family.name == "nortpole_db_pool_checked_out":
                 return family.samples[0].value
         raise AssertionError("gauge missing")
 

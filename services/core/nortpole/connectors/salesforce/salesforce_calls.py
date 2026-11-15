@@ -35,7 +35,7 @@ from nortpole.utils.logger import setup_logger
 from nortpole.utils.retry_wrapper import retry_builder
 
 if TYPE_CHECKING:
-    from nortpole.connectors.salesforce.evolvxsi_salesforce import NortPoleSalesforce
+    from nortpole.connectors.salesforce.nortpole_salesforce import NortPoleSalesforce
 
 logger = setup_logger()
 

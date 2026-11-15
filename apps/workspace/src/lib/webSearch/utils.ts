@@ -229,9 +229,9 @@ export function getSingleConfigFieldValueForForm(
 // ── Content provider registry ─────────────────────────────────────────────────
 
 export const CONTENT_PROVIDER_DETAILS: Record<string, ContentProviderDetail> = {
-  evolvxsi_web_crawler: {
+  nortpole_web_crawler: {
     label: "NortPole Web Crawler",
-    subtitleKey: "contentProviders.evolvxsiWebCrawler.subtitle",
+    subtitleKey: "contentProviders.nortpoleWebCrawler.subtitle",
   },
   firecrawl: {
     label: "Firecrawl",
@@ -266,7 +266,7 @@ const CONTENT_PROVIDER_CAPABILITIES: Record<
   string,
   ContentProviderCapabilities
 > = {
-  evolvxsi_web_crawler: { requiresApiKey: false, requiredConfigKeys: [] },
+  nortpole_web_crawler: { requiresApiKey: false, requiredConfigKeys: [] },
   firecrawl: {
     requiresApiKey: true,
     requiredConfigKeys: ["base_url"],
@@ -325,10 +325,10 @@ export function getCurrentContentProviderType(
   }>
 ): WebContentProviderType {
   return (
-    providers.find((p) => p.is_active && p.provider_type !== "evolvxsi_web_crawler")
+    providers.find((p) => p.is_active && p.provider_type !== "nortpole_web_crawler")
       ?.provider_type ??
     providers.find((p) => p.is_active)?.provider_type ??
-    "evolvxsi_web_crawler"
+    "nortpole_web_crawler"
   );
 }
 

@@ -59,7 +59,7 @@ describe("withMimeTypeExtension", () => {
     expect(withMimeTypeExtension("blob", "application/octet-stream")).toBe(
       "blob"
     );
-    expect(withMimeTypeExtension("blob", "application/x-evolvxsi-unknown")).toBe(
+    expect(withMimeTypeExtension("blob", "application/x-nortpole-unknown")).toBe(
       "blob"
     );
   });

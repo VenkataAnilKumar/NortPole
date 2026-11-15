@@ -4,9 +4,9 @@ Tracks client-side round-trip latency, server-side execution time (from
 OpenSearch's ``took`` field), total search attempts, in-flight concurrency, and
 per-error-type failure counts.
 
-``evolvxsi_opensearch_search_total`` counts attempts (incremented on entry to the
+``nortpole_opensearch_search_total`` counts attempts (incremented on entry to the
 ``track_opensearch_search`` context manager that wraps every request), so
-``evolvxsi_opensearch_search_errors_total / evolvxsi_opensearch_search_total`` is a
+``nortpole_opensearch_search_errors_total / nortpole_opensearch_search_total`` is a
 meaningful failure rate.
 """
 
@@ -36,14 +36,14 @@ _SEARCH_LATENCY_BUCKETS = (
 )
 
 _client_duration = Histogram(
-    "evolvxsi_opensearch_search_client_duration_seconds",
+    "nortpole_opensearch_search_client_duration_seconds",
     "Client-side end-to-end latency of OpenSearch search calls",
     ["search_type"],
     buckets=_SEARCH_LATENCY_BUCKETS,
 )
 
 _server_duration = Histogram(
-    "evolvxsi_opensearch_search_server_duration_seconds",
+    "nortpole_opensearch_search_server_duration_seconds",
     "Server-side execution time reported by OpenSearch (took field)",
     ["search_type"],
     buckets=_SEARCH_LATENCY_BUCKETS,
@@ -66,7 +66,7 @@ _OVERHEAD_BUCKETS = (
 )
 
 _client_server_overhead = Histogram(
-    "evolvxsi_opensearch_search_overhead_seconds",
+    "nortpole_opensearch_search_overhead_seconds",
     "Per-request overhead: client wall-clock duration minus server 'took'. Only "
     "sampled when both are known. Lets the dashboard compute proper quantiles instead of "
     "subtracting two independent quantile series.",
@@ -75,21 +75,21 @@ _client_server_overhead = Histogram(
 )
 
 _search_total = Counter(
-    "evolvxsi_opensearch_search_total",
+    "nortpole_opensearch_search_total",
     "Total number of OpenSearch search attempts (incremented before send, so this "
     "counts both successes and failures)",
     ["search_type"],
 )
 
 _search_errors = Counter(
-    "evolvxsi_opensearch_search_errors_total",
+    "nortpole_opensearch_search_errors_total",
     "Total number of OpenSearch search attempts that errored, labeled by the error "
     "type",
     ["search_type", "error_type"],
 )
 
 _searches_in_progress = Gauge(
-    "evolvxsi_opensearch_searches_in_progress",
+    "nortpole_opensearch_searches_in_progress",
     "Number of OpenSearch searches currently in-flight",
     ["search_type"],
 )
@@ -158,8 +158,8 @@ def track_opensearch_search(
 ) -> Generator[None, None, None]:
     """Wraps an OpenSearch search call.
 
-    On entry: increments ``evolvxsi_opensearch_search_total`` (the attempt
-    counter) and ``evolvxsi_opensearch_searches_in_progress`` (the in-flight
+    On entry: increments ``nortpole_opensearch_search_total`` (the attempt
+    counter) and ``nortpole_opensearch_searches_in_progress`` (the in-flight
     gauge). On exit: decrements the gauge. Both increments are best-effort —
     a metrics failure must not break the underlying search.
     """

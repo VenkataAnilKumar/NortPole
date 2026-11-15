@@ -27,7 +27,7 @@ from nortpole.connectors.salesforce.models import (
     parse_salesforce_credentials,
     validate_salesforce_my_domain_url,
 )
-from nortpole.connectors.salesforce.evolvxsi_salesforce import NortPoleSalesforce
+from nortpole.connectors.salesforce.nortpole_salesforce import NortPoleSalesforce
 
 PRODUCTION_LOGIN_URL = "https://acme.my.salesforce.com"
 SANDBOX_LOGIN_URL = "https://acme--dev.sandbox.my.salesforce.com"
@@ -227,7 +227,7 @@ def test_authorization_code_exchange_uses_typed_form(
     credentials = exchange_salesforce_authorization_code(
         login_url=f"{PRODUCTION_LOGIN_URL}/",
         code="authorization-code",
-        redirect_uri="https://evolvxsi.example/oauth/callback",
+        redirect_uri="https://nortpole.example/oauth/callback",
         code_verifier="pkce-verifier",
     )
 
@@ -248,7 +248,7 @@ def test_authorization_code_exchange_uses_typed_form(
         "code": "authorization-code",
         "client_id": "client-id",
         "client_secret": "client-secret",
-        "redirect_uri": "https://evolvxsi.example/oauth/callback",
+        "redirect_uri": "https://nortpole.example/oauth/callback",
         "code_verifier": "pkce-verifier",
     }
 
@@ -283,7 +283,7 @@ def test_token_exchange_includes_safe_structured_oauth_error(
         exchange_salesforce_authorization_code(
             login_url=PRODUCTION_LOGIN_URL,
             code="authorization-code",
-            redirect_uri="https://evolvxsi.example/oauth/callback",
+            redirect_uri="https://nortpole.example/oauth/callback",
             code_verifier="pkce-verifier",
         )
 
@@ -311,7 +311,7 @@ def test_token_exchange_does_not_retry_terminal_oauth_error(
         exchange_salesforce_authorization_code(
             login_url=PRODUCTION_LOGIN_URL,
             code="authorization-code",
-            redirect_uri="https://evolvxsi.example/oauth/callback",
+            redirect_uri="https://nortpole.example/oauth/callback",
             code_verifier="pkce-verifier",
         )
 
@@ -367,7 +367,7 @@ def test_token_exchange_uses_generic_error_for_malformed_payload(
         exchange_salesforce_authorization_code(
             login_url=PRODUCTION_LOGIN_URL,
             code="authorization-code",
-            redirect_uri="https://evolvxsi.example/oauth/callback",
+            redirect_uri="https://nortpole.example/oauth/callback",
             code_verifier="pkce-verifier",
         )
 
@@ -391,7 +391,7 @@ def test_token_exchange_uses_generic_error_for_non_json_response(
         exchange_salesforce_authorization_code(
             login_url=PRODUCTION_LOGIN_URL,
             code="authorization-code",
-            redirect_uri="https://evolvxsi.example/oauth/callback",
+            redirect_uri="https://nortpole.example/oauth/callback",
             code_verifier="pkce-verifier",
         )
 
@@ -410,7 +410,7 @@ def test_authorization_code_exchange_requires_refresh_token(
         exchange_salesforce_authorization_code(
             login_url=PRODUCTION_LOGIN_URL,
             code="authorization-code",
-            redirect_uri="https://evolvxsi.example/oauth/callback",
+            redirect_uri="https://nortpole.example/oauth/callback",
             code_verifier="pkce-verifier",
         )
 
@@ -483,7 +483,7 @@ def test_refresh_callback_reuses_credentials_rotated_by_other_job(
     assert session.sf_access_token == "already-rotated-access-token"
 
 
-def test_evolvxsi_salesforce_refreshes_invalid_session_mid_run() -> None:
+def test_nortpole_salesforce_refreshes_invalid_session_mid_run() -> None:
     invalid_session = MagicMock(status_code=401)
     invalid_session.json.return_value = [{"errorCode": "INVALID_SESSION_ID"}]
     successful_response = MagicMock(status_code=200, headers={})
@@ -522,7 +522,7 @@ def test_evolvxsi_salesforce_refreshes_invalid_session_mid_run() -> None:
 
 
 @pytest.mark.parametrize("payload", [[], {}, "unauthorized"])
-def test_evolvxsi_salesforce_routes_malformed_unauthorized_response(
+def test_nortpole_salesforce_routes_malformed_unauthorized_response(
     payload: Any,
 ) -> None:
     unauthorized = MagicMock(
@@ -548,7 +548,7 @@ def test_evolvxsi_salesforce_routes_malformed_unauthorized_response(
     refresh_callback.assert_not_called()
 
 
-def test_evolvxsi_salesforce_routes_non_json_unauthorized_response() -> None:
+def test_nortpole_salesforce_routes_non_json_unauthorized_response() -> None:
     unauthorized = MagicMock(
         status_code=401,
         url=f"{INSTANCE_URL}/services/data/v59.0/sobjects",
@@ -644,7 +644,7 @@ def test_salesforce_authorization_url_uses_my_domain_and_pkce(
     monkeypatch.setattr(salesforce_connector, "SALESFORCE_CLIENT_ID", "client-id")
 
     authorization_url = SalesforceConnector.oauth_authorization_url(
-        base_domain="https://evolvxsi.example/",
+        base_domain="https://nortpole.example/",
         state="oauth-state",
         additional_kwargs={"salesforce_my_domain_url": login_url},
         code_challenge="pkce-challenge",
@@ -656,7 +656,7 @@ def test_salesforce_authorization_url_uses_my_domain_and_pkce(
     assert parse_qs(parsed.query) == {
         "client_id": ["client-id"],
         "response_type": ["code"],
-        "redirect_uri": ["https://evolvxsi.example/connector/oauth/callback/salesforce"],
+        "redirect_uri": ["https://nortpole.example/connector/oauth/callback/salesforce"],
         "scope": ["api refresh_token"],
         "state": ["oauth-state"],
         "code_challenge": ["pkce-challenge"],
@@ -667,7 +667,7 @@ def test_salesforce_authorization_url_uses_my_domain_and_pkce(
 def test_salesforce_code_exchange_requires_pkce_verifier() -> None:
     with pytest.raises(ValueError, match="PKCE code verifier"):
         SalesforceConnector.oauth_code_to_token(
-            base_domain="https://evolvxsi.example",
+            base_domain="https://nortpole.example",
             code="authorization-code",
             additional_kwargs={"salesforce_my_domain_url": PRODUCTION_LOGIN_URL},
         )
@@ -684,7 +684,7 @@ def test_salesforce_code_exchange_returns_json_credentials(
     )
 
     credentials = SalesforceConnector.oauth_code_to_token(
-        base_domain="https://evolvxsi.example/",
+        base_domain="https://nortpole.example/",
         code="authorization-code",
         additional_kwargs={"salesforce_my_domain_url": PRODUCTION_LOGIN_URL},
         code_verifier="pkce-verifier",
@@ -694,7 +694,7 @@ def test_salesforce_code_exchange_returns_json_credentials(
     exchange.assert_called_once_with(
         login_url=PRODUCTION_LOGIN_URL,
         code="authorization-code",
-        redirect_uri="https://evolvxsi.example/connector/oauth/callback/salesforce",
+        redirect_uri="https://nortpole.example/connector/oauth/callback/salesforce",
         code_verifier="pkce-verifier",
     )
 

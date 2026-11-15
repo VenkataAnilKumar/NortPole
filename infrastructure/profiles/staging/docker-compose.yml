@@ -2,18 +2,18 @@
 # No search index and no model server (see README.md next to this file).
 # Required environment (no defaults, so a missing secret stops the start):
 #   POSTGRES_PASSWORD, USER_AUTH_SECRET (random hex, e.g. `openssl rand -hex 32`)
-name: evolvxsi
+name: nortpole
 services:
   db:
     image: postgres:16
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
-      POSTGRES_USER: evolvxsi
-      POSTGRES_DB: evolvxsi
+      POSTGRES_USER: nortpole
+      POSTGRES_DB: nortpole
     volumes:
       - dbdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U evolvxsi -d evolvxsi"]
+      test: ["CMD-SHELL", "pg_isready -U nortpole -d nortpole"]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -30,7 +30,7 @@ services:
     restart: unless-stopped
 
   api:
-    image: evolvxsi-core:${NORTPOLE_VERSION:-${EVOLVXSI_VERSION:-dev}}
+    image: nortpole-core:${NORTPOLE_VERSION:-${NORTPOLE_VERSION:-dev}}
     build:
       context: ../../../services/core
     depends_on:
@@ -38,9 +38,9 @@ services:
       redis: {condition: service_healthy}
     environment:
       POSTGRES_HOST: db
-      POSTGRES_USER: evolvxsi
+      POSTGRES_USER: nortpole
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
-      POSTGRES_DB: evolvxsi
+      POSTGRES_DB: nortpole
       REDIS_HOST: redis
       USER_AUTH_SECRET: ${USER_AUTH_SECRET:?set USER_AUTH_SECRET}
       AUTH_TYPE: basic
@@ -49,7 +49,7 @@ services:
       FILE_STORE_BACKEND: postgres
       NORTPOLE_OFFLINE_TOKENIZER: "true"
       HF_HUB_OFFLINE: "1"
-      NORTPOLE_VERSION: ${NORTPOLE_VERSION:-${EVOLVXSI_VERSION:-dev}}
+      NORTPOLE_VERSION: ${NORTPOLE_VERSION:-${NORTPOLE_VERSION:-dev}}
     extra_hosts:
       - "host.docker.internal:host-gateway"   # lets a model server on this machine be used as http://host.docker.internal:<port>
     expose:
@@ -57,7 +57,7 @@ services:
     restart: unless-stopped
 
   web:
-    image: evolvxsi-web:${NORTPOLE_VERSION:-${EVOLVXSI_VERSION:-dev}}
+    image: nortpole-web:${NORTPOLE_VERSION:-${NORTPOLE_VERSION:-dev}}
     build:
       context: ../../../apps/workspace
       args:

@@ -1,7 +1,7 @@
 import type { HTMLAttributes, RefCallback } from "react";
 // Canonical TextFont/TextColor unions, shared with mobile via the neutral
-// @evolvxsi-ai/shared/contracts (not the RN-only /native).
-import type { TextColor, TextFont } from "@evolvxsi-ai/shared/contracts";
+// @nortpole-ai/shared/contracts (not the RN-only /native).
+import type { TextColor, TextFont } from "@nortpole-ai/shared/contracts";
 import type { RichNodes, RichStr, WithoutStyles } from "@opal/types";
 import { cn, isRichNodes } from "@opal/utils";
 import { resolveStr } from "@opal/components/text/InlineMarkdown";

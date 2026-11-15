@@ -31,7 +31,7 @@ export default function ExternalAppPluginDetail({
     Permission.FULL_ADMIN_PANEL_ACCESS
   );
   const settings = useSettings();
-  return isGlobalHolder && settings.evolvxsi_craft_available === true ? (
+  return isGlobalHolder && settings.nortpole_craft_available === true ? (
     <AuthorizedExternalAppDetail appId={appId} />
   ) : null;
 }

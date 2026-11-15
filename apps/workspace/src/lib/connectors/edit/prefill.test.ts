@@ -108,7 +108,7 @@ describe("buildEditProposal", () => {
   it("proposes the pair's state when nothing changed", () => {
     const config = {
       repo_owner: "acme-corp",
-      repositories: "evolvxsi,docs",
+      repositories: "nortpole,docs",
       include_prs: true,
       include_issues: false,
     };
@@ -140,7 +140,7 @@ describe("buildEditProposal", () => {
     "keeps the %s access and the pair's groups when nothing changed",
     (accessType, groupIds) => {
       const ccPair = githubPair(
-        { repo_owner: "acme-corp", repositories: "evolvxsi" },
+        { repo_owner: "acme-corp", repositories: "nortpole" },
         { access_type: accessType }
       );
 
@@ -154,7 +154,7 @@ describe("buildEditProposal", () => {
 
   it("proposes the picked data-access groups when the access changed", () => {
     const ccPair = githubPair(
-      { repo_owner: "acme-corp", repositories: "evolvxsi" },
+      { repo_owner: "acme-corp", repositories: "nortpole" },
       { access_type: "private" }
     );
 
@@ -168,19 +168,19 @@ describe("buildEditProposal", () => {
   });
 
   it("proposes the changed values only", () => {
-    const config = { repo_owner: "acme-corp", repositories: "evolvxsi" };
+    const config = { repo_owner: "acme-corp", repositories: "nortpole" };
     const ccPair = githubPair(config);
 
     const proposal = proposalFor(ccPair, [], (values) => ({
       ...values,
-      repositories: ["evolvxsi", "docs"],
+      repositories: ["nortpole", "docs"],
       name: "Renamed",
       refreshFreq: 60,
     }));
 
     expect(proposal.connector_specific_config).toEqual({
       repo_owner: "acme-corp",
-      repositories: "evolvxsi,docs",
+      repositories: "nortpole,docs",
     });
     expect(proposal.name).toBe("Renamed");
     expect(proposal.refresh_freq).toBe(3600);

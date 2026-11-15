@@ -19,7 +19,7 @@ from nortpole.server.features.build.sandbox.labels import (
     LABEL_K8S_COMPONENT_AUTH,
     LABEL_K8S_COMPONENT_SANDBOX,
     LABEL_K8S_MANAGED_BY,
-    LABEL_K8S_MANAGED_BY_EVOLVXSI,
+    LABEL_K8S_MANAGED_BY_NORTPOLE,
     LABEL_SANDBOX_ID,
     LABEL_TENANT_ID,
 )
@@ -75,7 +75,7 @@ def test_docker_inventory_rejects_foreign_network_with_matching_compose_project(
     manager = object.__new__(dsm.DockerSandboxManager)
     manager._cleanup_docker = MagicMock()
     manager._network_name = "deployment-network"
-    manager._compose_project = "evolvxsi"
+    manager._compose_project = "nortpole"
     items = []
     for name, network in (
         ("owned", "deployment-network"),
@@ -86,7 +86,7 @@ def test_docker_inventory_rejects_foreign_network_with_matching_compose_project(
         item.name = name
         item.id = name
         item.labels = dsm.build_sandbox_labels(
-            uuid4(), "tenant-a", None, compose_project="evolvxsi"
+            uuid4(), "tenant-a", None, compose_project="nortpole"
         )
         if network is None:
             item.labels.pop(dsm.LABEL_DOCKER_NETWORK)
@@ -148,7 +148,7 @@ def _metadata(resource: SandboxResource) -> client.V1ObjectMeta:
         labels={
             LABEL_SANDBOX_ID: str(resource.sandbox_id),
             LABEL_TENANT_ID: resource.tenant_id,
-            LABEL_K8S_MANAGED_BY: LABEL_K8S_MANAGED_BY_EVOLVXSI,
+            LABEL_K8S_MANAGED_BY: LABEL_K8S_MANAGED_BY_NORTPOLE,
             LABEL_K8S_COMPONENT: LABEL_K8S_COMPONENT_SANDBOX,
         },
     )
@@ -225,15 +225,15 @@ def test_inventory_paginates_and_excludes_other_tenants() -> None:
     calls = manager._core_api.list_namespaced_pod.call_args_list
     assert calls[1].kwargs["_continue"] == "next"
     assert calls[0].kwargs["limit"] == 100
-    assert "evolvxsi.local/tenant-id=tenant-a" in calls[0].kwargs["label_selector"]
+    assert "nortpole.local/tenant-id=tenant-a" in calls[0].kwargs["label_selector"]
     assert calls[0].kwargs["_request_timeout"] <= 10
     secret_selectors = [
         call.kwargs["label_selector"]
         for call in manager._core_api.list_namespaced_secret.call_args_list
     ]
     assert len(secret_selectors) == 2
-    assert "evolvxsi.local/tenant-id=tenant-a" in secret_selectors[0]
-    assert "!evolvxsi.local/tenant-id" in secret_selectors[1]
+    assert "nortpole.local/tenant-id=tenant-a" in secret_selectors[0]
+    assert "!nortpole.local/tenant-id" in secret_selectors[1]
 
 
 def test_readiness_watch_uses_remaining_operation_budget(

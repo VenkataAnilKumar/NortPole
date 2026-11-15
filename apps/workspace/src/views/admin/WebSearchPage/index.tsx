@@ -9,7 +9,7 @@ import { FetchError } from "@/lib/fetcher";
 import { useWebSearchProviders } from "@/lib/webSearch/hooks";
 import { useCreateModal } from "@opal/components";
 import { SvgGlobe } from "@opal/icons";
-import { SvgEvolvXSILogo } from "@opal/logos";
+import { SvgNortPoleLogo } from "@opal/logos";
 import { MessageCard } from "@opal/components";
 import { ADMIN_ROUTES } from "@/lib/admin-routes";
 import {
@@ -189,11 +189,11 @@ export default function WebSearchPage() {
       const existing = byType.get(providerType);
       if (existing) return existing;
 
-      if (providerType === "evolvxsi_web_crawler") {
+      if (providerType === "nortpole_web_crawler") {
         return {
           id: -1,
           name: "NortPole Web Crawler",
-          provider_type: "evolvxsi_web_crawler",
+          provider_type: "nortpole_web_crawler",
           is_active: true,
           config: null,
           masked_api_key: null,
@@ -509,7 +509,7 @@ export default function WebSearchPage() {
 
                 const canActivate =
                   providerId > 0 ||
-                  provider.provider_type === "evolvxsi_web_crawler" ||
+                  provider.provider_type === "nortpole_web_crawler" ||
                   isConfigured;
 
                 const ContentLogo =
@@ -521,8 +521,8 @@ export default function WebSearchPage() {
                     icon={() =>
                       ContentLogo ? (
                         <ContentLogo size={16} />
-                      ) : provider.provider_type === "evolvxsi_web_crawler" ? (
-                        <SvgEvolvXSILogo size={16} />
+                      ) : provider.provider_type === "nortpole_web_crawler" ? (
+                        <SvgNortPoleLogo size={16} />
                       ) : (
                         <SvgGlobe size={16} />
                       )
@@ -546,7 +546,7 @@ export default function WebSearchPage() {
                       )
                     }
                     onEdit={
-                      provider.provider_type !== "evolvxsi_web_crawler" &&
+                      provider.provider_type !== "nortpole_web_crawler" &&
                       isConfigured
                         ? () => {
                             openContentModal(provider.provider_type, provider);
@@ -554,7 +554,7 @@ export default function WebSearchPage() {
                         : undefined
                     }
                     onDisconnect={
-                      provider.provider_type !== "evolvxsi_web_crawler" &&
+                      provider.provider_type !== "nortpole_web_crawler" &&
                       isConfigured &&
                       provider.id > 0
                         ? () => {

@@ -259,7 +259,7 @@ def test_none_auth_missing_template_values_requires_setup(
     credentials = ResolvedMCPCredentials(
         connection_config_id=1,
         connection_data={
-            "headers": {"X-Client": "evolvxsi"},
+            "headers": {"X-Client": "nortpole"},
             "header_substitutions": {"workspace": "existing"},
             "reauth_required": rejected,
         },

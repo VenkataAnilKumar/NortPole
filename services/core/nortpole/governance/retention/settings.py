@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field
 from nortpole.key_value_store.factory import get_kv_store
 from nortpole.key_value_store.interface import KvKeyNotFoundError
 
-KV_KEY = "evolvxsi_retention"
+KV_KEY = "nortpole_retention"
 MIN_DAYS, MAX_DAYS = 30, 3650  # a floor, so a typo cannot wipe the log
 
 

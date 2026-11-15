@@ -125,11 +125,11 @@ class TestWorkerHealthCollector:
         assert len(families) == 2
 
         active = families[0]
-        assert active.name == "evolvxsi_celery_active_worker_count"
+        assert active.name == "nortpole_celery_active_worker_count"
         assert active.samples[0].value == 3
 
         up = families[1]
-        assert up.name == "evolvxsi_celery_worker_up"
+        assert up.name == "nortpole_celery_worker_up"
         assert len(up.samples) == 3
         label_pairs = {
             (s.labels["worker_type"], s.labels["hostname"]) for s in up.samples
@@ -192,5 +192,5 @@ class TestWorkerHealthCollector:
         active = families[0]
         assert active.samples[0].value == 0
         up = families[1]
-        assert up.name == "evolvxsi_celery_worker_up"
+        assert up.name == "nortpole_celery_worker_up"
         assert len(up.samples) == 0

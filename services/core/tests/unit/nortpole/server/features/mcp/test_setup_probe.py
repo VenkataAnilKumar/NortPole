@@ -347,7 +347,7 @@ def test_protected_sse_message_endpoint_uses_its_oauth_challenge(
     monkeypatch.setattr(
         oauth_discovery,
         "validated_mcp_oauth_client_metadata_url",
-        lambda: "https://evolvxsi.example/api/mcp/oauth/client-metadata",
+        lambda: "https://nortpole.example/api/mcp/oauth/client-metadata",
     )
     result = asyncio.run(setup_probe.probe_mcp_server("https://mcp.example/sse"))
     assert result.kind == "oauth"
@@ -376,13 +376,13 @@ def test_probe_route_checks_permission_before_network(
     from nortpole.error_handling.error_codes import NortPoleErrorCode
     from nortpole.error_handling.exceptions import (
         NortPoleError,
-        register_evolvxsi_exception_handlers,
+        register_nortpole_exception_handlers,
     )
     from nortpole.server.features.mcp import api
 
     app = FastAPI()
     app.include_router(api.admin_router)
-    register_evolvxsi_exception_handlers(app)
+    register_nortpole_exception_handlers(app)
     route = next(
         route
         for route in api.admin_router.routes

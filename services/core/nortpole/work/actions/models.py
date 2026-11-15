@@ -16,7 +16,7 @@ class NortPoleActionTarget(Base):
     """Where an administrator allows actions to go. Owners pick from these; they
     cannot type a destination."""
 
-    __tablename__ = "evolvxsi_action_target"
+    __tablename__ = "nortpole_action_target"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String, nullable=False, unique=True)
@@ -33,14 +33,14 @@ class NortPoleActionTarget(Base):
 
 
 class NortPoleAction(Base):
-    __tablename__ = "evolvxsi_action"
+    __tablename__ = "nortpole_action"
 
     id: Mapped[uuid.UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     task_id: Mapped[uuid.UUID] = mapped_column(
-        PGUUID(as_uuid=True), ForeignKey("evolvxsi_task.id", ondelete="CASCADE"), nullable=False, index=True
+        PGUUID(as_uuid=True), ForeignKey("nortpole_task.id", ondelete="CASCADE"), nullable=False, index=True
     )
     owner_id: Mapped[uuid.UUID] = mapped_column(PGUUID(as_uuid=True), ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
-    target_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("evolvxsi_action_target.id", ondelete="SET NULL"), nullable=True)
+    target_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("nortpole_action_target.id", ondelete="SET NULL"), nullable=True)
     target_name: Mapped[str] = mapped_column(String, nullable=False)
     # What will be sent, frozen when proposed. The approval covers exactly this.
     payload: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)

@@ -102,7 +102,7 @@ from nortpole.server.features.build.session.interrupt_signal import request_inte
 from nortpole.server.features.build.session.llm_config import (
     AgentSelection,
     GatewaySelection,
-    build_evolvxsi_gateway_config,
+    build_nortpole_gateway_config,
     parse_agent_selection,
 )
 from nortpole.server.features.build.session.md_to_docx import markdown_to_docx_bytes
@@ -207,7 +207,7 @@ class SessionManager:
             for model in configured_default_models
             if model is not None
         ]
-        gateway_config = build_evolvxsi_gateway_config(
+        gateway_config = build_nortpole_gateway_config(
             fetch_all_accessible_llm_providers(self._db_session, user),
             selection,
             configured_defaults,
@@ -1640,7 +1640,7 @@ class SessionManager:
             internal_url = sandbox_manager.get_webapp_url(sandbox_id, port)
             probe_url = (
                 f"{internal_url}/api/build/sessions/{session_id}/webapp"
-                "/_next/static/evolvxsi-ready-probe.js"
+                "/_next/static/nortpole-ready-probe.js"
             )
             with httpx.Client(timeout=_WEBAPP_PROBE_TIMEOUT_SECONDS) as client:
                 client.get(probe_url)

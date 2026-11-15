@@ -5,10 +5,10 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from nortpole.error_handling.error_codes import NortPoleErrorCode
-from nortpole.error_handling.exceptions import NortPoleError, register_evolvxsi_exception_handlers
+from nortpole.error_handling.exceptions import NortPoleError, register_nortpole_exception_handlers
 
 
-class TestEvolvXSIError:
+class TestNortPoleError:
     """Unit tests for NortPoleError construction and properties."""
 
     def test_basic_construction(self) -> None:
@@ -47,7 +47,7 @@ class TestExceptionHandler:
     @pytest.fixture()
     def client(self) -> TestClient:
         app = FastAPI()
-        register_evolvxsi_exception_handlers(app)
+        register_nortpole_exception_handlers(app)
 
         @app.get("/boom")
         def _boom() -> None:

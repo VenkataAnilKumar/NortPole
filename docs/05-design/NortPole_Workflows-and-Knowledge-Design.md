@@ -41,7 +41,7 @@ Written 2026-11-14 after a review of Microsoft Copilot Studio, Google Gemini Ent
 
 ### 3.2 Data
 
-`evolvxsi_workflow_schedule`
+`nortpole_workflow_schedule`
 
 | Column | Notes |
 |---|---|
@@ -59,15 +59,15 @@ Written 2026-11-14 after a review of Microsoft Copilot Studio, Google Gemini Ent
 | copied_from_id | When a person copied a shared schedule |
 | version, created_at, updated_at | Writes name the version they were based on, as drafts do |
 
-`evolvxsi_workflow_run`: id, schedule_id, task_id (nullable when skipped), fired_at, outcome (`plan_ready`, `plan_failed`, `skipped`, `superseded`, `accepted`, `draft_ready`, `approved`, `cancelled`), reason, route_kind, input_tokens, output_tokens.
+`nortpole_workflow_run`: id, schedule_id, task_id (nullable when skipped), fired_at, outcome (`plan_ready`, `plan_failed`, `skipped`, `superseded`, `accepted`, `draft_ready`, `approved`, `cancelled`), reason, route_kind, input_tokens, output_tokens.
 
-`evolvxsi_task` gains `schedule_id` (nullable) and the new state `superseded` (a transition from `plan_review` only, shown in My drafts as "Replaced by a newer run"; it counts as ended for retention).
+`nortpole_task` gains `schedule_id` (nullable) and the new state `superseded` (a transition from `plan_review` only, shown in My drafts as "Replaced by a newer run"; it counts as ended for retention).
 
-Settings in the key-value store `evolvxsi_schedule_controls`: `enabled` (default **false**), `group_ids` (empty = everyone once enabled), `max_per_person` (default 10), `min_cadence` (default `daily`; no hourly schedules in the pilot), `two_admin` (whether changing these needs a second administrator, using the existing admin-changes flow).
+Settings in the key-value store `nortpole_schedule_controls`: `enabled` (default **false**), `group_ids` (empty = everyone once enabled), `max_per_person` (default 10), `min_cadence` (default `daily`; no hourly schedules in the pilot), `two_admin` (whether changing these needs a second administrator, using the existing admin-changes flow).
 
 ### 3.3 Running
 
-- A Celery beat entry `evolvxsi-workflow-schedules` runs **every 5 minutes**. It **claims** due schedules in a short transaction (`SELECT … FOR UPDATE SKIP LOCKED`, then set `next_run_at` to the next time and commit), so two workers never fire the same one, and the slow planning call happens **after** the claim, holding no lock.
+- A Celery beat entry `nortpole-workflow-schedules` runs **every 5 minutes**. It **claims** due schedules in a short transaction (`SELECT … FOR UPDATE SKIP LOCKED`, then set `next_run_at` to the next time and commit), so two workers never fire the same one, and the slow planning call happens **after** the claim, holding no lock.
 - **Missed runs are not caught up.** After downtime a schedule fires once and moves on to its next time.
 - **Load:** at most 20 runs per tick; the rest wait for the next tick. The schedule form spreads start times by a few minutes after the chosen time, so ten 08:30 schedules do not hit the model at once.
 - For each: check scheduling is on, the owner is still **active** and still in an allowed group (if not: pause, reason `scheduling_off` or `owner_inactive`); supersede a waiting plan **with the same version check people use**, so if the owner accepted it a moment earlier the accept wins and the run is recorded as `accepted`; create the draft; draft the plan with the same code as Start (`draft_plan` or `draft_agent_plan`, the owner's permissions, the route policy); record the run and tokens; compute `next_run_at`.
@@ -130,11 +130,11 @@ Unit: next-run computation across time zones, daylight-saving changes, month end
 
 ### 4.2 Data
 
-`evolvxsi_domain`: id, slug, name, description, document_set_id, access (`open`, `restricted`), member_group_ids, member_user_ids, owner_user_ids, is_default, created_at.
+`nortpole_domain`: id, slug, name, description, document_set_id, access (`open`, `restricted`), member_group_ids, member_user_ids, owner_user_ids, is_default, created_at.
 
-`evolvxsi_doc_verification`: document_id (unique), state (`verified`, `deprecated`), by_email, at, recheck_at, note. One current row per document and domain; history in the audit log.
+`nortpole_doc_verification`: document_id (unique), state (`verified`, `deprecated`), by_email, at, recheck_at, note. One current row per document and domain; history in the audit log.
 
-`evolvxsi_source_request` gains the kind `knowledge` (add files to a domain), reusing the R4 request and decision flow; the decision is made by a domain owner or an administrator. **A deliberate exception to R4's "approving turns nothing on":** here approving performs the addition, because it is a change inside the workspace that the approver owns and it widens nothing beyond the domain's members; it is recorded in the audit log. The files are **copied** into a file source that belongs to the domain (so they take the domain's reading groups); the person's private copy stays private.
+`nortpole_source_request` gains the kind `knowledge` (add files to a domain), reusing the R4 request and decision flow; the decision is made by a domain owner or an administrator. **A deliberate exception to R4's "approving turns nothing on":** here approving performs the addition, because it is a change inside the workspace that the approver owns and it widens nothing beyond the domain's members; it is recorded in the audit log. The files are **copied** into a file source that belongs to the domain (so they take the domain's reading groups); the person's private copy stays private.
 
 Packs may declare domains for a template or workflow agent (`Template.domains`); the agent's searches are limited to those domains.
 

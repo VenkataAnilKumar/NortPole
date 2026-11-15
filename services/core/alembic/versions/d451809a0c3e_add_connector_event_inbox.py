@@ -1,6 +1,6 @@
 """add connector_event_inbox
 
-One pending document change pushed to EvolvXSI by an event-based connector. The
+One pending document change pushed to NortPole by an event-based connector. The
 webhook server writes a row per event; a later drain claims rows inside an
 ordinary docfetching run.
 

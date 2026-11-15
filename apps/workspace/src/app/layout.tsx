@@ -88,10 +88,10 @@ export default async function Layout({ children }: LayoutProps) {
 
   let dir: HtmlDir = htmlDirForLocale(language);
   // Dev-only escape hatch so QA can preview either direction without
-  // switching account language: set an "evolvxsi-dir" cookie to "rtl" or
+  // switching account language: set an "nortpole-dir" cookie to "rtl" or
   // "ltr" (with path=/) and reload.
   if (process.env.NODE_ENV === "development") {
-    const dirOverride = (await cookies()).get("evolvxsi-dir")?.value;
+    const dirOverride = (await cookies()).get("nortpole-dir")?.value;
     if (dirOverride === "rtl" || dirOverride === "ltr") {
       dir = dirOverride;
     }
@@ -133,7 +133,7 @@ export default async function Layout({ children }: LayoutProps) {
             scripts, so this synchronous check sees them; the class then
             persists across client-side navigations. No-op in a browser. */}
         <Script
-          id="evolvxsi-desktop-detector"
+          id="nortpole-desktop-detector"
           strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `
@@ -141,7 +141,7 @@ export default async function Layout({ children }: LayoutProps) {
                 ('__TAURI_INTERNALS__' in window || '__TAURI__' in window) &&
                 navigator.platform.startsWith('Mac')
               ) {
-                document.documentElement.classList.add('evolvxsi-desktop');
+                document.documentElement.classList.add('nortpole-desktop');
               }
             `,
           }}

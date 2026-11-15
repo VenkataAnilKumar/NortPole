@@ -18,8 +18,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @config "../tailwind-preset.cjs";
-@import "@evolvxsi-ai/shared/tokens.css";
-@import "@evolvxsi-ai/shared/typography.css";
+@import "@nortpole-ai/shared/tokens.css";
+@import "@nortpole-ai/shared/typography.css";
 @import "./styles/sizes.css";
 @import "./styles/typography.css";
 

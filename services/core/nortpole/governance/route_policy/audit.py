@@ -24,7 +24,7 @@ logger = setup_logger()
 class NortPoleAuditEvent(Base):
     """Who, what and when for policy changes and blocked requests. Holds no message content."""
 
-    __tablename__ = "evolvxsi_audit_event"
+    __tablename__ = "nortpole_audit_event"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
     created_at: Mapped[datetime] = mapped_column(

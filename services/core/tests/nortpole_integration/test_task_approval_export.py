@@ -59,7 +59,7 @@ def world():  # type: ignore[no-untyped-def]
         s.query(Credential).filter_by(id=ids["cr"]).delete()
         s.query(Connector).filter_by(id=ids["c"]).delete()
         s.query(UserGroup).filter_by(id=ids["g"]).delete()
-        s.execute(text("delete from evolvxsi_audit_event where actor_email = :e and row_hash is null"), {"e": f"approver-{RUN}@example.com"})
+        s.execute(text("delete from nortpole_audit_event where actor_email = :e and row_hash is null"), {"e": f"approver-{RUN}@example.com"})
         s.query(User).filter_by(id=ids["u"]).delete()
         s.commit()
 
@@ -124,7 +124,7 @@ def test_export_is_withheld_once_access_to_a_cited_source_is_gone(world) -> None
             with pytest.raises(NortPoleError) as err:
                 api.export_draft(t.id, api.VersionOnly(version=a.version), user=u, db_session=s)
             assert "withheld" in err.value.detail and "Receipt rules doc" not in err.value.detail
-            denied = s.execute(text("select count(*) from evolvxsi_audit_event where actor_email = :e and action = 'task.export' and outcome = 'denied'"),
+            denied = s.execute(text("select count(*) from nortpole_audit_event where actor_email = :e and action = 'task.export' and outcome = 'denied'"),
                                {"e": f"approver-{RUN}@example.com"}).scalar()
             assert denied >= 1
         finally:

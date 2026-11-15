@@ -1024,7 +1024,7 @@ class OpencodeServeClient:
         self._base_url = base_url.rstrip("/")
         self._password = password
         self._client_info = client_info or {
-            "name": "evolvxsi-opencode-serve-client",
+            "name": "nortpole-opencode-serve-client",
             "version": "1.0.0",
         }
         self._timeouts = timeouts or ClientTimeouts()

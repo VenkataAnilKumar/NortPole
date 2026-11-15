@@ -208,7 +208,7 @@ def test_real_config_unlocks_config_requiring_checks(
         requires_connector_config=True,
     )
     instantiate = _patch_runner_environment(monkeypatch, [check])
-    connector_specific_config = {"repositories": "evolvxsi"}
+    connector_specific_config = {"repositories": "nortpole"}
 
     # Under test.
     report = generate_capability_report(
@@ -355,7 +355,7 @@ def test_hung_instantiation_is_bounded_and_surfaces_incomplete(
 
     # Under test.
     report = generate_capability_report(
-        _make_credential(), connector_specific_config={"repo": "evolvxsi"}
+        _make_credential(), connector_specific_config={"repo": "nortpole"}
     )
 
     # Postcondition.

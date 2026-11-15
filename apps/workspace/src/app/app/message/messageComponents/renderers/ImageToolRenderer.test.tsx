@@ -10,7 +10,7 @@ test("the timeline counts unique images across repeated deltas", () => {
   const image = {
     file_id: "first",
     url: "/api/chat/file/first",
-    revised_prompt: "An evolvxsi stone",
+    revised_prompt: "An nortpole stone",
   };
   const packets: ImageGenerationToolPacket[] = [
     {

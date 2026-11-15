@@ -16,7 +16,7 @@ export interface OutputPanelPreferences {
   filesTabState?: FilesTabState;
 }
 
-const STORAGE_PREFIX = "evolvxsi:craft:output-panel:v1:";
+const STORAGE_PREFIX = "nortpole:craft:output-panel:v1:";
 
 function storageKey(sessionId: string): string {
   return `${STORAGE_PREFIX}${sessionId}`;

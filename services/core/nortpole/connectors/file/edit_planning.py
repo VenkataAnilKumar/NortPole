@@ -14,7 +14,7 @@ from typing import Any
 from sqlalchemy.orm import Session
 
 from nortpole.connectors.cross_connector_utils.miscellaneous_utils import (
-    process_evolvxsi_metadata,
+    process_nortpole_metadata,
 )
 from nortpole.connectors.file.config import LocalFileConnectorConfig
 from nortpole.connectors.file.edit_staging import (
@@ -58,7 +58,7 @@ def _documents_by_id(
             continue
         entry = zip_metadata_entry(zip_metadata, facts.display_name)
         document_id = file_document_id(
-            file_id, process_evolvxsi_metadata(entry)[0].document_id
+            file_id, process_nortpole_metadata(entry)[0].document_id
         )
         documents.setdefault(document_id, []).append(
             FileDocument(

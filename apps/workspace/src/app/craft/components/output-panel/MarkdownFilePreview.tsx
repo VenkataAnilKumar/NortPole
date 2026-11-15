@@ -43,7 +43,7 @@ function MarkdownContentView({
 }) {
   return (
     <ReactMarkdown
-      className="prose prose-evolvxsi max-w-none text-sm wrap-break-word"
+      className="prose prose-nortpole max-w-none text-sm wrap-break-word"
       remarkPlugins={[remarkGfm, [remarkMath, { singleDollarTextMath: false }]]}
       rehypePlugins={[rehypeKatex, rehypeDirection]}
       urlTransform={transformLinkUri}

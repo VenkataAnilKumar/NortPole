@@ -1,6 +1,6 @@
 import { Text } from "@opal/components";
 import { SourceIcon } from "@/components/SourceIcon";
-import { MinimalEvolvXSIDocument, NortPoleDocument } from "@/lib/search/types";
+import { MinimalNortPoleDocument, NortPoleDocument } from "@/lib/search/types";
 import { SvgTag } from "@opal/icons";
 import { buildDocumentSummaryDisplay } from "@/components/search/DocumentDisplay";
 import { DocumentUpdatedAtBadge } from "@/components/search/DocumentUpdatedAtBadge";
@@ -55,7 +55,7 @@ export interface ChatDocumentDisplayProps {
   document: NortPoleDocument;
   modal?: boolean;
   isSelected: boolean;
-  setPresentingDocument: Dispatch<SetStateAction<MinimalEvolvXSIDocument | null>>;
+  setPresentingDocument: Dispatch<SetStateAction<MinimalNortPoleDocument | null>>;
 }
 
 export default function ChatDocumentDisplay({

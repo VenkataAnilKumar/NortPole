@@ -87,7 +87,7 @@ class GCSBackedFileStore(PresignableFileStore):
         # Shared across threads, so the first operations build one client.
         self._client_lock = threading.Lock()
         self._bucket_name = bucket_name
-        self._gcs_prefix = gcs_prefix or "evolvxsi-files"
+        self._gcs_prefix = gcs_prefix or "nortpole-files"
         self._project_id = project_id
         self._service_account_key_path = service_account_key_path
         self._service_account_key_json = service_account_key_json

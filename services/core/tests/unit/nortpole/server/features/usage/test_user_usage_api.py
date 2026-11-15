@@ -32,7 +32,7 @@ from nortpole.db.models import (
     UserUsage,
 )
 from nortpole.db.user_usage import get_period_window_reset
-from nortpole.error_handling.exceptions import register_evolvxsi_exception_handlers
+from nortpole.error_handling.exceptions import register_nortpole_exception_handlers
 from nortpole.llm import cost_overrides
 from nortpole.llm.cost import ModelPrice, get_model_price_per_million
 from nortpole.server.features.usage.api import user_usage_router
@@ -84,7 +84,7 @@ def db_session() -> Generator[Session, None, None]:
 
 def _make_app(db_session: Session, user: _StubUser) -> FastAPI:
     app = FastAPI()
-    register_evolvxsi_exception_handlers(app)
+    register_nortpole_exception_handlers(app)
     app.include_router(user_usage_router)
     app.dependency_overrides[get_session] = lambda: db_session
     app.dependency_overrides[current_user] = lambda: user

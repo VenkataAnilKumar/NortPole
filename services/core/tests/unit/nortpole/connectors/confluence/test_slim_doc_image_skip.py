@@ -15,7 +15,7 @@ import pytest
 
 from nortpole.connectors.confluence.connector import ConfluenceConnector
 from nortpole.connectors.confluence.source_operations import (
-    _EvolvXSIConfluence,
+    _NortPoleConfluence,
 )
 from nortpole.connectors.models import SlimDocument
 from tests.unit.nortpole.connectors.confluence.confluence_gateway_fakes import (
@@ -74,7 +74,7 @@ def _collect_slim_doc_ids(connector: ConfluenceConnector) -> list[str]:
             return iter([_IMAGE_ATTACHMENT, _PDF_ATTACHMENT])
         return iter([])
 
-    fake_client = mock.Mock(spec=_EvolvXSIConfluence)
+    fake_client = mock.Mock(spec=_NortPoleConfluence)
     fake_client.cql_paginate_all_expansions.side_effect = fake_paginate
 
     with (

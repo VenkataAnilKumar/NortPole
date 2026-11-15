@@ -4,7 +4,7 @@ unreachable drive apart from an empty one.
 A shared drive organizer (Manager in the UI) can always open folders with
 limited access inside that drive, and that access cannot be revoked. So one
 organizer pass returns everything, where a union over arbitrary members can
-silently miss restricted folders. Probes against the evolvxsi-test tenant measured
+silently miss restricted folders. Probes against the nortpole-test tenant measured
 the gap: the organizer saw 25 items in shared_drive_1, a reader saw 23.
 
 Nothing here calls the retrieval path; it only decides who should do the call.

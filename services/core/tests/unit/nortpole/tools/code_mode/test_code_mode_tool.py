@@ -473,14 +473,14 @@ def test_mcp_like_stub_runs_and_type_checks_its_arguments() -> None:
     )
     _, details, _ = _run(
         tool,
-        "r = await github_list_issues(repo_name='evolvxsi', state='open', class_=True)\n"
+        "r = await github_list_issues(repo_name='nortpole', state='open', class_=True)\n"
         "r['issues'][0]['number']\n",
     )
     assert details.status == "completed", details.error
     assert details.result == "1"
 
     _, rejected, _ = _run(
-        tool, "await github_list_issues(repo_name='evolvxsi', state='x')\n"
+        tool, "await github_list_issues(repo_name='nortpole', state='x')\n"
     )
     assert rejected.status == "failed"
     assert rejected.error is not None

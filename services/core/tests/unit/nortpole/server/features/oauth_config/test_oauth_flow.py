@@ -19,7 +19,7 @@ from nortpole.auth.pkce import compute_s256_challenge
 from nortpole.auth.users import current_user
 from nortpole.db.enums import PermissionAuthority
 from nortpole.db.models import OAuthConfig, User
-from nortpole.error_handling.exceptions import NortPoleError, register_evolvxsi_exception_handlers
+from nortpole.error_handling.exceptions import NortPoleError, register_nortpole_exception_handlers
 from nortpole.server.features.oauth_config import api as oauth_config_api
 from nortpole.server.features.oauth_config.models import (
     OAuthConfigCreate,
@@ -374,7 +374,7 @@ def test_provider_failure_returns_http_error_and_consumes_attempt(
         permissions, "has_permission", lambda *_: PermissionAuthority.GLOBAL
     )
     app = FastAPI()
-    register_evolvxsi_exception_handlers(app)
+    register_nortpole_exception_handlers(app)
     app.include_router(oauth_config_api.router)
     app.dependency_overrides[oauth_config_api.get_session] = lambda: db_session
     app.dependency_overrides[current_user] = lambda: user
@@ -665,7 +665,7 @@ def test_draft_http_permission_and_provider_error_contract(
     )
     token_post.side_effect = requests.HTTPError("provider body contains secret")
     app = FastAPI()
-    register_evolvxsi_exception_handlers(app)
+    register_nortpole_exception_handlers(app)
     app.include_router(oauth_config_api.admin_router)
     app.dependency_overrides[oauth_config_api.get_session] = lambda: db
     app.dependency_overrides[current_user] = lambda: user

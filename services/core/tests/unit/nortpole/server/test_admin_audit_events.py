@@ -30,7 +30,7 @@ def test_create_api_key_emits_event(
     mock_insert.return_value = MagicMock(api_key_id=7)
     user = MagicMock(id="admin-1", email="admin@example.com")
 
-    with caplog.at_level(logging.INFO, logger="evolvxsi.audit"):
+    with caplog.at_level(logging.INFO, logger="nortpole.audit"):
         create_api_key(MagicMock(), user=user, db_session=MagicMock())
 
     events = audit_events(caplog)
@@ -49,7 +49,7 @@ def test_regenerate_api_key_emits_event(
 ) -> None:
     user = MagicMock(id="admin-1", email="admin@example.com")
 
-    with caplog.at_level(logging.INFO, logger="evolvxsi.audit"):
+    with caplog.at_level(logging.INFO, logger="nortpole.audit"):
         regenerate_existing_api_key(api_key_id=42, user=user, db_session=MagicMock())
 
     events = audit_events(caplog)
@@ -68,7 +68,7 @@ def test_update_api_key_emits_event(
     user = MagicMock(id="admin-1", email="admin@example.com")
     args = MagicMock(name="ci-key", group_ids=[3, 9])
 
-    with caplog.at_level(logging.INFO, logger="evolvxsi.audit"):
+    with caplog.at_level(logging.INFO, logger="nortpole.audit"):
         update_existing_api_key(
             api_key_id=42, api_key_args=args, user=user, db_session=MagicMock()
         )
@@ -87,7 +87,7 @@ def test_delete_api_key_emits_event(
 ) -> None:
     user = MagicMock(id="admin-1", email="admin@example.com")
 
-    with caplog.at_level(logging.INFO, logger="evolvxsi.audit"):
+    with caplog.at_level(logging.INFO, logger="nortpole.audit"):
         delete_api_key(api_key_id=99, user=user, db_session=MagicMock())
 
     events = audit_events(caplog)
@@ -110,7 +110,7 @@ def test_delete_llm_provider_emits_event(
 ) -> None:
     user = MagicMock(id="admin-1", email="admin@example.com")
 
-    with caplog.at_level(logging.INFO, logger="evolvxsi.audit"):
+    with caplog.at_level(logging.INFO, logger="nortpole.audit"):
         # force=True skips the default-provider lookup so no DB is needed.
         delete_llm_provider(
             provider_id=5, force=True, user=user, db_session=MagicMock()

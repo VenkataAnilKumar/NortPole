@@ -94,7 +94,7 @@ from nortpole.redis.redis_pool import get_redis_client, get_redis_replica_client
 from nortpole.redis.redis_tenant_work_gating import maybe_mark_tenant_active
 from nortpole.redis.tenant_redis_client import TenantRedisClient
 from nortpole.server.metrics.pruning_metrics import observe_pruning_diff_duration
-from nortpole.server.runtime.evolvxsi_runtime import NortPoleRuntime
+from nortpole.server.runtime.nortpole_runtime import NortPoleRuntime
 from nortpole.server.utils import make_short_id
 from nortpole.utils.logger import (
     LoggerContextVars,

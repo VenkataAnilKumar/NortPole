@@ -38,7 +38,7 @@ class UserPreferences(BaseModel):
 
 
 def _key(user_id: str) -> str:
-    return f"evolvxsi_user_prefs:{user_id}"
+    return f"nortpole_user_prefs:{user_id}"
 
 
 def load_preferences(user_id: str) -> UserPreferences:

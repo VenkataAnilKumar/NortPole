@@ -32,7 +32,7 @@ def _make_session(
     session.time_updated = time_updated or session.time_created
     session.description = description
     session.deleted = False
-    session.evolvxsibot_flow = False
+    session.nortpolebot_flow = False
     session.project_id = None
     return session
 

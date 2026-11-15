@@ -2,7 +2,7 @@
 
 import { MinimalAgent } from "@/lib/agents/types";
 import { buildAgentAvatarUrl } from "@/lib/agents/utils";
-import { SvgEvolvXSILogo } from "@opal/logos";
+import { SvgNortPoleLogo } from "@opal/logos";
 import { useSettings } from "@/lib/settings/hooks";
 import { DEFAULT_AVATAR_SIZE_PX, DEFAULT_AGENT_ID } from "@/lib/constants";
 import CustomAgentAvatar from "@/refresh-components/avatars/CustomAgentAvatar";
@@ -37,7 +37,7 @@ export default function AgentAvatar({
         />
       </div>
     ) : (
-      <SvgEvolvXSILogo size={size} className="shrink-0" />
+      <SvgNortPoleLogo size={size} className="shrink-0" />
     );
   }
 

@@ -39,7 +39,7 @@ from nortpole.server.features.build.sandbox.docker.docker_sandbox_manager import
 )
 from nortpole.server.features.build.sandbox.labels import (
     LABEL_K8S_MANAGED_BY,
-    LABEL_K8S_MANAGED_BY_EVOLVXSI,
+    LABEL_K8S_MANAGED_BY_NORTPOLE,
 )
 
 SANDBOX_ID = UUID("12345678-1234-1234-1234-1234567890ab")
@@ -77,7 +77,7 @@ def test_volume_name_is_per_sandbox_and_short() -> None:
     """
     vol = _sandbox_volume_name(SANDBOX_ID)
     assert vol.endswith("12345678")
-    assert vol.startswith("evolvxsi-craft-sandbox-")
+    assert vol.startswith("nortpole-craft-sandbox-")
 
 
 def test_labels_include_required_fields() -> None:
@@ -86,7 +86,7 @@ def test_labels_include_required_fields() -> None:
     assert labels[LABEL_SANDBOX_ID] == str(SANDBOX_ID)
     assert labels[LABEL_TENANT_ID] == TENANT_ID
     assert labels[LABEL_USER_ID] == str(USER_ID)
-    assert labels[LABEL_K8S_MANAGED_BY] == LABEL_K8S_MANAGED_BY_EVOLVXSI
+    assert labels[LABEL_K8S_MANAGED_BY] == LABEL_K8S_MANAGED_BY_NORTPOLE
 
 
 def test_labels_omit_user_id_when_none() -> None:
@@ -100,35 +100,35 @@ def test_labels_omit_user_id_when_none() -> None:
 
 
 def test_immutable_sandbox_image_uses_cached_image_when_present() -> None:
-    mgr, docker = _bare_manager_with_image("evolvxsidotapp/sandbox:v4.1.2")
+    mgr, docker = _bare_manager_with_image("nortpoledotapp/sandbox:v4.1.2")
 
     mgr._ensure_sandbox_image()
 
-    docker.images.get.assert_called_once_with("evolvxsidotapp/sandbox:v4.1.2")
+    docker.images.get.assert_called_once_with("nortpoledotapp/sandbox:v4.1.2")
     docker.images.pull.assert_not_called()
 
 
 def test_immutable_sandbox_image_pulls_when_missing() -> None:
-    mgr, docker = _bare_manager_with_image("evolvxsidotapp/sandbox:v4.1.2")
+    mgr, docker = _bare_manager_with_image("nortpoledotapp/sandbox:v4.1.2")
     docker.images.get.side_effect = dsm.NotFound("missing")
 
     mgr._ensure_sandbox_image()
 
-    docker.images.pull.assert_called_once_with("evolvxsidotapp/sandbox:v4.1.2")
+    docker.images.pull.assert_called_once_with("nortpoledotapp/sandbox:v4.1.2")
 
 
 def test_mutable_sandbox_image_refreshes_once() -> None:
-    mgr, docker = _bare_manager_with_image("evolvxsidotapp/sandbox:latest")
+    mgr, docker = _bare_manager_with_image("nortpoledotapp/sandbox:latest")
 
     mgr._ensure_sandbox_image()
     mgr._ensure_sandbox_image()
 
-    docker.images.pull.assert_called_once_with("evolvxsidotapp/sandbox:latest")
+    docker.images.pull.assert_called_once_with("nortpoledotapp/sandbox:latest")
     docker.images.get.assert_not_called()
 
 
 def test_sandbox_image_refresh_is_thread_safe() -> None:
-    mgr, docker = _bare_manager_with_image("evolvxsidotapp/sandbox:latest")
+    mgr, docker = _bare_manager_with_image("nortpoledotapp/sandbox:latest")
     pull_started = threading.Event()
     finish_pull = threading.Event()
 
@@ -146,11 +146,11 @@ def test_sandbox_image_refresh_is_thread_safe() -> None:
         first.result(timeout=1)
         second.result(timeout=1)
 
-    docker.images.pull.assert_called_once_with("evolvxsidotapp/sandbox:latest")
+    docker.images.pull.assert_called_once_with("nortpoledotapp/sandbox:latest")
 
 
 def test_implicit_latest_sandbox_image_refreshes() -> None:
-    image = "evolvxsidotapp/sandbox"
+    image = "nortpoledotapp/sandbox"
     mgr, docker = _bare_manager_with_image(image)
 
     mgr._ensure_sandbox_image()
@@ -162,18 +162,18 @@ def test_implicit_latest_sandbox_image_refreshes() -> None:
 def test_mutable_sandbox_image_uses_cache_once_if_refresh_fails() -> None:
     # Avoid retrying the registry on every sandbox spinup. A process restart
     # gets another chance to refresh the moving tag.
-    mgr, docker = _bare_manager_with_image("evolvxsidotapp/sandbox:edge")
+    mgr, docker = _bare_manager_with_image("nortpoledotapp/sandbox:edge")
     docker.images.pull.side_effect = dsm.APIError("registry unavailable")
 
     mgr._ensure_sandbox_image()
     mgr._ensure_sandbox_image()
 
-    docker.images.pull.assert_called_once_with("evolvxsidotapp/sandbox:edge")
-    docker.images.get.assert_called_once_with("evolvxsidotapp/sandbox:edge")
+    docker.images.pull.assert_called_once_with("nortpoledotapp/sandbox:edge")
+    docker.images.get.assert_called_once_with("nortpoledotapp/sandbox:edge")
 
 
 def test_mutable_sandbox_image_raises_if_refresh_fails_without_cache() -> None:
-    mgr, docker = _bare_manager_with_image("evolvxsidotapp/sandbox:beta")
+    mgr, docker = _bare_manager_with_image("nortpoledotapp/sandbox:beta")
     docker.images.pull.side_effect = dsm.APIError("registry unavailable")
     docker.images.get.side_effect = dsm.NotFound("missing")
 
@@ -182,16 +182,16 @@ def test_mutable_sandbox_image_raises_if_refresh_fails_without_cache() -> None:
 
 
 def test_local_dev_sandbox_image_uses_cached_image_when_present() -> None:
-    mgr, docker = _bare_manager_with_image("evolvxsidotapp/sandbox:dev")
+    mgr, docker = _bare_manager_with_image("nortpoledotapp/sandbox:dev")
 
     mgr._ensure_sandbox_image()
 
-    docker.images.get.assert_called_once_with("evolvxsidotapp/sandbox:dev")
+    docker.images.get.assert_called_once_with("nortpoledotapp/sandbox:dev")
     docker.images.pull.assert_not_called()
 
 
 def test_registry_port_untagged_image_refreshes_as_implicit_latest() -> None:
-    image = "localhost:5001/evolvxsi-sandbox"
+    image = "localhost:5001/nortpole-sandbox"
     mgr, docker = _bare_manager_with_image(image)
 
     mgr._ensure_sandbox_image()
@@ -201,7 +201,7 @@ def test_registry_port_untagged_image_refreshes_as_implicit_latest() -> None:
 
 
 def test_digest_sandbox_image_uses_cached_image_when_present() -> None:
-    image = "evolvxsidotapp/sandbox@sha256:abc123"
+    image = "nortpoledotapp/sandbox@sha256:abc123"
     mgr, docker = _bare_manager_with_image(image)
 
     mgr._ensure_sandbox_image()
@@ -223,11 +223,11 @@ def kwargs() -> ContainerCreateKwargs:
         sandbox_id=SANDBOX_ID,
         user_id=USER_ID,
         tenant_id=TENANT_ID,
-        image="evolvxsidotapp/sandbox:test",
-        evolvxsi_pat="pat-redacted",
+        image="nortpoledotapp/sandbox:test",
+        nortpole_pat="pat-redacted",
         api_server_url="http://api_server:8080",
-        network="evolvxsi_craft_sandbox",
-        volume_name="evolvxsi-craft-sandbox-12345678",
+        network="nortpole_craft_sandbox",
+        volume_name="nortpole-craft-sandbox-12345678",
         memory_limit="2g",
         cpu_limit=1.0,
         provisioning_attempt_number=1,
@@ -242,7 +242,7 @@ def proxy_kwargs() -> ContainerCreateKwargs:
     Proxy-enabled posture. Mirrors what production self-host compose deployments
     with ``--include-craft`` produce.
 
-    Note: ``evolvxsi_pat`` is the proxy-injected placeholder because in proxy mode
+    Note: ``nortpole_pat`` is the proxy-injected placeholder because in proxy mode
     the manager's provision flow scrubs the real PAT before reaching this
     builder; the real value lives in Postgres and the proxy injects it on the
     wire. Same for any ``api_key`` in ``opencode_config_json``.
@@ -251,11 +251,11 @@ def proxy_kwargs() -> ContainerCreateKwargs:
         sandbox_id=SANDBOX_ID,
         user_id=USER_ID,
         tenant_id=TENANT_ID,
-        image="evolvxsidotapp/sandbox:test",
-        evolvxsi_pat=SANDBOX_PROXY_INJECTED_PLACEHOLDER,
-        api_server_url="https://evolvxsi.example.com/api",
-        network="evolvxsi_craft_sandbox",
-        volume_name="evolvxsi-craft-sandbox-12345678",
+        image="nortpoledotapp/sandbox:test",
+        nortpole_pat=SANDBOX_PROXY_INJECTED_PLACEHOLDER,
+        api_server_url="https://nortpole.example.com/api",
+        network="nortpole_craft_sandbox",
+        volume_name="nortpole-craft-sandbox-12345678",
         memory_limit="2g",
         cpu_limit=1.0,
         provisioning_attempt_number=1,
@@ -311,7 +311,7 @@ def test_outputs_manifest_uses_trusted_cli(
     monkeypatch: pytest.MonkeyPatch,
     include_web: bool,
 ) -> None:
-    manager, _ = _bare_manager_with_image("evolvxsidotapp/sandbox:test")
+    manager, _ = _bare_manager_with_image("nortpoledotapp/sandbox:test")
     container = MagicMock()
     monkeypatch.setattr(manager, "_require_container", lambda _: container)
     run = MagicMock(return_value=dsm.ExecResult(0, b'{"entries":[]}', b""))
@@ -418,16 +418,16 @@ def test_container_kwargs_resource_limits(kwargs: ContainerCreateKwargs) -> None
 
 def test_container_kwargs_labels_and_volume(kwargs: ContainerCreateKwargs) -> None:
     assert kwargs["labels"][LABEL_SANDBOX_ID] == str(SANDBOX_ID)
-    assert "evolvxsi-craft-sandbox-12345678" in kwargs["volumes"]
+    assert "nortpole-craft-sandbox-12345678" in kwargs["volumes"]
     assert (
-        kwargs["volumes"]["evolvxsi-craft-sandbox-12345678"]["bind"]
+        kwargs["volumes"]["nortpole-craft-sandbox-12345678"]["bind"]
         == "/workspace/sessions"
     )
 
 
 def test_container_kwargs_uses_sandbox_network(kwargs: ContainerCreateKwargs) -> None:
     """Sandbox must join only the dedicated bridge, not compose's default."""
-    assert kwargs["network"] == "evolvxsi_craft_sandbox"
+    assert kwargs["network"] == "nortpole_craft_sandbox"
 
 
 def test_container_kwargs_does_not_publish_serve_outside_dev(
@@ -446,11 +446,11 @@ def test_container_kwargs_publishes_serve_on_localhost_in_dev(
         sandbox_id=SANDBOX_ID,
         user_id=USER_ID,
         tenant_id=TENANT_ID,
-        image="evolvxsidotapp/sandbox:test",
-        evolvxsi_pat="pat-redacted",
+        image="nortpoledotapp/sandbox:test",
+        nortpole_pat="pat-redacted",
         api_server_url="http://api_server:8080",
-        network="evolvxsi_craft_sandbox",
-        volume_name="evolvxsi-craft-sandbox-12345678",
+        network="nortpole_craft_sandbox",
+        volume_name="nortpole-craft-sandbox-12345678",
         memory_limit="2g",
         cpu_limit=1.0,
         provisioning_attempt_number=1,
@@ -571,10 +571,10 @@ def test_container_kwargs_warns_on_internal_compose_host(
             sandbox_id=SANDBOX_ID,
             user_id=USER_ID,
             tenant_id=TENANT_ID,
-            image="evolvxsidotapp/sandbox:test",
-            evolvxsi_pat="pat",
+            image="nortpoledotapp/sandbox:test",
+            nortpole_pat="pat",
             api_server_url="http://api_server:8080",  # compose-internal DNS
-            network="evolvxsi_craft_sandbox",
+            network="nortpole_craft_sandbox",
             volume_name="vol",
             memory_limit="2g",
             cpu_limit=1.0,
@@ -599,10 +599,10 @@ def test_container_kwargs_no_warning_for_public_url(
             sandbox_id=SANDBOX_ID,
             user_id=USER_ID,
             tenant_id=TENANT_ID,
-            image="evolvxsidotapp/sandbox:test",
-            evolvxsi_pat="pat",
-            api_server_url="https://evolvxsi.example.com/api",
-            network="evolvxsi_craft_sandbox",
+            image="nortpoledotapp/sandbox:test",
+            nortpole_pat="pat",
+            api_server_url="https://nortpole.example.com/api",
+            network="nortpole_craft_sandbox",
             volume_name="vol",
             memory_limit="2g",
             cpu_limit=1.0,
@@ -626,10 +626,10 @@ def test_container_kwargs_no_warning_for_craft_api_alias(
             sandbox_id=SANDBOX_ID,
             user_id=USER_ID,
             tenant_id=TENANT_ID,
-            image="evolvxsidotapp/sandbox:test",
-            evolvxsi_pat="pat",
-            api_server_url="http://evolvxsi-craft-api:8080",
-            network="evolvxsi_craft_sandbox",
+            image="nortpoledotapp/sandbox:test",
+            nortpole_pat="pat",
+            api_server_url="http://nortpole-craft-api:8080",
+            network="nortpole_craft_sandbox",
             volume_name="vol",
             memory_limit="2g",
             cpu_limit=1.0,
@@ -711,7 +711,7 @@ def test_proxy_kwargs_mounts_ca_volume_read_only(
     assert volumes["sandbox_proxy_ca"]["bind"] == "/sandbox-ca"
     assert volumes["sandbox_proxy_ca"]["mode"] == "ro"
     # The per-sandbox workspace volume is still there.
-    assert "evolvxsi-craft-sandbox-12345678" in volumes
+    assert "nortpole-craft-sandbox-12345678" in volumes
 
 
 def test_proxy_kwargs_env_contains_proxy_and_ca_keys(
@@ -725,7 +725,7 @@ def test_proxy_kwargs_env_contains_proxy_and_ca_keys(
     # The compatibility core is preserved; NORTPOLE_PAT is the proxy placeholder
     # in this posture (real value lives in Postgres, proxy injects on wire).
     assert env["NORTPOLE_PAT"] == SANDBOX_PROXY_INJECTED_PLACEHOLDER
-    assert env["NORTPOLE_SERVER_URL"] == "https://evolvxsi.example.com/api"
+    assert env["NORTPOLE_SERVER_URL"] == "https://nortpole.example.com/api"
     assert env["NORTPOLE_API_PREFIX"] == ""
     assert env["OPENCODE_SERVER_PASSWORD"] == _OPENCODE_PASSWORD
     assert env["OPENCODE_CONFIG_CONTENT"] == _OPENCODE_CONFIG_JSON
@@ -844,10 +844,10 @@ def test_proxy_kwargs_requires_ca_volume() -> None:
             sandbox_id=SANDBOX_ID,
             user_id=USER_ID,
             tenant_id=TENANT_ID,
-            image="evolvxsidotapp/sandbox:test",
-            evolvxsi_pat="pat",
-            api_server_url="https://evolvxsi.example.com/api",
-            network="evolvxsi_craft_sandbox",
+            image="nortpoledotapp/sandbox:test",
+            nortpole_pat="pat",
+            api_server_url="https://nortpole.example.com/api",
+            network="nortpole_craft_sandbox",
             volume_name="vol",
             memory_limit="2g",
             cpu_limit=1.0,

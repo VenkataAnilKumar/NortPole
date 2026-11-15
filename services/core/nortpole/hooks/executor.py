@@ -6,7 +6,7 @@ process_message.py (CE code) uses isinstance checks against them.
 execute_hook is the public entry point. It dispatches to _execute_hook_impl
 via fetch_versioned_implementation so that:
   - CE: nortpole.hooks.executor._execute_hook_impl → no-op, returns HookSkipped()
-  - EE: ee.evolvxsi.hooks.executor._execute_hook_impl → real HTTP call
+  - EE: ee.nortpole.hooks.executor._execute_hook_impl → real HTTP call
 """
 
 from typing import Any, TypeVar

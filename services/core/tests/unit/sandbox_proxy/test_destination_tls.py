@@ -228,7 +228,7 @@ def test_pinned_tls_preserves_hostname_verification_and_injection(
                 proxy_instance_id="tls-test",
                 credential_dispatcher=CredentialInjectionDispatcher([credential]),
                 destination_policy=parse_destination_policy(
-                    "https://evolvxsi.test"
+                    "https://nortpole.test"
                     if mcp_destination
                     else f"https://{_HOST}:{upstream_port}"
                 ),

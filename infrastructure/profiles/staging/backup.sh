@@ -14,14 +14,14 @@ stamp="$(date -u +%Y%m%dT%H%M%SZ)"
 case "${KEEP:-1}" in (*[!0-9]*|0) echo "KEEP must be a whole number of at least 1" >&2; exit 1;; esac
 mkdir -p "$out"
 umask 077
-dump="$out/evolvxsi-$stamp.dump"
+dump="$out/nortpole-$stamp.dump"
 # -Fc: compressed custom format; --no-owner so a restore works with a different database role.
-docker compose exec -T db pg_dump -U evolvxsi -d evolvxsi -Fc --no-owner > "$dump"
+docker compose exec -T db pg_dump -U nortpole -d nortpole -Fc --no-owner > "$dump"
 size=$(wc -c < "$dump")
 [ "$size" -gt 1000 ] || { echo "backup looks empty ($size bytes); removed" >&2; rm -f "$dump"; exit 1; }
 sum=$(sha256sum "$dump" | cut -d' ' -f1)
-head_rev=$(docker compose exec -T db psql -U evolvxsi -d evolvxsi -Atc "select version_num from alembic_version" 2>/dev/null | tr -d '\r' | paste -sd, - || true)
-audit_rows=$(docker compose exec -T db psql -U evolvxsi -d evolvxsi -Atc "select count(*) from evolvxsi_audit_event" 2>/dev/null | tr -d '\r' || echo unknown)
+head_rev=$(docker compose exec -T db psql -U nortpole -d nortpole -Atc "select version_num from alembic_version" 2>/dev/null | tr -d '\r' | paste -sd, - || true)
+audit_rows=$(docker compose exec -T db psql -U nortpole -d nortpole -Atc "select count(*) from nortpole_audit_event" 2>/dev/null | tr -d '\r' || echo unknown)
 cat > "$dump.manifest" <<MANIFEST
 created_utc=$stamp
 file=$(basename "$dump")
@@ -29,14 +29,14 @@ bytes=$size
 sha256=__SUM__
 migration_revision=$head_rev
 audit_rows=$audit_rows
-product_version=${NORTPOLE_VERSION:-${EVOLVXSI_VERSION:-dev}}
+product_version=${NORTPOLE_VERSION:-${NORTPOLE_VERSION:-dev}}
 MANIFEST
 sed -i "s/__SUM__/$sum/" "$dump.manifest"
 echo "wrote $dump ($size bytes)"
 echo "wrote $dump.manifest"
 if [ -n "${KEEP:-}" ]; then
   # Newest first; everything after the first KEEP entries goes. Only files this script names are touched.
-  ls -1t "$out"/evolvxsi-*.dump 2>/dev/null | tail -n +"$((KEEP + 1))" | while read -r old; do
+  ls -1t "$out"/nortpole-*.dump 2>/dev/null | tail -n +"$((KEEP + 1))" | while read -r old; do
     rm -f -- "$old" "$old.manifest" && echo "removed old backup $(basename "$old")"
   done
 fi

@@ -2,7 +2,7 @@
 
 import { NavLink } from "@opal/navigation";
 import { useTranslations } from "next-intl";
-import { SvgEvolvXSILogo } from "@opal/logos";
+import { SvgNortPoleLogo } from "@opal/logos";
 import { useSettings } from "@/lib/settings/hooks";
 import { Text } from "@opal/components";
 
@@ -34,7 +34,7 @@ export default function AuthFlowContainer({
             />
           </div>
         ) : (
-          <SvgEvolvXSILogo size={44} className="text-theme-primary-05" />
+          <SvgNortPoleLogo size={44} className="text-theme-primary-05" />
         )}
         <div className="w-full mt-3">{children}</div>
       </div>

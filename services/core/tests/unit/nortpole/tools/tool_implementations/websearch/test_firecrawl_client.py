@@ -70,7 +70,7 @@ def test_search_maps_firecrawl_response(monkeypatch: pytest.MonkeyPatch) -> None
 
     monkeypatch.setattr(firecrawl_module.requests, "post", _mock_post)
 
-    results = client.search("evolvxsi")
+    results = client.search("nortpole")
 
     assert len(results) == 1
     assert results[0].title == "Result 1"
@@ -103,13 +103,13 @@ def test_search_sends_expected_request(monkeypatch: pytest.MonkeyPatch) -> None:
 
     monkeypatch.setattr(firecrawl_module.requests, "post", _mock_post)
 
-    client.search("evolvxsi")
+    client.search("nortpole")
 
     assert captured_url == FIRECRAWL_SEARCH_URL
     assert captured_headers is not None
     assert captured_headers["Authorization"] == "Bearer test-key"
     assert captured_body is not None
-    assert captured_body["query"] == "evolvxsi"
+    assert captured_body["query"] == "nortpole"
     assert captured_body["limit"] == 100
     assert captured_body["sources"] == ["web"]
     assert captured_body["tbs"] == "qdr:d"
@@ -130,9 +130,9 @@ def test_search_omits_unset_optional_params(monkeypatch: pytest.MonkeyPatch) -> 
 
     monkeypatch.setattr(firecrawl_module.requests, "post", _mock_post)
 
-    client.search("evolvxsi")
+    client.search("nortpole")
 
-    assert captured_body == {"query": "evolvxsi", "limit": 5, "sources": ["web"]}
+    assert captured_body == {"query": "nortpole", "limit": 5, "sources": ["web"]}
 
 
 def test_search_uses_custom_base_url(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -150,7 +150,7 @@ def test_search_uses_custom_base_url(monkeypatch: pytest.MonkeyPatch) -> None:
 
     monkeypatch.setattr(firecrawl_module.requests, "post", _mock_post)
 
-    client.search("evolvxsi")
+    client.search("nortpole")
 
     assert captured_url == "https://firecrawl.internal/v2/search"
 
@@ -174,7 +174,7 @@ def test_search_raises_descriptive_error_on_http_failure(
     monkeypatch.setattr(firecrawl_module.requests, "post", _mock_post)
 
     with pytest.raises(ValueError, match="status 401.*Invalid token"):
-        client.search("evolvxsi")
+        client.search("nortpole")
 
 
 def test_search_does_not_retry_non_retryable_http_errors(
@@ -194,7 +194,7 @@ def test_search_does_not_retry_non_retryable_http_errors(
     monkeypatch.setattr(firecrawl_module.requests, "post", _mock_post)
 
     with pytest.raises(ValueError, match="status 402"):
-        client.search("evolvxsi")
+        client.search("nortpole")
     assert calls == 1
 
 
@@ -216,7 +216,7 @@ def test_search_retries_rate_limit_then_fails(
     monkeypatch.setattr(firecrawl_module.requests, "post", _mock_post)
 
     with pytest.raises(ValueError, match="status 429"):
-        client.search("evolvxsi")
+        client.search("nortpole")
     assert calls == 3
 
 
@@ -242,7 +242,7 @@ def test_search_retries_transient_request_errors(
 
     monkeypatch.setattr(firecrawl_module.requests, "post", _mock_post)
 
-    results = client.search("evolvxsi")
+    results = client.search("nortpole")
 
     assert calls == 3
     assert len(results) == 1
@@ -264,7 +264,7 @@ def test_search_retries_non_json_body_then_fails(
     monkeypatch.setattr(firecrawl_module.requests, "post", _mock_post)
 
     with pytest.raises(ValueError, match="non-JSON"):
-        client.search("evolvxsi")
+        client.search("nortpole")
     assert calls == 3
 
 
@@ -281,7 +281,7 @@ def test_search_rejects_malformed_web_section(
     monkeypatch.setattr(firecrawl_module.requests, "post", _mock_post)
 
     with pytest.raises(ValueError, match="data.web"):
-        client.search("evolvxsi")
+        client.search("nortpole")
 
 
 def test_search_returns_empty_when_web_section_missing(
@@ -296,7 +296,7 @@ def test_search_returns_empty_when_web_section_missing(
 
     monkeypatch.setattr(firecrawl_module.requests, "post", _mock_post)
 
-    assert client.search("evolvxsi") == []
+    assert client.search("nortpole") == []
 
 
 def test_constructor_accepts_custom_tbs_range() -> None:
@@ -320,7 +320,7 @@ def test_search_raises_on_success_false_body(
     monkeypatch.setattr(firecrawl_module.requests, "post", _mock_post)
 
     with pytest.raises(ValueError, match="Search backend unavailable"):
-        client.search("evolvxsi")
+        client.search("nortpole")
 
 
 @pytest.mark.parametrize(
@@ -425,7 +425,7 @@ def test_search_blocks_private_base_url_on_cloud(
     )
 
     with pytest.raises(ValueError, match="base_url is not allowed"):
-        client.search("evolvxsi")
+        client.search("nortpole")
 
     assert post_calls == []
 
@@ -451,7 +451,7 @@ def test_search_rejects_redirect_without_following(
     client = FirecrawlSearchClient(api_key="fc-key")
 
     with pytest.raises(ValueError, match="returned a redirect"):
-        client.search("evolvxsi")
+        client.search("nortpole")
 
     assert len(post_kwargs) == 1
     assert post_kwargs[0]["allow_redirects"] is False

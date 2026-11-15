@@ -55,7 +55,7 @@ def get_provider_for_app(app: ExternalApp) -> ExternalAppProvider | None:
     return PROVIDERS.get(app.app_type)
 
 
-def get_evolvxsi_managed_provider(app_type: ExternalAppType) -> NortPoleManagedExtApp | None:
+def get_nortpole_managed_provider(app_type: ExternalAppType) -> NortPoleManagedExtApp | None:
     """The NortPole-managed provider for ``app_type``, or None when the app_type is
     CUSTOM/unregistered or its provider isn't NortPole-managed. Not gated on
     ``MULTI_TENANT`` — callers add that for the cloud-only lockdown (``is not
@@ -69,7 +69,7 @@ def uses_cloud_scope(app_type: ExternalAppType) -> bool:
     credentials the deployment owns. That client is verified with the upstream
     provider, so providers narrow their scope there (see ``GoogleOAuthProvider``)
     and the actions it can't cover drop out of the catalog."""
-    return MULTI_TENANT and get_evolvxsi_managed_provider(app_type) is not None
+    return MULTI_TENANT and get_nortpole_managed_provider(app_type) is not None
 
 
 def get_provider_or_raise(app: ExternalApp) -> ExternalAppProvider:
@@ -178,7 +178,7 @@ def fetch_available_built_in_apps() -> list[BuiltInExternalAppDescriptor]:
     return [_descriptor_for(cls) for cls in _PROVIDER_CLASSES]
 
 
-def fetch_evolvxsi_managed_built_in_apps() -> list[BuiltInExternalAppDescriptor]:
+def fetch_nortpole_managed_built_in_apps() -> list[BuiltInExternalAppDescriptor]:
     """Built-in providers NortPole owns the credentials for — the apps cloud
     provisioning seeds per tenant. Excludes non-managed built-ins."""
     return [

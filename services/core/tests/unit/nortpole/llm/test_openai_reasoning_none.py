@@ -299,7 +299,7 @@ def test_explicit_none_survives_the_retry_ladder() -> None:
 
 
 _HISTORY: list[ChatMinimalTextMessage] = [
-    ChatMinimalTextMessage(message="what is evolvxsi", message_type=MessageType.USER)
+    ChatMinimalTextMessage(message="what is nortpole", message_type=MessageType.USER)
 ]
 
 
@@ -318,7 +318,7 @@ def _completion_stream(text: str) -> MagicMock:
 def test_semantic_query_rephrase_sends_none() -> None:
     with patch(
         _COMPLETION,
-        return_value=litellm.stream_chunk_builder(_text_stream_chunks("evolvxsi")),
+        return_value=litellm.stream_chunk_builder(_text_stream_chunks("nortpole")),
     ) as completion:
         semantic_query_rephrase(_HISTORY, _search_llm())
     assert completion.call_args.kwargs["reasoning"] == {"effort": "none"}
@@ -327,7 +327,7 @@ def test_semantic_query_rephrase_sends_none() -> None:
 def test_keyword_query_expansion_sends_none() -> None:
     with patch(
         _COMPLETION,
-        return_value=litellm.stream_chunk_builder(_text_stream_chunks("evolvxsi")),
+        return_value=litellm.stream_chunk_builder(_text_stream_chunks("nortpole")),
     ) as completion:
         keyword_query_expansion(_HISTORY, _search_llm())
     assert completion.call_args.kwargs["reasoning"] == {"effort": "none"}
@@ -338,7 +338,7 @@ def test_classify_section_relevance_sends_none() -> None:
         classify_section_relevance(
             document_title="doc",
             section_text="body",
-            user_query="what is evolvxsi",
+            user_query="what is nortpole",
             llm=_search_llm(),
             section_above_text=None,
             section_below_text=None,

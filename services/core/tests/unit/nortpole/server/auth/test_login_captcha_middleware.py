@@ -6,14 +6,14 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from nortpole.auth.captcha import CaptchaAction, CaptchaVerificationError
-from nortpole.error_handling.exceptions import register_evolvxsi_exception_handlers
+from nortpole.error_handling.exceptions import register_nortpole_exception_handlers
 from nortpole.server.auth import captcha_api as captcha_api_module
 from nortpole.server.auth.captcha_api import LoginCaptchaMiddleware
 
 
 def build_app() -> FastAPI:
     app = FastAPI()
-    register_evolvxsi_exception_handlers(app)
+    register_nortpole_exception_handlers(app)
     app.add_middleware(LoginCaptchaMiddleware)
 
     @app.post("/auth/login")

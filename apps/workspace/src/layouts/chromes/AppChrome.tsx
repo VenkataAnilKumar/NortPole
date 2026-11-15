@@ -675,7 +675,7 @@ export default function AppChrome({ children }: AppChromeProps) {
       const activeEl = document.activeElement;
       const isFocused =
         activeEl instanceof HTMLElement &&
-        activeEl.id === "evolvxsi-chat-input-textbox";
+        activeEl.id === "nortpole-chat-input-textbox";
       const target = event.target;
       const isInteractive =
         target instanceof HTMLElement && !!target.closest(INTERACTIVE_SELECTOR);
@@ -689,7 +689,7 @@ export default function AppChrome({ children }: AppChromeProps) {
     inputWasFocused.current = false;
     const sel = window.getSelection();
     if (sel && !sel.isCollapsed) return;
-    const textarea = document.getElementById("evolvxsi-chat-input-textbox");
+    const textarea = document.getElementById("nortpole-chat-input-textbox");
     if (textarea && document.activeElement !== textarea) {
       textarea.focus();
     }

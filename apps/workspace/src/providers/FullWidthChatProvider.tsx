@@ -15,7 +15,7 @@ import {
  * localStorage; starts false and hydrates in an effect so SSR and the first
  * client render agree.
  */
-const STORAGE_KEY = "evolvxsi:fullWidthChat";
+const STORAGE_KEY = "nortpole:fullWidthChat";
 
 interface FullWidthChatContextValue {
   fullWidthChat: boolean;

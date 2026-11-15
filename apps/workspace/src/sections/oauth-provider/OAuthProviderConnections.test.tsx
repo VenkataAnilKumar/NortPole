@@ -24,7 +24,7 @@ const grant = {
   id: "00000000-0000-0000-0000-000000000001",
   client_name: "NortPole test client",
   client_id: "client",
-  resource: "https://evolvxsi.example/mcp/",
+  resource: "https://nortpole.example/mcp/",
   scopes: ["read:search"],
   created_at: "2026-09-01T00:00:00Z",
   expires_at: "2026-10-01T00:00:00Z",

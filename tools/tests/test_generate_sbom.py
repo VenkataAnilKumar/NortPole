@@ -16,7 +16,7 @@ UV = f'''
 version = 1
 
 [[package]]
-name = "evolvxsi"
+name = "nortpole"
 version = "0.0.0"
 source = {{ virtual = "." }}
 dependencies = [
@@ -56,7 +56,7 @@ BUN = f'''{{
     "@scope/pkg": ["@scope/pkg@1.2.3", "", {{"dependencies": {{"left-pad": "^1"}}}}, "{INTEGRITY}"],
     "left-pad": ["left-pad@1.3.0", "", {{}}, "{INTEGRITY}"],
     "other/left-pad": ["left-pad@1.3.0", "", {{}}, "{INTEGRITY}"],
-    "@evolvxsi-ai/opal": ["@evolvxsi-ai/opal@workspace:lib/opal"],
+    "@nortpole-ai/opal": ["@nortpole-ai/opal@workspace:lib/opal"],
     "bad": ["bad@0.1.0", "", {{}}, "sha512-not*base64"],
     "xlsx": ["xlsx@https://cdn.example.com/xlsx-0.20.3/xlsx-0.20.3.tgz", "", {{}}, "{INTEGRITY}"],
   }},

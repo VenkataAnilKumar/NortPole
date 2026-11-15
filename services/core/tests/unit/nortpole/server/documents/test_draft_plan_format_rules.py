@@ -81,7 +81,7 @@ def _form_errors(source: DocumentSource, form_values: dict[str, Any]) -> dict[st
         ),
         (
             DocumentSource.GITHUB,
-            {**_GITHUB_FORM, "repositories": "docs, acme-corp/evolvxsi"},
+            {**_GITHUB_FORM, "repositories": "docs, acme-corp/nortpole"},
             "repositories",
             REPOSITORY_OWNER_ERROR,
         ),
@@ -164,7 +164,7 @@ def test_a_value_that_breaks_a_format_rule_is_a_form_error(
         ),
         (DocumentSource.JIRA, {**_JIRA_FORM, "jql_query": 'summary ~ "order by"'}),
         (DocumentSource.JIRA, {**_JIRA_FORM, "jql_query": None}),
-        (DocumentSource.GITHUB, {**_GITHUB_FORM, "repositories": "evolvxsi, docs"}),
+        (DocumentSource.GITHUB, {**_GITHUB_FORM, "repositories": "nortpole, docs"}),
         (DocumentSource.GITHUB, {**_GITHUB_FORM, "repositories": ""}),
         (
             DocumentSource.GOOGLE_DRIVE,
@@ -191,7 +191,7 @@ def test_a_value_that_follows_the_format_rules_is_no_form_error(
 
 
 def test_a_stored_config_that_breaks_a_format_rule_still_builds_the_connector() -> None:
-    stored = {**_GITHUB_FORM, "repositories": "acme-corp/evolvxsi"}
+    stored = {**_GITHUB_FORM, "repositories": "acme-corp/nortpole"}
 
     assert build_connector_kwargs(DocumentSource.GITHUB, stored) == stored
 

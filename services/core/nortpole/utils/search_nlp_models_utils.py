@@ -16,7 +16,7 @@ def pass_aws_key(api_key: str) -> tuple[str, str, str]:
     if len(parts) != 4:
         raise ValueError(
             f"API key must be in format 'aws_ACCESSKEY_SECRETKEY_REGION', got {len(parts) - 1} parts. "
-            "This is an evolvxsi specific format for formatting the aws secrets for bedrock"
+            "This is an nortpole specific format for formatting the aws secrets for bedrock"
         )
 
     try:

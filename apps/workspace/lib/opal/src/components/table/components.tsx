@@ -6,7 +6,7 @@ import "@opal/components/table/styles.css";
 import { useEffect, useMemo } from "react";
 import { flexRender } from "@tanstack/react-table";
 import useDataTable, {
-  toEvolvXSISortDirection,
+  toNortPoleSortDirection,
 } from "@opal/components/table/hooks/useDataTable";
 import useColumnWidths from "@opal/components/table/hooks/useColumnWidths";
 import useDraggableRows from "@opal/components/table/hooks/useDraggableRows";
@@ -470,7 +470,7 @@ export function Table<TData>(props: DataTableProps<TData>) {
                           width={columnWidths[header.id]}
                           alignment={colDef?.alignment}
                           sorted={
-                            canSort ? toEvolvXSISortDirection(sortDir) : undefined
+                            canSort ? toNortPoleSortDirection(sortDir) : undefined
                           }
                           onSort={
                             canSort

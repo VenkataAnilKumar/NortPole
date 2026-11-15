@@ -25,29 +25,29 @@ class MCPServerToolName(str, Enum):
 UNKNOWN_SOURCE_LABEL = "unknown"
 
 MCP_SERVER_AUTH_TOTAL = Counter(
-    "evolvxsi_mcp_server_auth_total",
+    "nortpole_mcp_server_auth_total",
     "MCP server token verification outcomes",
     ["result"],
 )
 MCP_SERVER_TOOL_LATENCY = Histogram(
-    "evolvxsi_mcp_server_tool_latency_seconds",
+    "nortpole_mcp_server_tool_latency_seconds",
     "MCP server tool execution latency",
     ["tool"],
     buckets=(0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0, 30.0),
 )
 MCP_SERVER_TOOL_TOTAL = Counter(
-    "evolvxsi_mcp_server_tool_calls_total",
+    "nortpole_mcp_server_tool_calls_total",
     "MCP server tool calls",
     ["tool", "status"],
 )
 MCP_SERVER_SEARCH_RESULTS = Histogram(
-    "evolvxsi_mcp_server_search_results",
+    "nortpole_mcp_server_search_results",
     "Results returned by MCP server search tools",
     ["tool"],
     buckets=(0, 1, 2, 5, 10, 20, 50),
 )
 MCP_SERVER_SEARCH_SOURCES = Counter(
-    "evolvxsi_mcp_server_search_by_source_total",
+    "nortpole_mcp_server_search_by_source_total",
     "MCP server document searches by requested source type",
     ["source_type"],
 )

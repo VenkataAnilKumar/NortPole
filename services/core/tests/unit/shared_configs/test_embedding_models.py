@@ -31,8 +31,8 @@ def test_registry_invariants() -> None:
             assert spec.loader == LocalModelLoader.STANDARD, spec.model_name
 
 
-def test_registry_imports_no_evolvxsi_or_ml_packages() -> None:
-    """The model-server image has no evolvxsi package and the API image has no torch."""
+def test_registry_imports_no_nortpole_or_ml_packages() -> None:
+    """The model-server image has no nortpole package and the API image has no torch."""
     code = (
         "import sys\n"
         "import shared_configs.embedding_models\n"

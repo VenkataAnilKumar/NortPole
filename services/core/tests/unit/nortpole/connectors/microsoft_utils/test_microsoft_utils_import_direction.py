@@ -16,7 +16,7 @@ import pytest
 BACKEND_DIR = pathlib.Path(__file__).resolve().parents[5]
 PACKAGE_DIR = BACKEND_DIR / "nortpole" / "connectors" / "microsoft_utils"
 EE_PACKAGE_DIR = (
-    BACKEND_DIR / "ee" / "evolvxsi" / "external_permissions" / "microsoft_utils"
+    BACKEND_DIR / "ee" / "nortpole" / "external_permissions" / "microsoft_utils"
 )
 
 # Shared connector infrastructure the packages may use. Everything else under

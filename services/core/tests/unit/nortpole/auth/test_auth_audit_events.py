@@ -25,7 +25,7 @@ async def test_on_after_login_emits_login_success(
     user = MagicMock(id="u-1", email="user@example.com")
     manager = UserManager(MagicMock())
 
-    with caplog.at_level(logging.INFO, logger="evolvxsi.audit"):
+    with caplog.at_level(logging.INFO, logger="nortpole.audit"):
         await manager.on_after_login(user, request=None, response=None)
 
     events = audit_events(caplog)
@@ -46,7 +46,7 @@ async def test_authenticate_unknown_user_emits_login_failure(
     manager = UserManager(MagicMock())
     creds = OAuth2PasswordRequestForm(username="user@example.com", password="wrong")
 
-    with caplog.at_level(logging.INFO, logger="evolvxsi.audit"):
+    with caplog.at_level(logging.INFO, logger="nortpole.audit"):
         result = await manager.authenticate(creds)
 
     assert result is None
@@ -70,7 +70,7 @@ async def test_on_after_forgot_password_emits_event(
     user = MagicMock(id="u-1", email="user@example.com")
     manager = UserManager(MagicMock())
 
-    with caplog.at_level(logging.INFO, logger="evolvxsi.audit"):
+    with caplog.at_level(logging.INFO, logger="nortpole.audit"):
         await manager.on_after_forgot_password(user, token="tok", request=None)
 
     events = audit_events(caplog)
@@ -97,7 +97,7 @@ async def test_on_after_request_verify_emits_event(
     user = MagicMock(id="u-1", email="user@example.com")
     manager = UserManager(MagicMock())
 
-    with caplog.at_level(logging.INFO, logger="evolvxsi.audit"):
+    with caplog.at_level(logging.INFO, logger="nortpole.audit"):
         await manager.on_after_request_verify(user, token="tok", request=None)
 
     events = audit_events(caplog)
@@ -115,7 +115,7 @@ async def test_on_after_reset_password_emits_event(
 
     with (
         patch.object(manager, "revoke_sessions", new=AsyncMock()) as revoke,
-        caplog.at_level(logging.INFO, logger="evolvxsi.audit"),
+        caplog.at_level(logging.INFO, logger="nortpole.audit"),
     ):
         await manager.on_after_reset_password(user, request=None)
 

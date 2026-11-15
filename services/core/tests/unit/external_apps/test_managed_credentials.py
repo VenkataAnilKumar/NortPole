@@ -8,11 +8,11 @@ import pytest
 
 from nortpole.db.enums import ExternalAppType
 from nortpole.external_apps.providers.base import NortPoleManagedExtApp
-from nortpole.external_apps.providers.registry import PROVIDERS, get_evolvxsi_managed_provider
+from nortpole.external_apps.providers.registry import PROVIDERS, get_nortpole_managed_provider
 
 
 def _gmail() -> NortPoleManagedExtApp:
-    provider = get_evolvxsi_managed_provider(ExternalAppType.GMAIL)
+    provider = get_nortpole_managed_provider(ExternalAppType.GMAIL)
     assert provider is not None
     return provider
 

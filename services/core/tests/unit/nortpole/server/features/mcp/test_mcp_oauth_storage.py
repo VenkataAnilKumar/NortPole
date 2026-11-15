@@ -15,7 +15,7 @@ from nortpole.error_handling.exceptions import NortPoleError
 from nortpole.server.features.mcp import oauth
 from nortpole.server.features.mcp.models import MCPOAuthKeys
 
-_REDIRECT_URI = "https://evolvxsi.example.com/mcp/oauth/callback"
+_REDIRECT_URI = "https://nortpole.example.com/mcp/oauth/callback"
 _DISCOVERED_METADATA = OAuthMetadata(
     issuer=cast(AnyHttpUrl, "https://idp.other-host.com"),
     authorization_endpoint=cast(AnyHttpUrl, "https://idp.other-host.com/authorize"),
@@ -261,7 +261,7 @@ def test_stored_cimd_registration_is_only_reused_while_cimd_is_enabled(
     monkeypatch: pytest.MonkeyPatch,
     cimd_enabled: bool,
 ) -> None:
-    metadata_url = "https://evolvxsi.example.com/api/mcp/oauth/client-metadata"
+    metadata_url = "https://nortpole.example.com/api/mcp/oauth/client-metadata"
     monkeypatch.setattr(
         oauth,
         "is_mcp_oauth_cimd_client_id",
@@ -282,7 +282,7 @@ def test_stored_cimd_registration_is_only_reused_while_cimd_is_enabled(
 def test_cimd_off_replaces_shared_cimd_registration_with_dcr_without_conflict(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    metadata_url = "https://evolvxsi.example.com/api/mcp/oauth/client-metadata"
+    metadata_url = "https://nortpole.example.com/api/mcp/oauth/client-metadata"
     monkeypatch.setattr(
         oauth,
         "is_mcp_oauth_cimd_client_id",

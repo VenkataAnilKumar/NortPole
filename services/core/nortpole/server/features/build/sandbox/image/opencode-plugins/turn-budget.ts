@@ -6,7 +6,7 @@
 
 import type { Plugin } from "@opencode-ai/plugin";
 
-const BUDGET_FILE = ".evolvxsi-turn-budget.json";
+const BUDGET_FILE = ".nortpole-turn-budget.json";
 
 const NOTICE_INTERVAL_MS = 60_000;
 

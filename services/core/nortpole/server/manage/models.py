@@ -23,7 +23,7 @@ from nortpole.db.models import StandardAnswer as StandardAnswerModel
 from nortpole.db.models import StandardAnswerCategory as StandardAnswerCategoryModel
 from nortpole.db.port_attempt import ReindexProgressCounts
 from nortpole.llm.models import ReasoningEffort
-from nortpole.evolvxsibot.slack.config import VALID_SLACK_FILTERS
+from nortpole.nortpolebot.slack.config import VALID_SLACK_FILTERS
 from nortpole.server.features.persona.models import FullPersonaSnapshot, PersonaSnapshot
 from nortpole.server.models import FullUserSnapshot, InvitedUserSnapshot
 
@@ -596,7 +596,7 @@ class StandardAnswerCreationRequest(BaseModel):
 
 
 class ContainerVersions(BaseModel):
-    evolvxsi: str
+    nortpole: str
     relational_db: str
     index: str
     nginx: str

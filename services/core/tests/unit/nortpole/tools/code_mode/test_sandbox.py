@@ -51,11 +51,11 @@ def _count(name: str, labels: dict[str, str]) -> float:
 
 
 def _worker_losses(reason: str) -> float:
-    return _count("evolvxsi_code_mode_sandbox_workers_lost_total", {"reason": reason})
+    return _count("nortpole_code_mode_sandbox_workers_lost_total", {"reason": reason})
 
 
 def _suspensions(outcome: str) -> float:
-    return _count("evolvxsi_code_mode_suspensions_total", {"outcome": outcome})
+    return _count("nortpole_code_mode_suspensions_total", {"outcome": outcome})
 
 
 STUBS = f"""from typing import Any, TypedDict
@@ -724,10 +724,10 @@ def test_tenant_counters_follow_worker_time_and_busy_rejections(
     token = CURRENT_TENANT_ID_CONTEXTVAR.set(tenant_id)
     try:
         seconds = _tenant_count(
-            "evolvxsi_code_mode_sandbox_worker_seconds_total", tenant_id
+            "nortpole_code_mode_sandbox_worker_seconds_total", tenant_id
         )
         rejections = _tenant_count(
-            "evolvxsi_code_mode_sandbox_busy_rejections_total", tenant_id
+            "nortpole_code_mode_sandbox_busy_rejections_total", tenant_id
         )
         with Monty(min_processes=1, max_processes=1, checkout_timeout=0.1) as pool:
             ran = run("print(await slow(seconds=0.5))\n", pool=pool)
@@ -739,12 +739,12 @@ def test_tenant_counters_follow_worker_time_and_busy_rejections(
     assert rejected.error == BUSY_MESSAGE
     # The program kept its worker while its call ran: no other program waited.
     held = (
-        _tenant_count("evolvxsi_code_mode_sandbox_worker_seconds_total", tenant_id)
+        _tenant_count("nortpole_code_mode_sandbox_worker_seconds_total", tenant_id)
         - seconds
     )
     assert 0.5 <= held < 5, held
     assert (
-        _tenant_count("evolvxsi_code_mode_sandbox_busy_rejections_total", tenant_id)
+        _tenant_count("nortpole_code_mode_sandbox_busy_rejections_total", tenant_id)
         == rejections + 1
     )
 
@@ -1542,7 +1542,7 @@ def test_a_call_that_outlives_its_program_keeps_its_thread_until_it_returns(
 
 def _held_after_end() -> float:
     return (
-        REGISTRY.get_sample_value("evolvxsi_code_mode_tool_call_threads_held_after_end")
+        REGISTRY.get_sample_value("nortpole_code_mode_tool_call_threads_held_after_end")
         or 0.0
     )
 

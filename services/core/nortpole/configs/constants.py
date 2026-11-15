@@ -7,7 +7,7 @@ from enum import Enum, auto
 
 NORTPOLE_DEFAULT_APPLICATION_NAME = "NortPole"
 NORTPOLE_DISCORD_URL = "https://discord.gg/4NA5SbzrWb"
-NORTPOLE_UTM_SOURCE = "evolvxsi_app"
+NORTPOLE_UTM_SOURCE = "nortpole_app"
 SLACK_USER_TOKEN_PREFIX = "xoxp-"
 NORTPOLE_EMAILABLE_LOGO_MAX_DIM = 512
 
@@ -38,7 +38,7 @@ PUBLIC_API_TAGS: list[str | Enum] = ["public"]
 FASTAPI_USERS_AUTH_COOKIE_NAME = (
     os.environ.get("AUTH_COOKIE_NAME") or "fastapiusersauth"
 )
-ANONYMOUS_USER_COOKIE_NAME = "evolvxsi_anonymous_user"
+ANONYMOUS_USER_COOKIE_NAME = "nortpole_anonymous_user"
 # Locale cookie the Next.js server layout reads to render the UI language.
 # The backend owns this cookie: PATCH /user/language and GET /me set it from
 # the user's stored preference. Name must match web/src/i18n/config.ts.
@@ -48,10 +48,10 @@ NEXT_LOCALE_COOKIE_NAME = "NEXT_LOCALE"
 ANONYMOUS_USER_INFO_ID = "__anonymous_user__"
 # Placeholder user for migrating no-auth data to first registered user
 NO_AUTH_PLACEHOLDER_USER_UUID = "00000000-0000-0000-0000-000000000001"
-NO_AUTH_PLACEHOLDER_USER_EMAIL = "no-auth-placeholder@evolvxsi.local"
+NO_AUTH_PLACEHOLDER_USER_EMAIL = "no-auth-placeholder@nortpole.local"
 # Real anonymous user in DB for anonymous access feature
 ANONYMOUS_USER_UUID = "00000000-0000-0000-0000-000000000002"
-ANONYMOUS_USER_EMAIL = "anonymous@evolvxsi.local"
+ANONYMOUS_USER_EMAIL = "anonymous@nortpole.local"
 
 # For chunking/processing chunks
 RETURN_SEPARATOR = "\n\r\n"
@@ -60,7 +60,7 @@ SECTION_SEPARATOR = "\n\n"
 INDEX_SEPARATOR = "==="
 
 # For File Connector Metadata override file
-NORTPOLE_METADATA_FILENAME = ".evolvxsi_metadata.json"
+NORTPOLE_METADATA_FILENAME = ".nortpole_metadata.json"
 
 #####
 # Version Pattern Configs
@@ -93,7 +93,7 @@ POSTGRES_UNKNOWN_APP_NAME = "unknown"
 SSL_CERT_FILE = "bundle.pem"
 # API Keys
 DANSWER_API_KEY_PREFIX = "API_KEY__"
-DANSWER_API_KEY_DUMMY_EMAIL_DOMAIN = "evolvxsiapikey.ai"
+DANSWER_API_KEY_DUMMY_EMAIL_DOMAIN = "nortpoleapikey.ai"
 UNNAMED_KEY_PLACEHOLDER = "Unnamed"
 DISCORD_SERVICE_API_KEY_NAME = "discord-bot-service"
 SLACK_SERVICE_ACCOUNT_NAME = "slack-bot-service"
@@ -117,9 +117,9 @@ KV_ANONYMOUS_USER_PREFERENCES_KEY = "anonymous_user_preferences"
 KV_ANONYMOUS_USER_PERSONALIZATION_KEY = "anonymous_user_personalization"
 KV_CRED_KEY = "credential_id_{}"
 KV_GEN_AI_KEY_CHECK_TIME = "genai_api_key_last_check_time"
-KV_SETTINGS_KEY = "evolvxsi_settings"
+KV_SETTINGS_KEY = "nortpole_settings"
 KV_CUSTOMER_UUID_KEY = "customer_uuid"
-KV_ENTERPRISE_SETTINGS_KEY = "evolvxsi_enterprise_settings"
+KV_ENTERPRISE_SETTINGS_KEY = "nortpole_enterprise_settings"
 KV_CUSTOM_ANALYTICS_SCRIPT_KEY = "__custom_analytics_script__"
 KV_KG_CONFIG_KEY = "kg_config"
 KV_CC_PAIR_IDS_BACKFILL_PROGRESS_KEY = "opensearch_cc_pair_ids_backfill_progress"
@@ -435,7 +435,7 @@ class TokenRateLimitScope(str, Enum):
     USER_GROUP_MEMBER = "user_group_member"
 
 
-# TODO(evan-evolvxsi): deliver alert-only notifications and expose ALERT_ONLY in the admin UI.
+# TODO(evan-nortpole): deliver alert-only notifications and expose ALERT_ONLY in the admin UI.
 class TokenRateLimitAction(str, Enum):
     """BLOCK rows are enforced. ALERT_ONLY rows are stored, and nothing reads
     them yet."""
@@ -497,7 +497,7 @@ class MilestoneRecordType(str, Enum):
     USER_MESSAGE_SENT = "user_message_sent"
     MULTIPLE_ASSISTANTS = "multiple_assistants"
     CREATED_ASSISTANT = "created_assistant"
-    CREATED_NORTPOLE_BOT = "created_evolvxsi_bot"
+    CREATED_NORTPOLE_BOT = "created_nortpole_bot"
     REQUESTED_CONNECTOR = "requested_connector"
 
 
@@ -714,8 +714,8 @@ class NortPoleCeleryTask:
     CLEANUP_INDEX_ATTEMPT = "cleanup_index_attempt"
 
     CLEANUP_OAUTH_PROVIDER_GRANTS = "cleanup_oauth_provider_grants"
-    NORTPOLE_RETENTION_PRUNE = "evolvxsi_retention_prune"
-    NORTPOLE_WORKFLOW_SCHEDULES = "evolvxsi_workflow_schedules"
+    NORTPOLE_RETENTION_PRUNE = "nortpole_retention_prune"
+    NORTPOLE_WORKFLOW_SCHEDULES = "nortpole_workflow_schedules"
     CLEANUP_OAUTH_PROVIDER_CLIENTS = "cleanup_oauth_provider_clients"
 
     # Old-index reclamation (post-reindex deletion of the now-PAST index)
@@ -800,7 +800,7 @@ class NortPoleCeleryTask:
 
 
 # this needs to correspond to the matching entry in supervisord
-NORTPOLE_CELERY_BEAT_HEARTBEAT_KEY = "evolvxsi:celery:beat:heartbeat"
+NORTPOLE_CELERY_BEAT_HEARTBEAT_KEY = "nortpole:celery:beat:heartbeat"
 
 REDIS_SOCKET_KEEPALIVE_OPTIONS = {}
 REDIS_SOCKET_KEEPALIVE_OPTIONS[socket.TCP_KEEPINTVL] = 15

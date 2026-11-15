@@ -4,7 +4,7 @@ Adapted from the upstream open-source core, commit `919578e0408a2d739a16215c0984
 
 ## What was copied
 
-- Backend package (renamed `evolvxsi`), `alembic`, `alembic_tenants`, `model_server`, `shared_configs`, `requirements`, `pyproject.toml`, `uv.lock` and unit tests.
+- Backend package (renamed `nortpole`), `alembic`, `alembic_tenants`, `model_server`, `shared_configs`, `requirements`, `pyproject.toml`, `uv.lock` and unit tests.
 - The web app source into `apps/workspace`.
 
 ## What was left out
@@ -42,7 +42,7 @@ Tests that switch on Enterprise mode are skipped with a stated reason.
 
 ## Brand assets and documents
 
-- Upstream brand assets were removed and replaced with new NortPole placeholder assets: `public/logo*.png`, `logo.svg`, `logotype*.png`, `evolvxsi.ico`, `OpenSource.png`, the chat background images and thumbnails, the inline logo components in `lib/opal/src/logos` and `lib/opal/src/icons`, and the favicon and app icons in the sandbox web template. The wordmark text uses a system font; final brand artwork and typeface are still open.
+- Upstream brand assets were removed and replaced with new NortPole placeholder assets: `public/logo*.png`, `logo.svg`, `logotype*.png`, `nortpole.ico`, `OpenSource.png`, the chat background images and thumbnails, the inline logo components in `lib/opal/src/logos` and `lib/opal/src/icons`, and the favicon and app icons in the sandbox web template. The wordmark text uses a system font; final brand artwork and typeface are still open.
 - The upstream licensed font (KH Teka) was removed. The font token is now `font-brand` (Inter, then system fonts).
 - Unreferenced Vercel and Next.js sample images and `favicon.zip` were removed from the sandbox web template, and the `ee` requirements file was removed.
 - Third-party product logos (connector, model-provider and Slack source icons) were kept because they identify other companies' products. Check each company's brand rules before release.
@@ -66,10 +66,10 @@ Tests that switch on Enterprise mode are skipped with a stated reason.
 
 ## Clean-up of upstream leftovers (done 2026-11-10)
 
-- Seeded and placeholder users now use `evolvxsi.local` addresses (code and migrations); all other upstream-domain addresses, including a named person's, were replaced or removed.
+- Seeded and placeholder users now use `nortpole.local` addresses (code and migrations); all other upstream-domain addresses, including a named person's, were replaced or removed.
 - The connector-request email is sent only when `CONNECTOR_REQUEST_EMAIL` is set; it no longer goes to an upstream address.
 - The `HTTP-Referer` header for model providers now uses the app's own `WEB_DOMAIN`; the web crawler user agent no longer links to an upstream site; the evaluation CLI default points to localhost.
-- Sandbox label keys moved from the upstream domain to `evolvxsi.local/...`.
+- Sandbox label keys moved from the upstream domain to `nortpole.local/...`.
 - The Craft background video no longer loads from an upstream CDN (and the content security policy no longer allows it); the footer link and slogan are now neutral ("Governed agent workspace", English in every locale until translated); the contact-sales link is `NEXT_PUBLIC_SALES_URL` or `#`.
 - The enterprise-only agent statistics links were removed, because that page was part of `ee`.
 - Upstream names removed from code, tests and documents (2026-11-14). Help links go to the in-product Help page (`/help`); data files the product fetches (recommended models, price tables, Slack source icons, release notes) are read from this repository; the built-in skill that pointed the agent at the upstream documentation site was removed (migration `e5a7c9d1f346`). The company-search and image-generation skills no longer use the upstream command-line package; each ships its own standard-library script (`company_search.py`, `image_gen.py`) that calls this API with the sandbox's `NORTPOLE_SERVER_URL` and `NORTPOLE_PAT`.
@@ -79,7 +79,7 @@ Tests that switch on Enterprise mode are skipped with a stated reason.
 
 - `nortpole/governance/route_policy/`: route kinds (local, private, cloud), data classes (public, internal, confidential, restricted), the administrator's policy, a decision function, `GET /route-policy`, `POST /route-policy/check` and `PUT /admin/route-policy`. A request to a blocked route fails with `POLICY_BLOCKED` before any content is sent; a model that cannot be placed on a provider, and a provider with no route type, are treated as cloud (fail closed). The one upstream edit is the `enforce_route` call in `chat/process_message.py` (`_select_models`).
 - Web: `RoutePicker` (`sections/model-selector/RoutePicker.tsx`) replaces the upstream model selector on the home and chat screens; a blocked route is listed but disabled with its reason.
-- Audit trail: table `evolvxsi_audit_event` (migration `9b1e7c3a5d20`), `nortpole/governance/route_policy/audit.py` and `GET /admin/route-policy/audit`. Every policy change (with a before and after diff) and every request refused with `POLICY_BLOCKED` is stored with the actor, time and policy facts, never message content. The same events also go to the log-only audit stream under two new, append-only `AuditAction` values (`route_policy.change`, `route.blocked`) in `utils/audit.py`. Rows are not pruned yet, and allowed requests are not logged.
+- Audit trail: table `nortpole_audit_event` (migration `9b1e7c3a5d20`), `nortpole/governance/route_policy/audit.py` and `GET /admin/route-policy/audit`. Every policy change (with a before and after diff) and every request refused with `POLICY_BLOCKED` is stored with the actor, time and policy facts, never message content. The same events also go to the log-only audit stream under two new, append-only `AuditAction` values (`route_policy.change`, `route.blocked`) in `utils/audit.py`. Rows are not pruned yet, and allowed requests are not logged.
 - Admin page `Route Policy` (`/admin/route-policy`, view `RoutePolicyPage.tsx`): route type per provider, the data-class matrix, the workspace data class and a test panel. It needs the manage-LLMs permission. The sidebar label is English in every locale until translated.
 - `services/model-gateway/src/adapters/mock/`: the deterministic mock model route used for development.
 - The policy lives in the key-value store; the workspace data class is one default value for now. Per-task data classes need the source and classification work.

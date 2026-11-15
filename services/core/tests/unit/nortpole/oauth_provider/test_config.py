@@ -12,7 +12,7 @@ from nortpole.oauth_provider.models import OAuthProviderSettings
 def _patch_oauth_config(
     monkeypatch: pytest.MonkeyPatch,
     *,
-    web_domain: str = "https://evolvxsi.example",
+    web_domain: str = "https://nortpole.example",
 ) -> None:
     monkeypatch.setattr(app_configs, "WEB_DOMAIN", web_domain)
 
@@ -20,45 +20,45 @@ def _patch_oauth_config(
 def test_load_oauth_provider_settings_derives_defaults(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    _patch_oauth_config(monkeypatch, web_domain="https://evolvxsi.example/")
+    _patch_oauth_config(monkeypatch, web_domain="https://nortpole.example/")
 
     settings = load_oauth_provider_settings()
     assert settings is not None
 
     assert settings == OAuthProviderSettings(
-        issuer_url="https://evolvxsi.example/api/oauth-provider",
-        mcp_resource_url="https://evolvxsi.example/mcp/",
-        web_url="https://evolvxsi.example",
-        web_origin="https://evolvxsi.example",
+        issuer_url="https://nortpole.example/api/oauth-provider",
+        mcp_resource_url="https://nortpole.example/mcp/",
+        web_url="https://nortpole.example",
+        web_origin="https://nortpole.example",
     )
 
 
 def test_load_oauth_provider_settings_preserves_web_path_and_origin(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    _patch_oauth_config(monkeypatch, web_domain="https://evolvxsi.example/app/")
+    _patch_oauth_config(monkeypatch, web_domain="https://nortpole.example/app/")
 
     settings = load_oauth_provider_settings()
     assert settings is not None
 
-    assert settings.issuer_url == "https://evolvxsi.example/app/api/oauth-provider"
-    assert settings.mcp_resource_url == "https://evolvxsi.example/app/mcp/"
-    assert settings.web_url == "https://evolvxsi.example/app"
-    assert settings.web_origin == "https://evolvxsi.example"
+    assert settings.issuer_url == "https://nortpole.example/app/api/oauth-provider"
+    assert settings.mcp_resource_url == "https://nortpole.example/app/mcp/"
+    assert settings.web_url == "https://nortpole.example/app"
+    assert settings.web_origin == "https://nortpole.example"
 
 
 def test_load_oauth_provider_settings_uses_any_url_canonical_form(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    _patch_oauth_config(monkeypatch, web_domain="HTTPS://EvolvXSI.EXAMPLE:443/App/")
+    _patch_oauth_config(monkeypatch, web_domain="HTTPS://NortPole.EXAMPLE:443/App/")
 
     settings = load_oauth_provider_settings()
     assert settings is not None
 
-    assert settings.issuer_url == "https://evolvxsi.example/App/api/oauth-provider"
-    assert settings.mcp_resource_url == "https://evolvxsi.example/App/mcp/"
-    assert settings.web_url == "https://evolvxsi.example/App"
-    assert settings.web_origin == "https://evolvxsi.example"
+    assert settings.issuer_url == "https://nortpole.example/App/api/oauth-provider"
+    assert settings.mcp_resource_url == "https://nortpole.example/App/mcp/"
+    assert settings.web_url == "https://nortpole.example/App"
+    assert settings.web_origin == "https://nortpole.example"
 
 
 @pytest.mark.parametrize(
@@ -111,40 +111,40 @@ def test_load_oauth_provider_settings_is_off_for_an_unusable_web_domain(
 
 def test_canonical_mcp_resource_accepts_exact_and_missing_final_slash_only() -> None:
     settings = OAuthProviderSettings(
-        issuer_url="https://evolvxsi.example/api/oauth-provider",
-        mcp_resource_url="https://evolvxsi.example/mcp/",
-        web_url="https://evolvxsi.example",
-        web_origin="https://evolvxsi.example",
+        issuer_url="https://nortpole.example/api/oauth-provider",
+        mcp_resource_url="https://nortpole.example/mcp/",
+        web_url="https://nortpole.example",
+        web_origin="https://nortpole.example",
     )
 
-    assert canonical_mcp_resource("https://evolvxsi.example/mcp/", settings) == (
-        "https://evolvxsi.example/mcp/"
+    assert canonical_mcp_resource("https://nortpole.example/mcp/", settings) == (
+        "https://nortpole.example/mcp/"
     )
-    assert canonical_mcp_resource("https://evolvxsi.example/mcp", settings) == (
-        "https://evolvxsi.example/mcp/"
+    assert canonical_mcp_resource("https://nortpole.example/mcp", settings) == (
+        "https://nortpole.example/mcp/"
     )
 
 
 @pytest.mark.parametrize(
     "resource",
     [
-        "https://evolvxsi.example/mcp/extra",
-        "https://evolvxsi.example/mcp?x=1",
-        "https://evolvxsi.example/mcp/#fragment",
-        "https://evolvxsi.example/mcp%2F",
-        "https://evolvxsi.example/MCP/",
-        "https://EVOLVXSI.example/mcp/",
-        "https://evolvxsi.example:443/mcp/",
+        "https://nortpole.example/mcp/extra",
+        "https://nortpole.example/mcp?x=1",
+        "https://nortpole.example/mcp/#fragment",
+        "https://nortpole.example/mcp%2F",
+        "https://nortpole.example/MCP/",
+        "https://NORTPOLE.example/mcp/",
+        "https://nortpole.example:443/mcp/",
         "https://evil.example/mcp/",
-        "https://evolvxsi.example/mc",
+        "https://nortpole.example/mc",
     ],
 )
 def test_canonical_mcp_resource_rejects_prefix_widening(resource: str) -> None:
     settings = OAuthProviderSettings(
-        issuer_url="https://evolvxsi.example/api/oauth-provider",
-        mcp_resource_url="https://evolvxsi.example/mcp/",
-        web_url="https://evolvxsi.example",
-        web_origin="https://evolvxsi.example",
+        issuer_url="https://nortpole.example/api/oauth-provider",
+        mcp_resource_url="https://nortpole.example/mcp/",
+        web_url="https://nortpole.example",
+        web_origin="https://nortpole.example",
     )
 
     with pytest.raises(ValueError, match="Invalid OAuth provider resource"):

@@ -1,4 +1,4 @@
-"""Shared fixtures for evolvxsi unit tests."""
+"""Shared fixtures for nortpole unit tests."""
 
 import logging
 from collections.abc import Generator
@@ -10,11 +10,11 @@ import pytest
 def _capture_audit_logger(
     caplog: pytest.LogCaptureFixture,
 ) -> Generator[None, None, None]:
-    """Attach caplog's handler to ``evolvxsi.audit`` so audit tests can assert on
+    """Attach caplog's handler to ``nortpole.audit`` so audit tests can assert on
     caplog: the subsystem sets ``propagate=False``, so records don't reach
     pytest's root handler. No-op for tests that emit no audit events.
     """
-    audit_logger = logging.getLogger("evolvxsi.audit")
+    audit_logger = logging.getLogger("nortpole.audit")
     audit_logger.addHandler(caplog.handler)
     try:
         yield

@@ -50,7 +50,7 @@ export default function MCPServerToolsEditor({
   const policyText = useTranslations("craft.apps.mcpPolicy");
   const policyEditorText = useTranslations("craft.apps.policyEditor");
   const settings = useSettings();
-  const craftAvailable = settings.evolvxsi_craft_available === true;
+  const craftAvailable = settings.nortpole_craft_available === true;
   const {
     data: tools = [],
     error: loadError,

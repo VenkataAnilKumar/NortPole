@@ -512,7 +512,7 @@ def test_private_mcp_http_enforces_path_credentials_and_policy(
                 ).encode()
                 try:
                     writer.write(
-                        f"POST http://{_HOST}:{port}{path} HTTP/1.1\r\nHost: {_HOST}:{port}\r\nContent-Type: application/json\r\nX-EvolvXSI-Mcp-Session: {session_id}\r\nAuthorization: Bearer placeholder\r\nContent-Length: {len(body)}\r\nConnection: close\r\n\r\n".encode()
+                        f"POST http://{_HOST}:{port}{path} HTTP/1.1\r\nHost: {_HOST}:{port}\r\nContent-Type: application/json\r\nX-NortPole-Mcp-Session: {session_id}\r\nAuthorization: Bearer placeholder\r\nContent-Length: {len(body)}\r\nConnection: close\r\n\r\n".encode()
                         + body
                     )
                     await writer.drain()

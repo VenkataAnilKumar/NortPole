@@ -57,7 +57,7 @@ from nortpole.redis.redis_hierarchy import (
 )
 from nortpole.redis.redis_pool import get_redis_client
 from nortpole.utils.logger import setup_logger
-from nortpole.utils.middleware import make_randomized_evolvxsi_request_id
+from nortpole.utils.middleware import make_randomized_nortpole_request_id
 from nortpole.utils.postgres_sanitization import sanitize_hierarchy_nodes_for_postgres
 
 logger = setup_logger()
@@ -151,7 +151,7 @@ def _flush_batch(
         attempt_id=attempt.id,
         connector_id=attempt.connector_credential_pair.connector.id,
         credential_id=attempt.connector_credential_pair.credential.id,
-        request_id=make_randomized_evolvxsi_request_id("TRX"),
+        request_id=make_randomized_nortpole_request_id("TRX"),
         structured_id="%s:%s:%s:targeted:%s"
         % (tenant_id, attempt.connector_credential_pair_id, attempt.id, batch_num),
         batch_num=batch_num,

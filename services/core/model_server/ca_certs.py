@@ -25,7 +25,7 @@ logger = setup_logger()
 # Set by the Helm model-server templates when customCACerts is enabled.
 CUSTOM_CA_CERTS_DIR_ENV = "NORTPOLE_CUSTOM_CA_CERTS_DIR"
 
-_MERGED_BUNDLE_NAME = "evolvxsi-model-server-ca-bundle.crt"
+_MERGED_BUNDLE_NAME = "nortpole-model-server-ca-bundle.crt"
 _CERT_SUFFIXES = {".crt", ".pem"}
 
 

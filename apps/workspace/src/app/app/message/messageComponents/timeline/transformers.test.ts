@@ -128,7 +128,7 @@ test("a later observation replaces a running call in place", () => {
 test("a shorter report of a running call keeps the fuller one", () => {
   const queries: Packet = {
     placement: at(0, 0, 0),
-    obj: { type: PacketType.SEARCH_TOOL_QUERIES_DELTA, queries: ["evolvxsi"] },
+    obj: { type: PacketType.SEARCH_TOOL_QUERIES_DELTA, queries: ["nortpole"] },
   } as Packet;
   const turns = expand([
     ...observation(0, 1, [...search(0, 0, false), queries], "running"),

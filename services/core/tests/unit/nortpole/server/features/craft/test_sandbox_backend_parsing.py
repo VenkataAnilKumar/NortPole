@@ -66,7 +66,7 @@ def test_sandbox_backend_unknown_fails_fast(
     assert "docker" in str(exc_info.value)
 
 
-def test_sandbox_image_fallback_is_not_derived_from_evolvxsi_version(
+def test_sandbox_image_fallback_is_not_derived_from_nortpole_version(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.delenv("SANDBOX_CONTAINER_IMAGE", raising=False)
@@ -74,18 +74,18 @@ def test_sandbox_image_fallback_is_not_derived_from_evolvxsi_version(
 
     reloaded = importlib.reload(configs)
 
-    assert reloaded.SANDBOX_CONTAINER_IMAGE == "evolvxsidotapp/sandbox:latest"
+    assert reloaded.SANDBOX_CONTAINER_IMAGE == "nortpoledotapp/sandbox:latest"
 
 
 def test_sandbox_image_override_wins(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setenv("NORTPOLE_VERSION", "v4.1.2")
-    monkeypatch.setenv("SANDBOX_CONTAINER_IMAGE", "evolvxsidotapp/sandbox:ctx-123")
+    monkeypatch.setenv("SANDBOX_CONTAINER_IMAGE", "nortpoledotapp/sandbox:ctx-123")
 
     reloaded = importlib.reload(configs)
 
-    assert reloaded.SANDBOX_CONTAINER_IMAGE == "evolvxsidotapp/sandbox:ctx-123"
+    assert reloaded.SANDBOX_CONTAINER_IMAGE == "nortpoledotapp/sandbox:ctx-123"
 
 
 def test_blank_sandbox_image_override_does_not_emit_blank_image(
@@ -96,7 +96,7 @@ def test_blank_sandbox_image_override_does_not_emit_blank_image(
 
     reloaded = importlib.reload(configs)
 
-    assert reloaded.SANDBOX_CONTAINER_IMAGE == "evolvxsidotapp/sandbox:latest"
+    assert reloaded.SANDBOX_CONTAINER_IMAGE == "nortpoledotapp/sandbox:latest"
 
 
 def test_sandbox_timing_defaults_match_existing_behavior(

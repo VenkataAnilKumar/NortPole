@@ -91,7 +91,7 @@ def world():  # type: ignore[no-untyped-def]
         external_user_emails=[f"syncmember-{RUN}@example.com", f"syncnamed_only-{RUN}@example.com"],
         external_user_group_ids=[], is_public=False,
     )
-    name = f"evolvxsi_enf_test_{RUN}"
+    name = f"nortpole_enf_test_{RUN}"
     idx = OpenSearchDocumentIndex(
         tenant_state=TenantState(tenant_id=TENANT, multitenant=False),
         index_name=name, embedding_dim=DIM, vector_quantization=VectorQuantization.NONE,
@@ -118,7 +118,7 @@ def world():  # type: ignore[no-untyped-def]
         s.query(Connector).filter(Connector.id.in_(ids["connectors"])).delete()
         s.query(UserGroup).filter(UserGroup.id.in_(list(ids["groups"].values()))).delete()
         s.query(User).filter(User.id.in_([ids[k] for k in ("member", "outsider", "syncmember", "syncnamed_only")])).delete()
-        s.execute(text("delete from evolvxsi_audit_event where actor_email = :e and row_hash is null"), {"e": ADMIN.email})
+        s.execute(text("delete from nortpole_audit_event where actor_email = :e and row_hash is null"), {"e": ADMIN.email})
         s.commit()
 
 

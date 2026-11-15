@@ -61,7 +61,7 @@ def signer():  # type: ignore[no-untyped-def]
         s.query(NortPoleTask).filter_by(pack_id=PACK_ID).delete()
         s.query(NortPolePackVersion).filter_by(pack_id=PACK_ID).delete()
         s.query(NortPolePackSigner).filter_by(key_id=key_id).delete()
-        s.execute(text("delete from evolvxsi_audit_event where actor_email = :e and row_hash is null"), {"e": ADMIN.email})
+        s.execute(text("delete from nortpole_audit_event where actor_email = :e and row_hash is null"), {"e": ADMIN.email})
         s.commit()
 
 
@@ -103,7 +103,7 @@ def test_a_tampered_package_is_refused_and_audited(signer) -> None:  # type: ign
             packs.install_pack(pkg, user=ADMIN, db_session=s)
         assert "does not match" in err.value.detail
         assert s.query(NortPolePackVersion).filter_by(pack_id=PACK_ID).count() == 0
-        denied = s.execute(text("select count(*) from evolvxsi_audit_event where action='pack.install' and outcome='denied' and actor_email = :e"), {"e": ADMIN.email}).scalar()
+        denied = s.execute(text("select count(*) from nortpole_audit_event where action='pack.install' and outcome='denied' and actor_email = :e"), {"e": ADMIN.email}).scalar()
         assert denied >= 1
 
 
@@ -192,7 +192,7 @@ def test_a_version_from_before_signed_bytes_were_kept_is_unverifiable_until_reup
         packs.install_pack(_package(key, key_id, m), user=ADMIN, db_session=s)
         assert _check(s).status == "verified"
         assert s.query(NortPolePackVersion).filter_by(pack_id=PACK_ID).count() == 1
-        restored = s.execute(text("select summary from evolvxsi_audit_event where action='pack.install' and actor_email=:e order by id desc limit 1"), {"e": ADMIN.email}).scalar()
+        restored = s.execute(text("select summary from nortpole_audit_event where action='pack.install' and actor_email=:e order by id desc limit 1"), {"e": ADMIN.email}).scalar()
         assert "Restored the signed manifest" in restored
 
 
@@ -224,7 +224,7 @@ def test_upgrade_and_rollback_leave_past_tasks_on_their_version(signer, person) 
         assert new.pack_version == "1.1.0"
 
         packs.activate(PACK_ID, "1.0.0", user=ADMIN, db_session=s)  # rollback
-        rolled = s.execute(text("select summary from evolvxsi_audit_event where action='pack.activate' and actor_email=:e order by id desc limit 1"), {"e": ADMIN.email}).scalar()
+        rolled = s.execute(text("select summary from nortpole_audit_event where action='pack.activate' and actor_email=:e order by id desc limit 1"), {"e": ADMIN.email}).scalar()
         assert "Rolled back to" in rolled
         assert tasks.get_task(old.id, user=u, db_session=s).pack_version == "1.0.0"
         assert tasks.get_task(new.id, user=u, db_session=s).pack_version == "1.1.0", "each task keeps the version it started from"
@@ -401,7 +401,7 @@ def test_review_rules_block_approval_until_met_and_warnings_do_not(signer, perso
         with pytest.raises(NortPoleError) as err:
             tasks.approve_draft(t.id, tasks.Approve(version=t.version, draft_hash=t.draft_hash), user=u, db_session=s)
         assert "Cite at least two sources." in err.value.detail and "Keep it short" not in err.value.detail
-        denied = s.execute(text("select outcome, summary from evolvxsi_audit_event where action='task.approve' order by id desc limit 1")).one()
+        denied = s.execute(text("select outcome, summary from nortpole_audit_event where action='task.approve' order by id desc limit 1")).one()
         assert denied.outcome == "denied" and "review rule" in denied.summary
 
         two = packs.start_from_template(PACK_ID, "receipt-rules", user=u, db_session=s)
@@ -571,7 +571,7 @@ def test_an_agent_runs_exactly_the_accepted_searches_and_cannot_be_steered_by_a_
         assert drafted["calls"] == 1 and [e.n for e in drafted["evidence"]] == [1, 2]
         assert ("Agent instructions (Policy researcher)", "Look for the current version of the policy first.") in drafted["guides"]
         assert t.state.value == "draft_ready"
-        row = s.execute(text("select summary, details::text from evolvxsi_audit_event where action='agent.run' and resource_id=:i"), {"i": str(t.id)}).one()
+        row = s.execute(text("select summary, details::text from nortpole_audit_event where action='agent.run' and resource_id=:i"), {"i": str(t.id)}).one()
         assert "ran 2 search(es)" in row[0] and "travel receipt" not in row[0] + row[1], "the audit holds counts, not the owner's words"
         assert '"agent": "researcher"' in row[1]
 

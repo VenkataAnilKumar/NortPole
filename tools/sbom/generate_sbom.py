@@ -26,7 +26,7 @@ from pathlib import Path
 from urllib.parse import quote
 
 ROOT = Path(__file__).resolve().parents[2]
-PRODUCT = "evolvxsi"
+PRODUCT = "nortpole"
 
 
 def _norm(name: str) -> str:
@@ -119,10 +119,10 @@ def build(uv_lock: str, bun_lock: str, *, version: str, commit: str, timestamp: 
         "version": 1,
         "metadata": {
             "timestamp": timestamp,
-            "tools": {"components": [{"type": "application", "name": "evolvxsi-generate-sbom"}]},
+            "tools": {"components": [{"type": "application", "name": "nortpole-generate-sbom"}]},
             "component": {"type": "application", "bom-ref": root_ref, "name": PRODUCT, "version": version,
-                          **({"properties": [{"name": "evolvxsi:commit", "value": commit}]} if commit else {})},
-            "properties": [{"name": "evolvxsi:sources", "value": "services/core/uv.lock, apps/workspace/bun.lock"}],
+                          **({"properties": [{"name": "nortpole:commit", "value": commit}]} if commit else {})},
+            "properties": [{"name": "nortpole:sources", "value": "services/core/uv.lock, apps/workspace/bun.lock"}],
         },
         "components": components,
         "dependencies": graph,

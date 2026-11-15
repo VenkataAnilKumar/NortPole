@@ -16,11 +16,11 @@ import {
 // user id, reads fall back to defaults and writes are dropped.
 
 function llmSelectionKey(userId: string): string {
-  return `evolvxsi:craftLlmSelection:${userId}`;
+  return `nortpole:craftLlmSelection:${userId}`;
 }
 
 function recommendedOnlyKey(userId: string): string {
-  return `evolvxsi:craftRecommendedModelsOnly:${userId}`;
+  return `nortpole:craftRecommendedModelsOnly:${userId}`;
 }
 
 export function getStoredRecommendedModelsOnly(

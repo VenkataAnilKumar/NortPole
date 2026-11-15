@@ -35,13 +35,13 @@ def test_verify_email_domain_rejects_plus_addressing(
     assert "'+'" in exc.value.detail
 
 
-def test_verify_email_domain_allows_plus_for_evolvxsi_app(
+def test_verify_email_domain_allows_plus_for_nortpole_app(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(users, "MULTI_TENANT", True, raising=False)
 
     # Should not raise for example.com domain
-    verify_email_domain("user+tag@evolvxsi.local", valid_email_domains=[])
+    verify_email_domain("user+tag@nortpole.local", valid_email_domains=[])
 
 
 def test_verify_email_domain_rejects_dotted_gmail_on_registration(

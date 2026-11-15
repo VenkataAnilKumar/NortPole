@@ -90,7 +90,7 @@ def test_empty_archive_accepted() -> None:
         "../evil",
         f"{ARCHIVE_ROOT}/opencode/../../evil",
         "evil.sh",
-        "managed/.evolvxsi/firewall-init.sh",
+        "managed/.nortpole/firewall-init.sh",
         ".opencode-database/evil",
         f"{ARCHIVE_ROOT}-evil/payload",
     ],

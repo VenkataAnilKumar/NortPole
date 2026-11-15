@@ -21,7 +21,7 @@ from nortpole.connectors.google_drive.source_operations import (
     GoogleDriveSourceOperations,
 )
 
-_DOMAIN = "evolvxsi-test.com"
+_DOMAIN = "nortpole-test.com"
 _DRIVE = "drive_1"
 
 

@@ -18,7 +18,7 @@ from nortpole.db.engine.sql_engine import is_valid_schema_name
 from nortpole.error_handling.error_codes import NortPoleErrorCode
 from nortpole.error_handling.exceptions import NortPoleError
 
-SSO_TENANT_TOKEN_AUDIENCE = "evolvxsi:sso-login-tenant"
+SSO_TENANT_TOKEN_AUDIENCE = "nortpole:sso-login-tenant"
 SSO_TENANT_TOKEN_LIFETIME_SECONDS = 600
 SSO_TENANT_TOKEN_PARAM = "workspace_token"
 

@@ -184,7 +184,7 @@ class FirefliesConnector(PollConnector, LoadConnector):
         while True:
             variables["skip"] = skip
             # Retry 5xx with exponential backoff — Fireflies occasionally
-            # returns 500 / 504 for transient errors (EVOLVXSI-BACKEND-H6FJ/H6FH).
+            # returns 500 / 504 for transient errors (NORTPOLE-BACKEND-H6FJ/H6FH).
             # 4xx still raises immediately because those are not retryable.
             response: requests.Response | None = None
             for attempt in range(_FIREFLIES_MAX_RETRIES):

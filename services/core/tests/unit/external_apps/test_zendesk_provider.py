@@ -109,13 +109,13 @@ def test_providers_on_a_fixed_host_contribute_no_skill_values() -> None:
 def test_token_exchange_posts_json_with_an_explicit_expiry() -> None:
     """Zendesk issues a refresh token only when the request names an expiry."""
     request = _provider().build_token_exchange_request(
-        "the-code", "cid", "secret", "https://evolvxsi.test/callback"
+        "the-code", "cid", "secret", "https://nortpole.test/callback"
     )
     assert request.json_encoded is True
     assert request.headers["Content-Type"] == "application/json"
     assert request.body["grant_type"] == "authorization_code"
     assert request.body["code"] == "the-code"
-    assert request.body["redirect_uri"] == "https://evolvxsi.test/callback"
+    assert request.body["redirect_uri"] == "https://nortpole.test/callback"
     assert request.body["scope"] == _provider().spec.oauth.scope
     # An integer, as Zendesk's JSON token endpoint documents it.
     assert isinstance(request.body["expires_in"], int)
@@ -129,7 +129,7 @@ def test_refresh_request_restates_the_expiry() -> None:
     assert (
         body["expires_in"]
         == _provider()
-        .build_token_exchange_request("c", "cid", "s", "https://evolvxsi.test/callback")
+        .build_token_exchange_request("c", "cid", "s", "https://nortpole.test/callback")
         .body["expires_in"]
     )
     assert _provider().refresh_json_encoded is True

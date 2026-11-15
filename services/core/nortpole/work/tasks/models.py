@@ -16,7 +16,7 @@ class NortPoleTask(Base):
     """One reviewed task. Holds the owner's request and the proposed plan;
     the work itself runs only after an explicit start and an accepted plan."""
 
-    __tablename__ = "evolvxsi_task"
+    __tablename__ = "nortpole_task"
 
     id: Mapped[uuid.UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     owner_id: Mapped[uuid.UUID] = mapped_column(
@@ -39,7 +39,7 @@ class NortPoleTask(Base):
     started_at: Mapped[datetime.datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     # The schedule that created this task, if a scheduled run did (R6).
     schedule_id: Mapped[uuid.UUID | None] = mapped_column(
-        PGUUID(as_uuid=True), ForeignKey("evolvxsi_workflow_schedule.id", ondelete="SET NULL"), nullable=True, index=True
+        PGUUID(as_uuid=True), ForeignKey("nortpole_workflow_schedule.id", ondelete="SET NULL"), nullable=True, index=True
     )
     # The pack version this task was started from, kept so later upgrades
     # or rollbacks never change what a past run was.

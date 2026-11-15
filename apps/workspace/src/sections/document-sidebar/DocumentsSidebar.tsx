@@ -1,6 +1,6 @@
 "use client";
 
-import { MinimalEvolvXSIDocument, NortPoleDocument } from "@/lib/search/types";
+import { MinimalNortPoleDocument, NortPoleDocument } from "@/lib/search/types";
 import ChatDocumentDisplay from "@/sections/document-sidebar/ChatDocumentDisplay";
 import { removeDuplicateDocs } from "@/lib/documentUtils";
 import { Dispatch, SetStateAction, useMemo, memo } from "react";
@@ -14,7 +14,7 @@ import { Text, Button, Divider } from "@opal/components";
 import { SvgSearchMenu, SvgX } from "@opal/icons";
 
 // Build an NortPoleDocument from basic file info
-const buildEvolvXSIDocumentFromFile = (
+const buildNortPoleDocumentFromFile = (
   id: string,
   name?: string | null,
   appendProjectPrefix?: boolean
@@ -84,7 +84,7 @@ interface DocumentsSidebarProps {
   closeSidebar: () => void;
   selectedDocuments: NortPoleDocument[] | null;
   modal: boolean;
-  setPresentingDocument: Dispatch<SetStateAction<MinimalEvolvXSIDocument | null>>;
+  setPresentingDocument: Dispatch<SetStateAction<MinimalNortPoleDocument | null>>;
 }
 
 const DocumentsSidebar = memo(
@@ -163,7 +163,7 @@ const DocumentsSidebar = memo(
 
     return (
       <div
-        id="evolvxsi-chat-sidebar"
+        id="nortpole-chat-sidebar"
         className="bg-background-tint-01 overflow-y-scroll h-full w-full border-s"
       >
         <div className="flex flex-col px-3 gap-6">
@@ -218,7 +218,7 @@ const DocumentsSidebar = memo(
                     key={file.id}
                     setPresentingDocument={setPresentingDocument}
                     modal={modal}
-                    document={buildEvolvXSIDocumentFromFile(
+                    document={buildNortPoleDocumentFromFile(
                       file.id,
                       file.name,
                       false

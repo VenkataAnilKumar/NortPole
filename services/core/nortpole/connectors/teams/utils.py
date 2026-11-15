@@ -13,7 +13,7 @@ from office365.runtime.http.request_options import RequestOptions
 from office365.runtime.queries.client_query import ClientQuery
 
 from nortpole.access.models import ExternalAccess
-from nortpole.access.utils import build_ext_group_name_for_evolvxsi
+from nortpole.access.utils import build_ext_group_name_for_nortpole
 from nortpole.configs.constants import DocumentSource
 from nortpole.connectors.interfaces import SecondsSinceUnixEpoch
 from nortpole.connectors.microsoft_utils.drive_delta import (
@@ -320,7 +320,7 @@ def source_group_ids(group_ids: set[str], for_indexing: bool) -> set[str]:
     if not for_indexing:
         return group_ids
     return {
-        build_ext_group_name_for_evolvxsi(group_id, DocumentSource.TEAMS)
+        build_ext_group_name_for_nortpole(group_id, DocumentSource.TEAMS)
         for group_id in group_ids
     }
 

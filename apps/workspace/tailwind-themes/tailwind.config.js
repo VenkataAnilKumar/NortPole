@@ -3,7 +3,7 @@ const plugin = require("tailwindcss/plugin");
 /** @type {import('tailwindcss').Config} */
 
 module.exports = {
-  presets: [require("@evolvxsi-ai/opal/tailwind-preset")],
+  presets: [require("@nortpole-ai/opal/tailwind-preset")],
   darkMode: "class",
   content: ["./src/**/*.{js,jsx,ts,tsx}", "./lib/opal/**/*.{js,jsx,ts,tsx}"],
   theme: {

@@ -24,10 +24,10 @@ depends_on = None
 
 _CRAFT_DOCUMENTATION_SKILL_ID = "craft-documentation"
 _CRAFT_DOCUMENTATION_DESCRIPTION = (
-    "Answer questions about how EvolvXSI and EvolvXSI Craft work using the product "
+    "Answer questions about how NortPole and NortPole Craft work using the product "
     "documentation. Use when the user asks what Craft can do, "
     "how a feature works, how to set up skills or apps, or how to deploy, "
-    "configure, or administer EvolvXSI."
+    "configure, or administer NortPole."
 )
 
 _skill_table = sa.table(

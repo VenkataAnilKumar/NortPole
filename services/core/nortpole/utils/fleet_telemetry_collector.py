@@ -33,7 +33,7 @@ from nortpole.db.fleet_telemetry import (
     stage_rows,
     standard_user_count,
 )
-from nortpole.server.runtime.evolvxsi_runtime import NortPoleRuntime
+from nortpole.server.runtime.nortpole_runtime import NortPoleRuntime
 from nortpole.utils.fleet_telemetry import (
     CONNECTOR_ROW_SETTINGS,
     DEPLOYMENT_TYPE,

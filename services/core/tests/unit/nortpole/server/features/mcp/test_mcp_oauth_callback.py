@@ -30,7 +30,7 @@ from nortpole.server.features.mcp.models import (
     MCPOAuthFlowState,
 )
 
-_REDIRECT_URI = "https://evolvxsi.example.com/mcp/oauth/callback"
+_REDIRECT_URI = "https://nortpole.example.com/mcp/oauth/callback"
 _CODE_VERIFIER = "v" * 128
 _STATE = "flow-state"
 

@@ -25,7 +25,7 @@ INDEXING_REQUEST_ID_CONTEXTVAR: contextvars.ContextVar[str | None] = (
 
 # set by every route in the API server
 NORTPOLE_REQUEST_ID_CONTEXTVAR: contextvars.ContextVar[str | None] = contextvars.ContextVar(
-    "evolvxsi_request_id", default=None
+    "nortpole_request_id", default=None
 )
 
 # Used to store cc pair id and index attempt id in multithreaded environments
@@ -44,7 +44,7 @@ CURRENT_USER_ID_CONTEXTVAR: contextvars.ContextVar[str | None] = contextvars.Con
 )
 
 # IncognitoRecordMode value of the streaming turn's session, None outside
-# incognito. A plain string keeps this layer free of evolvxsi imports.
+# incognito. A plain string keeps this layer free of nortpole imports.
 CURRENT_INCOGNITO_RECORD_MODE_CONTEXTVAR: contextvars.ContextVar[str | None] = (
     contextvars.ContextVar("current_incognito_record_mode", default=None)
 )

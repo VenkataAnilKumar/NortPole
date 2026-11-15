@@ -1594,7 +1594,7 @@ wheels = [
 ]
 
 [[package]]
-name = "evolvxsi"
+name = "nortpole"
 version = "0.0.0"
 source = { virtual = "." }
 dependencies = [

@@ -1,4 +1,4 @@
-"""add evolvxsi_route_tokens
+"""add nortpole_route_tokens
 
 Revision ID: 9d7f2b5c0a81
 Revises: 8c6e1a4b9d70
@@ -17,7 +17,7 @@ depends_on = None
 
 def upgrade() -> None:
     op.create_table(
-        "evolvxsi_route_tokens",
+        "nortpole_route_tokens",
         sa.Column("row_id", sa.Integer(), primary_key=True, autoincrement=True),
         sa.Column("day", sa.Date(), nullable=False),
         sa.Column("route_kind", sa.String(length=20), nullable=False),
@@ -28,9 +28,9 @@ def upgrade() -> None:
         sa.Column("completion_tokens", sa.BigInteger(), nullable=False, server_default="0"),
         sa.Column("cost_cents", sa.Numeric(18, 6), nullable=False, server_default="0"),
         sa.Column("unpriced_calls", sa.Integer(), nullable=False, server_default="0"),
-        sa.UniqueConstraint("day", "route_kind", "provider_id", "model_name", name="uq_evolvxsi_route_tokens"),
+        sa.UniqueConstraint("day", "route_kind", "provider_id", "model_name", name="uq_nortpole_route_tokens"),
     )
 
 
 def downgrade() -> None:
-    op.drop_table("evolvxsi_route_tokens")
+    op.drop_table("nortpole_route_tokens")

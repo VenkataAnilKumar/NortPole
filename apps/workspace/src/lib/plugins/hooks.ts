@@ -20,7 +20,7 @@ export function useInstalledPlugins() {
   );
   const settings = useSettings();
   const canManageApps =
-    isGlobalHolder && settings.evolvxsi_craft_available === true;
+    isGlobalHolder && settings.nortpole_craft_available === true;
   const apps = useSWR<ExternalAppAdminResponse[]>(
     canManageApps ? SWR_KEYS.buildExternalAppsAdmin : null,
     errorHandlingFetcher

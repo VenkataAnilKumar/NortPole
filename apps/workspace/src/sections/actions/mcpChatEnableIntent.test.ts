@@ -86,7 +86,7 @@ test("signed-out users cannot mint proof", () => {
 test("rejects a stored proof for another origin", () => {
   const token = mintMcpChatEnableIntent(scope);
   sessionStorage.setItem(
-    "evolvxsi:mcp-chat-enable",
+    "nortpole:mcp-chat-enable",
     JSON.stringify({
       ...scope,
       token,
@@ -98,6 +98,6 @@ test("rejects a stored proof for another origin", () => {
 });
 
 test("malformed stored data fails closed", () => {
-  sessionStorage.setItem("evolvxsi:mcp-chat-enable", "not-json");
+  sessionStorage.setItem("nortpole:mcp-chat-enable", "not-json");
   expect(verifyMcpChatEnableIntent("forged", scope)).toBe(false);
 });

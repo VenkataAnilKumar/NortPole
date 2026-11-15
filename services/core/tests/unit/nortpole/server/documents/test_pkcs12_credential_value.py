@@ -14,7 +14,7 @@ from nortpole.server.documents.private_key_types import validate_pkcs12_credenti
 def _pfx_base64() -> str:
     key = ec.generate_private_key(ec.SECP256R1())
     pfx = pkcs12.serialize_key_and_certificates(
-        b"evolvxsi", key, None, None, BestAvailableEncryption(b"secret")
+        b"nortpole", key, None, None, BestAvailableEncryption(b"secret")
     )
     return base64.b64encode(pfx).decode("ascii")
 

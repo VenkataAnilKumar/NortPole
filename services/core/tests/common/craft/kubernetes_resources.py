@@ -15,7 +15,7 @@ from nortpole.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manage
 from nortpole.server.features.build.sandbox.labels import (
     LABEL_K8S_COMPONENT,
     LABEL_K8S_MANAGED_BY,
-    LABEL_K8S_MANAGED_BY_EVOLVXSI,
+    LABEL_K8S_MANAGED_BY_NORTPOLE,
     LABEL_SANDBOX_ID,
     LABEL_TENANT_ID,
 )
@@ -35,9 +35,9 @@ class CleanupNamespace:
         labels = {
             LABEL_SANDBOX_ID: str(sandbox_id),
             LABEL_TENANT_ID: tenant,
-            LABEL_K8S_MANAGED_BY: LABEL_K8S_MANAGED_BY_EVOLVXSI,
+            LABEL_K8S_MANAGED_BY: LABEL_K8S_MANAGED_BY_NORTPOLE,
             LABEL_K8S_COMPONENT: "sandbox",
-            "evolvxsi.local/provisioning-attempt": str(attempt),
+            "nortpole.local/provisioning-attempt": str(attempt),
         }
         self.core.create_namespaced_pod(
             self.name,

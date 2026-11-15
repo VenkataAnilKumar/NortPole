@@ -205,15 +205,15 @@
       "type": "color"
     },
     "theme-primary-06": {
-      "value": "{evolvxsi-chrome-00}",
+      "value": "{nortpole-chrome-00}",
       "type": "color"
     },
     "theme-primary-05": {
-      "value": "{evolvxsi-chrome-10}",
+      "value": "{nortpole-chrome-10}",
       "type": "color"
     },
     "theme-primary-04": {
-      "value": "{evolvxsi-chrome-20}",
+      "value": "{nortpole-chrome-20}",
       "type": "color"
     },
     "theme-gradient-05": {

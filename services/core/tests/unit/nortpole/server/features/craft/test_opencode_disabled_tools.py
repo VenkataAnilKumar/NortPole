@@ -2,7 +2,7 @@
 sandbox session. It is deployment-wide, not per-user: the decision collapses
 two inputs: the `OPENCODE_DISABLED_TOOLS` env var (used when no real feature
 flag provider is configured, or the flag's variant is unset/unrecognized) and
-the PostHog `evolvxsi-craft-opencode-disabled-tools` multivariate flag, keyed on
+the PostHog `nortpole-craft-opencode-disabled-tools` multivariate flag, keyed on
 tenant_id rather than a per-user rollout — each variant key maps to a fixed
 tools list in `OPENCODE_DISABLED_TOOLS_VARIANTS`.
 """
@@ -88,7 +88,7 @@ def test_none_variant_disables_nothing(monkeypatch: pytest.MonkeyPatch) -> None:
     )
 
     assert get_opencode_disabled_tools() == []
-    assert provider.calls == [("evolvxsi-craft-opencode-disabled-tools", "tenant_dev")]
+    assert provider.calls == [("nortpole-craft-opencode-disabled-tools", "tenant_dev")]
 
 
 @pytest.mark.parametrize("unrecognized_variant", ["not-a-real-variant", True, False])

@@ -20,9 +20,9 @@ from nortpole.utils.logger import setup_logger
 logger = setup_logger()
 
 class NortPoleRouteUsage(Base):
-    __tablename__ = "evolvxsi_route_usage"
+    __tablename__ = "nortpole_route_usage"
     __table_args__ = (
-        UniqueConstraint("day", "route_kind", "provider_id", "model_name", "data_class", "purpose", name="uq_evolvxsi_route_usage"),
+        UniqueConstraint("day", "route_kind", "provider_id", "model_name", "data_class", "purpose", name="uq_nortpole_route_usage"),
     )
 
     row_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -42,7 +42,7 @@ def record_usage(*, route_kind: str, provider_id: int | None, model_name: str, d
                       model_name=model_name, data_class=data_class, purpose=purpose, requests=1)
         with get_session_with_current_tenant() as s:
             stmt = insert(NortPoleRouteUsage).values(**values)
-            stmt = stmt.on_conflict_do_update(constraint="uq_evolvxsi_route_usage",
+            stmt = stmt.on_conflict_do_update(constraint="uq_nortpole_route_usage",
                                               set_={"requests": NortPoleRouteUsage.requests + 1})
             s.execute(stmt)
             s.commit()
@@ -67,8 +67,8 @@ class NortPoleRouteTokens(Base):
     Counters only: no person, no prompt, no text. The cost is an estimate from the price list, in cents,
     counted only for calls whose price is known; `unpriced_calls` says how many were not."""
 
-    __tablename__ = "evolvxsi_route_tokens"
-    __table_args__ = (UniqueConstraint("day", "route_kind", "provider_id", "model_name", name="uq_evolvxsi_route_tokens"),)
+    __tablename__ = "nortpole_route_tokens"
+    __table_args__ = (UniqueConstraint("day", "route_kind", "provider_id", "model_name", name="uq_nortpole_route_tokens"),)
 
     row_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     day: Mapped[datetime.date] = mapped_column(Date, nullable=False)
@@ -116,7 +116,7 @@ def record_tokens(*, model_configuration_id: int | None, model_version: str, pro
                           cost_cents=cost if priced else 0, unpriced_calls=0 if priced else 1)
             stmt = insert(NortPoleRouteTokens).values(**values)
             t = NortPoleRouteTokens
-            stmt = stmt.on_conflict_do_update(constraint="uq_evolvxsi_route_tokens", set_={
+            stmt = stmt.on_conflict_do_update(constraint="uq_nortpole_route_tokens", set_={
                 "calls": t.calls + 1, "prompt_tokens": t.prompt_tokens + values["prompt_tokens"],
                 "completion_tokens": t.completion_tokens + values["completion_tokens"],
                 "cost_cents": t.cost_cents + values["cost_cents"], "unpriced_calls": t.unpriced_calls + values["unpriced_calls"]})

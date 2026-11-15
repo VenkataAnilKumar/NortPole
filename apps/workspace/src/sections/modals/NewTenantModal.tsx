@@ -13,7 +13,7 @@ import { InputErrorText, toast } from "@opal/layouts";
 import type { ErrorResponseBody } from "@/lib/fetcher";
 
 // App domain should not be hardcoded
-const APP_DOMAIN = process.env.NEXT_PUBLIC_APP_DOMAIN || "evolvxsi.local";
+const APP_DOMAIN = process.env.NEXT_PUBLIC_APP_DOMAIN || "nortpole.local";
 
 export interface NewTenantModalProps {
   tenantInfo: NewTenantInfo;

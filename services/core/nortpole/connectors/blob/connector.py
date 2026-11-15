@@ -185,7 +185,7 @@ class BlobStorageConnector(LoadConnector, PollConnector):
                     sts_client = boto3.client("sts", region_name=self.region_name)
                     assumed_role_object = sts_client.assume_role(
                         RoleArn=role_arn,
-                        RoleSessionName=f"evolvxsi_blob_storage_{int(time.time())}",
+                        RoleSessionName=f"nortpole_blob_storage_{int(time.time())}",
                     )
                     creds = assumed_role_object["Credentials"]
                     return {

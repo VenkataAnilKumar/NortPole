@@ -107,11 +107,11 @@ def validate_file(size: int) -> tuple[bool, str | None]:
 
 # PostHog feature flag key for enabling NortPole Craft (cloud rollout control)
 # Flag logic: True = enabled, False/null/not found = disabled
-NORTPOLE_CRAFT_ENABLED_FLAG = "evolvxsi-craft-enabled"
+NORTPOLE_CRAFT_ENABLED_FLAG = "nortpole-craft-enabled"
 
 # PostHog multivariate flag; each variant key maps to a fixed disabled-tools
 # list below. An unrecognized/missing variant falls back to OPENCODE_DISABLED_TOOLS.
-OPENCODE_DISABLED_TOOLS_FLAG = "evolvxsi-craft-opencode-disabled-tools"
+OPENCODE_DISABLED_TOOLS_FLAG = "nortpole-craft-opencode-disabled-tools"
 OPENCODE_DISABLED_TOOLS_VARIANTS: dict[str, list[str]] = {
     "none": [],
 }
@@ -122,7 +122,7 @@ BUILD_MODE_FEATURE_ID = "build_mode"
 
 def _craft_flag_enabled(user: User) -> bool:
     """
-    Flag logic for "evolvxsi-craft-enabled":
+    Flag logic for "nortpole-craft-enabled":
     - Flag = True → enabled (NortPole Craft is available)
     - Flag = False → disabled (NortPole Craft is not available)
     - Flag = null/not found → disabled (NortPole Craft is not available)

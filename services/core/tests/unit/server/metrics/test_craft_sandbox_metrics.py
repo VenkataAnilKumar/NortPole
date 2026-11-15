@@ -23,9 +23,9 @@ from nortpole.server.metrics.craft_sandbox import (
     track_sandbox_provision_in_progress,
 )
 
-_READY = "evolvxsi_craft_sandbox_ready_duration_seconds"
-_PHASE = "evolvxsi_craft_sandbox_provision_phase_duration_seconds"
-_IN_PROGRESS = "evolvxsi_craft_sandbox_provisions_in_progress"
+_READY = "nortpole_craft_sandbox_ready_duration_seconds"
+_PHASE = "nortpole_craft_sandbox_provision_phase_duration_seconds"
+_IN_PROGRESS = "nortpole_craft_sandbox_provisions_in_progress"
 
 
 def _sample(name: str, labels: dict[str, str] | None = None) -> float:

@@ -38,7 +38,7 @@ from nortpole.utils.logger import setup_logger
 
 logger = setup_logger()
 
-CAPTCHA_COOKIE_NAME = "evolvxsi_captcha_verified"
+CAPTCHA_COOKIE_NAME = "nortpole_captcha_verified"
 
 # Enterprise Assessment reason enums defined by Google — not a
 # per-deployment tuning knob. Any of these reasons on a token means the
@@ -262,7 +262,7 @@ async def verify_captcha_token(token: str, action: CaptchaAction) -> None:
 
 def _cookie_signing_key() -> bytes:
     return hashlib.sha256(
-        f"evolvxsi-captcha-cookie-v1::{USER_AUTH_SECRET}".encode("utf-8")
+        f"nortpole-captcha-cookie-v1::{USER_AUTH_SECRET}".encode("utf-8")
     ).digest()
 
 

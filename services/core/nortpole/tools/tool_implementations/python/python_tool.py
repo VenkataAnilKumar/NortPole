@@ -459,7 +459,7 @@ class PythonTool(Tool):
                         )
 
                         # Save to NortPole file store
-                        evolvxsi_file_id = file_store.save_file(
+                        nortpole_file_id = file_store.save_file(
                             content=BytesIO(file_content),
                             display_name=filename,
                             file_origin=FileOrigin.CHAT_IMAGE_GEN,
@@ -472,7 +472,7 @@ class PythonTool(Tool):
                         generated_files.append(
                             PythonExecutionFile(
                                 filename=filename,
-                                file_link=build_full_frontend_file_url(evolvxsi_file_id),
+                                file_link=build_full_frontend_file_url(nortpole_file_id),
                             )
                         )
 

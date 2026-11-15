@@ -16,7 +16,7 @@ OPENCODE_DATA_DIR = Path(
     os.environ.get("OPENCODE_DATA_HOME", "/workspace/opencode-data")
 )
 OPENCODE_HISTORY_RESTORED_SENTINEL = Path(
-    "/workspace/managed/.evolvxsi/opencode-history-restored"
+    "/workspace/managed/.nortpole/opencode-history-restored"
 )
 
 _OPENCODE_ARCHIVE_ROOT = ".opencode-data"

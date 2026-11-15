@@ -169,7 +169,7 @@ test("search cannot submit or clear a draft while readiness is unconfirmed", asy
   const inputProps = props("unconfirmed");
   const { container } = render(<AppInputBar {...inputProps} />);
   const send = container.querySelector<HTMLButtonElement>(
-    "#evolvxsi-chat-input-send-button"
+    "#nortpole-chat-input-send-button"
   );
   expect(send).toBeDisabled();
   if (!send) throw new Error("Search submission button is missing");
@@ -290,7 +290,7 @@ test("a pending readiness check does not disable Stop when streaming resumes", a
   act(() => store.updateChatState("session", "streaming"));
   rerender(<AppInputBar {...inputProps} chatState="streaming" />);
   const stop = container.querySelector<HTMLButtonElement>(
-    "#evolvxsi-chat-input-send-button"
+    "#nortpole-chat-input-send-button"
   );
   expect(stop).toBeEnabled();
   if (!stop) throw new Error("Stop button is missing");

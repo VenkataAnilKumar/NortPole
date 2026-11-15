@@ -7,7 +7,7 @@ import { useSettings } from "@/lib/settings/hooks";
 import * as Yup from "yup";
 import { Button } from "@opal/components";
 import { SvgArrowExchange } from "@opal/icons";
-import { SvgEvolvXSILogo } from "@opal/logos";
+import { SvgNortPoleLogo } from "@opal/logos";
 import { Modal } from "@opal/components";
 import { InputVertical, toast, Section } from "@opal/layouts";
 import { InputSingleSelectField } from "@opal/form";
@@ -58,7 +58,7 @@ function ModalShell({ provider, isEditing, children }: ModalShellProps) {
         <Modal.Header
           icon={provider.icon}
           moreIcon1={SvgArrowExchange}
-          moreIcon2={SvgEvolvXSILogo}
+          moreIcon2={SvgNortPoleLogo}
           title={
             isEditing
               ? t("modal.manage.title", { provider: provider.displayName })

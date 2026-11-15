@@ -40,7 +40,7 @@ def _to_configuration(persona: Persona) -> DefaultAssistantConfiguration:
     )
 
 
-def _to_evolvxsi_error(error: ValueError) -> NortPoleError:
+def _to_nortpole_error(error: ValueError) -> NortPoleError:
     if _DEFAULT_ASSISTANT_NOT_FOUND in str(error):
         return NortPoleError(NortPoleErrorCode.NOT_FOUND, str(error))
     return NortPoleError(NortPoleErrorCode.INVALID_INPUT, str(error))
@@ -75,7 +75,7 @@ def update_default_assistant(
             update_system_prompt=update_system_prompt,
         )
     except ValueError as e:
-        raise _to_evolvxsi_error(e) from e
+        raise _to_nortpole_error(e) from e
     return _to_configuration(updated_persona)
 
 
@@ -91,6 +91,6 @@ def update_default_assistant_tools(
             db_session, update_request.tool_ids, update_request.enabled
         )
     except ValueError as e:
-        raise _to_evolvxsi_error(e) from e
+        raise _to_nortpole_error(e) from e
     db_session.commit()
     return _to_configuration(persona)

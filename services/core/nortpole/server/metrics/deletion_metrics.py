@@ -31,19 +31,19 @@ from nortpole.utils.logger import setup_logger
 logger = setup_logger()
 
 DELETION_STARTED = Counter(
-    "evolvxsi_deletion_started_total",
+    "nortpole_deletion_started_total",
     "Connector deletions initiated (taskset generated)",
     ["tenant_id"],
 )
 
 DELETION_COMPLETED = Counter(
-    "evolvxsi_deletion_completed_total",
+    "nortpole_deletion_completed_total",
     "Connector deletions completed",
     ["tenant_id", "outcome"],
 )
 
 DELETION_TASKSET_DURATION = Histogram(
-    "evolvxsi_deletion_taskset_duration_seconds",
+    "nortpole_deletion_taskset_duration_seconds",
     "Duration of a connector deletion taskset, from taskset generation "
     "to completion or failure. Does not include time spent blocked on "
     "indexing/pruning/permissions before the taskset was generated.",
@@ -52,13 +52,13 @@ DELETION_TASKSET_DURATION = Histogram(
 )
 
 DELETION_BLOCKED = Counter(
-    "evolvxsi_deletion_blocked_total",
+    "nortpole_deletion_blocked_total",
     "Times deletion was blocked by a dependency",
     ["tenant_id", "blocker"],
 )
 
 DELETION_FENCE_RESET = Counter(
-    "evolvxsi_deletion_fence_reset_total",
+    "nortpole_deletion_fence_reset_total",
     "Deletion fences reset due to missing celery tasks",
     ["tenant_id"],
 )

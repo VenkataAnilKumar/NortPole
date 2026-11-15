@@ -127,7 +127,7 @@ def _step(plan: EditPlan, kind: EditStepKind) -> EditStep:
 
 
 def test_identity_change_reindexes_then_prunes() -> None:
-    current = _current(DocumentSource.GITHUB, {"repo_owner": "evolvxsi"})
+    current = _current(DocumentSource.GITHUB, {"repo_owner": "nortpole"})
     plan = _plan(current, connector_specific_config={"repo_owner": "other"})
 
     assert _kinds(plan) == [EditStepKind.FULL_REINDEX_THEN_PRUNE]
@@ -242,7 +242,7 @@ def test_widen_and_narrow_on_two_fields() -> None:
 
 def test_github_repo_owner_change_reindexes_then_prunes() -> None:
     current = _current(
-        DocumentSource.GITHUB, {"repo_owner": "evolvxsi", "repositories": "a"}
+        DocumentSource.GITHUB, {"repo_owner": "nortpole", "repositories": "a"}
     )
     plan = _plan(
         current,
@@ -368,7 +368,7 @@ def test_indexing_start_later_and_a_reindex_reindex_then_prune() -> None:
 
 def test_indexing_start_later_prune_folds_into_an_identity_change() -> None:
     current = _current(
-        DocumentSource.GITHUB, {"repo_owner": "evolvxsi"}, indexing_start=_EARLIER_START
+        DocumentSource.GITHUB, {"repo_owner": "nortpole"}, indexing_start=_EARLIER_START
     )
     plan = _plan(
         current,
@@ -631,7 +631,7 @@ def test_backfills_of_one_kind_with_different_windows_raise() -> None:
 
 def test_identity_and_narrowing_merge_into_one_step() -> None:
     current = _current(
-        DocumentSource.GITHUB, {"repo_owner": "evolvxsi", "repositories": "a,b"}
+        DocumentSource.GITHUB, {"repo_owner": "nortpole", "repositories": "a,b"}
     )
     plan = _plan(
         current,
@@ -888,7 +888,7 @@ def test_rule_steps_replace_the_default_steps_of_their_fields(
     github_rule: None,  # noqa: ARG001
 ) -> None:
     current = _current(
-        DocumentSource.GITHUB, {"repo_owner": "evolvxsi", "repositories": "a"}
+        DocumentSource.GITHUB, {"repo_owner": "nortpole", "repositories": "a"}
     )
     plan = _plan(
         current,
@@ -915,7 +915,7 @@ def test_fields_outside_the_rule_steps_keep_the_default_steps(
     github_rule: None,  # noqa: ARG001
 ) -> None:
     current = _current(
-        DocumentSource.GITHUB, {"repo_owner": "evolvxsi", "repositories": "a"}
+        DocumentSource.GITHUB, {"repo_owner": "nortpole", "repositories": "a"}
     )
     plan = _plan(
         current,
@@ -932,7 +932,7 @@ def test_rule_without_its_data_uses_the_default_rules(
     github_rule: None,  # noqa: ARG001
 ) -> None:
     current = _current(
-        DocumentSource.GITHUB, {"repo_owner": "evolvxsi", "repositories": "a"}
+        DocumentSource.GITHUB, {"repo_owner": "nortpole", "repositories": "a"}
     )
     plan = _plan(
         current, connector_specific_config={"repo_owner": "acme", "repositories": "a"}
@@ -1048,9 +1048,9 @@ def test_planning_rule_runs_once_per_plan(monkeypatch: pytest.MonkeyPatch) -> No
         ),
     )
     _plan(
-        _current(DocumentSource.GITHUB, {"repo_owner": "evolvxsi", "repositories": "a"}),
+        _current(DocumentSource.GITHUB, {"repo_owner": "nortpole", "repositories": "a"}),
         _inputs(rule_data=_RuleData(backfill_repositories="")),
-        connector_specific_config={"repo_owner": "evolvxsi", "repositories": "a,b"},
+        connector_specific_config={"repo_owner": "nortpole", "repositories": "a,b"},
     )
 
     assert len(calls) == 1

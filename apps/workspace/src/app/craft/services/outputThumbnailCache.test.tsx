@@ -88,7 +88,7 @@ function savedThumbnail(
     },
   };
 }
-const storageKey = "evolvxsi:craft:output-thumbnails:v1:owner";
+const storageKey = "nortpole:craft:output-thumbnails:v1:owner";
 beforeEach(() => window.sessionStorage.clear());
 
 it("restores successful revision-tagged previews across a browser reload", () => {

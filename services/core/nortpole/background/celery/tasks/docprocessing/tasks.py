@@ -148,9 +148,9 @@ from nortpole.server.metrics.connector_health_metrics import (
     on_connector_indexing_success,
     on_index_attempt_status_change,
 )
-from nortpole.server.runtime.evolvxsi_runtime import NortPoleRuntime
+from nortpole.server.runtime.nortpole_runtime import NortPoleRuntime
 from nortpole.utils.logger import setup_logger
-from nortpole.utils.middleware import make_randomized_evolvxsi_request_id
+from nortpole.utils.middleware import make_randomized_nortpole_request_id
 from nortpole.utils.telemetry import mt_cloud_telemetry
 from shared_configs.configs import (
     INDEXING_MODEL_SERVER_HOST,
@@ -1887,7 +1887,7 @@ def _docprocessing_task(
     # check_usage_and_raise raises NortPoleError; hitting a trial/paid usage limit
     # is an expected user-facing condition (not an actionable error), so we
     # mark the attempt failed and return cleanly instead of raising (which
-    # would ship EVOLVXSI-BACKEND-H6ED to Sentry on every queued batch of an
+    # would ship NORTPOLE-BACKEND-H6ED to Sentry on every queued batch of an
     # over-limit tenant).
     if USAGE_LIMITS_ENABLED:
         try:
@@ -2021,7 +2021,7 @@ def _docprocessing_task(
                 attempt_id=index_attempt_id,
                 connector_id=index_attempt.connector_credential_pair.connector.id,
                 credential_id=index_attempt.connector_credential_pair.credential.id,
-                request_id=make_randomized_evolvxsi_request_id("DIP"),
+                request_id=make_randomized_nortpole_request_id("DIP"),
                 structured_id=f"{tenant_id}:{cc_pair_id}:{index_attempt_id}:{batch_num}",
                 batch_num=batch_num,
             )

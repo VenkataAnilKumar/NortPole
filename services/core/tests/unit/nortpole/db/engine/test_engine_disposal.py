@@ -112,7 +112,7 @@ async def test_lifespan_shutdown_disposes_all_three_engines(
     each engine. The lifespan touches a lot of other startup machinery; we
     patch it out so this test is hermetic and only asserts the disposal calls.
     """
-    from nortpole import main as evolvxsi_main
+    from nortpole import main as nortpole_main
 
     sync_engine = MagicMock()
     readonly_engine = MagicMock()
@@ -134,46 +134,46 @@ async def test_lifespan_shutdown_disposes_all_three_engines(
         reset_sync = stack.enter_context(patch.object(SqlEngine, "reset_engine"))
         reset_ro = stack.enter_context(patch.object(SqlEngine, "reset_readonly_engine"))
         reset_async = stack.enter_context(
-            patch.object(evolvxsi_main, "reset_sqlalchemy_async_engine", new=AsyncMock())
+            patch.object(nortpole_main, "reset_sqlalchemy_async_engine", new=AsyncMock())
         )
         stack.enter_context(
             patch.object(
-                evolvxsi_main,
+                nortpole_main,
                 "get_sqlalchemy_async_engine",
                 return_value=async_engine_mock,
             )
         )
         stack.enter_context(
-            patch.object(evolvxsi_main, "setup_postgres_connection_pool_metrics")
+            patch.object(nortpole_main, "setup_postgres_connection_pool_metrics")
         )
-        stack.enter_context(patch.object(evolvxsi_main, "validate_no_vector_db_settings"))
-        stack.enter_context(patch.object(evolvxsi_main, "validate_cache_backend_settings"))
-        stack.enter_context(patch.object(evolvxsi_main, "validate_registry"))
-        stack.enter_context(patch.object(evolvxsi_main, "verify_user_auth_secret"))
+        stack.enter_context(patch.object(nortpole_main, "validate_no_vector_db_settings"))
+        stack.enter_context(patch.object(nortpole_main, "validate_cache_backend_settings"))
+        stack.enter_context(patch.object(nortpole_main, "validate_registry"))
+        stack.enter_context(patch.object(nortpole_main, "verify_user_auth_secret"))
         stack.enter_context(
             patch.object(
-                evolvxsi_main,
+                nortpole_main,
                 "fetch_versioned_implementation",
                 return_value=lambda: None,
             )
         )
-        stack.enter_context(patch.object(evolvxsi_main, "setup_tracing"))
+        stack.enter_context(patch.object(nortpole_main, "setup_tracing"))
         stack.enter_context(
-            patch.object(evolvxsi_main, "warm_up_connections", new=AsyncMock())
+            patch.object(nortpole_main, "warm_up_connections", new=AsyncMock())
         )
-        stack.enter_context(patch.object(evolvxsi_main, "get_session_with_current_tenant"))
-        stack.enter_context(patch.object(evolvxsi_main, "setup_evolvxsi"))
-        stack.enter_context(patch.object(evolvxsi_main, "get_default_file_store"))
-        stack.enter_context(patch.object(evolvxsi_main, "start_telemetry"))
-        stack.enter_context(patch.object(evolvxsi_main, "MULTI_TENANT", False))
-        stack.enter_context(patch.object(evolvxsi_main, "RATE_LIMITING_ENABLED", True))
+        stack.enter_context(patch.object(nortpole_main, "get_session_with_current_tenant"))
+        stack.enter_context(patch.object(nortpole_main, "setup_nortpole"))
+        stack.enter_context(patch.object(nortpole_main, "get_default_file_store"))
+        stack.enter_context(patch.object(nortpole_main, "start_telemetry"))
+        stack.enter_context(patch.object(nortpole_main, "MULTI_TENANT", False))
+        stack.enter_context(patch.object(nortpole_main, "RATE_LIMITING_ENABLED", True))
         stack.enter_context(
-            patch.object(evolvxsi_main, "setup_auth_limiter", new=AsyncMock())
+            patch.object(nortpole_main, "setup_auth_limiter", new=AsyncMock())
         )
         close_limiter = stack.enter_context(
-            patch.object(evolvxsi_main, "close_auth_limiter", new=AsyncMock())
+            patch.object(nortpole_main, "close_auth_limiter", new=AsyncMock())
         )
-        stack.enter_context(patch.object(evolvxsi_main, "DISABLE_VECTOR_DB", True))
+        stack.enter_context(patch.object(nortpole_main, "DISABLE_VECTOR_DB", True))
         stack.enter_context(
             patch("nortpole.background.periodic_poller.recover_stuck_user_files")
         )
@@ -188,7 +188,7 @@ async def test_lifespan_shutdown_disposes_all_three_engines(
         )
         chat_work = WorkTracker()
         chat_work.started()
-        stack.enter_context(patch.object(evolvxsi_main, "chat_turn_work", chat_work))
+        stack.enter_context(patch.object(nortpole_main, "chat_turn_work", chat_work))
         wait_started = asyncio.Event()
         loop = asyncio.get_running_loop()
         wait_idle = chat_work.wait_idle
@@ -211,9 +211,9 @@ async def test_lifespan_shutdown_disposes_all_three_engines(
             finally:
                 chat_work.finished()
 
-        stack.enter_context(patch.object(evolvxsi_main, "OAUTH_CLIENT_ID", ""))
-        stack.enter_context(patch.object(evolvxsi_main, "OAUTH_CLIENT_SECRET", ""))
-        stack.enter_context(patch.object(evolvxsi_main, "SYSTEM_RECURSION_LIMIT", None))
+        stack.enter_context(patch.object(nortpole_main, "OAUTH_CLIENT_ID", ""))
+        stack.enter_context(patch.object(nortpole_main, "OAUTH_CLIENT_SECRET", ""))
+        stack.enter_context(patch.object(nortpole_main, "SYSTEM_RECURSION_LIMIT", None))
 
         if shutdown_fails:
             shutdown_tracing.side_effect = RuntimeError("Tracing shutdown failed")
@@ -223,7 +223,7 @@ async def test_lifespan_shutdown_disposes_all_three_engines(
 
         completion: asyncio.Task[None] | None = None
         try:
-            async with evolvxsi_main.lifespan(MagicMock()):
+            async with nortpole_main.lifespan(MagicMock()):
                 if drained:
                     completion = asyncio.create_task(finish_chat())
                 reset_sync.assert_not_called()
@@ -241,7 +241,7 @@ async def test_lifespan_shutdown_disposes_all_three_engines(
                 await completion
             else:
                 chat_work.finished()
-        wait_chat.assert_called_once_with(evolvxsi_main.CHAT_EXECUTION_TIMEOUT_S)
+        wait_chat.assert_called_once_with(nortpole_main.CHAT_EXECUTION_TIMEOUT_S)
         assert wait_idle(0)
         shutdown_tracing.assert_called_once_with()
         stop_poller.assert_called_once_with()

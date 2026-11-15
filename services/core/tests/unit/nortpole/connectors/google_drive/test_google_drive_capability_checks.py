@@ -221,7 +221,7 @@ def test_workspace_users_do_not_apply_with_specific_users() -> None:
     assert result.applicable is False
 
 
-def test_specific_users_reports_the_users_evolvxsi_cannot_act_as() -> None:
+def test_specific_users_reports_the_users_nortpole_cannot_act_as() -> None:
     ops = _ops()
     bad_user = f"typo@{_DOMAIN}"
 

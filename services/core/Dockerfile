@@ -1,5 +1,5 @@
 # NortPole core API (FastAPI). Lite mode needs no search index and no model server.
-# Build from this directory:  docker build -t evolvxsi-core .
+# Build from this directory:  docker build -t nortpole-core .
 # Every dependency is a prebuilt wheel, so no system packages are installed.
 FROM python:3.13-slim AS build
 ENV UV_LINK_MODE=copy UV_COMPILE_BYTECODE=1 UV_PROJECT_ENVIRONMENT=/opt/venv
@@ -9,12 +9,12 @@ COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-dev --no-install-project --group backend
 
 FROM python:3.13-slim
-RUN useradd --create-home --uid 10001 evolvxsi
+RUN useradd --create-home --uid 10001 nortpole
 COPY --from=build /opt/venv /opt/venv
 WORKDIR /app
-COPY --chown=evolvxsi:evolvxsi . .
+COPY --chown=nortpole:nortpole . .
 ENV PATH=/opt/venv/bin:$PATH PYTHONPATH=/app PYTHONUNBUFFERED=1
-USER evolvxsi
+USER nortpole
 # Tokenizers baked into the image, so token counting works with no outbound internet. The default tokenizer
 # (chat token counting and the fallback) loads without a revision; the default embedding model's tokenizer loads
 # at the revision pinned in shared_configs/embedding_models.py, so the two must match

@@ -3,7 +3,7 @@
 import type { CredentialRef } from "@/lib/credentials/types";
 import { CHECKS_CARD_ID } from "@/lib/connectors/checks/constants";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { TextColor, TextFont } from "@evolvxsi-ai/shared/contracts";
+import type { TextColor, TextFont } from "@nortpole-ai/shared/contracts";
 import {
   ContentAction,
   Section,

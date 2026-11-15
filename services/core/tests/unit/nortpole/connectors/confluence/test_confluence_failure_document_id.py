@@ -26,7 +26,7 @@ from unittest import mock
 from nortpole.connectors.confluence.config import extract_page_id_from_url
 from nortpole.connectors.confluence.connector import ConfluenceConnector
 from nortpole.connectors.confluence.source_operations import (
-    _EvolvXSIConfluence,
+    _NortPoleConfluence,
 )
 from nortpole.connectors.models import ConnectorFailure, Document
 from tests.unit.nortpole.connectors.confluence.confluence_gateway_fakes import (
@@ -48,7 +48,7 @@ def _make_connector() -> ConfluenceConnector:
     connector = ConfluenceConnector(
         wiki_base="https://example.atlassian.net/wiki", is_cloud=True
     )
-    confluence_client = mock.Mock(spec=_EvolvXSIConfluence)
+    confluence_client = mock.Mock(spec=_NortPoleConfluence)
     confluence_client.paginated_cql_retrieval.return_value = iter([])
     connector._source_operations = gateway_with_client(confluence_client)
     return connector

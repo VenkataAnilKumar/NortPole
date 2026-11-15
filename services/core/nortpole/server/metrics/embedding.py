@@ -50,32 +50,32 @@ TEXT_TYPE_LABEL_NAME = "text_type"
 STATUS_LABEL_NAME = "status"
 
 _client_duration = Histogram(
-    "evolvxsi_embedding_client_duration_seconds",
+    "nortpole_embedding_client_duration_seconds",
     "Client-side end-to-end latency of an embedding batch as seen by the caller.",
     [PROVIDER_LABEL_NAME, TEXT_TYPE_LABEL_NAME],
     buckets=_EMBEDDING_LATENCY_BUCKETS,
 )
 
 _embedding_requests_total = Counter(
-    "evolvxsi_embedding_requests_total",
+    "nortpole_embedding_requests_total",
     "Total embedding batch requests, labeled by outcome.",
     [PROVIDER_LABEL_NAME, TEXT_TYPE_LABEL_NAME, STATUS_LABEL_NAME],
 )
 
 _embedding_texts_total = Counter(
-    "evolvxsi_embedding_texts_total",
+    "nortpole_embedding_texts_total",
     "Total number of individual texts submitted for embedding.",
     [PROVIDER_LABEL_NAME, TEXT_TYPE_LABEL_NAME],
 )
 
 _embedding_input_chars_total = Counter(
-    "evolvxsi_embedding_input_chars_total",
+    "nortpole_embedding_input_chars_total",
     "Total number of input characters submitted for embedding.",
     [PROVIDER_LABEL_NAME, TEXT_TYPE_LABEL_NAME],
 )
 
 _embeddings_in_progress = Gauge(
-    "evolvxsi_embeddings_in_progress",
+    "nortpole_embeddings_in_progress",
     "Number of embedding batches currently in-flight.",
     [PROVIDER_LABEL_NAME, TEXT_TYPE_LABEL_NAME],
 )
@@ -83,13 +83,13 @@ _embeddings_in_progress = Gauge(
 CACHE_OUTCOME_LABEL_NAME = "outcome"
 
 _query_embedding_cache_lookups_total = Counter(
-    "evolvxsi_query_embedding_cache_lookups_total",
+    "nortpole_query_embedding_cache_lookups_total",
     "Query-embedding cache lookups, labeled by outcome.",
     [PROVIDER_LABEL_NAME, CACHE_OUTCOME_LABEL_NAME],
 )
 
 _query_embedding_cache_writes_total = Counter(
-    "evolvxsi_query_embedding_cache_writes_total",
+    "nortpole_query_embedding_cache_writes_total",
     "Query-embedding cache writes, labeled by outcome.",
     [PROVIDER_LABEL_NAME, CACHE_OUTCOME_LABEL_NAME],
 )

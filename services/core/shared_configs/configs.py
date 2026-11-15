@@ -69,13 +69,13 @@ INDEXING_ONLY = os.environ.get("INDEXING_ONLY", "").lower() == "true"
 # The process needs to have this for the log file to write to
 # otherwise, it will not create additional log files
 # This should just be the filename base without extension or path.
-LOG_FILE_NAME = os.environ.get("LOG_FILE_NAME") or "evolvxsi"
+LOG_FILE_NAME = os.environ.get("LOG_FILE_NAME") or "nortpole"
 
 # Enable generating persistent log files for local dev environments
 DEV_LOGGING_ENABLED = os.environ.get("DEV_LOGGING_ENABLED", "").lower() == "true"
 # File logging is on by default. Set LOG_TO_FILE=false to disable it for a given
 # pod/process — it then logs to stdout only (e.g. read-only-root containers where
-# /var/log/evolvxsi isn't writable).
+# /var/log/nortpole isn't writable).
 LOG_TO_FILE = os.environ.get("LOG_TO_FILE", "true").lower() != "false"
 # notset, debug, info, notice, warning, error, or critical
 LOG_LEVEL = os.environ.get("LOG_LEVEL") or "info"
@@ -196,7 +196,7 @@ CORS_ALLOW_CREDENTIALS: bool = cors_allow_credentials(CORS_ALLOWED_ORIGIN)
 # Multi-tenancy configuration
 MULTI_TENANT = os.environ.get("MULTI_TENANT", "").lower() == "true"
 
-# Air-gapped deployment: no outbound calls to evolvxsi-controlled endpoints
+# Air-gapped deployment: no outbound calls to nortpole-controlled endpoints
 # (recommended-models sync, remote model catalog lookup, release notes).
 # Inbound traffic and user-configured integrations are unaffected.
 # NortPole: on by default. While on, the product does not fetch release notes, model price tables or
@@ -204,7 +204,7 @@ MULTI_TENANT = os.environ.get("MULTI_TENANT", "").lower() == "true"
 # to allow those fetches (the release notes shown would then be the upstream project's, not NortPole's).
 NORTPOLE_AIRGAPPED = os.environ.get("NORTPOLE_AIRGAPPED", "true").lower() == "true"
 
-# How often to check GitHub for updated evolvxsi-published LLM config
+# How often to check GitHub for updated nortpole-published LLM config
 # (recommended-models, remote model catalog sections).
 AUTO_LLM_UPDATE_INTERVAL_SECONDS = int(
     os.environ.get("AUTO_LLM_UPDATE_INTERVAL_SECONDS", 1800)  # 30 minutes

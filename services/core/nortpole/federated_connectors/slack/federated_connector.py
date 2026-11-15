@@ -18,7 +18,7 @@ from nortpole.db.engine.sql_engine import get_session_with_current_tenant
 from nortpole.federated_connectors.interfaces import FederatedConnector
 from nortpole.federated_connectors.models import CredentialField, EntityField, OAuthResult
 from nortpole.federated_connectors.slack.models import SlackCredentials, SlackEntities
-from nortpole.evolvxsibot.slack.models import SlackContext
+from nortpole.nortpolebot.slack.models import SlackContext
 from nortpole.utils.logger import setup_logger
 
 logger = setup_logger()

@@ -387,7 +387,7 @@ def get_standard_formatter() -> logging.Formatter:
 
 # Set on a record once a setup_logger file handler wrote it, so the root logger's
 # file handlers skip it when the record propagates up.
-_FILE_LOGGED_RECORD_ATTR = "evolvxsi_file_logged"
+_FILE_LOGGED_RECORD_ATTR = "nortpole_file_logged"
 
 _truncated_log_files: set[str] = set()
 
@@ -399,7 +399,7 @@ class _MarkFileLoggedFilter(logging.Filter):
 
 
 class SkipFileLoggedFilter(logging.Filter):
-    """Drops records an evolvxsi logger already wrote to the log files."""
+    """Drops records an nortpole logger already wrote to the log files."""
 
     def filter(self, record: logging.LogRecord) -> bool:
         return not record.__dict__.get(_FILE_LOGGED_RECORD_ATTR, False)
@@ -421,7 +421,7 @@ def add_file_handlers(
 
     for level in ["debug", "info", "notice"]:
         file_name = (
-            f"/var/log/evolvxsi/{LOG_FILE_NAME}_{level}.log"
+            f"/var/log/nortpole/{LOG_FILE_NAME}_{level}.log"
             if is_containerized
             else f"./log/{LOG_FILE_NAME}_{level}.log"
         )
@@ -451,7 +451,7 @@ def add_file_handlers(
             )
         except OSError:
             # The log location isn't writable by this process — e.g. a nonroot
-            # container whose mounted /var/log/evolvxsi volume is owned by another UID.
+            # container whose mounted /var/log/nortpole volume is owned by another UID.
             # Fall back to the stdout handler instead of crashing at import time.
             logger.warning(
                 "Cannot write log files under %s; falling back to stdout logging.",

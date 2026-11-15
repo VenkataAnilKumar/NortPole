@@ -46,7 +46,7 @@ _FAR_FUTURE = datetime.now(timezone.utc) + timedelta(days=365)
 
 def _count(source: str, wait_class: str) -> float:
     value = REGISTRY.get_sample_value(
-        "evolvxsi_connector_long_retry_after_total",
+        "nortpole_connector_long_retry_after_total",
         {"source": source, "wait_class": wait_class},
     )
     return value or 0.0

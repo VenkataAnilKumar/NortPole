@@ -57,7 +57,7 @@ def _make_manager() -> KubernetesSandboxManager:
     # in-process serve-transport plumbing.
     mgr = object.__new__(KubernetesSandboxManager)
     mgr._init_serve_state()
-    mgr._namespace = "evolvxsi-sandboxes"
+    mgr._namespace = "nortpole-sandboxes"
     return mgr
 
 
@@ -112,7 +112,7 @@ def test_reuse_existing_pod_clears_stale_tombstone() -> None:
             sandbox_id=sandbox_id,
             user_id=uuid4(),
             tenant_id="public",
-            evolvxsi_pat="pat-test",
+            nortpole_pat="pat-test",
             provisioning_attempt_number=1,
         )
 

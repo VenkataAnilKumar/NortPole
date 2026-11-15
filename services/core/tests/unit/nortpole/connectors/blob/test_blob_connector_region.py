@@ -54,7 +54,7 @@ def test_instance_role_auth_passes_region(region_name: str | None) -> None:
 def test_iam_role_auth_passes_region_to_sts_and_s3() -> None:
     credentials: dict[str, Any] = {
         "authentication_method": "iam_role",
-        "aws_role_arn": "arn:aws-us-gov:iam::123456789012:role/evolvxsi-test",
+        "aws_role_arn": "arn:aws-us-gov:iam::123456789012:role/nortpole-test",
     }
 
     connector = _make_connector("us-gov-west-1")

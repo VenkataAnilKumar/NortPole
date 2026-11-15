@@ -23,7 +23,7 @@ from nortpole.db.slack_channel_config import (
     remove_slack_channel_config,
     update_slack_channel_config,
 )
-from nortpole.evolvxsibot.slack.config import validate_channel_name
+from nortpole.nortpolebot.slack.config import validate_channel_name
 from nortpole.server.manage.models import (
     SlackBot,
     SlackBotCreationRequest,

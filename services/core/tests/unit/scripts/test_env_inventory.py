@@ -104,7 +104,7 @@ def _names(src: str) -> set[str]:
 
     tree = ast.parse(src)
     environ_aliases, getenv_aliases = _scan_os_imports(tree)
-    visitor = EnvVisitor("backend/evolvxsi/x.py", False, environ_aliases, getenv_aliases)
+    visitor = EnvVisitor("backend/nortpole/x.py", False, environ_aliases, getenv_aliases)
     visitor.visit(tree)
     return {r.name for r in visitor.reads}
 

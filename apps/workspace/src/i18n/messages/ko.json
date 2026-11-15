@@ -4277,7 +4277,7 @@
           "fields": {
             "sites": {
               "label": "사이트",
-              "description": "- 사이트를 지정하지 않으면 조직의 모든 사이트가 인덱싱됩니다 (`Sites.Read.All` 권한 필요).\n- 예를 들어 `https://evolvxsiai.sharepoint.com/sites/support`를 지정하면 이 사이트만 인덱싱합니다.\n- 예를 들어 `https://evolvxsiai.sharepoint.com/sites/support/subfolder`를 지정하면 이 폴더만 인덱싱합니다.\n- 사용자의 개인 사이트를 인덱싱하려면 [OneDrive 커넥터]({docsAdminsPath}/connectors/official/onedrive)를 사용하세요.\n- 사이트 지정은 현재 영어, 스페인어 또는 독일어를 사용하는 SharePoint 인스턴스에서만 작동합니다. 다른 언어 지원이 필요하면 NortPole 팀에 문의하세요."
+              "description": "- 사이트를 지정하지 않으면 조직의 모든 사이트가 인덱싱됩니다 (`Sites.Read.All` 권한 필요).\n- 예를 들어 `https://nortpoleai.sharepoint.com/sites/support`를 지정하면 이 사이트만 인덱싱합니다.\n- 예를 들어 `https://nortpoleai.sharepoint.com/sites/support/subfolder`를 지정하면 이 폴더만 인덱싱합니다.\n- 사용자의 개인 사이트를 인덱싱하려면 [OneDrive 커넥터]({docsAdminsPath}/connectors/official/onedrive)를 사용하세요.\n- 사이트 지정은 현재 영어, 스페인어 또는 독일어를 사용하는 SharePoint 인스턴스에서만 작동합니다. 다른 언어 지원이 필요하면 NortPole 팀에 문의하세요."
             },
             "include_site_documents": {
               "label": "문서 인덱싱",
@@ -4318,7 +4318,7 @@
           "fields": {
             "teams": {
               "label": "팀",
-              "description": "인덱싱할 팀을 0개 이상 지정하세요. 예를 들어 'evolvxsiai' 조직의 'Support' 팀을 지정하면 'Support' 팀에 속한 채널에서 전송된 메시지만 인덱싱합니다. 팀을 지정하지 않으면 조직의 모든 팀이 인덱싱됩니다."
+              "description": "인덱싱할 팀을 0개 이상 지정하세요. 예를 들어 'nortpoleai' 조직의 'Support' 팀을 지정하면 'Support' 팀에 속한 채널에서 전송된 메시지만 인덱싱합니다. 팀을 지정하지 않으면 조직의 모든 팀이 인덱싱됩니다."
             },
             "include_attachments": {
               "description": "각 채널의 파일 탭에 있는 파일을 SharePoint가 부여한 읽기 권한자와 함께 별도의 문서로 인덱싱합니다. 인증서 자격 증명, Graph의 Files.Read.All 또는 Sites.Read.All, 그리고 각 파일의 읽기 권한자를 읽기 위한 SharePoint API의 Sites.FullControl.All이 필요합니다. Sites.Selected를 사용하는 경우 각 채널 사이트에 대해 앱에 모든 권한을 부여하세요."
@@ -4478,7 +4478,7 @@
           "fields": {
             "base_url": {
               "label": "기본 URL",
-              "description": "Slab 팀의 기본 URL을 지정하세요. 다음과 같은 형태입니다: https://evolvxsi.slab.com/"
+              "description": "Slab 팀의 기본 URL을 지정하세요. 다음과 같은 형태입니다: https://nortpole.slab.com/"
             }
           }
         },
@@ -8124,7 +8124,7 @@
           "responseFallback": "초대 요청에 실패했습니다"
         },
         "requestSentBody": "참가 요청을 보냈습니다. {domain}의 관리자가 요청을 승인할 때까지 자신의 팀으로 둘러볼 수 있습니다.",
-        "tryEvolvXSIButton": {
+        "tryNortPoleButton": {
           "label": "기다리는 동안 NortPole 사용해 보기"
         }
       },
@@ -8754,7 +8754,7 @@
       },
       "placeholders": {
         "jwksUrl": "https://idp.example.com/.well-known/jwks.json",
-        "audience": "evolvxsi",
+        "audience": "nortpole",
         "issuer": "https://idp.example.com"
       }
     },
@@ -9540,7 +9540,7 @@
         "spEntityId": {
           "label": "SP 엔터티 ID",
           "description": "IdP에 등록된 이 인스턴스의 엔터티 ID입니다.",
-          "placeholder": "evolvxsi"
+          "placeholder": "nortpole"
         },
         "spX509Cert": {
           "label": "SP X.509 인증서",
@@ -10620,7 +10620,7 @@
         "message": "예기치 않은 오류가 발생했습니다."
       },
       "contentProviders": {
-        "evolvxsiWebCrawler": {
+        "nortpoleWebCrawler": {
           "subtitle": "기본 내장 웹 크롤러입니다. 대부분의 페이지에서 작동하지만 예외적인 경우 성능이 떨어집니다."
         },
         "firecrawl": {
@@ -11755,7 +11755,7 @@
         "description": "계정 액세스 제한 또는 권한 문제"
       },
       "cloudSupportPrompt": {
-        "text": "문제가 계속되면 <link>support@evolvxsi.local</link>으로 NortPole 팀에 문의하세요"
+        "text": "문제가 계속되면 <link>support@nortpole.local</link>으로 NortPole 팀에 문의하세요"
       },
       "code": {
         "accessDenied": "ID 공급자가 액세스를 거부했습니다.",
@@ -11839,7 +11839,7 @@
     },
     "impersonate": {
       "adminNote": {
-        "text": "참고: 이 기능은 @evolvxsi.local 관리자만 사용할 수 있습니다"
+        "text": "참고: 이 기능은 @nortpole.local 관리자만 사용할 수 있습니다"
       },
       "apiKeyField": {
         "label": "API 키",
@@ -13590,7 +13590,7 @@
         "newChatButton": {
           "tooltip": "새 채팅"
         },
-        "openInEvolvXSIButton": {
+        "openInNortPoleButton": {
           "tooltip": "{appName}에서 열기"
         }
       }
@@ -13942,7 +13942,7 @@
     "errorPages": {
       "accessRestricted": {
         "billingAdminHint": {
-          "text": "관리자라면 <billingLink>관리자 결제</billingLink> 페이지에서 라이선스를 {hadLicense, select, true {갱신} other {활성화}}하거나 Stripe를 통해 가입하거나 결제 관련 지원은 <supportLink>support@evolvxsi.local</supportLink>으로 문의하세요."
+          "text": "관리자라면 <billingLink>관리자 결제</billingLink> 페이지에서 라이선스를 {hadLicense, select, true {갱신} other {활성화}}하거나 Stripe를 통해 가입하거나 결제 관련 지원은 <supportLink>support@nortpole.local</supportLink>으로 문의하세요."
         },
         "downgradeButton": {
           "label": "Community로 다운그레이드"
@@ -17611,7 +17611,7 @@
     "disk": "OpenSearch 데이터 노드의 디스크 사용률이 85% 이상입니다. 디스크가 가득 차면 인덱싱이 중단될 수 있습니다.",
     "jvmMemory": "반복 검사에서 OpenSearch JVM 메모리 사용률이 85%를 초과했습니다. 검색 및 인덱싱이 실패할 수 있습니다.",
     "vectorMemory": "OpenSearch 벡터 메모리가 거의 가득 찼거나 한도에 도달했습니다. 검색 및 인덱싱이 실패할 수 있습니다.",
-    "contact": "시스템 관리자 또는 NortPole 팀([support@evolvxsi.local](mailto:support@evolvxsi.local))에 문의하세요.",
+    "contact": "시스템 관리자 또는 NortPole 팀([support@nortpole.local](mailto:support@nortpole.local))에 문의하세요.",
     "stale": "최신 검사를 사용할 수 없습니다. 이 경고는 마지막으로 성공한 검사를 반영하며 복구는 확인되지 않았습니다.",
     "dismiss": "닫기",
     "diskTitle": "디스크 공간",

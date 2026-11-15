@@ -15,7 +15,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, Response
 from starlette.middleware.base import RequestResponseEndpoint
 
-from nortpole.error_handling.exceptions import register_evolvxsi_exception_handlers
+from nortpole.error_handling.exceptions import register_nortpole_exception_handlers
 from nortpole.server.metrics.prometheus_setup import (
     create_prometheus_instrumentator,
     expose_prometheus_metrics,
@@ -35,7 +35,7 @@ def create_webhook_app() -> FastAPI:
         docs_url=None,
         redoc_url=None,
     )
-    register_evolvxsi_exception_handlers(app)
+    register_nortpole_exception_handlers(app)
 
     @app.middleware("http")
     async def health_check(

@@ -4,14 +4,14 @@
  * Consumers wire this in their own tailwind.config.js:
  *
  *   module.exports = {
- *     presets: [require("@evolvxsi-ai/opal/tailwind-preset")],
+ *     presets: [require("@nortpole-ai/opal/tailwind-preset")],
  *     content: [
  *       "./src/**\/*.{ts,tsx}",
- *       "./node_modules/@evolvxsi-ai/opal/dist/**\/*.{js,mjs}",
+ *       "./node_modules/@nortpole-ai/opal/dist/**\/*.{js,mjs}",
  *     ],
  *   };
  *
- * Consumers must also `import "@evolvxsi-ai/opal/styles.css"` once at the top of
+ * Consumers must also `import "@nortpole-ai/opal/styles.css"` once at the top of
  * their app (e.g. in a Next.js root layout) so the underlying CSS variables
  * referenced by these tokens are defined.
  */
@@ -193,12 +193,12 @@ module.exports = {
         "chart-sequential-mass-02-blue": "var(--chart-sequential-mass-02-blue)",
         "chart-diverging-neg-10-red": "var(--chart-diverging-neg-10-red)",
         "chart-diverging-neg-02-red": "var(--chart-diverging-neg-02-red)",
-        "evolvxsi-ink-100": "var(--evolvxsi-ink-100)",
-        "evolvxsi-ink-95": "var(--evolvxsi-ink-95)",
-        "evolvxsi-ink-90": "var(--evolvxsi-ink-90)",
-        "evolvxsi-chrome-20": "var(--evolvxsi-chrome-20)",
-        "evolvxsi-chrome-10": "var(--evolvxsi-chrome-10)",
-        "evolvxsi-chrome-00": "var(--evolvxsi-chrome-00)",
+        "nortpole-ink-100": "var(--nortpole-ink-100)",
+        "nortpole-ink-95": "var(--nortpole-ink-95)",
+        "nortpole-ink-90": "var(--nortpole-ink-90)",
+        "nortpole-chrome-20": "var(--nortpole-chrome-20)",
+        "nortpole-chrome-10": "var(--nortpole-chrome-10)",
+        "nortpole-chrome-00": "var(--nortpole-chrome-00)",
         "tint-98": "var(--tint-98)",
         "tint-95": "var(--tint-95)",
         "tint-90": "var(--tint-90)",

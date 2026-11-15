@@ -9,7 +9,7 @@ ROUTE_KINDS: tuple[str, ...] = ("local", "private", "cloud")
 DATA_CLASSES: tuple[str, ...] = ("public", "internal", "confidential", "restricted")
 # Preference order when the user picks "Auto": most contained route first.
 AUTO_PREFERENCE: tuple[str, ...] = ("local", "private", "cloud")
-KV_KEY = "evolvxsi_route_policy"
+KV_KEY = "nortpole_route_policy"
 UNASSIGNED_KIND = "cloud"  # a provider with no kind is treated as the least contained
 
 

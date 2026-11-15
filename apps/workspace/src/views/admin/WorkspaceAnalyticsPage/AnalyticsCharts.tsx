@@ -1,6 +1,6 @@
 import { useLocale, useTranslations } from "next-intl";
 import {
-  useEvolvXSIBotAnalytics,
+  useNortPoleBotAnalytics,
   useQueryAnalytics,
   useUserAnalytics,
 } from "@/lib/usage/hooks";
@@ -91,7 +91,7 @@ export function FeedbackChart({ timeRange }: TimeRangeProps) {
 
 export function SlackChannelChart({ timeRange }: TimeRangeProps) {
   const t = useTranslations("admin.analytics");
-  const { data, isLoading, error } = useEvolvXSIBotAnalytics(timeRange);
+  const { data, isLoading, error } = useNortPoleBotAnalytics(timeRange);
 
   useLoggedChartError("NortPoleBot", error);
 

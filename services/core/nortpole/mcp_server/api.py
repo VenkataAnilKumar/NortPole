@@ -13,7 +13,7 @@ from starlette.routing import Route
 from starlette.types import Receive, Scope, Send
 
 from nortpole.configs.app_configs import MCP_SERVER_CORS_ORIGINS
-from nortpole.error_handling.exceptions import register_evolvxsi_exception_handlers
+from nortpole.error_handling.exceptions import register_nortpole_exception_handlers
 from nortpole.mcp_server.auth import MCPAuthErrorMiddleware, build_mcp_server_auth
 from nortpole.mcp_server.utils import shutdown_http_client
 from nortpole.server.metrics.prometheus_setup import (
@@ -114,7 +114,7 @@ def create_mcp_fastapi_app() -> FastAPI:
         version="1.0.0",
         lifespan=combined_lifespan,
     )
-    register_evolvxsi_exception_handlers(app)
+    register_nortpole_exception_handlers(app)
 
     # Public health check endpoint (bypasses MCP auth)
     @app.middleware("http")

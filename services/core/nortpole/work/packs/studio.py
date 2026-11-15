@@ -29,8 +29,8 @@ from nortpole.work.packs.manifest import Manifest, canonical_bytes
 from nortpole.work.packs.models import NortPolePackSigner, NortPolePackVersion
 
 router = APIRouter(prefix="/admin/studio")
-KEY_KV = "evolvxsi_studio_signer"
-DRAFTS_KV = "evolvxsi_studio_drafts"
+KEY_KV = "nortpole_studio_signer"
+DRAFTS_KV = "nortpole_studio_drafts"
 KEY_ID = "workspace-studio"
 MAX_DRAFTS = 50
 

@@ -14,7 +14,7 @@ interface DirectorySnapshot {
 }
 
 function storageKey(userId: string, sessionId: string): string {
-  return `evolvxsi:craft:directories:v1:${userId}:${sessionId}`;
+  return `nortpole:craft:directories:v1:${userId}:${sessionId}`;
 }
 
 // oxlint-disable-next-line anti-slop/no-unknown-parameters -- Validates untrusted browser storage at the I/O boundary.

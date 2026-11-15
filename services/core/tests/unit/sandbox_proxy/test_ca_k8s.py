@@ -18,7 +18,7 @@ def _api_exception(status: int) -> ApiException:
 def _make_store(core_api: MagicMock) -> K8sSecretCAStore:
     return K8sSecretCAStore(
         core_api=core_api,
-        proxy_namespace="evolvxsi",
+        proxy_namespace="nortpole",
         sandbox_namespace="sandboxes",
         secret_name="sandbox-proxy-ca",
         configmap_name="sandbox-proxy-ca-bundle",
@@ -90,11 +90,11 @@ def test_persist_create_path_succeeds() -> None:
 
     # Secret carries both keys, base64-encoded, in the proxy namespace.
     secret_call = core_api.create_namespaced_secret.call_args
-    assert secret_call.kwargs["namespace"] == "evolvxsi"
+    assert secret_call.kwargs["namespace"] == "nortpole"
     secret_body = secret_call.kwargs["body"]
     assert secret_body.data["ca.crt"] == base64.b64encode(cert_pem).decode()
     assert secret_body.data["ca.key"] == base64.b64encode(key_pem).decode()
-    assert secret_body.metadata.labels["app.kubernetes.io/managed-by"] == "evolvxsi"
+    assert secret_body.metadata.labels["app.kubernetes.io/managed-by"] == "nortpole"
     assert secret_body.metadata.labels["app.kubernetes.io/component"] == "sandbox-proxy"
 
     # ConfigMap carries ONLY the cert (no key), in the sandbox namespace.

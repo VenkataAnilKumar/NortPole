@@ -96,11 +96,11 @@ const BackgroundThumbnail = ({
 export const SettingsPanel = ({
   settingsOpen,
   toggleSettings,
-  handleUseEvolvXSIToggle,
+  handleUseNortPoleToggle,
 }: {
   settingsOpen: boolean;
   toggleSettings: () => void;
-  handleUseEvolvXSIToggle: (checked: boolean) => void;
+  handleUseNortPoleToggle: (checked: boolean) => void;
 }) => {
   const tBg = useTranslations("common.chatBackgrounds");
   const bgLabels: Record<string, string> = {
@@ -113,7 +113,7 @@ export const SettingsPanel = ({
   };
   const t = useTranslations("chat");
   const { appName } = useSettings();
-  const { useEvolvXSIAsNewTab } = useNRFPreferences();
+  const { useNortPoleAsNewTab } = useNRFPreferences();
   const { theme, setTheme } = useTheme();
   const { user, updateUserChatBackground, updateUserThemePreference } =
     useUser();
@@ -218,8 +218,8 @@ export const SettingsPanel = ({
                 label={t("nrf.settingsPanel.newTabToggle.label", { appName })}
               >
                 <InputSwitch
-                  checked={useEvolvXSIAsNewTab}
-                  onCheckedChange={handleUseEvolvXSIToggle}
+                  checked={useNortPoleAsNewTab}
+                  onCheckedChange={handleUseNortPoleToggle}
                 />
               </SettingRow>
             </div>

@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from nortpole.key_value_store.factory import get_kv_store
 from nortpole.key_value_store.interface import KvKeyNotFoundError
 
-KV_KEY = "evolvxsi_admin_controls"
+KV_KEY = "nortpole_admin_controls"
 KINDS = ("route_policy", "retention", "controls")
 
 

@@ -79,7 +79,7 @@ def _oauth_admin_config_with_runtime_headers() -> MagicMock:
             "client_info": {
                 "client_id": "shared-oauth-client-id",
                 "client_secret": "shared-oauth-client-secret",
-                "redirect_uris": ["https://evolvxsi.example.com/mcp/oauth/callback"],
+                "redirect_uris": ["https://nortpole.example.com/mcp/oauth/callback"],
                 "grant_types": ["authorization_code", "refresh_token"],
                 "response_types": ["code"],
                 "token_endpoint_auth_method": "client_secret_post",

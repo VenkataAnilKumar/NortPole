@@ -1,6 +1,6 @@
-export const OAUTH_TEST_ACTIVE_KEY = "evolvxsi:oauth-config-test:active";
-const TEST_KEY_PREFIX = "evolvxsi:oauth-config-test:attempt:";
-export const OAUTH_TEST_MESSAGE_TYPE = "evolvxsi:oauth-config-test-result";
+export const OAUTH_TEST_ACTIVE_KEY = "nortpole:oauth-config-test:active";
+const TEST_KEY_PREFIX = "nortpole:oauth-config-test:attempt:";
+export const OAUTH_TEST_MESSAGE_TYPE = "nortpole:oauth-config-test-result";
 
 export function oauthTestStorageKey(state: string): string {
   return `${TEST_KEY_PREFIX}${state}`;
@@ -42,5 +42,5 @@ export function isOAuthTestMessage(value: unknown): value is OAuthTestMessage {
 }
 
 export function oauthTestChannelName(state: string): string {
-  return `evolvxsi:oauth-config-test:result:${state}`;
+  return `nortpole:oauth-config-test:result:${state}`;
 }

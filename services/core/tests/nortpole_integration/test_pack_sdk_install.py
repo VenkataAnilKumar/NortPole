@@ -52,5 +52,5 @@ def test_an_sdk_signed_pack_installs_and_activates(tmp_path: Path) -> None:
         with get_session_with_current_tenant() as s:
             s.query(NortPolePackVersion).filter_by(pack_id=pack_id).delete()
             s.query(NortPolePackSigner).filter_by(key_id=key["key_id"]).delete()
-            s.execute(text("delete from evolvxsi_audit_event where actor_email = :e and row_hash is null"), {"e": ADMIN.email})
+            s.execute(text("delete from nortpole_audit_event where actor_email = :e and row_hash is null"), {"e": ADMIN.email})
             s.commit()

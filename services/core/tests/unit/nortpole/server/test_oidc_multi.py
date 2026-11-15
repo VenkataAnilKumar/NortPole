@@ -429,8 +429,8 @@ def test_login_callback_uri_saml_is_fixed_acs() -> None:
     from nortpole.db.sso_provider import sso_login_callback_uri
 
     provider = _provider(name="corp-saml", provider_type=SSOProviderType.SAML)
-    uri = sso_login_callback_uri(provider, {}, "https://evolvxsi.example.com")
-    assert uri == "https://evolvxsi.example.com/auth/saml/callback"
+    uri = sso_login_callback_uri(provider, {}, "https://nortpole.example.com")
+    assert uri == "https://nortpole.example.com/auth/saml/callback"
 
 
 def test_fixed_callback_rejects_missing_state() -> None:

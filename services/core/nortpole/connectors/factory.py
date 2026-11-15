@@ -189,7 +189,7 @@ def build_connector_kwargs(
     try:
         config = mapping.config_class.model_validate(connector_specific_config)
     except pydantic.ValidationError as e:
-        # TODO(evan-evolvxsi): raise here once no stored config fails validation.
+        # TODO(evan-nortpole): raise here once no stored config fails validation.
         logger.warning(
             "Stored connector config does not match its typed config; using it as-is: source=%s errors=%s",
             source,

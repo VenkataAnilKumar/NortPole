@@ -45,7 +45,7 @@ for key in [
         _NORTPOLE_MANAGED_API_KEYS.add(key)
 
 
-def is_evolvxsi_managed_api_key(api_key: str | None) -> bool:
+def is_nortpole_managed_api_key(api_key: str | None) -> bool:
     """Check if the given API key is one of NortPole's managed default keys."""
     return bool(api_key) and api_key in _NORTPOLE_MANAGED_API_KEYS
 
@@ -196,7 +196,7 @@ def check_llm_cost_limit_for_provider(
         return
 
     # Only enforce limits for NortPole-managed API keys
-    if not is_evolvxsi_managed_api_key(llm_provider_api_key):
+    if not is_nortpole_managed_api_key(llm_provider_api_key):
         return
 
     check_usage_and_raise(

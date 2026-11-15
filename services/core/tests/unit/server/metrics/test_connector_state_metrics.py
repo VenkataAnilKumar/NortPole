@@ -76,7 +76,7 @@ def test_collect_reports_failure_when_db_unavailable() -> None:
         collector._executor.shutdown(wait=True)
 
     assert [family.name for family in families] == [
-        "evolvxsi_connector_state_collection_success"
+        "nortpole_connector_state_collection_success"
     ]
     assert families[0].samples[0].value == 0.0
 
@@ -100,58 +100,58 @@ def test_collect_maps_snapshot_to_metrics(monkeypatch: pytest.MonkeyPatch) -> No
         collector._executor.shutdown(wait=True)
     connector_labels = {"source": "google_drive", "cc_pair_id": "42"}
 
-    assert _sample_value(families["evolvxsi_connector_state_collection_success"], {}) == 1.0
+    assert _sample_value(families["nortpole_connector_state_collection_success"], {}) == 1.0
     assert (
         _sample_value(
-            families["evolvxsi_connector_last_successful_index_timestamp_seconds"],
+            families["nortpole_connector_last_successful_index_timestamp_seconds"],
             connector_labels,
         )
         == datetime(2026, 7, 11, 12, tzinfo=timezone.utc).timestamp()
     )
     assert (
         _sample_value(
-            families["evolvxsi_connector_last_pruned_timestamp_seconds"],
+            families["nortpole_connector_last_pruned_timestamp_seconds"],
             connector_labels,
         )
         == 0.0
     )
     assert (
         _sample_value(
-            families["evolvxsi_connector_repeated_error_state"],
+            families["nortpole_connector_repeated_error_state"],
             connector_labels,
         )
         == 1.0
     )
     assert (
         _sample_value(
-            families["evolvxsi_connector_status"],
+            families["nortpole_connector_status"],
             {**connector_labels, "status": "ACTIVE"},
         )
         == 1.0
     )
     assert (
         _sample_value(
-            families["evolvxsi_connector_status"],
+            families["nortpole_connector_status"],
             {**connector_labels, "status": "UNKNOWN"},
         )
         == 0.0
     )
     assert (
         _sample_value(
-            families["evolvxsi_connector_count"],
+            families["nortpole_connector_count"],
             {"source": "google_drive", "status": "ACTIVE"},
         )
         == 1.0
     )
     assert (
         _sample_value(
-            families["evolvxsi_connector_document_count"],
+            families["nortpole_connector_document_count"],
             {"source": "google_drive"},
         )
         == 17.0
     )
 
-    info_labels = families["evolvxsi_connector"].samples[0].labels
+    info_labels = families["nortpole_connector"].samples[0].labels
     assert info_labels == {
         "cc_pair_id": "42",
         "connector_name": "Engineering Drive",
@@ -211,7 +211,7 @@ def test_describe_does_not_query_database(monkeypatch: pytest.MonkeyPatch) -> No
         collector._executor.shutdown(wait=True)
 
     assert len(families) == 13
-    assert families[0].name == "evolvxsi_connector_state_collection_success"
+    assert families[0].name == "nortpole_connector_state_collection_success"
     collect_fresh.assert_not_called()
 
 

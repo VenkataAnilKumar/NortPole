@@ -148,7 +148,7 @@ def test_embedded_images_use_the_metadata_link() -> None:
     ]
 
 
-def test_evolvxsi_metadata_overrides_the_storage_fields() -> None:
+def test_nortpole_metadata_overrides_the_storage_fields() -> None:
     extraction = ExtractionResult(
         text_content="body",
         embedded_images=[],
@@ -213,7 +213,7 @@ def test_tabular_file_reports_its_mime_type_and_size() -> None:
 def test_unknown_extension_reports_size_without_a_mime_type() -> None:
     extraction = ExtractionResult(text_content="body", embedded_images=[], metadata={})
     with patch(f"{MODULE}.extract_text_and_images", return_value=extraction):
-        document = _build("notes.evolvxsiunknown", b"body")
+        document = _build("notes.nortpoleunknown", b"body")
 
     assert document is not None
     assert document.source_mime_type is None

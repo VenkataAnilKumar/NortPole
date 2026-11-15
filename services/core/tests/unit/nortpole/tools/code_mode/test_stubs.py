@@ -202,10 +202,10 @@ def test_mcp_like_schema_with_odd_names_and_refs() -> None:
     assert function.argument_names["class_"] == "class"
     # An explicit None is sent for an argument that accepts null only.
     assert tool_arguments(
-        function, {"repo_name": "evolvxsi", "limit": None, "class_": None}
-    ).value == {"repo-name": "evolvxsi", "limit": None}
+        function, {"repo_name": "nortpole", "limit": None, "class_": None}
+    ).value == {"repo-name": "nortpole", "limit": None}
     with pytest.raises(TypeError, match=r"must be JSON data.* at \['limit'\]"):
-        tool_arguments(function, {"repo_name": "evolvxsi", "limit": float("nan")})
+        tool_arguments(function, {"repo_name": "nortpole", "limit": float("nan")})
 
 
 def test_tool_arguments_stop_at_their_byte_limit() -> None:

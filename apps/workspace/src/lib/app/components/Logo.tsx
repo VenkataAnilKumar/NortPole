@@ -6,13 +6,13 @@ import { useSettings } from "@/lib/settings/hooks";
 import { DEFAULT_LOGO_SIZE_PX } from "@/lib/constants";
 import { Section } from "@opal/layouts";
 import { cn } from "@opal/utils";
-import { SvgEvolvXSILogo, SvgEvolvXSILogoWordmark, SvgEvolvXSIWordmark } from "@opal/logos";
+import { SvgNortPoleLogo, SvgNortPoleLogoWordmark, SvgNortPoleWordmark } from "@opal/logos";
 import { IconProps } from "@opal/types";
 
 export interface LogoProps extends IconProps {
   // Always render the real NortPole mark, ignoring the enterprise custom logo.
   // Used by NortPole-branded surfaces like Craft.
-  evolvxsiBranded?: boolean;
+  nortpoleBranded?: boolean;
 }
 
 /**
@@ -20,14 +20,14 @@ export interface LogoProps extends IconProps {
  * mark otherwise. Shaped like an Opal icon, so it fits any `icon` slot and
  * honours the size or style the slot passes.
  */
-export function Logo({ size, className, style, evolvxsiBranded }: LogoProps) {
+export function Logo({ size, className, style, nortpoleBranded }: LogoProps) {
   const t = useTranslations("common");
   const resolvedSize = size ?? DEFAULT_LOGO_SIZE_PX;
   const { logoUrl } = useSettings();
 
-  if (evolvxsiBranded || !logoUrl) {
+  if (nortpoleBranded || !logoUrl) {
     return (
-      <SvgEvolvXSILogo
+      <SvgNortPoleLogo
         size={resolvedSize}
         className={cn("shrink-0", className)}
         style={style}
@@ -64,19 +64,19 @@ export function FoldableLogo({
   folded,
   size,
   className,
-  evolvxsiBranded,
+  nortpoleBranded,
 }: FoldableLogoProps) {
   const t = useTranslations("common");
   const resolvedSize = size ?? DEFAULT_LOGO_SIZE_PX;
-  const { enterprise, logoUrl, hide_evolvxsi_branding, isLoading } = useSettings();
+  const { enterprise, logoUrl, hide_nortpole_branding, isLoading } = useSettings();
   const logoDisplayStyle = enterprise?.logo_display_style;
   const applicationName = enterprise?.application_name;
 
-  if (evolvxsiBranded) {
+  if (nortpoleBranded) {
     return folded ? (
-      <Logo evolvxsiBranded size={resolvedSize} className={className} />
+      <Logo nortpoleBranded size={resolvedSize} className={className} />
     ) : (
-      <SvgEvolvXSILogoWordmark size={resolvedSize} className={className} />
+      <SvgNortPoleLogoWordmark size={resolvedSize} className={className} />
     );
   }
 
@@ -105,7 +105,7 @@ export function FoldableLogo({
               </Text>
             )}
             {/* Wait for settings so a hidden tagline never flashes. */}
-            {!isLoading && !hide_evolvxsi_branding && (
+            {!isLoading && !hide_nortpole_branding && (
               <Text font="secondary-body" color="text-03" maxLines={1}>
                 {t("logo.poweredBy.label")}
               </Text>
@@ -121,7 +121,7 @@ export function FoldableLogo({
   if (!applicationName) {
     if (folded) return <Logo size={resolvedSize} className={className} />;
     if (!logoUrl) {
-      return <SvgEvolvXSILogoWordmark size={resolvedSize} className={className} />;
+      return <SvgNortPoleLogoWordmark size={resolvedSize} className={className} />;
     }
     return (
       <Section
@@ -133,7 +133,7 @@ export function FoldableLogo({
         height="fit"
       >
         <Logo size={resolvedSize} className={className} />
-        <SvgEvolvXSIWordmark size={resolvedSize} />
+        <SvgNortPoleWordmark size={resolvedSize} />
       </Section>
     );
   }
@@ -168,12 +168,12 @@ export function SidebarLogoMark({ size }: { size: number }) {
  */
 export function SidebarWordmark({ size }: { size: number }) {
   const t = useTranslations("common");
-  const { enterprise, hide_evolvxsi_branding, isLoading } = useSettings();
+  const { enterprise, hide_nortpole_branding, isLoading } = useSettings();
   const logoDisplayStyle = enterprise?.logo_display_style;
   const applicationName = enterprise?.application_name;
 
   if (!applicationName) {
-    return <SvgEvolvXSIWordmark size={size} />;
+    return <SvgNortPoleWordmark size={size} />;
   }
 
   return (
@@ -200,7 +200,7 @@ export function SidebarWordmark({ size }: { size: number }) {
         </Text>
       )}
       {/* Wait for settings so a hidden tagline never flashes. */}
-      {!isLoading && !hide_evolvxsi_branding && (
+      {!isLoading && !hide_nortpole_branding && (
         <Text font="secondary-body" color="text-03" maxLines={1}>
           {t("logo.poweredBy.label")}
         </Text>

@@ -356,9 +356,9 @@ class TestCustomTool(unittest.TestCase):
             tool_id=-1,
             openapi_schema=schema,
             custom_headers=[
-                {"key": "X-EvolvXSI-User-Id", "value": "USER_ID"},
+                {"key": "X-NortPole-User-Id", "value": "USER_ID"},
                 {
-                    "key": "X-EvolvXSI-User-Email",  # pragma: allowlist secret
+                    "key": "X-NortPole-User-Email",  # pragma: allowlist secret
                     "value": "USER_EMAIL",
                 },
             ],
@@ -386,8 +386,8 @@ class TestCustomTool(unittest.TestCase):
         # Custom headers do NOT receive placeholder substitution today;
         # only the OpenAPI schema string is templated.
         expected_headers = {
-            "X-EvolvXSI-User-Id": "USER_ID",
-            "X-EvolvXSI-User-Email": "USER_EMAIL",
+            "X-NortPole-User-Id": "USER_ID",
+            "X-NortPole-User-Email": "USER_EMAIL",
         }
         mock_request.assert_called_once_with(
             expected_url,

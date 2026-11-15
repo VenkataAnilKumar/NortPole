@@ -372,7 +372,7 @@ def export_usage(
     )
     start_dt, end_dt = _date_range_to_utc_bounds(start_date, end_date)
 
-    # TODO(evan-evolvxsi): this might need to be done in a background task
+    # TODO(evan-nortpole): this might need to be done in a background task
     rows = get_usage_export(db_session, start=start_dt, end=end_dt, model=model)
 
     records_by_email: dict[str, list[UsageExportRecord]] = defaultdict(list)

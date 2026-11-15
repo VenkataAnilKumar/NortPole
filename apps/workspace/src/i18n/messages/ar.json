@@ -4277,7 +4277,7 @@
           "fields": {
             "sites": {
               "label": "المواقع",
-              "description": "- إذا لم تُحدد مواقع، فستُفهرس جميع المواقع في مؤسستك (يتطلب الإذن `Sites.Read.All`).\n- تحديد `https://evolvxsiai.sharepoint.com/sites/support` مثلاً يفهرس هذا الموقع فقط.\n- تحديد `https://evolvxsiai.sharepoint.com/sites/support/subfolder` مثلاً يفهرس هذا المجلد فقط.\n- لفهرسة المواقع الشخصية للمستخدمين، استخدم [موصل OneDrive]({docsAdminsPath}/connectors/official/onedrive).\n- يعمل تحديد المواقع حاليًا مع نُسخ SharePoint التي تستخدم الإنجليزية أو الإسبانية أو الألمانية. تواصل مع فريق NortPole إذا احتجت إلى دعم لغة أخرى."
+              "description": "- إذا لم تُحدد مواقع، فستُفهرس جميع المواقع في مؤسستك (يتطلب الإذن `Sites.Read.All`).\n- تحديد `https://nortpoleai.sharepoint.com/sites/support` مثلاً يفهرس هذا الموقع فقط.\n- تحديد `https://nortpoleai.sharepoint.com/sites/support/subfolder` مثلاً يفهرس هذا المجلد فقط.\n- لفهرسة المواقع الشخصية للمستخدمين، استخدم [موصل OneDrive]({docsAdminsPath}/connectors/official/onedrive).\n- يعمل تحديد المواقع حاليًا مع نُسخ SharePoint التي تستخدم الإنجليزية أو الإسبانية أو الألمانية. تواصل مع فريق NortPole إذا احتجت إلى دعم لغة أخرى."
             },
             "include_site_documents": {
               "label": "فهرسة المستندات",
@@ -4318,7 +4318,7 @@
           "fields": {
             "teams": {
               "label": "الفرق",
-              "description": "حدّد 0 أو أكثر من الفرق للفهرسة. مثلاً، تحديد الفريق \"Support\" للمؤسسة \"evolvxsiai\" يجعلنا نفهرس فقط الرسائل المرسلة في القنوات التابعة للفريق \"Support\". إذا لم تُحدد فرق، فستُفهرس جميع الفرق في مؤسستك."
+              "description": "حدّد 0 أو أكثر من الفرق للفهرسة. مثلاً، تحديد الفريق \"Support\" للمؤسسة \"nortpoleai\" يجعلنا نفهرس فقط الرسائل المرسلة في القنوات التابعة للفريق \"Support\". إذا لم تُحدد فرق، فستُفهرس جميع الفرق في مؤسستك."
             },
             "include_attachments": {
               "description": "فهرسة الملفات في تبويب الملفات لكل قناة كمستندات مستقلة، مع القرّاء الذين يمنحهم SharePoint حق الوصول إليها. يتطلب بيانات اعتماد شهادة، وFiles.Read.All أو Sites.Read.All على Graph، وSites.FullControl.All على SharePoint API لقراءة قرّاء كل ملف. مع Sites.Selected، امنح التطبيق تحكمًا كاملاً في موقع كل قناة."
@@ -4478,7 +4478,7 @@
           "fields": {
             "base_url": {
               "label": "عنوان URL الأساسي",
-              "description": "حدّد عنوان URL الأساسي لفريق Slab لديك. سيبدو شيئًا مثل: https://evolvxsi.slab.com/"
+              "description": "حدّد عنوان URL الأساسي لفريق Slab لديك. سيبدو شيئًا مثل: https://nortpole.slab.com/"
             }
           }
         },
@@ -8124,7 +8124,7 @@
           "responseFallback": "فشل طلب الدعوة"
         },
         "requestSentBody": "أُرسل طلب انضمامك. يمكنك الاستكشاف كفريق خاص بك بينما تنتظر موافقة مسؤول {domain} على طلبك.",
-        "tryEvolvXSIButton": {
+        "tryNortPoleButton": {
           "label": "جرّب NortPole أثناء الانتظار"
         }
       },
@@ -8754,7 +8754,7 @@
       },
       "placeholders": {
         "jwksUrl": "https://idp.example.com/.well-known/jwks.json",
-        "audience": "evolvxsi",
+        "audience": "nortpole",
         "issuer": "https://idp.example.com"
       }
     },
@@ -9540,7 +9540,7 @@
         "spEntityId": {
           "label": "معرّف كيان موفّر الخدمة",
           "description": "معرّف كيان هذا المثيل، المسجّل لدى موفّر الهوية.",
-          "placeholder": "evolvxsi"
+          "placeholder": "nortpole"
         },
         "spX509Cert": {
           "label": "شهادة X.509 لموفّر الخدمة",
@@ -10620,7 +10620,7 @@
         "message": "حدث خطأ غير متوقع."
       },
       "contentProviders": {
-        "evolvxsiWebCrawler": {
+        "nortpoleWebCrawler": {
           "subtitle": "زاحف ويب مضمّن. يعمل مع معظم الصفحات لكنه أقل كفاءة في الحالات الاستثنائية."
         },
         "firecrawl": {
@@ -11755,7 +11755,7 @@
         "description": "قيود أو أذونات الوصول إلى الحساب"
       },
       "cloudSupportPrompt": {
-        "text": "إذا استمرت المشكلة، يرجى التواصل مع فريق NortPole على <link>support@evolvxsi.local</link>"
+        "text": "إذا استمرت المشكلة، يرجى التواصل مع فريق NortPole على <link>support@nortpole.local</link>"
       },
       "code": {
         "accessDenied": "رفض موفر الهوية الوصول.",
@@ -11839,7 +11839,7 @@
     },
     "impersonate": {
       "adminNote": {
-        "text": "ملاحظة: هذه الميزة متاحة فقط لمسؤولي @evolvxsi.local"
+        "text": "ملاحظة: هذه الميزة متاحة فقط لمسؤولي @nortpole.local"
       },
       "apiKeyField": {
         "label": "مفتاح API",
@@ -13590,7 +13590,7 @@
         "newChatButton": {
           "tooltip": "دردشة جديدة"
         },
-        "openInEvolvXSIButton": {
+        "openInNortPoleButton": {
           "tooltip": "فتح في {appName}"
         }
       }
@@ -13942,7 +13942,7 @@
     "errorPages": {
       "accessRestricted": {
         "billingAdminHint": {
-          "text": "إذا كنت المسؤول، فيرجى زيارة صفحة <billingLink>فوترة المسؤول</billingLink> من أجل {hadLicense, select, true {تجديد} other {تفعيل}} ترخيصك، أو التسجيل عبر Stripe، أو التواصل مع <supportLink>support@evolvxsi.local</supportLink> للمساعدة في الفوترة."
+          "text": "إذا كنت المسؤول، فيرجى زيارة صفحة <billingLink>فوترة المسؤول</billingLink> من أجل {hadLicense, select, true {تجديد} other {تفعيل}} ترخيصك، أو التسجيل عبر Stripe، أو التواصل مع <supportLink>support@nortpole.local</supportLink> للمساعدة في الفوترة."
         },
         "downgradeButton": {
           "label": "الرجوع إلى إصدار المجتمع"
@@ -17611,7 +17611,7 @@
     "disk": "يبلغ استخدام قرص OpenSearch ‏85% على الأقل على إحدى عقد البيانات. قد تتوقف الفهرسة عند امتلاء القرص.",
     "jvmMemory": "ظل استخدام ذاكرة JVM في OpenSearch أعلى من 85% عبر فحوصات متكررة. قد يفشل البحث والفهرسة.",
     "vectorMemory": "ذاكرة المتجهات في OpenSearch شبه ممتلئة أو وصلت إلى حدها. قد يفشل البحث والفهرسة.",
-    "contact": "تواصل مع مسؤول النظام أو فريق NortPole على [support@evolvxsi.local](mailto:support@evolvxsi.local).",
+    "contact": "تواصل مع مسؤول النظام أو فريق NortPole على [support@nortpole.local](mailto:support@nortpole.local).",
     "stale": "الفحص الأخير غير متاح. يعكس هذا التحذير آخر فحص ناجح؛ لم يتم تأكيد التعافي.",
     "dismiss": "إغلاق",
     "diskTitle": "مساحة القرص",

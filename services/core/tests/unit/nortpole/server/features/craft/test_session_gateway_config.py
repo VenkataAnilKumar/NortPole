@@ -116,8 +116,8 @@ def test_decision_models_require_chat_capability_for_craft(supports_chat: bool) 
     assert llm_config._select_gateway_default([provider], selection) == expected
     assert llm_config._select_gateway_default([provider], None, [selection]) == expected
     assert llm_config._select_gateway_default([provider], None) == expected
-    with patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://evolvxsi.test/api"):
-        config = llm_config.build_evolvxsi_gateway_config([provider], selection)
+    with patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://nortpole.test/api"):
+        config = llm_config.build_nortpole_gateway_config([provider], selection)
     if supports_chat:
         assert config is not None
         assert config.model_name == "3/gpt-6-luna"
@@ -139,16 +139,16 @@ def test_gateway_config_qualifies_collisions_and_selects_exact_default() -> None
         name="AWS Bedrock",
     )
 
-    with patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://evolvxsi.test/api"):
-        config = llm_config.build_evolvxsi_gateway_config(
+    with patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://nortpole.test/api"):
+        config = llm_config.build_nortpole_gateway_config(
             [bedrock, direct],
             llm_config.GatewaySelection(7, "anthropic/claude-sonnet"),
         )
 
     assert config is not None
-    assert config.provider == "evolvxsi"
+    assert config.provider == "nortpole"
     assert config.model_name == "7/anthropic/claude-sonnet"
-    assert config.api_base == "https://evolvxsi.test/api/gateway/v1"
+    assert config.api_base == "https://nortpole.test/api/gateway/v1"
     assert config.models is not None
     assert {model.id for model in config.models} == {
         "3/claude-sonnet",
@@ -164,8 +164,8 @@ def test_gateway_config_fallback_supports_any_provider() -> None:
     bedrock = _provider(2, "bedrock", [_model("bedrock-model")])
     anthropic = _provider(9, "anthropic", [_model("claude-first")])
 
-    with patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://evolvxsi.test"):
-        config = llm_config.build_evolvxsi_gateway_config([bedrock, anthropic])
+    with patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://nortpole.test"):
+        config = llm_config.build_nortpole_gateway_config([bedrock, anthropic])
 
     assert config is not None
     assert config.model_name == "2/bedrock-model"
@@ -185,12 +185,12 @@ def test_gateway_model_capabilities_reach_opencode_catalog() -> None:
         ],
     )
 
-    with patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://evolvxsi.test"):
-        gateway_config = llm_config.build_evolvxsi_gateway_config([provider])
+    with patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://nortpole.test"):
+        gateway_config = llm_config.build_nortpole_gateway_config([provider])
 
     assert gateway_config is not None
     opencode_models = build_provider_opencode_config(gateway_config)["provider"][
-        "evolvxsi"
+        "nortpole"
     ]["models"]
 
     vision_model = opencode_models["3/claude-opus-5"]
@@ -214,7 +214,7 @@ def test_gateway_model_capabilities_reach_opencode_catalog() -> None:
 
 def test_gateway_config_can_target_direct_api_service() -> None:
     with patch.object(llm_config, "NORTPOLE_SERVER_URL", "http://api:8080/"):
-        config = llm_config.build_evolvxsi_gateway_config(
+        config = llm_config.build_nortpole_gateway_config(
             [_provider(2, "bedrock", [_model("bedrock-model")])]
         )
 
@@ -223,13 +223,13 @@ def test_gateway_config_can_target_direct_api_service() -> None:
 
 
 def test_gateway_config_preserves_url_path_prefix() -> None:
-    with patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://evolvxsi.example/api"):
-        config = llm_config.build_evolvxsi_gateway_config(
+    with patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://nortpole.example/api"):
+        config = llm_config.build_nortpole_gateway_config(
             [_provider(2, "bedrock", [_model("bedrock-model")])]
         )
 
     assert config is not None
-    assert config.api_base == "https://evolvxsi.example/api/gateway/v1"
+    assert config.api_base == "https://nortpole.example/api/gateway/v1"
 
 
 def test_custom_azure_alias_renders_deployment_limits_for_opencode() -> None:
@@ -254,14 +254,14 @@ def test_custom_azure_alias_renders_deployment_limits_for_opencode() -> None:
     }
 
     with (
-        patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://evolvxsi.test"),
+        patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://nortpole.test"),
         patch.object(model_catalog, "get_model_map", return_value=model_map),
     ):
-        gateway_config = llm_config.build_evolvxsi_gateway_config([provider])
+        gateway_config = llm_config.build_nortpole_gateway_config([provider])
 
     assert gateway_config is not None
     opencode_config = build_provider_opencode_config(gateway_config)
-    assert opencode_config["provider"]["evolvxsi"]["models"]["300/GPT-6.1-SOL"][
+    assert opencode_config["provider"]["nortpole"]["models"]["300/GPT-6.1-SOL"][
         "limit"
     ] == {
         "context": 272_000,
@@ -291,14 +291,14 @@ def test_gateway_config_preserves_explicit_context_override() -> None:
     }
 
     with (
-        patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://evolvxsi.test"),
+        patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://nortpole.test"),
         patch.object(model_catalog, "get_model_map", return_value=model_map),
     ):
-        gateway_config = llm_config.build_evolvxsi_gateway_config([provider])
+        gateway_config = llm_config.build_nortpole_gateway_config([provider])
 
     assert gateway_config is not None
     opencode_config = build_provider_opencode_config(gateway_config)
-    assert opencode_config["provider"]["evolvxsi"]["models"]["300/Customer Alias"][
+    assert opencode_config["provider"]["nortpole"]["models"]["300/Customer Alias"][
         "limit"
     ] == {
         "context": 200_000,
@@ -315,14 +315,14 @@ def test_unknown_model_omits_unverified_token_limits() -> None:
     )
 
     with (
-        patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://evolvxsi.test"),
+        patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://nortpole.test"),
         patch.object(model_catalog, "get_model_map", return_value={}),
     ):
-        gateway_config = llm_config.build_evolvxsi_gateway_config([provider])
+        gateway_config = llm_config.build_nortpole_gateway_config([provider])
 
     assert gateway_config is not None
     opencode_config = build_provider_opencode_config(gateway_config)
-    model_config = opencode_config["provider"]["evolvxsi"]["models"]["7/unknown-model"]
+    model_config = opencode_config["provider"]["nortpole"]["models"]["7/unknown-model"]
     assert "limit" not in model_config
 
 
@@ -346,14 +346,14 @@ def test_small_input_override_does_not_reduce_provider_output() -> None:
     }
 
     with (
-        patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://evolvxsi.test"),
+        patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://nortpole.test"),
         patch.object(model_catalog, "get_model_map", return_value=model_map),
     ):
-        gateway_config = llm_config.build_evolvxsi_gateway_config([provider])
+        gateway_config = llm_config.build_nortpole_gateway_config([provider])
 
     assert gateway_config is not None
     opencode_config = build_provider_opencode_config(gateway_config)
-    assert opencode_config["provider"]["evolvxsi"]["models"]["7/tiny-model"]["limit"] == {
+    assert opencode_config["provider"]["nortpole"]["models"]["7/tiny-model"]["limit"] == {
         "context": 25_000,
         "input": 25_000,
         "output": 128_000,
@@ -362,7 +362,7 @@ def test_small_input_override_does_not_reduce_provider_output() -> None:
 
 def test_gateway_selection_renders_storage_columns() -> None:
     assert llm_config.GatewaySelection(17, "anthropic/claude-sonnet").to_columns() == (
-        "evolvxsi",
+        "nortpole",
         "17/anthropic/claude-sonnet",
     )
 
@@ -385,7 +385,7 @@ def test_manager_prefers_provider_recommended_default_in_provider_order() -> Non
     user = cast(User, MagicMock(spec=User))
 
     with (
-        patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://evolvxsi.test"),
+        patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://nortpole.test"),
         patch.object(
             manager_module,
             "fetch_all_accessible_llm_providers",
@@ -401,7 +401,7 @@ def test_manager_prefers_provider_recommended_default_in_provider_order() -> Non
 
     # "Alpha provider" (bedrock) sorts before "Zulu provider"; its recommended
     # default (bedrock-pro) wins over the alphabetically-first visible model.
-    assert config.provider == "evolvxsi"
+    assert config.provider == "nortpole"
     assert config.model_name == "7/bedrock-pro"
     fetch_providers.assert_called_once_with(manager._db_session, user)
 
@@ -426,7 +426,7 @@ def test_manager_prefers_configured_default_over_recommendation() -> None:
     configured_default = MagicMock()
     configured_default.configure_mock(llm_provider_id=3, name="claude-sonnet-5")
     with (
-        patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://evolvxsi.test"),
+        patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://nortpole.test"),
         patch.object(
             manager_module,
             "fetch_all_accessible_llm_providers",
@@ -468,7 +468,7 @@ def test_manager_falls_back_to_recommendation_when_configured_default_not_visibl
     configured_default = MagicMock()
     configured_default.configure_mock(llm_provider_id=3, name="claude-sonnet-5")
     with (
-        patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://evolvxsi.test"),
+        patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://nortpole.test"),
         patch.object(
             manager_module,
             "fetch_all_accessible_llm_providers",
@@ -500,7 +500,7 @@ def test_manager_prefers_craft_default_over_chat_default() -> None:
     craft_default = MagicMock()
     craft_default.configure_mock(llm_provider_id=7, name="bedrock-pro")
     with (
-        patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://evolvxsi.test"),
+        patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://nortpole.test"),
         patch.object(
             manager_module,
             "fetch_all_accessible_llm_providers",
@@ -530,7 +530,7 @@ def test_manager_stored_selection_outranks_craft_default() -> None:
     craft_default = MagicMock()
     craft_default.configure_mock(llm_provider_id=7, name="bedrock-pro")
     with (
-        patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://evolvxsi.test"),
+        patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://nortpole.test"),
         patch.object(
             manager_module,
             "fetch_all_accessible_llm_providers",
@@ -576,7 +576,7 @@ def test_manager_craft_default_not_visible_falls_through_to_chat_default() -> No
     craft_default = MagicMock()
     craft_default.configure_mock(llm_provider_id=7, name="bedrock-lite")
     with (
-        patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://evolvxsi.test"),
+        patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://nortpole.test"),
         patch.object(
             manager_module,
             "fetch_all_accessible_llm_providers",
@@ -602,8 +602,8 @@ def test_selection_outranks_configured_default() -> None:
     anthropic = _provider(3, "anthropic", [_model("claude-sonnet-5")])
     bedrock = _provider(7, "bedrock", [_model("bedrock-pro")])
 
-    with patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://evolvxsi.test"):
-        config = llm_config.build_evolvxsi_gateway_config(
+    with patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://nortpole.test"):
+        config = llm_config.build_nortpole_gateway_config(
             [anthropic, bedrock],
             llm_config.GatewaySelection(7, "bedrock-pro"),
             [llm_config.GatewaySelection(3, "claude-sonnet-5")],
@@ -617,8 +617,8 @@ def test_stale_selection_falls_through_to_configured_default() -> None:
     anthropic = _provider(3, "anthropic", [_model("claude-sonnet-5")])
     bedrock = _provider(7, "bedrock", [_model("bedrock-pro")])
 
-    with patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://evolvxsi.test"):
-        config = llm_config.build_evolvxsi_gateway_config(
+    with patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://nortpole.test"):
+        config = llm_config.build_nortpole_gateway_config(
             [anthropic, bedrock],
             llm_config.GatewaySelection(7, "retired-model"),
             [llm_config.GatewaySelection(3, "claude-sonnet-5")],
@@ -630,10 +630,10 @@ def test_stale_selection_falls_through_to_configured_default() -> None:
 
 def _gateway_config() -> CraftLLMProviderConfig:
     return CraftLLMProviderConfig(
-        provider="evolvxsi",
+        provider="nortpole",
         model_name="13/gpt-6-astra",
         api_key="proxy-placeholder",
-        api_base="https://evolvxsi.test/gateway/v1",
+        api_base="https://nortpole.test/gateway/v1",
         models=[
             GatewayModelDescriptor(
                 id="13/gpt-6-astra",
@@ -647,8 +647,8 @@ def _gateway_config() -> CraftLLMProviderConfig:
 def test_gateway_config_falls_back_when_requested_selection_is_stale() -> None:
     provider = _provider(2, "anthropic", [_model("claude-fable-5")])
 
-    with patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://evolvxsi.test"):
-        config = llm_config.build_evolvxsi_gateway_config(
+    with patch.object(llm_config, "NORTPOLE_SERVER_URL", "https://nortpole.test"):
+        config = llm_config.build_nortpole_gateway_config(
             [provider],
             llm_config.GatewaySelection(99, "deleted-model"),
         )
@@ -770,7 +770,7 @@ def test_reconcile_parses_stored_gateway_selection() -> None:
         BuildSession,
         MagicMock(
             id=2,
-            agent_provider="evolvxsi",
+            agent_provider="nortpole",
             agent_model="17/anthropic/claude-sonnet",
             opencode_session_id=None,
         ),

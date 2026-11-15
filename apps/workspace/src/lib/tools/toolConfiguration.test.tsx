@@ -12,7 +12,7 @@ import {
   normalizeSourceSelection,
 } from "@/lib/searchFilters/utils";
 
-const CHAT_KEY = "evolvxsi:tools:chat:abc";
+const CHAT_KEY = "nortpole:tools:chat:abc";
 
 // Mutable so a test can move the composer between chats; the hook re-keys
 // from what useAppPosition reports on each render.

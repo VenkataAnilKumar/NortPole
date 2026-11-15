@@ -183,7 +183,7 @@ export default function NewTeamModal() {
               width="full"
               rightIcon={SvgArrowRight}
             >
-              {t("tryEvolvXSIButton.label")}
+              {t("tryNortPoleButton.label")}
             </Button>
           ) : (
             <>

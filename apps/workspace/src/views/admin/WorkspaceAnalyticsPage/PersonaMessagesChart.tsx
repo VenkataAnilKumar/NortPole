@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Dropdown, SelectButton } from "@opal/components";
-import { SvgEvolvXSIOctagon } from "@opal/icons";
+import { SvgNortPoleOctagon } from "@opal/icons";
 import { Section } from "@opal/layouts";
 import { usePersonaMessages, usePersonaUniqueUsers } from "@/lib/usage/hooks";
 import { useAdminAgents } from "@/lib/agents/hooks";
@@ -31,7 +31,7 @@ function PersonaPicker({
     <Dropdown open={open} onOpenChange={setOpen}>
       <Dropdown.Trigger asChild>
         <SelectButton
-          icon={SvgEvolvXSIOctagon}
+          icon={SvgNortPoleOctagon}
           state="empty"
           variant="select-input"
         >
@@ -50,7 +50,7 @@ function PersonaPicker({
         items={agents.map((agent) => ({
           kind: "option",
           value: String(agent.id),
-          icon: SvgEvolvXSIOctagon,
+          icon: SvgNortPoleOctagon,
           title: agent.name,
         }))}
       />

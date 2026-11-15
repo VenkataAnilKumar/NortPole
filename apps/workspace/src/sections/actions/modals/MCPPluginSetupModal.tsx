@@ -282,7 +282,7 @@ function MCPSetupSession({
     access_mode: isScopedManager ? "groups" : "public",
     groups: [],
     users: [],
-    available_in_craft: settings.evolvxsi_craft_available === true,
+    available_in_craft: settings.nortpole_craft_available === true,
   };
 
   return (
@@ -672,7 +672,7 @@ function MCPSetupSession({
                               onChange={setEnableChat}
                             />
                           )}
-                          {settings.evolvxsi_craft_available === true && (
+                          {settings.nortpole_craft_available === true && (
                             <PluginAvailabilitySwitch
                               surface="mcp-craft"
                               enabled={

@@ -134,7 +134,7 @@ class TestExternalStorageFileStore:
     def test_s3_key_generation_default_prefix(self) -> None:
         """Test S3 key generation with default prefix"""
         with (
-            patch("nortpole.file_store.file_store.S3_FILE_STORE_PREFIX", "evolvxsi-files"),
+            patch("nortpole.file_store.file_store.S3_FILE_STORE_PREFIX", "nortpole-files"),
             patch(
                 "nortpole.file_store.file_store.get_current_tenant_id",
                 return_value="test-tenant",
@@ -142,7 +142,7 @@ class TestExternalStorageFileStore:
         ):
             file_store = S3BackedFileStore(bucket_name="test-bucket")
             s3_key: str = file_store._get_s3_key("test-file.txt")
-            assert s3_key == "evolvxsi-files/test-tenant/test-file.txt"
+            assert s3_key == "nortpole-files/test-tenant/test-file.txt"
 
     def test_s3_key_generation_custom_prefix(self) -> None:
         """Test S3 key generation with custom prefix"""
@@ -161,7 +161,7 @@ class TestExternalStorageFileStore:
 
     def test_s3_key_generation_with_different_tenant_ids(self) -> None:
         """Test S3 key generation with different tenant IDs"""
-        with patch("nortpole.file_store.file_store.S3_FILE_STORE_PREFIX", "evolvxsi-files"):
+        with patch("nortpole.file_store.file_store.S3_FILE_STORE_PREFIX", "nortpole-files"):
             file_store = S3BackedFileStore(bucket_name="test-bucket")
 
             # Test with tenant ID "tenant-1"
@@ -170,7 +170,7 @@ class TestExternalStorageFileStore:
                 return_value="tenant-1",
             ):
                 s3_key = file_store._get_s3_key("document.pdf")
-                assert s3_key == "evolvxsi-files/tenant-1/document.pdf"
+                assert s3_key == "nortpole-files/tenant-1/document.pdf"
 
             # Test with tenant ID "tenant-2"
             with patch(
@@ -178,7 +178,7 @@ class TestExternalStorageFileStore:
                 return_value="tenant-2",
             ):
                 s3_key = file_store._get_s3_key("document.pdf")
-                assert s3_key == "evolvxsi-files/tenant-2/document.pdf"
+                assert s3_key == "nortpole-files/tenant-2/document.pdf"
 
             # Test with default tenant (public)
             with patch(
@@ -186,7 +186,7 @@ class TestExternalStorageFileStore:
                 return_value="public",
             ):
                 s3_key = file_store._get_s3_key("document.pdf")
-                assert s3_key == "evolvxsi-files/public/document.pdf"
+                assert s3_key == "nortpole-files/public/document.pdf"
 
     @patch("boto3.client")
     def test_s3_save_file_mock(
@@ -209,7 +209,7 @@ class TestExternalStorageFileStore:
             patch(
                 "nortpole.file_store.file_store.S3_FILE_STORE_BUCKET_NAME", "test-bucket"
             ),
-            patch("nortpole.file_store.file_store.S3_FILE_STORE_PREFIX", "evolvxsi-files"),
+            patch("nortpole.file_store.file_store.S3_FILE_STORE_PREFIX", "nortpole-files"),
             patch("nortpole.file_store.file_store.S3_AWS_ACCESS_KEY_ID", "test-key"),
             patch("nortpole.file_store.file_store.S3_AWS_SECRET_ACCESS_KEY", "test-secret"),
         ):
@@ -233,7 +233,7 @@ class TestExternalStorageFileStore:
                 mock_s3_client.put_object.assert_called_once()
                 call_args = mock_s3_client.put_object.call_args
                 assert call_args[1]["Bucket"] == "test-bucket"
-                assert call_args[1]["Key"] == "evolvxsi-files/public/test-file.txt"
+                assert call_args[1]["Key"] == "nortpole-files/public/test-file.txt"
                 assert call_args[1]["ContentType"] == "text/plain"
 
     def test_minio_client_initialization(self) -> None:
@@ -425,7 +425,7 @@ class TestGCSFileStore:
         ):
             file_store = GCSBackedFileStore(bucket_name="test-bucket")
             key: str = file_store._get_object_key("test-file.txt")
-            assert key == "evolvxsi-files/test-tenant/test-file.txt"
+            assert key == "nortpole-files/test-tenant/test-file.txt"
 
     def test_gcs_object_key_generation_custom_prefix(self) -> None:
         """Test GCS object key generation with custom prefix"""
@@ -486,7 +486,7 @@ class TestGCSFileStore:
     def test_gcs_read_file_mock(self, sample_content: bytes) -> None:
         """Test GCS read_file returns BytesIO with blob content"""
         mock_record = Mock(
-            bucket_name="test-bucket", object_key="evolvxsi-files/public/test-file.txt"
+            bucket_name="test-bucket", object_key="nortpole-files/public/test-file.txt"
         )
         mock_blob = Mock()
         mock_blob.download_as_bytes.return_value = sample_content
@@ -518,14 +518,14 @@ class TestGCSFileStore:
                 file_id="test-file.txt", db_session=mock_db_session
             )
             mock_client.bucket.assert_called_once_with("test-bucket")
-            mock_bucket.blob.assert_called_once_with("evolvxsi-files/public/test-file.txt")
+            mock_bucket.blob.assert_called_once_with("nortpole-files/public/test-file.txt")
             mock_blob.download_as_bytes.assert_called_once()
             assert result.read() == sample_content
 
     def test_gcs_read_file_with_tempfile(self, sample_content: bytes) -> None:
         """Test GCS read_file with use_tempfile=True downloads to a temp file"""
         mock_record = Mock(
-            bucket_name="test-bucket", object_key="evolvxsi-files/public/test-file.txt"
+            bucket_name="test-bucket", object_key="nortpole-files/public/test-file.txt"
         )
         mock_blob = Mock()
 
@@ -566,7 +566,7 @@ class TestGCSFileStore:
     def test_gcs_delete_file_mock(self) -> None:
         """Test GCS delete_file removes blob and DB record"""
         mock_record = Mock(
-            bucket_name="test-bucket", object_key="evolvxsi-files/public/test-file.txt"
+            bucket_name="test-bucket", object_key="nortpole-files/public/test-file.txt"
         )
         mock_blob = Mock()
         mock_bucket = Mock()
@@ -605,7 +605,7 @@ class TestGCSFileStore:
         from google.api_core.exceptions import NotFound
 
         mock_record = Mock(
-            bucket_name="test-bucket", object_key="evolvxsi-files/public/missing.txt"
+            bucket_name="test-bucket", object_key="nortpole-files/public/missing.txt"
         )
         mock_blob = Mock()
         mock_blob.delete.side_effect = NotFound("blob not found")
@@ -690,7 +690,7 @@ class TestGCSFileStore:
         """change_file_id repoints the record at the same blob — no copy/delete."""
         mock_record = Mock(
             bucket_name="test-bucket",
-            object_key="evolvxsi-files/public/old-id",
+            object_key="nortpole-files/public/old-id",
             display_name="Old File",
             file_origin=FileOrigin.OTHER,
             file_type="text/plain",
@@ -732,7 +732,7 @@ class TestGCSFileStore:
             assert mock_upsert.call_args.kwargs["file_id"] == "new-id"
             assert mock_upsert.call_args.kwargs["bucket_name"] == "test-bucket"
             assert (
-                mock_upsert.call_args.kwargs["object_key"] == "evolvxsi-files/public/old-id"
+                mock_upsert.call_args.kwargs["object_key"] == "nortpole-files/public/old-id"
             )
             mock_delete_record.assert_called_once_with(
                 file_id="old-id", db_session=mock_db_session
@@ -744,7 +744,7 @@ class TestGCSFileStore:
     def test_gcs_get_file_size_mock(self) -> None:
         """Test GCS get_file_size returns the blob size"""
         mock_record = Mock(
-            bucket_name="test-bucket", object_key="evolvxsi-files/public/test-file.txt"
+            bucket_name="test-bucket", object_key="nortpole-files/public/test-file.txt"
         )
         mock_blob = Mock()
         mock_blob.size = 1234

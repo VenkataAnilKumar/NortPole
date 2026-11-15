@@ -37,9 +37,9 @@ global_version = NortPoleVersion()
 
 def is_ee_available() -> bool:
     """Whether this build ships the Enterprise Edition code. The MIT-only mirror
-    strips `ee.evolvxsi` and keeps a bare `ee` package."""
+    strips `ee.nortpole` and keeps a bare `ee` package."""
     try:
-        spec: ModuleSpec | None = importlib.util.find_spec("ee.evolvxsi")
+        spec: ModuleSpec | None = importlib.util.find_spec("ee.nortpole")
     except ModuleNotFoundError:
         # No `ee` package at all.
         return False
@@ -103,7 +103,7 @@ def fetch_versioned_implementation(module: str, attribute: str) -> Any:
         )
 
         if is_ee:
-            if "ee.evolvxsi" not in str(e):
+            if "ee.nortpole" not in str(e):
                 # If it's a non NortPole related import failure, this is likely because
                 # a dependent library has not been installed. Should raise this failure
                 # instead of letting the server start up

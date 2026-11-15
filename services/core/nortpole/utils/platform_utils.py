@@ -8,9 +8,9 @@ _DANSWER_DOCKER_ENV_STR = "DANSWER_RUNNING_IN_DOCKER"
 
 
 def _resolve_container_flag() -> bool:
-    evolvxsi_val = os.getenv(_NORTPOLE_DOCKER_ENV_STR)
-    if evolvxsi_val is not None:
-        return evolvxsi_val.lower() == "true"
+    nortpole_val = os.getenv(_NORTPOLE_DOCKER_ENV_STR)
+    if nortpole_val is not None:
+        return nortpole_val.lower() == "true"
 
     danswer_val = os.getenv(_DANSWER_DOCKER_ENV_STR)
     if danswer_val is not None:

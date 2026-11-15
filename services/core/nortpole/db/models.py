@@ -1086,7 +1086,7 @@ class ConnectorCredentialPair(Base):
 
     # source type (defined in the connector's `source` field)
     # E.g. for google_drive perm sync:
-    # {"customer_id": "123567", "company_domain": "@evolvxsi.local"}
+    # {"customer_id": "123567", "company_domain": "@nortpole.local"}
     auto_sync_options: Mapped[dict[str, Any] | None] = mapped_column(
         postgresql.JSONB(), nullable=True
     )
@@ -3459,11 +3459,11 @@ class ChatSession(Base):
     __tablename__ = "chat_session"
     __table_args__ = (
         # Backs the chat-history sidebar query: filter on (user_id,
-        # evolvxsibot_flow), order by time_updated DESC.
+        # nortpolebot_flow), order by time_updated DESC.
         Index(
-            "ix_chat_session_user_id_evolvxsibot_flow_time_updated",
+            "ix_chat_session_user_id_nortpolebot_flow_time_updated",
             "user_id",
-            "evolvxsibot_flow",
+            "nortpolebot_flow",
             desc("time_updated"),
         ),
     )
@@ -3487,7 +3487,7 @@ class ChatSession(Base):
     )
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     # This chat created by NortPoleBot
-    evolvxsibot_flow: Mapped[bool] = mapped_column(Boolean, default=False)
+    nortpolebot_flow: Mapped[bool] = mapped_column(Boolean, default=False)
     # Pinned at creation, so a later setting change cannot alter a live
     # session. NULL is an ordinary chat and records normally. Of the incognito
     # modes only FULL_HISTORY writes conversation content into messages.

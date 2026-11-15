@@ -15,7 +15,7 @@ from nortpole.auth.constants import (
     OAUTH_PROVIDER_SCOPE,
 )
 from nortpole.error_handling.error_codes import NortPoleErrorCode
-from nortpole.error_handling.exceptions import NortPoleError, evolvxsi_error_to_json_response
+from nortpole.error_handling.exceptions import NortPoleError, nortpole_error_to_json_response
 from nortpole.mcp_server.utils import get_http_client
 from nortpole.oauth_provider import config as oauth_provider_config
 from nortpole.oauth_provider.models import OAuthProviderIntrospection
@@ -44,7 +44,7 @@ class MCPAuthErrorMiddleware:
         except NortPoleError as error:
             if started or scope["type"] != "http":
                 raise
-            await evolvxsi_error_to_json_response(error)(scope, receive, send)
+            await nortpole_error_to_json_response(error)(scope, receive, send)
 
 
 class NortPoleTokenVerifier(TokenVerifier):

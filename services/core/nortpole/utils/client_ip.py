@@ -22,7 +22,7 @@ from fastapi import Request
 from starlette.types import ASGIApp, Receive, Scope, Send
 
 _CLIENT_IP_CONTEXTVAR: ContextVar[str | None] = ContextVar(
-    "evolvxsi_client_ip", default=None
+    "nortpole_client_ip", default=None
 )
 
 

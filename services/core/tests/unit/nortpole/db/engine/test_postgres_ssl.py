@@ -33,7 +33,7 @@ def client_cert_key(tmp_path_factory: pytest.TempPathFactory) -> tuple[str, str]
     exercising the mutual-TLS path (load_cert_chain / libpq sslcert+sslkey)."""
     out = tmp_path_factory.mktemp("pg_mtls")
     key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
-    name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "evolvxsi-test-client")])
+    name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "nortpole-test-client")])
     cert = (
         x509.CertificateBuilder()
         .subject_name(name)

@@ -29,8 +29,8 @@ export default async function Layout({ children }: LayoutProps) {
   // Check if NortPole Craft is enabled via feature flag
   // Only explicit true enables the feature; false or undefined = disabled
   const settings = await fetchSettingsSS();
-  if (settings?.settings?.evolvxsi_craft_enabled !== true) {
-    if (settings?.settings?.evolvxsi_craft_requires_upgrade === true) {
+  if (settings?.settings?.nortpole_craft_enabled !== true) {
+    if (settings?.settings?.nortpole_craft_requires_upgrade === true) {
       return <CraftUpgradePage />;
     }
     redirect("/app");

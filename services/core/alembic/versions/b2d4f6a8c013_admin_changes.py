@@ -18,7 +18,7 @@ depends_on = None
 
 def upgrade() -> None:
     op.create_table(
-        "evolvxsi_admin_change",
+        "nortpole_admin_change",
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
         sa.Column("kind", sa.String(length=40), nullable=False),
         sa.Column("payload", postgresql.JSONB(), nullable=False),
@@ -32,9 +32,9 @@ def upgrade() -> None:
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
         sa.Column("decided_at", sa.DateTime(timezone=True), nullable=True),
     )
-    op.create_index("ix_evolvxsi_admin_change_state", "evolvxsi_admin_change", ["state"])
+    op.create_index("ix_nortpole_admin_change_state", "nortpole_admin_change", ["state"])
 
 
 def downgrade() -> None:
-    op.drop_index("ix_evolvxsi_admin_change_state", table_name="evolvxsi_admin_change")
-    op.drop_table("evolvxsi_admin_change")
+    op.drop_index("ix_nortpole_admin_change_state", table_name="nortpole_admin_change")
+    op.drop_table("nortpole_admin_change")

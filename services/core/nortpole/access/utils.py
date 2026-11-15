@@ -22,7 +22,7 @@ def prefix_external_group(ext_group_name: str) -> str:
     return f"{EXTERNAL_GROUP_ACL_PREFIX}{ext_group_name}"
 
 
-def build_ext_group_name_for_evolvxsi(ext_group_name: str, source: DocumentSource) -> str:
+def build_ext_group_name_for_nortpole(ext_group_name: str, source: DocumentSource) -> str:
     """
     External groups may collide across sources, every source needs its own prefix.
     NOTE: the name is lowercased to handle case sensitivity for group names

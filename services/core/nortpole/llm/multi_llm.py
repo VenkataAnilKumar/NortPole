@@ -411,7 +411,7 @@ def _provider_scope(
         ) from error
 
 
-def _as_evolvxsi_llm_error(error: Exception) -> Exception:
+def _as_nortpole_llm_error(error: Exception) -> Exception:
     """Translate a litellm exception into the NortPole one callers catch.
 
     litellm raises a failure during a stream as ``MidStreamFallbackError`` (a
@@ -464,7 +464,7 @@ def _consume_stream_until_deadline[T](stream: Iterable[T], deadline: float) -> l
     except Exception as error:
         check_cancelled()
         # The request itself succeeded, so _completion's mapping never saw this.
-        raise _as_evolvxsi_llm_error(error)
+        raise _as_nortpole_llm_error(error)
     return chunks
 
 
@@ -979,9 +979,9 @@ class LitellmLLM(LLM):
         if not is_usage_limits_enabled():
             return
 
-        from nortpole.server.usage_limits import is_evolvxsi_managed_api_key
+        from nortpole.server.usage_limits import is_nortpole_managed_api_key
 
-        if not is_evolvxsi_managed_api_key(self._api_key):
+        if not is_nortpole_managed_api_key(self._api_key):
             return
         # Import here to avoid circular imports
         from nortpole.db.engine.sql_engine import get_session_with_current_tenant
@@ -1710,7 +1710,7 @@ class LitellmLLM(LLM):
             raise RuntimeError("Provider retry attempts exhausted")
         except Exception as e:
             check_cancelled()
-            raise _as_evolvxsi_llm_error(e)
+            raise _as_nortpole_llm_error(e)
 
     def redact_error(self, text: str) -> str:
         config = self.config
@@ -2060,7 +2060,7 @@ class LitellmLLM(LLM):
                     )
                     return
                 if yielded_any or attempt >= max_attempts - 1:
-                    raise _as_evolvxsi_llm_error(e)
+                    raise _as_nortpole_llm_error(e)
                 logger.warning(
                     "Retrying pre-chunk stream for model %s after %s on attempt %d/%d",
                     self.config.model_name,

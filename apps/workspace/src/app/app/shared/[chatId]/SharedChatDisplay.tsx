@@ -18,7 +18,7 @@ import SvgNotFound from "@opal/illustrations/not-found";
 import { Button, Text, useCreateModal } from "@opal/components";
 import { Agent } from "@/lib/agents/types";
 import { useAppPosition } from "@/lib/navigation/hooks";
-import { MinimalEvolvXSIDocument } from "@/lib/search/types";
+import { MinimalNortPoleDocument } from "@/lib/search/types";
 import PreviewModal from "@/sections/modals/PreviewModal";
 import useOnMount from "@/hooks/useOnMount";
 import SharedAppInputBar from "@/sections/input/SharedAppInputBar";
@@ -36,9 +36,9 @@ export default function SharedChatDisplay({
   const t = useTranslations("chat.sharedChat");
   const locale = useLocale();
   const [presentingDocument, setPresentingDocument] =
-    useState<MinimalEvolvXSIDocument | null>(null);
+    useState<MinimalNortPoleDocument | null>(null);
   const previewModal = useCreateModal();
-  const presentDocument = (document: MinimalEvolvXSIDocument) => {
+  const presentDocument = (document: MinimalNortPoleDocument) => {
     setPresentingDocument(document);
     previewModal.toggle(true);
   };

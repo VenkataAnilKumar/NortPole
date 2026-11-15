@@ -147,7 +147,7 @@ async def test_failed_exchange_leaves_no_attempt_or_grant(cache: FakeCache) -> N
 async def test_transient_storage_preserves_registration_and_expiry() -> None:
     storage = setup_oauth.TransientTokenStorage()
     client = OAuthClientInformationFull(
-        client_id="registered", redirect_uris=["https://evolvxsi.example/callback"]
+        client_id="registered", redirect_uris=["https://nortpole.example/callback"]
     )
     await storage.set_client_info(client)
     assert await storage.get_client_info() == client
@@ -214,7 +214,7 @@ async def test_rejected_client_metadata_document_stores_no_attempt(
     request = _request().model_copy(
         update={
             "oauth_provider_mode": MCPOAuthProviderMode.AUTO_DISCOVERY,
-            "oauth_client_id": "https://evolvxsi.example/api/mcp/oauth/client-metadata",
+            "oauth_client_id": "https://nortpole.example/api/mcp/oauth/client-metadata",
             "oauth_client_secret": None,
         }
     )
@@ -251,7 +251,7 @@ async def test_existing_registration_keeps_negotiated_token_auth(
     registration = OAuthClientInformationFull(
         client_id="client",
         client_secret="client-secret",
-        redirect_uris=["https://evolvxsi.example.com/mcp/oauth/callback"],
+        redirect_uris=["https://nortpole.example.com/mcp/oauth/callback"],
         token_endpoint_auth_method="client_secret_basic",
         client_id_issued_at=1234567890,
     )

@@ -105,7 +105,7 @@ describe("getPreferredLlmSelection", () => {
       provider("anthropic", [model("claude-opus-5", { craft: true })], 1),
     ];
     for (const raw of ["not json", "null", '"gpt-6-sol"', "42"]) {
-      window.localStorage.setItem(`evolvxsi:craftLlmSelection:${USER}`, raw);
+      window.localStorage.setItem(`nortpole:craftLlmSelection:${USER}`, raw);
       expect(getPreferredLlmSelection(USER, providers)?.modelName).toBe(
         "claude-opus-5"
       );

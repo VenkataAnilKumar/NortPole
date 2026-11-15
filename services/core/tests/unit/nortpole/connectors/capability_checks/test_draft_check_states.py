@@ -239,4 +239,4 @@ def test_github_cache_keys_follow_only_the_fields_each_check_reads() -> None:
 
     assert changed({"include_prs": False}) == {"github_document_types"}
     assert changed({"branch": "dev"}) == {"github_branch", "github_files"}
-    assert "github_auth" not in changed({"repositories": "evolvxsi"})
+    assert "github_auth" not in changed({"repositories": "nortpole"})

@@ -41,7 +41,7 @@ def world():  # type: ignore[no-untyped-def]
     save_policy(saved[2])
     with get_session_with_current_tenant() as s:
         s.query(NortPoleAdminChange).filter(NortPoleAdminChange.proposed_by_email.like(f"%-{TAG}@example.com")).delete(synchronize_session=False)
-        s.execute(text("delete from evolvxsi_audit_event where actor_email like :p and row_hash is null"), {"p": f"admin-%-{TAG}@example.com"})
+        s.execute(text("delete from nortpole_audit_event where actor_email like :p and row_hash is null"), {"p": f"admin-%-{TAG}@example.com"})
         s.query(User).filter(User.id.in_(ids)).delete(synchronize_session=False)
         s.commit()
 
@@ -78,7 +78,7 @@ def test_with_the_rule_on_a_change_is_held_and_nothing_is_saved(world) -> None: 
         assert load_ret().audit_days == before.audit_days, "the setting is unchanged until a second administrator approves"
         row = s.get(NortPoleAdminChange, uuid.UUID(body["change_id"]))
         assert row.state == "pending" and row.proposed_by_email == a.email and "402" in row.summary
-        n = s.execute(text("select count(*) from evolvxsi_audit_event where action='admin.change_propose' and resource_id=:i"), {"i": body["change_id"]}).scalar()
+        n = s.execute(text("select count(*) from nortpole_audit_event where action='admin.change_propose' and resource_id=:i"), {"i": body["change_id"]}).scalar()
         assert n == 1
 
 
@@ -90,7 +90,7 @@ def test_a_different_administrator_approves_and_it_is_applied_and_audited(world)
         done = service.approve(s, b, cid)
         assert done.state == "applied" and done.decided_by_email == b.email
         assert load_ret().audit_days == 403
-        rows = s.execute(text("select details::text from evolvxsi_audit_event where action='retention.change' and details::text like :p order by id desc limit 1"),
+        rows = s.execute(text("select details::text from nortpole_audit_event where action='retention.change' and details::text like :p order by id desc limit 1"),
                          {"p": f"%{b.email}%"}).all()
         assert rows and a.email in rows[0][0] and b.email in rows[0][0], "the change is audited with both who proposed and who approved"
 
@@ -103,7 +103,7 @@ def test_the_proposer_cannot_approve_their_own_change(world) -> None:  # type: i
         with pytest.raises(NortPoleError):
             service.approve(s, a, cid)
         assert s.get(NortPoleAdminChange, cid).state == "pending" and load_ret().audit_days != 404
-        denied = s.execute(text("select count(*) from evolvxsi_audit_event where action='admin.change_decide' and outcome='denied' and summary like 'Approval refused: the approver proposed it%'")).scalar()
+        denied = s.execute(text("select count(*) from nortpole_audit_event where action='admin.change_decide' and outcome='denied' and summary like 'Approval refused: the approver proposed it%'")).scalar()
         assert denied >= 1
 
 

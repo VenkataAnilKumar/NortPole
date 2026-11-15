@@ -191,7 +191,7 @@ const EDGES: MapEdge[] = [
 ];
 
 const TERMINAL_LINES: string[] = [
-  '$ evolvxsi search "q2 invoices"',
+  '$ nortpole search "q2 invoices"',
   "$ python analyze_spend.py",
   "$ write outputs/summary.md",
 ];

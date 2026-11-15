@@ -42,27 +42,27 @@ logger = setup_logger()
 # --- Doc permission sync metrics ---
 
 DOC_PERM_SYNC_DURATION = Histogram(
-    "evolvxsi_doc_perm_sync_duration_seconds",
+    "nortpole_doc_perm_sync_duration_seconds",
     "Overall duration of doc permission sync (source enumeration + DB updates)",
     ["connector_type"],
     buckets=[5, 60, 600, 1800, 3600, 10800, 21600],
 )
 
 DOC_PERM_SYNC_DB_UPDATE_DURATION = Histogram(
-    "evolvxsi_doc_perm_sync_db_update_duration_seconds",
+    "nortpole_doc_perm_sync_db_update_duration_seconds",
     "Cumulative per-element DB update duration within a single doc permission sync",
     ["connector_type"],
     buckets=[0.1, 0.5, 1, 5, 15, 30, 60, 300, 600],
 )
 
 DOC_PERM_SYNC_DOCS_PROCESSED = Counter(
-    "evolvxsi_doc_perm_sync_docs_processed_total",
+    "nortpole_doc_perm_sync_docs_processed_total",
     "Total documents successfully synced during doc permission sync",
     ["connector_type"],
 )
 
 DOC_PERM_SYNC_ERRORS = Counter(
-    "evolvxsi_doc_perm_sync_errors_total",
+    "nortpole_doc_perm_sync_errors_total",
     "Total document permission errors during doc permission sync",
     ["connector_type"],
 )
@@ -70,33 +70,33 @@ DOC_PERM_SYNC_ERRORS = Counter(
 # --- External group sync metrics ---
 
 GROUP_SYNC_DURATION = Histogram(
-    "evolvxsi_group_sync_duration_seconds",
+    "nortpole_group_sync_duration_seconds",
     "Overall duration of external group sync",
     ["connector_type"],
     buckets=[5, 60, 600, 1800, 3600, 10800, 21600],
 )
 
 GROUP_SYNC_UPSERT_DURATION = Histogram(
-    "evolvxsi_group_sync_upsert_duration_seconds",
+    "nortpole_group_sync_upsert_duration_seconds",
     "Cumulative batch upsert duration within a single external group sync",
     ["connector_type"],
     buckets=[0.1, 0.5, 1, 5, 15, 30, 60, 300, 600],
 )
 
 GROUP_SYNC_GROUPS_PROCESSED = Counter(
-    "evolvxsi_group_sync_groups_processed_total",
+    "nortpole_group_sync_groups_processed_total",
     "Total groups processed during external group sync",
     ["connector_type"],
 )
 
 GROUP_SYNC_USERS_PROCESSED = Counter(
-    "evolvxsi_group_sync_users_processed_total",
+    "nortpole_group_sync_users_processed_total",
     "Total unique users discovered during external group sync",
     ["connector_type"],
 )
 
 GROUP_SYNC_ERRORS = Counter(
-    "evolvxsi_group_sync_errors_total",
+    "nortpole_group_sync_errors_total",
     "Total errors during external group sync",
     ["connector_type"],
 )

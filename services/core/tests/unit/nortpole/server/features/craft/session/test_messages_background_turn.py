@@ -197,7 +197,7 @@ def test_send_message_starts_background_turn(
             ],
         )
     ]
-    assert session.agent_provider == "evolvxsi"
+    assert session.agent_provider == "nortpole"
     assert session.agent_model == "17/gpt-6-luna"
     assert db_session.commits == 1
     turn = get_turn(cache, UUID(response.turn_id))
@@ -273,7 +273,7 @@ def test_send_message_prefers_provider_id_over_legacy_provider(
         db_session=cast(Session, db_session),
     )
 
-    assert session.agent_provider == "evolvxsi"
+    assert session.agent_provider == "nortpole"
     assert session.agent_model == "17/claude-fable-5"
 
 

@@ -8,12 +8,12 @@ from nortpole.utils.logger import setup_logger
 logger = setup_logger()
 
 MCP_CLIENT_TOOL_TOTAL = Counter(
-    "evolvxsi_mcp_client_tool_calls_total",
+    "nortpole_mcp_client_tool_calls_total",
     "External MCP tool calls made by NortPole",
     ["server_name", "tool_name", "status"],
 )
 MCP_CLIENT_TOOL_LATENCY = Histogram(
-    "evolvxsi_mcp_client_tool_latency_seconds",
+    "nortpole_mcp_client_tool_latency_seconds",
     "External MCP tool call latency",
     ["server_name", "tool_name"],
     buckets=(0.1, 0.5, 1.0, 2.5, 5.0, 10.0, 30.0, 60.0),

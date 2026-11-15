@@ -135,13 +135,13 @@ def test_sign_in_and_grid_listing_unlock_the_form() -> None:
 def test_sign_in_names_the_bot_and_the_workspace() -> None:
     gateway = autospec_gateway()
     gateway.check_auth.return_value = SlackAuthTestResponse(
-        ok=True, user="evolvxsi", team="Acme"
+        ok=True, user="nortpole", team="Acme"
     )
 
     result = _run("slack_token_auth", gateway)
 
     assert result.status == CapabilityCheckStatus.PASSED
-    assert result.summary == "Signed in as @evolvxsi in Acme"
+    assert result.summary == "Signed in as @nortpole in Acme"
 
 
 def test_a_missing_token_says_so() -> None:

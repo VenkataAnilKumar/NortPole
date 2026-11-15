@@ -177,7 +177,7 @@ def test_content_disposition_names_an_empty_filename() -> None:
         ("Q3 Deck.pptx", PPTX_MIME_TYPE, "Q3 Deck.pptx"),
         ("notes.md", "text/plain", "notes.md"),
         ("blob", "application/octet-stream", "blob"),
-        ("blob", "application/x-evolvxsi-unknown", "blob"),
+        ("blob", "application/x-nortpole-unknown", "blob"),
     ],
 )
 def test_ensure_filename_extension(

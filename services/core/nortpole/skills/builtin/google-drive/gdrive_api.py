@@ -28,7 +28,7 @@ _DEFAULT_LIMIT = 100
 _HTTP_TIMEOUT_SECONDS = 180
 # Cap a single `read` so a huge file can't blow up the agent's context.
 _DEFAULT_MAX_BYTES = 5_000_000
-_UPLOAD_BOUNDARY = "evolvxsi-gdrive-boundary-7c1f"
+_UPLOAD_BOUNDARY = "nortpole-gdrive-boundary-7c1f"
 _FOLDER_MIME = "application/vnd.google-apps.folder"
 # Explicit content-types for the text formats Craft produces — `mimetypes` is
 # platform-dependent and notably misses `.md`, which Drive needs to convert

@@ -42,7 +42,7 @@ services/core/                  API + background workers
   nortpole/insight/             quality, overview, inventory
   nortpole/extensions/          hook point (fixed path)
   nortpole/external_permissions/ permission sync (fixed path)
-  evolvxsi/…                    inherited platform modules, unchanged
+  nortpole/…                    inherited platform modules, unchanged
 services/model-gateway/         mock model server used by tests and the sandbox
 packs/horizontal/<pack>/        domain-neutral packs (manifest.yaml)
 packs/vertical/<industry>/<pack>/ industry packs (manifest.yaml)

@@ -7,7 +7,7 @@ const craftLabel = "Enable in Craft";
 let mockCraftEnabled: boolean | undefined = true;
 
 jest.mock("@/lib/settings/hooks", () => ({
-  useSettings: () => ({ evolvxsi_craft_enabled: mockCraftEnabled }),
+  useSettings: () => ({ nortpole_craft_enabled: mockCraftEnabled }),
 }));
 
 beforeEach(() => {

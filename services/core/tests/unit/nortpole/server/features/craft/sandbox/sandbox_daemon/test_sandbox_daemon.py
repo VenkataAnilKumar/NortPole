@@ -88,7 +88,7 @@ def _point_opencode_paths(
 ) -> Path:
     opencode_data_dir = sessions_root.parent / "opencode-data"
     opencode_restored_path = (
-        sessions_root.parent / "managed" / ".evolvxsi" / "opencode-history-restored"
+        sessions_root.parent / "managed" / ".nortpole" / "opencode-history-restored"
     )
     monkeypatch.setattr(opencode_history_mod, "SESSIONS_ROOT", sessions_root)
     monkeypatch.setattr(opencode_history_mod, "OPENCODE_DATA_DIR", opencode_data_dir)
@@ -573,7 +573,7 @@ def test_push_to_mount_path_outside_allowed_prefix_returns_400(
     assert resp.status_code == 400
 
 
-def test_push_missing_public_key_raises_evolvxsi_error(
+def test_push_missing_public_key_raises_nortpole_error(
     configured_sandbox_daemon: tuple[ModuleType, ModuleType, Ed25519PrivateKey, Path],
     client: TestClient,
     monkeypatch: pytest.MonkeyPatch,

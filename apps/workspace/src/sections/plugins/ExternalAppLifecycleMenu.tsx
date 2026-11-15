@@ -48,7 +48,7 @@ export default function ExternalAppLifecycleMenu({
         {renderStatus?.({
           disabled: pending,
         })}
-        {!app.is_evolvxsi_managed ? (
+        {!app.is_nortpole_managed ? (
           <Button
             icon={SvgTrash}
             size="sm"

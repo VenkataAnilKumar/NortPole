@@ -65,7 +65,7 @@ from nortpole.indexing.adapters.document_indexing_adapter import (
 from nortpole.indexing.embedder import DefaultIndexingEmbedder, IndexingEmbedder
 from nortpole.indexing.indexing_pipeline import run_indexing_pipeline
 from nortpole.utils.logger import setup_logger
-from nortpole.utils.middleware import make_randomized_evolvxsi_request_id
+from nortpole.utils.middleware import make_randomized_nortpole_request_id
 
 logger = setup_logger()
 
@@ -284,7 +284,7 @@ def _rechunk_batch(
         metadata = IndexAttemptMetadata(
             connector_id=connector_id,
             credential_id=credential_id,
-            request_id=make_randomized_evolvxsi_request_id("TRC"),
+            request_id=make_randomized_nortpole_request_id("TRC"),
             structured_id=f"{tenant_id}:{connector_id}:tabular-rechunk:{batch_num}",
             batch_num=batch_num,
         )

@@ -24,7 +24,7 @@ import { useSettings } from "@/lib/settings/hooks";
 import type { ExternalAppUserResponse } from "@/app/craft/v1/apps/registry";
 
 jest.mock("@/lib/settings/hooks", () => ({
-  useSettings: jest.fn(() => ({ evolvxsi_craft_enabled: false })),
+  useSettings: jest.fn(() => ({ nortpole_craft_enabled: false })),
 }));
 
 function externalApp(
@@ -113,7 +113,7 @@ test("disconnects external app personal credentials and preserves workspace cred
 test("Craft loads external apps and uses authoritative MCP Craft authentication without OpenAPI", async () => {
   jest
     .mocked(useSettings)
-    .mockReturnValue({ evolvxsi_craft_enabled: true } as ReturnType<
+    .mockReturnValue({ nortpole_craft_enabled: true } as ReturnType<
       typeof useSettings
     >);
   const fetchSpy = jest
@@ -157,7 +157,7 @@ test("Craft loads external apps and uses authoritative MCP Craft authentication 
   ]);
   jest
     .mocked(useSettings)
-    .mockReturnValue({ evolvxsi_craft_enabled: false } as ReturnType<
+    .mockReturnValue({ nortpole_craft_enabled: false } as ReturnType<
       typeof useSettings
     >);
 });
@@ -165,7 +165,7 @@ test("Craft loads external apps and uses authoritative MCP Craft authentication 
 test("the unified directory includes external apps while Chat does not fetch them", async () => {
   jest
     .mocked(useSettings)
-    .mockReturnValue({ evolvxsi_craft_enabled: true } as ReturnType<
+    .mockReturnValue({ nortpole_craft_enabled: true } as ReturnType<
       typeof useSettings
     >);
   const fetchSpy = jest
@@ -200,7 +200,7 @@ test("the unified directory includes external apps while Chat does not fetch the
   );
   jest
     .mocked(useSettings)
-    .mockReturnValue({ evolvxsi_craft_enabled: false } as ReturnType<
+    .mockReturnValue({ nortpole_craft_enabled: false } as ReturnType<
       typeof useSettings
     >);
 });
@@ -908,7 +908,7 @@ test.each([
         new MessageEvent("message", {
           origin: window.location.origin,
           source: popup,
-          data: { type: "evolvxsi:oauth-complete", state: "s1", ok: true },
+          data: { type: "nortpole:oauth-complete", state: "s1", ok: true },
         })
       );
       await promise;
@@ -969,7 +969,7 @@ test("connects an OpenAPI plugin through its real OAuth initiation endpoint", as
     new MessageEvent("message", {
       origin: window.location.origin,
       source: popup,
-      data: { type: "evolvxsi:oauth-complete", state: "s2", ok: true },
+      data: { type: "nortpole:oauth-complete", state: "s2", ok: true },
     })
   );
   await promise;

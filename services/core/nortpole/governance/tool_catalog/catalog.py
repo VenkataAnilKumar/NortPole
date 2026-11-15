@@ -25,7 +25,7 @@ from nortpole.utils.logger import setup_logger
 
 logger = setup_logger()
 
-KV_KEY = "evolvxsi_tool_catalog"
+KV_KEY = "nortpole_tool_catalog"
 Kind = Literal["read", "web", "generate", "personal", "code", "outside"]
 KINDS: tuple[Kind, ...] = ("read", "web", "generate", "personal", "code", "outside")
 DEFAULTS: dict[str, bool] = {"read": True, "web": True, "generate": True, "personal": True, "code": False, "outside": False}

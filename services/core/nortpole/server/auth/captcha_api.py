@@ -34,7 +34,7 @@ from nortpole.configs.app_configs import (
 )
 from nortpole.configs.constants import PUBLIC_API_TAGS
 from nortpole.error_handling.error_codes import NortPoleErrorCode
-from nortpole.error_handling.exceptions import NortPoleError, evolvxsi_error_to_json_response
+from nortpole.error_handling.exceptions import NortPoleError, nortpole_error_to_json_response
 from nortpole.utils.client_ip import get_client_ip
 from nortpole.utils.logger import setup_logger
 
@@ -113,7 +113,7 @@ class CaptchaCookieMiddleware:
         if is_guarded_callback:
             cookie_value = request.cookies.get(CAPTCHA_COOKIE_NAME)
             if not validate_captcha_cookie_value(cookie_value):
-                response = evolvxsi_error_to_json_response(
+                response = nortpole_error_to_json_response(
                     NortPoleError(
                         NortPoleErrorCode.UNAUTHORIZED,
                         "Captcha challenge required. Refresh the page and try again.",
@@ -205,7 +205,7 @@ class LoginCaptchaMiddleware:
                 try:
                     await verify_captcha_token(token, CaptchaAction.LOGIN)
                 except CaptchaVerificationError as exc:
-                    response = evolvxsi_error_to_json_response(
+                    response = nortpole_error_to_json_response(
                         NortPoleError(NortPoleErrorCode.UNAUTHORIZED, str(exc))
                     )
                     await response(scope, receive, send)

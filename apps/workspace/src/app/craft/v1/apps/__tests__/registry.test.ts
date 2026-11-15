@@ -33,7 +33,7 @@ function configuredApp(
     actions: [],
     associated_skills: [],
     users_can_manage_policies: true,
-    is_evolvxsi_managed: false,
+    is_nortpole_managed: false,
     ...overrides,
   };
 }
@@ -76,7 +76,7 @@ describe("availableBuiltInDescriptors", () => {
 
   it("hides configured NortPole-managed built-ins", () => {
     const available = availableBuiltInDescriptors(ALL_DESCRIPTORS, [
-      configuredApp("GMAIL", { is_evolvxsi_managed: true }),
+      configuredApp("GMAIL", { is_nortpole_managed: true }),
     ]);
     expect(available.map((d) => d.app_type)).not.toContain("GMAIL");
   });

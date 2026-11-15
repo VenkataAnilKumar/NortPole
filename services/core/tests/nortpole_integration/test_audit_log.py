@@ -19,14 +19,14 @@ def rows():  # type: ignore[no-untyped-def]
     with get_session_with_current_tenant() as s:
         for i in range(7):
             s.execute(
-                text("insert into evolvxsi_audit_event (action, outcome, actor_email, summary) values (:a, :o, :e, :m)"),
+                text("insert into nortpole_audit_event (action, outcome, actor_email, summary) values (:a, :o, :e, :m)"),
                 {"a": "task.start" if i % 2 == 0 else "action.execute", "o": "denied" if i == 3 else "success",
                  "e": ACTOR_A if i < 5 else ACTOR_B, "m": f"event {i} 100% done_{RUN}"},
             )
         s.commit()
     yield
     with get_session_with_current_tenant() as s:
-        s.execute(text("delete from evolvxsi_audit_event where actor_email in (:a, :b) and row_hash is null"), {"a": ACTOR_A, "b": ACTOR_B})
+        s.execute(text("delete from nortpole_audit_event where actor_email in (:a, :b) and row_hash is null"), {"a": ACTOR_A, "b": ACTOR_B})
         s.commit()
 
 

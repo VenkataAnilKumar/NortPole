@@ -14,7 +14,7 @@ from nortpole.utils.logger import setup_logger
 logger = setup_logger()
 
 # Resolves one Slack user id to a validated ``users.info`` payload. The
-# gateway's ``fetch_user_info`` operation satisfies this; evolvxsibot (which keeps
+# gateway's ``fetch_user_info`` operation satisfies this; nortpolebot (which keeps
 # its own bot-app WebClient and no gateway) passes an adapter over that client.
 FetchUserInfo = Callable[[str], SlackUserInfoResponse]
 
@@ -158,7 +158,7 @@ class SlackTextCleaner:
                 # fallback so we don't re-hit the API for the same bad id on
                 # every message, and keep the event out of Sentry — the
                 # message indexing path continues with the id in place of
-                # the display name (EVOLVXSI-BACKEND-H6FN).
+                # the display name (NORTPOLE-BACKEND-H6FN).
                 logger.warning(
                     "Error fetching data for user %s: %s", user_id, e.response["error"]
                 )

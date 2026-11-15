@@ -19,7 +19,7 @@ def _node(issue_id: str) -> dict[str, Any]:
         "id": issue_id,
         "identifier": "ENG-1",
         "title": "Issue",
-        "url": f"https://linear.app/evolvxsi/issue/ENG-1/{issue_id}",
+        "url": f"https://linear.app/nortpole/issue/ENG-1/{issue_id}",
         "description": "body",
         "comments": {"nodes": []},
         "team": {"name": "Engineering"},

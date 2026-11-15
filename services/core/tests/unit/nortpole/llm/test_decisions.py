@@ -58,7 +58,7 @@ def test_system_one_protocol(
     def handler(http_request: httpx.Request) -> httpx.Response:
         assert str(http_request.url) == url
         assert http_request.headers["Authorization"] == "Bearer test-key"
-        assert http_request.headers["X-EvolvXSI"] == "test"
+        assert http_request.headers["X-NortPole"] == "test"
         assert json.loads(http_request.content) == {
             "model": "test-model",
             "state": "The export failed.",
@@ -103,7 +103,7 @@ def test_system_one_protocol(
     with closing(httpx.Client(transport=httpx.MockTransport(handler))) as transport:
         with patch("nortpole.llm.decisions.client.httpx.Client", return_value=transport):
             result = DecisionClient(
-                provider, "test-model", "test-key", extra_headers={"X-EvolvXSI": "test"}
+                provider, "test-model", "test-key", extra_headers={"X-NortPole": "test"}
             ).decide(decision_request, flow=LLMFlow.MODEL_VALIDATION)
     assert result.model_dump() == {
         "model": "served-model",

@@ -1292,7 +1292,7 @@ class TestGetLitellmAvailableModels:
             model_names = [r.model_name for r in results]
             assert model_names == sorted(model_names, key=str.lower)
 
-    def test_empty_data_raises_evolvxsi_error(self) -> None:
+    def test_empty_data_raises_nortpole_error(self) -> None:
         """Test that empty model list raises NortPoleError."""
         from nortpole.server.manage.llm.api import get_litellm_available_models
 
@@ -1311,7 +1311,7 @@ class TestGetLitellmAvailableModels:
             with pytest.raises(NortPoleError, match="No models found"):
                 get_litellm_available_models(request, MagicMock(), mock_session)
 
-    def test_missing_data_key_raises_evolvxsi_error(self) -> None:
+    def test_missing_data_key_raises_nortpole_error(self) -> None:
         """Test that response without 'data' key raises NortPoleError."""
         from nortpole.server.manage.llm.api import get_litellm_available_models
 
@@ -1365,7 +1365,7 @@ class TestGetLitellmAvailableModels:
             assert len(results) == 1
             assert results[0].model_name == "gpt-4o"
 
-    def test_all_entries_unparseable_raises_evolvxsi_error(self) -> None:
+    def test_all_entries_unparseable_raises_nortpole_error(self) -> None:
         """Test that NortPoleError is raised when all entries fail to parse."""
         from nortpole.server.manage.llm.api import get_litellm_available_models
 
@@ -1838,7 +1838,7 @@ class TestGetBedrockAvailableModels:
         base_session.client.assert_called_once_with("sts", region_name="us-west-2")
         sts_client.assume_role.assert_called_once_with(
             RoleArn="arn:aws:iam::123456789012:role/bedrock",
-            RoleSessionName="evolvxsi-bedrock-model-fetch",
+            RoleSessionName="nortpole-bedrock-model-fetch",
             ExternalId="ext-id",
         )
         assert mock_session_cls.call_args_list[1].kwargs == {

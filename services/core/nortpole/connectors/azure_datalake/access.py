@@ -6,7 +6,7 @@ from collections.abc import Callable
 from typing import cast
 
 from nortpole.access.models import ExternalAccess
-from nortpole.access.utils import build_ext_group_name_for_evolvxsi
+from nortpole.access.utils import build_ext_group_name_for_nortpole
 from nortpole.configs.constants import DocumentSource
 from nortpole.connectors.azure_datalake.models import AzureDataLakePath
 from nortpole.connectors.azure_datalake.source_operations import (
@@ -60,7 +60,7 @@ def prefix_azure_datalake_external_groups(access: ExternalAccess) -> ExternalAcc
     return ExternalAccess(
         external_user_emails=access.external_user_emails,
         external_user_group_ids={
-            build_ext_group_name_for_evolvxsi(group_id, DocumentSource.AZURE_DATALAKE)
+            build_ext_group_name_for_nortpole(group_id, DocumentSource.AZURE_DATALAKE)
             for group_id in access.external_user_group_ids
         },
         is_public=access.is_public,

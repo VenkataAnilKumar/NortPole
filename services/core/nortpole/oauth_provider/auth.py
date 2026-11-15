@@ -38,7 +38,7 @@ _ACCESS_ROUTES = frozenset(
         ("GET", "/persona"),
     }
 )
-_TOKEN_INFO_SCOPE_KEY = "evolvxsi.mcp_oauth"
+_TOKEN_INFO_SCOPE_KEY = "nortpole.mcp_oauth"
 
 
 def _is_mcp_oauth_access_route(request: Request) -> bool:
@@ -47,7 +47,7 @@ def _is_mcp_oauth_access_route(request: Request) -> bool:
 
 def extract_oauth_provider_bearer(request: Request) -> str | None:
     authorization = request.headers.getlist("authorization")
-    alternate = request.headers.getlist("x-evolvxsi-authorization")
+    alternate = request.headers.getlist("x-nortpole-authorization")
     values = authorization + alternate
     if not any(
         part.startswith(

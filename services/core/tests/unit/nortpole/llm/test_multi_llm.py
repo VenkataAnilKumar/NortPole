@@ -3783,7 +3783,7 @@ def test_track_llm_cost_prices_cache_creation_at_write_rate(
         "nortpole.server.usage_limits.is_usage_limits_enabled", lambda: True
     )
     monkeypatch.setattr(
-        "nortpole.server.usage_limits.is_evolvxsi_managed_api_key", lambda _key: True
+        "nortpole.server.usage_limits.is_nortpole_managed_api_key", lambda _key: True
     )
     monkeypatch.setattr(
         "nortpole.db.engine.sql_engine.get_session_with_current_tenant", _fake_session
@@ -3827,7 +3827,7 @@ def test_track_llm_cost_applies_override_for_its_model_configuration(
         "nortpole.server.usage_limits.is_usage_limits_enabled", lambda: True
     )
     monkeypatch.setattr(
-        "nortpole.server.usage_limits.is_evolvxsi_managed_api_key", lambda _key: True
+        "nortpole.server.usage_limits.is_nortpole_managed_api_key", lambda _key: True
     )
     monkeypatch.setattr(
         "nortpole.db.engine.sql_engine.get_session_with_current_tenant", _fake_session
@@ -3904,7 +3904,7 @@ def test_track_llm_cost_prices_routed_model(monkeypatch: pytest.MonkeyPatch) -> 
         "nortpole.server.usage_limits.is_usage_limits_enabled", lambda: True
     )
     monkeypatch.setattr(
-        "nortpole.server.usage_limits.is_evolvxsi_managed_api_key", lambda _key: True
+        "nortpole.server.usage_limits.is_nortpole_managed_api_key", lambda _key: True
     )
     monkeypatch.setattr(
         "nortpole.db.engine.sql_engine.get_session_with_current_tenant", _fake_session

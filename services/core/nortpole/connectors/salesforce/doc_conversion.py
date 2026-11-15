@@ -4,7 +4,7 @@ from typing import Any, cast
 from nortpole.configs.constants import DocumentSource
 from nortpole.connectors.cross_connector_utils.miscellaneous_utils import time_str_to_utc
 from nortpole.connectors.models import BasicExpertInfo, Document, ImageSection, TextSection
-from nortpole.connectors.salesforce.evolvxsi_salesforce import NortPoleSalesforce
+from nortpole.connectors.salesforce.nortpole_salesforce import NortPoleSalesforce
 from nortpole.connectors.salesforce.sqlite_functions import NortPoleSalesforceSQLite
 from nortpole.connectors.salesforce.utils import (
     CREATED_FIELD,
@@ -210,7 +210,7 @@ def convert_sf_object_to_doc(
     """Would be nice if this function was documented"""
     object_dict = sf_object.data
     salesforce_id = object_dict[ID_FIELD]
-    evolvxsi_salesforce_id = f"{ID_PREFIX}{salesforce_id}"
+    nortpole_salesforce_id = f"{ID_PREFIX}{salesforce_id}"
     base_url = f"https://{sf_instance}"
     extracted_doc_updated_at = time_str_to_utc(object_dict[MODIFIED_FIELD])
     created_date = object_dict.get(CREATED_FIELD)
@@ -236,7 +236,7 @@ def convert_sf_object_to_doc(
         primary_owner_list = [primary_owner]
 
     doc = Document(
-        id=evolvxsi_salesforce_id,
+        id=nortpole_salesforce_id,
         sections=cast(list[TextSection | ImageSection], sections),
         source=DocumentSource.SALESFORCE,
         semantic_identifier=extracted_semantic_identifier,

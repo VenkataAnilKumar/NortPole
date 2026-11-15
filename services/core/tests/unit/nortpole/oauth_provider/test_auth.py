@@ -25,13 +25,13 @@ from nortpole.server.oauth_provider.api import _session_hash
 from shared_configs.contextvars import UsageCredentialIdentity
 from shared_configs.enums import UsageCredentialType
 
-_OAUTH_ACCESS_TOKEN = "evolvxsi_oat_public." + "a" * 43
+_OAUTH_ACCESS_TOKEN = "nortpole_oat_public." + "a" * 43
 _OAUTH_ACCESS_TOKEN_BYTES = _OAUTH_ACCESS_TOKEN.encode("ascii")
 
 
 @pytest.fixture
 def introspection_backend(monkeypatch: pytest.MonkeyPatch) -> AsyncMock:
-    monkeypatch.setattr(app_configs, "WEB_DOMAIN", "https://evolvxsi.example")
+    monkeypatch.setattr(app_configs, "WEB_DOMAIN", "https://nortpole.example")
     monkeypatch.setattr(
         oauth_config,
         "OAUTH_PROVIDER_SETTINGS",
@@ -48,7 +48,7 @@ def introspection() -> OAuthProviderIntrospection:
     return OAuthProviderIntrospection(
         client_id="registered-client",
         scopes=["read:search"],
-        resource="https://evolvxsi.example/mcp/",
+        resource="https://nortpole.example/mcp/",
         expires_at=1900,
         subject=str(uuid4()),
         grant_id=uuid4(),
@@ -142,7 +142,7 @@ def isolate_app_metrics(monkeypatch: pytest.MonkeyPatch) -> None:
         ],
         [
             (b"authorization", b"Bearer " + _OAUTH_ACCESS_TOKEN_BYTES),
-            (b"x-evolvxsi-authorization", b"Bearer other-token"),
+            (b"x-nortpole-authorization", b"Bearer other-token"),
         ],
         [(b"authorization", b"Basic " + _OAUTH_ACCESS_TOKEN_BYTES)],
         [(b"authorization", b"Bearer " + _OAUTH_ACCESS_TOKEN_BYTES + b" extra")],
@@ -159,7 +159,7 @@ def test_conflicting_or_malformed_mcp_headers_fail_closed(
 
 def test_non_mcp_credentials_keep_existing_auth_path() -> None:
     request = Request(
-        {"type": "http", "headers": [(b"authorization", b"Bearer evolvxsi_pat_example")]}
+        {"type": "http", "headers": [(b"authorization", b"Bearer nortpole_pat_example")]}
     )
     assert extract_oauth_provider_bearer(request) is None
 
@@ -280,11 +280,11 @@ async def test_pat_initializes_mcp_with_oauth_discovery_enabled(
     app: FastAPI = mcp_api.create_mcp_fastapi_app()
     async with app.router.lifespan_context(app):
         async with httpx.AsyncClient(
-            transport=httpx.ASGITransport(app), base_url="https://evolvxsi.example"
+            transport=httpx.ASGITransport(app), base_url="https://nortpole.example"
         ) as client:
             response: httpx.Response = await client.post(
                 "/",
-                headers={"Authorization": "Bearer evolvxsi_pat_test"},
+                headers={"Authorization": "Bearer nortpole_pat_test"},
                 json={
                     "jsonrpc": "2.0",
                     "id": 1,

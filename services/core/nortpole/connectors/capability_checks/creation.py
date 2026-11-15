@@ -294,7 +294,7 @@ def _run_checks_within_budget(
     # A check a draft run of this form is still running is awaited, not run
     # again: its result lands in the draft cache.
     awaited_ids: list[str] = list(awaited)
-    # TODO(evan-evolvxsi): concurrent creation checks can add load on rate-limited
+    # TODO(evan-nortpole): concurrent creation checks can add load on rate-limited
     # sources; they may need a concurrency cap.
     groups = run_functions_tuples_in_parallel(
         [

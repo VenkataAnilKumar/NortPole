@@ -125,7 +125,7 @@ function PluginAvailability({
 export function PluginRow({ plugin }: PluginRowProps) {
   const t = useTranslations("actions.plugins");
   const settings = useSettings();
-  const craftAvailable = settings.evolvxsi_craft_available === true;
+  const craftAvailable = settings.nortpole_craft_available === true;
   const resource =
     plugin.kind === "mcp"
       ? plugin.server

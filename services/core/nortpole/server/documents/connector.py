@@ -336,7 +336,7 @@ def save_zip_metadata_to_file_store(
     file_metadata: dict[str, Any] | None = None,
 ) -> tuple[str | None, int]:
     """
-    Extract .evolvxsi_metadata.json from zip and save to file store.
+    Extract .nortpole_metadata.json from zip and save to file store.
     Return the file ID and decompressed size, or (None, 0) if absent.
     """
     try:

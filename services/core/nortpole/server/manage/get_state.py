@@ -22,7 +22,7 @@ from nortpole.db.auth import get_user_count
 from nortpole.db.engine.sql_engine import get_session_with_shared_schema
 from nortpole.db.sso_provider import fetch_sso_providers, sso_authorize_path
 from nortpole.error_handling.error_codes import NortPoleErrorCode
-from nortpole.error_handling.exceptions import NortPoleError, evolvxsi_error_to_json_response
+from nortpole.error_handling.exceptions import NortPoleError, nortpole_error_to_json_response
 from nortpole.server.manage.models import (
     AllVersions,
     AuthConfigResponse,
@@ -176,7 +176,7 @@ async def readiness() -> StatusResponse[dict[str, float]] | JSONResponse:
     # Returned rather than raised: the global NortPoleError handler logs every 5xx,
     # which would put one line per probe per replica back in the log. The
     # response body and status are identical either way.
-    return evolvxsi_error_to_json_response(
+    return nortpole_error_to_json_response(
         NortPoleError(
             NortPoleErrorCode.SERVICE_UNAVAILABLE,
             f"Request threadpool saturated for {saturated_for:.1f}s "
@@ -255,9 +255,9 @@ DOCUMENT_INDEX_IMAGE = "opensearchproject/opensearch:3.6.0"
 
 
 _DOCKERHUB_REPOS = (
-    "evolvxsidotapp/evolvxsi-model-server",
-    "evolvxsidotapp/evolvxsi-backend",
-    "evolvxsidotapp/evolvxsi-web-server",
+    "nortpoledotapp/nortpole-model-server",
+    "nortpoledotapp/nortpole-backend",
+    "nortpoledotapp/nortpole-web-server",
 )
 _DOCKERHUB_PAGE_SIZE = 100
 _DOCKERHUB_MAX_PAGES = 2
@@ -337,19 +337,19 @@ def _fetch_versions() -> AllVersions:
 
     return AllVersions(
         stable=ContainerVersions(
-            evolvxsi=latest_stable_version,
+            nortpole=latest_stable_version,
             relational_db="postgres:15.2-alpine",
             index=DOCUMENT_INDEX_IMAGE,
             nginx="nginx:1.25.5-alpine",
         ),
         dev=ContainerVersions(
-            evolvxsi=latest_dev_version,
+            nortpole=latest_dev_version,
             relational_db="postgres:15.2-alpine",
             index=DOCUMENT_INDEX_IMAGE,
             nginx="nginx:1.25.5-alpine",
         ),
         migration=ContainerVersions(
-            evolvxsi="airgapped-intfloat-nomic-migration",
+            nortpole="airgapped-intfloat-nomic-migration",
             relational_db="postgres:15.2-alpine",
             index=DOCUMENT_INDEX_IMAGE,
             nginx="nginx:1.25.5-alpine",

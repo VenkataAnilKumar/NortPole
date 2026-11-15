@@ -961,7 +961,7 @@ def transfer_persona_ownership(
     new_owner_group_id: int | None = None,
 ) -> None:
     """Move ownership to a single user. Group targets are EE-only (versioned
-    override in ee.evolvxsi.db.persona)."""
+    override in ee.nortpole.db.persona)."""
     if new_owner_group_id is not None:
         raise NotImplementedError("NortPole MIT does not support group ownership")
     _transfer_persona_ownership(

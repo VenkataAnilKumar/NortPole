@@ -166,7 +166,7 @@ def test_nextjs_ready_probe_targets_base_path_dev_asset() -> None:
     assert ready is True
     http_client.get.assert_called_once_with(
         f"http://sandbox-x:3010/api/build/sessions/{session_id}/webapp"
-        "/_next/static/evolvxsi-ready-probe.js"
+        "/_next/static/nortpole-ready-probe.js"
     )
 
 

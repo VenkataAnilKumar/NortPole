@@ -1,7 +1,7 @@
 import { initiateOAuthFlow } from "@/lib/oauth/api";
 
 const location = {
-  href: "https://evolvxsi.example.com/app",
+  href: "https://nortpole.example.com/app",
   // `loadPage` makes a full page load through these.
   assign(url: string) {
     location.href = url;
@@ -12,7 +12,7 @@ const location = {
 };
 
 beforeEach(() => {
-  location.href = "https://evolvxsi.example.com/app";
+  location.href = "https://nortpole.example.com/app";
   Object.defineProperty(globalThis, "window", {
     // A blocked tab falls back to the current-tab redirect.
     value: { location, open: () => null },
@@ -37,7 +37,7 @@ test.each(["javascript:alert(1)", "data:text/html,test", "//example.com/auth"])(
     await expect(
       initiateOAuthFlow(1, "/app", "Localized invalid authorization URL")
     ).rejects.toThrow("Localized invalid authorization URL");
-    expect(location.href).toBe("https://evolvxsi.example.com/app");
+    expect(location.href).toBe("https://nortpole.example.com/app");
     jest.spyOn(globalThis, "fetch").mockResolvedValue(
       new Response(
         JSON.stringify({

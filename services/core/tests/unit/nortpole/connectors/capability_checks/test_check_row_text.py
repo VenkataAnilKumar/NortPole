@@ -236,7 +236,7 @@ def test_every_row_description_has_at_most_three_lines() -> None:
     paths = sorted(
         {
             *(_BACKEND_ROOT / "nortpole" / "connectors").rglob("*.py"),
-            *(_BACKEND_ROOT / "ee" / "evolvxsi").rglob("capability_checks*.py"),
+            *(_BACKEND_ROOT / "ee" / "nortpole").rglob("capability_checks*.py"),
         }
     )
     long = {

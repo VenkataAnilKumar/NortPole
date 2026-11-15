@@ -4,8 +4,8 @@ import React, { createContext, useContext, useState } from "react";
 import { LocalStorageKeys } from "@/lib/extension/constants";
 
 interface NRFPreferencesContextValue {
-  useEvolvXSIAsNewTab: boolean;
-  setUseEvolvXSIAsNewTab: (v: boolean) => void;
+  useNortPoleAsNewTab: boolean;
+  setUseNortPoleAsNewTab: (v: boolean) => void;
 }
 
 const NRFPreferencesContext = createContext<
@@ -39,7 +39,7 @@ export function NRFPreferencesProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [useEvolvXSIAsNewTab, setUseEvolvXSIAsNewTab] = useLocalStorageState<boolean>(
+  const [useNortPoleAsNewTab, setUseNortPoleAsNewTab] = useLocalStorageState<boolean>(
     LocalStorageKeys.USE_NORTPOLE_AS_NEW_TAB,
     true
   );
@@ -47,8 +47,8 @@ export function NRFPreferencesProvider({
   return (
     <NRFPreferencesContext.Provider
       value={{
-        useEvolvXSIAsNewTab,
-        setUseEvolvXSIAsNewTab,
+        useNortPoleAsNewTab,
+        setUseNortPoleAsNewTab,
       }}
     >
       {children}

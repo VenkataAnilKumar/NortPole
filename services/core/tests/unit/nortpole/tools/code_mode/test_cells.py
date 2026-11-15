@@ -748,12 +748,12 @@ def test_restored_running_observation_is_amended_as_interrupted() -> None:
 
 
 _CAPACITY_SAMPLES: tuple[tuple[str, dict[str, str]], ...] = (
-    ("evolvxsi_code_mode_cells_running", {}),
-    ("evolvxsi_code_mode_sandbox_workers_busy", {}),
-    ("evolvxsi_code_mode_tool_call_threads_in_use", {}),
-    ("evolvxsi_code_mode_programs_waiting_for_worker", {}),
-    ("evolvxsi_code_mode_program_duration_seconds_count", {}),
-    ("evolvxsi_code_mode_program_start_duration_seconds_count", {}),
+    ("nortpole_code_mode_cells_running", {}),
+    ("nortpole_code_mode_sandbox_workers_busy", {}),
+    ("nortpole_code_mode_tool_call_threads_in_use", {}),
+    ("nortpole_code_mode_programs_waiting_for_worker", {}),
+    ("nortpole_code_mode_program_duration_seconds_count", {}),
+    ("nortpole_code_mode_program_start_duration_seconds_count", {}),
 )
 
 
@@ -765,9 +765,9 @@ def _samples() -> dict[str, float]:
 
 
 _IN_USE_GAUGES = (
-    "evolvxsi_code_mode_cells_running",
-    "evolvxsi_code_mode_sandbox_workers_busy",
-    "evolvxsi_code_mode_tool_call_threads_in_use",
+    "nortpole_code_mode_cells_running",
+    "nortpole_code_mode_sandbox_workers_busy",
+    "nortpole_code_mode_tool_call_threads_in_use",
 )
 
 
@@ -785,18 +785,18 @@ def test_capacity_metrics_follow_one_program() -> None:
     )
     assert _details(running).status == "running"
     # A lone waiting program keeps its worker; its call holds a thread.
-    assert delta("evolvxsi_code_mode_cells_running") == 1
-    assert delta("evolvxsi_code_mode_sandbox_workers_busy") == 1
-    assert delta("evolvxsi_code_mode_tool_call_threads_in_use") == 1
+    assert delta("nortpole_code_mode_cells_running") == 1
+    assert delta("nortpole_code_mode_sandbox_workers_busy") == 1
+    assert delta("nortpole_code_mode_tool_call_threads_in_use") == 1
 
     response.gate.set()
     assert _details(response.wait(1, yield_time_ms=30_000)).status == "completed"
-    until(lambda: delta("evolvxsi_code_mode_cells_running") == 0)
-    assert delta("evolvxsi_code_mode_program_duration_seconds_count") == 1
-    assert delta("evolvxsi_code_mode_program_start_duration_seconds_count") == 1
-    assert delta("evolvxsi_code_mode_sandbox_workers_busy") == 0
-    assert delta("evolvxsi_code_mode_tool_call_threads_in_use") == 0
-    assert delta("evolvxsi_code_mode_programs_waiting_for_worker") == 0
+    until(lambda: delta("nortpole_code_mode_cells_running") == 0)
+    assert delta("nortpole_code_mode_program_duration_seconds_count") == 1
+    assert delta("nortpole_code_mode_program_start_duration_seconds_count") == 1
+    assert delta("nortpole_code_mode_sandbox_workers_busy") == 0
+    assert delta("nortpole_code_mode_tool_call_threads_in_use") == 0
+    assert delta("nortpole_code_mode_programs_waiting_for_worker") == 0
 
 
 def test_a_crash_keeps_only_commits_whose_earlier_commits_are_saved() -> None:
@@ -894,10 +894,10 @@ def test_tenant_counters_follow_one_program_and_one_rejection(
 ) -> None:
     tenant_id = "tenant_cell_metrics"
     names = (
-        ("evolvxsi_code_mode_programs_total", {"status": "completed"}),
-        ("evolvxsi_code_mode_cell_seconds_total", {}),
-        ("evolvxsi_code_mode_cell_busy_rejections_total", {}),
-        ("evolvxsi_code_mode_sandbox_worker_seconds_total", {}),
+        ("nortpole_code_mode_programs_total", {"status": "completed"}),
+        ("nortpole_code_mode_cell_seconds_total", {}),
+        ("nortpole_code_mode_cell_busy_rejections_total", {}),
+        ("nortpole_code_mode_sandbox_worker_seconds_total", {}),
     )
 
     def samples() -> list[float]:

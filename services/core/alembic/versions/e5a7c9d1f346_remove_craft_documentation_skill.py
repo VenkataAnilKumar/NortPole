@@ -1,7 +1,7 @@
 """remove the built-in craft-documentation skill
 
 The skill sent the agent to the inherited product's public documentation site, which does not describe
-EvolvXSI. Its definition is gone from the built-in registry; this removes the seeded row too.
+NortPole. Its definition is gone from the built-in registry; this removes the seeded row too.
 
 Revision ID: e5a7c9d1f346
 Revises: d4f6b8c0e235

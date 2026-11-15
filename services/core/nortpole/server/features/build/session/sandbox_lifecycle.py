@@ -137,7 +137,7 @@ class SandboxReservation:
     # Set only when this reservation authorized external provisioning (the
     # row is committed PROVISIONING at this attempt number); None when the sandbox
     # was already RUNNING and only needs a health check.
-    evolvxsi_pat: str | None
+    nortpole_pat: str | None
     requires_provisioning: bool
     sandbox_preexisted: bool
     # A prior attempt (FAILED, or a taken-over stale PROVISIONING) may have
@@ -425,10 +425,10 @@ def reserve_sandbox__no_commit(
         )
 
     # Keep PAT reads off the healthy hot path.
-    evolvxsi_pat: str | None = None
+    nortpole_pat: str | None = None
     if requires_provisioning:
         with time_provision_phase(SandboxProvisionPhase.ENSURE_PAT):
-            evolvxsi_pat = ensure_sandbox_pat(db_session, sandbox, user)
+            nortpole_pat = ensure_sandbox_pat(db_session, sandbox, user)
     elif not has_active_craft_pat(db_session, user.id):
         # A password reset revokes every PAT. The proxy reads the stored PAT
         # per request, so a new one restores a running sandbox's API access.
@@ -439,7 +439,7 @@ def reserve_sandbox__no_commit(
         sandbox_id=sandbox.id,
         tenant_id=tenant_id,
         attempt_number=attempt_number,
-        evolvxsi_pat=evolvxsi_pat,
+        nortpole_pat=nortpole_pat,
         requires_provisioning=requires_provisioning,
         sandbox_preexisted=sandbox_preexisted,
         terminate_before_provision=terminate_before_provision,
@@ -534,7 +534,7 @@ def reconcile_sandbox(
     sandbox_id = reservation.sandbox_id
     tenant_id = reservation.tenant_id
     attempt_number = reservation.attempt_number
-    evolvxsi_pat = reservation.evolvxsi_pat
+    nortpole_pat = reservation.nortpole_pat
     attempt_deadline = time.monotonic() + ATTEMPT_DEADLINE_SECONDS
     outcome = (
         (
@@ -583,7 +583,7 @@ def reconcile_sandbox(
             if sandbox is None:
                 raise RuntimeError(f"Sandbox {sandbox_id} disappeared during recovery")
             with time_provision_phase(SandboxProvisionPhase.ENSURE_PAT):
-                evolvxsi_pat = ensure_sandbox_pat(db_session, sandbox, user)
+                nortpole_pat = ensure_sandbox_pat(db_session, sandbox, user)
             db_session.commit()
 
             snapshot_opencode_history_before_recovery(
@@ -617,7 +617,7 @@ def reconcile_sandbox(
                 sandbox_id=sandbox_id,
                 user_id=user.id,
                 tenant_id=tenant_id,
-                evolvxsi_pat=evolvxsi_pat,
+                nortpole_pat=nortpole_pat,
                 provisioning_attempt_number=attempt_number,
             )
     except SandboxProvisionContentionError as e:

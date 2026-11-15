@@ -37,8 +37,8 @@ export async function logout(): Promise<Response> {
       for (let index = storage.length - 1; index >= 0; index--) {
         const key = storage.key(index);
         if (
-          key?.startsWith("evolvxsi:craft:") ||
-          key?.startsWith("evolvxsi:draft:craft:")
+          key?.startsWith("nortpole:craft:") ||
+          key?.startsWith("nortpole:draft:craft:")
         ) {
           storage.removeItem(key);
         }

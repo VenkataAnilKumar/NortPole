@@ -45,7 +45,7 @@ def main() -> None:
     if r.status_code != 200:
         sys.exit(f"embedding provider was not saved ({r.status_code}): {r.text[:200]}")
 
-    index = "evolvxsi_chunk_" + re.sub(r"[^a-z0-9]+", "_", args.model.lower()).strip("_")
+    index = "nortpole_chunk_" + re.sub(r"[^a-z0-9]+", "_", args.model.lower()).strip("_")
     SqlEngine.init_engine(pool_size=2, max_overflow=0)
     with get_session_with_current_tenant() as db:
         db.execute(text("delete from search_settings where status = 'FUTURE'"))

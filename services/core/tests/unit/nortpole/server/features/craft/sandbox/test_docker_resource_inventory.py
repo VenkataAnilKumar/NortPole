@@ -23,7 +23,7 @@ def _legacy_manager() -> tuple[DockerSandboxManager, MagicMock, MagicMock, UUID]
     labels = {
         LABEL_SANDBOX_ID: str(sandbox_id),
         LABEL_TENANT_ID: "tenant-a",
-        LABEL_K8S_MANAGED_BY: "evolvxsi",
+        LABEL_K8S_MANAGED_BY: "nortpole",
     }
     container, volume = MagicMock(), MagicMock()
     container.name, container.id, container.labels = "sandbox", "container-1", labels

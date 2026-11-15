@@ -298,7 +298,7 @@ def celery_is_worker_primary(worker: Any) -> bool:
 def make_probe_path(probe: str, hostname: str) -> Path:
     """templates the path for a k8s probe file.
 
-    e.g. /tmp/evolvxsi_k8s_indexing_readiness.txt
+    e.g. /tmp/nortpole_k8s_indexing_readiness.txt
     """
     hostname_parts = hostname.split("@")
     if len(hostname_parts) != 2:
@@ -309,4 +309,4 @@ def make_probe_path(probe: str, hostname: str) -> Path:
         raise ValueError(f"name cannot be empty! {name=}")
 
     safe_name = "".join(c for c in name if c.isalnum()).rstrip()
-    return Path(f"/tmp/evolvxsi_k8s_{safe_name}_{probe}.txt")  # noqa: S108 — k8s probe file, name sanitized above
+    return Path(f"/tmp/nortpole_k8s_{safe_name}_{probe}.txt")  # noqa: S108 — k8s probe file, name sanitized above

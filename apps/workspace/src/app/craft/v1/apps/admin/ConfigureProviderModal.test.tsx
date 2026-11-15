@@ -103,7 +103,7 @@ const APP: ExternalAppAdminResponse = {
     { id: "custom-skill", name: "slack-workflow", is_valid: true },
   ],
   users_can_manage_policies: true,
-  is_evolvxsi_managed: false,
+  is_nortpole_managed: false,
 };
 
 function renderExistingProvider(onClose = jest.fn()) {
@@ -146,7 +146,7 @@ describe("ConfigureProviderModal", () => {
   it.each([false, true])(
     "preserves concurrent availability changes for managed=%s",
     async (managed) => {
-      const initial = { ...APP, is_evolvxsi_managed: managed };
+      const initial = { ...APP, is_nortpole_managed: managed };
       const onClose = jest.fn();
       const onSaved = jest.fn();
       jest
@@ -326,7 +326,7 @@ describe("ConfigureProviderModal", () => {
   it("keeps managed provider credentials out of the editor", () => {
     render(
       <ConfigureProviderModal
-        existingApp={{ ...APP, is_evolvxsi_managed: true }}
+        existingApp={{ ...APP, is_nortpole_managed: true }}
         descriptor={DESCRIPTOR}
         onClose={jest.fn()}
         onSaved={jest.fn()}

@@ -10,11 +10,11 @@ from nortpole.server.features.microvm.api import SANDBOX_NODE_SIGNING_KEY_PATH
 
 
 def _has_signing_key_route(runtime: SandboxRuntime) -> bool:
-    evolvxsi_main = importlib.import_module("nortpole.main")
+    nortpole_main = importlib.import_module("nortpole.main")
     with pytest.MonkeyPatch.context() as mp:
-        mp.setattr(evolvxsi_main, "SANDBOX_RUNTIME", runtime)
-        mp.setattr(evolvxsi_main, "APP_API_PREFIX", "")
-        app = evolvxsi_main.get_application()
+        mp.setattr(nortpole_main, "SANDBOX_RUNTIME", runtime)
+        mp.setattr(nortpole_main, "APP_API_PREFIX", "")
+        app = nortpole_main.get_application()
     return any(
         isinstance(route, APIRoute)
         and route.path == SANDBOX_NODE_SIGNING_KEY_PATH

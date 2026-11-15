@@ -1,6 +1,6 @@
 """Parse audit events out of caplog.
 
-These return nothing unless a handler is attached to ``evolvxsi.audit``. The unit
+These return nothing unless a handler is attached to ``nortpole.audit``. The unit
 conftests do that automatically; external-dependency tests use ``audit_stream``.
 """
 
@@ -14,7 +14,7 @@ def audit_events(caplog: pytest.LogCaptureFixture) -> list[dict[str, Any]]:
     return [
         json.loads(record.getMessage())
         for record in caplog.records
-        if record.name.startswith("evolvxsi.audit")
+        if record.name.startswith("nortpole.audit")
     ]
 
 

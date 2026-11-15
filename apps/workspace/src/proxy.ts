@@ -134,7 +134,7 @@ export async function proxy(request: NextRequest) {
 
   // A desktop-started OAuth callback goes back to the app, which holds the
   // session. Serve the handoff page ahead of any auth gate; the URL stays the
-  // same, so the page builds the evolvxsi:// link from it.
+  // same, so the page builds the nortpole:// link from it.
   if (
     isDesktopOAuthCallback(pathname, request.nextUrl.searchParams.get("state"))
   ) {

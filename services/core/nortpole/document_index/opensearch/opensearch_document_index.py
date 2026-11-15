@@ -244,7 +244,7 @@ def convert_retrieved_opensearch_chunk_to_inference_chunk_uncleaned(
     )
 
 
-def _convert_evolvxsi_chunk_to_opensearch_document(
+def _convert_nortpole_chunk_to_opensearch_document(
     chunk: DocMetadataAwareIndexChunk,
 ) -> DocumentChunk:
     filtered_blurb = remove_invalid_unicode_chars(chunk.blurb)
@@ -575,10 +575,10 @@ class OpenSearchDocumentIndex(DocumentIndex):
             # can result in a state where chunks are deleted and not all the
             # new chunks have been indexed.
             chunk_batch: list[DocumentChunk] = [
-                _convert_evolvxsi_chunk_to_opensearch_document(chunk)
+                _convert_nortpole_chunk_to_opensearch_document(chunk)
                 for chunk in doc_chunks
             ]
-            evolvxsi_document: Document = doc_chunks[0].source_document
+            nortpole_document: Document = doc_chunks[0].source_document
             # First delete the doc's chunks from the index. This is so that
             # there are no dangling chunks in the index, in the event that the
             # new document's content contains fewer chunks than the previous
@@ -587,18 +587,18 @@ class OpenSearchDocumentIndex(DocumentIndex):
             # if the chunk count has actually decreased. This assumes that
             # overlapping chunks are perfectly overwritten. If we can't
             # guarantee that then we need the code as-is.
-            if evolvxsi_document.id not in deleted_doc_ids:
+            if nortpole_document.id not in deleted_doc_ids:
                 num_chunks_deleted = self.delete(
-                    evolvxsi_document.id, evolvxsi_document.chunk_count
+                    nortpole_document.id, nortpole_document.chunk_count
                 )
-                deleted_doc_ids.add(evolvxsi_document.id)
+                deleted_doc_ids.add(nortpole_document.id)
                 # If we see that chunks were deleted we assume the doc already
                 # existed. We record the result before bulk_index_documents
                 # runs. If indexing raises, this entire result list is discarded
                 # by the caller's retry logic, so early recording is safe.
                 document_indexing_results.append(
                     DocumentInsertionRecord(
-                        document_id=evolvxsi_document.id,
+                        document_id=nortpole_document.id,
                         already_existed=num_chunks_deleted > 0,
                     )
                 )

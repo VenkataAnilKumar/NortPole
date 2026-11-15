@@ -42,7 +42,7 @@ from nortpole.indexing.embedder import DefaultIndexingEmbedder
 from nortpole.indexing.models import DocAwareChunk
 from nortpole.llm.factory import get_default_llm
 from nortpole.llm.interfaces import LLM
-from nortpole.evolvxsibot.slack.models import ChannelType, SlackContext
+from nortpole.nortpolebot.slack.models import ChannelType, SlackContext
 from nortpole.redis.redis_pool import get_redis_client
 from nortpole.server.federated.models import FederatedConnectorDetail
 from nortpole.utils.logger import setup_logger

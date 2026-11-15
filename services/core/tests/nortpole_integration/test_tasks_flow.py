@@ -24,7 +24,7 @@ def _up() -> bool:
         pass
     try:
         with get_session_with_current_tenant() as s:
-            s.execute(text("select 1 from evolvxsi_task limit 1"))
+            s.execute(text("select 1 from nortpole_task limit 1"))
         return True
     except Exception:
         return False
@@ -52,7 +52,7 @@ def people():  # type: ignore[no-untyped-def]
     yield ids
     with get_session_with_current_tenant() as s:
         s.query(NortPoleTask).filter(NortPoleTask.owner_id.in_(ids)).delete()
-        s.execute(text("delete from evolvxsi_audit_event where actor_email like :p and row_hash is null"), {"p": f"%-{RUN}@example.com"})
+        s.execute(text("delete from nortpole_audit_event where actor_email like :p and row_hash is null"), {"p": f"%-{RUN}@example.com"})
         s.query(User).filter(User.id.in_(ids)).delete()
         s.commit()
 

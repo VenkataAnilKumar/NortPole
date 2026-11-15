@@ -32,7 +32,7 @@ Sandbox containers run with:
   ``NORTPOLE_API_PREFIX``,
   opencode auth/config only)
 - only the dedicated sandbox bridge network — never compose's default
-  network. ``evolvxsi-craft-api`` is the supported API endpoint on that bridge;
+  network. ``nortpole-craft-api`` is the supported API endpoint on that bridge;
   postgres, redis, object-store, and model_server remain unreachable by service name.
 
 Threat model — Docker vs Kubernetes parity gap
@@ -125,7 +125,7 @@ from nortpole.server.features.build.sandbox.image.sandbox_daemon.models import (
 from nortpole.server.features.build.sandbox.labels import (
     LABEL_DOCKER_NETWORK,
     LABEL_K8S_MANAGED_BY,
-    LABEL_K8S_MANAGED_BY_EVOLVXSI,
+    LABEL_K8S_MANAGED_BY_NORTPOLE,
     LABEL_PROVISIONING_ATTEMPT,
     LABEL_SANDBOX_ID,
     LABEL_TENANT_ID,
@@ -183,9 +183,9 @@ from nortpole.utils.logger import setup_logger
 logger = setup_logger()
 
 
-LABEL_COMPONENT = "evolvxsi.local/component"
+LABEL_COMPONENT = "nortpole.local/component"
 LABEL_COMPONENT_VALUE = "craft-sandbox"
-LABEL_USER_ID = "evolvxsi.local/user-id"
+LABEL_USER_ID = "nortpole.local/user-id"
 
 # Path conventions inside the sandbox container — must match the K8s image.
 WORKSPACE_ROOT = "/workspace"
@@ -369,7 +369,7 @@ def _looks_like_internal_compose_host(url: str) -> bool:
 
     Used to warn deployers that pointed NORTPOLE_SERVER_URL at a service available
     only on Compose's default network. Sandboxes can resolve the dedicated
-    ``evolvxsi-craft-api`` alias, but not these unrelated service names.
+    ``nortpole-craft-api`` alias, but not these unrelated service names.
     """
     if not url:
         return False
@@ -413,7 +413,7 @@ def build_sandbox_labels(
     """Standard label set for sandbox-owned docker resources.
 
     ``compose_project`` is added as ``com.docker.compose.project`` so Docker
-    Desktop groups sandbox containers under the same "evolvxsi" stack header as
+    Desktop groups sandbox containers under the same "nortpole" stack header as
     api_server/postgres/redis/etc. Auto-detected by ``DockerSandboxManager``
     from its own container's labels.
 
@@ -425,7 +425,7 @@ def build_sandbox_labels(
         LABEL_COMPONENT: LABEL_COMPONENT_VALUE,
         LABEL_SANDBOX_ID: str(sandbox_id),
         LABEL_TENANT_ID: tenant_id,
-        LABEL_K8S_MANAGED_BY: LABEL_K8S_MANAGED_BY_EVOLVXSI,
+        LABEL_K8S_MANAGED_BY: LABEL_K8S_MANAGED_BY_NORTPOLE,
     }
     if user_id is not None:
         labels[LABEL_USER_ID] = str(user_id)
@@ -449,7 +449,7 @@ def _proxy_env_vars(
     """Proxy-enabled env additions for the sandbox container.
 
     The Kubernetes lane injects the equivalent vars via the Helm pod template
-    (``evolvxsi.sandboxProxyEnv``); here they're layered on the docker env dict.
+    (``nortpole.sandboxProxyEnv``); here they're layered on the docker env dict.
     Includes the firewall-init.sh contract vars since the script runs as the
     container's entrypoint wrapper and reads them from its own environment.
     Proxy ports come from build config and are injected as internal env, not
@@ -526,7 +526,7 @@ def build_container_create_kwargs(
     user_id: UUID,
     tenant_id: str,
     image: str,
-    evolvxsi_pat: str,
+    nortpole_pat: str,
     api_server_url: str,
     network: str,
     volume_name: str,
@@ -556,7 +556,7 @@ def build_container_create_kwargs(
     - **Cap-dropped non-root**: ``user=1000:1000``, ``cap_drop=ALL``,
       ``security_opt=no-new-privileges``, ``privileged=False``.
     - **Single network**: joins only the caller-supplied ``network`` (the
-      dedicated ``evolvxsi_craft_sandbox`` bridge). Does NOT join compose's default
+      dedicated ``nortpole_craft_sandbox`` bridge). Does NOT join compose's default
       network; the dedicated API alias is supported there, while postgres,
       redis, and object-store remain unreachable by service name.
 
@@ -593,7 +593,7 @@ def build_container_create_kwargs(
       root-only ``ca.key``; the agent runs as UID 1000 after init.
 
     ``NORTPOLE_SERVER_URL`` is the complete API base used by the skill scripts inside the
-    sandbox. The default ``evolvxsi-craft-api`` alias is attached to the sandbox
+    sandbox. The default ``nortpole-craft-api`` alias is attached to the sandbox
     bridge; we warn about other Compose DNS names because they exist only on the
     default network.
 
@@ -608,12 +608,12 @@ def build_container_create_kwargs(
         logger.warning(
             "NORTPOLE_SERVER_URL=%s looks like an internal compose hostname. Sandboxes only "
             "join the craft bridge network, so default-network DNS will fail. Use the "
-            "http://evolvxsi-craft-api:8080 bridge alias or a public API base such as "
-            "https://evolvxsi.your-org.com/api.",
+            "http://nortpole-craft-api:8080 bridge alias or a public API base such as "
+            "https://nortpole.your-org.com/api.",
             api_server_url,
         )
     env: dict[str, str] = {
-        "NORTPOLE_PAT": evolvxsi_pat,
+        "NORTPOLE_PAT": nortpole_pat,
         "NORTPOLE_SERVER_URL": api_server_url,
         # The deployment URL is already the exact API base. Disable the CLI's
         # compatibility prefix for direct services and prefixed ingress URLs.
@@ -819,7 +819,7 @@ class DockerSandboxManager(SandboxManager):
             driver="bridge",
             labels={
                 LABEL_COMPONENT: LABEL_COMPONENT_VALUE,
-                LABEL_K8S_MANAGED_BY: LABEL_K8S_MANAGED_BY_EVOLVXSI,
+                LABEL_K8S_MANAGED_BY: LABEL_K8S_MANAGED_BY_NORTPOLE,
             },
         )
 
@@ -875,12 +875,12 @@ class DockerSandboxManager(SandboxManager):
         sandbox_id: UUID,
         user_id: UUID,
         tenant_id: str,
-        evolvxsi_pat: str | None,
+        nortpole_pat: str | None,
         provisioning_attempt_number: int,
     ) -> SandboxInfo:
         with sandbox_provision_lock(sandbox_id, tenant_id):
             return self._provision(
-                sandbox_id, user_id, tenant_id, evolvxsi_pat, provisioning_attempt_number
+                sandbox_id, user_id, tenant_id, nortpole_pat, provisioning_attempt_number
             )
 
     def _provision(
@@ -888,11 +888,11 @@ class DockerSandboxManager(SandboxManager):
         sandbox_id: UUID,
         user_id: UUID,
         tenant_id: str,
-        evolvxsi_pat: str | None,
+        nortpole_pat: str | None,
         provisioning_attempt_number: int,
     ) -> SandboxInfo:
-        if not evolvxsi_pat:
-            raise ValueError("evolvxsi_pat is required for Docker sandbox provisioning.")
+        if not nortpole_pat:
+            raise ValueError("nortpole_pat is required for Docker sandbox provisioning.")
         if not NORTPOLE_SERVER_URL:
             raise ValueError(
                 "NORTPOLE_SERVER_URL must be set for Docker sandbox provisioning."
@@ -928,8 +928,8 @@ class DockerSandboxManager(SandboxManager):
             ]
             if SANDBOX_PROXY_HOST:
                 plugins.append(_OPENCODE_SESSION_TAG_PLUGIN_PATH)
-            container_evolvxsi_pat = (
-                SANDBOX_PROXY_INJECTED_PLACEHOLDER if SANDBOX_PROXY_HOST else evolvxsi_pat
+            container_nortpole_pat = (
+                SANDBOX_PROXY_INJECTED_PLACEHOLDER if SANDBOX_PROXY_HOST else nortpole_pat
             )
             opencode_config = build_opencode_base_config(
                 disabled_tools=get_opencode_disabled_tools(),
@@ -943,7 +943,7 @@ class DockerSandboxManager(SandboxManager):
                 sandbox_id=sandbox_id,
                 user_id=user_id,
                 tenant_id=tenant_id,
-                evolvxsi_pat=container_evolvxsi_pat,
+                nortpole_pat=container_nortpole_pat,
                 volume_name=volume_name,
                 opencode_password=opencode_password,
                 opencode_config_json=opencode_config_json,
@@ -1039,7 +1039,7 @@ class DockerSandboxManager(SandboxManager):
         sandbox_id: UUID,
         user_id: UUID,
         tenant_id: str,
-        evolvxsi_pat: str,
+        nortpole_pat: str,
         volume_name: str,
         opencode_password: str,
         opencode_config_json: str,
@@ -1069,7 +1069,7 @@ class DockerSandboxManager(SandboxManager):
             user_id=user_id,
             tenant_id=tenant_id,
             image=self._image,
-            evolvxsi_pat=evolvxsi_pat,
+            nortpole_pat=nortpole_pat,
             api_server_url=NORTPOLE_SERVER_URL,
             network=self._network_name,
             listen_host=listen_host,
@@ -1152,7 +1152,7 @@ class DockerSandboxManager(SandboxManager):
     ) -> Iterator[SandboxResource]:
         labels = [
             f"{LABEL_COMPONENT}={LABEL_COMPONENT_VALUE}",
-            f"{LABEL_K8S_MANAGED_BY}={LABEL_K8S_MANAGED_BY_EVOLVXSI}",
+            f"{LABEL_K8S_MANAGED_BY}={LABEL_K8S_MANAGED_BY_NORTPOLE}",
             f"{LABEL_TENANT_ID}={tenant_id}",
         ]
         if sandbox_id is not None:
@@ -1243,7 +1243,7 @@ class DockerSandboxManager(SandboxManager):
             if (
                 labels.get(LABEL_SANDBOX_ID) != str(resource.sandbox_id)
                 or labels.get(LABEL_TENANT_ID) != resource.tenant_id
-                or labels.get(LABEL_K8S_MANAGED_BY) != LABEL_K8S_MANAGED_BY_EVOLVXSI
+                or labels.get(LABEL_K8S_MANAGED_BY) != LABEL_K8S_MANAGED_BY_NORTPOLE
             ):
                 raise RuntimeError(f"Resource ownership changed: {resource.name}")
             remaining_request_timeout(deadline)

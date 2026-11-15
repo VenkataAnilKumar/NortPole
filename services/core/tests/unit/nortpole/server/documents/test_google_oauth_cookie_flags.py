@@ -18,7 +18,7 @@ from nortpole.server.documents import connector
 )
 @pytest.mark.parametrize(
     "web_domain, expect_secure",
-    [("https://evolvxsi.example", True), ("http://localhost:3000", False)],
+    [("https://nortpole.example", True), ("http://localhost:3000", False)],
 )
 def test_google_oauth_credential_cookie_flags(
     monkeypatch: pytest.MonkeyPatch,

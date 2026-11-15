@@ -22,7 +22,7 @@ from shared_configs.configs import MULTI_TENANT
 
 logger = logging.getLogger("alembic.runtime.migration")
 
-# EvolvXSI no longer uses Vespa. These helpers were inlined from the removed Vespa
+# NortPole no longer uses Vespa. These helpers were inlined from the removed Vespa
 # document index module so this migration stays importable.
 _VESPA_APP_CONTAINER_URL = os.environ.get("VESPA_CLOUD_URL") or (
     f"http://{os.environ.get('VESPA_HOST') or 'localhost'}"

@@ -238,7 +238,7 @@ class PermissionSyncContext(BaseModel):
     google_domain: str
 
 
-def evolvxsi_document_id_from_drive_file(file: GoogleDriveFileType) -> str:
+def nortpole_document_id_from_drive_file(file: GoogleDriveFileType) -> str:
     link = file.get(WEB_VIEW_LINK_KEY)
     if not link:
         file_id = file.get("id")
@@ -848,7 +848,7 @@ def _convert_drive_item_to_document(
             )
             return None
 
-        doc_id = evolvxsi_document_id_from_drive_file(file)
+        doc_id = nortpole_document_id_from_drive_file(file)
         external_access = (
             _get_external_access_for_raw_gdrive_file(
                 file=file,
@@ -909,7 +909,7 @@ def _convert_drive_item_to_document(
     except Exception as e:
         doc_id = "unknown"
         try:
-            doc_id = evolvxsi_document_id_from_drive_file(file)
+            doc_id = nortpole_document_id_from_drive_file(file)
         except Exception as e2:
             logger.warning("Error getting document id from file: %s", e2)
 
@@ -966,7 +966,7 @@ def build_slim_document(
         else None
     )
     return SlimDocument(
-        id=evolvxsi_document_id_from_drive_file(file),
+        id=nortpole_document_id_from_drive_file(file),
         external_access=external_access,
         parent_hierarchy_raw_node_id=(file.get("parents") or [None])[0],
         doc_created_at=(

@@ -20,7 +20,7 @@ from nortpole.connectors.confluence.source_operations import (
     ConfluenceSpacePermissionsVariant,
     ConfluenceUserEmailVariant,
     ConfluenceUserListVariant,
-    _EvolvXSIConfluence,
+    _NortPoleConfluence,
 )
 from nortpole.connectors.exceptions import (
     ConnectorValidationError,
@@ -67,8 +67,8 @@ def _sdk_client(*responses: requests.Response) -> mock.Mock:
     return sdk
 
 
-def _transport(sdk: mock.Mock, is_cloud: bool = False) -> _EvolvXSIConfluence:
-    client = _EvolvXSIConfluence(
+def _transport(sdk: mock.Mock, is_cloud: bool = False) -> _NortPoleConfluence:
+    client = _NortPoleConfluence(
         is_cloud=is_cloud, url=_WIKI_BASE, credentials_provider=_provider()
     )
     client._confluence = sdk
@@ -192,7 +192,7 @@ def test_connector_probes_the_site_once(scoped_token: bool) -> None:
     )
 
     with (
-        mock.patch.object(_EvolvXSIConfluence, "_probe_connection") as probe,
+        mock.patch.object(_NortPoleConfluence, "_probe_connection") as probe,
         mock.patch.object(
             source_operations,
             "scoped_url",
@@ -204,7 +204,7 @@ def test_connector_probes_the_site_once(scoped_token: bool) -> None:
             return_value=iter([{"key": "KEY"}]),
         ),
         mock.patch.object(
-            _EvolvXSIConfluence, "get_space", create=True, return_value={"key": "KEY"}
+            _NortPoleConfluence, "get_space", create=True, return_value={"key": "KEY"}
         ),
     ):
         # Under test.
@@ -264,7 +264,7 @@ def test_probe_site_leaves_the_client_in_use_alone() -> None:
 
 def test_get_space_translates_the_sdk_error() -> None:
     # Precondition.
-    client = mock.Mock(spec=_EvolvXSIConfluence)
+    client = mock.Mock(spec=_NortPoleConfluence)
     client.get_space = mock.Mock(side_effect=ApiError("no such space"))
     gateway = gateway_with_client(client)
     connector = ConfluenceConnector(wiki_base=_WIKI_BASE, is_cloud=False, space="X")
@@ -340,7 +340,7 @@ def test_content_read_restrictions_unreadable_is_none(status_code: int) -> None:
 
 
 def test_list_users_rejects_a_mismatched_variant() -> None:
-    gateway = gateway_with_client(mock.Mock(spec=_EvolvXSIConfluence), is_cloud=False)
+    gateway = gateway_with_client(mock.Mock(spec=_NortPoleConfluence), is_cloud=False)
 
     with pytest.raises(ValueError):
         gateway.list_users(variant=ConfluenceUserListVariant.CLOUD)
@@ -367,7 +367,7 @@ def test_get_space_permissions_rejects_a_mismatched_variant(
 
 def test_username_email_lookup_swallows_errors() -> None:
     source_operations._USERNAME_TO_EMAIL_CACHE.clear()
-    client = mock.Mock(spec=_EvolvXSIConfluence)
+    client = mock.Mock(spec=_NortPoleConfluence)
     client._url = _WIKI_BASE
     client.get_mobile_parameters = mock.Mock(
         side_effect=requests.HTTPError(response=_response(403))
@@ -383,7 +383,7 @@ def test_username_email_lookup_swallows_errors() -> None:
 def test_uncached_userkey_email_lookup_skips_the_cache() -> None:
     """The cache keeps a None result for a userKey; a check reads past it."""
     source_operations._USER_KEY_TO_EMAIL_CACHE.clear()
-    client = mock.Mock(spec=_EvolvXSIConfluence)
+    client = mock.Mock(spec=_NortPoleConfluence)
     client._url = _WIKI_BASE
     client.get_user_details_by_userkey = mock.Mock(
         side_effect=[{}, {"email": "a@x.io"}, {"email": "b@x.io"}]
@@ -404,7 +404,7 @@ def test_uncached_userkey_email_lookup_skips_the_cache() -> None:
 
 
 def test_cloud_space_permissions_translate_the_sdk_errors() -> None:
-    client = mock.Mock(spec=_EvolvXSIConfluence)
+    client = mock.Mock(spec=_NortPoleConfluence)
     client.get_space = mock.Mock(side_effect=ApiError("no such space"))
     gateway = gateway_with_client(client, is_cloud=True)
 
@@ -422,7 +422,7 @@ def test_cloud_space_permissions_translate_the_sdk_errors() -> None:
 
 def test_listed_user_email_uses_the_username_lookup() -> None:
     source_operations._USERNAME_TO_EMAIL_CACHE.clear()
-    client = mock.Mock(spec=_EvolvXSIConfluence)
+    client = mock.Mock(spec=_NortPoleConfluence)
     client._url = _WIKI_BASE
     client.get_mobile_parameters = mock.Mock(
         return_value={"email": "alice@example.com"}

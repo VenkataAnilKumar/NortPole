@@ -7,7 +7,7 @@ export const LOGIN_PATH = "/auth/login";
 
 /** Stamped by the proxy with the request path and query, since layouts
  * cannot read the URL; requireAuth() hands it back as the login `next`. */
-export const ORIGINAL_PATH_HEADER = "x-evolvxsi-original-path";
+export const ORIGINAL_PATH_HEADER = "x-nortpole-original-path";
 
 /** Login page flag. `false` keeps the SSO button instead of auto-starting it. */
 export const SSO_AUTO_REDIRECT_PARAM = "autoRedirectToSso";

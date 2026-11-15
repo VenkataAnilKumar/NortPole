@@ -7,7 +7,7 @@ import { useDropzone } from "react-dropzone";
 import { useProjectsContext } from "@/lib/projects/providers";
 import FilePickerPopover from "@/refresh-components/popovers/FilePickerPopover";
 import { UserFileStatus, type ProjectFile } from "@/lib/projects/types";
-import { MinimalEvolvXSIDocument } from "@/lib/search/types";
+import { MinimalNortPoleDocument } from "@/lib/search/types";
 import { Button, Divider, LineItemButton, Text } from "@opal/components";
 import { Content, ContentAction } from "@opal/layouts";
 import AddInstructionModal from "@/sections/modals/AddInstructionModal";
@@ -26,7 +26,7 @@ import {
 export interface ProjectContextPanelProps {
   projectTokenCount?: number;
   availableContextTokens?: number;
-  setPresentingDocument?: (document: MinimalEvolvXSIDocument) => void;
+  setPresentingDocument?: (document: MinimalNortPoleDocument) => void;
 }
 
 export default function ProjectContextPanel({
@@ -37,12 +37,12 @@ export default function ProjectContextPanel({
   const t = useTranslations("chat");
   const addInstructionModal = useCreateModal();
   const projectFilesModal = useCreateModal();
-  // Convert ProjectFile to MinimalEvolvXSIDocument format for viewing
+  // Convert ProjectFile to MinimalNortPoleDocument format for viewing
   const handleOnView = useCallback(
     (file: ProjectFile) => {
       if (!setPresentingDocument) return;
 
-      const documentForViewer: MinimalEvolvXSIDocument = {
+      const documentForViewer: MinimalNortPoleDocument = {
         document_id: `project_file__${file.file_id}`,
         semantic_identifier: file.name,
       };

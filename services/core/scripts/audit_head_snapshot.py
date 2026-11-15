@@ -34,7 +34,7 @@ def _session(url: str, email: str, password: str, verify: bool | str) -> request
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("mode", choices=["save", "check"])
-    p.add_argument("--url", required=True, help="the product address, for example https://evolvxsi.example.com")
+    p.add_argument("--url", required=True, help="the product address, for example https://nortpole.example.com")
     p.add_argument("--email", required=True)
     p.add_argument("--file", required=True, help="where heads are kept (save appends, check reads the last line)")
     p.add_argument("--ca", default=None, help="a CA certificate file to trust (for a private or self-signed certificate)")

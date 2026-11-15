@@ -1,4 +1,4 @@
-@import "@evolvxsi-ai/opal/root.css";
+@import "@nortpole-ai/opal/root.css";
 @import "./css/content-editable.css" layer(base);
 @import "./css/card.css" layer(base);
 @import "./css/comet.css" layer(base);
@@ -10,7 +10,7 @@
 @import "./css/line-item.css" layer(base);
 @import "./css/square-button.css" layer(base);
 @import "./css/z-index.css" layer(base);
-/* Imported unlayered (and gated on html.evolvxsi-desktop) so it overrides the
+/* Imported unlayered (and gated on html.nortpole-desktop) so it overrides the
    frozen desktop-wrapper shim regardless of source order. */
 @import "./css/desktop-titlebar.css";
 @config '../../tailwind.config.js';
@@ -334,32 +334,32 @@
 }
 
 /* Chat box: Manus / North style. Large rounded card, roomy input, round buttons. */
-#evolvxsi-chat-input {
+#nortpole-chat-input {
   background: var(--background-tint-00) !important;
   border-radius: 1.5rem !important;
   border: 1px solid var(--border-01);
   box-shadow: 0 1px 2px rgba(28, 27, 25, 0.06), 0 10px 28px rgba(28, 27, 25, 0.07);
 }
-#evolvxsi-chat-input div:has(> #evolvxsi-chat-input-textbox) {
+#nortpole-chat-input div:has(> #nortpole-chat-input-textbox) {
   height: auto !important;
   min-height: 4.5rem;
   align-items: flex-start;
   padding: 1.1rem 1.25rem 0.25rem;
 }
-#evolvxsi-chat-input #evolvxsi-chat-input-textbox {
+#nortpole-chat-input #nortpole-chat-input-textbox {
   font-size: 1rem;
   line-height: 1.5;
   min-height: 2.75rem;
   width: 100%;
 }
-#evolvxsi-chat-input button {
+#nortpole-chat-input button {
   border-radius: 9999px;
 }
-#evolvxsi-chat-input #evolvxsi-chat-input-send-button:not(:disabled) {
+#nortpole-chat-input #nortpole-chat-input-send-button:not(:disabled) {
   background: var(--text-05);
   color: var(--background-neutral-00);
 }
-#evolvxsi-chat-input #evolvxsi-chat-input-send-button:not(:disabled) svg {
+#nortpole-chat-input #nortpole-chat-input-send-button:not(:disabled) svg {
   color: var(--background-neutral-00);
   stroke: var(--background-neutral-00);
 }

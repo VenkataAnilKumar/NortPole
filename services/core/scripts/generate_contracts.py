@@ -39,11 +39,11 @@ def pack_manifest_schema() -> str:
 
     schema = Manifest.model_json_schema()
     schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
-    schema["$id"] = "https://evolvxsi.local/contracts/pack-manifest.schema.json"
+    schema["$id"] = "https://nortpole.local/contracts/pack-manifest.schema.json"
     return _dump(schema)
 
 
-def evolvxsi_openapi() -> str:
+def nortpole_openapi() -> str:
     from fastapi.openapi.utils import get_openapi
     from fastapi.routing import APIRoute
 
@@ -65,7 +65,7 @@ def evolvxsi_openapi() -> str:
 
 
 def outputs() -> dict[Path, str]:
-    return {SCHEMA_PATH: pack_manifest_schema(), OPENAPI_PATH: evolvxsi_openapi()}
+    return {SCHEMA_PATH: pack_manifest_schema(), OPENAPI_PATH: nortpole_openapi()}
 
 
 def main(argv: list[str]) -> int:

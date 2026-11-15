@@ -450,7 +450,7 @@ export const MessageTextRenderer: MessageRenderer<
             className={cn(!streamFullyDisplayed && "streaming-katex")}
           >
             <ReactMarkdown
-              className="prose prose-evolvxsi font-main-content-body max-w-full"
+              className="prose prose-nortpole font-main-content-body max-w-full"
               components={markdownComponents}
               remarkPlugins={
                 streamFullyDisplayed

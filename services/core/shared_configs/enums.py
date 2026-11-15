@@ -34,7 +34,7 @@ class WebSearchProviderType(str, Enum):
 
 
 class WebContentProviderType(str, Enum):
-    NORTPOLE_WEB_CRAWLER = "evolvxsi_web_crawler"
+    NORTPOLE_WEB_CRAWLER = "nortpole_web_crawler"
     FIRECRAWL = "firecrawl"
     EXA = "exa"
     TAVILY = "tavily"

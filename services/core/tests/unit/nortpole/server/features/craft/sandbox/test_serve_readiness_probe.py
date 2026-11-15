@@ -21,7 +21,7 @@ from nortpole.server.features.build.sandbox.serve_transport import (
 
 _SBX = UUID("12345678-1234-1234-1234-1234567890ab")
 _POD_IP_URL = "http://10.244.0.97:4096"
-_SERVICE_URL = "http://sandbox-x.evolvxsi-sandboxes.svc.cluster.local:4096"
+_SERVICE_URL = "http://sandbox-x.nortpole-sandboxes.svc.cluster.local:4096"
 _PASSWORD = "hunter2"
 
 

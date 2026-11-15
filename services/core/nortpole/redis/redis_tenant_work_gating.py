@@ -30,32 +30,32 @@ _SET_KEY = "active_tenants"
 # --- Prometheus metrics ---
 
 _active_set_size = Gauge(
-    "evolvxsi_tenant_work_gating_active_set_size",
+    "nortpole_tenant_work_gating_active_set_size",
     "Current cardinality of the active_tenants sorted set (updated once per "
     "generator invocation when the gate reads it).",
 )
 
 _marked_total = Counter(
-    "evolvxsi_tenant_work_gating_marked_total",
+    "nortpole_tenant_work_gating_marked_total",
     "Writes into active_tenants, labelled by caller.",
     ["caller"],
 )
 
 _skipped_total = Counter(
-    "evolvxsi_tenant_work_gating_skipped_total",
+    "nortpole_tenant_work_gating_skipped_total",
     "Per-tenant fanouts skipped by the gate (enforce mode only), by task.",
     ["task"],
 )
 
 _would_skip_total = Counter(
-    "evolvxsi_tenant_work_gating_would_skip_total",
+    "nortpole_tenant_work_gating_would_skip_total",
     "Per-tenant fanouts that would have been skipped if enforce were on "
     "(shadow counter), by task.",
     ["task"],
 )
 
 _full_fanout_total = Counter(
-    "evolvxsi_tenant_work_gating_full_fanout_total",
+    "nortpole_tenant_work_gating_full_fanout_total",
     "Generator invocations that bypassed the gate for a full fanout cycle, by task.",
     ["task"],
 )
@@ -101,7 +101,7 @@ def maybe_mark_tenant_active(tenant_id: str, caller: str = "unknown") -> None:
         # Local import to avoid a module-load cycle: NortPoleRuntime imports
         # nortpole.redis.redis_pool, so a top-level import here would wedge on
         # certain startup paths.
-        from nortpole.server.runtime.evolvxsi_runtime import NortPoleRuntime
+        from nortpole.server.runtime.nortpole_runtime import NortPoleRuntime
 
         if not NortPoleRuntime.get_tenant_work_gating_enabled():
             return

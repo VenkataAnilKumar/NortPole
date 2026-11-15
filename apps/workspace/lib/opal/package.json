@@ -1,5 +1,5 @@
 {
-  "name": "@evolvxsi-ai/opal",
+  "name": "@nortpole-ai/opal",
   "version": "0.0.0",
   "description": "Opal \u2014 NortPole's Typescript component library and design system.",
   "homepage": "https://github.com/VenkataAnilKumar/NortPole/tree/main/apps/workspace/lib/opal",
@@ -94,7 +94,7 @@
     "tailwind-merge": "^2.0.0"
   },
   "devDependencies": {
-    "@evolvxsi-ai/shared": "file:../shared",
+    "@nortpole-ai/shared": "file:../shared",
     "tsdown": "^0.23.0",
     "typescript": "7.1.0-dev.20260916.1"
   },

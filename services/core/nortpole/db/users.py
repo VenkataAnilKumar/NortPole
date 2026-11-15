@@ -58,7 +58,7 @@ _MAX_LISTED_STRANDED_EMAILS = 3
 
 # tenant-hashed so tenants don't block each other and the id can't collide with
 # the other advisory locks in the codebase
-_MEMBERSHIP_LOCK_NAMESPACE = "evolvxsi_membership_lock"
+_MEMBERSHIP_LOCK_NAMESPACE = "nortpole_membership_lock"
 
 
 def is_limited_user(user: User) -> bool:

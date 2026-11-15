@@ -151,7 +151,7 @@ const STALE_SSO_STATE_ERRORS: ReadonlySet<string> = new Set([
   "OAUTH_INVALID_STATE",
 ]);
 
-const SSO_RESTART_STORAGE_KEY = "evolvxsi:sso-restart";
+const SSO_RESTART_STORAGE_KEY = "nortpole:sso-restart";
 // Covers one IdP round trip: a restart that fails again inside it shows the
 // error, and a later stale link in the same tab restarts again.
 const SSO_RESTART_WINDOW_MS = 5 * 60 * 1000;

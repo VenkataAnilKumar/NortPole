@@ -454,13 +454,13 @@ def test_framework_constructor_stores_provider_and_config() -> None:
     # Under test.
     gateway = _SlackOperations(
         credentials_provider=provider,
-        connector_specific_config={"workspace": "evolvxsi"},
+        connector_specific_config={"workspace": "nortpole"},
     )
     configless = _SlackOperations(credentials_provider=provider)
 
     # Postcondition.
     assert gateway.credentials_provider is provider
-    assert gateway.connector_specific_config == {"workspace": "evolvxsi"}
+    assert gateway.connector_specific_config == {"workspace": "nortpole"}
     assert configless.connector_specific_config is None
 
 

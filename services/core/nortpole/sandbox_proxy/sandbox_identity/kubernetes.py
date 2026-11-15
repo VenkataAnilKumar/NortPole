@@ -20,7 +20,7 @@ from nortpole.server.features.build.sandbox.labels import (
     LABEL_K8S_COMPONENT,
     LABEL_K8S_COMPONENT_SANDBOX,
     LABEL_K8S_MANAGED_BY,
-    LABEL_K8S_MANAGED_BY_EVOLVXSI,
+    LABEL_K8S_MANAGED_BY_NORTPOLE,
     LABEL_SANDBOX_ID,
     LABEL_TENANT_ID,
 )
@@ -38,7 +38,7 @@ _WATCH_CONNECT_TIMEOUT_S = 15.0
 _SANDBOX_POD_SELECTOR = ",".join(
     [
         f"{LABEL_K8S_COMPONENT}={LABEL_K8S_COMPONENT_SANDBOX}",
-        f"{LABEL_K8S_MANAGED_BY}={LABEL_K8S_MANAGED_BY_EVOLVXSI}",
+        f"{LABEL_K8S_MANAGED_BY}={LABEL_K8S_MANAGED_BY_NORTPOLE}",
     ]
 )
 
@@ -57,7 +57,7 @@ def _identity_from_pod(pod: client.V1Pod) -> SandboxIdentity | None:
     labels = metadata.labels or {}
     # Re-check managed-by even though the selector filters it, so loosening the
     # selector later can't enable label spoofing.
-    if labels.get(LABEL_K8S_MANAGED_BY) != LABEL_K8S_MANAGED_BY_EVOLVXSI:
+    if labels.get(LABEL_K8S_MANAGED_BY) != LABEL_K8S_MANAGED_BY_NORTPOLE:
         return None
     sandbox_id_raw = labels.get(LABEL_SANDBOX_ID)
     tenant_id = labels.get(LABEL_TENANT_ID)

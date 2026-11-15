@@ -66,7 +66,7 @@ class ShardCapacityCollector(Collector):
 
     def collect(self) -> Iterator[Metric]:
         gauge = GaugeMetricFamily(
-            "evolvxsi_shard_tenant_count",
+            "nortpole_shard_tenant_count",
             "Tenant schemas physically present on a shard",
             labels=["shard"],
         )

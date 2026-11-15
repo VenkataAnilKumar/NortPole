@@ -4,9 +4,9 @@ Revision ID: e0ea2ae62e51
 Revises: c2cc933f0a40
 Create Date: 2026-07-23 23:13:21.795575
 
-Adds a composite btree index on (user_id, evolvxsibot_flow, time_updated DESC) to
+Adds a composite btree index on (user_id, nortpolebot_flow, time_updated DESC) to
 back the chat-history sidebar query (get_chat_sessions_by_user), which filters
-on user_id + evolvxsibot_flow and orders by time_updated DESC. Without it Postgres
+on user_id + nortpolebot_flow and orders by time_updated DESC. Without it Postgres
 plans a Seq Scan + Sort that degrades linearly as chat_session grows.
 
 chat_session is hot (time_updated is bumped on every message), so the index is
@@ -39,7 +39,7 @@ depends_on = None
 
 logger = logging.getLogger("alembic.runtime.migration")
 
-INDEX_NAME = "ix_chat_session_user_id_evolvxsibot_flow_time_updated"
+INDEX_NAME = "ix_chat_session_user_id_nortpolebot_flow_time_updated"
 
 # CONCURRENTLY waits on every older transaction in the database, whatever schema
 # it runs in. A bounded wait fails naming the schema instead of hanging the run.
@@ -97,7 +97,7 @@ def _build_index(conn: sa.engine.Connection, schema: str) -> None:
                 )
             conn.exec_driver_sql(
                 f'CREATE INDEX CONCURRENTLY "{INDEX_NAME}" '
-                f'ON "{schema}".chat_session (user_id, evolvxsibot_flow, time_updated DESC)'
+                f'ON "{schema}".chat_session (user_id, nortpolebot_flow, time_updated DESC)'
             )
             return
         except DBAPIError as e:

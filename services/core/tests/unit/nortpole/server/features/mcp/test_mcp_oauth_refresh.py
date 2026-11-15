@@ -32,7 +32,7 @@ from nortpole.server.features.mcp.oauth import (
 )
 
 _TOKEN_ENDPOINT = "https://gitlab.example.com/oauth/token"
-_REDIRECT_URI = "https://evolvxsi.example.com/mcp/oauth/callback"
+_REDIRECT_URI = "https://nortpole.example.com/mcp/oauth/callback"
 
 
 def _server_stub(transport: MCPTransport = MCPTransport.SSE) -> DbMCPServer:
@@ -454,7 +454,7 @@ def test_no_refresh_without_persisted_expiry(monkeypatch: pytest.MonkeyPatch) ->
     assert "sent_request" not in captured
 
 
-def test_refresh_persists_via_real_evolvxsi_token_storage(
+def test_refresh_persists_via_real_nortpole_token_storage(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """OAuth refresh replaces Authorization without dropping custom headers."""

@@ -8,7 +8,7 @@ import { NextRequest } from "next/server";
 import { GET as oauthCallback } from "@/app/auth/oauth/callback/route";
 import { GET as oidcCallback } from "@/app/auth/oidc/callback/route";
 
-const APP_DOMAIN = "https://evolvxsi.example.com";
+const APP_DOMAIN = "https://nortpole.example.com";
 
 // Next resolves this build-time marker itself, so it has no module to load here.
 jest.mock("server-only", () => ({}), { virtual: true });

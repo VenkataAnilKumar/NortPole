@@ -165,7 +165,7 @@ def deliver_email(value: str, payload: dict[str, Any], idempotency_key: str) -> 
     msg = EmailMessage()
     msg["From"], msg["To"] = cfg.EMAIL_FROM, ", ".join(recipients)
     msg["Subject"] = _one_line(str(payload.get("title") or "Reviewed draft"))
-    msg["Message-ID"] = f"<{idempotency_key}@evolvxsi.local>"
+    msg["Message-ID"] = f"<{idempotency_key}@nortpole.local>"
     msg.set_content(str(payload.get("markdown") or ""))
     try:
         with smtplib.SMTP(cfg.SMTP_SERVER, cfg.SMTP_PORT, timeout=TIMEOUT_S) as smtp:

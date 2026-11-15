@@ -14,7 +14,7 @@ from nortpole.federated_connectors.slack.models import SlackEntities
 from nortpole.llm.interfaces import LLM, GenerationContext
 from nortpole.llm.models import GenerationRequest, UserMessage
 from nortpole.natural_language_processing.english_stopwords import ENGLISH_STOPWORDS_SET
-from nortpole.evolvxsibot.slack.models import ChannelType
+from nortpole.nortpolebot.slack.models import ChannelType
 from nortpole.prompts.federated_search import (
     SLACK_DATE_EXTRACTION_PROMPT,
     SLACK_QUERY_EXPANSION_PROMPT,
@@ -655,7 +655,7 @@ def extract_slack_message_urls(
     """Extract Slack message URLs from query text.
 
     Parses URLs like:
-      https://evolvxsi-company.slack.com/archives/C097NBWMY8Y/p1775491616524769
+      https://nortpole-company.slack.com/archives/C097NBWMY8Y/p1775491616524769
 
     Returns list of (channel_id, thread_ts) tuples.
     The 16-digit timestamp is converted to Slack ts format (with dot).

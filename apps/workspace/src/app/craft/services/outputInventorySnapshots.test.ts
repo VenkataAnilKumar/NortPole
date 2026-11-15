@@ -7,7 +7,7 @@ import {
 
 const file = { path: "outputs/report.csv", revision: "1:50", size: 50 };
 const files = { [file.path]: file };
-const key = "evolvxsi:craft:outputs:v1:user:session";
+const key = "nortpole:craft:outputs:v1:user:session";
 
 beforeEach(() => sessionStorage.clear());
 afterEach(() => jest.restoreAllMocks());

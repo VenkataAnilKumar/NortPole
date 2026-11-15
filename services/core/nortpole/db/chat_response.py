@@ -732,7 +732,7 @@ def reserve_child_response__no_commit(
             spawned_by_message_id=parent.id,
             user_id=root.chat_session.user_id,
             persona_id=root.chat_session.persona_id,
-            evolvxsibot_flow=root.chat_session.evolvxsibot_flow,
+            nortpolebot_flow=root.chat_session.nortpolebot_flow,
             incognito_record_mode=root.chat_session.incognito_record_mode,
             agent_name=sanitize_string(agent.path.rsplit("/", 1)[-1]),
             description=sanitize_string(agent.description),

@@ -15,7 +15,7 @@ interface Tool { name: string; kind_label: string; allowed: boolean; mine: boole
  */
 export default function PluginsSourcePage() {
   const { data, error, isLoading } = useSWR<{ kinds: Kind[]; tools: Tool[] }>("/api/tool-catalog", errorHandlingFetcher);
-  const craft = useSettings().evolvxsi_craft_enabled === true;
+  const craft = useSettings().nortpole_craft_enabled === true;
   const tools = [...(data?.tools ?? [])].sort((a, b) => Number(b.allowed) - Number(a.allowed) || a.name.localeCompare(b.name));
 
   return (

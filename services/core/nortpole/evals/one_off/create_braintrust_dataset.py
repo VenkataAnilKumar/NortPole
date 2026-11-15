@@ -192,7 +192,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--csv-path",
-        default="/Users/richardguan/evolvxsi/backend/nortpole/evals/data/DR Master Question & Metric Sheet - Sheet1.csv",
+        default="/Users/richardguan/nortpole/backend/nortpole/evals/data/DR Master Question & Metric Sheet - Sheet1.csv",
         help="Path to the CSV file (default: %(default)s)",
     )
 

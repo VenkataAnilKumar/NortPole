@@ -67,7 +67,7 @@ def test_prune_removes_only_what_is_older_than_the_period_and_records_itself() -
         out = prune(s, now=NOW, actor=ADMIN, settings=Retention(audit_days=30, usage_days=30))
         assert out["held"] is False and out["audit_events"] >= 1 and out["usage_rows"] >= 1 and out["redaction_rows"] >= 1
         assert _counts(s) == (1, 1, 0), "the 2-day-old rows stay, the 60-day-old rows go"
-        last = s.execute(text("select summary from evolvxsi_audit_event where action='retention.prune' and actor_email=:e order by id desc limit 1"), {"e": ADMIN.email}).scalar()
+        last = s.execute(text("select summary from nortpole_audit_event where action='retention.prune' and actor_email=:e order by id desc limit 1"), {"e": ADMIN.email}).scalar()
         assert last and last.startswith("Pruned ")
 
 
@@ -102,7 +102,7 @@ def test_changing_retention_and_the_hold_is_audited_and_remembered() -> None:
     v = ret_api.put_retention(ret_api.RetentionUpdate(audit_days=400, usage_days=200), user=ADMIN)
     assert v.legal_hold is False and v.hold_reason == ""
     with get_session_with_current_tenant() as s:
-        rows = [r[0] for r in s.execute(text("select summary from evolvxsi_audit_event where action='retention.change' and actor_email=:e order by id"), {"e": ADMIN.email})]
+        rows = [r[0] for r in s.execute(text("select summary from nortpole_audit_event where action='retention.change' and actor_email=:e order by id"), {"e": ADMIN.email})]
     assert "legal hold placed: audit 2026" in rows[0] and rows[1].endswith("legal hold lifted")
 
 
@@ -121,6 +121,6 @@ def test_export_is_ordered_complete_audited_and_neutralises_spreadsheet_formulas
         rows = [r for r in csv.reader(io.StringIO(c.body.decode())) if r and r[3] and f"old-{TAG}" in r]
         assert rows[0][7].startswith("'="), "a formula is shown as text"
         assert rows[1][7] == "plain, with comma" and rows[1][8] == '{"k": "v"}'
-        logged = s.execute(text("select summary, details from evolvxsi_audit_event where action='audit.export' and actor_email=:e order by id desc limit 1"), {"e": ADMIN.email}).one()
+        logged = s.execute(text("select summary, details from nortpole_audit_event where action='audit.export' and actor_email=:e order by id desc limit 1"), {"e": ADMIN.email}).one()
         assert logged.summary.startswith("Exported ") and "rows" in logged.details
         assert "HYPERLINK" not in json.dumps(logged.details), "the export record holds counts, not content"

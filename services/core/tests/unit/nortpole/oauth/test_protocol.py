@@ -34,7 +34,7 @@ def test_protocol_fields_cannot_be_configured(key: str, in_endpoint: bool) -> No
         build_authorization_url(
             authorization_url=endpoint,
             client_id="client",
-            redirect_uri="https://evolvxsi.example/callback",
+            redirect_uri="https://nortpole.example/callback",
             state="state",
             additional_params=extras,
         )
@@ -44,7 +44,7 @@ def test_provider_scope_and_query_encoding() -> None:
     url = build_authorization_url(
         authorization_url="https://provider.example/authorize?audience=old#section",
         client_id="client",
-        redirect_uri="https://evolvxsi.example/callback",
+        redirect_uri="https://nortpole.example/callback",
         state="state",
         scope="read,write",
         scope_param="user_scope",
@@ -84,7 +84,7 @@ def test_resource_ownership_depends_on_flow(in_endpoint: bool) -> None:
         return build_authorization_url(
             authorization_url=endpoint,
             client_id="client",
-            redirect_uri="https://evolvxsi.example",
+            redirect_uri="https://nortpole.example",
             state="state",
             additional_params=extras,
             owns_resource=owns_resource,

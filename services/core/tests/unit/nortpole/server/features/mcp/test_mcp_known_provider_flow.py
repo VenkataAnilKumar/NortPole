@@ -23,7 +23,7 @@ from nortpole.server.features.mcp.models import MCPOAuthFlowState
 
 _AUTHORIZATION_URL = "https://accounts.example.com/authorize"
 _TOKEN_URL = "https://accounts.example.com/token"
-_REDIRECT_URI = "https://evolvxsi.example.com/mcp/oauth/callback"
+_REDIRECT_URI = "https://nortpole.example.com/mcp/oauth/callback"
 _CODE_VERIFIER = "v" * 128
 
 

@@ -202,7 +202,7 @@ def content_persisting_sessions_filter() -> ColumnElement[bool]:
 
 
 # Retrieves chat sessions by user
-# Chat sessions do not include evolvxsibot flows
+# Chat sessions do not include nortpolebot flows
 def get_chat_sessions_by_user(
     user_id: UUID | None,
     deleted: bool | None,
@@ -219,7 +219,7 @@ def get_chat_sessions_by_user(
         select(ChatSession)
         .where(ChatSession.user_id == user_id)
         .where(ChatSession.spawned_by_message_id.is_(None))
-        .where(ChatSession.evolvxsibot_flow.is_(False))
+        .where(ChatSession.nortpolebot_flow.is_(False))
         .order_by(desc(ChatSession.time_updated))
     )
 
@@ -346,7 +346,7 @@ def create_chat_session(
     persona_id: int | None,  # Can be none if temporary persona is used
     llm_override: LLMOverride | None = None,
     prompt_override: PromptOverride | None = None,
-    evolvxsibot_flow: bool = False,
+    nortpolebot_flow: bool = False,
     slack_thread_id: str | None = None,
     project_id: int | None = None,
     incognito_record_mode: IncognitoRecordMode | None = None,
@@ -361,7 +361,7 @@ def create_chat_session(
         description=description,
         llm_override=llm_override,
         prompt_override=prompt_override,
-        evolvxsibot_flow=evolvxsibot_flow,
+        nortpolebot_flow=nortpolebot_flow,
         slack_thread_id=slack_thread_id,
         project_id=project_id,
         incognito_record_mode=incognito_record_mode,
@@ -422,7 +422,7 @@ def duplicate_chat_session_for_user_from_slack(
         llm_override=chat_session.llm_override,
         prompt_override=chat_session.prompt_override,
         # Chat is in UI now so this is false
-        evolvxsibot_flow=False,
+        nortpolebot_flow=False,
         # Maybe we want this in the future to track if it was created from Slack
         slack_thread_id=None,
     )
@@ -466,7 +466,7 @@ def delete_all_chat_sessions_for_user(
         db_session.query(ChatSession)
         .filter(
             ChatSession.user_id == user_id,
-            ChatSession.evolvxsibot_flow.is_(False),
+            ChatSession.nortpolebot_flow.is_(False),
             ChatSession.spawned_by_message_id.is_(None),
         )
         .all()
@@ -478,7 +478,7 @@ def delete_all_chat_sessions_for_user(
         db_session.execute(
             delete(ChatSession).where(
                 ChatSession.user_id == user_id,
-                ChatSession.evolvxsibot_flow.is_(False),
+                ChatSession.nortpolebot_flow.is_(False),
                 ChatSession.spawned_by_message_id.is_(None),
             )
         )
@@ -487,7 +487,7 @@ def delete_all_chat_sessions_for_user(
             update(ChatSession)
             .where(
                 ChatSession.user_id == user_id,
-                ChatSession.evolvxsibot_flow.is_(False),
+                ChatSession.nortpolebot_flow.is_(False),
                 ChatSession.spawned_by_message_id.is_(None),
             )
             .values(deleted=True)

@@ -13,7 +13,7 @@ from nortpole.background.celery.tasks.beat_schedule import CLOUD_BEAT_MULTIPLIER
 from nortpole.configs.constants import POSTGRES_CELERY_BEAT_APP_NAME
 from nortpole.db.engine.sql_engine import SqlEngine
 from nortpole.db.engine.tenant_utils import get_all_tenant_ids
-from nortpole.server.runtime.evolvxsi_runtime import NortPoleRuntime
+from nortpole.server.runtime.nortpole_runtime import NortPoleRuntime
 from nortpole.utils.variable_functionality import fetch_versioned_implementation
 from shared_configs.configs import IGNORED_SYNCING_TENANT_LIST, MULTI_TENANT
 

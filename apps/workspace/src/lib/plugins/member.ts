@@ -196,7 +196,7 @@ export function useMemberPlugins({
   const appsEnabled =
     surface !== "chat" &&
     agentId === undefined &&
-    settings.evolvxsi_craft_enabled === true;
+    settings.nortpole_craft_enabled === true;
   const { mutate: mutateCache } = useSWRConfig();
   const servers = useSWR<MCPServersResponse, Error>(
     surface === "craft"

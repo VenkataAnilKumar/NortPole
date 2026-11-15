@@ -10,7 +10,7 @@ from nortpole.auth.users import current_user
 from nortpole.db.enums import LLMModelFlowType, Permission, PermissionAuthority
 from nortpole.db.llm import ModelConfigurationWindow
 from nortpole.db.models import LLMModelFlow, LLMProvider, ModelConfiguration, Persona, User
-from nortpole.error_handling.exceptions import register_evolvxsi_exception_handlers
+from nortpole.error_handling.exceptions import register_nortpole_exception_handlers
 from nortpole.server.manage.llm import api
 from nortpole.server.manage.llm.models import DefaultModel
 from nortpole.server.manage.llm.provider_cache import ProviderListingCacheLookup
@@ -21,7 +21,7 @@ from nortpole.utils.sensitive import make_mock_sensitive_value
 def client() -> Generator[TestClient, None, None]:
     app = FastAPI()
     app.include_router(api.admin_router)
-    register_evolvxsi_exception_handlers(app)
+    register_nortpole_exception_handlers(app)
     app.dependency_overrides[current_user] = lambda: User()
     app.dependency_overrides[api.get_session] = lambda: MagicMock(spec=Session)
     with TestClient(app) as test_client:

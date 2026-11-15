@@ -11,7 +11,7 @@ from nortpole.utils.special_types import JSON_ro
 logger = setup_logger()
 
 
-REDIS_KEY_PREFIX = "evolvxsi_kv_store:"
+REDIS_KEY_PREFIX = "nortpole_kv_store:"
 KV_REDIS_KEY_EXPIRATION = 60 * 60 * 24  # 1 Day
 
 

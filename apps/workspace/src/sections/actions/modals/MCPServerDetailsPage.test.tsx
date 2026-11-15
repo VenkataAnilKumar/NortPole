@@ -181,7 +181,7 @@ beforeEach(() => {
         JSON.stringify({
           tier: workspaceTier,
           ee_features_enabled: true,
-          evolvxsi_craft_available: craftAvailable,
+          nortpole_craft_available: craftAvailable,
         })
       );
     if (url === "/api/enterprise-settings") return new Response("{}");

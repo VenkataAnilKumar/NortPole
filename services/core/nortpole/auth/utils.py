@@ -27,7 +27,7 @@ def get_hashed_bearer_token_from_request(
 
     Args:
         request: The FastAPI request
-        valid_prefixes: List of valid token prefixes (e.g., ["on_", "evolvxsi_pat_"])
+        valid_prefixes: List of valid token prefixes (e.g., ["on_", "nortpole_pat_"])
         hash_fn: Function to hash the token (e.g., hash_api_key or hash_pat)
         allow_non_bearer: If True, accept raw tokens without "Bearer " prefix
 

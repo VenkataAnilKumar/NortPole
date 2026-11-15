@@ -49,7 +49,7 @@ it("ignores expired and malformed snapshots", () => {
     readWorkspaceDirectorySnapshot("user", "session", "outputs")
   ).toBeUndefined();
   window.sessionStorage.setItem(
-    "evolvxsi:craft:directories:v1:user:session",
+    "nortpole:craft:directories:v1:user:session",
     JSON.stringify([
       { readAt: now, listing: { path: "outputs", entries: [{ name: "bad" }] } },
     ])
@@ -87,7 +87,7 @@ it("bounds stored directory count and serialized size", () => {
     readWorkspaceDirectorySnapshot("user", "session", "huge")
   ).toBeUndefined();
   expect(
-    window.sessionStorage.getItem("evolvxsi:craft:directories:v1:user:session")
+    window.sessionStorage.getItem("nortpole:craft:directories:v1:user:session")
       ?.length
   ).toBeLessThanOrEqual(256_000);
 });

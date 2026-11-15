@@ -42,14 +42,14 @@ def _dim_tier(pixels: int) -> str:
 
 
 _image_summarization_duration_seconds = Histogram(
-    "evolvxsi_image_summarization_duration_seconds",
+    "nortpole_image_summarization_duration_seconds",
     "Latency of LLM image summarization calls, in seconds.",
     _LABEL_NAMES,
     buckets=_LLM_LATENCY_BUCKETS,
 )
 
 _image_summarization_total = Counter(
-    "evolvxsi_image_summarization_total",
+    "nortpole_image_summarization_total",
     "Total image summarizations processed.",
     _LABEL_NAMES,
 )

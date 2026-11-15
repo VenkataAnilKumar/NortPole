@@ -2,7 +2,7 @@ import React, { memo, JSX, useMemo, useCallback } from "react";
 import type { ExtraProps } from "react-markdown";
 import { SourceIcon } from "@/components/SourceIcon";
 import { WebResultIcon } from "@/components/WebResultIcon";
-import { MinimalEvolvXSIDocument, NortPoleDocument } from "@/lib/search/types";
+import { MinimalNortPoleDocument, NortPoleDocument } from "@/lib/search/types";
 import { SubQuestionDetail, CitationMap } from "@/app/app/types";
 import { ValidSources } from "@/lib/connectors/types/source";
 import { ProjectFile } from "@/lib/projects/types";
@@ -38,7 +38,7 @@ function getPlainLabel(children: React.ReactNode): string | null {
 
 interface DocumentCardProps {
   document: NortPoleDocument;
-  updatePresentingDocument: (document: MinimalEvolvXSIDocument) => void;
+  updatePresentingDocument: (document: MinimalNortPoleDocument) => void;
   url?: string;
 }
 interface QuestionCardProps {
@@ -62,7 +62,7 @@ export const MemoizedAnchor = memo(
     docs?: NortPoleDocument[] | null;
     userFiles?: ProjectFile[] | null;
     citations?: CitationMap;
-    updatePresentingDocument: (doc: MinimalEvolvXSIDocument) => void;
+    updatePresentingDocument: (doc: MinimalNortPoleDocument) => void;
     href?: string;
     children: React.ReactNode;
   }): JSX.Element => {

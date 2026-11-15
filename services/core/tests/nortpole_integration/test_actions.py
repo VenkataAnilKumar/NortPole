@@ -141,7 +141,7 @@ def test_policy_blocks_a_data_class_the_target_does_not_allow(world, target, sin
         with pytest.raises(NortPoleError) as err:
             actions.execute_action(a.id, actions.VersionOnly(version=a.version), user=u, db_session=s)
         assert "Blocked by policy" in err.value.detail
-        denied = s.execute(text("select count(*) from evolvxsi_audit_event where action='action.execute' and outcome='denied' and actor_email like 'approver-%'")).scalar()
+        denied = s.execute(text("select count(*) from nortpole_audit_event where action='action.execute' and outcome='denied' and actor_email like 'approver-%'")).scalar()
         assert denied >= 1
     assert sink.requests == []
 
@@ -174,7 +174,7 @@ def test_losing_access_to_a_cited_source_blocks_the_send(world, target, sink) ->
 def test_an_expired_approval_is_refused(world, target, sink) -> None:  # type: ignore[no-untyped-def]
     with get_session_with_current_tenant() as s:
         u, t, a = _approved_action(s, world["u"], target)
-        s.execute(text("update evolvxsi_action set approved_at = now() - interval '31 minutes' where id = :i"), {"i": str(a.id)})
+        s.execute(text("update nortpole_action set approved_at = now() - interval '31 minutes' where id = :i"), {"i": str(a.id)})
         s.commit()
         with pytest.raises(NortPoleError) as err:
             actions.execute_action(a.id, actions.VersionOnly(version=a.version), user=u, db_session=s)
@@ -186,7 +186,7 @@ def test_audit_holds_the_fingerprint_but_not_the_draft_text(world, target, sink)
     with get_session_with_current_tenant() as s:
         u, t, a = _approved_action(s, world["u"], target)
         actions.execute_action(a.id, actions.VersionOnly(version=a.version), user=u, db_session=s)
-        rows = s.execute(text("select summary, details::text from evolvxsi_audit_event where resource_id = :i"), {"i": str(a.id)}).all()
+        rows = s.execute(text("select summary, details::text from nortpole_audit_event where resource_id = :i"), {"i": str(a.id)}).all()
         blob = " ".join(f"{x} {y}" for x, y in rows)
         assert a.fingerprint in blob and "Receipts are due" not in blob and len(rows) >= 3
 
@@ -264,7 +264,7 @@ def test_a_read_only_destination_refuses_proposals_and_audits_it(world, target) 
             actions.propose_action(t.id, actions.Propose(target_id=target), user=u, db_session=s)
         assert "read-only" in err.value.detail
         assert s.query(NortPoleAction).filter_by(target_id=target).count() == 0
-        last = s.execute(text("select outcome, summary from evolvxsi_audit_event where action='action.propose' order by id desc limit 1")).one()
+        last = s.execute(text("select outcome, summary from nortpole_audit_event where action='action.propose' order by id desc limit 1")).one()
         assert last.outcome == "denied" and "read-only" in last.summary
 
 

@@ -1304,10 +1304,10 @@ class EmbeddingModel:
         def _make_request() -> Response:
             headers = {}
             if tenant_id:
-                headers["X-EvolvXSI-Tenant-ID"] = tenant_id
+                headers["X-NortPole-Tenant-ID"] = tenant_id
 
             if request_id:
-                headers["X-EvolvXSI-Request-ID"] = request_id
+                headers["X-NortPole-Request-ID"] = request_id
 
             def post() -> Response:
                 response = requests.post(

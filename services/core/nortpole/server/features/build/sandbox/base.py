@@ -268,7 +268,7 @@ class SandboxManager(_ServeMixin, ABC):
         sandbox_id: UUID,
         user_id: UUID,
         tenant_id: str,
-        evolvxsi_pat: str | None,
+        nortpole_pat: str | None,
         provisioning_attempt_number: int,
     ) -> SandboxInfo:
         """Provision a new sandbox for a user. Returns only once the sandbox
@@ -289,7 +289,7 @@ class SandboxManager(_ServeMixin, ABC):
             sandbox_id: Unique identifier for the sandbox
             user_id: User identifier who owns this sandbox
             tenant_id: Tenant identifier for multi-tenant isolation
-            evolvxsi_pat: Raw PAT token to inject as NORTPOLE_PAT env var in the sandbox
+            nortpole_pat: Raw PAT token to inject as NORTPOLE_PAT env var in the sandbox
             provisioning_attempt_number: This attempt's number; stamped onto
                 backend resources for cleanup ownership checks. Database writes
                 also require the same current attempt number.

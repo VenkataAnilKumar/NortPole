@@ -1,18 +1,18 @@
 """Old setting names keep working after the product rename (decision 0007).
 
-Settings were renamed from EVOLVXSI_* to NORTPOLE_*. Deployments that still set an old name get it copied to the new
+Settings were renamed from NORTPOLE_* to NORTPOLE_*. Deployments that still set an old name get it copied to the new
 name at import time, unless the new name is set too (the new name wins). Remove once deployments have moved.
 """
 
 import os
 
-OLD_PREFIX = "EVOLVXSI_"
+OLD_PREFIX = "NORTPOLE_"
 NEW_PREFIX = "NORTPOLE_"
 _applied: list[str] = []
 
 
 def apply() -> list[str]:
-    """Copy each EVOLVXSI_X (and NEXT_PUBLIC_EVOLVXSI_X) to its NORTPOLE_ name when that is unset; return what moved."""
+    """Copy each NORTPOLE_X (and NEXT_PUBLIC_NORTPOLE_X) to its NORTPOLE_ name when that is unset; return what moved."""
     moved = []
     for key, value in list(os.environ.items()):
         idx = key.find(OLD_PREFIX)

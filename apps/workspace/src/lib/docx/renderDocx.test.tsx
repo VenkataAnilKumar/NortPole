@@ -91,12 +91,12 @@ describe("document sanitization", () => {
       "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==";
     const doc = parse(
       await renderHtml(
-        `<a href="mailto:hi@evolvxsi.local">mail</a><img src="${dataUrl}">`
+        `<a href="mailto:hi@nortpole.local">mail</a><img src="${dataUrl}">`
       )
     );
 
     expect(doc.querySelector("a")?.getAttribute("href")).toBe(
-      "mailto:hi@evolvxsi.local"
+      "mailto:hi@nortpole.local"
     );
     expect(doc.querySelector("img")?.getAttribute("src")).toBe(dataUrl);
   });

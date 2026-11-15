@@ -236,7 +236,7 @@ def _get_single_file_fields(field_type: DriveFileFieldType) -> str:
 
 
 # Set on a shortcut's resolved target, holding the shortcut's id.
-RESOLVED_FROM_SHORTCUT_KEY = "evolvxsiResolvedFromShortcutId"
+RESOLVED_FROM_SHORTCUT_KEY = "nortpoleResolvedFromShortcutId"
 
 
 def _is_drive_shortcut(file: GoogleDriveFileType) -> bool:

@@ -21,7 +21,7 @@ depends_on = None
 
 # Must match constants in nortpole/configs/constants.py file
 ANONYMOUS_USER_UUID = "00000000-0000-0000-0000-000000000002"
-ANONYMOUS_USER_EMAIL = "anonymous@evolvxsi.local"
+ANONYMOUS_USER_EMAIL = "anonymous@nortpole.local"
 
 # Tables with user_id foreign key that may need migration
 TABLES_WITH_USER_ID = [

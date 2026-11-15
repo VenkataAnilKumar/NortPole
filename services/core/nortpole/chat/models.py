@@ -46,7 +46,7 @@ from nortpole.llm.models import (
     ReasoningEffort,
     ToolResultMessage,
 )
-from nortpole.evolvxsibot.slack.models import SlackContext
+from nortpole.nortpolebot.slack.models import SlackContext
 from nortpole.server.query_and_chat.models import (
     MessageResponseIDInfo,
     MultiModelMessageResponseIDInfo,

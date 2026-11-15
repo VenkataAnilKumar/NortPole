@@ -340,7 +340,7 @@ def test_a_graph_refusal_carries_the_request_and_body() -> None:
 
 def _pfx(not_after: datetime) -> bytes:
     key = ec.generate_private_key(ec.SECP256R1())
-    name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "evolvxsi")])
+    name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "nortpole")])
     certificate = (
         x509.CertificateBuilder()
         .subject_name(name)
@@ -352,7 +352,7 @@ def _pfx(not_after: datetime) -> bytes:
         .sign(key, hashes.SHA256())
     )
     return pkcs12.serialize_key_and_certificates(
-        b"evolvxsi", key, certificate, None, BestAvailableEncryption(b"secret")
+        b"nortpole", key, certificate, None, BestAvailableEncryption(b"secret")
     )
 
 

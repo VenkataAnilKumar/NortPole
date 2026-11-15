@@ -32,13 +32,13 @@ export interface OAuthLaunchOptions {
 }
 
 export { DESKTOP_STATE_SUFFIX };
-export const DESKTOP_OAUTH_RETURN_URL = "evolvxsi://oauth-callback";
+export const DESKTOP_OAUTH_RETURN_URL = "nortpole://oauth-callback";
 const LAUNCH_TIMEOUT_MS = 10 * 60 * 1000;
 // A claimed callback that never reports must not leave a spinner running.
 const CLAIMED_CALLBACK_TIMEOUT_MS = 60 * 1000;
 // Marks a tab that `launchOAuth` opened, so only its callback closes itself.
-const LAUNCHED_TAB_KEY = "evolvxsi:oauth-launch";
-const completionType = "evolvxsi:oauth-complete";
+const LAUNCHED_TAB_KEY = "nortpole:oauth-launch";
+const completionType = "nortpole:oauth-complete";
 const completionSchema = yup.object({
   type: yup.mixed<typeof completionType>().oneOf([completionType]).defined(),
   state: yup.string().defined(),

@@ -16,7 +16,7 @@ from nortpole.connectors.registry import CONNECTOR_CLASS_MAP
 from nortpole.connectors.testrail import config as testrail_config
 
 _CONFLUENCE_SITE = {"wiki_base": "https://example.atlassian.net", "is_cloud": True}
-_BITBUCKET_WORKSPACE = {"workspace": "evolvxsi"}
+_BITBUCKET_WORKSPACE = {"workspace": "nortpole"}
 _DRUPAL_SITE = {"base_url": "https://wiki.example.com"}
 _ASANA_WORKSPACE = {"asana_workspace_id": "w"}
 _JIRA_SITE = {"jira_base_url": "https://example.atlassian.net"}
@@ -372,7 +372,7 @@ def test_github_branch_and_repositories_are_stripped(
     raw: str | None, expected: str | None
 ) -> None:
     config = GithubConnectorConfig.model_validate(
-        {"repo_owner": "evolvxsi", "repositories": raw, "branch": raw}
+        {"repo_owner": "nortpole", "repositories": raw, "branch": raw}
     )
 
     assert config.repositories == expected
@@ -383,8 +383,8 @@ def test_github_whitespace_is_not_a_change() -> None:
     assert (
         _classify(
             DocumentSource.GITHUB,
-            {"repo_owner": "evolvxsi", "repositories": "a", "branch": "main"},
-            {"repo_owner": "evolvxsi", "repositories": " a ", "branch": " main "},
+            {"repo_owner": "nortpole", "repositories": "a", "branch": "main"},
+            {"repo_owner": "nortpole", "repositories": " a ", "branch": " main "},
         )
         == []
     )
@@ -393,11 +393,11 @@ def test_github_whitespace_is_not_a_change() -> None:
 def test_github_scoped_backfill_for_added_repositories() -> None:
     delta = _scoped_backfill_config(
         DocumentSource.GITHUB,
-        {"repo_owner": "evolvxsi", "repositories": "a", "include_issues": True},
-        {"repo_owner": "evolvxsi", "repositories": "a,b", "include_issues": True},
+        {"repo_owner": "nortpole", "repositories": "a", "include_issues": True},
+        {"repo_owner": "nortpole", "repositories": "a,b", "include_issues": True},
     )
 
-    assert delta == {"repo_owner": "evolvxsi", "repositories": "b", "include_issues": True}
+    assert delta == {"repo_owner": "nortpole", "repositories": "b", "include_issues": True}
 
 
 def test_salesforce_scoped_backfill_holds_only_added_types() -> None:

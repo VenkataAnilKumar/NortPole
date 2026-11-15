@@ -14,7 +14,7 @@ class NortPoleSourceRequest(Base):
     """A person's request for something on the Discover page: a connector type, a pack, or a tool. Approving one
     records the decision only; an administrator still connects, activates or allows the item where it is managed."""
 
-    __tablename__ = "evolvxsi_source_request"
+    __tablename__ = "nortpole_source_request"
 
     id: Mapped[uuid.UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     kind: Mapped[str] = mapped_column(String(20), nullable=False)  # connector skill plugin

@@ -7,7 +7,7 @@ from typing import IO, Any
 from nortpole.configs.app_configs import INDEX_BATCH_SIZE, SKIP_SPREADSHEET_CONTENT
 from nortpole.configs.constants import DocumentSource, FileOrigin
 from nortpole.connectors.cross_connector_utils.miscellaneous_utils import (
-    process_evolvxsi_metadata,
+    process_nortpole_metadata,
 )
 from nortpole.connectors.cross_connector_utils.tabular_section_utils import (
     is_tabular_file,
@@ -112,17 +112,17 @@ def _process_file(
         return []
 
     # If a zip is uploaded with a metadata file, we can process it here
-    evolvxsi_metadata, custom_tags = process_evolvxsi_metadata(metadata)
-    file_display_name = evolvxsi_metadata.file_display_name or os.path.basename(file_name)
-    time_updated = evolvxsi_metadata.doc_updated_at or datetime.now(timezone.utc)
-    primary_owners = evolvxsi_metadata.primary_owners
-    secondary_owners = evolvxsi_metadata.secondary_owners
-    link = evolvxsi_metadata.link
+    nortpole_metadata, custom_tags = process_nortpole_metadata(metadata)
+    file_display_name = nortpole_metadata.file_display_name or os.path.basename(file_name)
+    time_updated = nortpole_metadata.doc_updated_at or datetime.now(timezone.utc)
+    primary_owners = nortpole_metadata.primary_owners
+    secondary_owners = nortpole_metadata.secondary_owners
+    link = nortpole_metadata.link
 
     # These metadata items are not settable by the user
-    source_type = evolvxsi_metadata.source_type or DocumentSource.FILE
+    source_type = nortpole_metadata.source_type or DocumentSource.FILE
 
-    doc_id = file_document_id(file_id, evolvxsi_metadata.document_id)
+    doc_id = file_document_id(file_id, nortpole_metadata.document_id)
     title = metadata.get("title") or file_display_name
 
     # 1) If the file itself is an image, handle that scenario quickly
@@ -191,7 +191,7 @@ def _process_file(
             file_name,
             extraction_result.metadata,
         )
-        evolvxsi_metadata, more_custom_tags = process_evolvxsi_metadata(
+        nortpole_metadata, more_custom_tags = process_nortpole_metadata(
             extraction_result.metadata
         )
 
@@ -199,13 +199,13 @@ def _process_file(
         custom_tags.update(more_custom_tags)
 
         # File-specific metadata overrides metadata processed so far
-        source_type = evolvxsi_metadata.source_type or source_type
-        primary_owners = evolvxsi_metadata.primary_owners or primary_owners
-        secondary_owners = evolvxsi_metadata.secondary_owners or secondary_owners
-        time_updated = evolvxsi_metadata.doc_updated_at or time_updated
-        file_display_name = evolvxsi_metadata.file_display_name or file_display_name
-        title = evolvxsi_metadata.title or evolvxsi_metadata.file_display_name or title
-        link = evolvxsi_metadata.link or link
+        source_type = nortpole_metadata.source_type or source_type
+        primary_owners = nortpole_metadata.primary_owners or primary_owners
+        secondary_owners = nortpole_metadata.secondary_owners or secondary_owners
+        time_updated = nortpole_metadata.doc_updated_at or time_updated
+        file_display_name = nortpole_metadata.file_display_name or file_display_name
+        title = nortpole_metadata.title or nortpole_metadata.file_display_name or title
+        link = nortpole_metadata.link or link
 
     # Build sections: first the text as a single Section
     sections: list[TextSection | ImageSection | TabularSection] = []

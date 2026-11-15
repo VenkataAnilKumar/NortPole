@@ -72,7 +72,7 @@ const CUSTOM_APP: ExternalAppAdminResponse = {
   actions: [],
   associated_skills: [],
   users_can_manage_policies: true,
-  is_evolvxsi_managed: false,
+  is_nortpole_managed: false,
 };
 
 function renderExistingApp({

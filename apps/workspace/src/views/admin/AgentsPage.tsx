@@ -1,7 +1,7 @@
 "use client";
 
 import { useNavigation } from "@opal/navigation";
-import { SvgEvolvXSIOctagon, SvgPlus } from "@opal/icons";
+import { SvgNortPoleOctagon, SvgPlus } from "@opal/icons";
 import { Button } from "@opal/components";
 import { SettingsLayouts } from "@opal/layouts";
 import { useTranslations } from "next-intl";
@@ -21,7 +21,7 @@ export default function AgentsPage() {
       <SettingsLayouts.Header
         title={t("header.title")}
         description={t("header.description")}
-        icon={SvgEvolvXSIOctagon}
+        icon={SvgNortPoleOctagon}
         actions={[
           <Button
             key="primary"

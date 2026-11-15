@@ -23,14 +23,14 @@ def test_coding_agent_downloads_and_extracts_repo_with_existing_policy() -> None
         ) as download_archive,
         patch.object(coding_agent, "CodeInterpreterClient", return_value=client),
         coding_agent.coding_sandbox_session(
-            repo="git@github.com:acme-corp/evolvxsi.git",
+            repo="git@github.com:acme-corp/nortpole.git",
             github_token="secret",
         ) as session_id,
     ):
         assert session_id == "session-id"
 
     source, revision, authorization = download_archive.call_args.args
-    assert (source.owner, source.repo) == ("acme-corp", "evolvxsi")
+    assert (source.owner, source.repo) == ("acme-corp", "nortpole")
     assert revision == "HEAD"
     assert authorization == "Bearer secret"
     assert download_archive.call_args.kwargs == {

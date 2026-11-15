@@ -10,8 +10,8 @@
 # from pydantic import BaseModel
 
 # from model_server.constants import MODEL_WARM_UP_STRING
-# from model_server.legacy.evolvxsi_torch_model import ConnectorClassifier
-# from model_server.legacy.evolvxsi_torch_model import HybridClassifier
+# from model_server.legacy.nortpole_torch_model import ConnectorClassifier
+# from model_server.legacy.nortpole_torch_model import HybridClassifier
 # from model_server.utils import simple_log_function_time
 # from nortpole.utils.logger import setup_logger
 # from shared_configs.configs import CONNECTOR_CLASSIFIER_MODEL_REPO
@@ -254,7 +254,7 @@
 
 #     input_ids, attention_mask = tokenize_connector_classification_query(
 #         ["GitHub"],
-#         "evolvxsi classifier query google doc",
+#         "nortpole classifier query google doc",
 #         connector_classifier_tokenizer,
 #         connector_classifier.connector_end_token_id,
 #     )

@@ -591,7 +591,7 @@ def test_tool_recovery_keeps_answer_text_and_signed_thinking(
     choice: ToolChoiceOptions | NamedToolChoice,
 ) -> None:
     signed = ThinkingBlock(thinking="plan", signature="provider-signature")
-    payload = '{"name": "search", "arguments": {"query": "evolvxsi"}}'
+    payload = '{"name": "search", "arguments": {"query": "nortpole"}}'
     request = GenerationRequest(
         tools=[ToolDefinition(name="search", description="Search", parameters={})],
         options=GenerationOptions(tool_choice=choice),
@@ -610,7 +610,7 @@ def test_tool_recovery_keeps_answer_text_and_signed_thinking(
     assert message.thinking == "plan"
     assert message.thinking_blocks == [signed]
     assert [call.name for call in message.tool_calls] == ["search"]
-    assert message.tool_calls[0].arguments == {"query": "evolvxsi"}
+    assert message.tool_calls[0].arguments == {"query": "nortpole"}
 
 
 @pytest.mark.parametrize(

@@ -16,7 +16,7 @@ down_revision = "a1c3e5f7b9d2"
 branch_labels = None
 depends_on = None
 
-OLD, NEW = "EvolvXSI", "NortPole"
+OLD, NEW = "NortPole", "NortPole"
 
 
 def upgrade() -> None:

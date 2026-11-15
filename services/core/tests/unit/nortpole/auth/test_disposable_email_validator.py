@@ -278,7 +278,7 @@ class TestDisposableEmailValidator:
         legitimate_emails = [
             "user@gmail.com",
             "employee@company.com",
-            "admin@evolvxsi.local",
+            "admin@nortpole.local",
             "test@outlook.com",
             "person@yahoo.com",
             "contact@protonmail.com",

@@ -138,7 +138,7 @@ def _parse_document_source(connector_type: Any) -> DocumentSource | None:
         return None
 
 
-def process_evolvxsi_metadata(
+def process_nortpole_metadata(
     metadata: dict[str, Any],
 ) -> tuple[NortPoleMetadata, dict[str, Any]]:
     """

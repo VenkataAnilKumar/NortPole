@@ -3,7 +3,7 @@ import { prepareOAuthAuthorizationRequest } from "@/lib/oauth_utils";
 beforeEach(() => {
   Object.defineProperty(globalThis, "window", {
     configurable: true,
-    value: { location: new URL("https://evolvxsi.example.com/admin/connectors") },
+    value: { location: new URL("https://nortpole.example.com/admin/connectors") },
   });
 });
 
@@ -17,7 +17,7 @@ test("converts the connector page URL into a site-relative completion path", asy
     );
   await prepareOAuthAuthorizationRequest(
     "slack",
-    "https://evolvxsi.example.com/admin/connectors?step=2#settings",
+    "https://nortpole.example.com/admin/connectors?step=2#settings",
     "Localized invalid completion URL"
   );
   expect(fetchMock).toHaveBeenCalledWith(
@@ -57,8 +57,8 @@ test.each([
 );
 
 test.each([
-  "https://evolvxsi.example.com//other.example.com/path",
-  "https://evolvxsi.example.com/\\other.example.com/path",
+  "https://nortpole.example.com//other.example.com/path",
+  "https://nortpole.example.com/\\other.example.com/path",
 ])(
   "rejects an ambiguous same-origin completion path %s before sending state",
   async (url) => {

@@ -553,7 +553,7 @@ def on_setup_logging(
         root_file_handler.setFormatter(root_file_formatter)
         root_logger.addHandler(root_file_handler)
 
-    # Also write to the evolvxsi log files, which the admin log export collects; on
+    # Also write to the nortpole log files, which the admin log export collects; on
     # Kubernetes nothing keeps stdout. setup_logger records are already there.
     add_file_handlers(
         root_logger, root_file_formatter, log_filter=SkipFileLoggedFilter()
@@ -719,8 +719,8 @@ _VECTOR_DB_TASK_MODULES: set[str] = {
     "nortpole.background.celery.tasks.doc_permission_syncing",
     "nortpole.background.celery.tasks.hierarchyfetching",
     # EE modules that are vector-DB-dependent
-    "ee.evolvxsi.background.celery.tasks.doc_permission_syncing",
-    "ee.evolvxsi.background.celery.tasks.external_group_syncing",
+    "ee.nortpole.background.celery.tasks.doc_permission_syncing",
+    "ee.nortpole.background.celery.tasks.external_group_syncing",
 }
 # NOTE: "nortpole.background.celery.tasks.shared" is intentionally NOT in the set
 # above. It contains celery_beat_heartbeat (which only writes to Redis) alongside

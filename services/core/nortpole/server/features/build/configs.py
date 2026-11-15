@@ -102,10 +102,10 @@ ATTACHMENTS_DIRECTORY = "attachments"
 # Kubernetes sandbox (SANDBOX_BACKEND=kubernetes)
 # ==============================================================================
 
-SANDBOX_NAMESPACE = os.environ.get("SANDBOX_NAMESPACE", "evolvxsi-sandboxes")
+SANDBOX_NAMESPACE = os.environ.get("SANDBOX_NAMESPACE", "nortpole-sandboxes")
 
 SANDBOX_CONTAINER_IMAGE = (
-    os.environ.get("SANDBOX_CONTAINER_IMAGE", "").strip() or "evolvxsidotapp/sandbox:latest"
+    os.environ.get("SANDBOX_CONTAINER_IMAGE", "").strip() or "nortpoledotapp/sandbox:latest"
 )
 
 # Set to "Always" only in internal environments that deliberately pin a mutable
@@ -124,7 +124,7 @@ ENABLE_BROWSER = os.environ.get("ENABLE_BROWSER", "true").lower() == "true"
 SANDBOX_PUSH_PRIVATE_KEY = os.environ.get("NORTPOLE_SANDBOX_PUSH_PRIVATE_KEY", "")
 
 
-NORTPOLE_GATEWAY_PROVIDER_ID = "evolvxsi"
+NORTPOLE_GATEWAY_PROVIDER_ID = "nortpole"
 
 # Dev/debug-only: exposes an SSE endpoint that tails the sandbox pod's
 # opencode-serve container logs. Never enable in prod — the logs include LLM I/O
@@ -173,7 +173,7 @@ SANDBOX_PROXY_SSL_VERIFY_UPSTREAM_TRUSTED_CA = (
 # The CA Secret lives here; the CA ConfigMap is projected into SANDBOX_NAMESPACE
 # so sandboxes can mount it (K8s does not allow cross-namespace ConfigMap
 # mounts).
-SANDBOX_PROXY_NAMESPACE = os.environ.get("SANDBOX_PROXY_NAMESPACE", "evolvxsi")
+SANDBOX_PROXY_NAMESPACE = os.environ.get("SANDBOX_PROXY_NAMESPACE", "nortpole")
 
 SANDBOX_PROXY_CA_SECRET = os.environ.get("SANDBOX_PROXY_CA_SECRET", "sandbox-proxy-ca")
 SANDBOX_PROXY_CA_CONFIGMAP = os.environ.get(
@@ -199,7 +199,7 @@ SANDBOX_PROXY_INJECTED_PLACEHOLDER = "replaced_by_egress_proxy"
 # instead the per-session opencode.json stamps this header on each MCP server.
 # The egress proxy reads it to attribute the tool call to a session for approval,
 # then strips it so it never reaches the MCP origin.
-MCP_SESSION_TAG_HEADER = "X-EvolvXSI-Mcp-Session"
+MCP_SESSION_TAG_HEADER = "X-NortPole-Mcp-Session"
 
 # Shared cluster credential the Firecracker host agent presents to register its
 # node signing key. Unset = registration is locked.
@@ -220,10 +220,10 @@ SANDBOX_DOCKER_SOCKET = os.environ.get("SANDBOX_DOCKER_SOCKET", "/var/run/docker
 
 # Sandbox containers join only this network and never compose's default network,
 # isolating them from api_server, postgres, redis, etc.
-SANDBOX_DOCKER_NETWORK = os.environ.get("SANDBOX_DOCKER_NETWORK", "evolvxsi_craft_sandbox")
+SANDBOX_DOCKER_NETWORK = os.environ.get("SANDBOX_DOCKER_NETWORK", "nortpole_craft_sandbox")
 
 SANDBOX_DOCKER_VOLUME_PREFIX = os.environ.get(
-    "SANDBOX_DOCKER_VOLUME_PREFIX", "evolvxsi-craft-sandbox-"
+    "SANDBOX_DOCKER_VOLUME_PREFIX", "nortpole-craft-sandbox-"
 )
 
 # Defaults match the Kubernetes sandbox pod's *requests* (1 CPU / 2Gi), not its
@@ -256,7 +256,7 @@ OPENCODE_PROMPT_INACTIVITY_TIMEOUT_SECONDS = float(
 
 # Per-turn deadline stamp for the turn-budget plugin; name is an internal
 # contract with turn-budget.ts.
-TURN_BUDGET_FILE_NAME = ".evolvxsi-turn-budget.json"
+TURN_BUDGET_FILE_NAME = ".nortpole-turn-budget.json"
 
 # Prompt-slot lock lease; renewed on every sandbox event/keepalive, so a dead
 # holder strands the slot for at most this long.

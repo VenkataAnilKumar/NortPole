@@ -104,7 +104,7 @@ from nortpole.server.features.build.sandbox.labels import (
     LABEL_K8S_COMPONENT_AUTH,
     LABEL_K8S_COMPONENT_SANDBOX,
     LABEL_K8S_MANAGED_BY,
-    LABEL_K8S_MANAGED_BY_EVOLVXSI,
+    LABEL_K8S_MANAGED_BY_NORTPOLE,
     LABEL_PROVISIONING_ATTEMPT,
     LABEL_SANDBOX_ID,
     LABEL_TENANT_ID,
@@ -317,7 +317,7 @@ class KubernetesSandboxManager(SandboxManager):
                     namespace=self._namespace,
                     labels={
                         LABEL_K8S_COMPONENT: LABEL_K8S_COMPONENT_AUTH,
-                        LABEL_K8S_MANAGED_BY: LABEL_K8S_MANAGED_BY_EVOLVXSI,
+                        LABEL_K8S_MANAGED_BY: LABEL_K8S_MANAGED_BY_NORTPOLE,
                         LABEL_SANDBOX_ID: str(sandbox_id),
                         LABEL_TENANT_ID: tenant_id,
                         LABEL_PROVISIONING_ATTEMPT: str(provisioning_attempt_number),
@@ -453,7 +453,7 @@ class KubernetesSandboxManager(SandboxManager):
                 labels={
                     **(pod_template.template.metadata.labels or {}),
                     LABEL_K8S_COMPONENT: LABEL_K8S_COMPONENT_SANDBOX,
-                    LABEL_K8S_MANAGED_BY: LABEL_K8S_MANAGED_BY_EVOLVXSI,
+                    LABEL_K8S_MANAGED_BY: LABEL_K8S_MANAGED_BY_NORTPOLE,
                     LABEL_SANDBOX_ID: sandbox_id,
                     LABEL_TENANT_ID: tenant_id,
                     LABEL_PROVISIONING_ATTEMPT: str(provisioning_attempt_number),
@@ -578,7 +578,7 @@ class KubernetesSandboxManager(SandboxManager):
                 namespace=self._namespace,
                 labels={
                     LABEL_K8S_COMPONENT: LABEL_K8S_COMPONENT_SANDBOX,
-                    LABEL_K8S_MANAGED_BY: LABEL_K8S_MANAGED_BY_EVOLVXSI,
+                    LABEL_K8S_MANAGED_BY: LABEL_K8S_MANAGED_BY_NORTPOLE,
                     LABEL_SANDBOX_ID: sandbox_id_str,
                     LABEL_TENANT_ID: tenant_id_str,
                 },
@@ -957,7 +957,7 @@ class KubernetesSandboxManager(SandboxManager):
         sandbox_id: UUID,
         user_id: UUID,
         tenant_id: str,
-        evolvxsi_pat: str | None,
+        nortpole_pat: str | None,
         provisioning_attempt_number: int,
     ) -> SandboxInfo:
         """Provision a new sandbox as a Kubernetes pod (user-level).
@@ -978,7 +978,7 @@ class KubernetesSandboxManager(SandboxManager):
             sandbox_id: Unique identifier for the sandbox
             user_id: User identifier who owns this sandbox
             tenant_id: Tenant identifier for multi-tenant isolation
-            evolvxsi_pat: Required by the interface and the Docker backend; on K8s
+            nortpole_pat: Required by the interface and the Docker backend; on K8s
                 the pod ships a placeholder and the proxy injects the real PAT,
                 so this is only checked as a provisioning precondition.
 
@@ -995,8 +995,8 @@ class KubernetesSandboxManager(SandboxManager):
             tenant_id,
         )
 
-        if not evolvxsi_pat:
-            raise ValueError("evolvxsi_pat is required for Kubernetes sandbox provisioning")
+        if not nortpole_pat:
+            raise ValueError("nortpole_pat is required for Kubernetes sandbox provisioning")
         if not NORTPOLE_SERVER_URL:
             raise ValueError(
                 "NORTPOLE_SERVER_URL must be set for Kubernetes sandbox provisioning"
@@ -1326,7 +1326,7 @@ class KubernetesSandboxManager(SandboxManager):
         self, tenant_id: str, deadline: float, sandbox_id: UUID | None = None
     ) -> Iterator[SandboxResource]:
         selector = (
-            f"{LABEL_K8S_MANAGED_BY}={LABEL_K8S_MANAGED_BY_EVOLVXSI},"
+            f"{LABEL_K8S_MANAGED_BY}={LABEL_K8S_MANAGED_BY_NORTPOLE},"
             f"{LABEL_TENANT_ID}={tenant_id},"
             f"{LABEL_K8S_COMPONENT} in ({LABEL_K8S_COMPONENT_SANDBOX},{LABEL_K8S_COMPONENT_AUTH})"
         )
@@ -1425,7 +1425,7 @@ class KubernetesSandboxManager(SandboxManager):
                 )
                 or (
                     not legacy_auth
-                    and labels.get(LABEL_K8S_MANAGED_BY) != LABEL_K8S_MANAGED_BY_EVOLVXSI
+                    and labels.get(LABEL_K8S_MANAGED_BY) != LABEL_K8S_MANAGED_BY_NORTPOLE
                 )
                 or (
                     resource.provisioning_attempt_number is not None

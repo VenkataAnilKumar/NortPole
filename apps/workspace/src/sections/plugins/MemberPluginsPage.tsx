@@ -263,7 +263,7 @@ export default function MemberPluginsPage({
     Permission.MANAGE_ACTIONS
   );
   const locale = useLocale();
-  const craftAvailable = useSettings().evolvxsi_craft_enabled === true;
+  const craftAvailable = useSettings().nortpole_craft_enabled === true;
   const [filter, setFilter] = useState(initialFilter);
   const [query, setQuery] = useState("");
   const [dialog, setDialog] = useState<MemberPluginDialog>(null);

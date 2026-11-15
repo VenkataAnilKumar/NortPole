@@ -102,7 +102,7 @@ function isNeutralConfiguration(configuration: ChatConfiguration): boolean {
   );
 }
 
-const STORAGE_PREFIX = "evolvxsi:tools";
+const STORAGE_PREFIX = "nortpole:tools";
 
 function chatKey(chatSessionId: string): string {
   return `${STORAGE_PREFIX}:chat:${chatSessionId}`;

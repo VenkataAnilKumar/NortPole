@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from nortpole.auth.captcha import CaptchaVerificationError
-from nortpole.error_handling.exceptions import register_evolvxsi_exception_handlers
+from nortpole.error_handling.exceptions import register_nortpole_exception_handlers
 from nortpole.server.auth import captcha_api as captcha_api_module
 from nortpole.server.auth.captcha_api import CaptchaCookieMiddleware
 from nortpole.server.auth.captcha_api import router as captcha_router
@@ -16,7 +16,7 @@ from nortpole.server.auth.captcha_api import router as captcha_router
 def build_app_with_middleware() -> FastAPI:
     """Minimal app with the middleware + router + fake OAuth callback route."""
     app = FastAPI()
-    register_evolvxsi_exception_handlers(app)
+    register_nortpole_exception_handlers(app)
     app.add_middleware(CaptchaCookieMiddleware)
     app.include_router(captcha_router)
 
@@ -73,7 +73,7 @@ def test_verify_endpoint_sets_cookie_on_success() -> None:
     assert CAPTCHA_COOKIE_NAME in res.cookies
 
 
-def test_verify_endpoint_raises_evolvxsi_error_on_failure() -> None:
+def test_verify_endpoint_raises_nortpole_error_on_failure() -> None:
     app = build_app_with_middleware()
     client = TestClient(app)
     with (

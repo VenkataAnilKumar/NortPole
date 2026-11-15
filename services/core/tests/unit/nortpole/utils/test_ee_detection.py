@@ -1,7 +1,7 @@
-"""Enterprise code loads only when the build ships a real `ee.evolvxsi` package.
+"""Enterprise code loads only when the build ships a real `ee.nortpole` package.
 
 `is_ee_available` rejects a missing `ee` package, a bare `ee` package, and an
-`ee/evolvxsi` directory with no `__init__.py`. `set_is_ee_if_available` selects
+`ee/nortpole` directory with no `__init__.py`. `set_is_ee_if_available` selects
 the Enterprise Edition only when `is_ee_available` is true.
 """
 
@@ -19,10 +19,10 @@ from nortpole.utils.variable_functionality import (
 
 
 def test_ee_is_available_when_the_package_is_real() -> None:
-    # Mocked, so this also runs on the MIT-only mirror, which has no `ee.evolvxsi`.
+    # Mocked, so this also runs on the MIT-only mirror, which has no `ee.nortpole`.
     with patch(
         "nortpole.utils.variable_functionality.importlib.util.find_spec",
-        return_value=ModuleSpec("ee.evolvxsi", loader=None, origin="ee/nortpole/__init__.py"),
+        return_value=ModuleSpec("ee.nortpole", loader=None, origin="ee/nortpole/__init__.py"),
     ):
         assert is_ee_available()
 
@@ -38,10 +38,10 @@ def test_ee_is_unavailable_with_no_ee_package() -> None:
 @pytest.mark.parametrize(
     "spec",
     [
-        # The MIT-only mirror: a bare `ee` package with no `evolvxsi` inside.
+        # The MIT-only mirror: a bare `ee` package with no `nortpole` inside.
         None,
-        # A leftover `ee/evolvxsi` directory with no `__init__.py`.
-        ModuleSpec("ee.evolvxsi", loader=None, origin=None),
+        # A leftover `ee/nortpole` directory with no `__init__.py`.
+        ModuleSpec("ee.nortpole", loader=None, origin=None),
     ],
 )
 def test_ee_is_unavailable_without_a_real_package(spec: ModuleSpec | None) -> None:

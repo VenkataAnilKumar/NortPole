@@ -82,7 +82,7 @@ async def test_pat_type_selects_credential_type(
         scopes=None,
         pat_id=7,
         pat_name="my-token",
-        pat_display="evolvxsi_pat_...abcd",
+        pat_display="nortpole_pat_...abcd",
         pat_type=pat_type,
     )
 
@@ -95,7 +95,7 @@ async def test_pat_type_selects_credential_type(
 
     assert await _resolve(request, None) is pat_user
     assert request.state.usage_credential == UsageCredentialIdentity(
-        expected_credential_type, "7", "my-token", "evolvxsi_pat_...abcd"
+        expected_credential_type, "7", "my-token", "nortpole_pat_...abcd"
     )
 
 

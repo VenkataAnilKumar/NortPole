@@ -120,7 +120,7 @@ export default function PluginsPage() {
   );
   const canManageActions = isGlobalHolder || isScopedManager;
   const settings = useSettings();
-  const canManageApps = fullAdmin && settings.evolvxsi_craft_available === true;
+  const canManageApps = fullAdmin && settings.nortpole_craft_available === true;
   const canCreate = canManageActions || canManageApps;
   const { plugins, mcp, openapi, externalApps } = useInstalledPlugins();
   const [dialog, setDialog] = useState<PluginDialog>(null);
@@ -159,7 +159,7 @@ export default function PluginsPage() {
   const filteredPlugins = sortPlugins(
     plugins,
     (plugin) =>
-      installedPluginStatus(plugin, settings.evolvxsi_craft_available === true),
+      installedPluginStatus(plugin, settings.nortpole_craft_available === true),
     (plugin) =>
       plugin.kind === "mcp"
         ? plugin.server.name

@@ -6,7 +6,7 @@ from nortpole.context.search.models import CCPairAccessMode
 from nortpole.document_index.opensearch.cc_pair_ids_backfill import (
     is_cc_pair_ids_backfill_complete,
 )
-from nortpole.server.runtime.evolvxsi_runtime import NortPoleRuntime
+from nortpole.server.runtime.nortpole_runtime import NortPoleRuntime
 
 
 def get_cc_pair_access_mode(db_session: Session) -> CCPairAccessMode | None:

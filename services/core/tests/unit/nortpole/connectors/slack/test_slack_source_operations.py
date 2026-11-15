@@ -198,7 +198,7 @@ def test_check_auth_parses_granted_scopes_from_the_response_header() -> None:
     gateway = _gateway()
     client = MagicMock()
     client.auth_test.return_value = MagicMock(
-        data={"ok": True, "url": "https://evolvxsi.slack.com"},
+        data={"ok": True, "url": "https://nortpole.slack.com"},
         headers={"X-OAuth-Scopes": ["channels:read, channels:join"]},
     )
     gateway._cached_client = client

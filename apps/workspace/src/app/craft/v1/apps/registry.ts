@@ -106,7 +106,7 @@ export interface ExternalAppAdminResponse {
   }[];
   // NortPole-managed built-in (cloud): creds/config NortPole-owned and blanked here; the
   // admin may only set availability and policies (the UI hides the rest).
-  is_evolvxsi_managed: boolean;
+  is_nortpole_managed: boolean;
 }
 
 export interface ExternalAppUserResponse {

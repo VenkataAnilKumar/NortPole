@@ -1,5 +1,5 @@
 [project]
-name = "evolvxsi"
+name = "nortpole"
 version = "0.0.0"
 requires-python = ">=3.13"
 # Shared dependencies between backend and model_server
@@ -208,7 +208,7 @@ model_server = [
 ]
 
 [tool.uv]
-# uv is used for dependency management only. The evolvxsi "project" is never built
+# uv is used for dependency management only. The nortpole "project" is never built
 # or installed as a package: Docker images copy the source tree and install
 # deps from the requirements exports, and local imports resolve via cwd /
 # PYTHONPATH conventions (see backend/pytest.ini).
@@ -406,9 +406,9 @@ known-first-party = ["nortpole", "ee", "tests", "shared_configs", "model_server"
 "backend/nortpole/federated_connectors/federated_retrieval.py" = ["C901"] # 21
 "backend/nortpole/llm/multi_llm.py" = ["C901"] # 45
 "backend/nortpole/llm/utils.py" = ["C901"] # 30
-"backend/nortpole/evolvxsibot/slack/handlers/handle_message.py" = ["C901"] # 34
-"backend/nortpole/evolvxsibot/slack/handlers/handle_regular_answer.py" = ["C901"] # 22
-"backend/nortpole/evolvxsibot/slack/listener.py" = ["C901"] # 28
+"backend/nortpole/nortpolebot/slack/handlers/handle_message.py" = ["C901"] # 34
+"backend/nortpole/nortpolebot/slack/handlers/handle_regular_answer.py" = ["C901"] # 22
+"backend/nortpole/nortpolebot/slack/listener.py" = ["C901"] # 28
 "backend/nortpole/secondary_llm_flows/document_filter.py" = ["C901"] # 31
 "backend/nortpole/server/documents/connector.py" = ["C901"] # 28
 "backend/nortpole/server/features/build/interactive_turns/api.py" = ["C901"] # 22

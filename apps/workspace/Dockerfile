@@ -1,6 +1,6 @@
 # NortPole workspace (Next.js). The API address is fixed at build time because
 # Next.js bakes its rewrites into the build:
-#   docker build --build-arg INTERNAL_URL=http://api:8080 -t evolvxsi-web .
+#   docker build --build-arg INTERNAL_URL=http://api:8080 -t nortpole-web .
 FROM node:22-slim AS build
 RUN npm install -g bun@1.4.4
 WORKDIR /app

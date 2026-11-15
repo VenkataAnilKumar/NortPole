@@ -58,8 +58,8 @@ def test_versions_report_the_opensearch_index_image() -> None:
     ):
         versions = get_versions()
 
-    assert versions.stable.evolvxsi == "v3.2.0"
-    assert versions.dev.evolvxsi == "v3.3.0-beta.2"
+    assert versions.stable.nortpole == "v3.2.0"
+    assert versions.dev.nortpole == "v3.3.0-beta.2"
     for container_versions in (versions.stable, versions.dev, versions.migration):
         assert container_versions.index == DOCUMENT_INDEX_IMAGE
         assert "vespa" not in container_versions.index
@@ -164,7 +164,7 @@ def test_failure_with_no_last_good_value_is_cached_for_the_cooldown() -> None:
         versions = get_versions()
 
     assert mock_get.call_count == len(get_state._DOCKERHUB_REPOS)
-    assert versions.stable.evolvxsi == "v3.2.0"
+    assert versions.stable.nortpole == "v3.2.0"
     assert len(get_state._VERSIONS_FAILURE_CACHE) == 0
 
 

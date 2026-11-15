@@ -4,7 +4,7 @@ import { Section } from "@opal/layouts";
 import { IconLoader } from "@opal/loaders";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useTranslations } from "next-intl";
-import { MinimalEvolvXSIDocument } from "@/lib/search/types";
+import { MinimalNortPoleDocument } from "@/lib/search/types";
 import { Modal } from "@opal/components";
 import { Button, Text } from "@opal/components";
 
@@ -24,7 +24,7 @@ import {
 } from "@/sections/modals/PreviewModal/downloadFileName";
 
 interface PreviewModalProps {
-  presentingDocument: MinimalEvolvXSIDocument;
+  presentingDocument: MinimalNortPoleDocument;
   onClose: () => void;
 }
 

@@ -23,7 +23,7 @@ from nortpole import __version__
 from nortpole.auth.schemas import AuthBackend, UserCreate, UserRead, UserUpdate
 from nortpole.auth.users import (
     auth_backend,
-    create_evolvxsi_oauth_router,
+    create_nortpole_oauth_router,
     fastapi_users,
     mobile_auth_backend,
     verify_auth_setting,
@@ -64,7 +64,7 @@ from nortpole.db.engine.connection_warmup import warm_up_connections
 from nortpole.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant
 from nortpole.db.sso_provider import seed_saml_provider_from_conf_dir
 from nortpole.error_handling.error_codes import NortPoleErrorCode
-from nortpole.error_handling.exceptions import register_evolvxsi_exception_handlers
+from nortpole.error_handling.exceptions import register_nortpole_exception_handlers
 from nortpole.file_store.file_store import get_default_file_store
 from nortpole.hooks.registry import validate_registry
 from nortpole.oauth_provider.config import OAUTH_PROVIDER_SETTINGS
@@ -181,7 +181,7 @@ from nortpole.server.middleware.rate_limiting import (
     setup_auth_limiter,
 )
 from nortpole.server.oidc_multi import router as oidc_multi_router
-from nortpole.server.evolvxsi_api.ingestion import router as evolvxsi_api_router
+from nortpole.server.nortpole_api.ingestion import router as nortpole_api_router
 from nortpole.server.pat.api import router as pat_router
 from nortpole.server.query_and_chat.chat_backend import router as chat_router
 from nortpole.server.query_and_chat.query_backend import admin_router as admin_query_router
@@ -193,7 +193,7 @@ from nortpole.server.settings.api import admin_router as settings_admin_router
 from nortpole.server.settings.api import basic_router as settings_router
 from nortpole.server.sso_discovery import router as sso_discovery_router
 from nortpole.server.utils import BasicAuthenticationError
-from nortpole.setup import setup_multitenant_evolvxsi, setup_evolvxsi
+from nortpole.setup import setup_multitenant_nortpole, setup_nortpole
 from nortpole.tracing.setup import setup_tracing
 from nortpole.utils.client_ip import ClientIPMiddleware
 from nortpole.utils.fleet_telemetry import start_telemetry
@@ -443,7 +443,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:  # noqa: ARG001
 
         # If we are multi-tenant, we need to only set up initial public tables
         with get_session_with_current_tenant() as db_session:
-            setup_evolvxsi(db_session, POSTGRES_DEFAULT_SCHEMA)
+            setup_nortpole(db_session, POSTGRES_DEFAULT_SCHEMA)
             # Import a legacy single-config SAML_CONF_DIR into a provider row. The
             # api_server has the mount the migration job lacks, so this is where it
             # runs once, so deleting the imported row is final.
@@ -454,7 +454,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:  # noqa: ARG001
             # this is done via IaC
             get_default_file_store().initialize()
     else:
-        setup_multitenant_evolvxsi()
+        setup_multitenant_nortpole()
 
     start_telemetry("api")
 
@@ -595,7 +595,7 @@ def get_application(lifespan_override: Lifespan | None = None) -> FastAPI:
         status.HTTP_500_INTERNAL_SERVER_ERROR, log_http_error
     )
 
-    register_evolvxsi_exception_handlers(application)
+    register_nortpole_exception_handlers(application)
 
     include_router_with_global_prefix_prepended(application, password_router)
     include_router_with_global_prefix_prepended(application, chat_router)
@@ -646,7 +646,7 @@ def get_application(lifespan_override: Lifespan | None = None) -> FastAPI:
     include_router_with_global_prefix_prepended(application, admin_oauth_config_router)
     include_router_with_global_prefix_prepended(application, user_oauth_token_router)
     include_router_with_global_prefix_prepended(application, state_router)
-    include_router_with_global_prefix_prepended(application, evolvxsi_api_router)
+    include_router_with_global_prefix_prepended(application, nortpole_api_router)
     include_router_with_global_prefix_prepended(application, settings_router)
     include_router_with_global_prefix_prepended(application, settings_admin_router)
     include_router_with_global_prefix_prepended(application, security_admin_router)
@@ -762,7 +762,7 @@ def get_application(lifespan_override: Lifespan | None = None) -> FastAPI:
         )
         include_auth_router_with_prefix(
             application,
-            create_evolvxsi_oauth_router(
+            create_nortpole_oauth_router(
                 oauth_client,
                 auth_backend,
                 USER_AUTH_SECRET,
@@ -779,7 +779,7 @@ def get_application(lifespan_override: Lifespan | None = None) -> FastAPI:
         # names apart from the web router's; same Google client + strategy.
         include_auth_router_with_prefix(
             application,
-            create_evolvxsi_oauth_router(
+            create_nortpole_oauth_router(
                 oauth_client,
                 mobile_auth_backend,
                 USER_AUTH_SECRET,

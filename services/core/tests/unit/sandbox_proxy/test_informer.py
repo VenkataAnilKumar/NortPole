@@ -15,15 +15,15 @@ def _make_pod(
     pod_ip: str | None = "10.0.0.1",
     sandbox_id: str | None = "11111111-1111-1111-1111-111111111111",
     tenant_id: str | None = "public",
-    managed_by: str | None = "evolvxsi",
+    managed_by: str | None = "nortpole",
 ) -> client.V1Pod:
     labels: dict[str, str] = {"app.kubernetes.io/component": "sandbox"}
     if managed_by is not None:
         labels["app.kubernetes.io/managed-by"] = managed_by
     if sandbox_id is not None:
-        labels["evolvxsi.local/sandbox-id"] = sandbox_id
+        labels["nortpole.local/sandbox-id"] = sandbox_id
     if tenant_id is not None:
-        labels["evolvxsi.local/tenant-id"] = tenant_id
+        labels["nortpole.local/tenant-id"] = tenant_id
     return client.V1Pod(
         metadata=client.V1ObjectMeta(name=name, labels=labels),
         status=client.V1PodStatus(pod_ip=pod_ip),

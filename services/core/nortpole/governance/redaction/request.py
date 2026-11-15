@@ -35,8 +35,8 @@ logger = setup_logger()
 class NortPoleRedactionCount(Base):
     """How many items of each kind were replaced, by day and route kind. Counts only."""
 
-    __tablename__ = "evolvxsi_redaction_count"
-    __table_args__ = (UniqueConstraint("day", "route_kind", "data_kind", name="uq_evolvxsi_redaction_count"),)
+    __tablename__ = "nortpole_redaction_count"
+    __table_args__ = (UniqueConstraint("day", "route_kind", "data_kind", name="uq_nortpole_redaction_count"),)
 
     row_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     day: Mapped[datetime.date] = mapped_column(Date, nullable=False)
@@ -50,7 +50,7 @@ def _record(route_kind: str, counts: dict[str, int]) -> None:
         with get_session_with_current_tenant() as s:
             for kind, n in counts.items():
                 stmt = insert(NortPoleRedactionCount).values(day=datetime.date.today(), route_kind=route_kind, data_kind=kind, items=n)
-                s.execute(stmt.on_conflict_do_update(constraint="uq_evolvxsi_redaction_count",
+                s.execute(stmt.on_conflict_do_update(constraint="uq_nortpole_redaction_count",
                                                      set_={"items": NortPoleRedactionCount.items + n}))
             s.commit()
     except Exception:  # noqa: BLE001 - counting must not stop a request

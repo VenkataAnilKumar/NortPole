@@ -50,7 +50,7 @@ logger = setup_logger()
 # Deliberately NOT `sqlalchemy.url`: that option is already set by other callers (the
 # integration-test reset helpers) with a sync-driver URL, on the established
 # understanding that alembic/env.py ignores it and builds its own async engine.
-ALEMBIC_TARGET_URL_ATTRIBUTE = "evolvxsi_target_url"
+ALEMBIC_TARGET_URL_ATTRIBUTE = "nortpole_target_url"
 
 
 class ShardConfigurationError(RuntimeError):

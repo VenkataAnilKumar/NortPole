@@ -68,7 +68,7 @@ beforeEach(() => {
   jest.clearAllMocks();
   jest
     .mocked(useSettings)
-    .mockReturnValue({ evolvxsi_craft_available: true } as ReturnType<
+    .mockReturnValue({ nortpole_craft_available: true } as ReturnType<
       typeof useSettings
     >);
   snapshots = [
@@ -178,7 +178,7 @@ it("keeps the same list viewport when switching availability and Craft permissio
 it("hides Craft policies without Craft and respects tool permissions", async () => {
   jest
     .mocked(useSettings)
-    .mockReturnValue({ evolvxsi_craft_available: false } as ReturnType<
+    .mockReturnValue({ nortpole_craft_available: false } as ReturnType<
       typeof useSettings
     >);
   snapshots = [{ ...tool, permissions: {} }];

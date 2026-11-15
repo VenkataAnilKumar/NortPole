@@ -122,7 +122,7 @@ def _source_docs() -> list[SourceDocument]:
 
 @pytest.fixture(scope="module")
 def index():  # type: ignore[no-untyped-def]
-    name = f"evolvxsi_acl_test_{uuid.uuid4().hex[:8]}"
+    name = f"nortpole_acl_test_{uuid.uuid4().hex[:8]}"
     idx = OpenSearchDocumentIndex(
         tenant_state=TenantState(tenant_id=TENANT, multitenant=False),
         index_name=name,

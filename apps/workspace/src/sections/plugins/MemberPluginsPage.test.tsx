@@ -54,7 +54,7 @@ jest.mock("@/lib/permissions/hooks", () => ({
   }),
 }));
 jest.mock("@/lib/settings/hooks", () => ({
-  useSettings: () => ({ evolvxsi_craft_enabled: true }),
+  useSettings: () => ({ nortpole_craft_enabled: true }),
 }));
 
 function network({

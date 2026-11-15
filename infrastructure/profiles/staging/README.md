@@ -33,15 +33,15 @@ In this profile PostgreSQL holds everything that must survive: accounts, drafts,
 
 ```bash
 ./backup.sh /path/to/backups                 # one compressed dump plus a manifest (checksum, migration revision, audit row count)
-./restore.sh /path/to/backups/evolvxsi-<time>.dump    # replaces the current database after you type "replace"
+./restore.sh /path/to/backups/nortpole-<time>.dump    # replaces the current database after you type "replace"
 ```
 
 Run both from this folder with the same `-f` files (or `COMPOSE_FILE`) and environment you start the stack with. The restore refuses a dump whose checksum does not match its manifest, stops the API and web app, recreates the database, loads the dump, starts them again (the API applies any newer migrations), and prints how to check the audit log chain afterwards. Copy the dump and manifest off the machine; the backups are not encrypted by these scripts, so store them with the same care as the database.
 
-To keep a bounded number of dumps, set `KEEP=14` (delete all but the newest 14 after each backup; only files named `evolvxsi-*.dump` and their manifests are touched). To run it daily, a cron entry such as the following works; set the secrets the same way you start the stack:
+To keep a bounded number of dumps, set `KEEP=14` (delete all but the newest 14 after each backup; only files named `nortpole-*.dump` and their manifests are touched). To run it daily, a cron entry such as the following works; set the secrets the same way you start the stack:
 
 ```bash
-15 2 * * *  cd /opt/evolvxsi/infrastructure/profiles/staging && . /etc/evolvxsi/env && KEEP=14 ./backup.sh /var/backups/evolvxsi >> /var/log/evolvxsi-backup.log 2>&1
+15 2 * * *  cd /opt/nortpole/infrastructure/profiles/staging && . /etc/nortpole/env && KEEP=14 ./backup.sh /var/backups/nortpole >> /var/log/nortpole-backup.log 2>&1
 ```
 
 Scheduling is only an example here and was not run on a clock; the script itself and `KEEP` were run by hand.
@@ -55,12 +55,12 @@ To roll back, start the previous version tag **and restore the backup taken befo
 Sharing images through a registry: tag both images with the registry name, push, and pull on the target machine before `up -d`:
 
 ```bash
-docker tag evolvxsi-core:<version> <registry>/evolvxsi-core:<version>   # and the same for evolvxsi-web
-docker push <registry>/evolvxsi-core:<version>
-docker pull <registry>/evolvxsi-core:<version>
+docker tag nortpole-core:<version> <registry>/nortpole-core:<version>   # and the same for nortpole-web
+docker push <registry>/nortpole-core:<version>
+docker pull <registry>/nortpole-core:<version>
 ```
 
-Pull and tag the images back to the plain `evolvxsi-core:<version>` names (or change the `image:` lines) so the compose file finds them. Signing images and scanning them for vulnerabilities are not set up.
+Pull and tag the images back to the plain `nortpole-core:<version>` names (or change the `image:` lines) so the compose file finds them. Signing images and scanning them for vulnerabilities are not set up.
 
 ## Building behind a proxy that re-signs HTTPS
 

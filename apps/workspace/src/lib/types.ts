@@ -16,7 +16,7 @@ export enum ThemePreference {
 }
 
 interface UserPreferences {
-  // TODO: rename to agent — https://linear.app/evolvxsi-app/issue/ENG-3766
+  // TODO: rename to agent — https://linear.app/nortpole-app/issue/ENG-3766
   chosen_assistants: number[] | null;
   visible_assistants: number[];
   hidden_assistants: number[];

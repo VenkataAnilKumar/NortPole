@@ -17,14 +17,14 @@ import { useLanguageModelsForAgent } from "@/lib/languageModels/hooks";
 import { useProviderStatus } from "@/components/chat/ProviderContext";
 
 function getOnboardingCompletedKey(userId: string): string {
-  return `evolvxsi:onboardingCompleted:${userId}`;
+  return `nortpole:onboardingCompleted:${userId}`;
 }
 
 // Saved progress lets onboarding resume at the same step after the user
 // leaves the page (e.g. for an admin page) and comes back. It lives until
 // onboarding is finished or dismissed.
 function getOnboardingProgressKey(userId: string): string {
-  return `evolvxsi:onboardingProgress:${userId}`;
+  return `nortpole:onboardingProgress:${userId}`;
 }
 
 function isOnboardingStep(value: string | null): value is OnboardingStep {

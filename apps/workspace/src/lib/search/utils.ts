@@ -1,5 +1,5 @@
 import { ValidSources } from "@/lib/connectors/types/source";
-import { MinimalEvolvXSIDocument, NortPoleDocument } from "@/lib/search/types";
+import { MinimalNortPoleDocument, NortPoleDocument } from "@/lib/search/types";
 import { transformLinkUri } from "@/lib/utils";
 
 export const openExternalLink = (url: string) => {
@@ -45,7 +45,7 @@ export function countDocumentsBySource(
 // If above fails and we have a file, update the presenting document
 export const openDocument = (
   document: NortPoleDocument,
-  updatePresentingDocument?: (document: MinimalEvolvXSIDocument) => void
+  updatePresentingDocument?: (document: MinimalNortPoleDocument) => void
 ) => {
   if (document.link) {
     openExternalLink(document.link);

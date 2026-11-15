@@ -48,7 +48,7 @@ from nortpole.db.engine.sql_engine import (
 )
 from nortpole.db.enums import Permission
 from nortpole.db.models import OAuthProviderClient, OAuthProviderGrant, User
-from nortpole.error_handling.exceptions import register_evolvxsi_exception_handlers
+from nortpole.error_handling.exceptions import register_nortpole_exception_handlers
 from nortpole.oauth_provider import config as oauth_config
 from nortpole.redis.redis_pool import get_async_redis_connection
 from nortpole.server.oauth_provider.api import router as user_router
@@ -271,7 +271,7 @@ def _start_nginx_proxy(
         "--rm",
         "--detach",
         "--name",
-        f"evolvxsi-native-mcp-oauth-{uuid4().hex[:12]}",
+        f"nortpole-native-mcp-oauth-{uuid4().hex[:12]}",
         "--publish",
         f"127.0.0.1:{proxy_port}:80",
         "--volume",
@@ -563,7 +563,7 @@ def _codex_discover_mcp_tools(
             "initialize",
             {
                 "clientInfo": {
-                    "name": "evolvxsi-native-mcp-oauth-test",
+                    "name": "nortpole-native-mcp-oauth-test",
                     "version": "0",
                 },
                 "capabilities": {},
@@ -665,7 +665,7 @@ def native_oauth_server(
                 await reset_sqlalchemy_async_engine()
 
     app: FastAPI = FastAPI(lifespan=_lifespan)
-    register_evolvxsi_exception_handlers(app)
+    register_nortpole_exception_handlers(app)
 
     @app.get("/health")
     def health() -> JSONResponse:
@@ -774,7 +774,7 @@ def test_codex_mcp_login_exchanges_tokens_and_reaches_mcp(
     mcp_path: str,
 ) -> None:
     codex: str = _require_cli("codex")
-    server_name: str = f"evolvxsi_native_{registration}_{uuid4().hex[:8]}"
+    server_name: str = f"nortpole_native_{registration}_{uuid4().hex[:8]}"
     env: dict[str, str] = {
         **os.environ,
         "PATH": _cli_path(),
@@ -819,7 +819,7 @@ def test_claude_mcp_login_and_get_discovers_tools(
     native_oauth_server: NativeOAuthServer, tmp_path: Path, mcp_path: str
 ) -> None:
     claude: str = _require_cli("claude")
-    server_name: str = f"evolvxsi-native-claude-{uuid4().hex[:8]}"
+    server_name: str = f"nortpole-native-claude-{uuid4().hex[:8]}"
     env: dict[str, str] = {
         **os.environ,
         "PATH": _cli_path(),

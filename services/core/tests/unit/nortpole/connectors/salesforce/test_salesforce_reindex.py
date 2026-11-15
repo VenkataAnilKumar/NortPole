@@ -21,7 +21,7 @@ from nortpole.connectors.models import (
 )
 from nortpole.connectors.salesforce.connector import SalesforceConnector
 from nortpole.connectors.salesforce.doc_conversion import ID_PREFIX
-from nortpole.connectors.salesforce.evolvxsi_salesforce import NortPoleSalesforce
+from nortpole.connectors.salesforce.nortpole_salesforce import NortPoleSalesforce
 
 ACCOUNT_ID = "001000000000001AAA"
 ACCOUNT_ID_15 = "001000000000004"

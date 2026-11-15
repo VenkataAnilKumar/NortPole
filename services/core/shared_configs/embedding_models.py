@@ -1,7 +1,7 @@
 """Registry of known embedding models, shared by the API server (upgrade-only
 guard, tokenizer revision, config defaults) and the model server (loader
 settings). Keep it pure (pydantic, the stdlib, ``shared_configs``): the
-model-server image has no ``evolvxsi`` package and the API image has no torch.
+model-server image has no ``nortpole`` package and the API image has no torch.
 
 Only add entries: a deployment can hold any entry as PRESENT, FUTURE or PAST.
 ``model_name`` is the exact ``SearchSettings.model_name``: the bare name for

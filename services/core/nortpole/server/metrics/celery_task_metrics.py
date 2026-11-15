@@ -28,50 +28,50 @@ from nortpole.utils.logger import setup_logger
 logger = setup_logger()
 
 TASK_STARTED = Counter(
-    "evolvxsi_celery_task_started_total",
+    "nortpole_celery_task_started_total",
     "Total Celery tasks started",
     ["task_name", "queue"],
 )
 
 TASK_COMPLETED = Counter(
-    "evolvxsi_celery_task_completed_total",
+    "nortpole_celery_task_completed_total",
     "Total Celery tasks completed",
     ["task_name", "queue", "outcome"],
 )
 
 TASK_DURATION = Histogram(
-    "evolvxsi_celery_task_duration_seconds",
+    "nortpole_celery_task_duration_seconds",
     "Celery task execution duration in seconds",
     ["task_name", "queue"],
     buckets=[1, 5, 15, 30, 60, 120, 300, 600, 1800, 3600],
 )
 
 TASKS_ACTIVE = Gauge(
-    "evolvxsi_celery_tasks_active",
+    "nortpole_celery_tasks_active",
     "Currently executing Celery tasks",
     ["task_name", "queue"],
 )
 
 TASK_RETRIED = Counter(
-    "evolvxsi_celery_task_retried_total",
+    "nortpole_celery_task_retried_total",
     "Total Celery tasks retried",
     ["task_name", "queue"],
 )
 
 TASK_REVOKED = Counter(
-    "evolvxsi_celery_task_revoked_total",
+    "nortpole_celery_task_revoked_total",
     "Total Celery tasks revoked (cancelled)",
     ["task_name"],
 )
 
 TASK_REJECTED = Counter(
-    "evolvxsi_celery_task_rejected_total",
+    "nortpole_celery_task_rejected_total",
     "Total Celery tasks rejected by worker",
     ["task_name"],
 )
 
 TASK_QUEUE_WAIT = Histogram(
-    "evolvxsi_celery_task_queue_wait_seconds",
+    "nortpole_celery_task_queue_wait_seconds",
     "Time a Celery task spent waiting in the queue before execution started",
     ["task_name", "queue"],
     buckets=[

@@ -23,7 +23,7 @@ export default function MemberMCPPreferences({
 }: MemberMCPPreferencesProps) {
   const t = useTranslations("actions.memberPlugins.defaults");
   const availabilityCopy = useTranslations("actions.plugins.availability");
-  const craftEnabled = useSettings().evolvxsi_craft_enabled === true;
+  const craftEnabled = useSettings().nortpole_craft_enabled === true;
   const rows = [
     ...(surface === "craft"
       ? []

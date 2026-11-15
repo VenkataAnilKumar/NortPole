@@ -21,12 +21,12 @@ def tenant_header_middleware(app: ASGIApp) -> ASGIApp:
             await app(scope, receive, send)
             return
 
-        evolvxsi_tenant_id = Request(scope).headers.get("X-EvolvXSI-Tenant-ID")
-        if not evolvxsi_tenant_id:
+        nortpole_tenant_id = Request(scope).headers.get("X-NortPole-Tenant-ID")
+        if not nortpole_tenant_id:
             await app(scope, receive, send)
             return
 
-        token = CURRENT_TENANT_ID_CONTEXTVAR.set(evolvxsi_tenant_id)
+        token = CURRENT_TENANT_ID_CONTEXTVAR.set(nortpole_tenant_id)
         try:
             await app(scope, receive, send)
         finally:
@@ -41,9 +41,9 @@ def request_id_middleware(app: ASGIApp, *, prefix: str) -> ASGIApp:
             await app(scope, receive, send)
             return
 
-        request_id = Request(scope).headers.get("X-EvolvXSI-Request-ID")
+        request_id = Request(scope).headers.get("X-NortPole-Request-ID")
         token = NORTPOLE_REQUEST_ID_CONTEXTVAR.set(
-            request_id or make_randomized_evolvxsi_request_id(prefix)
+            request_id or make_randomized_nortpole_request_id(prefix)
         )
         try:
             await app(scope, receive, send)
@@ -53,20 +53,20 @@ def request_id_middleware(app: ASGIApp, *, prefix: str) -> ASGIApp:
     return set_request_id
 
 
-def make_randomized_evolvxsi_request_id(prefix: str) -> str:
+def make_randomized_nortpole_request_id(prefix: str) -> str:
     """generates a randomized request id"""
 
     hash_input = str(uuid.uuid4())
-    return _make_evolvxsi_request_id(prefix, hash_input)
+    return _make_nortpole_request_id(prefix, hash_input)
 
 
-def make_structured_evolvxsi_request_id(prefix: str, request_url: str) -> str:
+def make_structured_nortpole_request_id(prefix: str, request_url: str) -> str:
     """Not used yet, but could be in the future!"""
     hash_input = f"{request_url}:{datetime.now(timezone.utc)}"
-    return _make_evolvxsi_request_id(prefix, hash_input)
+    return _make_nortpole_request_id(prefix, hash_input)
 
 
-def _make_evolvxsi_request_id(prefix: str, hash_input: str) -> str:
+def _make_nortpole_request_id(prefix: str, hash_input: str) -> str:
     """helper function to return an id given a string input"""
     hash_obj = hashlib.md5(hash_input.encode("utf-8"), usedforsecurity=False)
     hash_bytes = hash_obj.digest()[:6]  # Truncate to 6 bytes
@@ -74,8 +74,8 @@ def _make_evolvxsi_request_id(prefix: str, hash_input: str) -> str:
     # 6 bytes becomes 8 bytes. we shouldn't need to strip but just in case
     # NOTE: possible we'll want more input bytes if id's aren't unique enough
     hash_str = base64.urlsafe_b64encode(hash_bytes).decode("utf-8").rstrip("=")
-    evolvxsi_request_id = f"{prefix}:{hash_str}"
-    return evolvxsi_request_id
+    nortpole_request_id = f"{prefix}:{hash_str}"
+    return nortpole_request_id
 
 
 def _build_route_map(app: FastAPI) -> list[tuple[re.Pattern[str], str]]:
@@ -104,8 +104,8 @@ def add_endpoint_context_middleware(app: FastAPI) -> None:
     """Set CURRENT_ENDPOINT_CONTEXTVAR so Prometheus pool metrics can
     attribute DB connections to the endpoint that checked them out.
 
-    Used by ``evolvxsi_db_connections_held_by_endpoint`` and
-    ``evolvxsi_db_connection_hold_seconds`` in the pool event listeners.
+    Used by ``nortpole_db_connections_held_by_endpoint`` and
+    ``nortpole_db_connection_hold_seconds`` in the pool event listeners.
 
     Resolves request paths to route templates (e.g. /api/chat/{chat_id}
     instead of /api/chat/abc-123) to keep metric label cardinality low.

@@ -1,4 +1,4 @@
-"""add evolvxsi_task.review_rules
+"""add nortpole_task.review_rules
 
 Revision ID: 7b5d0f3a8c69
 Revises: 6a4c9e2f7b58
@@ -17,8 +17,8 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.add_column("evolvxsi_task", sa.Column("review_rules", postgresql.JSONB(), nullable=True))
+    op.add_column("nortpole_task", sa.Column("review_rules", postgresql.JSONB(), nullable=True))
 
 
 def downgrade() -> None:
-    op.drop_column("evolvxsi_task", "review_rules")
+    op.drop_column("nortpole_task", "review_rules")

@@ -65,7 +65,7 @@ from nortpole.connectors.salesforce.models import (
     SalesforceChildFields,
     SalesforceMyDomainUrl,
 )
-from nortpole.connectors.salesforce.evolvxsi_salesforce import (
+from nortpole.connectors.salesforce.nortpole_salesforce import (
     NortPoleSalesforce,
     is_salesforce_rate_limit_error,
 )
@@ -1044,7 +1044,7 @@ class SalesforceConnector(
         # 1.1 - Detect all fields in child types which reference a parent type.
         # build dicts to detect relationships between parent and child
         for child_type in child_types.union(_ESSENTIAL_TYPES):
-            # evolvxsi_sf_type = NortPoleSalesforceType(child_type, sf_client)
+            # nortpole_sf_type = NortPoleSalesforceType(child_type, sf_client)
             parent_reference_fields = sf_client.get_parent_reference_fields(
                 child_type, parent_types
             )
@@ -1057,7 +1057,7 @@ class SalesforceConnector(
         # NOTE(rkuo):
         all_types_to_filter: dict[str, bool] = {}
         for sf_type in all_types:
-            # evolvxsi_sf_type = NortPoleSalesforceType(sf_type, sf_client)
+            # nortpole_sf_type = NortPoleSalesforceType(sf_type, sf_client)
 
             # NOTE(rkuo): I'm not convinced it makes sense to restrict filtering at all
             # all_types_to_filter[sf_type] = sf_db.object_type_count(sf_type) > 0
@@ -1108,7 +1108,7 @@ class SalesforceConnector(
             "Parent object types: num=%s list=%s", len(parent_types), parent_types
         )
         for parent_type in parent_types:
-            # parent_evolvxsi_sf_type = NortPoleSalesforceType(parent_type, sf_client)
+            # parent_nortpole_sf_type = NortPoleSalesforceType(parent_type, sf_client)
 
             custom_fields: list[str] | None = []
             associations_config: dict[str, list[str]] | None = None
@@ -1170,7 +1170,7 @@ class SalesforceConnector(
             parent_to_relationship_fields[parent_type] = {}
 
             for child_type, child_relationship in child_types_working.items():
-                # evolvxsi_sf_type = NortPoleSalesforceType(child_type, sf_client)
+                # nortpole_sf_type = NortPoleSalesforceType(child_type, sf_client)
 
                 # map parent name to child name
                 parent_to_child_types[parent_type].add(child_type)

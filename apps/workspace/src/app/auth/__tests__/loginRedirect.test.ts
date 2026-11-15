@@ -7,7 +7,7 @@ import { requireAuth } from "@/lib/auth/svcSS";
 import { ORIGINAL_PATH_HEADER } from "@/lib/auth/paths";
 import { SERVER_SIDE_ONLY__AUTH_COOKIE_NAME } from "@/lib/constants";
 
-const APP_DOMAIN = "https://evolvxsi.example.com";
+const APP_DOMAIN = "https://nortpole.example.com";
 const STAMPED = `x-middleware-request-${ORIGINAL_PATH_HEADER}`;
 
 // Next resolves this build-time marker itself, so it has no module to load here.

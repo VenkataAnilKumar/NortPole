@@ -20,8 +20,8 @@ _BUILT_IN_SKILL_ID = "image-generation"
 _OLD_DESCRIPTION = "Generate images using nano banana."
 
 _NEW_DESCRIPTION = (
-    "Generate or edit images with evolvxsi-cli using the image generation provider "
-    "configured in EvolvXSI."
+    "Generate or edit images with nortpole-cli using the image generation provider "
+    "configured in NortPole."
 )
 
 _skill_table = sa.table(

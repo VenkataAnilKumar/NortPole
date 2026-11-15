@@ -28,9 +28,9 @@ def hash_pat(token: str) -> str:
 def build_displayable_pat(token: str) -> str:
     """Create masked display version: show prefix + first 4 random chars, mask middle, show last 4.
 
-    Example: evolvxsi_pat_abc1****xyz9
+    Example: nortpole_pat_abc1****xyz9
     """
-    # Show first 12 chars (evolvxsi_pat_ + 4 random chars) and last 4 chars
+    # Show first 12 chars (nortpole_pat_ + 4 random chars) and last 4 chars
     return f"{token[:12]}****{token[-4:]}"
 
 

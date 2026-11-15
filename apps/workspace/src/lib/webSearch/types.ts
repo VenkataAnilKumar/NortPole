@@ -20,7 +20,7 @@ export type WebSearchProviderType =
 
 export type WebContentProviderType =
   | "firecrawl"
-  | "evolvxsi_web_crawler"
+  | "nortpole_web_crawler"
   | "exa"
   | "tavily"
   | (string & {});

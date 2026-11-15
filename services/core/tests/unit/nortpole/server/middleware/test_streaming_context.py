@@ -48,13 +48,13 @@ async def _request(
         "root_path": "",
         "query_string": b"",
         "headers": (
-            [(b"x-evolvxsi-request-id", request_id.encode())] if request_id else []
+            [(b"x-nortpole-request-id", request_id.encode())] if request_id else []
         ),
         "client": ("127.0.0.1", 1234),
         "server": ("test", 80),
     }
     if tenant_id:
-        scope["headers"].append((b"x-evolvxsi-tenant-id", tenant_id.encode()))
+        scope["headers"].append((b"x-nortpole-tenant-id", tenant_id.encode()))
     messages: list[Message] = []
 
     async def receive() -> Message:

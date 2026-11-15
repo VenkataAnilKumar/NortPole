@@ -792,7 +792,7 @@ def test_provision_cleans_up_pod_when_opencode_history_restore_fails(
             sandbox_id=sandbox_id,
             user_id=_sandbox_id(),
             tenant_id="tenant-test",
-            evolvxsi_pat="pat",
+            nortpole_pat="pat",
             provisioning_attempt_number=1,
         )
 
@@ -824,7 +824,7 @@ def test_provision_existing_healthy_pod_does_not_restore_opencode_history(
         sandbox_id=sandbox_id,
         user_id=_sandbox_id(),
         tenant_id="tenant-test",
-        evolvxsi_pat="pat",
+        nortpole_pat="pat",
         provisioning_attempt_number=1,
     )
 
@@ -868,7 +868,7 @@ def test_provision_conflicting_healthy_pod_skips_startup_restore(
         sandbox_id=sandbox_id,
         user_id=_sandbox_id(),
         tenant_id="tenant-test",
-        evolvxsi_pat="pat",
+        nortpole_pat="pat",
         provisioning_attempt_number=1,
     )
 
@@ -930,7 +930,7 @@ def test_provision_conflicting_not_ready_pod_runs_startup_restore(
         sandbox_id=sandbox_id,
         user_id=_sandbox_id(),
         tenant_id="tenant-test",
-        evolvxsi_pat="pat",
+        nortpole_pat="pat",
         provisioning_attempt_number=1,
     )
 
@@ -973,7 +973,7 @@ def test_provision_conflicting_not_ready_pod_restore_failure_does_not_cleanup(
             sandbox_id=sandbox_id,
             user_id=_sandbox_id(),
             tenant_id="tenant-test",
-            evolvxsi_pat="pat",
+            nortpole_pat="pat",
             provisioning_attempt_number=1,
         )
 

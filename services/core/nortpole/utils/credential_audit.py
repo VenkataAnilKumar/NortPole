@@ -11,7 +11,7 @@ code path (credential reads sit on the chat hot path and on connector
 indexing). Every piece of context is best-effort and any failure degrades to
 ``None`` or to "always emit".
 
-The emitted line goes to a dedicated logger named ``evolvxsi.audit.credential_access``
+The emitted line goes to a dedicated logger named ``nortpole.audit.credential_access``
 at INFO. To consume the audit trail, filter logs on that logger name and parse
 the JSON payload.
 """
@@ -26,7 +26,7 @@ from typing import Any
 # object (the NortPole standard formatter prepends a human-readable prefix, which
 # would make machine parsing harder). The logger propagates to the root so it
 # still reaches the configured handlers / log files.
-AUDIT_LOGGER_NAME = "evolvxsi.audit.credential_access"
+AUDIT_LOGGER_NAME = "nortpole.audit.credential_access"
 _audit_logger = logging.getLogger(AUDIT_LOGGER_NAME)
 _audit_logger.setLevel(logging.INFO)
 

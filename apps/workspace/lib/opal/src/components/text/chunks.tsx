@@ -1,5 +1,5 @@
 import { Children, type ReactNode } from "react";
-import type { TextColor, TextFont } from "@evolvxsi-ai/shared/contracts";
+import type { TextColor, TextFont } from "@nortpole-ai/shared/contracts";
 import { Text } from "@opal/components/text/components";
 
 /** Wraps the string parts of a translated rich message in Text so every chunk is a sibling span.

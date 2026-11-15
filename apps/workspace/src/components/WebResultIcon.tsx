@@ -3,7 +3,7 @@
 import { ValidSources } from "@/lib/connectors/types/source";
 import { SourceIcon } from "./SourceIcon";
 import { useState } from "react";
-import { SvgEvolvXSILogo, SvgGitHub } from "@opal/logos";
+import { SvgNortPoleLogo, SvgGitHub } from "@opal/logos";
 
 export function WebResultIcon({
   url,
@@ -17,12 +17,12 @@ export function WebResultIcon({
   try {
     hostname = new URL(url).hostname;
   } catch (e) {
-    hostname = "evolvxsi.local";
+    hostname = "nortpole.local";
   }
   return (
     <>
-      {hostname.includes("evolvxsi.local") ? (
-        <SvgEvolvXSILogo size={size} className="dark:text-white text-black" />
+      {hostname.includes("nortpole.local") ? (
+        <SvgNortPoleLogo size={size} className="dark:text-white text-black" />
       ) : hostname === "github.com" || hostname.endsWith(".github.com") ? (
         <SvgGitHub size={size} />
       ) : !error ? (

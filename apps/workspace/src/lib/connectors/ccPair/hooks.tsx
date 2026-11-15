@@ -943,7 +943,7 @@ export function useLatestCCPairRun(
 }
 
 function panelOpenKey(scope: ActivityScope): string {
-  return `evolvxsi.activityPanel.open.${scope === "fleet" ? "fleet" : scope.ccPairId}`;
+  return `nortpole.activityPanel.open.${scope === "fleet" ? "fleet" : scope.ccPairId}`;
 }
 
 function readPanelChoice(key: string): boolean | null {

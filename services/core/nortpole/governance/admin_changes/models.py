@@ -16,7 +16,7 @@ class NortPoleAdminChange(Base):
     """An administrator change that waits for a second administrator. The payload is the request as it was made;
     nothing in it is a secret (policy settings and retention periods)."""
 
-    __tablename__ = "evolvxsi_admin_change"
+    __tablename__ = "nortpole_admin_change"
 
     id: Mapped[uuid.UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     kind: Mapped[str] = mapped_column(String(40), nullable=False)

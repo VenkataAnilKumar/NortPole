@@ -17,7 +17,7 @@ _CA_BUNDLE = certifi.where()
 def _self_signed(out_path: Path) -> tuple[str, str]:
     out_path.mkdir(parents=True, exist_ok=True)
     key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
-    name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "evolvxsi-test")])
+    name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "nortpole-test")])
     cert = (
         x509.CertificateBuilder()
         .subject_name(name)

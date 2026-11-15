@@ -290,7 +290,7 @@ def test_sharepoint_credential_maps_to_azure_data_lake() -> None:
 def test_azure_data_lake_account_key_keeps_its_own_shape() -> None:
     account_key_json = {
         "authentication_method": "account_key",
-        "adls_account_name": "evolvxsitest",
+        "adls_account_name": "nortpoletest",
         "adls_account_key": "key",
     }
 
@@ -321,7 +321,7 @@ def test_an_app_registration_account_cannot_become_an_account_key() -> None:
             DocumentSource.AZURE_DATALAKE,
             {
                 "authentication_method": "account_key",
-                "adls_account_name": "evolvxsitest",
+                "adls_account_name": "nortpoletest",
                 "adls_account_key": "key",
             },
             stored,

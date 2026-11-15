@@ -174,7 +174,7 @@ def load_files_from_zip(
                 yield file_info, subfile
 
 
-def _extract_evolvxsi_metadata(line: str) -> dict | None:
+def _extract_nortpole_metadata(line: str) -> dict | None:
     """
     Example: first line has:
         <!-- NORTPOLE_METADATA={"title": "..."} -->
@@ -204,7 +204,7 @@ def read_text_file(
     file: IO,
     encoding: str = "utf-8",
     errors: str = "replace",
-    ignore_evolvxsi_metadata: bool = True,
+    ignore_nortpole_metadata: bool = True,
 ) -> tuple[str, dict]:
     """
     For plain text files. Optionally extracts NortPole metadata from the first line.
@@ -223,8 +223,8 @@ def read_text_file(
             )
 
         # optionally parse metadata in the first line
-        if ind == 0 and not ignore_evolvxsi_metadata:
-            potential_meta = _extract_evolvxsi_metadata(line)
+        if ind == 0 and not ignore_nortpole_metadata:
+            potential_meta = _extract_nortpole_metadata(line)
             if potential_meta is not None:
                 metadata = potential_meta
                 continue
@@ -483,7 +483,7 @@ def read_docx_file(
         file.seek(0)
         encoding = detect_encoding(file)
         text_content_raw, _ = read_text_file(
-            file, encoding=encoding, ignore_evolvxsi_metadata=False
+            file, encoding=encoding, ignore_nortpole_metadata=False
         )
         return text_content_raw or "", []
 
@@ -901,7 +901,7 @@ class ExtractionResult(NamedTuple):
 def extract_result_from_text_file(file: IO[Any]) -> ExtractionResult:
     encoding = detect_encoding(file)
     text_content_raw, file_metadata = read_text_file(
-        file, encoding=encoding, ignore_evolvxsi_metadata=False
+        file, encoding=encoding, ignore_nortpole_metadata=False
     )
     return ExtractionResult(
         text_content=text_content_raw,

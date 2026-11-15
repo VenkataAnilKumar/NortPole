@@ -37,7 +37,7 @@ export type NortPoleSelectionState = "none" | "partial" | "all";
  * This is a **named export** (not on the return object) because it is used
  * statically inside JSX header loops, not tied to hook state.
  */
-export function toEvolvXSISortDirection(
+export function toNortPoleSortDirection(
   dir: false | "asc" | "desc"
 ): NortPoleSortDirection {
   if (dir === "asc") return "ascending";

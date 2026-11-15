@@ -5,7 +5,7 @@ from unittest.mock import patch
 import pytest
 
 from nortpole.connectors.salesforce.models import SalesforceChildFields
-from nortpole.connectors.salesforce.evolvxsi_salesforce import NortPoleSalesforce
+from nortpole.connectors.salesforce.nortpole_salesforce import NortPoleSalesforce
 from nortpole.connectors.salesforce.salesforce_calls import (
     SOQL_FIELD_SEPARATOR,
     SOQL_MAX_SUBQUERIES,

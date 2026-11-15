@@ -363,7 +363,7 @@ test("browsing from a new project chat hands its configuration back to that comp
   first.unmount();
   const second = renderHook(() => useToolConfiguration());
   expect(second.result.current.disabledToolIds).toEqual([10, 11]);
-  expect(sessionStorage.getItem("evolvxsi:tools:new:5:9")).toBeNull();
+  expect(sessionStorage.getItem("nortpole:tools:new:5:9")).toBeNull();
   second.unmount();
   expect(
     renderHook(() => useToolConfiguration()).result.current.disabledToolIds

@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Modal, Button, Text } from "@opal/components";
-import { SvgEvolvXSIOctagon } from "@opal/icons";
+import { SvgNortPoleOctagon } from "@opal/icons";
 import { useUser } from "@/providers/UserProvider";
 import { ADMIN_ROUTES } from "@/lib/admin-routes";
 
@@ -13,7 +13,7 @@ export function NoAgentModal() {
   return (
     <Modal open>
       <Modal.Content width="sm" height="sm">
-        <Modal.Header icon={SvgEvolvXSIOctagon} title={t("noAgent.title")} />
+        <Modal.Header icon={SvgNortPoleOctagon} title={t("noAgent.title")} />
         <Modal.Body gap={2}>
           <Text as="p" color="text-03">
             {t("noAgent.body.description")}

@@ -64,7 +64,7 @@ describe("stripSessionPrefix", () => {
   it("strips local sandboxes/sessions prefix", () => {
     expect(
       stripSessionPrefix(
-        "/Users/wenxi-evolvxsi/data/sandboxes/b29c196e-fa14-46b8-8182-ff4a7f67b47b/sessions/9c7662c1-785f-4f1c-b9e0-9021ddbf2893/outputs/web/AGENTS.md"
+        "/Users/wenxi-nortpole/data/sandboxes/b29c196e-fa14-46b8-8182-ff4a7f67b47b/sessions/9c7662c1-785f-4f1c-b9e0-9021ddbf2893/outputs/web/AGENTS.md"
       )
     ).toBe("outputs/web/AGENTS.md");
   });
@@ -72,7 +72,7 @@ describe("stripSessionPrefix", () => {
   it("strips local sandboxes/sessions prefix for user_library/ directory", () => {
     expect(
       stripSessionPrefix(
-        "/Users/wenxi-evolvxsi/data/sandboxes/b29c196e-fa14-46b8-8182-ff4a7f67b47b/sessions/9c7662c1-785f-4f1c-b9e0-9021ddbf2893/user_library/docs/report.pdf"
+        "/Users/wenxi-nortpole/data/sandboxes/b29c196e-fa14-46b8-8182-ff4a7f67b47b/sessions/9c7662c1-785f-4f1c-b9e0-9021ddbf2893/user_library/docs/report.pdf"
       )
     ).toBe("user_library/docs/report.pdf");
   });
@@ -118,7 +118,7 @@ describe("stripSessionPrefix", () => {
   it("handles title field without leading slash (sandboxes path)", () => {
     expect(
       stripSessionPrefix(
-        "Users/wenxi-evolvxsi/data/sandboxes/b29c196e-fa14-46b8-8182-ff4a7f67b47b/sessions/9c7662c1-785f-4f1c-b9e0-9021ddbf2893/outputs/web/page.tsx"
+        "Users/wenxi-nortpole/data/sandboxes/b29c196e-fa14-46b8-8182-ff4a7f67b47b/sessions/9c7662c1-785f-4f1c-b9e0-9021ddbf2893/outputs/web/page.tsx"
       )
     ).toBe("outputs/web/page.tsx");
   });
@@ -156,7 +156,7 @@ describe("sanitizePathsInText", () => {
   it("strips local sandboxes path from cd command", () => {
     expect(
       sanitizePathsInText(
-        "cd /Users/wenxi-evolvxsi/data/sandboxes/abc-123/sessions/def-456/outputs/web && python3 prepare.py"
+        "cd /Users/wenxi-nortpole/data/sandboxes/abc-123/sessions/def-456/outputs/web && python3 prepare.py"
       )
     ).toBe("cd outputs/web && python3 prepare.py");
   });
@@ -191,7 +191,7 @@ describe("sanitizePathsInText", () => {
 
   it("returns text without sandbox/session paths unchanged", () => {
     const text =
-      "total 0\ndrwxr-xr-x@ 3 wenxi-evolvxsi  staff  96 Jan 21 15:18 .\n";
+      "total 0\ndrwxr-xr-x@ 3 wenxi-nortpole  staff  96 Jan 21 15:18 .\n";
     expect(sanitizePathsInText(text)).toBe(text);
   });
 

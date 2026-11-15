@@ -4277,7 +4277,7 @@
           "fields": {
             "sites": {
               "label": "站点",
-              "description": "- 如果未指定站点，将索引您组织中的所有站点（需要 `Sites.Read.All` 权限）。\n- 例如，指定 `https://evolvxsiai.sharepoint.com/sites/support` 只会索引该站点。\n- 例如，指定 `https://evolvxsiai.sharepoint.com/sites/support/subfolder` 只会索引该文件夹。\n- 如需索引用户的个人站点，请使用 [OneDrive 连接器]({docsAdminsPath}/connectors/official/onedrive)。\n- 目前，指定站点适用于使用英语、西班牙语或德语的 SharePoint 实例。如需支持其他语言，请联系 NortPole 团队。"
+              "description": "- 如果未指定站点，将索引您组织中的所有站点（需要 `Sites.Read.All` 权限）。\n- 例如，指定 `https://nortpoleai.sharepoint.com/sites/support` 只会索引该站点。\n- 例如，指定 `https://nortpoleai.sharepoint.com/sites/support/subfolder` 只会索引该文件夹。\n- 如需索引用户的个人站点，请使用 [OneDrive 连接器]({docsAdminsPath}/connectors/official/onedrive)。\n- 目前，指定站点适用于使用英语、西班牙语或德语的 SharePoint 实例。如需支持其他语言，请联系 NortPole 团队。"
             },
             "include_site_documents": {
               "label": "索引文档",
@@ -4318,7 +4318,7 @@
           "fields": {
             "teams": {
               "label": "团队",
-              "description": "指定 0 个或多个要索引的团队。例如，为“evolvxsiai”组织指定团队“Support”，将只索引发送到属于“Support”团队的频道中的消息。如果未指定团队，将索引您组织中的所有团队。"
+              "description": "指定 0 个或多个要索引的团队。例如，为“nortpoleai”组织指定团队“Support”，将只索引发送到属于“Support”团队的频道中的消息。如果未指定团队，将索引您组织中的所有团队。"
             },
             "include_attachments": {
               "description": "将每个频道“文件”选项卡中的文件作为独立文档进行索引，并沿用 SharePoint 授予的读取者。需要证书凭据、Graph 上的 Files.Read.All 或 Sites.Read.All，以及 SharePoint API 上的 Sites.FullControl.All，以读取每个文件的读取者。使用 Sites.Selected 时，请为每个频道站点授予该应用完全控制权限。"
@@ -4478,7 +4478,7 @@
           "fields": {
             "base_url": {
               "label": "基础 URL",
-              "description": "指定您的 Slab 团队的基础 URL，格式类似：https://evolvxsi.slab.com/"
+              "description": "指定您的 Slab 团队的基础 URL，格式类似：https://nortpole.slab.com/"
             }
           }
         },
@@ -8124,7 +8124,7 @@
           "responseFallback": "请求邀请失败"
         },
         "requestSentBody": "您的加入请求已发送。在等待 {domain} 管理员批准期间，您可以先以自己的团队身份浏览体验。",
-        "tryEvolvXSIButton": {
+        "tryNortPoleButton": {
           "label": "等待期间先试用 NortPole"
         }
       },
@@ -8754,7 +8754,7 @@
       },
       "placeholders": {
         "jwksUrl": "https://idp.example.com/.well-known/jwks.json",
-        "audience": "evolvxsi",
+        "audience": "nortpole",
         "issuer": "https://idp.example.com"
       }
     },
@@ -9540,7 +9540,7 @@
         "spEntityId": {
           "label": "SP 实体 ID",
           "description": "此实例在 IdP 注册的实体 ID。",
-          "placeholder": "evolvxsi"
+          "placeholder": "nortpole"
         },
         "spX509Cert": {
           "label": "SP X.509 证书",
@@ -10620,7 +10620,7 @@
         "message": "发生意外错误。"
       },
       "contentProviders": {
-        "evolvxsiWebCrawler": {
+        "nortpoleWebCrawler": {
           "subtitle": "内置网页爬虫。适用于大多数页面，但在特殊情况下性能较低。"
         },
         "firecrawl": {
@@ -11755,7 +11755,7 @@
         "description": "账户访问限制或权限问题"
       },
       "cloudSupportPrompt": {
-        "text": "如果问题持续存在，请通过 <link>support@evolvxsi.local</link> 联系 NortPole 团队"
+        "text": "如果问题持续存在，请通过 <link>support@nortpole.local</link> 联系 NortPole 团队"
       },
       "code": {
         "accessDenied": "您的身份提供方拒绝了访问。",
@@ -11839,7 +11839,7 @@
     },
     "impersonate": {
       "adminNote": {
-        "text": "注意：此功能仅面向 @evolvxsi.local 管理员开放"
+        "text": "注意：此功能仅面向 @nortpole.local 管理员开放"
       },
       "apiKeyField": {
         "label": "API 密钥",
@@ -13590,7 +13590,7 @@
         "newChatButton": {
           "tooltip": "新聊天"
         },
-        "openInEvolvXSIButton": {
+        "openInNortPoleButton": {
           "tooltip": "在 {appName} 中打开"
         }
       }
@@ -13942,7 +13942,7 @@
     "errorPages": {
       "accessRestricted": {
         "billingAdminHint": {
-          "text": "如果您是管理员，请访问<billingLink>管理员账单</billingLink>页面以{hadLicense, select, true {续订} other {激活}}您的许可证，通过 Stripe 注册，或联系 <supportLink>support@evolvxsi.local</supportLink> 获取账单帮助。"
+          "text": "如果您是管理员，请访问<billingLink>管理员账单</billingLink>页面以{hadLicense, select, true {续订} other {激活}}您的许可证，通过 Stripe 注册，或联系 <supportLink>support@nortpole.local</supportLink> 获取账单帮助。"
         },
         "downgradeButton": {
           "label": "降级到 Community"
@@ -17611,7 +17611,7 @@
     "disk": "OpenSearch 数据节点的磁盘使用率至少为 85%。磁盘空间耗尽时，索引可能停止。",
     "jvmMemory": "多次检查显示 OpenSearch JVM 内存使用率持续超过 85%。搜索和索引可能失败。",
     "vectorMemory": "OpenSearch 向量内存接近满载或已达到上限。搜索和索引可能失败。",
-    "contact": "请联系系统管理员或通过 [support@evolvxsi.local](mailto:support@evolvxsi.local) 联系 NortPole 团队。",
+    "contact": "请联系系统管理员或通过 [support@nortpole.local](mailto:support@nortpole.local) 联系 NortPole 团队。",
     "stale": "最新检查不可用。此警告反映上次成功检查的结果，尚未确认恢复。",
     "dismiss": "关闭",
     "diskTitle": "磁盘空间",

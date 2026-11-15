@@ -11,7 +11,7 @@ if [ ! -d "$template/node_modules" ] || [ -e "$config_dir/node_modules" ]; then
 fi
 
 mkdir -p "$config_dir"
-staging="$(mktemp -d "$config_dir/.evolvxsi-sdk.XXXXXX")"
+staging="$(mktemp -d "$config_dir/.nortpole-sdk.XXXXXX")"
 trap 'rm -rf "$staging"' EXIT
 trap 'exit 1' HUP INT TERM
 

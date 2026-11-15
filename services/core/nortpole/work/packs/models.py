@@ -11,7 +11,7 @@ from nortpole.db.models import Base
 
 
 class NortPolePackSigner(Base):
-    __tablename__ = "evolvxsi_pack_signer"
+    __tablename__ = "nortpole_pack_signer"
 
     key_id: Mapped[str] = mapped_column(String(80), primary_key=True)
     public_key: Mapped[str] = mapped_column(String, nullable=False)
@@ -24,8 +24,8 @@ class NortPolePackVersion(Base):
     """One installed version of one pack. At most one version of a pack is
     active; activating another is an upgrade or a rollback."""
 
-    __tablename__ = "evolvxsi_pack_version"
-    __table_args__ = (UniqueConstraint("pack_id", "version", name="uq_evolvxsi_pack_version"),)
+    __tablename__ = "nortpole_pack_version"
+    __table_args__ = (UniqueConstraint("pack_id", "version", name="uq_nortpole_pack_version"),)
 
     row_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     pack_id: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
@@ -46,8 +46,8 @@ class NortPolePackVersion(Base):
 class NortPolePackEvaluation(Base):
     """The latest evaluation of one pack version on one model."""
 
-    __tablename__ = "evolvxsi_pack_eval"
-    __table_args__ = (UniqueConstraint("pack_id", "version", "model_configuration_id", name="uq_evolvxsi_pack_eval"),)
+    __tablename__ = "nortpole_pack_eval"
+    __table_args__ = (UniqueConstraint("pack_id", "version", "model_configuration_id", name="uq_nortpole_pack_eval"),)
 
     row_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     pack_id: Mapped[str] = mapped_column(String(64), nullable=False, index=True)

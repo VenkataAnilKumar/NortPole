@@ -358,8 +358,8 @@ def _configure_azure_datalake_spy(spy: MagicMock) -> None:
         accounts=[
             AzureStorageAccountResource(
                 id="/subscriptions/sub/resourceGroups/rg/providers/"
-                "Microsoft.Storage/storageAccounts/evolvxsitest",
-                name="evolvxsitest",
+                "Microsoft.Storage/storageAccounts/nortpoletest",
+                name="nortpoletest",
             )
         ]
     )
@@ -448,7 +448,7 @@ _CONNECTOR_CONFIGS: dict[DocumentSource, list[dict[str, Any]]] = {
     # The selected-scope checks read teams and projects only when some are set.
     DocumentSource.LINEAR: [{"team_keys": ["ENG"], "projects": ["Roadmap"]}],
     DocumentSource.AZURE_DATALAKE: [
-        {"account_name": "evolvxsitest", "container_name": "docs", "path_prefix": "docs"}
+        {"account_name": "nortpoletest", "container_name": "docs", "path_prefix": "docs"}
     ],
 }
 

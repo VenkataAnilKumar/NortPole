@@ -17,10 +17,10 @@ from nortpole.server.oauth_provider.provider import (
 
 CLIENT_ID = "https://client.example/oauth.json"
 SETTINGS = OAuthProviderSettings(
-    issuer_url="https://evolvxsi.example/api/oauth-provider",
-    mcp_resource_url="https://evolvxsi.example/mcp/",
-    web_url="https://evolvxsi.example",
-    web_origin="https://evolvxsi.example",
+    issuer_url="https://nortpole.example/api/oauth-provider",
+    mcp_resource_url="https://nortpole.example/mcp/",
+    web_url="https://nortpole.example",
+    web_origin="https://nortpole.example",
 )
 
 

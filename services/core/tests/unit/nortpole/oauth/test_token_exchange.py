@@ -38,7 +38,7 @@ def test_exchange_rejects_invalid_token_payload(
                 client_id="client",
             ),
             "code",
-            "https://evolvxsi.example/callback",
+            "https://nortpole.example/callback",
         )
 
 
@@ -55,7 +55,7 @@ def test_exchange_uses_bounded_network_timeout(monkeypatch: pytest.MonkeyPatch) 
             client_id="client",
         ),
         "code",
-        "https://evolvxsi.example/callback",
+        "https://nortpole.example/callback",
     )
     assert post.call_args.kwargs["timeout"] == 30
 
@@ -75,7 +75,7 @@ def test_exchange_rejects_token_endpoint_redirect(
                 client_id="client",
             ),
             "code",
-            "https://evolvxsi.example/callback",
+            "https://nortpole.example/callback",
         )
     assert post.call_args.kwargs["allow_redirects"] is False
     response.json.assert_not_called()

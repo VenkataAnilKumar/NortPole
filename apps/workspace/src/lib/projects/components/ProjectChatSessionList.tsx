@@ -40,7 +40,7 @@ import { noProp } from "@/lib/utils";
 import { MoveCustomAgentChatModal } from "@/lib/agents/components";
 import { ConfirmationModalLayout } from "@opal/layouts";
 
-const LS_HIDE_MOVE_CUSTOM_AGENT_MODAL_KEY = "evolvxsi:hideMoveCustomAgentModal";
+const LS_HIDE_MOVE_CUSTOM_AGENT_MODAL_KEY = "nortpole:hideMoveCustomAgentModal";
 
 interface ProjectChatItemProps {
   chat: ChatSession;

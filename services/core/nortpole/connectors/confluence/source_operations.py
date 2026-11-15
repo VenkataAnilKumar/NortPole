@@ -7,7 +7,7 @@ the credential plus the bound config fields (``wiki_base``, ``is_cloud``,
 ``scoped_token``), and exposes each remote call as a stamped operation that
 returns plain data.
 
-``_EvolvXSIConfluence`` is the transport: rate-limit retries, OAuth refresh, and the
+``_NortPoleConfluence`` is the transport: rate-limit retries, OAuth refresh, and the
 pagination engine. Only the gateway calls it.
 
 Pagination notes: the Cloud ``search/user`` and ``user/memberof`` endpoints use
@@ -208,7 +208,7 @@ def _is_confcloud_77618_response(response: requests.Response) -> bool:
     return any(sig in body for sig in _CONFCLOUD_77618_404_BODY_SIGNATURES)
 
 
-class _EvolvXSIConfluence:
+class _NortPoleConfluence:
     """Wraps the SDK ``Confluence`` client.
 
     Adds CQL pagination with expansions, which the SDK does not support well.
@@ -544,7 +544,7 @@ class _EvolvXSIConfluence:
         if OAUTH_REFRESH_TOKEN_KEY in credentials:
             logger.info("Connecting to Confluence Cloud with OAuth Access Token.")
 
-            oauth2_dict: dict[str, Any] = _EvolvXSIConfluence._make_oauth2_dict(credentials)
+            oauth2_dict: dict[str, Any] = _NortPoleConfluence._make_oauth2_dict(credentials)
             url = f"https://api.atlassian.com/ex/confluence/{credentials['cloud_id']}"
             confluence = Confluence(url=url, oauth2=oauth2_dict, **kwargs)
         else:
@@ -1331,7 +1331,7 @@ def _parse_dc_version(version_str: str) -> tuple[int, int] | None:
         return None
 
 
-def _get_user(confluence_client: _EvolvXSIConfluence, user_id: str) -> str:
+def _get_user(confluence_client: _NortPoleConfluence, user_id: str) -> str:
     """Returns the display name for an account id (Cloud) or userkey (DC).
 
     Returns ``UNKNOWN_USER_DISPLAY_NAME`` if the user is deactivated or not found.
@@ -1357,7 +1357,7 @@ def _get_user(confluence_client: _EvolvXSIConfluence, user_id: str) -> str:
 
 
 def _lookup_user_display_name(
-    confluence_client: _EvolvXSIConfluence, user_id: str
+    confluence_client: _NortPoleConfluence, user_id: str
 ) -> str | None:
     """Uncached: tries the userkey (DC) and then the account-id (Cloud)
     endpoint. Returns None when neither has a readable user with this id.
@@ -1392,7 +1392,7 @@ def _http_status(e: HTTPError) -> int | str:
 
 
 def _fetch_user_email_by_username(
-    confluence_client: _EvolvXSIConfluence, user_name: str
+    confluence_client: _NortPoleConfluence, user_name: str
 ) -> str | None:
     """DC username -> email through the mobile profile endpoint, uncached.
     Logs and swallows lookup errors."""
@@ -1417,7 +1417,7 @@ def _fetch_user_email_by_username(
 
 
 def _fetch_user_email_by_userkey(
-    confluence_client: _EvolvXSIConfluence, user_key: str
+    confluence_client: _NortPoleConfluence, user_key: str
 ) -> str | None:
     """DC userKey -> email through ``rest/api/user?key=``, uncached. Logs and
     swallows lookup errors."""
@@ -1442,7 +1442,7 @@ def _fetch_user_email_by_userkey(
 
 
 def _get_user_email_by_username(
-    confluence_client: _EvolvXSIConfluence, user_name: str
+    confluence_client: _NortPoleConfluence, user_name: str
 ) -> str | None:
     """Cached ``_fetch_user_email_by_username``. A None result is not cached,
     so the next sync tries the lookup again."""
@@ -1455,7 +1455,7 @@ def _get_user_email_by_username(
 
 
 def _get_user_email_by_userkey(
-    confluence_client: _EvolvXSIConfluence, user_key: str
+    confluence_client: _NortPoleConfluence, user_key: str
 ) -> str | None:
     """Cached ``_fetch_user_email_by_userkey``. A None result is cached too,
     so an unresolvable user costs one call per process."""
@@ -1528,8 +1528,8 @@ class ConfluenceSourceOperations(SourceOperations):
     # Data Center, scoped token).
     config_keys = frozenset(ConfluenceCredentialBinding.model_fields)
 
-    _cached_client: _EvolvXSIConfluence | None = None
-    _cached_fast_client: _EvolvXSIConfluence | None = None
+    _cached_client: _NortPoleConfluence | None = None
+    _cached_fast_client: _NortPoleConfluence | None = None
     _cached_scoped_api_url: str | None = None
 
     def _client_build_lock(self) -> threading.Lock:
@@ -1549,10 +1549,10 @@ class ConfluenceSourceOperations(SourceOperations):
             self._cached_scoped_api_url = scoped_url(wiki_base, "confluence")
         return self._cached_scoped_api_url
 
-    def _build_client(self, *, fast: bool) -> _EvolvXSIConfluence:
+    def _build_client(self, *, fast: bool) -> _NortPoleConfluence:
         binding = self._binding()
         wiki_base = binding.wiki_base.rstrip("/")
-        return _EvolvXSIConfluence(
+        return _NortPoleConfluence(
             is_cloud=binding.is_cloud,
             url=wiki_base,
             credentials_provider=self.credentials_provider,
@@ -1564,7 +1564,7 @@ class ConfluenceSourceOperations(SourceOperations):
             ),
         )
 
-    def _client(self, *, fast: bool = False) -> _EvolvXSIConfluence:
+    def _client(self, *, fast: bool = False) -> _NortPoleConfluence:
         cached = self._cached_fast_client if fast else self._cached_client
         if cached is not None:
             return cached
@@ -2014,7 +2014,7 @@ class ConfluenceSourceOperations(SourceOperations):
 
 
 def _search(
-    client: _EvolvXSIConfluence,
+    client: _NortPoleConfluence,
     *,
     cql: str,
     expand: str,

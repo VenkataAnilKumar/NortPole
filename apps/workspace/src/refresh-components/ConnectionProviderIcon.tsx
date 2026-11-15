@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { SvgArrowExchange } from "@opal/icons";
-import { SvgEvolvXSILogo } from "@opal/logos";
+import { SvgNortPoleLogo } from "@opal/logos";
 
 type ConnectionProviderIconProps = {
   icon: React.ReactNode;
@@ -14,7 +14,7 @@ const ConnectionProviderIcon = memo(({ icon }: ConnectionProviderIconProps) => {
         <SvgArrowExchange className="w-3 h-3 stroke-text-04" />
       </div>
       <div className="w-7 h-7 flex items-center justify-center">
-        <SvgEvolvXSILogo size={24} className="fill-text-04" />
+        <SvgNortPoleLogo size={24} className="fill-text-04" />
       </div>
     </div>
   );

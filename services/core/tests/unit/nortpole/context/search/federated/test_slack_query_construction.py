@@ -4,7 +4,7 @@ from nortpole.context.search.federated.slack_search_utils import (
     build_channel_query_filter,
     matches_exclude_pattern,
 )
-from nortpole.evolvxsibot.slack.models import ChannelType
+from nortpole.nortpolebot.slack.models import ChannelType
 
 
 class TestChannelPatternMatching:

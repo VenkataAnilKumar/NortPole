@@ -10,7 +10,7 @@ from nortpole.auth.users import current_user
 from nortpole.db.enums import LLMModelFlowType, Permission, PermissionAuthority
 from nortpole.db.llm import ModelConfigurationWindow
 from nortpole.db.models import Persona, User
-from nortpole.error_handling.exceptions import register_evolvxsi_exception_handlers
+from nortpole.error_handling.exceptions import register_nortpole_exception_handlers
 from nortpole.server.manage.llm import api
 from nortpole.server.manage.llm.models import DefaultModel
 from tests.unit.nortpole.server.manage.llm.test_default_chat_naming import (
@@ -25,7 +25,7 @@ from tests.unit.nortpole.server.manage.llm.test_default_chat_naming import (
 def client() -> Generator[TestClient, None, None]:
     app = FastAPI()
     app.include_router(api.admin_router)
-    register_evolvxsi_exception_handlers(app)
+    register_nortpole_exception_handlers(app)
     app.dependency_overrides[current_user] = lambda: User()
     app.dependency_overrides[api.get_session] = lambda: MagicMock(spec=Session)
     with TestClient(app) as test_client:

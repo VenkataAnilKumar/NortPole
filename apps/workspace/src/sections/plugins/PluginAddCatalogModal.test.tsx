@@ -74,7 +74,7 @@ test("installed-app failure offers retry and custom creation, then excludes inst
     credential_placeholder_keys: [],
     actions: [],
     associated_skills: [],
-    is_evolvxsi_managed: false,
+    is_nortpole_managed: false,
     users_can_manage_policies: true,
   };
   let installedRequestCount = 0;

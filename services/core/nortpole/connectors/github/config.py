@@ -12,7 +12,7 @@ from nortpole.connectors.field_policy import (
 )
 from nortpole.connectors.github.utils import parse_repository_names
 
-REPOSITORY_OWNER_ERROR = "Enter the name without the owner, e.g. evolvxsi."
+REPOSITORY_OWNER_ERROR = "Enter the name without the owner, e.g. nortpole."
 
 _DOCUMENT_TYPE_TOGGLE = FieldPolicy(
     FieldClass.SCOPE, scope=ScopeToggle(widens_when=True)

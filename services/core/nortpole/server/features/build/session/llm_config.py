@@ -69,7 +69,7 @@ def parse_agent_selection(
     agent_provider: str | None, agent_model: str | None
 ) -> AgentSelection | None:
     """Decode the persisted (agent_provider, agent_model) columns. Gateway rows
-    store ("evolvxsi", "<provider_id>/<model_name>"); legacy rows store
+    store ("nortpole", "<provider_id>/<model_name>"); legacy rows store
     (provider_type, model_name). Model names may contain slashes, so the gateway
     id splits on the FIRST separator only."""
     if not agent_model:
@@ -144,7 +144,7 @@ def _select_gateway_default(
     return fallback
 
 
-def build_evolvxsi_gateway_config(
+def build_nortpole_gateway_config(
     gateway_providers: list[LLMProviderView],
     selection: AgentSelection | None = None,
     configured_defaults: Sequence[GatewaySelection] = (),

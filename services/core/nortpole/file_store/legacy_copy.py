@@ -62,7 +62,7 @@ if TYPE_CHECKING:
 logger = setup_logger()
 
 # On a copied object, the MinIO ETag the copy came from.
-LEGACY_COPIED_FROM_METADATA_KEY = "evolvxsi-legacy-etag"
+LEGACY_COPIED_FROM_METADATA_KEY = "nortpole-legacy-etag"
 # Objects up to this size are buffered in memory, larger ones on local disk.
 _SPOOL_MAX_BYTES = 16 * 1024 * 1024
 _CHUNK_BYTES = 8 * 1024 * 1024

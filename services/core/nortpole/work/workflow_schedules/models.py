@@ -15,7 +15,7 @@ class NortPoleWorkflowSchedule(Base):
     """A saved workflow and a cadence. It belongs to one person and every run is made as that person. A run drafts the
     plan and stops; nothing runs further without the owner's yes."""
 
-    __tablename__ = "evolvxsi_workflow_schedule"
+    __tablename__ = "nortpole_workflow_schedule"
 
     id: Mapped[uuid.UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     owner_id: Mapped[uuid.UUID] = mapped_column(PGUUID(as_uuid=True), ForeignKey("user.id", ondelete="CASCADE"), nullable=False, index=True)
@@ -49,11 +49,11 @@ class NortPoleWorkflowSchedule(Base):
 class NortPoleWorkflowRun(Base):
     """One firing of a schedule: what happened and why. Holds no request text."""
 
-    __tablename__ = "evolvxsi_workflow_run"
+    __tablename__ = "nortpole_workflow_run"
 
     id: Mapped[uuid.UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    schedule_id: Mapped[uuid.UUID] = mapped_column(PGUUID(as_uuid=True), ForeignKey("evolvxsi_workflow_schedule.id", ondelete="CASCADE"), nullable=False, index=True)
-    task_id: Mapped[uuid.UUID | None] = mapped_column(PGUUID(as_uuid=True), ForeignKey("evolvxsi_task.id", ondelete="SET NULL"), nullable=True)
+    schedule_id: Mapped[uuid.UUID] = mapped_column(PGUUID(as_uuid=True), ForeignKey("nortpole_workflow_schedule.id", ondelete="CASCADE"), nullable=False, index=True)
+    task_id: Mapped[uuid.UUID | None] = mapped_column(PGUUID(as_uuid=True), ForeignKey("nortpole_task.id", ondelete="SET NULL"), nullable=True)
     fired_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     outcome: Mapped[str] = mapped_column(String(20), nullable=False)  # plan_ready plan_failed skipped paused
     reason: Mapped[str | None] = mapped_column(Text, nullable=True)

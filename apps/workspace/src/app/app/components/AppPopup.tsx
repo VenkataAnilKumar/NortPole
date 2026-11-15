@@ -11,7 +11,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { transformLinkUri } from "@/lib/utils";
 import { SvgAlertCircle } from "@opal/icons";
-import { SvgEvolvXSILogo } from "@opal/logos";
+import { SvgNortPoleLogo } from "@opal/logos";
 import type { IconProps } from "@opal/types";
 import { useTranslations } from "next-intl";
 
@@ -70,12 +70,12 @@ export function AppPopup() {
   // - Otherwise -> show uploaded custom logo (fallback to NortPole icon)
   const headerIcon =
     !hasApplicationName && !hasCustomLogo
-      ? (props: IconProps) => <SvgEvolvXSILogo size={24} {...props} />
+      ? (props: IconProps) => <SvgNortPoleLogo size={24} {...props} />
       : logoDisplayStyle === "name_only"
         ? SvgAlertCircle
         : hasCustomLogo
           ? CustomLogoHeaderIcon
-          : (props: IconProps) => <SvgEvolvXSILogo size={24} {...props} />;
+          : (props: IconProps) => <SvgNortPoleLogo size={24} {...props} />;
 
   return (
     <Modal open onOpenChange={() => {}}>

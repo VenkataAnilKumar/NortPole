@@ -52,7 +52,7 @@ import { useSWRConfig } from "swr";
 import {
   SvgArrowExchange,
   SvgChevronDown,
-  SvgEvolvXSIOctagon,
+  SvgNortPoleOctagon,
   SvgOrganization,
   SvgPlusCircle,
   SvgRefreshCw,
@@ -61,7 +61,7 @@ import {
   SvgUsers,
   SvgX,
 } from "@opal/icons";
-import SvgEvolvXSILogo from "@opal/logos/evolvxsi-logo";
+import SvgNortPoleLogo from "@opal/logos/nortpole-logo";
 import { Card, EmptyMessageCard, type BadgeProps } from "@opal/components";
 import { useModelTypeBadge } from "@/lib/badges/components";
 import { ContentAction } from "@opal/layouts";
@@ -428,7 +428,7 @@ export function ModelAccessField() {
               <div className="w-full p-2">
                 <Content
                   font="main-ui-action"
-                  icon={SvgEvolvXSIOctagon}
+                  icon={SvgNortPoleOctagon}
                   title={t("access.noAgents.title")}
                   description={t("access.noAgents.description")}
                 />
@@ -1158,7 +1158,7 @@ function ModalWrapperInner({
           <Modal.Header
             icon={providerIcon}
             moreIcon1={SvgArrowExchange}
-            moreIcon2={SvgEvolvXSILogo}
+            moreIcon2={SvgNortPoleLogo}
             title={title}
             description={description}
             onClose={onClose}

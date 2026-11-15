@@ -17,7 +17,7 @@ from nortpole.server.features.mcp import oauth_flow
 from nortpole.server.features.mcp.models import MCPOAuthFlowState
 from tests.unit.fakes import FakeCache
 
-_REDIRECT_URI = "https://evolvxsi.example.com/mcp/oauth/callback"
+_REDIRECT_URI = "https://nortpole.example.com/mcp/oauth/callback"
 _CODE_VERIFIER = "v" * 128
 _STATE = "s" * 32
 

@@ -342,7 +342,7 @@ if MOBILE_SSO_CODE_TTL_SECONDS < 1:
     raise ValueError("MOBILE_SSO_CODE_TTL_SECONDS must be >= 1")
 # Deep-link URIs the SSO completion is allowed to 302 to. Defaults to the app's
 # custom scheme; override (comma-separated) to add Universal/App Links later.
-_DEFAULT_MOBILE_REDIRECT_URIS = frozenset({"evolvxsi://auth/callback"})
+_DEFAULT_MOBILE_REDIRECT_URIS = frozenset({"nortpole://auth/callback"})
 _MOBILE_ALLOWED_REDIRECT_URIS_RAW = os.environ.get("MOBILE_ALLOWED_REDIRECT_URIS", "")
 MOBILE_ALLOWED_REDIRECT_URIS: frozenset[str] = frozenset(
     uri.strip() for uri in _MOBILE_ALLOWED_REDIRECT_URIS_RAW.split(",") if uri.strip()
@@ -2094,9 +2094,9 @@ DB_READONLY_PASSWORD: str = urllib.parse.quote_plus(
 FILE_STORE_BACKEND = os.environ.get("FILE_STORE_BACKEND", "s3")
 
 S3_FILE_STORE_BUCKET_NAME = (
-    os.environ.get("S3_FILE_STORE_BUCKET_NAME") or "evolvxsi-file-store-bucket"
+    os.environ.get("S3_FILE_STORE_BUCKET_NAME") or "nortpole-file-store-bucket"
 )
-S3_FILE_STORE_PREFIX = os.environ.get("S3_FILE_STORE_PREFIX") or "evolvxsi-files"
+S3_FILE_STORE_PREFIX = os.environ.get("S3_FILE_STORE_PREFIX") or "nortpole-files"
 # S3_ENDPOINT_URL is for MinIO and other S3-compatible storage. Leave blank for AWS S3.
 S3_ENDPOINT_URL = os.environ.get("S3_ENDPOINT_URL")
 S3_VERIFY_SSL = os.environ.get("S3_VERIFY_SSL", "").lower() == "true"
@@ -2190,7 +2190,7 @@ LEGACY_COPY_ALL_OBJECTS = (
 
 # GCS (Google Cloud Storage) Configuration
 GCS_FILE_STORE_BUCKET_NAME = os.environ.get("GCS_FILE_STORE_BUCKET_NAME") or None
-GCS_FILE_STORE_PREFIX = os.environ.get("GCS_FILE_STORE_PREFIX") or "evolvxsi-files"
+GCS_FILE_STORE_PREFIX = os.environ.get("GCS_FILE_STORE_PREFIX") or "nortpole-files"
 GCS_PROJECT_ID = os.environ.get("GCS_PROJECT_ID") or None
 # Path to a service account JSON key file. When empty/unset, Application Default
 # Credentials (ADC) are used — supports GKE Workload Identity, Compute Engine
@@ -2203,7 +2203,7 @@ GCS_SERVICE_ACCOUNT_KEY_JSON = os.environ.get("GCS_SERVICE_ACCOUNT_KEY_JSON") or
 AZURE_FILE_STORE_CONTAINER_NAME = (
     os.environ.get("AZURE_FILE_STORE_CONTAINER_NAME") or None
 )
-AZURE_FILE_STORE_PREFIX = os.environ.get("AZURE_FILE_STORE_PREFIX") or "evolvxsi-files"
+AZURE_FILE_STORE_PREFIX = os.environ.get("AZURE_FILE_STORE_PREFIX") or "nortpole-files"
 AZURE_STORAGE_ACCOUNT_NAME = os.environ.get("AZURE_STORAGE_ACCOUNT_NAME") or None
 # Full blob endpoint URL. When unset, derived from the account name as
 # https://<account>.blob.core.windows.net. Set explicitly for Azurite or
@@ -2286,7 +2286,7 @@ DISCORD_BOT_INVOKE_CHAR = os.environ.get("DISCORD_BOT_INVOKE_CHAR", "!")
 # Publishable keys are safe to expose publicly - they can only initialize
 # Stripe.js and tokenize payment info, not make charges or access data.
 STRIPE_PUBLISHABLE_KEY_URL = (
-    "https://evolvxsi-stripe-public.s3.amazonaws.com/publishable-key.txt"
+    "https://nortpole-stripe-public.s3.amazonaws.com/publishable-key.txt"
 )
 # Override for local testing with Stripe test keys (pk_test_*)
 STRIPE_PUBLISHABLE_KEY_OVERRIDE = os.environ.get("STRIPE_PUBLISHABLE_KEY")

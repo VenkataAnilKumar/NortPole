@@ -11,7 +11,7 @@ from nortpole.sandbox_proxy.sandbox_identity.docker import (
     _identity_from_container,
 )
 
-_DEFAULT_NETWORK = "evolvxsi_craft_sandbox"
+_DEFAULT_NETWORK = "nortpole_craft_sandbox"
 
 
 def _make_container(
@@ -31,11 +31,11 @@ def _make_container(
     """
     labels: dict[str, str] = {}
     if component is not None:
-        labels["evolvxsi.local/component"] = component
+        labels["nortpole.local/component"] = component
     if sandbox_id is not None:
-        labels["evolvxsi.local/sandbox-id"] = sandbox_id
+        labels["nortpole.local/sandbox-id"] = sandbox_id
     if tenant_id is not None:
-        labels["evolvxsi.local/tenant-id"] = tenant_id
+        labels["nortpole.local/tenant-id"] = tenant_id
 
     networks: dict[str, dict[str, str]] = {}
     if ip is not None:

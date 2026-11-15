@@ -1,6 +1,6 @@
 """The bundled ``zendesk_api.py`` sandbox helper: the pure argument and
 response handling the subcommands rest on. A standalone script, not an
-importable package, so load it by path. No network, no evolvxsi imports."""
+importable package, so load it by path. No network, no nortpole imports."""
 
 from __future__ import annotations
 

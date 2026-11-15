@@ -23,7 +23,7 @@ import {
   SvgImage,
   SvgLinkedDots,
   SvgMcp,
-  SvgEvolvXSIOctagon,
+  SvgNortPoleOctagon,
   SvgPaintBrush,
   SvgProgressBars,
   SvgPieChart,
@@ -246,7 +246,7 @@ export const ADMIN_ROUTES = {
   // ── Agents & Actions ──────────────────────────────────────────────
   AGENTS: {
     path: "/admin/agents",
-    icon: SvgEvolvXSIOctagon,
+    icon: SvgNortPoleOctagon,
     title: "Agents",
     sidebarLabel: "Agents",
     requiredPermission: Permission.MANAGE_AGENTS,

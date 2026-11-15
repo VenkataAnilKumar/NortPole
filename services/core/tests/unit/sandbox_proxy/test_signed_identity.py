@@ -78,7 +78,7 @@ def _sign(
 
 def _claims(**overrides: Any) -> dict[str, Any]:
     claims: dict[str, Any] = {
-        "sub": f"spiffe://evolvxsi/tenant/{_TENANT}/sandbox/{_SANDBOX}",
+        "sub": f"spiffe://nortpole/tenant/{_TENANT}/sandbox/{_SANDBOX}",
         "gen": 3,
         "node": _NODE,
         "iat": _NOW,
@@ -118,13 +118,13 @@ def _build_vectors() -> dict[str, Any]:
         (
             "bad_subject",
             eddsa,
-            _claims(sub="spiffe://evolvxsi/sandbox/x"),
+            _claims(sub="spiffe://nortpole/sandbox/x"),
             "node",
             "malformed",
         ),
         ("missing_jti", eddsa, no_jti, "node", "malformed"),
         ("exp_before_iat", eddsa, _claims(iat=_NOW, exp=_NOW - 1), "node", "malformed"),
-        ("wrong_audience", eddsa, _claims(aud="evolvxsi-api"), "node", "malformed"),
+        ("wrong_audience", eddsa, _claims(aud="nortpole-api"), "node", "malformed"),
         ("missing_aud", eddsa, no_aud, "node", "malformed"),
     ]
     vectors: list[dict[str, Any]] = []
@@ -239,9 +239,9 @@ def test_audience_list_rejected() -> None:
 def test_multi_tenant_requires_tenant_pattern(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(signed, "MULTI_TENANT", True)
     tenant = "tenant_" + str(UUID(int=5))
-    good = _sign(_claims(sub=f"spiffe://evolvxsi/tenant/{tenant}/sandbox/{_SANDBOX}"))
+    good = _sign(_claims(sub=f"spiffe://nortpole/tenant/{tenant}/sandbox/{_SANDBOX}"))
     assert _verifier().verify_claims(good).tenant_id == tenant
-    public = _sign(_claims(sub=f"spiffe://evolvxsi/tenant/public/sandbox/{_SANDBOX}"))
+    public = _sign(_claims(sub=f"spiffe://nortpole/tenant/public/sandbox/{_SANDBOX}"))
     assert _rejection(_verifier(), public) is SignedIdentityRejection.MALFORMED
 
 

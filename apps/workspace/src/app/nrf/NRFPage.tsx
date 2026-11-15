@@ -39,7 +39,7 @@ import { cn } from "@opal/utils";
 import { Spacer } from "@opal/components";
 import { SvgUser, SvgMenu, SvgAlertTriangle } from "@opal/icons";
 import { useAppBackground } from "@/providers/AppBackgroundProvider";
-import { MinimalEvolvXSIDocument } from "@/lib/search/types";
+import { MinimalNortPoleDocument } from "@/lib/search/types";
 import DocumentsSidebar from "@/sections/document-sidebar/DocumentsSidebar";
 import PreviewModal from "@/sections/modals/PreviewModal";
 import { useQueryController } from "@/providers/QueryControllerProvider";
@@ -59,7 +59,7 @@ interface NRFPageProps {
 export default function NRFPage({ isSidePanel = false }: NRFPageProps) {
   const t = useTranslations("chat");
   const { appName } = useSettings();
-  const { setUseEvolvXSIAsNewTab } = useNRFPreferences();
+  const { setUseNortPoleAsNewTab } = useNRFPreferences();
 
   const searchParams = useSearchParams();
   const navigation = useNavigation();
@@ -148,7 +148,7 @@ export default function NRFPage({ isSidePanel = false }: NRFPageProps) {
   const [tabReadingEnabled, setTabReadingEnabled] = useState<boolean>(false);
   const [currentTabUrl, setCurrentTabUrl] = useState<string | null>(null);
   const [presentingDocument, setPresentingDocument] =
-    useState<MinimalEvolvXSIDocument | null>(null);
+    useState<MinimalNortPoleDocument | null>(null);
 
   // Document sidebar state (from store)
   const documentSidebarVisible = useDocumentSidebarVisible();
@@ -260,17 +260,17 @@ export default function NRFPage({ isSidePanel = false }: NRFPageProps) {
   };
 
   // Turning the new-tab toggle off prompts a modal first
-  const handleUseEvolvXSIToggle = (checked: boolean) => {
+  const handleUseNortPoleToggle = (checked: boolean) => {
     if (!checked) {
       setShowTurnOffModal(true);
     } else {
-      setUseEvolvXSIAsNewTab(true);
+      setUseNortPoleAsNewTab(true);
       sendSetDefaultNewTabMessage(true);
     }
   };
 
   const confirmTurnOff = () => {
-    setUseEvolvXSIAsNewTab(false);
+    setUseNortPoleAsNewTab(false);
     setShowTurnOffModal(false);
     sendSetDefaultNewTabMessage(false);
   };
@@ -440,7 +440,7 @@ export default function NRFPage({ isSidePanel = false }: NRFPageProps) {
 
   // Handle search result document click
   const handleSearchDocumentClick = useCallback(
-    (doc: MinimalEvolvXSIDocument) => setPresentingDocument(doc),
+    (doc: MinimalNortPoleDocument) => setPresentingDocument(doc),
     []
   );
 
@@ -644,7 +644,7 @@ export default function NRFPage({ isSidePanel = false }: NRFPageProps) {
           <SettingsPanel
             settingsOpen={settingsOpen}
             toggleSettings={toggleSettings}
-            handleUseEvolvXSIToggle={handleUseEvolvXSIToggle}
+            handleUseNortPoleToggle={handleUseNortPoleToggle}
           />
 
           <Modal open={showTurnOffModal} onOpenChange={setShowTurnOffModal}>

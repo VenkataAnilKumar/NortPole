@@ -81,7 +81,7 @@ async def test_private_mcp_origin(
         cache_factory=unused_cache,
         proxy_instance_id="test",
         credential_dispatcher=CredentialInjectionDispatcher([]),
-        destination_policy=parse_destination_policy("https://evolvxsi.test"),
+        destination_policy=parse_destination_policy("https://nortpole.test"),
         mcp_resolver=resolver,
     )
     flow = make_flow(host=host, port=8443)
@@ -169,7 +169,7 @@ def test_mcp_validates_resolved_addresses(
     resolver = MCPServerResolver()
     monkeypatch.setattr(resolver, "allows_destination", lambda *_args: True)
     result = resolve_destination(
-        parse_destination_policy("https://evolvxsi.test"),
+        parse_destination_policy("https://nortpole.test"),
         "private-mcp.test",
         8443,
         scheme="https",
@@ -224,7 +224,7 @@ def test_mcp_rechecks_tenant_ssrf_settings(
     monkeypatch.setattr(
         "nortpole.sandbox_proxy.destination_policy.get_security_settings", settings
     )
-    policy = parse_destination_policy("https://evolvxsi.test")
+    policy = parse_destination_policy("https://nortpole.test")
     identity = StubResolver(sandbox=sandbox)
     previous = CURRENT_TENANT_ID_CONTEXTVAR.get()
     for level, expected in [
@@ -306,7 +306,7 @@ def test_private_mcp_denies_real_settings_read_failure(
         )
     )
     monkeypatch.setattr(store, "_db_load_overrides", db_read)
-    policy = parse_destination_policy("https://evolvxsi.test")
+    policy = parse_destination_policy("https://nortpole.test")
     identity = StubResolver(sandbox=sandbox)
 
     # Populate MCP access and strict tenant settings through the actual reader.
@@ -417,7 +417,7 @@ def test_disabled_ssrf_matches_backend_mcp_hostname_policy(
     resolver = MCPServerResolver()
     monkeypatch.setattr(resolver, "allows_destination", lambda *_args: True)
     addresses = resolve_destination(
-        parse_destination_policy("https://evolvxsi.test"),
+        parse_destination_policy("https://nortpole.test"),
         host,
         8000,
         scheme="http",
@@ -431,12 +431,12 @@ def test_disabled_ssrf_matches_backend_mcp_hostname_policy(
 @pytest.mark.parametrize(
     "api_url,addresses,allowed,needs_mcp",
     [
-        ("https://evolvxsi.test", ["10.1.2.3"], True, True),
-        ("https://evolvxsi.test", ["8.8.8.8", "10.1.2.3"], True, True),
-        ("https://evolvxsi.test", ["10.1.2.3", "169.254.169.254"], False, True),
-        ("https://evolvxsi.test", ["8.8.8.8"], True, False),
+        ("https://nortpole.test", ["10.1.2.3"], True, True),
+        ("https://nortpole.test", ["8.8.8.8", "10.1.2.3"], True, True),
+        ("https://nortpole.test", ["10.1.2.3", "169.254.169.254"], False, True),
+        ("https://nortpole.test", ["8.8.8.8"], True, False),
         ("https://private-mcp.test", ["10.1.2.3"], True, False),
-        ("https://evolvxsi.test", [], False, False),
+        ("https://nortpole.test", [], False, False),
     ],
 )
 @pytest.mark.usefixtures("mcp_ssrf_settings")
@@ -498,7 +498,7 @@ def test_internal_destination_requires_authorization_context(
 
     assert (
         resolve_destination(
-            parse_destination_policy("https://evolvxsi.test"),
+            parse_destination_policy("https://nortpole.test"),
             "10.1.2.3",
             443,
             scheme="" if missing == "scheme" else "https",
@@ -542,7 +542,7 @@ async def test_request_checks_pending_and_connected_addresses(
         cache_factory=unused_cache,
         proxy_instance_id="test",
         credential_dispatcher=CredentialInjectionDispatcher([]),
-        destination_policy=parse_destination_policy("https://evolvxsi.test"),
+        destination_policy=parse_destination_policy("https://nortpole.test"),
         mcp_resolver=resolver,
     )
     flow = make_flow(host=host, port=port)

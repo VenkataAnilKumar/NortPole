@@ -64,13 +64,13 @@ _INDEXING_TASK_NAMES: frozenset[str] = frozenset(
 
 # connector_name is intentionally excluded — see module docstring.
 INDEXING_TASK_STARTED = Counter(
-    "evolvxsi_indexing_task_started_total",
+    "nortpole_indexing_task_started_total",
     "Indexing tasks started per connector",
     ["task_name", "source", "tenant_id", "cc_pair_id"],
 )
 
 INDEXING_TASK_COMPLETED = Counter(
-    "evolvxsi_indexing_task_completed_total",
+    "nortpole_indexing_task_completed_total",
     "Indexing tasks completed per connector",
     [
         "task_name",
@@ -82,7 +82,7 @@ INDEXING_TASK_COMPLETED = Counter(
 )
 
 INDEXING_TASK_DURATION = Histogram(
-    "evolvxsi_indexing_task_duration_seconds",
+    "nortpole_indexing_task_duration_seconds",
     "Indexing task duration by connector type",
     ["task_name", "source", "tenant_id"],
     buckets=[1, 5, 15, 30, 60, 120, 300, 600, 1800, 3600],

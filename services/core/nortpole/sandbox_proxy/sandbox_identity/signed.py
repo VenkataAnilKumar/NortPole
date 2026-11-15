@@ -29,14 +29,14 @@ from nortpole.db.engine.tenant_utils import validate_tenant_id
 from shared_configs.configs import MULTI_TENANT, POSTGRES_DEFAULT_SCHEMA
 
 SIGNED_IDENTITY_AUTH_SCHEME = "bearer"
-SESSION_HINT_HEADER = "X-EvolvXSI-Session-Hint"
+SESSION_HINT_HEADER = "X-NortPole-Session-Hint"
 MAX_TOKEN_LIFETIME_SECONDS = 60
 CLOCK_SKEW_SECONDS = 5
 # Bounds header parsing work before any signature check.
 _MAX_TOKEN_BYTES = 4096
 
 _SUBJECT_PATTERN = re.compile(
-    r"^spiffe://evolvxsi/tenant/(?P<tenant>[A-Za-z0-9_-]+)/sandbox/(?P<sandbox>[0-9a-f-]{36})$"
+    r"^spiffe://nortpole/tenant/(?P<tenant>[A-Za-z0-9_-]+)/sandbox/(?P<sandbox>[0-9a-f-]{36})$"
 )
 SIGNED_IDENTITY_AUDIENCE = "sandbox-proxy"
 _REQUIRED_CLAIMS = ["sub", "gen", "node", "iat", "exp", "jti", "aud"]

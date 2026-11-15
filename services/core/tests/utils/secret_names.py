@@ -30,7 +30,7 @@ class TestSecret(StrEnum):
     OLLAMA_API_KEY = "OLLAMA_API_KEY"
     VERCEL_AI_GATEWAY_API_KEY = "VERCEL_AI_GATEWAY_API_KEY"
     BEDROCK_API_KEY = "bedrock-api-key"
-    NORTPOLE_DEV_LICENSE = "evolvxsi-dev-license"
+    NORTPOLE_DEV_LICENSE = "nortpole-dev-license"
 
     # Connector test secrets. Member names match the CI env var; values match
     # the AWS Secrets Manager key (the suffix after the ``test/`` prefix).

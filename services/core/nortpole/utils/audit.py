@@ -1,7 +1,7 @@
 """Structured, SIEM-exportable audit-event subsystem (log-only).
 
 Emits one JSON line per security-relevant action (auth, admin-config /
-access-control change, credential access) on the ``evolvxsi.audit`` logger tree.
+access-control change, credential access) on the ``nortpole.audit`` logger tree.
 Field names and the action taxonomy are shaped toward OCSF so the stream maps
 onto OCSF event classes (Authentication / Account Change / User Access
 Management / Group Management / API Activity) and drops into any SIEM. The
@@ -26,11 +26,11 @@ AUDIT_SCHEMA_VERSION = "1.0"
 
 # Root of the audit logger tree; children propagate up to the dedicated stdout
 # handler configured in ``_configure_audit_logging``.
-AUDIT_LOGGER_ROOT = "evolvxsi.audit"
-AUDIT_HANDLER_NAME = "evolvxsi_audit_stdout"
+AUDIT_LOGGER_ROOT = "nortpole.audit"
+AUDIT_HANDLER_NAME = "nortpole_audit_stdout"
 
 # Diagnostics logger for the subsystem's own failures. Deliberately NOT under
-# ``evolvxsi.audit`` so internal warnings never land in the parsed audit stream.
+# ``nortpole.audit`` so internal warnings never land in the parsed audit stream.
 _internal_logger = logging.getLogger(__name__)
 
 _DEFAULT_DEDUP_TTL_SECONDS = 600
@@ -386,7 +386,7 @@ def emit_audit_event(
 
 
 def _configure_audit_logging() -> None:
-    """Own an INFO stdout handler on ``evolvxsi.audit`` so events reach stdout
+    """Own an INFO stdout handler on ``nortpole.audit`` so events reach stdout
     regardless of host-process logging. Relying on root propagation dropped
     every event under uvicorn (root unconfigured -> WARNING ``lastResort``).
     ``propagate=False`` keeps output identical across processes and avoids

@@ -79,21 +79,21 @@ _PROVISION_DURATION_BUCKETS = (
 )
 
 _ready_duration = Histogram(
-    "evolvxsi_craft_sandbox_ready_duration_seconds",
+    "nortpole_craft_sandbox_ready_duration_seconds",
     "Time from requesting a Craft sandbox to it being ready, by which path was taken.",
     [OUTCOME_LABEL_NAME],
     buckets=_PROVISION_DURATION_BUCKETS,
 )
 
 _provision_phase_duration = Histogram(
-    "evolvxsi_craft_sandbox_provision_phase_duration_seconds",
+    "nortpole_craft_sandbox_provision_phase_duration_seconds",
     "Duration of an individual Craft sandbox provisioning phase.",
     [PHASE_LABEL_NAME],
     buckets=_PROVISION_DURATION_BUCKETS,
 )
 
 _provisions_in_progress = Gauge(
-    "evolvxsi_craft_sandbox_provisions_in_progress",
+    "nortpole_craft_sandbox_provisions_in_progress",
     "Number of Craft sandbox provisions currently in flight.",
 )
 

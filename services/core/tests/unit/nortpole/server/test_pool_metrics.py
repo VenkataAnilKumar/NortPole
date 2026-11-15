@@ -22,7 +22,7 @@ def test_checkout_timeout_counter_is_exported_before_any_timeout() -> None:
         sample.labels["engine"]
         for metric in _checkout_timeout_total.collect()
         for sample in metric.samples
-        if sample.name == "evolvxsi_db_pool_checkout_timeout_total"
+        if sample.name == "nortpole_db_pool_checkout_timeout_total"
     }
     assert exported == {"unknown"}
 
@@ -51,10 +51,10 @@ def test_pool_state_collector_reports_pool_stats() -> None:
         for sample in family.samples:
             metrics[f"{sample.name}:{sample.labels['engine']}"] = sample.value
 
-    assert metrics["evolvxsi_db_pool_checked_out:sync"] == 5
-    assert metrics["evolvxsi_db_pool_checked_in:sync"] == 35
-    assert metrics["evolvxsi_db_pool_overflow:sync"] == 2
-    assert metrics["evolvxsi_db_pool_size:sync"] == 40
+    assert metrics["nortpole_db_pool_checked_out:sync"] == 5
+    assert metrics["nortpole_db_pool_checked_in:sync"] == 35
+    assert metrics["nortpole_db_pool_overflow:sync"] == 2
+    assert metrics["nortpole_db_pool_size:sync"] == 40
 
 
 def test_pool_state_collector_handles_multiple_engines() -> None:

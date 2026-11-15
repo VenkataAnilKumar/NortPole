@@ -14,7 +14,7 @@ import { GridSearchInput, NoItems, NoResults } from "@/lib/common/components";
 import { useSearchableGrid } from "@opal/hooks";
 import { useNavigation } from "@opal/navigation";
 import { Button, EndOfList, Tabs, Text } from "@opal/components";
-import { SvgEvolvXSIOctagon, SvgPlus } from "@opal/icons";
+import { SvgNortPoleOctagon, SvgPlus } from "@opal/icons";
 import { useAgentsFilters } from "@/sections/agents/AgentsFilters";
 
 interface AgentsSectionProps {
@@ -141,7 +141,7 @@ export default function AgentsCatalogPage() {
     >
       <AgentViewer agentId={viewedAgentId} onClose={closeViewer} />
       <SettingsLayouts.Header
-        icon={SvgEvolvXSIOctagon}
+        icon={SvgNortPoleOctagon}
         title={t("navigation.header.title")}
         description={t("navigation.header.description")}
         actions={[

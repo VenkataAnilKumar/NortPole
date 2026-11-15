@@ -16,12 +16,12 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.add_column("evolvxsi_audit_event", sa.Column("prev_hash", sa.String(length=64), nullable=True))
-    op.add_column("evolvxsi_audit_event", sa.Column("row_hash", sa.String(length=64), nullable=True))
-    op.create_index("ix_evolvxsi_audit_event_row_hash", "evolvxsi_audit_event", ["row_hash"])
+    op.add_column("nortpole_audit_event", sa.Column("prev_hash", sa.String(length=64), nullable=True))
+    op.add_column("nortpole_audit_event", sa.Column("row_hash", sa.String(length=64), nullable=True))
+    op.create_index("ix_nortpole_audit_event_row_hash", "nortpole_audit_event", ["row_hash"])
 
 
 def downgrade() -> None:
-    op.drop_index("ix_evolvxsi_audit_event_row_hash", table_name="evolvxsi_audit_event")
-    op.drop_column("evolvxsi_audit_event", "row_hash")
-    op.drop_column("evolvxsi_audit_event", "prev_hash")
+    op.drop_index("ix_nortpole_audit_event_row_hash", table_name="nortpole_audit_event")
+    op.drop_column("nortpole_audit_event", "row_hash")
+    op.drop_column("nortpole_audit_event", "prev_hash")

@@ -44,7 +44,7 @@ test("member OAuth reports to the waiting dialog, then lands on the completion p
   );
   // The dialog verifies the connection itself; only a tab launchOAuth opened closes.
   expect(window.opener.postMessage).toHaveBeenCalledWith(
-    { type: "evolvxsi:oauth-complete", state: "state", ok: true },
+    { type: "nortpole:oauth-complete", state: "state", ok: true },
     window.location.origin
   );
   expect(window.close).not.toHaveBeenCalled();
@@ -79,7 +79,7 @@ test("rejects an external return URL without signalling success", async () => {
   expect(window.opener.postMessage).toHaveBeenCalledTimes(1);
   expect(window.opener.postMessage).toHaveBeenCalledWith(
     {
-      type: "evolvxsi:oauth-complete",
+      type: "nortpole:oauth-complete",
       state: "state",
       ok: false,
       error: {

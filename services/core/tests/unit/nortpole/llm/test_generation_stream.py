@@ -1098,7 +1098,7 @@ def test_empty_generation_logs_one_metadata_warning(chunk_count: int) -> None:
 
 @pytest.mark.parametrize("streaming", [False, True])
 def test_unnamed_native_call_does_not_suppress_text_recovery(streaming: bool) -> None:
-    payload = '{"name":"search","arguments":{"query":"evolvxsi"}}'
+    payload = '{"name":"search","arguments":{"query":"nortpole"}}'
     request = GenerationRequest(
         tools=[ToolDefinition(name="search", description="Search", parameters={})],
         options=GenerationOptions(tool_choice=ToolChoiceOptions.REQUIRED),
@@ -1141,7 +1141,7 @@ def test_unnamed_native_call_does_not_suppress_text_recovery(streaming: bool) ->
         )
     assert result.text == payload
     assert [call.name for call in result.tool_calls] == ["search"]
-    assert result.tool_calls[0].arguments == {"query": "evolvxsi"}
+    assert result.tool_calls[0].arguments == {"query": "nortpole"}
 
 
 def test_split_surrogate_pair_in_tool_arguments_decodes_on_completion() -> None:

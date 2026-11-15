@@ -41,7 +41,7 @@ def world():  # type: ignore[no-untyped-def]
         s.query(NortPoleWorkflowSchedule).filter(NortPoleWorkflowSchedule.owner_id.in_(ids.values())).delete(synchronize_session=False)
         s.query(NortPoleTask).filter(NortPoleTask.owner_id.in_(ids.values())).delete(synchronize_session=False)
         s.query(Notification).filter(Notification.user_id.in_(ids.values())).delete(synchronize_session=False)
-        s.execute(text("delete from evolvxsi_audit_event where actor_email like :p and row_hash is null"), {"p": f"sched-%-{TAG}@example.com"})
+        s.execute(text("delete from nortpole_audit_event where actor_email like :p and row_hash is null"), {"p": f"sched-%-{TAG}@example.com"})
         s.query(User).filter(User.id.in_(ids.values())).delete(synchronize_session=False)
         s.commit()
 
@@ -90,7 +90,7 @@ def test_a_run_drafts_the_plan_as_the_owner_and_stops(world) -> None:  # type: i
         sched = s.get(NortPoleWorkflowSchedule, v.id)
         assert sched.next_run_at > NOW and sched.state == "active", "no catch-up: the next time after now"
         assert not runner.claim_due(s, NOW), "claimed once"
-        audit = s.execute(text("select action, details::text, summary from evolvxsi_audit_event where resource_id = :r"), {"r": str(v.id)}).all()
+        audit = s.execute(text("select action, details::text, summary from nortpole_audit_event where resource_id = :r"), {"r": str(v.id)}).all()
         assert {a for a, _, _ in audit} >= {"schedule.change", "schedule.fire"}
         assert all(TAG not in (d or "") and TAG not in sm for _, d, sm in audit), "no request text in the audit"
 

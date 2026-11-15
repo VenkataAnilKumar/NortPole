@@ -101,7 +101,7 @@ from nortpole.llm.factory import get_decision_client, get_llm_token_counter
 from nortpole.llm.interfaces import LLM
 from nortpole.llm.models import ToolDefinition, ToolResult, ToolResultMessage
 from nortpole.natural_language_processing.search_nlp_models import EmbeddingModel
-from nortpole.evolvxsibot.slack.models import SlackContext
+from nortpole.nortpolebot.slack.models import SlackContext
 from nortpole.prompts.tool_prompts import CODE_MODE_SEARCH_USAGE
 from nortpole.secondary_llm_flows.decision_rerank_expansion import (
     MAX_DECISION_QUESTIONS,
@@ -180,7 +180,7 @@ from shared_configs.contextvars import get_current_tenant_id
 logger = setup_logger()
 
 # PostHog flag for decision-model rerank and expansion (cloud rollout control).
-SEARCH_DECISION_RERANK_EXPANSION_FLAG = "evolvxsi-search-decision-rerank-expansion"
+SEARCH_DECISION_RERANK_EXPANSION_FLAG = "nortpole-search-decision-rerank-expansion"
 
 QUERIES_FIELD = "queries"
 MAX_QUERIES_PER_CALL = 3

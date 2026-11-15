@@ -21,6 +21,6 @@ def get_current_tier() -> Tier:
     """The deployment's tier; Community when EE code is not loaded."""
     if not global_version.is_ee_version():
         return Tier.COMMUNITY
-    from ee.evolvxsi.utils.tier import get_tier
+    from ee.nortpole.utils.tier import get_tier
 
     return get_tier()

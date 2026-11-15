@@ -4,7 +4,7 @@ from typing import TypedDict
 
 from pydantic import BaseModel
 
-from nortpole.evolvxsibot.slack.models import ChannelType
+from nortpole.nortpolebot.slack.models import ChannelType
 
 
 @dataclass(frozen=True)

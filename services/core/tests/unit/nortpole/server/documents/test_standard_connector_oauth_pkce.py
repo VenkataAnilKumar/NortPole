@@ -125,7 +125,7 @@ def test_authorize_passes_pkce_challenge(
     monkeypatch.setattr(
         standard_oauth, "generate_pkce_pair", lambda: (_CODE_VERIFIER, "challenge")
     )
-    monkeypatch.setattr(standard_oauth, "WEB_DOMAIN", "https://evolvxsi.example")
+    monkeypatch.setattr(standard_oauth, "WEB_DOMAIN", "https://nortpole.example")
     monkeypatch.setattr(
         PKCEOAuthConnector, "oauth_authorization_url", authorization_url
     )
@@ -433,13 +433,13 @@ def test_callback_normalizes_same_origin_return_and_replaces_credential_id(
         "create_credential",
         lambda **_: SimpleNamespace(id=7),
     )
-    monkeypatch.setattr(standard_oauth, "WEB_DOMAIN", "https://evolvxsi.example")
+    monkeypatch.setattr(standard_oauth, "WEB_DOMAIN", "https://nortpole.example")
 
     standard_oauth.oauth_authorize(
         request=_request(),
         source=DocumentSource.LINEAR,
         desired_return_url=(
-            "https://evolvxsi.example/return?step=0&credentialId=999#setup"
+            "https://nortpole.example/return?step=0&credentialId=999#setup"
         ),
         user=_user(),
     )
@@ -453,7 +453,7 @@ def test_callback_normalizes_same_origin_return_and_replaces_credential_id(
         user=_user(),
     )
     assert result.redirect_url == (
-        "https://evolvxsi.example/return?step=0&credentialId=7#setup"
+        "https://nortpole.example/return?step=0&credentialId=7#setup"
     )
 
 

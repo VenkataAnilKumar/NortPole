@@ -42,7 +42,7 @@ def upgrade() -> None:
         return
     if inspector.has_table("oauth_provider_client", schema=POSTGRES_DEFAULT_SCHEMA):
         raise RuntimeError(
-            "OAuth client registries exist in both public and the EvolvXSI schema"
+            "OAuth client registries exist in both public and the NortPole schema"
         )
 
     schema = connection.dialect.identifier_preparer.quote_schema(

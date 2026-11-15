@@ -121,7 +121,7 @@ def world():  # type: ignore[no-untyped-def]
 
     with get_session_with_current_tenant() as s:
         access = get_access_for_documents([DOC_ID, SYNC_DOC_ID], s)
-    name = f"evolvxsi_grp_test_{RUN}"
+    name = f"nortpole_grp_test_{RUN}"
     idx = OpenSearchDocumentIndex(
         tenant_state=TenantState(tenant_id=TENANT, multitenant=False),
         index_name=name, embedding_dim=DIM, vector_quantization=VectorQuantization.NONE,
@@ -148,7 +148,7 @@ def world():  # type: ignore[no-untyped-def]
         s.query(Connector).filter(Connector.id.in_(ids["connectors"])).delete()
         s.query(UserGroup).filter(UserGroup.id.in_(ids["groups"])).delete()
         s.query(User).filter(User.id.in_([ids[k] for k in ("member", "outsider", "manager", "syncmember")])).delete()
-        s.execute(__import__("sqlalchemy").text("delete from evolvxsi_audit_event where actor_email = :e and row_hash is null"), {"e": f"admin-{RUN}@example.com"})
+        s.execute(__import__("sqlalchemy").text("delete from nortpole_audit_event where actor_email = :e and row_hash is null"), {"e": f"admin-{RUN}@example.com"})
         s.commit()
 
 

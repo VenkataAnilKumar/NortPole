@@ -11,7 +11,7 @@ from nortpole.utils.logger import setup_logger
 logger = setup_logger()
 
 CONNECTOR_LONG_RETRY_AFTER = Counter(
-    "evolvxsi_connector_long_retry_after_total",
+    "nortpole_connector_long_retry_after_total",
     "Server-supplied connector retry delays over 1 minute, over 5 minutes, or capped",
     ["source", "wait_class"],
 )

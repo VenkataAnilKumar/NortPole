@@ -1,10 +1,10 @@
 /**
- * @evolvxsi-ai/shared — platform-agnostic code shared between NortPole web and mobile.
+ * @nortpole-ai/shared — platform-agnostic code shared between NortPole web and mobile.
  *
  * Design tokens are NOT re-exported here: they are generated build artifacts,
- * consumed via the dedicated subpaths "@evolvxsi-ai/shared/tokens.css" (web/Opal CSS
- * variables), "@evolvxsi-ai/shared/nativewind-theme" (mobile Tailwind theme fragment),
- * and "@evolvxsi-ai/shared/native" (mobile light/dark vars() maps).
+ * consumed via the dedicated subpaths "@nortpole-ai/shared/tokens.css" (web/Opal CSS
+ * variables), "@nortpole-ai/shared/nativewind-theme" (mobile Tailwind theme fragment),
+ * and "@nortpole-ai/shared/native" (mobile light/dark vars() maps).
  */
 export * from "./contracts";
 export * from "./types";

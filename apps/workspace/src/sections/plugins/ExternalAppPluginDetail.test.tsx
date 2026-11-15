@@ -19,7 +19,7 @@ import type {
 let mockFullAdmin = false;
 let mockCraftAvailable = true;
 jest.mock("@/lib/settings/hooks", () => ({
-  useSettings: () => ({ evolvxsi_craft_available: mockCraftAvailable }),
+  useSettings: () => ({ nortpole_craft_available: mockCraftAvailable }),
 }));
 const mockPush = jest.fn();
 const mockReplace = jest.fn();
@@ -90,7 +90,7 @@ const app: ExternalAppAdminResponse = {
   credential_placeholder_keys: [],
   actions: [],
   associated_skills: [],
-  is_evolvxsi_managed: false,
+  is_nortpole_managed: false,
   users_can_manage_policies: true,
 };
 const slack: BuiltInExternalAppDescriptor = {

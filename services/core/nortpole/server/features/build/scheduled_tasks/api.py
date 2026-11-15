@@ -8,7 +8,7 @@ Thin HTTP layer over ``nortpole.db.scheduled_task``. Every handler:
 
 The router is mounted under the existing ``/build`` prefix (see
 ``backend/nortpole/server/features/build/api.py``), which provides the
-``require_evolvxsi_craft_enabled`` gate.
+``require_nortpole_craft_enabled`` gate.
 """
 
 from __future__ import annotations

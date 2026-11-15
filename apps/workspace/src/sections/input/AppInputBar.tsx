@@ -18,7 +18,7 @@ import usePromptShortcuts from "@/hooks/usePromptShortcuts";
 import { useContentEditable } from "@/hooks/useContentEditable";
 import useFilter from "@/hooks/useFilter";
 import { useAvailableSources } from "@/lib/connectors/hooks";
-import { MinimalEvolvXSIDocument } from "@/lib/search/types";
+import { MinimalNortPoleDocument } from "@/lib/search/types";
 import { ChatState, MAX_QUEUED_MESSAGES } from "@/app/app/types";
 import { useQueuedMessageNavigation } from "@/hooks/useQueuedMessageNavigation";
 import type { ToolConfigurationHandle } from "@/lib/tools/hooks";
@@ -100,7 +100,7 @@ export interface AppInputBarProps {
 
   handleFileUpload: (files: File[]) => void;
   deepResearchEnabled: boolean;
-  setPresentingDocument?: (document: MinimalEvolvXSIDocument) => void;
+  setPresentingDocument?: (document: MinimalNortPoleDocument) => void;
   toggleDeepResearch: () => void;
   isMultiModelActive?: boolean;
   disabled: boolean;
@@ -391,12 +391,12 @@ const AppInputBar = React.memo(
       [currentMessageFiles]
     );
 
-    // Convert ProjectFile to MinimalEvolvXSIDocument format for viewing
+    // Convert ProjectFile to MinimalNortPoleDocument format for viewing
     const handleFileClick = useCallback(
       (file: ProjectFile) => {
         if (!setPresentingDocument) return;
 
-        const documentForViewer: MinimalEvolvXSIDocument = {
+        const documentForViewer: MinimalNortPoleDocument = {
           document_id: `project_file__${file.file_id}`,
           semantic_identifier: file.name,
         };
@@ -564,7 +564,7 @@ const AppInputBar = React.memo(
       const isProjectWorkflow = isLoadingProjects || activeProject !== null;
 
       // TODO(@yuhong): Re-enable Deep Research in Projects workflow once it is fully supported.
-      // https://linear.app/evolvxsi-app/issue/ENG-3818/re-enable-deep-research-in-projects
+      // https://linear.app/nortpole-app/issue/ENG-3818/re-enable-deep-research-in-projects
       return (
         !isProjectWorkflow &&
         deepResearchGloballyEnabled &&
@@ -800,7 +800,7 @@ const AppInputBar = React.memo(
                   ? t("appInputBar.sendButton.processingFilesTooltip")
                   : undefined
             }
-            id="evolvxsi-chat-input-send-button"
+            id="nortpole-chat-input-send-button"
             aria-label={
               chatState === "unconfirmed"
                 ? t("appInputBar.sendButton.reloadLabel")
@@ -890,7 +890,7 @@ const AppInputBar = React.memo(
         <Disabled disabled={disabled} allowClick>
           <div
             ref={containerRef}
-            id="evolvxsi-chat-input"
+            id="nortpole-chat-input"
             className={cn(
               "relative w-full flex flex-col shadow-box-01 bg-background-neutral-00 rounded-16"
               // # Note (from @raunakab):
@@ -967,7 +967,7 @@ const AppInputBar = React.memo(
                   >
                     <div
                       ref={inputRef}
-                      id="evolvxsi-chat-input-textbox"
+                      id="nortpole-chat-input-textbox"
                       role="textbox"
                       aria-label={t("appInputBar.input.ariaLabel")}
                       contentEditable={!disabled}
@@ -1113,7 +1113,7 @@ const AppInputBar = React.memo(
                       chatState === "cancelling" ||
                       chatState === "unconfirmed"
                     }
-                    id="evolvxsi-chat-input-send-button"
+                    id="nortpole-chat-input-send-button"
                     aria-label={t("appInputBar.sendButton.sendLabel")}
                     icon={isClassifying ? IconLoader : SvgSearch}
                     onClick={() => {

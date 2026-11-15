@@ -6,7 +6,7 @@ const MAX_FILES = 2000;
 const MAX_AGE_MS = 24 * 60 * 60 * 1000;
 
 function storageKey(userId: string, sessionId: string): string {
-  return `evolvxsi:craft:outputs:v1:${userId}:${sessionId}`;
+  return `nortpole:craft:outputs:v1:${userId}:${sessionId}`;
 }
 
 /** Display hint only: stored files cannot establish the task's discovery baseline. */

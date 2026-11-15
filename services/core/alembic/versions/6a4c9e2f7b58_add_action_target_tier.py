@@ -1,4 +1,4 @@
-"""add evolvxsi_action_target.tier
+"""add nortpole_action_target.tier
 
 Revision ID: 6a4c9e2f7b58
 Revises: 5f3b8d1e6a47
@@ -16,8 +16,8 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.add_column("evolvxsi_action_target", sa.Column("tier", sa.String(length=20), nullable=False, server_default="act_with_approval"))
+    op.add_column("nortpole_action_target", sa.Column("tier", sa.String(length=20), nullable=False, server_default="act_with_approval"))
 
 
 def downgrade() -> None:
-    op.drop_column("evolvxsi_action_target", "tier")
+    op.drop_column("nortpole_action_target", "tier")

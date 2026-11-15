@@ -75,7 +75,7 @@ export default function BuildWelcome({
               onClick={handleWordmarkClick}
             >
               <FoldableLogo
-                evolvxsiBranded
+                nortpoleBranded
                 size={28}
                 className="translate-y-[6px]"
               />
@@ -84,7 +84,7 @@ export default function BuildWelcome({
                 style={{
                   fontFamily: "var(--font-brand)",
                   fontWeight: 400,
-                  // Sized so the x-height matches the custom "evolvxsi" logotype
+                  // Sized so the x-height matches the custom "nortpole" logotype
                   // (its x-height ≈ 0.595em vs the brand font's 0.504em at size 28).
                   fontSize: "34px",
                   lineHeight: "1",

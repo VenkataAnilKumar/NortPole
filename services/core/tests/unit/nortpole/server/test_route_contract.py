@@ -7,7 +7,7 @@
    a registered GATE-2 helper.
 3. A GET/HEAD handler must not commit or call a ``__no_commit`` writer.
 
-Checks 2 and 3 walk the handler source and the evolvxsi/ee functions it calls.
+Checks 2 and 3 walk the handler source and the nortpole/ee functions it calls.
 ``route_contract_baseline.json`` lists the existing violations. It can only
 shrink: a new violation fails, and an entry that no longer violates fails too.
 """
@@ -277,17 +277,17 @@ def get_write_violations(app: FastAPI) -> set[str]:
 def app() -> Iterator[FastAPI]:
     # NortPole ships the community edition only (no ``ee`` package), so the contract covers the application
     # ``nortpole.main`` builds, including NortPole's own routers.
-    evolvxsi_main = importlib.import_module("nortpole.main")
+    nortpole_main = importlib.import_module("nortpole.main")
 
     # Pin the flags that add or remove routers so the route set is stable.
     with pytest.MonkeyPatch.context() as mp:
-        mp.setattr(evolvxsi_main, "OAUTH_ENABLED", True)
-        mp.setattr(evolvxsi_main, "OAUTH_CLIENT_ID", "route-contract-client")
-        mp.setattr(evolvxsi_main, "OAUTH_CLIENT_SECRET", "route-contract-value")
-        mp.setattr(evolvxsi_main, "OAUTH_PROVIDER_SETTINGS", MagicMock())
-        mp.setattr(evolvxsi_main, "ENABLE_PUBLIC_DOCS", False)
-        mp.setattr(evolvxsi_main, "APP_API_PREFIX", "")
-        yield evolvxsi_main.get_application()
+        mp.setattr(nortpole_main, "OAUTH_ENABLED", True)
+        mp.setattr(nortpole_main, "OAUTH_CLIENT_ID", "route-contract-client")
+        mp.setattr(nortpole_main, "OAUTH_CLIENT_SECRET", "route-contract-value")
+        mp.setattr(nortpole_main, "OAUTH_PROVIDER_SETTINGS", MagicMock())
+        mp.setattr(nortpole_main, "ENABLE_PUBLIC_DOCS", False)
+        mp.setattr(nortpole_main, "APP_API_PREFIX", "")
+        yield nortpole_main.get_application()
 
 
 def _load_baseline() -> dict[str, dict[str, str]]:

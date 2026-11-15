@@ -1,5 +1,5 @@
 {
-  "name": "@evolvxsi-ai/shared",
+  "name": "@nortpole-ai/shared",
   "version": "0.1.0",
   "description": "Platform-agnostic shared design tokens, types, contracts, and utilities for NortPole web + mobile.",
   "license": "MIT",

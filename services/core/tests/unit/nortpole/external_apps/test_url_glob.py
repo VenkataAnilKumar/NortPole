@@ -29,8 +29,8 @@ def test_star_matches_full_path_including_slashes() -> None:
 
 def test_star_in_middle() -> None:
     glob = "https://api.github.com/repos/*/issues"
-    assert _matches(glob, "https://api.github.com/repos/evolvxsi/issues")
-    assert not _matches(glob, "https://api.github.com/repos/evolvxsi/pulls")
+    assert _matches(glob, "https://api.github.com/repos/nortpole/issues")
+    assert not _matches(glob, "https://api.github.com/repos/nortpole/pulls")
 
 
 def test_exact_pattern_matches_only_itself() -> None:

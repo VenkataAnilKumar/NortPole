@@ -18,7 +18,7 @@ import {
   SvgImageSmall,
   SvgInfoSmall,
   SvgMusicSmall,
-  SvgEvolvXSIOctagon,
+  SvgNortPoleOctagon,
   SvgPenSmall,
   SvgQuestionMarkSmall,
   SvgSearchSmall,
@@ -78,7 +78,7 @@ function SvgOctagonWrapper({ size, children }: SvgOctagonWrapperProps) {
       <div className="absolute inset-0 flex items-center justify-center">
         {children}
       </div>
-      <SvgEvolvXSIOctagon className="stroke-text-04" height={size} width={size} />
+      <SvgNortPoleOctagon className="stroke-text-04" height={size} width={size} />
     </div>
   );
 }

@@ -24,10 +24,10 @@ from nortpole.server.gateway.models import (
 
 def _gateway(*, default: str = "7/gpt-6.1-sol") -> CraftLLMProviderConfig:
     return CraftLLMProviderConfig(
-        provider="evolvxsi",
+        provider="nortpole",
         model_name=default,
         api_key="proxy-placeholder",
-        api_base="https://evolvxsi.test/api/gateway/v1",
+        api_base="https://nortpole.test/api/gateway/v1",
         display_name="NortPole",
         models=[
             GatewayModelDescriptor(
@@ -62,13 +62,13 @@ def _mcp(
 
 def test_gateway_is_the_only_enabled_provider() -> None:
     config = build_provider_opencode_config(_gateway())
-    assert config["model"] == "evolvxsi/7/gpt-6.1-sol"
-    assert config["enabled_providers"] == ["evolvxsi"]
-    provider = config["provider"]["evolvxsi"]
+    assert config["model"] == "nortpole/7/gpt-6.1-sol"
+    assert config["enabled_providers"] == ["nortpole"]
+    provider = config["provider"]["nortpole"]
     assert provider["npm"] == "@ai-sdk/openai-compatible"
     assert provider["options"] == {
         "apiKey": "proxy-placeholder",
-        "baseURL": "https://evolvxsi.test/api/gateway/v1",
+        "baseURL": "https://nortpole.test/api/gateway/v1",
     }
     assert set(provider["models"]) == {"7/gpt-6.1-sol", "9/claude-opus-4-8"}
     assert provider["models"]["9/claude-opus-4-8"]["limit"] == {
@@ -107,10 +107,10 @@ def test_gateway_is_the_only_enabled_provider() -> None:
 
 def test_gateway_capabilities_are_adapted_instead_of_hardcoded() -> None:
     gateway = CraftLLMProviderConfig(
-        provider="evolvxsi",
+        provider="nortpole",
         model_name="4/custom-model",
         api_key=None,
-        api_base="https://evolvxsi.test/api/gateway/v1",
+        api_base="https://nortpole.test/api/gateway/v1",
         models=[
             GatewayModelDescriptor(
                 id="4/custom-model",
@@ -127,7 +127,7 @@ def test_gateway_capabilities_are_adapted_instead_of_hardcoded() -> None:
         ],
     )
 
-    model = build_provider_opencode_config(gateway)["provider"]["evolvxsi"]["models"][
+    model = build_provider_opencode_config(gateway)["provider"]["nortpole"]["models"][
         "4/custom-model"
     ]
 
@@ -147,10 +147,10 @@ def test_gateway_capabilities_are_adapted_instead_of_hardcoded() -> None:
 
 def test_gateway_omits_partial_token_limits() -> None:
     gateway = CraftLLMProviderConfig(
-        provider="evolvxsi",
+        provider="nortpole",
         model_name="7/broken-model",
         api_key=None,
-        api_base="https://evolvxsi.test/api/gateway/v1",
+        api_base="https://nortpole.test/api/gateway/v1",
         models=[
             GatewayModelDescriptor(
                 id="7/broken-model",
@@ -161,7 +161,7 @@ def test_gateway_omits_partial_token_limits() -> None:
         ],
     )
 
-    model = build_provider_opencode_config(gateway)["provider"]["evolvxsi"]["models"][
+    model = build_provider_opencode_config(gateway)["provider"]["nortpole"]["models"][
         "7/broken-model"
     ]
     assert "limit" not in model
@@ -241,7 +241,7 @@ def test_session_config_sends_session_header_to_gateway() -> None:
     config = build_provider_opencode_config(_gateway(), session_id="sess-abc")
     # opencode-serve is one process for many sessions, so this header is the
     # gateway's only way to attribute an LLM call to its session.
-    assert config["provider"]["evolvxsi"]["options"]["headers"] == {
+    assert config["provider"]["nortpole"]["options"]["headers"] == {
         CRAFT_SESSION_HEADER: "sess-abc"
     }
 
@@ -249,7 +249,7 @@ def test_session_config_sends_session_header_to_gateway() -> None:
 def test_base_config_sends_no_session_header() -> None:
     assert (
         "headers"
-        not in build_provider_opencode_config(_gateway())["provider"]["evolvxsi"]["options"]
+        not in build_provider_opencode_config(_gateway())["provider"]["nortpole"]["options"]
     )
 
 

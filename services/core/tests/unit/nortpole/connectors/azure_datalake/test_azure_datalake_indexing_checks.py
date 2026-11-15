@@ -40,7 +40,7 @@ def _context(gateway: MagicMock, path_prefix: str = "") -> CapabilityCheckContex
         source=DocumentSource.AZURE_DATALAKE,
         credential_json={},
         connector_specific_config={
-            "account_name": "evolvxsitest",
+            "account_name": "nortpoletest",
             "container_name": "docs",
             "path_prefix": path_prefix,
         },

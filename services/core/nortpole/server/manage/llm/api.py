@@ -426,7 +426,7 @@ def _assume_bedrock_role(
     """Return a session for *role_arn*, assumed with *base_session* credentials."""
     assume_role_kwargs: dict[str, Any] = {
         "RoleArn": role_arn,
-        "RoleSessionName": "evolvxsi-bedrock-model-fetch",
+        "RoleSessionName": "nortpole-bedrock-model-fetch",
     }
     if external_id:
         assume_role_kwargs["ExternalId"] = external_id

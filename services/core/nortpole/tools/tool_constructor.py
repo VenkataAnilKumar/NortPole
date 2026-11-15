@@ -25,7 +25,7 @@ from nortpole.db.tools import get_builtin_tool, get_tool_user_preferences
 from nortpole.document_index.factory import get_default_document_index
 from nortpole.image_gen.interfaces import ImageGenerationProviderCredentials
 from nortpole.llm.interfaces import LLM, LLMConfig
-from nortpole.evolvxsibot.slack.models import SlackContext
+from nortpole.nortpolebot.slack.models import SlackContext
 from nortpole.server.features.mcp.credentials import (
     MCPCredentialsError,
     resolve_mcp_credentials,

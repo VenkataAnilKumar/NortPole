@@ -62,8 +62,8 @@ def session():  # type: ignore[no-untyped-def]
     assert login.status_code in (200, 204), login.text[:200]
     yield s
     with get_session_with_current_tenant() as db:
-        db.execute(text('delete from evolvxsi_task where owner_id in (select id from "user" where email = :e)'), {"e": EMAIL})
-        db.execute(text("delete from evolvxsi_audit_event where actor_email = :e and row_hash is null"), {"e": EMAIL})
+        db.execute(text('delete from nortpole_task where owner_id in (select id from "user" where email = :e)'), {"e": EMAIL})
+        db.execute(text("delete from nortpole_audit_event where actor_email = :e and row_hash is null"), {"e": EMAIL})
         # Registration adds the user to the built-in group; remove the link first.
         db.execute(text('delete from user__user_group where user_id in (select id from "user" where email = :e)'), {"e": EMAIL})
         db.execute(text('delete from "user" where email = :e'), {"e": EMAIL})
@@ -100,7 +100,7 @@ def test_an_edit_of_the_task_does_not_put_its_text_in_the_audit_trail(session) -
     t = [t for t in session.get(f"{API}/tasks", timeout=15).json() if t["title"] == SECRET_TITLE][0]
     session.post(f"{API}/tasks/{t['id']}/cancel", json={"version": t["version"]}, timeout=15)
     with get_session_with_current_tenant() as db:
-        rows = db.execute(text("select summary, details::text from evolvxsi_audit_event where actor_email = :e"), {"e": EMAIL}).all()
+        rows = db.execute(text("select summary, details::text from nortpole_audit_event where actor_email = :e"), {"e": EMAIL}).all()
     assert rows, "the cancel should have been audited"
     blob = " ".join(f"{a} {b or ''}" for a, b in rows)
     assert SECRET_TITLE not in blob and "UniqueRequestText" not in blob and "acquisition" not in blob
@@ -109,7 +109,7 @@ def test_an_edit_of_the_task_does_not_put_its_text_in_the_audit_trail(session) -
 def test_no_audit_row_anywhere_holds_task_text(session) -> None:  # type: ignore[no-untyped-def]
     with get_session_with_current_tenant() as db:
         leaked = db.execute(
-            text("select count(*) from evolvxsi_audit_event where summary like :p or details::text like :p"),
+            text("select count(*) from nortpole_audit_event where summary like :p or details::text like :p"),
             {"p": f"%{SECRET_TITLE}%"},
         ).scalar()
     assert leaked == 0

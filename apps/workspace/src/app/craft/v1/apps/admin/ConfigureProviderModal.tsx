@@ -83,7 +83,7 @@ export default function ConfigureProviderModal({
     : {};
   // Managed built-ins (cloud): NortPole owns creds/config, so the modal only edits
   // policies — cred fields are hidden and the backend ignores them anyway.
-  const managed = existingApp?.is_evolvxsi_managed ?? false;
+  const managed = existingApp?.is_nortpole_managed ?? false;
 
   const fields: EditorField[] = managed
     ? []

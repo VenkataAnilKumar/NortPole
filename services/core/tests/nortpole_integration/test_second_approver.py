@@ -41,7 +41,7 @@ def people(world):  # type: ignore[no-untyped-def]
     with get_session_with_current_tenant() as s:
         s.query(NortPoleAction).filter(NortPoleAction.second_approver_id.in_(ids)).update({"second_approver_id": None}, synchronize_session=False)
         s.query(User__UserGroup).filter(User__UserGroup.user_id.in_(ids)).delete(synchronize_session=False)
-        s.execute(text("delete from evolvxsi_audit_event where actor_email like :p and row_hash is null"), {"p": f"second-%-{TAG}@example.com"})
+        s.execute(text("delete from nortpole_audit_event where actor_email like :p and row_hash is null"), {"p": f"second-%-{TAG}@example.com"})
         s.query(User).filter(User.id.in_(ids)).delete(synchronize_session=False)
         s.commit()
 
@@ -96,7 +96,7 @@ def test_the_owner_cannot_be_their_own_second_approver(world, target, sink) -> N
             with pytest.raises(NortPoleError):
                 call()
         assert s.get(NortPoleAction, a.id).state == "awaiting_second"
-        denied = s.execute(text("select count(*) from evolvxsi_audit_event where action='action.approve' and outcome='denied' and summary like '%the approver is the owner%'")).scalar()
+        denied = s.execute(text("select count(*) from nortpole_audit_event where action='action.approve' and outcome='denied' and summary like '%the approver is the owner%'")).scalar()
         assert denied >= 3
     assert sink.requests == []
 
@@ -179,7 +179,7 @@ def test_opening_a_draft_for_review_is_audited_without_its_text(world, target, p
         u, a = _owner_approved_waiting(s, world, target)
         second = s.get(User, people[0])
         actions.second_review(a.id, user=second, db_session=s)
-        rows = s.execute(text("select summary, details::text from evolvxsi_audit_event where action='action.second_review' and resource_id=:i"), {"i": str(a.id)}).all()
+        rows = s.execute(text("select summary, details::text from nortpole_audit_event where action='action.second_review' and resource_id=:i"), {"i": str(a.id)}).all()
         assert len(rows) == 1 and "Receipts are due" not in rows[0][0] + (rows[0][1] or "")
 
 

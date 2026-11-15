@@ -3,7 +3,7 @@ from typing import Any, Dict
 
 from nortpole.context.search.models import ChunkIndexRequest, InferenceChunk
 from nortpole.federated_connectors.models import CredentialField, EntityField, OAuthResult
-from nortpole.evolvxsibot.slack.models import SlackContext
+from nortpole.nortpolebot.slack.models import SlackContext
 
 
 class FederatedConnector(ABC):

@@ -34,7 +34,7 @@ print("group", gid, "private source cc_pair", ccid)
 def ingest(doc, cc_pair_id):
     body = {"cc_pair_id": cc_pair_id, "document": {"id": f"{RUN}-{doc['doc_id']}", "semantic_identifier": doc["title"], "source": "ingestion_api",
             "sections": [{"text": doc["text"], "link": f"https://example.com/{doc['doc_id']}"}], "metadata": {}}}
-    r = admin.post(f"{API}/evolvxsi-api/ingestion", json=body, timeout=300)
+    r = admin.post(f"{API}/nortpole-api/ingestion", json=body, timeout=300)
     return r.status_code, r.text[:120]
 t0 = time.time(); results = []
 for d in corpus["documents"]:

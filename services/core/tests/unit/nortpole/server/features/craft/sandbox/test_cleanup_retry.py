@@ -41,7 +41,7 @@ def test_new_worker_retries_volume_removal_after_checkpoint_commit(
     container.labels = {
         dsm.LABEL_SANDBOX_ID: str(sandbox.id),
         dsm.LABEL_TENANT_ID: "tenant-a",
-        dsm.LABEL_K8S_MANAGED_BY: "evolvxsi",
+        dsm.LABEL_K8S_MANAGED_BY: "nortpole",
     }
     volume = docker._docker.volumes.get.return_value
     volume.name = "workspace"

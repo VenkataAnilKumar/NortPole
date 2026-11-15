@@ -29,7 +29,7 @@ class ChunkBatchStore:
     # -- context manager -----------------------------------------------------
 
     def __enter__(self) -> "ChunkBatchStore":
-        self._tmpdir = Path(tempfile.mkdtemp(prefix="evolvxsi_embeddings_"))
+        self._tmpdir = Path(tempfile.mkdtemp(prefix="nortpole_embeddings_"))
         return self
 
     def __exit__(self, *_exc: object) -> None:

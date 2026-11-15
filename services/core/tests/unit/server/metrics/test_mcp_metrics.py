@@ -237,4 +237,4 @@ def test_mcp_metrics_endpoint_uses_shared_bearer_auth(
     )
 
     assert response.status_code == 200
-    assert "evolvxsi_mcp_server_auth_total" in response.text
+    assert "nortpole_mcp_server_auth_total" in response.text

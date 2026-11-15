@@ -315,7 +315,7 @@ test("a failed response keeps partial text and ends search activity", async () =
     expect(
       screen.queryByText("Searching internal documents")
     ).not.toBeInTheDocument();
-    expect(screen.getByTestId("evolvxsi-ai-message")).toBeInTheDocument();
+    expect(screen.getByTestId("nortpole-ai-message")).toBeInTheDocument();
   });
 });
 

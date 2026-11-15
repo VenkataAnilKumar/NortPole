@@ -2,7 +2,7 @@
 
 import { JSX } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { MinimalEvolvXSIDocument, NortPoleDocument } from "@/lib/search/types";
+import { MinimalNortPoleDocument, NortPoleDocument } from "@/lib/search/types";
 import { SourceIcon } from "../SourceIcon";
 import { WebResultIcon } from "../WebResultIcon";
 import { Text } from "@opal/components";
@@ -125,7 +125,7 @@ export const buildDocumentSummaryDisplay = (
 
 interface CompactDocumentCardProps {
   document: NortPoleDocument;
-  updatePresentingDocument: (document: MinimalEvolvXSIDocument) => void;
+  updatePresentingDocument: (document: MinimalNortPoleDocument) => void;
 }
 
 export function CompactDocumentCard({

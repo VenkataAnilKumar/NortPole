@@ -43,7 +43,7 @@ def owner():  # type: ignore[no-untyped-def]
     yield ids
     with get_session_with_current_tenant() as s:
         s.query(NortPoleTask).filter(NortPoleTask.owner_id.in_(ids)).delete()
-        s.execute(text("delete from evolvxsi_audit_event where actor_email like :p and row_hash is null"), {"p": f"%-{RUN}@example.com"})
+        s.execute(text("delete from nortpole_audit_event where actor_email like :p and row_hash is null"), {"p": f"%-{RUN}@example.com"})
         s.query(User).filter(User.id.in_(ids)).delete()
         s.commit()
 
@@ -121,7 +121,7 @@ def test_a_failed_run_can_be_retried(owner) -> None:  # type: ignore[no-untyped-
 def test_evidence_is_gathered_with_the_owners_own_access(owner) -> None:  # type: ignore[no-untyped-def]
     mine, theirs = f"mine-{RUN}", f"theirs-{RUN}"
     host = os.environ.get("OPENSEARCH_HOST", "localhost")
-    name = f"evolvxsi_run_test_{RUN}"
+    name = f"nortpole_run_test_{RUN}"
     idx = OpenSearchDocumentIndex(TenantState(tenant_id=TENANT, multitenant=False), name, DIM, VectorQuantization.NONE)
     idx.verify_and_create_index_if_necessary(embedding_dim=DIM)
 

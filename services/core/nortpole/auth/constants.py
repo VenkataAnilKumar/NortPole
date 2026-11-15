@@ -10,13 +10,13 @@ DEPRECATED_API_KEY_PREFIX = "dn_"
 API_KEY_LENGTH = 192
 
 # PAT constants
-PAT_PREFIX = "evolvxsi_pat_"
+PAT_PREFIX = "nortpole_pat_"
 PAT_LENGTH = 192
 
 # OAuth provider constants
-OAUTH_PROVIDER_ACCESS_TOKEN_PREFIX = "evolvxsi_oat_"
-OAUTH_PROVIDER_REFRESH_TOKEN_PREFIX = "evolvxsi_ort_"
-OAUTH_PROVIDER_CODE_PREFIX = "evolvxsi_oac_"
+OAUTH_PROVIDER_ACCESS_TOKEN_PREFIX = "nortpole_oat_"
+OAUTH_PROVIDER_REFRESH_TOKEN_PREFIX = "nortpole_ort_"
+OAUTH_PROVIDER_CODE_PREFIX = "nortpole_oac_"
 # The only scope an OAuth provider grant carries.
 OAUTH_PROVIDER_SCOPE = Permission.READ_SEARCH.value
 # `secrets.token_urlsafe(32)` output: token secrets, request handles and CSRF
@@ -33,14 +33,14 @@ NO_STORE_HEADERS = {"Cache-Control": "no-store", "Pragma": "no-cache"}
 
 # SCIM constants. Defined here rather than in `ee` so that tenant extraction in
 # `nortpole.auth.utils` can recognise a SCIM token without importing from `ee`.
-SCIM_TOKEN_PREFIX = "evolvxsi_scim_"
+SCIM_TOKEN_PREFIX = "nortpole_scim_"
 SCIM_TOKEN_LENGTH = 48
 
 # Shared header constants
 API_KEY_HEADER_NAME = "Authorization"
-API_KEY_HEADER_ALTERNATIVE_NAME = "X-EvolvXSI-Authorization"
+API_KEY_HEADER_ALTERNATIVE_NAME = "X-NortPole-Authorization"
 BEARER_PREFIX = "Bearer "
-# Longest real token is 455 chars: `evolvxsi_pat_` + a 63-char tenant ID URL-encoded
+# Longest real token is 455 chars: `nortpole_pat_` + a 63-char tenant ID URL-encoded
 # (worst case 189) + `.` + token_urlsafe(192) (256). Rejecting longer input
 # bounds hashing cost (`dn_` keys use sha256_crypt, which scales with length).
 MAX_BEARER_TOKEN_LENGTH = 512

@@ -27,7 +27,7 @@ from nortpole.server.features.build.sandbox.kubernetes.k8s_client import build_c
 from nortpole.server.features.build.sandbox.labels import (
     LABEL_K8S_COMPONENT,
     LABEL_K8S_MANAGED_BY,
-    LABEL_K8S_MANAGED_BY_EVOLVXSI,
+    LABEL_K8S_MANAGED_BY_NORTPOLE,
 )
 from nortpole.utils.logger import setup_logger
 
@@ -39,7 +39,7 @@ _CA_KEY_SECRET_KEY = "ca.key"
 _CA_CERT_CONFIGMAP_KEY = "ca.crt"
 
 _COMPONENT_VALUE_PROXY = "sandbox-proxy"
-_RESOURCE_LABEL_KEY = "evolvxsi.local/resource"
+_RESOURCE_LABEL_KEY = "nortpole.local/resource"
 _SECRET_RESOURCE_LABEL = "sandbox-proxy-ca"
 _CONFIGMAP_RESOURCE_LABEL = "sandbox-proxy-ca-bundle"
 
@@ -114,7 +114,7 @@ class K8sSecretCAStore(CAStore):
                 name=self._secret_name,
                 namespace=self._proxy_ns,
                 labels={
-                    LABEL_K8S_MANAGED_BY: LABEL_K8S_MANAGED_BY_EVOLVXSI,
+                    LABEL_K8S_MANAGED_BY: LABEL_K8S_MANAGED_BY_NORTPOLE,
                     LABEL_K8S_COMPONENT: _COMPONENT_VALUE_PROXY,
                     _RESOURCE_LABEL_KEY: _SECRET_RESOURCE_LABEL,
                 },
@@ -148,7 +148,7 @@ class K8sSecretCAStore(CAStore):
                 name=self._configmap_name,
                 namespace=self._sandbox_ns,
                 labels={
-                    LABEL_K8S_MANAGED_BY: LABEL_K8S_MANAGED_BY_EVOLVXSI,
+                    LABEL_K8S_MANAGED_BY: LABEL_K8S_MANAGED_BY_NORTPOLE,
                     LABEL_K8S_COMPONENT: _COMPONENT_VALUE_PROXY,
                     _RESOURCE_LABEL_KEY: _CONFIGMAP_RESOURCE_LABEL,
                 },

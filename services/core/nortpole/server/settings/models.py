@@ -159,12 +159,12 @@ class UserSettings(Settings):
     needs_reindexing: bool
     tenant_id: str = POSTGRES_DEFAULT_SCHEMA
     # Feature flag for NortPole Craft (Build Mode) - used for server-side redirects
-    evolvxsi_craft_enabled: bool = False
+    nortpole_craft_enabled: bool = False
     # Deployment-level Craft availability, ignoring the per-user admin toggle.
     # Gates visibility of the admin per-user Craft controls.
-    evolvxsi_craft_available: bool = False
+    nortpole_craft_available: bool = False
     # Craft is switched on but the tier is too low: show the upgrade prompt.
-    evolvxsi_craft_requires_upgrade: bool = False
+    nortpole_craft_requires_upgrade: bool = False
     # Dev/debug flag: when true, the FE renders a button that streams the
     # user's sandbox pod's opencode-serve logs. Gated by the
     # ENABLE_OPENCODE_DEBUGGING env var; never set in prod.
@@ -174,7 +174,7 @@ class UserSettings(Settings):
     # document sets are unavailable.
     vector_db_enabled: bool = True
     # HIDE_NORTPOLE_BRANDING env var, honored only on the Enterprise tier.
-    hide_evolvxsi_branding: bool = False
+    hide_nortpole_branding: bool = False
     # True when hooks are available: single-tenant EE deployments only.
     hooks_enabled: bool = False
     # Application version, read from the NORTPOLE_VERSION env var at startup.

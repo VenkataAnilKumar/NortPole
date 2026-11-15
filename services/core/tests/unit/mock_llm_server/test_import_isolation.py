@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 
 
-def test_server_imports_no_evolvxsi_modules() -> None:
+def test_server_imports_no_nortpole_modules() -> None:
     backend_dir = Path(__file__).resolve().parents[3]
     code = (
         "import sys\n"

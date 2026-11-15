@@ -20,7 +20,7 @@ from nortpole.utils.url import SSRFException
 
 _AUTHORIZATION_URL = "https://accounts.example.com/authorize"
 _TOKEN_URL = "https://accounts.example.com/token"
-_REDIRECT_URI = "https://evolvxsi.example.com/mcp/oauth/callback"
+_REDIRECT_URI = "https://nortpole.example.com/mcp/oauth/callback"
 
 
 def _client_information(

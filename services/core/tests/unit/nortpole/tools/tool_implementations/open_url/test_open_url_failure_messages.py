@@ -7,7 +7,7 @@ URL's `failure_reason` so the model knows why and won't retry verbatim.
 from __future__ import annotations
 
 from nortpole.tools.tool_implementations.open_url.models import FailedFetch
-from nortpole.tools.tool_implementations.open_url.evolvxsi_web_crawler import FailureReason
+from nortpole.tools.tool_implementations.open_url.nortpole_web_crawler import FailureReason
 from nortpole.tools.tool_implementations.open_url.open_url_tool import (
     _build_failure_message,
     _format_failed_url,

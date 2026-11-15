@@ -2,7 +2,7 @@ import { JSX } from "react";
 import type { NestedCall } from "@/app/app/message/messageComponents/timeline/packetHelpers";
 import { MinimalAgent } from "@/lib/agents/types";
 import { Packet, StopReason } from "../../services/streamingModels";
-import { NortPoleDocument, MinimalEvolvXSIDocument } from "@/lib/search/types";
+import { NortPoleDocument, MinimalNortPoleDocument } from "@/lib/search/types";
 import { ProjectFile } from "@/lib/projects/types";
 import { LlmDescriptor } from "@/lib/hooks";
 import type { IconFunctionComponent } from "@opal/types";
@@ -29,7 +29,7 @@ export interface FullChatState {
   docs?: NortPoleDocument[] | null;
   userFiles?: ProjectFile[];
   citations?: CitationMap;
-  setPresentingDocument?: (document: MinimalEvolvXSIDocument) => void;
+  setPresentingDocument?: (document: MinimalNortPoleDocument) => void;
   // Regenerate functionality
   regenerate?: (modelOverRide: LlmDescriptor) => Promise<void>;
   overriddenModel?: string;

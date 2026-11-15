@@ -69,7 +69,7 @@ test("opens a new tab and resolves on the matching same-origin message", async (
   expect(popup.location.href).toBe(authUrl);
   expect(popup.opener).toBeNull();
   expect(popup.sessionStorage.setItem).toHaveBeenCalledWith(
-    "evolvxsi:oauth-launch",
+    "nortpole:oauth-launch",
     "abc_123"
   );
   const emit = (origin: string, source: MessageEventSource, state: string) =>
@@ -77,7 +77,7 @@ test("opens a new tab and resolves on the matching same-origin message", async (
       new MessageEvent("message", {
         origin,
         source,
-        data: { type: "evolvxsi:oauth-complete", state, ok: true },
+        data: { type: "nortpole:oauth-complete", state, ok: true },
       })
     );
   emit("https://evil.example", popupWindow, "abc_123");
@@ -252,11 +252,11 @@ test("desktop callbacks are recognised only on allowlisted paths", () => {
 test("only a tab that launchOAuth opened closes itself", () => {
   const close = jest.spyOn(window, "close").mockImplementation(() => {});
   expect(reportOAuthCallback("abc_123", true)).toBe(false);
-  window.sessionStorage.setItem("evolvxsi:oauth-launch", "other");
+  window.sessionStorage.setItem("nortpole:oauth-launch", "other");
   expect(reportOAuthCallback("abc_123", true)).toBe(false);
-  window.sessionStorage.setItem("evolvxsi:oauth-launch", "abc_123");
+  window.sessionStorage.setItem("nortpole:oauth-launch", "abc_123");
   expect(reportOAuthCallback("abc_123.desktop", true)).toBe(true);
-  expect(window.sessionStorage.getItem("evolvxsi:oauth-launch")).toBeNull();
+  expect(window.sessionStorage.getItem("nortpole:oauth-launch")).toBeNull();
   expect(close).toHaveBeenCalledTimes(1);
   window.__NORTPOLE_DESKTOP__ = { oauthCallbackWindow: true };
   expect(reportOAuthCallback("abc_123", true)).toBe(true);
@@ -267,11 +267,11 @@ test("desktop state helpers", () => {
   expect(stripDesktopOAuthState("abc.desktop")).toBe("abc");
   expect(stripDesktopOAuthState("abc")).toBe("abc");
   const callback = new URL(
-    "https://evolvxsi.example/mcp/oauth/callback?code=x&state=abc.desktop"
+    "https://nortpole.example/mcp/oauth/callback?code=x&state=abc.desktop"
   );
   const returnUrl = new URL(desktopOAuthReturnUrl(callback));
-  expect(returnUrl.protocol).toBe("evolvxsi:");
-  expect(returnUrl.searchParams.get("origin")).toBe("https://evolvxsi.example");
+  expect(returnUrl.protocol).toBe("nortpole:");
+  expect(returnUrl.searchParams.get("origin")).toBe("https://nortpole.example");
   expect(returnUrl.searchParams.get("path")).toBe(
     "/mcp/oauth/callback?code=x&state=abc.desktop"
   );

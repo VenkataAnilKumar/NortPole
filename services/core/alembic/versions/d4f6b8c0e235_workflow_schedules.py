@@ -18,7 +18,7 @@ depends_on = None
 
 def upgrade() -> None:
     op.create_table(
-        "evolvxsi_workflow_schedule",
+        "nortpole_workflow_schedule",
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
         sa.Column("owner_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("user.id", ondelete="CASCADE"), nullable=False),
         sa.Column("name", sa.String(length=200), nullable=False),
@@ -46,13 +46,13 @@ def upgrade() -> None:
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
         sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
     )
-    op.create_index("ix_evolvxsi_workflow_schedule_owner_id", "evolvxsi_workflow_schedule", ["owner_id"])
-    op.create_index("ix_evolvxsi_workflow_schedule_next_run_at", "evolvxsi_workflow_schedule", ["next_run_at"])
+    op.create_index("ix_nortpole_workflow_schedule_owner_id", "nortpole_workflow_schedule", ["owner_id"])
+    op.create_index("ix_nortpole_workflow_schedule_next_run_at", "nortpole_workflow_schedule", ["next_run_at"])
     op.create_table(
-        "evolvxsi_workflow_run",
+        "nortpole_workflow_run",
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
-        sa.Column("schedule_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("evolvxsi_workflow_schedule.id", ondelete="CASCADE"), nullable=False),
-        sa.Column("task_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("evolvxsi_task.id", ondelete="SET NULL"), nullable=True),
+        sa.Column("schedule_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("nortpole_workflow_schedule.id", ondelete="CASCADE"), nullable=False),
+        sa.Column("task_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("nortpole_task.id", ondelete="SET NULL"), nullable=True),
         sa.Column("fired_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
         sa.Column("outcome", sa.String(length=20), nullable=False),
         sa.Column("reason", sa.Text(), nullable=True),
@@ -60,18 +60,18 @@ def upgrade() -> None:
         sa.Column("input_tokens", sa.Integer(), nullable=False, server_default="0"),
         sa.Column("output_tokens", sa.Integer(), nullable=False, server_default="0"),
     )
-    op.create_index("ix_evolvxsi_workflow_run_schedule_id", "evolvxsi_workflow_run", ["schedule_id"])
-    op.add_column("evolvxsi_task", sa.Column("schedule_id", postgresql.UUID(as_uuid=True), nullable=True))
-    op.create_foreign_key("fk_evolvxsi_task_schedule", "evolvxsi_task", "evolvxsi_workflow_schedule", ["schedule_id"], ["id"], ondelete="SET NULL")
-    op.create_index("ix_evolvxsi_task_schedule_id", "evolvxsi_task", ["schedule_id"])
+    op.create_index("ix_nortpole_workflow_run_schedule_id", "nortpole_workflow_run", ["schedule_id"])
+    op.add_column("nortpole_task", sa.Column("schedule_id", postgresql.UUID(as_uuid=True), nullable=True))
+    op.create_foreign_key("fk_nortpole_task_schedule", "nortpole_task", "nortpole_workflow_schedule", ["schedule_id"], ["id"], ondelete="SET NULL")
+    op.create_index("ix_nortpole_task_schedule_id", "nortpole_task", ["schedule_id"])
 
 
 def downgrade() -> None:
-    op.drop_index("ix_evolvxsi_task_schedule_id", table_name="evolvxsi_task")
-    op.drop_constraint("fk_evolvxsi_task_schedule", "evolvxsi_task", type_="foreignkey")
-    op.drop_column("evolvxsi_task", "schedule_id")
-    op.drop_index("ix_evolvxsi_workflow_run_schedule_id", table_name="evolvxsi_workflow_run")
-    op.drop_table("evolvxsi_workflow_run")
-    op.drop_index("ix_evolvxsi_workflow_schedule_next_run_at", table_name="evolvxsi_workflow_schedule")
-    op.drop_index("ix_evolvxsi_workflow_schedule_owner_id", table_name="evolvxsi_workflow_schedule")
-    op.drop_table("evolvxsi_workflow_schedule")
+    op.drop_index("ix_nortpole_task_schedule_id", table_name="nortpole_task")
+    op.drop_constraint("fk_nortpole_task_schedule", "nortpole_task", type_="foreignkey")
+    op.drop_column("nortpole_task", "schedule_id")
+    op.drop_index("ix_nortpole_workflow_run_schedule_id", table_name="nortpole_workflow_run")
+    op.drop_table("nortpole_workflow_run")
+    op.drop_index("ix_nortpole_workflow_schedule_next_run_at", table_name="nortpole_workflow_schedule")
+    op.drop_index("ix_nortpole_workflow_schedule_owner_id", table_name="nortpole_workflow_schedule")
+    op.drop_table("nortpole_workflow_schedule")

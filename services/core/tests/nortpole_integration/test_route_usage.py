@@ -36,7 +36,7 @@ def test_requests_are_counted_per_route_model_class_and_purpose() -> None:
 
 def test_the_table_holds_no_person_or_text_column() -> None:
     with get_session_with_current_tenant() as s:
-        cols = {r[0] for r in s.execute(text("select column_name from information_schema.columns where table_name='evolvxsi_route_usage'"))}
+        cols = {r[0] for r in s.execute(text("select column_name from information_schema.columns where table_name='nortpole_route_usage'"))}
     assert cols == {"row_id", "day", "route_kind", "provider_id", "model_name", "data_class", "purpose", "requests"}
 
 

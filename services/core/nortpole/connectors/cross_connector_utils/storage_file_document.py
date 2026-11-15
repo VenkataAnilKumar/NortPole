@@ -4,7 +4,7 @@ from io import BytesIO
 from nortpole.configs.app_configs import SKIP_SPREADSHEET_CONTENT
 from nortpole.configs.constants import DocumentSource, FileOrigin
 from nortpole.connectors.cross_connector_utils.miscellaneous_utils import (
-    process_evolvxsi_metadata,
+    process_nortpole_metadata,
 )
 from nortpole.connectors.cross_connector_utils.tabular_section_utils import (
     extract_and_stage_tabular_file,
@@ -51,7 +51,7 @@ def build_storage_file_document(
     size_bytes = len(file_bytes)
 
     if get_file_ext(file_name) in NortPoleFileExtensions.IMAGE_EXTENSIONS:
-        # TODO(evan-evolvxsi): Refactor to avoid direct DB access in connector
+        # TODO(evan-nortpole): Refactor to avoid direct DB access in connector
         # This will require broader refactoring across the codebase
         image_section, _ = store_image_and_create_section(
             image_data=file_bytes,
@@ -111,22 +111,22 @@ def build_storage_file_document(
             else None
         ),
     )
-    evolvxsi_metadata, custom_tags = process_evolvxsi_metadata(extraction_result.metadata)
-    if evolvxsi_metadata.link:
+    nortpole_metadata, custom_tags = process_nortpole_metadata(extraction_result.metadata)
+    if nortpole_metadata.link:
         # Embedded images were stored before the metadata named the link.
-        link = evolvxsi_metadata.link
+        link = nortpole_metadata.link
         sections = [section.model_copy(update={"link": link}) for section in sections]
     if text := extraction_result.text_content.strip():
         sections.append(TextSection(link=link, text=text))
     return Document(
         id=document_id,
         sections=sections or [TextSection(link=link, text="")],
-        source=evolvxsi_metadata.source_type or source,
-        semantic_identifier=evolvxsi_metadata.file_display_name or file_name,
-        doc_updated_at=evolvxsi_metadata.doc_updated_at or last_modified,
+        source=nortpole_metadata.source_type or source,
+        semantic_identifier=nortpole_metadata.file_display_name or file_name,
+        doc_updated_at=nortpole_metadata.doc_updated_at or last_modified,
         metadata=custom_tags,
-        primary_owners=evolvxsi_metadata.primary_owners,
-        secondary_owners=evolvxsi_metadata.secondary_owners,
+        primary_owners=nortpole_metadata.primary_owners,
+        secondary_owners=nortpole_metadata.secondary_owners,
         source_mime_type=mime_type,
         source_size_bytes=size_bytes,
     )

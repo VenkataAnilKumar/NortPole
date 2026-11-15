@@ -17,7 +17,7 @@ import requests
 from pydantic import ValidationError
 
 from nortpole.access.models import ExternalAccess
-from nortpole.access.utils import build_domain_group_id, build_ext_group_name_for_evolvxsi
+from nortpole.access.utils import build_domain_group_id, build_ext_group_name_for_nortpole
 from nortpole.configs.constants import DocumentSource
 from nortpole.connectors.zoom.client import ZoomClient
 from nortpole.connectors.zoom.models import (
@@ -196,7 +196,7 @@ def resolve_recording_access(
         )
     groups = {build_domain_group_id(d) for d in grant.domains}
     if add_prefix:
-        groups = {build_ext_group_name_for_evolvxsi(g, DocumentSource.ZOOM) for g in groups}
+        groups = {build_ext_group_name_for_nortpole(g, DocumentSource.ZOOM) for g in groups}
 
     if not emails and not groups and not grant.public:
         raise ZoomAccessListUnavailable(

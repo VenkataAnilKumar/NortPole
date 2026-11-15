@@ -151,7 +151,7 @@ class S3PutKwargs(TypedDict):
 # Marks legacy objects this release writes. The object store already holds that
 # version or a newer one, so a later copy of MinIO into the object store must
 # never let a marked object replace an app write.
-DUAL_WRITE_METADATA_KEY = "evolvxsi-dual-write"
+DUAL_WRITE_METADATA_KEY = "nortpole-dual-write"
 
 
 def s3_error_code(e: ClientError) -> str | None:
@@ -164,12 +164,12 @@ def is_missing_object(e: ClientError) -> bool:
 
 # A failed legacy write leaves a marker at this prefix plus the key in the
 # object store, for a later copy of MinIO to replay the write into MinIO.
-LEGACY_OUT_OF_SYNC_PREFIX = "evolvxsi-legacy-out-of-sync/"
+LEGACY_OUT_OF_SYNC_PREFIX = "nortpole-legacy-out-of-sync/"
 
 
 # Retiring MinIO writes this object once MinIO holds nothing the object store
 # lacks, so running processes stop writing to MinIO without a restart.
-LEGACY_RETIRED_MARKER_KEY = "evolvxsi-legacy-minio-retired"
+LEGACY_RETIRED_MARKER_KEY = "nortpole-legacy-minio-retired"
 LEGACY_RETIRED_RECHECK_SECONDS = 60
 # Module level because a store is built per request. Two threads that check at
 # once both HEAD the marker, which is harmless, so the dict is unguarded.
@@ -654,7 +654,7 @@ class S3BackedFileStore(PresignableFileStore):
         self._aws_secret_access_key = aws_secret_access_key
         self._aws_region_name = aws_region_name or "us-east-2"
         self._s3_endpoint_url = s3_endpoint_url
-        self._s3_prefix = s3_prefix or "evolvxsi-files"
+        self._s3_prefix = s3_prefix or "nortpole-files"
         self._s3_verify_ssl = s3_verify_ssl
         self._legacy_endpoint_url = legacy_endpoint_url
         self._legacy_access_key_id = legacy_access_key_id

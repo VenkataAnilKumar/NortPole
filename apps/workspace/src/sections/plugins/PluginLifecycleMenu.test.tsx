@@ -59,7 +59,7 @@ const app: ExternalAppAdminResponse = {
   credential_placeholder_keys: [],
   actions: [],
   associated_skills: [],
-  is_evolvxsi_managed: false,
+  is_nortpole_managed: false,
   users_can_manage_policies: true,
 };
 beforeEach(() => {
@@ -112,7 +112,7 @@ test.each([false, true])(
       <PluginLifecycleMenu
         plugin={{
           kind: "external-app",
-          app: { ...app, is_evolvxsi_managed: managed },
+          app: { ...app, is_nortpole_managed: managed },
         }}
       />
     );

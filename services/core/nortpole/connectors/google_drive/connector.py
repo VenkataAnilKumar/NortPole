@@ -28,7 +28,7 @@ from nortpole.connectors.google_drive.doc_conversion import (
     PermissionSyncContext,
     build_slim_document,
     convert_drive_item_to_document,
-    evolvxsi_document_id_from_drive_file,
+    nortpole_document_id_from_drive_file,
 )
 from nortpole.connectors.google_drive.drive_access import (
     internal_principals_of,
@@ -173,7 +173,7 @@ def _candidate_document_ids_from_file_id(file_id: str) -> list[str]:
 
     candidates: list[str] = []
     for link in [*native_doc_links, uploaded_binary_link]:
-        doc_id = evolvxsi_document_id_from_drive_file({WEB_VIEW_LINK_KEY: link}).rstrip("/")
+        doc_id = nortpole_document_id_from_drive_file({WEB_VIEW_LINK_KEY: link}).rstrip("/")
         if doc_id not in candidates:
             candidates.append(doc_id)
     return candidates
@@ -474,7 +474,7 @@ class GoogleDriveConnector(
 
         # Best guess: keep the pasted URL's type if it has one; a ?id= link has none.
         if parse_qs(parsed.query).get("id"):
-            normalized = evolvxsi_document_id_from_drive_file(
+            normalized = nortpole_document_id_from_drive_file(
                 {
                     WEB_VIEW_LINK_KEY: _FALLBACK_BINARY_WEB_VIEW_LINK_TEMPLATE.format(
                         file_id
@@ -482,7 +482,7 @@ class GoogleDriveConnector(
                 }
             ).rstrip("/")
         else:
-            normalized = evolvxsi_document_id_from_drive_file(
+            normalized = nortpole_document_id_from_drive_file(
                 {WEB_VIEW_LINK_KEY: url, "id": file_id}
             ).rstrip("/")
         return NormalizationResult(
@@ -1817,7 +1817,7 @@ class GoogleDriveConnector(
                 continue
 
             try:
-                evolvxsi_document_id_from_drive_file(drive_file)
+                nortpole_document_id_from_drive_file(drive_file)
             except KeyError as exc:
                 logger.warning(
                     "Drive file missing id/webViewLink (stage=%s user=%s). Skipping.",

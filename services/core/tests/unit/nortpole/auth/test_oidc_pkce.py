@@ -16,7 +16,7 @@ from nortpole.auth.users import (
     get_oauth_router,
     get_pkce_cookie_name,
 )
-from nortpole.error_handling.exceptions import register_evolvxsi_exception_handlers
+from nortpole.error_handling.exceptions import register_nortpole_exception_handlers
 
 
 class _StubOAuthClient:
@@ -107,7 +107,7 @@ def _build_test_client(
     )
     app = FastAPI()
     app.include_router(router, prefix="/auth/oidc")
-    register_evolvxsi_exception_handlers(app)
+    register_nortpole_exception_handlers(app)
 
     client = TestClient(app, raise_server_exceptions=False)
     return client, oauth_client, user_manager

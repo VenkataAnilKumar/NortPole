@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 from nortpole.key_value_store.factory import get_kv_store
 from nortpole.key_value_store.interface import KvKeyNotFoundError
 
-KV_KEY = "evolvxsi_schedule_controls"
+KV_KEY = "nortpole_schedule_controls"
 
 
 class ScheduleControls(BaseModel):

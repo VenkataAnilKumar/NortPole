@@ -101,7 +101,7 @@ def server(request: pytest.FixtureRequest) -> Generator[_Capture, None, None]:
 def _send_raw_request(port: int, target: str) -> None:
     with socket.create_connection(("127.0.0.1", port), timeout=5) as sock:
         sock.sendall(
-            f"GET {target} HTTP/1.1\r\nHost: evolvxsi.test\r\nConnection: close\r\n\r\n".encode()
+            f"GET {target} HTTP/1.1\r\nHost: nortpole.test\r\nConnection: close\r\n\r\n".encode()
         )
         while sock.recv(4096):
             pass
@@ -124,12 +124,12 @@ def test_callback_query_values_are_dropped(
 
 def test_absolute_form_request_target_query_is_dropped(server: _Capture) -> None:
     _send_raw_request(
-        server.port, f"http://evolvxsi.test/auth/oidc/callback?code={SECRET_CODE}"
+        server.port, f"http://nortpole.test/auth/oidc/callback?code={SECRET_CODE}"
     )
 
     output = server.access.getvalue()
     assert SECRET_CODE not in output
-    assert "evolvxsi.test/auth/oidc/callback HTTP/1.1" in output
+    assert "nortpole.test/auth/oidc/callback HTTP/1.1" in output
 
 
 def test_saml_redirect_binding_response_is_dropped(server: _Capture) -> None:

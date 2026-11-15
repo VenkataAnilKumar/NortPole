@@ -8,7 +8,7 @@ import Attachment from "@/refresh-components/Attachment";
 import { InMessageImage } from "@/app/app/components/files/images/InMessageImage";
 import SpreadsheetContent from "@/components/tools/SpreadsheetContent";
 import PreviewModal from "@/sections/modals/PreviewModal";
-import { MinimalEvolvXSIDocument } from "@/lib/search/types";
+import { MinimalNortPoleDocument } from "@/lib/search/types";
 import ExpandableContentWrapper from "@/components/tools/ExpandableContentWrapper";
 
 interface FileContainerProps {
@@ -50,7 +50,7 @@ export default function FileDisplay({ files }: FileDisplayProps) {
 
   // Stable per file: PreviewModal refetches when this object changes, which
   // would reload the closing card on every rerender.
-  const presentingDocument = useMemo<MinimalEvolvXSIDocument>(
+  const presentingDocument = useMemo<MinimalNortPoleDocument>(
     () => ({
       document_id: previewingFile?.id ?? "",
       semantic_identifier: previewingFile?.name ?? "",
@@ -70,7 +70,7 @@ export default function FileDisplay({ files }: FileDisplayProps) {
       </previewModal.Provider>
 
       {textFiles.length > 0 && (
-        <FileContainer id="evolvxsi-file">
+        <FileContainer id="nortpole-file">
           {textFiles.map((file) => (
             <Attachment
               key={file.id}
@@ -85,7 +85,7 @@ export default function FileDisplay({ files }: FileDisplayProps) {
       )}
 
       {imageFiles.length > 0 && (
-        <FileContainer id="evolvxsi-image">
+        <FileContainer id="nortpole-image">
           {imageFiles.map((file) => (
             <InMessageImage key={file.id} fileId={file.id} />
           ))}

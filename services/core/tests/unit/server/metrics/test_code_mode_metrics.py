@@ -24,16 +24,16 @@ def test_the_pool_sets_every_limit_gauge(monkeypatch: pytest.MonkeyPatch) -> Non
     monkeypatch.setattr(sandbox, "_pool", None)
     with patch.object(sandbox, "Monty"):
         sandbox.sandbox_pool()
-    assert _value("evolvxsi_code_mode_sandbox_workers_limit") == (
+    assert _value("nortpole_code_mode_sandbox_workers_limit") == (
         sandbox.MAX_SANDBOX_PROCESSES
     )
-    assert _value("evolvxsi_code_mode_suspended_bytes_limit") == (
+    assert _value("nortpole_code_mode_suspended_bytes_limit") == (
         sandbox.MAX_SUSPENDED_BYTES
     )
-    assert _value("evolvxsi_code_mode_tool_call_threads_limit") == (
+    assert _value("nortpole_code_mode_tool_call_threads_limit") == (
         sandbox.MAX_TOOL_CALL_THREADS
     )
-    assert _value("evolvxsi_code_mode_cells_limit") == sandbox.MAX_RUNNING_CELLS
+    assert _value("nortpole_code_mode_cells_limit") == sandbox.MAX_RUNNING_CELLS
 
 
 def test_program_duration_buckets_resolve_seconds_near_the_typical_p95() -> None:

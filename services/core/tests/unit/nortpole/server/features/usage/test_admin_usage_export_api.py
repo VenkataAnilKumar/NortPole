@@ -28,7 +28,7 @@ from nortpole.db.enums import (
 )
 from nortpole.db.models import UserUsage
 from nortpole.db.user_usage import UsageExportRow, get_usage_export
-from nortpole.error_handling.exceptions import register_evolvxsi_exception_handlers
+from nortpole.error_handling.exceptions import register_nortpole_exception_handlers
 from nortpole.server.features.usage.api import admin_usage_router
 from nortpole.server.features.usage.models import ResetUsageResponse
 
@@ -92,7 +92,7 @@ def _add_user(db_session: Session, email: str) -> str:
 
 def _make_app(db_session: Session, user: _StubUser) -> FastAPI:
     app = FastAPI()
-    register_evolvxsi_exception_handlers(app)
+    register_nortpole_exception_handlers(app)
     app.include_router(admin_usage_router)
     app.dependency_overrides[get_session] = lambda: db_session
     app.dependency_overrides[current_user] = lambda: user

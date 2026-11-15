@@ -42,45 +42,45 @@ def _graphql(query: str) -> bytes:
         # REST routes resolve unchanged.
         ("GET", "/user", {GitHubAction.USER_READ}),
         ("GET", "/user/repos", {GitHubAction.REPOS_READ}),
-        ("GET", "/repos/evolvxsi/evolvxsi", {GitHubAction.REPOS_READ}),
-        ("GET", "/repos/evolvxsi/evolvxsi/issues", {GitHubAction.ISSUES_READ}),
-        ("GET", "/repos/evolvxsi/evolvxsi/issues/12", {GitHubAction.ISSUES_READ}),
-        ("GET", "/repos/evolvxsi/evolvxsi/pulls", {GitHubAction.PULLS_READ}),
+        ("GET", "/repos/nortpole/nortpole", {GitHubAction.REPOS_READ}),
+        ("GET", "/repos/nortpole/nortpole/issues", {GitHubAction.ISSUES_READ}),
+        ("GET", "/repos/nortpole/nortpole/issues/12", {GitHubAction.ISSUES_READ}),
+        ("GET", "/repos/nortpole/nortpole/pulls", {GitHubAction.PULLS_READ}),
         ("GET", "/search/issues", {GitHubAction.SEARCH_READ}),
-        ("POST", "/repos/evolvxsi/evolvxsi/issues", {GitHubAction.ISSUES_CREATE}),
+        ("POST", "/repos/nortpole/nortpole/issues", {GitHubAction.ISSUES_CREATE}),
         (
             "POST",
-            "/repos/evolvxsi/evolvxsi/issues/12/comments",
+            "/repos/nortpole/nortpole/issues/12/comments",
             {GitHubAction.COMMENTS_CREATE},
         ),
         # Git data + repo content surface (the gh / API-driven workflows).
-        ("GET", "/repos/evolvxsi/evolvxsi/branches", {GitHubAction.REFS_READ}),
+        ("GET", "/repos/nortpole/nortpole/branches", {GitHubAction.REFS_READ}),
         # Slash-bearing ref / branch names via the trailing wildcard.
-        ("GET", "/repos/evolvxsi/evolvxsi/branches/feature/x", {GitHubAction.REFS_READ}),
-        ("GET", "/repos/evolvxsi/evolvxsi/git/ref/heads/main", {GitHubAction.REFS_READ}),
+        ("GET", "/repos/nortpole/nortpole/branches/feature/x", {GitHubAction.REFS_READ}),
+        ("GET", "/repos/nortpole/nortpole/git/ref/heads/main", {GitHubAction.REFS_READ}),
         (
             "GET",
-            "/repos/evolvxsi/evolvxsi/contents/backend/nortpole/main.py",
+            "/repos/nortpole/nortpole/contents/backend/nortpole/main.py",
             {GitHubAction.CONTENTS_READ},
         ),
-        ("GET", "/repos/evolvxsi/evolvxsi/git/trees/abc123", {GitHubAction.GIT_DATA_READ}),
-        ("GET", "/repos/evolvxsi/evolvxsi/commits", {GitHubAction.GIT_DATA_READ}),
-        ("GET", "/repos/evolvxsi/evolvxsi/commits/abc123", {GitHubAction.GIT_DATA_READ}),
-        ("GET", "/repos/evolvxsi/evolvxsi/releases", {GitHubAction.RELEASES_READ}),
-        ("GET", "/repos/evolvxsi/evolvxsi/releases/latest", {GitHubAction.RELEASES_READ}),
+        ("GET", "/repos/nortpole/nortpole/git/trees/abc123", {GitHubAction.GIT_DATA_READ}),
+        ("GET", "/repos/nortpole/nortpole/commits", {GitHubAction.GIT_DATA_READ}),
+        ("GET", "/repos/nortpole/nortpole/commits/abc123", {GitHubAction.GIT_DATA_READ}),
+        ("GET", "/repos/nortpole/nortpole/releases", {GitHubAction.RELEASES_READ}),
+        ("GET", "/repos/nortpole/nortpole/releases/latest", {GitHubAction.RELEASES_READ}),
         # Writes.
         (
             "PUT",
-            "/repos/evolvxsi/evolvxsi/contents/backend/nortpole/main.py",
+            "/repos/nortpole/nortpole/contents/backend/nortpole/main.py",
             {GitHubAction.CONTENTS_WRITE},
         ),
         (
             "DELETE",
-            "/repos/evolvxsi/evolvxsi/contents/backend/nortpole/main.py",
+            "/repos/nortpole/nortpole/contents/backend/nortpole/main.py",
             {GitHubAction.CONTENTS_WRITE},
         ),
-        ("POST", "/repos/evolvxsi/evolvxsi/git/refs", {GitHubAction.REFS_WRITE}),
-        ("POST", "/repos/evolvxsi/evolvxsi/pulls", {GitHubAction.PULLS_CREATE}),
+        ("POST", "/repos/nortpole/nortpole/git/refs", {GitHubAction.REFS_WRITE}),
+        ("POST", "/repos/nortpole/nortpole/pulls", {GitHubAction.PULLS_CREATE}),
     ],
 )
 def test_rest_route_resolves_to_exactly_one_action(
@@ -101,7 +101,7 @@ def test_rest_route_resolves_to_exactly_one_action(
             {GitHubAction.REPO_GRAPHQL_READ},
         ),
         (
-            'query { repository(owner:"evolvxsi", name:"evolvxsi")'
+            'query { repository(owner:"nortpole", name:"nortpole")'
             " { issue(number:12) { title } } }",
             {GitHubAction.REPO_GRAPHQL_READ},
         ),
@@ -123,7 +123,7 @@ def test_rest_route_resolves_to_exactly_one_action(
         ),
         # `gh repo list OWNER` reads via `repositoryOwner`.
         (
-            'query { repositoryOwner(login:"evolvxsi") { login } }',
+            'query { repositoryOwner(login:"nortpole") { login } }',
             {GitHubAction.REPO_GRAPHQL_READ},
         ),
         # `gh pr create` may use the `createPullRequest` mutation.
@@ -142,7 +142,7 @@ def test_graphql_op_resolves_to_exactly_one_action(
 def test_uncatalogued_graphql_op_matches_nothing() -> None:
     """A root field outside the catalog matches no action — the proxy then falls
     back to the whole-domain ASK gate rather than injecting under a catalog action."""
-    query = 'query { organization(login:"evolvxsi") { login } }'
+    query = 'query { organization(login:"nortpole") { login } }'
     assert _matching_actions("POST", "/graphql", _graphql(query)) == set()
 
 

@@ -309,7 +309,7 @@
       "type": "object"
     }
   },
-  "$id": "https://evolvxsi.local/contracts/pack-manifest.schema.json",
+  "$id": "https://nortpole.local/contracts/pack-manifest.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "properties": {

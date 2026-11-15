@@ -39,31 +39,31 @@ logger = setup_logger()
 # --- Pool lifecycle counters (event-driven) ---
 
 _checkout_total = Counter(
-    "evolvxsi_db_pool_checkout_total",
+    "nortpole_db_pool_checkout_total",
     "Total connection checkouts from the pool",
     ["engine"],
 )
 
 _checkin_total = Counter(
-    "evolvxsi_db_pool_checkin_total",
+    "nortpole_db_pool_checkin_total",
     "Total connection checkins to the pool",
     ["engine"],
 )
 
 _connections_created_total = Counter(
-    "evolvxsi_db_pool_connections_created_total",
+    "nortpole_db_pool_connections_created_total",
     "Total new database connections created",
     ["engine"],
 )
 
 _invalidations_total = Counter(
-    "evolvxsi_db_pool_invalidations_total",
+    "nortpole_db_pool_invalidations_total",
     "Total connection invalidations",
     ["engine"],
 )
 
 _checkout_timeout_total = Counter(
-    "evolvxsi_db_pool_checkout_timeout_total",
+    "nortpole_db_pool_checkout_timeout_total",
     "Total connection checkout timeouts",
     ["engine"],
 )
@@ -75,13 +75,13 @@ _checkout_timeout_total.labels(engine=_TIMEOUT_ENGINE_LABEL)
 # --- Per-endpoint attribution (event-driven) ---
 
 _connections_held = Gauge(
-    "evolvxsi_db_connections_held_by_endpoint",
+    "nortpole_db_connections_held_by_endpoint",
     "Number of DB connections currently held, by endpoint and engine",
     ["handler", "engine", "tenant_id"],
 )
 
 _hold_seconds = Histogram(
-    "evolvxsi_db_connection_hold_seconds",
+    "nortpole_db_connection_hold_seconds",
     "Duration a DB connection is held by an endpoint",
     ["handler", "engine"],
 )
@@ -123,22 +123,22 @@ class PoolStateCollector(Collector):
 
     def collect(self) -> list[GaugeMetricFamily]:
         checked_out = GaugeMetricFamily(
-            "evolvxsi_db_pool_checked_out",
+            "nortpole_db_pool_checked_out",
             "Currently checked-out connections",
             labels=["engine"],
         )
         checked_in = GaugeMetricFamily(
-            "evolvxsi_db_pool_checked_in",
+            "nortpole_db_pool_checked_in",
             "Idle connections available in the pool",
             labels=["engine"],
         )
         overflow = GaugeMetricFamily(
-            "evolvxsi_db_pool_overflow",
+            "nortpole_db_pool_overflow",
             "Current overflow connections beyond pool_size",
             labels=["engine"],
         )
         size = GaugeMetricFamily(
-            "evolvxsi_db_pool_size",
+            "nortpole_db_pool_size",
             "Configured pool size",
             labels=["engine"],
         )

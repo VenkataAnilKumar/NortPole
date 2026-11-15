@@ -38,7 +38,7 @@ from nortpole.sandbox_proxy.request_evaluator import (
 )
 from nortpole.sandbox_proxy.resolvers.external_app import ExternalAppResolver
 from nortpole.sandbox_proxy.resolvers.mcp_server import MCPServerResolver
-from nortpole.sandbox_proxy.resolvers.evolvxsi_pat import NortPolePatResolver
+from nortpole.sandbox_proxy.resolvers.nortpole_pat import NortPolePatResolver
 from nortpole.sandbox_proxy.sandbox_identity.resolution import (
     IdentityResolver,
     SandboxIPLookup,

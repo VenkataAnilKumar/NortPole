@@ -78,13 +78,13 @@ ENV_TEMPLATES = [
     REPO_ROOT / "deployment" / "docker_compose" / "env.template",
     REPO_ROOT / "deployment" / "docker_compose" / "env.prod.template",
 ]
-HELM_VALUES = REPO_ROOT / "deployment" / "helm" / "charts" / "evolvxsi" / "values.yaml"
+HELM_VALUES = REPO_ROOT / "deployment" / "helm" / "charts" / "nortpole" / "values.yaml"
 HELM_CONFIGMAP = (
     REPO_ROOT
     / "deployment"
     / "helm"
     / "charts"
-    / "evolvxsi"
+    / "nortpole"
     / "templates"
     / "configmap.yaml"
 )
@@ -656,7 +656,7 @@ def human_report(reads: list[EnvRead], drift_only: bool = False) -> None:
         multi_type = {n: s.types for n, s in summaries.items() if len(s.types) > 1}
 
         print("=" * 78)
-        print("EVOLVXSI BACKEND ENV-VAR INVENTORY")
+        print("NORTPOLE BACKEND ENV-VAR INVENTORY")
         print("=" * 78)
         print(f"Distinct env vars read in code : {len(code_names)}")
         print(f"Total read sites               : {total_reads}")
@@ -917,7 +917,7 @@ def main() -> int:
                 print(f"    + {n}", file=sys.stderr)
             print(
                 "  → Document each in deployment/docker_compose/env.template and "
-                "deployment/helm/charts/evolvxsi/values.yaml,\n"
+                "deployment/helm/charts/nortpole/values.yaml,\n"
                 "    or (if intentionally left undocumented) regenerate the baseline.",
                 file=sys.stderr,
             )

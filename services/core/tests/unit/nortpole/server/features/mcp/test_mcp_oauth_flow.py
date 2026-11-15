@@ -30,7 +30,7 @@ from nortpole.server.features.mcp.models import (
 
 _AUTHORIZATION_URL = "https://accounts.example.com/authorize"
 _TOKEN_URL = "https://accounts.example.com/token"
-_REDIRECT_URI = "https://evolvxsi.example.com/mcp/oauth/callback"
+_REDIRECT_URI = "https://nortpole.example.com/mcp/oauth/callback"
 
 
 def _client_information(client_id: str = "client-id") -> OAuthClientInformationFull:
@@ -584,7 +584,7 @@ def test_reverse_order_completions_restore_their_own_registration(
     )
 
 
-_CIMD_CLIENT_ID = "https://evolvxsi.example.com/api/mcp/oauth/client-metadata"
+_CIMD_CLIENT_ID = "https://nortpole.example.com/api/mcp/oauth/client-metadata"
 
 
 def _install_cimd_challenge(monkeypatch: pytest.MonkeyPatch) -> MagicMock:

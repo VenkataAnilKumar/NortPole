@@ -349,7 +349,7 @@ def test_rewrite_custom_bundle_skill_md_preserves_other_frontmatter() -> None:
                 b"license: Apache-2.0\n"
                 b"compatibility: Requires git\n"
                 b"metadata:\n"
-                b"  author: evolvxsi\n"
+                b"  author: nortpole\n"
                 b"allowed-tools: Read\n"
                 b"x-custom: preserved\n"
                 b"---\n\nOld instructions.\n",
@@ -368,7 +368,7 @@ def test_rewrite_custom_bundle_skill_md_preserves_other_frontmatter() -> None:
         skill_md = zf.read("SKILL.md").decode()
     assert "license: Apache-2.0" in skill_md
     assert "compatibility: Requires git" in skill_md
-    assert "author: evolvxsi" in skill_md
+    assert "author: nortpole" in skill_md
     assert "allowed-tools: Read" in skill_md
     assert "x-custom: preserved" in skill_md
 

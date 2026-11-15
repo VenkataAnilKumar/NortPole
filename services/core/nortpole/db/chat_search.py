@@ -32,7 +32,7 @@ def search_chat_sessions(
     if not query or not query.strip():
         stmt = (
             select(ChatSession)
-            .where(ChatSession.evolvxsibot_flow.is_(False))
+            .where(ChatSession.nortpolebot_flow.is_(False))
             .where(ChatSession.spawned_by_message_id.is_(None))
             .where(ChatSession.incognito_record_mode.is_(None))
             .order_by(desc(ChatSession.time_created))
@@ -59,7 +59,7 @@ def search_chat_sessions(
     # Applied to both arms of the union, so an incognito session cannot surface
     # through a message body when its description does not match.
     base_conditions: list[ColumnElement[bool]] = [
-        ChatSession.evolvxsibot_flow.is_(False),
+        ChatSession.nortpolebot_flow.is_(False),
         ChatSession.spawned_by_message_id.is_(None),
         ChatSession.incognito_record_mode.is_(None),
     ]

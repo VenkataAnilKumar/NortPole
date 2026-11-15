@@ -2,7 +2,7 @@
 
 `is_craft_enabled_for_user` decides whether a user sees Craft. The decision
 collapses two inputs: the `ENABLE_CRAFT` env var (used when no real feature
-flag provider is configured) and the PostHog `evolvxsi-craft-enabled` flag
+flag provider is configured) and the PostHog `nortpole-craft-enabled` flag
 (used otherwise). These tests pin the precedence: PostHog wins when present,
 env is the fallback when no provider is wired up.
 """
@@ -205,7 +205,7 @@ def test_posthog_flag_overrides_env(monkeypatch: pytest.MonkeyPatch) -> None:
     # The provider was consulted with the craft-enabled flag key for this user.
     assert provider.calls == [
         (
-            "evolvxsi-craft-enabled",
+            "nortpole-craft-enabled",
             user.id,
             {"tenant_id": "tenant_dev", "email": "user@tenant-dev.example"},
         )
@@ -225,7 +225,7 @@ def test_posthog_flag_disables_when_false(monkeypatch: pytest.MonkeyPatch) -> No
     assert is_craft_enabled_for_user(user) is False
     assert provider.calls == [
         (
-            "evolvxsi-craft-enabled",
+            "nortpole-craft-enabled",
             user.id,
             {"tenant_id": "tenant_other", "email": "user@tenant-dev.example"},
         )

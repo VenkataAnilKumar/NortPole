@@ -28,32 +28,32 @@ def _health_response() -> MagicMock:
 
 def test_missing_api_prefix_raises_with_corrected_url() -> None:
     def fake_get(url: str, **_: object) -> MagicMock:
-        if url == "https://evolvxsi.example/health":
+        if url == "https://nortpole.example/health":
             return _response(404)
-        assert url == "https://evolvxsi.example/api/health"
+        assert url == "https://nortpole.example/api/health"
         return _health_response()
 
     with patch.object(api_url_check.httpx, "get", side_effect=fake_get):
         with pytest.raises(NortPoleError) as exc_info:
-            api_url_check.validate_sandbox_api_url("https://evolvxsi.example")
+            api_url_check.validate_sandbox_api_url("https://nortpole.example")
 
-    assert "'https://evolvxsi.example/api'" in str(exc_info.value)
+    assert "'https://nortpole.example/api'" in str(exc_info.value)
 
 
 def test_redirected_web_page_does_not_mask_missing_prefix() -> None:
     # An ingress that redirects the unprefixed /health to a login page still
     # answers 200 — the body, not the status, proves it isn't the API.
     def fake_get(url: str, **_: object) -> MagicMock:
-        if url == "https://evolvxsi.example/health":
+        if url == "https://nortpole.example/health":
             return _response(200, json_body=None)  # HTML login page
-        assert url == "https://evolvxsi.example/api/health"
+        assert url == "https://nortpole.example/api/health"
         return _health_response()
 
     with patch.object(api_url_check.httpx, "get", side_effect=fake_get):
         with pytest.raises(NortPoleError) as exc_info:
-            api_url_check.validate_sandbox_api_url("https://evolvxsi.example")
+            api_url_check.validate_sandbox_api_url("https://nortpole.example")
 
-    assert "'https://evolvxsi.example/api'" in str(exc_info.value)
+    assert "'https://nortpole.example/api'" in str(exc_info.value)
 
 
 def test_reachable_url_passes_and_caches() -> None:
@@ -68,7 +68,7 @@ def test_reachable_url_passes_and_caches() -> None:
 
 def test_auth_guarded_health_counts_as_reachable() -> None:
     with patch.object(api_url_check.httpx, "get", return_value=_response(403)):
-        api_url_check.validate_sandbox_api_url("https://evolvxsi.example/api")
+        api_url_check.validate_sandbox_api_url("https://nortpole.example/api")
 
 
 def test_unreachable_probe_never_blocks() -> None:
@@ -77,12 +77,12 @@ def test_unreachable_probe_never_blocks() -> None:
         "get",
         side_effect=httpx.ConnectError("egress blocked"),
     ):
-        api_url_check.validate_sandbox_api_url("https://evolvxsi.example/api")
+        api_url_check.validate_sandbox_api_url("https://nortpole.example/api")
 
 
 def test_double_404_warns_without_raising() -> None:
     with patch.object(api_url_check.httpx, "get", return_value=_response(404)):
-        api_url_check.validate_sandbox_api_url("https://evolvxsi.example")
+        api_url_check.validate_sandbox_api_url("https://nortpole.example")
 
 
 def test_spa_catch_all_on_both_paths_warns_without_raising() -> None:
@@ -91,7 +91,7 @@ def test_spa_catch_all_on_both_paths_warns_without_raising() -> None:
     with patch.object(
         api_url_check.httpx, "get", return_value=_response(200, json_body=None)
     ):
-        api_url_check.validate_sandbox_api_url("https://evolvxsi.example")
+        api_url_check.validate_sandbox_api_url("https://nortpole.example")
 
 
 def test_unreachable_probe_latches_and_does_not_reprobe() -> None:
@@ -103,15 +103,15 @@ def test_unreachable_probe_latches_and_does_not_reprobe() -> None:
         "get",
         side_effect=httpx.ConnectError("egress blocked"),
     ) as probe:
-        api_url_check.validate_sandbox_api_url("https://evolvxsi.example/api")
-        api_url_check.validate_sandbox_api_url("https://evolvxsi.example/api")
+        api_url_check.validate_sandbox_api_url("https://nortpole.example/api")
+        api_url_check.validate_sandbox_api_url("https://nortpole.example/api")
 
     probe.assert_called_once()
 
 
 def test_double_404_latches_and_does_not_reprobe() -> None:
     with patch.object(api_url_check.httpx, "get", return_value=_response(404)) as probe:
-        api_url_check.validate_sandbox_api_url("https://evolvxsi.example")
-        api_url_check.validate_sandbox_api_url("https://evolvxsi.example")
+        api_url_check.validate_sandbox_api_url("https://nortpole.example")
+        api_url_check.validate_sandbox_api_url("https://nortpole.example")
 
     assert probe.call_count == 2

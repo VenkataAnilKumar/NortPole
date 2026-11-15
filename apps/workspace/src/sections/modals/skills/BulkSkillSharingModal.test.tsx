@@ -14,8 +14,8 @@ jest.mock("@/hooks/useShareableUsers", () => ({
   __esModule: true,
   default: () => ({
     data: [
-      { id: "user-1", email: "subash@evolvxsi.local" },
-      { id: "user-2", email: "thomas@evolvxsi.local" },
+      { id: "user-1", email: "subash@nortpole.local" },
+      { id: "user-2", email: "thomas@nortpole.local" },
     ],
   }),
 }));
@@ -101,10 +101,10 @@ describe("BulkSkillSharingModal", () => {
     });
     await user.type(search, "sub");
     expect(
-      screen.queryByRole("option", { name: /thomas@evolvxsi\.app/ })
+      screen.queryByRole("option", { name: /thomas@nortpole\.app/ })
     ).not.toBeInTheDocument();
     fireEvent.click(
-      await screen.findByRole("option", { name: /subash@evolvxsi\.app/ })
+      await screen.findByRole("option", { name: /subash@nortpole\.app/ })
     );
     expect(search).toHaveValue("");
     await user.type(search, "cash");

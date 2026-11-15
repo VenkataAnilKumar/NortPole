@@ -155,7 +155,7 @@ def test_bulk_invite_emits_user_create(
 ) -> None:
     admin = MagicMock(id="admin-1", email="admin@example.com")
 
-    with caplog.at_level(logging.INFO, logger="evolvxsi.audit"):
+    with caplog.at_level(logging.INFO, logger="nortpole.audit"):
         bulk_invite_users(emails=["new@example.com"], current_user=admin)
 
     events = audit_events(caplog)
@@ -187,7 +187,7 @@ def test_bulk_invite_reinvite_emits_nothing(
     caplog: pytest.LogCaptureFixture,
 ) -> None:
     # Re-inviting an already-invited email provisions no new access -> no event.
-    with caplog.at_level(logging.INFO, logger="evolvxsi.audit"):
+    with caplog.at_level(logging.INFO, logger="nortpole.audit"):
         bulk_invite_users(emails=["known@example.com"], current_user=MagicMock())
 
     assert audit_events(caplog) == []

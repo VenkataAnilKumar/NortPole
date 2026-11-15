@@ -217,13 +217,13 @@ export default function MCPServerDetailsPage({
     if (values.description !== baseline.description)
       payload.description = values.description;
     if (
-      settings.evolvxsi_craft_available === true &&
+      settings.nortpole_craft_available === true &&
       values.users_can_manage_policies !== baseline.users_can_manage_policies
     ) {
       payload.users_can_manage_policies = values.users_can_manage_policies;
     }
     if (
-      settings.evolvxsi_craft_available === true &&
+      settings.nortpole_craft_available === true &&
       values.available_in_craft !== baseline.available_in_craft
     ) {
       payload.available_in_craft = values.available_in_craft;
@@ -446,7 +446,7 @@ export default function MCPServerDetailsPage({
                   }
                 />
               )}
-              {settings.evolvxsi_craft_available === true && (
+              {settings.nortpole_craft_available === true && (
                 <PluginAvailabilitySwitch
                   surface="mcp-craft"
                   enabled={formikProps.values.available_in_craft === true}
@@ -456,7 +456,7 @@ export default function MCPServerDetailsPage({
                   disabled={readOnly || isSubmitting}
                 />
               )}
-              {settings.evolvxsi_craft_available === true && (
+              {settings.nortpole_craft_available === true && (
                 <UserManagementSwitch
                   value={formikProps.values.users_can_manage_policies}
                   onChange={(value) =>

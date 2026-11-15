@@ -38,7 +38,7 @@ from nortpole.utils.logger import setup_logger
 logger = setup_logger()
 
 
-def require_evolvxsi_craft_enabled(
+def require_nortpole_craft_enabled(
     user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
 ) -> User:
     if not is_craft_enabled_for_user(user):
@@ -49,7 +49,7 @@ def require_evolvxsi_craft_enabled(
     return user
 
 
-router = APIRouter(prefix="/build", dependencies=[Depends(require_evolvxsi_craft_enabled)])
+router = APIRouter(prefix="/build", dependencies=[Depends(require_nortpole_craft_enabled)])
 
 # Admin-only Craft endpoints. Deliberately NOT behind the craft-enabled-for-user
 # gate: an admin configuring Craft may not have Craft enabled for themselves.

@@ -140,7 +140,7 @@ beforeEach(() => {
       return json({
         tier: Tier.BUSINESS,
         ee_features_enabled: true,
-        evolvxsi_craft_available: craftAvailable,
+        nortpole_craft_available: craftAvailable,
       });
     if (path === "/api/enterprise-settings") return json({});
     if (path === "/api/manage/admin/user-group?include_users=false")

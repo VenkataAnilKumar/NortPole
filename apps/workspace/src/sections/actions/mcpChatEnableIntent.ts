@@ -1,6 +1,6 @@
 import * as yup from "yup";
 
-const storageKey = "evolvxsi:mcp-chat-enable";
+const storageKey = "nortpole:mcp-chat-enable";
 const lifetimeMs = 5 * 60 * 1000;
 const intentSchema = yup
   .object({

@@ -8,7 +8,7 @@ import React, {
   useRef,
 } from "react";
 import { Message } from "@/app/app/types";
-import { NortPoleDocument, MinimalEvolvXSIDocument } from "@/lib/search/types";
+import { NortPoleDocument, MinimalNortPoleDocument } from "@/lib/search/types";
 import HumanMessage from "@/app/app/message/HumanMessage";
 import { ErrorBanner } from "@/app/app/message/Resubmit";
 import { MinimalAgent } from "@/lib/agents/types";
@@ -58,7 +58,7 @@ export const FULL_WIDTH_TRANSITION =
 export interface ChatUIProps {
   activeAgent: MinimalAgent;
   llmManager: LlmManager;
-  setPresentingDocument: (doc: MinimalEvolvXSIDocument | null) => void;
+  setPresentingDocument: (doc: MinimalNortPoleDocument | null) => void;
   onMessageSelection: (nodeId: number) => void;
   stopGenerating: () => void;
 

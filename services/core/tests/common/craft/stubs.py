@@ -299,7 +299,7 @@ class StubSandboxManager(SandboxManager):
         sandbox_id: UUID,
         user_id: UUID,
         tenant_id: str,
-        evolvxsi_pat: str | None,
+        nortpole_pat: str | None,
         provisioning_attempt_number: int,
     ) -> SandboxInfo:
         self.provision_count += 1
@@ -307,7 +307,7 @@ class StubSandboxManager(SandboxManager):
             "sandbox_id": sandbox_id,
             "user_id": user_id,
             "tenant_id": tenant_id,
-            "evolvxsi_pat": evolvxsi_pat,
+            "nortpole_pat": nortpole_pat,
             "provisioning_attempt_number": provisioning_attempt_number,
         }
         if self.provision_returns is None:

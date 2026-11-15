@@ -45,7 +45,7 @@ def world():  # type: ignore[no-untyped-def]
         s.query(NortPolePackVersion).filter_by(pack_id=f"src-pack-{TAG}").delete()
         s.query(Tool).filter_by(id=ids["tool"]).delete()
         s.query(MCPServer).filter_by(id=ids["server"]).delete()
-        s.execute(text("delete from evolvxsi_audit_event where actor_email like :p and row_hash is null"), {"p": f"src-%-{TAG}@example.com"})
+        s.execute(text("delete from nortpole_audit_event where actor_email like :p and row_hash is null"), {"p": f"src-%-{TAG}@example.com"})
         s.query(Notification).filter(Notification.user_id.in_([ids["ann"], ids["bob"], ids["admin"]])).delete(synchronize_session=False)
         s.query(User).filter(User.id.in_([ids["ann"], ids["bob"], ids["admin"]])).delete(synchronize_session=False)
         s.commit()
@@ -95,7 +95,7 @@ def test_one_waiting_request_per_item_then_withdraw_and_decide(world) -> None:  
         assert told[0].title == f"Your request for src_tool_{TAG} was approved" and "Approving; will set it up" in (told[0].description or "")
         assert not s.query(Notification).filter_by(user_id=bob.id).count(), "only the requester is told"
 
-        rows = s.execute(text("select action, details::text from evolvxsi_audit_event where actor_email in (:a, :b) order by id"),
+        rows = s.execute(text("select action, details::text from nortpole_audit_event where actor_email in (:a, :b) order by id"),
                          {"a": ann.email, "b": admin.email}).all()
         actions = [a for a, _ in rows]
         assert actions.count("source.request") == 3 and actions.count("source.request_decide") == 1

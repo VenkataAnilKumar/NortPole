@@ -571,7 +571,7 @@ class WebConnector(LoadConnector, SlimConnector):
                     # a body (e.g. pure XML, some SPAs mid-navigation). That
                     # surfaces as "Page.evaluate: TypeError: Cannot read
                     # properties of null (reading 'scrollHeight')"
-                    # (EVOLVXSI-BACKEND-H6G5). Skip auto-scroll in that case and
+                    # (NORTPOLE-BACKEND-H6G5). Skip auto-scroll in that case and
                     # fall back to whatever content the initial load gave us.
                     scroll_attempts = 0
                     previous_height = page.evaluate("document.body.scrollHeight")

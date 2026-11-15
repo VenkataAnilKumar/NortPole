@@ -53,7 +53,7 @@ def admin():  # type: ignore[no-untyped-def]
                 store.delete(studio.KEY_KV)
         elif signer is not None:
             signer.revoked = revoked_before
-        s.execute(text("delete from evolvxsi_audit_event where actor_email = :e and row_hash is null"), {"e": f"studio-{TAG}@example.com"})
+        s.execute(text("delete from nortpole_audit_event where actor_email = :e and row_hash is null"), {"e": f"studio-{TAG}@example.com"})
         s.query(User).filter_by(id=uid).delete()
         s.commit()
 
@@ -95,7 +95,7 @@ def test_publishing_signs_with_the_workspace_key_and_installs_inactive(admin) ->
             studio.publish(PACK, user=u, db_session=s)  # the same version again
         studio.save_draft(PACK, studio.Draft(manifest=_draft("1.1.0")), _=None)
         assert studio.publish(PACK, user=u, db_session=s).version == "1.1.0", "a new version is signed with the same key"
-        n = s.execute(text("select count(*) from evolvxsi_audit_event where action='pack.install' and actor_email=:e"), {"e": u.email}).scalar()
+        n = s.execute(text("select count(*) from nortpole_audit_event where action='pack.install' and actor_email=:e"), {"e": u.email}).scalar()
         assert n >= 2
 
 

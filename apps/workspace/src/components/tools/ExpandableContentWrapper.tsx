@@ -7,7 +7,7 @@ import { Button, Text } from "@opal/components";
 import { FileDescriptor } from "@/app/app/types";
 import { cn } from "@opal/utils";
 import PreviewModal from "@/sections/modals/PreviewModal";
-import { MinimalEvolvXSIDocument } from "@/lib/search/types";
+import { MinimalNortPoleDocument } from "@/lib/search/types";
 
 export interface ExpandableContentWrapperProps {
   fileDescriptor: FileDescriptor;
@@ -92,7 +92,7 @@ export default function ExpandableContentWrapper({
     </div>
   );
 
-  const presentingDocument: MinimalEvolvXSIDocument = {
+  const presentingDocument: MinimalNortPoleDocument = {
     document_id: fileDescriptor.id,
     semantic_identifier: fileDescriptor.name ?? null,
   };

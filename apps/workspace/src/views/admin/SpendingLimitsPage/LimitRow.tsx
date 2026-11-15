@@ -492,7 +492,7 @@ export default function LimitRow({
               : t("row.whenReached.blockAll.description")
           }
         >
-          {/* TODO(evan-evolvxsi): add the alert-only option once notifications ship. */}
+          {/* TODO(evan-nortpole): add the alert-only option once notifications ship. */}
           <InputSingleSelect
             value={LimitAction.BLOCK}
             placeholder={t("row.whenReached.title")}

@@ -18,22 +18,22 @@ from nortpole.file_store.file_store import PresignedUrlsNotSupportedError
 from nortpole.file_store.gcs_file_store import GCSBackedFileStore
 from nortpole.file_store.models import PendingPresignedUpload
 
-SERVICE_ACCOUNT = "evolvxsi@project.iam.gserviceaccount.com"
+SERVICE_ACCOUNT = "nortpole@project.iam.gserviceaccount.com"
 SIGNATURE = b"signed-by-iam"
 PENDING = PendingPresignedUpload(
     file_id="file-1",
     display_name="snapshot.tar",
     file_origin=FileOrigin.OTHER,
     file_type="application/x-tar",
-    bucket_name="evolvxsi-bucket",
-    object_key="evolvxsi-files/public/file-1",
+    bucket_name="nortpole-bucket",
+    object_key="nortpole-files/public/file-1",
     size=24,
     sha256="0" * 64,
 )
 
 
 def _store_with(credentials: Credentials) -> GCSBackedFileStore:
-    store = GCSBackedFileStore(bucket_name="evolvxsi-bucket")
+    store = GCSBackedFileStore(bucket_name="nortpole-bucket")
     client = storage.Client(project="project", credentials=credentials)
     store._get_gcs_client = MagicMock(return_value=client)
     store._signing_credentials = credentials
@@ -66,7 +66,7 @@ def test_workload_identity_signs_an_upload_through_iam() -> None:
     url = urlparse(request.url)
     query = parse_qs(url.query)
     assert url.netloc == "storage.googleapis.com"
-    assert url.path == "/evolvxsi-bucket/evolvxsi-files/public/file-1"
+    assert url.path == "/nortpole-bucket/nortpole-files/public/file-1"
     assert query["X-Goog-Algorithm"] == ["GOOG4-RSA-SHA256"]
     assert query["X-Goog-Credential"][0].startswith(f"{SERVICE_ACCOUNT}/")
     assert query["X-Goog-Expires"] == ["300"]
@@ -95,14 +95,14 @@ def test_a_denied_sign_blob_names_the_missing_role() -> None:
             match="roles/iam.serviceAccountTokenCreator",
         ),
     ):
-        store._sign_download("evolvxsi-bucket", "evolvxsi-files/public/file-1", 300)
+        store._sign_download("nortpole-bucket", "nortpole-files/public/file-1", 300)
 
 
 def test_user_credentials_cannot_sign() -> None:
     store = _store_with(UserCredentials(token="user-token"))
 
     with pytest.raises(PresignedUrlsNotSupportedError, match="service account"):
-        store._sign_download("evolvxsi-bucket", "evolvxsi-files/public/file-1", 300)
+        store._sign_download("nortpole-bucket", "nortpole-files/public/file-1", 300)
 
 
 def test_a_transient_sign_blob_failure_is_raised_as_is() -> None:
@@ -115,4 +115,4 @@ def test_a_transient_sign_blob_failure_is_raised_as_is() -> None:
         ),
         pytest.raises(TransportError),
     ):
-        store._sign_download("evolvxsi-bucket", "evolvxsi-files/public/file-1", 300)
+        store._sign_download("nortpole-bucket", "nortpole-files/public/file-1", 300)

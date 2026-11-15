@@ -25,7 +25,7 @@ from nortpole.connectors.exceptions import (
 )
 
 MODULE = "nortpole.connectors.azure_datalake.source_operations"
-CONFIG = {"account_name": "evolvxsitest", "container_name": "docs"}
+CONFIG = {"account_name": "nortpoletest", "container_name": "docs"}
 
 
 def _gateway(
@@ -86,7 +86,7 @@ def test_storage_errors_map_to_the_validation_family(
 def test_a_missing_container_names_the_container() -> None:
     gateway = _gateway({})
 
-    with pytest.raises(ConnectorValidationError, match="'docs'.*'evolvxsitest'"):
+    with pytest.raises(ConnectorValidationError, match="'docs'.*'nortpoletest'"):
         gateway._call(_raising(_storage_error(404, "ContainerNotFound")), "x")
 
 
@@ -95,10 +95,10 @@ def test_an_account_key_signs_requests_itself() -> None:
     gateway = _gateway(
         {
             "authentication_method": "account_key",
-            "adls_account_name": "evolvxsitest",
+            "adls_account_name": "nortpoletest",
             "adls_account_key": "key",
         },
-        config={"account_name": "evolvxsitest"},
+        config={"account_name": "nortpoletest"},
     )
 
     with patch(f"{MODULE}.DataLakeServiceClient") as client_class:
@@ -107,7 +107,7 @@ def test_an_account_key_signs_requests_itself() -> None:
     assert token is None
     assert client_class.call_args.kwargs["credential"] == "key"
     assert client_class.call_args.kwargs["account_url"] == (
-        "https://evolvxsitest.dfs.core.windows.net"
+        "https://nortpoletest.dfs.core.windows.net"
     )
 
 
@@ -230,7 +230,7 @@ def test_account_key_cannot_read_resource_manager() -> None:
     gateway = _gateway(
         {
             "authentication_method": "account_key",
-            "adls_account_name": "evolvxsitest",
+            "adls_account_name": "nortpoletest",
             "adls_account_key": "a2V5",
         }
     )
@@ -256,7 +256,7 @@ def test_a_listing_cursor_that_does_not_advance_raises() -> None:
     gateway = _gateway(
         {
             "authentication_method": "account_key",
-            "adls_account_name": "evolvxsitest",
+            "adls_account_name": "nortpoletest",
             "adls_account_key": "key",
         }
     )
@@ -280,7 +280,7 @@ def test_read_file_reads_stored_bytes_up_to_the_limit(
     gateway = _gateway(
         {
             "authentication_method": "account_key",
-            "adls_account_name": "evolvxsitest",
+            "adls_account_name": "nortpoletest",
             "adls_account_key": "key",
         }
     )

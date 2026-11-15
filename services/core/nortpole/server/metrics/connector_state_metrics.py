@@ -67,62 +67,62 @@ class _ConnectorMetricFamilies(NamedTuple):
 def _create_metric_families() -> _ConnectorMetricFamilies:
     return _ConnectorMetricFamilies(
         last_success=GaugeMetricFamily(
-            "evolvxsi_connector_last_successful_index_timestamp_seconds",
+            "nortpole_connector_last_successful_index_timestamp_seconds",
             "Unix timestamp of the last successful indexing (0 if never).",
             labels=_CONNECTOR_LABELS,
         ),
         last_pruned=GaugeMetricFamily(
-            "evolvxsi_connector_last_pruned_timestamp_seconds",
+            "nortpole_connector_last_pruned_timestamp_seconds",
             "Unix timestamp of the last successful prune operation (0 if never).",
             labels=_CONNECTOR_LABELS,
         ),
         last_perm_sync=GaugeMetricFamily(
-            "evolvxsi_connector_last_perm_sync_timestamp_seconds",
+            "nortpole_connector_last_perm_sync_timestamp_seconds",
             "Unix timestamp of the last permission sync (0 if never).",
             labels=_CONNECTOR_LABELS,
         ),
         last_external_group_sync=GaugeMetricFamily(
-            "evolvxsi_connector_last_external_group_sync_timestamp_seconds",
+            "nortpole_connector_last_external_group_sync_timestamp_seconds",
             "Unix timestamp of the last external group sync (0 if never).",
             labels=_CONNECTOR_LABELS,
         ),
         repeated_error=GaugeMetricFamily(
-            "evolvxsi_connector_repeated_error_state",
+            "nortpole_connector_repeated_error_state",
             "Whether the connector is in a repeated error state.",
             labels=_CONNECTOR_LABELS,
         ),
         cc_pair_status=GaugeMetricFamily(
-            "evolvxsi_connector_status",
+            "nortpole_connector_status",
             "Current connector credential pair status as one-hot encoding.",
             labels=[*_CONNECTOR_LABELS, "status"],
         ),
         access_type=GaugeMetricFamily(
-            "evolvxsi_connector_access_type",
+            "nortpole_connector_access_type",
             "Access type of the connector as one-hot encoding.",
             labels=[*_CONNECTOR_LABELS, "access_type"],
         ),
         indexing_trigger=GaugeMetricFamily(
-            "evolvxsi_connector_indexing_trigger",
+            "nortpole_connector_indexing_trigger",
             "Indexing trigger mode as one-hot encoding.",
             labels=[*_CONNECTOR_LABELS, "trigger_mode"],
         ),
         auto_sync_enabled=GaugeMetricFamily(
-            "evolvxsi_connector_auto_sync_enabled",
+            "nortpole_connector_auto_sync_enabled",
             "Whether auto-sync is configured (1 = enabled, 0 = disabled).",
             labels=_CONNECTOR_LABELS,
         ),
         connector_count=GaugeMetricFamily(
-            "evolvxsi_connector_count",
+            "nortpole_connector_count",
             "Current connector credential pair count by source and status.",
             labels=["source", "status"],
         ),
         document_count=GaugeMetricFamily(
-            "evolvxsi_connector_document_count",
+            "nortpole_connector_document_count",
             "Current indexed document count across connectors by source.",
             labels=["source"],
         ),
         connector_info=InfoMetricFamily(
-            "evolvxsi_connector",
+            "nortpole_connector",
             "Connector credential pair metadata.",
             labels=["cc_pair_id"],
         ),
@@ -131,7 +131,7 @@ def _create_metric_families() -> _ConnectorMetricFamilies:
 
 def _collection_success_metric() -> GaugeMetricFamily:
     return GaugeMetricFamily(
-        "evolvxsi_connector_state_collection_success",
+        "nortpole_connector_state_collection_success",
         "Whether the latest connector state collection succeeded.",
     )
 

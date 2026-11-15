@@ -5,7 +5,7 @@ import { Formik, Form } from "formik";
 import { useTranslations } from "next-intl";
 import * as Yup from "yup";
 import { SvgArrowExchange } from "@opal/icons";
-import { SvgEvolvXSILogo } from "@opal/logos";
+import { SvgNortPoleLogo } from "@opal/logos";
 import { Button } from "@opal/components";
 import { Modal } from "@opal/components";
 import { useModalClose } from "@opal/components";
@@ -99,7 +99,7 @@ export function WebSearchSetupModal({ state }: WebSearchSetupModalProps) {
   const requiresApiKey =
     category === "search"
       ? searchProviderRequiresApiKey(providerType)
-      : providerType !== "evolvxsi_web_crawler";
+      : providerType !== "nortpole_web_crawler";
 
   const configField =
     category === "search"
@@ -225,7 +225,7 @@ export function WebSearchSetupModal({ state }: WebSearchSetupModalProps) {
               <Modal.Header
                 icon={icon}
                 moreIcon1={SvgArrowExchange}
-                moreIcon2={SvgEvolvXSILogo}
+                moreIcon2={SvgNortPoleLogo}
                 title={
                   isEditing
                     ? t("setupModal.editHeader.title", {

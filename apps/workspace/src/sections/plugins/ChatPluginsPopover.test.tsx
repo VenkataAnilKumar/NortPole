@@ -344,7 +344,7 @@ test("switching agents closes a pending connection without applying it to the ne
     return fetchFixture(input, init);
   });
   sessionStorage.setItem(
-    "evolvxsi:tools:chat:chat-a",
+    "nortpole:tools:chat:chat-a",
     JSON.stringify({ 71: "disabled", 72: "disabled" })
   );
   const { rerender } = render(<PickerHarness />);
@@ -358,7 +358,7 @@ test("switching agents closes a pending connection without applying it to the ne
   expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   await act(async () => save.resolve(jsonResponse({})));
   expect(
-    JSON.parse(sessionStorage.getItem("evolvxsi:tools:chat:chat-a") ?? "{}")
+    JSON.parse(sessionStorage.getItem("nortpole:tools:chat:chat-a") ?? "{}")
   ).toMatchObject({ tools: { 71: "disabled", 72: "disabled" } });
   await openPlugins(user);
   expect(
@@ -454,7 +454,7 @@ test("an OAuth status failure allows disabling a selected plugin but blocks enab
 test("the shared connection dialog reconnects without replacing the chat page", async () => {
   const { fetchSpy } = network({ credentials: true });
   sessionStorage.setItem(
-    "evolvxsi:tools:chat:chat-a",
+    "nortpole:tools:chat:chat-a",
     JSON.stringify({ 71: "disabled", 72: "disabled" })
   );
   render(<PickerHarness />);
@@ -495,7 +495,7 @@ test("the shared connection dialog reconnects without replacing the chat page", 
 test("connection failure stays in the dialog and preserves disabled selection", async () => {
   network({ credentials: true, credentialFailure: true });
   sessionStorage.setItem(
-    "evolvxsi:tools:chat:chat-a",
+    "nortpole:tools:chat:chat-a",
     JSON.stringify({ 71: "disabled", 72: "disabled" })
   );
   render(<PickerHarness />);
@@ -510,7 +510,7 @@ test("connection failure stays in the dialog and preserves disabled selection", 
   );
   expect(screen.getByRole("dialog")).toBeVisible();
   expect(
-    JSON.parse(sessionStorage.getItem("evolvxsi:tools:chat:chat-a") ?? "{}")
+    JSON.parse(sessionStorage.getItem("nortpole:tools:chat:chat-a") ?? "{}")
   ).toMatchObject({ tools: { 71: "disabled", 72: "disabled" } });
 });
 
@@ -566,7 +566,7 @@ test("Actions keeps built-in search and Sources while custom plugins appear only
   expect(notion).not.toBeChecked();
   await waitFor(() =>
     expect(
-      JSON.parse(sessionStorage.getItem("evolvxsi:tools:chat:chat-a") ?? "{}")
+      JSON.parse(sessionStorage.getItem("nortpole:tools:chat:chat-a") ?? "{}")
     ).toMatchObject({
       tools: { 1: "preferred" },
       filters: { selectedSources: ["slack"] },

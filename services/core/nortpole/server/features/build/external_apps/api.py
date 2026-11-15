@@ -48,7 +48,7 @@ from nortpole.external_apps.providers.base import OAuthExternalAppProvider
 from nortpole.external_apps.providers.registry import (
     action_policy_views,
     fetch_available_built_in_apps,
-    get_evolvxsi_managed_provider,
+    get_nortpole_managed_provider,
     get_provider_for_app,
 )
 from nortpole.external_apps.url_glob import UrlGlob
@@ -93,7 +93,7 @@ def _to_admin_response(
     db_session: Session,
 ) -> ExternalAppAdminResponse:
     # ``stored`` is the app's approval policy overrides.
-    managed = MULTI_TENANT and get_evolvxsi_managed_provider(app.app_type) is not None
+    managed = MULTI_TENANT and get_nortpole_managed_provider(app.app_type) is not None
     return ExternalAppAdminResponse(
         id=app.id,
         name=app.name,
@@ -124,7 +124,7 @@ def _to_admin_response(
                 key=lambda skill: (skill.name, str(skill.id)),
             )
         ],
-        is_evolvxsi_managed=managed,
+        is_nortpole_managed=managed,
     )
 
 
@@ -217,7 +217,7 @@ def create_built_in_external_app(
             "Custom apps must be managed via POST /admin/apps/custom.",
         )
 
-    if MULTI_TENANT and get_evolvxsi_managed_provider(request.app_type) is not None:
+    if MULTI_TENANT and get_nortpole_managed_provider(request.app_type) is not None:
         raise NortPoleError(
             NortPoleErrorCode.INVALID_INPUT,
             "Built-in apps are provided by NortPole; use PATCH /admin/apps/{id} to "
@@ -270,7 +270,7 @@ def update_external_app_admin(
     are NortPole-owned and ignored — only ``enabled`` and ``action_policies`` apply.
     """
     app = _get_app_or_404(db_session, external_app_id)
-    managed = MULTI_TENANT and get_evolvxsi_managed_provider(app.app_type) is not None
+    managed = MULTI_TENANT and get_nortpole_managed_provider(app.app_type) is not None
 
     # Custom apps author URL patterns as globs; validate them (built-ins author
     # regexes, which the matcher uses as-is).
@@ -423,7 +423,7 @@ def delete_external_app_admin(
     """
     # Resolve affected users before deleting the associations.
     app = _get_app_or_404(db_session, external_app_id)
-    if MULTI_TENANT and get_evolvxsi_managed_provider(app.app_type) is not None:
+    if MULTI_TENANT and get_nortpole_managed_provider(app.app_type) is not None:
         raise NortPoleError(
             NortPoleErrorCode.INVALID_INPUT,
             "Built-in apps are provided by NortPole and cannot be deleted.",

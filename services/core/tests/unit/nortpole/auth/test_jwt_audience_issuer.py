@@ -75,8 +75,8 @@ async def test_unset_settings_accept_any_signed_token(
 @pytest.mark.parametrize(
     "claims, accepted",
     [
-        ({"aud": "evolvxsi"}, True),
-        ({"aud": ["evolvxsi", "other"]}, True),
+        ({"aud": "nortpole"}, True),
+        ({"aud": ["nortpole", "other"]}, True),
         ({"aud": "some-other-service"}, False),
         ({"aud": ["other-a", "other-b"]}, False),
         ({}, False),
@@ -89,7 +89,7 @@ async def test_audience_enforced_when_configured(
     claims: dict[str, Any],
     accepted: bool,
 ) -> None:
-    _configure(monkeypatch, "evolvxsi", None)
+    _configure(monkeypatch, "nortpole", None)
     payload = await verify_jwt_token(_mint(claims))
     assert (payload is not None) is accepted
 
@@ -119,9 +119,9 @@ async def test_issuer_enforced_when_configured(
 async def test_both_enforced_and_matching(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    _configure(monkeypatch, "evolvxsi", "https://idp.example.com")
+    _configure(monkeypatch, "nortpole", "https://idp.example.com")
     payload = await verify_jwt_token(
-        _mint({"aud": "evolvxsi", "iss": "https://idp.example.com", "email": "a@b.c"})
+        _mint({"aud": "nortpole", "iss": "https://idp.example.com", "email": "a@b.c"})
     )
     assert payload is not None
 
@@ -131,9 +131,9 @@ async def test_both_enforced_and_matching(
 async def test_both_enforced_rejects_wrong_issuer(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    _configure(monkeypatch, "evolvxsi", "https://idp.example.com")
+    _configure(monkeypatch, "nortpole", "https://idp.example.com")
     payload = await verify_jwt_token(
-        _mint({"aud": "evolvxsi", "iss": "https://evil.example.com"})
+        _mint({"aud": "nortpole", "iss": "https://evil.example.com"})
     )
     assert payload is None
 
@@ -171,7 +171,7 @@ async def test_claim_rejection_does_not_refetch_keys(
         return _PUBLIC_PEM
 
     monkeypatch.setattr(jwt_module, "get_public_key", _counting_get)
-    _configure(monkeypatch, "evolvxsi", None)
+    _configure(monkeypatch, "nortpole", None)
     assert await verify_jwt_token(_mint({"aud": "some-other-service"})) is None
     assert len(calls) == 1
 

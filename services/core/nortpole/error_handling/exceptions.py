@@ -1,7 +1,7 @@
 """NortPoleError — the single exception type for all NortPole business errors.
 
 Raise ``NortPoleError`` instead of ``HTTPException`` in business code.  A global
-FastAPI exception handler (registered via ``register_evolvxsi_exception_handlers``)
+FastAPI exception handler (registered via ``register_nortpole_exception_handlers``)
 converts it into a JSON response with the standard
 ``{"error_code": "...", "detail": "..."}`` shape.
 
@@ -64,7 +64,7 @@ class NortPoleError(Exception):
         return self._status_code_override or self.error_code.status_code
 
 
-def log_evolvxsi_error(exc: NortPoleError) -> None:
+def log_nortpole_error(exc: NortPoleError) -> None:
     detail = exc.detail
     status_code = exc.status_code
     if status_code >= 500:
@@ -73,7 +73,7 @@ def log_evolvxsi_error(exc: NortPoleError) -> None:
         logger.warning("NortPoleError %s: %s", exc.error_code.code, detail)
 
 
-def evolvxsi_error_to_json_response(exc: NortPoleError) -> JSONResponse:
+def nortpole_error_to_json_response(exc: NortPoleError) -> JSONResponse:
     content = exc.error_code.detail(exc.detail)
     if exc.extra:
         # extra first so the canonical error_code/detail can't be overwritten.
@@ -85,7 +85,7 @@ def evolvxsi_error_to_json_response(exc: NortPoleError) -> JSONResponse:
     )
 
 
-def register_evolvxsi_exception_handlers(app: FastAPI) -> None:
+def register_nortpole_exception_handlers(app: FastAPI) -> None:
     """Register a global handler that converts ``NortPoleError`` to JSON responses.
 
     Must be called *after* the app is created but *before* it starts serving.
@@ -93,9 +93,9 @@ def register_evolvxsi_exception_handlers(app: FastAPI) -> None:
     """
 
     @app.exception_handler(NortPoleError)
-    async def _handle_evolvxsi_error(
+    async def _handle_nortpole_error(
         request: Request,  # noqa: ARG001
         exc: NortPoleError,
     ) -> JSONResponse:
-        log_evolvxsi_error(exc)
-        return evolvxsi_error_to_json_response(exc)
+        log_nortpole_error(exc)
+        return nortpole_error_to_json_response(exc)

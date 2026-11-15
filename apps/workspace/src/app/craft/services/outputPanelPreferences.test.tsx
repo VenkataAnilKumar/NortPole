@@ -204,7 +204,7 @@ test("restores an open empty panel and explicit closed state", () => {
 
 test("ignores invalid saved state and repairs a missing selection", () => {
   sessionStorage.setItem(
-    "evolvxsi:craft:output-panel:v1:invalid",
+    "nortpole:craft:output-panel:v1:invalid",
     JSON.stringify({
       ...preferences,
       panelTabs: [{ kind: "file", path: 42 }],
@@ -230,7 +230,7 @@ test("keeps controls usable when storage is blocked", () => {
     saveOutputPanelPreferences("session-a", preferences)
   ).not.toThrow();
   blocked.mockRestore();
-  sessionStorage.setItem("evolvxsi:craft:output-panel:v1:invalid", "{");
+  sessionStorage.setItem("nortpole:craft:output-panel:v1:invalid", "{");
   expect(readOutputPanelPreferences("invalid")).toBeUndefined();
 });
 

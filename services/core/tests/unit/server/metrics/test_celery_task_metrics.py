@@ -93,7 +93,7 @@ class TestCeleryTaskPrerun:
             sample.labels["outcome"]: sample.value
             for metric in TASK_COMPLETED.collect()
             for sample in metric.samples
-            if sample.name == "evolvxsi_celery_task_completed_total"
+            if sample.name == "nortpole_celery_task_completed_total"
             and sample.labels["task_name"] == "never_completed_task"
         }
         assert exported == {"success": 0.0, "failure": 0.0}

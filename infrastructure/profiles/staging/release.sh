@@ -9,8 +9,8 @@ cmd="${1:-}"; ver="${2:-}"
 [ "$cmd" = "manifest" ] && [ -n "$ver" ] || { echo "usage: release.sh manifest <version> [output-file]" >&2; exit 2; }
 out="${3:-./release-$ver.json}"
 repo=../../..
-core_id=$(docker image inspect "evolvxsi-core:$ver" --format '{{.Id}}')
-web_id=$(docker image inspect "evolvxsi-web:$ver" --format '{{.Id}}')
+core_id=$(docker image inspect "nortpole-core:$ver" --format '{{.Id}}')
+web_id=$(docker image inspect "nortpole-web:$ver" --format '{{.Id}}')
 commit=$(git -C "$repo" rev-parse HEAD)
 dirty=$(git -C "$repo" status --porcelain | wc -l | tr -d ' ')
 # The newest migration is the one no other migration names as its parent.

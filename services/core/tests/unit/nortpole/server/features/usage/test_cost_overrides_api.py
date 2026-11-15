@@ -34,7 +34,7 @@ from nortpole.db.models import (
     ModelCostOverride,
     VoiceProvider,
 )
-from nortpole.error_handling.exceptions import register_evolvxsi_exception_handlers
+from nortpole.error_handling.exceptions import register_nortpole_exception_handlers
 from nortpole.server.features.usage.api import router as cost_override_router
 
 _BASE = "/admin/cost-overrides"
@@ -111,7 +111,7 @@ def _rates(input_rate: float = 2.5, output_rate: float = 10.0) -> dict[str, Any]
 
 def _make_app(db_session: Session, user: _StubUser) -> FastAPI:
     app = FastAPI()
-    register_evolvxsi_exception_handlers(app)
+    register_nortpole_exception_handlers(app)
     app.include_router(cost_override_router)
     app.dependency_overrides[get_session] = lambda: db_session
     app.dependency_overrides[current_user] = lambda: user

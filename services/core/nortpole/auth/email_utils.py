@@ -34,7 +34,7 @@ from nortpole.configs.app_configs import (
 )
 from nortpole.configs.constants import NORTPOLE_DEFAULT_APPLICATION_NAME, NORTPOLE_DISCORD_URL
 from nortpole.db.models import User
-from nortpole.server.runtime.evolvxsi_runtime import NortPoleRuntime
+from nortpole.server.runtime.nortpole_runtime import NortPoleRuntime
 from nortpole.utils.logger import setup_logger
 from nortpole.utils.url import add_url_params
 from nortpole.utils.variable_functionality import fetch_versioned_implementation
@@ -228,7 +228,7 @@ def send_email_with_sendgrid(
     mail_from: str = EMAIL_FROM,
     inline_png: tuple[str, bytes] | None = None,
 ) -> None:
-    from_email = Email(mail_from) if mail_from else Email("noreply@evolvxsi.local")
+    from_email = Email(mail_from) if mail_from else Email("noreply@nortpole.local")
     to_email = To(user_email)
 
     mail = Mail(
@@ -284,7 +284,7 @@ def send_email_with_smtplib(
         raise ValueError("EMAIL_FROM must be set when SMTP_USER is not provided")
     msg["From"] = mail_from
     msg["Date"] = formatdate(localtime=True)
-    msg["Message-ID"] = make_msgid(domain="evolvxsi.local")
+    msg["Message-ID"] = make_msgid(domain="nortpole.local")
 
     # Add text part first (lowest priority)
     text_part = MIMEText(text_body, "plain")
@@ -332,7 +332,7 @@ def send_subscription_cancellation_email(user_email: str) -> None:
     except ModuleNotFoundError:
         application_name = NORTPOLE_DEFAULT_APPLICATION_NAME
 
-    evolvxsi_file = NortPoleRuntime.get_emailable_logo()
+    nortpole_file = NortPoleRuntime.get_emailable_logo()
 
     subject = f"Your {application_name} Subscription Has Been Canceled"
     heading = "Subscription Canceled"
@@ -360,7 +360,7 @@ def send_subscription_cancellation_email(user_email: str) -> None:
         subject,
         html_content,
         text_content,
-        inline_png=("logo.png", evolvxsi_file.data),
+        inline_png=("logo.png", nortpole_file.data),
     )
 
 
@@ -412,7 +412,7 @@ def send_user_email_invite(user_email: str, current_user: User) -> None:
     except ModuleNotFoundError:
         application_name = NORTPOLE_DEFAULT_APPLICATION_NAME
 
-    evolvxsi_file = NortPoleRuntime.get_emailable_logo()
+    nortpole_file = NortPoleRuntime.get_emailable_logo()
 
     subject = f"Invitation to Join {application_name} Organization"
 
@@ -425,7 +425,7 @@ def send_user_email_invite(user_email: str, current_user: User) -> None:
         subject,
         html_content,
         text_content,
-        inline_png=("logo.png", evolvxsi_file.data),
+        inline_png=("logo.png", nortpole_file.data),
     )
 
 
@@ -445,7 +445,7 @@ def send_forgot_password_email(
     except ModuleNotFoundError:
         application_name = NORTPOLE_DEFAULT_APPLICATION_NAME
 
-    evolvxsi_file = NortPoleRuntime.get_emailable_logo()
+    nortpole_file = NortPoleRuntime.get_emailable_logo()
 
     subject = f"Reset Your {application_name} Password"
     heading = "Reset Your Password"
@@ -470,7 +470,7 @@ def send_forgot_password_email(
         html_content,
         text_content,
         mail_from,
-        inline_png=("logo.png", evolvxsi_file.data),
+        inline_png=("logo.png", nortpole_file.data),
     )
 
 
@@ -490,7 +490,7 @@ def send_user_verification_email(
     except ModuleNotFoundError:
         application_name = NORTPOLE_DEFAULT_APPLICATION_NAME
 
-    evolvxsi_file = NortPoleRuntime.get_emailable_logo()
+    nortpole_file = NortPoleRuntime.get_emailable_logo()
 
     subject = f"{application_name} Email Verification"
     link = f"{WEB_DOMAIN}/auth/verify-email?token={token}"
@@ -511,5 +511,5 @@ def send_user_verification_email(
         html_content,
         text_content,
         mail_from,
-        inline_png=("logo.png", evolvxsi_file.data),
+        inline_png=("logo.png", nortpole_file.data),
     )

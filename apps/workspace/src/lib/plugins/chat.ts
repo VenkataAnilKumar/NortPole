@@ -163,8 +163,8 @@ export function safeChatReturnTo(
 ): "/app" | `/app?${string}` {
   if (!value || !value.startsWith("/app") || value.includes("\\"))
     return "/app";
-  const parsed = new URL(value, "https://evolvxsi.invalid");
-  if (parsed.origin !== "https://evolvxsi.invalid" || parsed.pathname !== "/app") {
+  const parsed = new URL(value, "https://nortpole.invalid");
+  if (parsed.origin !== "https://nortpole.invalid" || parsed.pathname !== "/app") {
     return "/app";
   }
   const query = new URLSearchParams();
@@ -186,7 +186,7 @@ export function memberPluginChatHref(
   reference: ChatPluginReference,
   returnTo?: string | null
 ): `/app?${string}` {
-  const target = new URL(safeChatReturnTo(returnTo), "https://evolvxsi.invalid");
+  const target = new URL(safeChatReturnTo(returnTo), "https://nortpole.invalid");
   target.searchParams.set("pluginKind", reference.kind);
   target.searchParams.set("pluginId", String(reference.id));
   return `/app?${target.searchParams}`;

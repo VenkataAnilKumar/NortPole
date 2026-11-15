@@ -1,5 +1,5 @@
 """Spending limit enforcement. CE enforces the workspace pool; EE adds group
-pools and per-user allowances (`ee.evolvxsi.server.query_and_chat.token_limit`).
+pools and per-user allowances (`ee.nortpole.server.query_and_chat.token_limit`).
 
 Two entry points share one strategy: `check_token_rate_limits` checks the
 all-models limits before a request runs, and `check_model_spend_limits` checks

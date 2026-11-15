@@ -1,6 +1,6 @@
 import {
   NortPoleDocument,
-  SearchEvolvXSIDocument,
+  SearchNortPoleDocument,
   StreamStopReason,
 } from "@/lib/search/types";
 import { Packet } from "./services/streamingModels";
@@ -143,7 +143,7 @@ export interface ChatSession {
 
 export interface SearchSession {
   search_session_id: string;
-  documents: SearchEvolvXSIDocument[];
+  documents: SearchNortPoleDocument[];
   messages: BackendMessage[];
   description: string;
 }
@@ -162,7 +162,7 @@ export interface Message {
   messageId?: number;
   nodeId: number; // Unique identifier for tree structure (can be negative for temp messages)
   message: string;
-  type: "user" | "assistant" | "system" | "error"; // TODO: rename "assistant" to "agent" — https://linear.app/evolvxsi-app/issue/ENG-3766
+  type: "user" | "assistant" | "system" | "error"; // TODO: rename "assistant" to "agent" — https://linear.app/nortpole-app/issue/ENG-3766
   retrievalType?: RetrievalType;
   researchType?: ResearchType;
   query?: string | null;
@@ -257,7 +257,7 @@ export interface BackendMessage {
   context_docs: NortPoleDocument[] | null;
   time_sent: string;
   overridden_model: string;
-  alternate_assistant_id: number | null; // TODO: rename to agent — https://linear.app/evolvxsi-app/issue/ENG-3766
+  alternate_assistant_id: number | null; // TODO: rename to agent — https://linear.app/nortpole-app/issue/ENG-3766
   chat_session_id: string;
   citations: CitationMap | null;
   files: FileDescriptor[];
@@ -282,7 +282,7 @@ export interface BackendMessage {
 
 export interface MessageResponseIDInfo {
   user_message_id: number | null;
-  reserved_assistant_message_id: number; // TODO: rename to agent — https://linear.app/evolvxsi-app/issue/ENG-3766
+  reserved_assistant_message_id: number; // TODO: rename to agent — https://linear.app/nortpole-app/issue/ENG-3766
 }
 
 export interface ModelResponseSlot {

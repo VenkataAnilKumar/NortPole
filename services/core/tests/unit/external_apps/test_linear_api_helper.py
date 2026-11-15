@@ -1,7 +1,7 @@
 """The bundled ``linear_api.py`` sandbox helper: the pure ``IssueCreateInput``
 builder used by ``create-issue``. The helper is a standalone script under the
 skills dir (not an importable package), so load it by path. These tests require
-no network and no evolvxsi imports."""
+no network and no nortpole imports."""
 
 from __future__ import annotations
 
