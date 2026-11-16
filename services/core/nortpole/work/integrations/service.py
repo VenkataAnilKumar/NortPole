@@ -16,6 +16,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from nortpole.db.models import User
+from nortpole.knowledge.source_requests import catalog
 from nortpole.knowledge.source_requests.models import NortPoleSourceRequest
 from nortpole.utils.audit import AuditAction, AuditOutcome
 from nortpole.work.integrations import executor, policy, registry, secrets
@@ -59,7 +60,7 @@ def _approved_for(db: Session, user: User, integration: Integration) -> bool:
         select(NortPoleSourceRequest.id).where(
             NortPoleSourceRequest.requested_by_id == user.id,
             NortPoleSourceRequest.kind == integration.kind,
-            NortPoleSourceRequest.item_key == integration.id,
+            NortPoleSourceRequest.item_key == catalog.integration_key(integration.id),
             NortPoleSourceRequest.state == "approved",
         ).limit(1)
     ) is not None

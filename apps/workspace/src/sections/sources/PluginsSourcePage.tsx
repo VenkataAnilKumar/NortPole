@@ -5,6 +5,7 @@ import useSWR from "swr";
 import { errorHandlingFetcher } from "@/lib/fetcher";
 import { useSettings } from "@/lib/settings/hooks";
 import { card, h1Class, pageClass } from "@/sections/sources/shared";
+import InstalledIntegrations from "@/sections/sources/InstalledIntegrations";
 
 interface Kind { kind: string; label: string; on: boolean }
 interface Tool { name: string; kind_label: string; allowed: boolean; mine: boolean }
@@ -31,6 +32,7 @@ export default function PluginsSourcePage() {
           </p>
         )}
       </header>
+      <InstalledIntegrations kind="plugin" />
       {isLoading && <p className="text-sm text-text-03">Loading plugins…</p>}
       {error && <p role="alert" className="text-sm text-status-text-error-05">Plugins could not be loaded. Try again in a moment.</p>}
       {data && (

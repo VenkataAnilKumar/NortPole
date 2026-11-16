@@ -184,7 +184,8 @@ def decide_request(
         # Tell the person in their Inbox (Updates). Best effort: the decision stands even if this fails.
         try:
             verdict = "approved" if body.approve else "declined"
-            what = "An administrator will set it up." if body.approve else "It was not added."
+            ready = "You can install it now from Sources." if r.item_key.startswith(catalog.INTEGRATION_PREFIX) else "An administrator will set it up."
+            what = ready if body.approve else "It was not added."
             create_notification(user_id=r.requested_by_id, notif_type=NotificationType.SOURCE_REQUEST_DECIDED, db_session=db_session,
                                 title=f"Your request for {r.item_name} was {verdict}",
                                 description=f"{what}{' Note: ' + r.decision_note if r.decision_note else ''}",

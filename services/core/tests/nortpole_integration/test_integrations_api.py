@@ -15,6 +15,7 @@ from nortpole.db.models import User
 from nortpole.error_handling.error_codes import NortPoleErrorCode
 from nortpole.error_handling.exceptions import NortPoleError
 from nortpole.governance.route_policy.audit import NortPoleAuditEvent
+from nortpole.knowledge.source_requests import api as requests_api
 from nortpole.knowledge.source_requests.models import NortPoleSourceRequest
 from nortpole.work.integrations import api, policy, registry, secrets
 from nortpole.work.integrations.models import NortPoleIntegrationUse
@@ -83,7 +84,7 @@ def test_install_connect_disconnect_and_remove_through_the_routes(world) -> None
         assert code_of(api.install, "nope", api.IntegrationInstallBody(), user=ann, db=s) == NortPoleErrorCode.NOT_FOUND
         assert code_of(api.connect, "airtable", api.IntegrationAccountBody(access_token=SECRET), user=ann, db=s) == NortPoleErrorCode.CONFLICT
         assert code_of(api.connect, "wikipedia", api.IntegrationAccountBody(access_token=SECRET), user=ann, db=s) == NortPoleErrorCode.INVALID_INPUT
-        s.add(NortPoleSourceRequest(kind="plugin", item_key="airtable", item_name="Airtable", reason="", state="approved", requested_by_id=ann.id, requested_by_email=ann.email))
+        s.add(NortPoleSourceRequest(kind="plugin", item_key="integration:airtable", item_name="Airtable", reason="", state="approved", requested_by_id=ann.id, requested_by_email=ann.email))
         s.commit()
         assert api.install("airtable", api.IntegrationInstallBody(), user=ann, db=s).state == "installed"
         view = api.connect("airtable", api.IntegrationAccountBody(access_token=SECRET), user=ann, db=s)
@@ -150,6 +151,27 @@ def test_letting_people_use_a_write_action_without_asking_needs_a_confirmation(w
         assert rows and rows[-1].details["opens_writes"] == ["example-writer"]
         # tightening again needs no confirmation
         api.put_policy(api.IntegrationPolicyBody(config=policy.PolicyConfig()), user=s.get(User, world["admin"]), db=s)
+
+
+def test_an_integration_that_needs_approval_is_requested_approved_and_then_installable(world) -> None:  # type: ignore[no-untyped-def]
+    with get_session_with_current_tenant() as s:
+        ann, admin = s.get(User, world["ann"]), s.get(User, world["admin"])
+        ask = requests_api.NewRequest(kind="plugin", item_key="integration:airtable", reason="for the ops report")
+        # an allowed integration has nothing to request, and an unknown one is not found
+        assert code_of(requests_api.create_request, requests_api.NewRequest(kind="plugin", item_key="integration:wikipedia"), user=ann, db_session=s) == NortPoleErrorCode.NOT_FOUND
+        assert code_of(requests_api.create_request, requests_api.NewRequest(kind="plugin", item_key="integration:ghost"), user=ann, db_session=s) == NortPoleErrorCode.NOT_FOUND
+        assert code_of(requests_api.create_request, requests_api.NewRequest(kind="skill", item_key="integration:airtable"), user=ann, db_session=s) == NortPoleErrorCode.NOT_FOUND
+        sent = requests_api.create_request(ask, user=ann, db_session=s)
+        assert sent.state == "pending"
+        assert code_of(requests_api.create_request, ask, user=ann, db_session=s) == NortPoleErrorCode.CONFLICT, "one waiting request per item"
+        assert code_of(api.install, "airtable", api.IntegrationInstallBody(), user=ann, db=s) == NortPoleErrorCode.POLICY_BLOCKED, "asking does not turn anything on"
+        done = requests_api.decide_request(sent.id, requests_api.Decision(approve=True, note="ok"), user=admin, db_session=s)
+        assert done.state == "approved"
+        assert api.detail("airtable", user=ann, db=s).state == "available"
+        assert api.install("airtable", api.IntegrationInstallBody(), user=ann, db=s).state == "installed"
+        # a blocked integration cannot be requested
+        policy.save(policy.PolicyConfig(integrations={"airtable": "blocked"}))
+        assert code_of(requests_api.create_request, requests_api.NewRequest(kind="plugin", item_key="integration:airtable"), user=admin, db_session=s) == NortPoleErrorCode.NOT_FOUND
 
 
 def test_two_integrations_never_share_a_schema_name_with_another_route_module() -> None:

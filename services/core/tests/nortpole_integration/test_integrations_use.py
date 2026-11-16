@@ -105,7 +105,7 @@ def test_an_integration_that_needs_approval_waits_for_one_then_connects_with_the
         ann, bob = person(s, world, "ann"), person(s, world, "bob")
         assert service.status(s, ann, "airtable")["state"] == "needs_approval"
         refused("needs_approval", service.install, s, ann, "airtable")
-        s.add(NortPoleSourceRequest(kind="plugin", item_key="airtable", item_name="Airtable", reason="", state="approved", requested_by_id=ann.id, requested_by_email=ann.email))
+        s.add(NortPoleSourceRequest(kind="plugin", item_key="integration:airtable", item_name="Airtable", reason="", state="approved", requested_by_id=ann.id, requested_by_email=ann.email))
         s.commit()
         assert service.status(s, ann, "airtable")["state"] == "available"
         assert service.status(s, bob, "airtable")["state"] == "needs_approval", "an approval is for one person"
@@ -125,7 +125,7 @@ def test_an_integration_that_needs_approval_waits_for_one_then_connects_with_the
 def test_the_account_is_sealed_at_rest_and_never_in_status_or_logs(world) -> None:  # type: ignore[no-untyped-def]
     with get_session_with_current_tenant() as s:
         ann = person(s, world, "ann")
-        s.add(NortPoleSourceRequest(kind="plugin", item_key="airtable", item_name="Airtable", reason="", state="approved", requested_by_id=ann.id, requested_by_email=ann.email))
+        s.add(NortPoleSourceRequest(kind="plugin", item_key="integration:airtable", item_name="Airtable", reason="", state="approved", requested_by_id=ann.id, requested_by_email=ann.email))
         s.commit()
         service.install(s, ann, "airtable")
         status = service.connect(s, ann, "airtable", {"access_token": SECRET, "refresh_token": f"ref-{SECRET}"})
@@ -143,7 +143,7 @@ def test_the_account_is_sealed_at_rest_and_never_in_status_or_logs(world) -> Non
 def test_disconnect_and_remove(world) -> None:  # type: ignore[no-untyped-def]
     with get_session_with_current_tenant() as s:
         ann = person(s, world, "ann")
-        s.add(NortPoleSourceRequest(kind="plugin", item_key="airtable", item_name="Airtable", reason="", state="approved", requested_by_id=ann.id, requested_by_email=ann.email))
+        s.add(NortPoleSourceRequest(kind="plugin", item_key="integration:airtable", item_name="Airtable", reason="", state="approved", requested_by_id=ann.id, requested_by_email=ann.email))
         s.commit()
         service.install(s, ann, "airtable")
         service.connect(s, ann, "airtable", {"access_token": SECRET})
