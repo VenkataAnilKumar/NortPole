@@ -76,6 +76,7 @@ Status: Working list, updated 2026-11-14 (after the redesign stages R1–R6b and
 - Sandbox-only (pass on a normal machine): IPv6 `::1` binding in the sandbox proxy tests, DNS for `example.com`, the model server needs `torch`, and one Hugging Face download host blocked (the Docker image bake was therefore not run here).
 
 ## Known issues (saved 2026-11-13)
+- Web build scripts: `bun run build` and `build:fast` fail at once because `apps/workspace/tools/prepare-pdf-assets.cjs` is missing, and `next build` with its type check stops at test files that import the missing `@tests/setup/*` helpers (found 2026-11-16 while upgrading Next.js). A build works as `SKIP_TYPE_CHECK=1 npx next build`. Restore the helpers or drop the script and the test-only type errors from the build.
 
 - The local 7B model obeyed hostile text in 31% of injection tests; guides' effect on a real model is not measured.
 - No real document source has been connected; retrieval, agent search results and connectors are tested only in code tests.
