@@ -7,11 +7,10 @@ const SvgNortPoleLogo = ({ size, ...props }: IconProps) => (
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
+    {/* The North Star: a four-point guiding star (decision 0007). */}
     <path
-      d="M12 3v18M4 7l16 10M20 7L4 17"
-      stroke="var(--theme-primary-05)"
-      strokeWidth={2}
-      strokeLinecap="round"
+      d="M12 1.5 L14.1 9.9 L22 12 L14.1 14.1 L12 22.5 L9.9 14.1 L2 12 L9.9 9.9 Z"
+      fill="var(--theme-primary-05)"
     />
   </svg>
 );
