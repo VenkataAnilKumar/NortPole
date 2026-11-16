@@ -11,6 +11,8 @@
   /* The North Star sky: black with a faint silver glow and a scatter of
      stars, the same in light and dark mode (decision 0007). */
   background:
+    radial-gradient(38% 34% at 62% 38%, rgba(150, 165, 200, 0.30), transparent 70%),
+    radial-gradient(34% 30% at 34% 66%, rgba(110, 124, 160, 0.28), transparent 70%),
     radial-gradient(40% 30% at 22% 100%, rgba(160, 172, 196, 0.22), transparent 70%),
     radial-gradient(34% 26% at 80% 96%, rgba(120, 132, 158, 0.16), transparent 70%),
     radial-gradient(1px 1px at 12% 18%, rgba(255, 255, 255, 0.7), transparent),
@@ -32,6 +34,19 @@
 
 .opal-auth-card-bottom-prompt {
   @apply text-center;
+}
+/* The sign-in card is frosted glass over the sky: it takes the dark tokens so
+   text and fields read on the dark glass in both themes. */
+.opal-auth-glass > * {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.05)) !important;
+  backdrop-filter: blur(26px) saturate(160%);
+  -webkit-backdrop-filter: blur(26px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.26) !important;
+  border-top-color: rgba(255, 255, 255, 0.42) !important;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.28) !important;
+}
+@supports not (backdrop-filter: blur(1px)) {
+  .opal-auth-glass > * { background: #161b25 !important; }
 }
 /* The prompt sits on the sky, not on the card. */
 .opal-auth-card-bottom-prompt,

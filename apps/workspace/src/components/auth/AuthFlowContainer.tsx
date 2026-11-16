@@ -20,24 +20,26 @@ export default function AuthFlowContainer({
   const { appName, logoUrl } = useSettings();
   return (
     <div className="opal-auth-root !flex-col p-4">
-      <div className="w-full max-w-md flex items-start flex-col bg-background-tint-00 rounded-16 shadow-lg shadow-box-02 p-6">
-        {/* logo_display_style only governs the sidebar; auth pages always show
+      <div className="opal-auth-glass dark w-full max-w-md">
+        <div className="w-full flex items-start flex-col bg-background-tint-00 rounded-16 shadow-lg shadow-box-02 p-6">
+          {/* logo_display_style only governs the sidebar; auth pages always show
             the logo mark (custom when uploaded, NortPole otherwise) */}
-        {logoUrl ? (
-          <div
-            className="aspect-square rounded-full overflow-hidden relative"
-            style={{ height: 44 }}
-          >
-            <img
-              alt={t("logo.alt")}
-              src={logoUrl}
-              className="object-cover object-center w-full h-full"
-            />
-          </div>
-        ) : (
-          <SvgNortPoleLogo size={44} />
-        )}
-        <div className="w-full mt-3">{children}</div>
+          {logoUrl ? (
+            <div
+              className="aspect-square rounded-full overflow-hidden relative"
+              style={{ height: 44 }}
+            >
+              <img
+                alt={t("logo.alt")}
+                src={logoUrl}
+                className="object-cover object-center w-full h-full"
+              />
+            </div>
+          ) : (
+            <SvgNortPoleLogo size={44} />
+          )}
+          <div className="w-full mt-3">{children}</div>
+        </div>
       </div>
       {authState === "login" && (
         <div className="opal-auth-card-bottom-prompt text-sm mt-6 text-center w-full mainUiBody mx-auto">

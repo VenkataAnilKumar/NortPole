@@ -49,22 +49,24 @@ function Card({
 }: CardProps) {
   return (
     <div className="opal-auth-card-outer">
-      <OpalCard padding={6} rounding={4} shadow="lg">
-        <div className="flex flex-col gap-6">
-          <div className="flex flex-col gap-3">
-            <div className="p-0.5">
-              <Icon size={ICON_SIZE_PX} />
+      <div className="opal-auth-glass dark">
+        <OpalCard padding={6} rounding={4} shadow="lg">
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-3">
+              <div className="p-0.5">
+                <Icon size={ICON_SIZE_PX} />
+              </div>
+              <Content
+                font="heading-headline"
+                orientation="stacked"
+                title={title}
+                description={description}
+              />
             </div>
-            <Content
-              font="heading-headline"
-              orientation="stacked"
-              title={title}
-              description={description}
-            />
+            <div className="flex flex-col gap-4">{children}</div>
           </div>
-          <div className="flex flex-col gap-4">{children}</div>
-        </div>
-      </OpalCard>
+        </OpalCard>
+      </div>
 
       {bottomPrompt && (
         <div className="opal-auth-card-bottom-prompt">

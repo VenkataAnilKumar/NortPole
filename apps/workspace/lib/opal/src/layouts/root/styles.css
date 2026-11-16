@@ -22,16 +22,11 @@ html:has(.opal-root-layout) body {
    css/desktop-titlebar.css. */
 .opal-root-layout {
   @apply flex flex-row w-full h-dvh overflow-hidden;
-  /* The black frame: the sidebar sits on it and the workspace is one rounded
-     sheet laid over it (decision 0007). */
-  background: #0b0d12;
-  padding: 8px 8px 8px 0;
 }
 
 /* App — fills remaining flex space; flex-col so Header/Footer pin correctly */
 .opal-root-layout__app {
-  @apply flex-1 flex flex-col overflow-hidden h-full w-full rounded-16;
-  background: var(--background-tint-00);
+  @apply flex-1 flex flex-col overflow-hidden h-full w-full;
 }
 
 /* Main content — the one scrollable slot. `min-h-0` so it shrinks to its

@@ -39,18 +39,16 @@ the favicon, the logo and logotype images (which still showed the previous name 
 template icons; a home-screen icon and a GitHub social preview were added. Files and uses are listed in
 [the brand assets](../assets/brand/README.md).
 
-## Colours and frame (2026-11-16)
+## Sign-in and glass layers (2026-11-16)
 
-The owner chose a **black frame and a white workspace**. There is no accent colour: buttons, the selected row and the
-progress bar are black or white by theme, and only errors and warnings keep a colour.
+The owner kept the workspace in its existing black-and-white look and asked only for a new sign-in page and a glass
+look for floating layers. Several palettes (gold and navy, glass tints, a black frame with a white sheet) were mocked
+up and not adopted, so the product has no accent colour.
 
-| Part | Light mode | Dark mode |
-|---|---|---|
-| Frame and sidebar | Black `#0b0d12` | Black `#0b0d12` |
-| Workspace sheet | White, rounded, laid over the frame | Graphite, rounded, laid over the frame |
-| Sign-in | Black sky (faint silver glow, stars) with the card on it | Same |
-
-The sidebar carries the `dark` class so it always uses the dark tokens, whichever theme the page is in. The frame is
-`.opal-root-layout` and the sheet is `.opal-root-layout__app`, both in `lib/opal/src/layouts/root/styles.css`. The Opal
-library bundles its own copy of the tokens, so rebuild `lib/shared` then `lib/opal` and restart the dev server to see a
-token change. Glass (blur) is kept for floating layers only, such as menus and phone tab bars.
+- **Sign-in and account pages** sit on a black sky with a faint silver glow and stars, in both themes. The card is
+  frosted glass (`.opal-auth-glass` in `lib/opal/src/layouts/auth/styles.css`; it takes the dark tokens so text and
+  fields read on the glass) with the prompt below it in light text.
+- **Dialogs** (`.opal-modal-card`) and **popovers** are frosted glass: about 84 percent opaque with a blur, so text stays
+  on a solid-enough ground. Where a browser has no backdrop blur, dialogs fall back to their solid surface.
+- The Opal library bundles its own copy of the tokens: rebuild `lib/shared` then `lib/opal` and restart the dev server to
+  see a token change.

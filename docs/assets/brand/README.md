@@ -14,5 +14,5 @@ In the product: `apps/workspace/lib/opal/src/logos/nortpole-logo.tsx` (sidebar a
 (`nortpole.ico` favicon at 16, 32 and 48 px, `apple-touch-icon.png`, `icon-512.png`, `logo*.png`, `logotype*.png`), and
 the Craft web-app template icons.
 
-Colours: black `#0b0d12` frame and white workspace, no accent colour; see decision 0007.
+There is no accent colour; the sign-in sky and glass layers are described in decision 0007.
 

@@ -110,7 +110,7 @@ function SidebarRoot({ foldable = false, children }: SidebarRootProps) {
     return (
       <SidebarFoldableContext.Provider value={true}>
         <div
-          className="opal-sidebar-root__overlay dark"
+          className="opal-sidebar-root__overlay"
           data-variant="mobile"
           data-folded={foldedAttr}
         >
@@ -133,7 +133,7 @@ function SidebarRoot({ foldable = false, children }: SidebarRootProps) {
       <SidebarFoldableContext.Provider value={true}>
         <div className="opal-sidebar-root__spacer" />
         <div
-          className="opal-sidebar-root__overlay dark"
+          className="opal-sidebar-root__overlay"
           data-variant="small"
           data-folded={foldedAttr}
         >
@@ -154,7 +154,7 @@ function SidebarRoot({ foldable = false, children }: SidebarRootProps) {
   return (
     <SidebarFoldableContext.Provider value={foldable}>
       <div
-        className="opal-sidebar-root__column dark"
+        className="opal-sidebar-root__column"
         data-folded={foldable ? foldedAttr : undefined}
       >
         {inner}

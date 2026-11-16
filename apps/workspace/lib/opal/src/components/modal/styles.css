@@ -93,10 +93,20 @@
 }
 
 .opal-modal-card {
-  @apply overflow-hidden bg-background-tint-00 border rounded-16 shadow-2xl flex flex-col;
+  @apply overflow-hidden border rounded-16 shadow-2xl flex flex-col;
+  /* Frosted glass: mostly opaque so text stays readable, with a blur that
+     picks up what is behind the dialog (decision 0007). */
+  background: color-mix(in srgb, var(--background-tint-00) 84%, transparent);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  border-color: color-mix(in srgb, var(--background-tint-00) 60%, var(--border-01));
 }
 .opal-modal-card[data-background="gray"] {
-  @apply bg-background-tint-01;
+  background: color-mix(in srgb, var(--background-tint-01) 84%, transparent);
+}
+@supports not (backdrop-filter: blur(1px)) {
+  .opal-modal-card { background: var(--background-tint-00); }
+  .opal-modal-card[data-background="gray"] { background: var(--background-tint-01); }
 }
 .opal-modal-card[data-height="fit"] {
   @apply h-fit;
