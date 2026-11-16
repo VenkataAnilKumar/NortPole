@@ -58,4 +58,8 @@ up and not adopted, so the product has no accent colour.
   soft blue, mint and lilac glows; dark mode uses the starfield (`public/app-sky.svg`, stars only, so Polaris does not
   show through the panels). Panels are 62 to 78 percent opaque with a blur, and fall back to solid surfaces where
   backdrop blur is missing. Colour tokens and the controls inside the panels are unchanged.
+- **Empty states and loading**: the shared empty-state drawing (`lib/opal/src/illustrations/empty.tsx`, used wherever an
+  empty list is shown) is the North Star over two snowy hills with faint star trails, in neutral tokens only. The loading
+  mark (`NortPoleLoader`) is the North Star outline that turns a half turn while filling in, 2 s per loop; with reduced
+  motion it holds the still outline. The Inbox empty states now show the drawing too.
 

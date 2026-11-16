@@ -46,13 +46,13 @@ interface NortPoleLoaderProps {
   color?: LoaderColor;
 }
 
-// Geometry matches the @opal/icons `nortpole-octagon`/`nortpole-logo` paths. Stroke
+// Geometry is the North Star of `nortpole-logo`, on a 16 grid. Stroke
 // is defined here, not reused from them, so weight can be tuned: ~2.5px at
 // the default 64px, scaling with `size`.
 const STROKE_WIDTH = 0.625;
 
 const OUTLINE_PATH =
-  "M4.5 2.50002L8 1.00002L11.5 2.50002M13.5 4.50002L15 8.00001L13.5 11.5M11.5 13.5L8 15L4.5 13.5M2.5 11.5L1 8L2.5 4.50002";
+  "M8 1L9.4 6.6L14.67 8L9.4 9.4L8 15L6.6 9.4L1.33 8L6.6 6.6Z";
 
 function svgLayerProps(size: number) {
   return {
@@ -66,19 +66,19 @@ function svgLayerProps(size: number) {
 }
 
 const MARK_PATHS = [
-  "M8 4.00001L4.5 2.50002L8 1.00002L11.5 2.50002L8 4.00001Z",
-  "M8 12L11.5 13.5L8 15L4.5 13.5L8 12Z",
-  "M4 8L2.5 11.5L1 8L2.5 4.50002L4 8Z",
-  "M12 8.00002L13.5 4.50002L15 8.00001L13.5 11.5L12 8.00002Z",
+  "M8 1L9.4 6.6L14.67 8L9.4 9.4L8 15L6.6 9.4L1.33 8L6.6 6.6Z",
 ];
 
 /**
- * NortPole-branded loading mark: rotates a full turn while crossfading between the
- * octagon outline and the diamond logo (2s loop), holding the static outline
+ * NortPole-branded loading mark: turns a half turn while crossfading between the North Star
+ * outline and the filled star (2s loop), holding the static outline
  * under `prefers-reduced-motion`. Uses `currentColor`, so `color` themes it.
  * For a full-page loading state with a label, use `PageLoader`.
  */
-function NortPoleLoader({ size = 64, color = "border-02" }: NortPoleLoaderProps) {
+function NortPoleLoader({
+  size = 64,
+  color = "border-02",
+}: NortPoleLoaderProps) {
   const strings = useOpalStrings();
   return (
     <div
@@ -107,6 +107,7 @@ function NortPoleLoader({ size = 64, color = "border-02" }: NortPoleLoaderProps)
             <path
               key={d}
               d={d}
+              fill="currentColor"
               strokeWidth={STROKE_WIDTH}
               strokeLinecap="round"
               strokeLinejoin="round"

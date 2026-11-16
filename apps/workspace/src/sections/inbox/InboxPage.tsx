@@ -8,6 +8,7 @@ import { dismissNotification, invalidateNotificationCaches } from "@/lib/notific
 import { type Notification } from "@/lib/notifications/interfaces";
 import { isAction } from "@/lib/notifications/inbox";
 import { useOwnWork, type OwnTask } from "@/lib/inboxWork";
+import { SvgEmpty } from "@opal/illustrations";
 import { useApprovalCounts } from "@/lib/approvals";
 import { useUser } from "@/providers/UserProvider";
 import LiveApprovals from "@/sections/inbox/LiveApprovals";
@@ -106,7 +107,8 @@ export default function InboxPage() {
   );
 
   const empty = (t: Tab) => (
-    <section className={`${card} p-5`} aria-labelledby="inbox-empty">
+    <section className={`${card} flex flex-col items-center p-8 text-center`} aria-labelledby="inbox-empty">
+      <SvgEmpty size={96} aria-hidden="true" />
       <h2 id="inbox-empty" className="mb-1 text-base font-semibold text-text-05">{EMPTY[t].title}</h2>
       <p className="text-sm text-text-03">{EMPTY[t].body}</p>
     </section>
