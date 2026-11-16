@@ -4,6 +4,11 @@ Dynamically discovers all columns using EncryptedString / EncryptedJson,
 decrypts each value with the old key, and re-encrypts with the current
 ENCRYPTION_KEY_SECRET.
 
+This is also how values stored before sealing existed are sealed the first time:
+run it with no old key (values without the `np1:` prefix are read as plain text).
+
+    ENCRYPTION_KEY_SECRET=<new key> python -m nortpole.db.rotate_encryption_key [--old-key OLD] [--dry-run]
+
 The operation is idempotent: rows already encrypted with the current key
 are skipped. Commits are made in batches so a crash mid-rotation can be
 safely resumed by re-running.
@@ -15,11 +20,9 @@ from typing import Any
 from sqlalchemy import LargeBinary, select, update
 from sqlalchemy.orm import Session
 
-from nortpole.configs.app_configs import ENCRYPTION_KEY_SECRET
 from nortpole.db.models import Base, EncryptedJson, EncryptedString
-from nortpole.utils.encryption import decrypt_bytes_to_string
+from nortpole.utils.encryption import EncryptionError, current_key, decrypt_bytes_to_string, is_sealed
 from nortpole.utils.logger import setup_logger
-from nortpole.utils.variable_functionality import global_version
 
 logger = setup_logger()
 
@@ -33,7 +36,7 @@ def _can_decrypt_with_current_key(data: bytes) -> bool:
     _decrypt_bytes is NOT triggered — a clean success/failure signal.
     """
     try:
-        decrypt_bytes_to_string(data, key=ENCRYPTION_KEY_SECRET)
+        decrypt_bytes_to_string(data, key=current_key())
         return True
     except Exception:
         return False
@@ -64,6 +67,7 @@ def rotate_encryption_key(
     db_session: Session,
     old_key: str | None,
     dry_run: bool = False,
+    only_tables: set[str] | None = None,
 ) -> dict[str, int]:
     """Decrypt all encrypted columns with old_key and re-encrypt with the current key.
 
@@ -72,6 +76,7 @@ def rotate_encryption_key(
         old_key: The previous encryption key. Pass None or "" if values were
                  not previously encrypted with a key.
         dry_run: If True, count rows that need rotation without modifying data.
+        only_tables: Limit the run to these table names (default: every table with an encrypted column).
 
     Returns:
         Dict of "table.column" -> number of rows re-encrypted (or would be).
@@ -80,10 +85,7 @@ def rotate_encryption_key(
     is preserved on crash. Already-rotated rows are detected and skipped,
     making the operation safe to re-run.
     """
-    if not global_version.is_ee_version():
-        raise RuntimeError("EE mode is not enabled — rotation requires EE encryption.")
-
-    if not ENCRYPTION_KEY_SECRET:
+    if not current_key():
         raise RuntimeError(
             "ENCRYPTION_KEY_SECRET is not set — cannot rotate. Set the target encryption key in the environment before running."
         )
@@ -93,6 +95,8 @@ def rotate_encryption_key(
 
     for model_cls, col_name, pk_names, is_json in encrypted_columns:
         table_name: str = model_cls.__tablename__  # ty: ignore[unresolved-attribute]
+        if only_tables is not None and table_name not in only_tables:
+            continue
         col_attr = getattr(model_cls, col_name)  # ods: ignore[getattr]
         pk_attrs = [getattr(model_cls, pk) for pk in pk_names]  # ods: ignore[getattr]
 
@@ -113,7 +117,8 @@ def rotate_encryption_key(
                 continue
 
             try:
-                if not old_key:
+                if not old_key or not is_sealed(raw_bytes):
+                    # Not sealed (stored before sealing existed): it is plain text, whatever the old key.
                     decrypted_str = raw_bytes.decode("utf-8")
                 else:
                     decrypted_str = decrypt_bytes_to_string(raw_bytes, key=old_key)
@@ -121,7 +126,7 @@ def rotate_encryption_key(
                 # For EncryptedJson, parse back to dict so the TypeDecorator
                 # can json.dumps() it cleanly (avoids double-encoding).
                 value: Any = json.loads(decrypted_str) if is_json else decrypted_str
-            except (ValueError, UnicodeDecodeError) as e:
+            except (ValueError, UnicodeDecodeError, EncryptionError) as e:
                 pk_vals = [row[i] for i in range(len(pk_names))]
                 logger.warning(
                     "Could not decrypt/parse %s.%s row %s — skipping: %s",
@@ -160,3 +165,26 @@ def rotate_encryption_key(
             )
 
     return totals
+
+
+def main(argv: list[str] | None = None) -> int:
+    import argparse
+
+    from nortpole.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant
+
+    parser = argparse.ArgumentParser(description="Seal or re-seal every encrypted column with ENCRYPTION_KEY_SECRET.")
+    parser.add_argument("--old-key", default=None, help="The key the values are sealed with now; leave out for values stored as plain text.")
+    parser.add_argument("--dry-run", action="store_true", help="Count what would change; change nothing.")
+    parser.add_argument("--only", action="append", default=None, metavar="TABLE", help="Limit the run to this table (repeatable).")
+    args = parser.parse_args(argv)
+    SqlEngine.init_engine(pool_size=2, max_overflow=0)
+    with get_session_with_current_tenant() as session:
+        totals = rotate_encryption_key(session, args.old_key, dry_run=args.dry_run, only_tables=set(args.only) if args.only else None)
+    for name, count in sorted(totals.items()):
+        print(f"{'would seal' if args.dry_run else 'sealed'} {count:>5}  {name}")
+    print(f"{'would change' if args.dry_run else 'changed'} {sum(totals.values())} value(s) in {len(totals)} column(s)")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

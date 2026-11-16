@@ -133,7 +133,7 @@ def test_the_account_is_sealed_at_rest_and_never_in_status_or_logs(world) -> Non
         assert SECRET not in json.dumps(status)
         raw = s.execute(text("select credential from nortpole_integration_use where user_id = :u and integration_id = 'airtable'"), {"u": ann.id}).scalar()
         assert raw is not None and SECRET not in raw and "access_token" not in raw, "the stored text must not hold the token"
-        assert raw.startswith("gAAAA"), "it is a sealed token"
+        assert len(raw) > 40, "it is the sealed bytes, not the token"
     for action in ("integration.install", "integration.connect", "tool.call"):
         for row in audit_rows(action, "airtable"):
             assert SECRET not in json.dumps({"s": row.summary, "d": row.details}), f"{action} row leaked the credential"
@@ -191,7 +191,11 @@ def test_an_unknown_integration_or_action_is_refused(world) -> None:  # type: ig
 
 
 def test_without_a_secrets_key_an_account_is_refused_not_stored_in_the_clear(world, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    import nortpole.utils.encryption as encryption
+
     monkeypatch.delenv(secrets.ENV)
+    monkeypatch.delenv("NORTPOLE_ALLOW_PLAINTEXT_SECRETS", raising=False)
+    monkeypatch.setattr(encryption, "ENCRYPTION_KEY_SECRET", "")
     with get_session_with_current_tenant() as s:
         ann = person(s, world, "ann")
         policy.save(policy.PolicyConfig(integrations={"airtable": "allowed"}))

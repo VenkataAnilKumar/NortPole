@@ -25,9 +25,12 @@ from nortpole.error_handling.error_codes import NortPoleErrorCode
 from nortpole.error_handling.exceptions import NortPoleError
 from nortpole.key_value_store.factory import get_kv_store
 from nortpole.key_value_store.interface import KvKeyNotFoundError
+from nortpole.utils.encryption import EncryptionError, decrypt_bytes_to_string, encrypt_string_to_bytes
+from nortpole.utils.logger import setup_logger
 from nortpole.work.packs.manifest import Manifest, canonical_bytes
 from nortpole.work.packs.models import NortPolePackSigner, NortPolePackVersion
 
+logger = setup_logger()
 router = APIRouter(prefix="/admin/studio")
 KEY_KV = "nortpole_studio_signer"
 DRAFTS_KV = "nortpole_studio_drafts"
@@ -66,6 +69,24 @@ def check(manifest: dict) -> CheckResult:
                                                        message=str(err["msg"]).removeprefix("Value error, ")) for err in e.errors()[:20]])
 
 
+def _sealed_record(raw: bytes) -> dict:
+    """The stored form of the signing key. The key-value store keeps plain JSON, so the private key is sealed first."""
+    sealed = encrypt_string_to_bytes(base64.b64encode(raw).decode())
+    return {"key_id": KEY_ID, "sealed_private_key": base64.b64encode(sealed).decode()}
+
+
+def _open_private_key(stored: dict) -> bytes:
+    if "sealed_private_key" in stored:
+        return base64.b64decode(decrypt_bytes_to_string(base64.b64decode(stored["sealed_private_key"])))
+    # Saved before sealing existed: use it, and seal it now if a key is configured (otherwise leave it and say so).
+    raw = base64.b64decode(stored["private_key"])
+    try:
+        get_kv_store().store(KEY_KV, _sealed_record(raw))
+    except EncryptionError:
+        logger.warning("The Studio signing key is stored unsealed; set ENCRYPTION_KEY_SECRET to seal it.")
+    return raw
+
+
 def _signing_key(db: Session, user: User) -> Ed25519PrivateKey:
     """The workspace key, created and trusted on first use. Refused if an administrator revoked it."""
     stored = _kv_load(KEY_KV, None)
@@ -76,14 +97,14 @@ def _signing_key(db: Session, user: User) -> Ed25519PrivateKey:
         key = Ed25519PrivateKey.generate()
         raw = key.private_bytes(serialization.Encoding.Raw, serialization.PrivateFormat.Raw, serialization.NoEncryption())
         pub = key.public_key().public_bytes(serialization.Encoding.Raw, serialization.PublicFormat.Raw)
-        get_kv_store().store(KEY_KV, {"key_id": KEY_ID, "private_key": base64.b64encode(raw).decode()})
+        get_kv_store().store(KEY_KV, _sealed_record(raw))
         from nortpole.work.packs.api import SignerIn, add_signer
 
         add_signer(SignerIn(key_id=KEY_ID, public_key=base64.b64encode(pub).decode(), label="Studio (this workspace)"), user=user, db_session=db)
         return key
     if signer is not None and signer.revoked:
         raise NortPoleError(NortPoleErrorCode.INVALID_INPUT, "The Studio signer was revoked, so Studio packs cannot be published.")
-    return Ed25519PrivateKey.from_private_bytes(base64.b64decode(stored["private_key"]))
+    return Ed25519PrivateKey.from_private_bytes(_open_private_key(stored))
 
 
 @router.get("")
