@@ -77,7 +77,8 @@ class Decision(BaseModel):
 def _view(r: NortPoleSourceRequest) -> RequestView:
     return RequestView(id=r.id, kind=r.kind, item_key=r.item_key, item_name=r.item_name, reason=r.reason, state=r.state,
                        requested_by_email=r.requested_by_email, decided_by_email=r.decided_by_email, decision_note=r.decision_note,
-                       created_at=r.created_at, decided_at=r.decided_at, manage_at=WHERE.get(r.kind, "/admin/approvals"))
+                       created_at=r.created_at, decided_at=r.decided_at,
+                       manage_at="/admin/integrations" if r.item_key.startswith(catalog.INTEGRATION_PREFIX) else WHERE.get(r.kind, "/admin/approvals"))
 
 
 def _mine(db: Session, user: User) -> list[NortPoleSourceRequest]:

@@ -184,7 +184,7 @@ export default function IntegrationCatalog() {
       <div className={`${card} flex flex-col gap-3`}>
         <label className="flex flex-col gap-1 text-sm font-medium text-text-05">
           Search
-          <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search skills, connectors and plugins" className="min-h-11 rounded-xl border border-border-02 bg-background-neutral-00 px-3 text-sm text-text-05" />
+          <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search connectors and plugins" className="min-h-11 rounded-xl border border-border-02 bg-background-neutral-00 px-3 text-sm text-text-05" />
         </label>
         <div role="group" aria-label="Show" className="flex flex-wrap items-center gap-2">
           {(["all", "horizontal", "vertical"] as Show[]).map((s) => (

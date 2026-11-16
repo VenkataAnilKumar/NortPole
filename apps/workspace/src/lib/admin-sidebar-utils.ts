@@ -24,6 +24,7 @@ export type AdminNavItemId =
   | "packsAdmin"
   | "inventory"
   | "toolCatalog"
+  | "integrations"
   | "studio"
   | "governance"
   | "overview"
@@ -102,6 +103,7 @@ export const NAV_ITEM_IDS: Record<
   STUDIO: "studio",
   INVENTORY: "inventory",
   TOOL_CATALOG: "toolCatalog",
+  INTEGRATIONS: "integrations",
   GOVERNANCE: "governance",
   OVERVIEW: "overview",
   QUALITY: "quality",

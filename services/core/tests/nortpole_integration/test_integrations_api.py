@@ -162,7 +162,7 @@ def test_an_integration_that_needs_approval_is_requested_approved_and_then_insta
         assert code_of(requests_api.create_request, requests_api.NewRequest(kind="plugin", item_key="integration:ghost"), user=ann, db_session=s) == NortPoleErrorCode.NOT_FOUND
         assert code_of(requests_api.create_request, requests_api.NewRequest(kind="skill", item_key="integration:airtable"), user=ann, db_session=s) == NortPoleErrorCode.NOT_FOUND
         sent = requests_api.create_request(ask, user=ann, db_session=s)
-        assert sent.state == "pending"
+        assert sent.state == "pending" and sent.manage_at == "/admin/integrations", "the administrator is sent to the Integrations page"
         assert code_of(requests_api.create_request, ask, user=ann, db_session=s) == NortPoleErrorCode.CONFLICT, "one waiting request per item"
         assert code_of(api.install, "airtable", api.IntegrationInstallBody(), user=ann, db=s) == NortPoleErrorCode.POLICY_BLOCKED, "asking does not turn anything on"
         done = requests_api.decide_request(sent.id, requests_api.Decision(approve=True, note="ok"), user=admin, db_session=s)

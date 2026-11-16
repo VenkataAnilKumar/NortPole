@@ -16867,6 +16867,9 @@
         "toolCatalog": {
           "label": "الأدوات"
         },
+        "integrations": {
+          "label": "التكاملات"
+        },
         "studio": {
           "label": "الاستوديو"
         },

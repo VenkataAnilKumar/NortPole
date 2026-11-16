@@ -16867,6 +16867,9 @@
         "toolCatalog": {
           "label": "工具"
         },
+        "integrations": {
+          "label": "集成"
+        },
         "studio": {
           "label": "工作室"
         },

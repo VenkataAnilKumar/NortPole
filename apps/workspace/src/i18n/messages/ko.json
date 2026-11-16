@@ -16867,6 +16867,9 @@
         "toolCatalog": {
           "label": "도구"
         },
+        "integrations": {
+          "label": "통합"
+        },
         "studio": {
           "label": "스튜디오"
         },

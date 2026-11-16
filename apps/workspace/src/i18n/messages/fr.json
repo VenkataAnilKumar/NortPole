@@ -16867,6 +16867,9 @@
         "toolCatalog": {
           "label": "Outils"
         },
+        "integrations": {
+          "label": "Intégrations"
+        },
         "studio": {
           "label": "Studio"
         },

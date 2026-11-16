@@ -499,6 +499,16 @@ export const ADMIN_ROUTES = {
     requiredTier: null,
     visibleWhen: null,
   },
+  INTEGRATIONS: {
+    path: "/admin/integrations",
+    icon: SvgShield,
+    title: "Integrations",
+    sidebarLabel: "Integrations",
+    requiredPermission: Permission.FULL_ADMIN_PANEL_ACCESS,
+    section: "Agents & tools",
+    requiredTier: null,
+    visibleWhen: null,
+  },
   INVENTORY: {
     path: "/admin/inventory",
     icon: SvgShield,

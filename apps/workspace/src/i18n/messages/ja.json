@@ -16867,6 +16867,9 @@
         "toolCatalog": {
           "label": "ツール"
         },
+        "integrations": {
+          "label": "連携"
+        },
         "studio": {
           "label": "スタジオ"
         },

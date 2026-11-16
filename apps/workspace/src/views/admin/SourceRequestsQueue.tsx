@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { errorHandlingFetcher } from "@/lib/fetcher";
 
 interface Req {
-  id: string; kind: string; item_name: string; reason: string; state: string; requested_by_email: string;
+  id: string; kind: string; item_key: string; item_name: string; reason: string; state: string; requested_by_email: string;
   decided_by_email: string | null; decision_note: string; created_at: string; manage_at: string;
 }
 interface Requests { pending: Req[]; recent: Req[] }
@@ -16,6 +16,8 @@ const primary = "min-h-11 rounded-xl bg-text-05 px-4 text-sm font-semibold text-
 const secondary = "min-h-11 rounded-xl border border-border-02 px-4 text-sm font-semibold text-text-05 disabled:opacity-50";
 const KIND: Record<string, string> = { connector: "Connector", skill: "Skill (pack)", plugin: "Plugin (tool)" };
 const WHERE: Record<string, string> = { connector: "Connectors", skill: "Packs", plugin: "Tools" };
+// An integration is not set up by an administrator: once approved, the person installs it themselves.
+const isIntegration = (r: { item_key: string }) => r.item_key.startsWith("integration:");
 
 /**
  * What people asked for on Discover. Approving records the decision and tells the person; it does not turn anything
@@ -38,7 +40,7 @@ export default function SourceRequestsQueue() {
         const body = await res.json().catch(() => null);
         throw new Error(typeof body?.detail === "string" ? body.detail : `The decision could not be saved (HTTP ${res.status}).`);
       }
-      setMsg({ ok: true, text: approve ? `Approved. Set up ${r.item_name} on the ${WHERE[r.kind] ?? "relevant"} page; approving does not turn it on.` : `Declined. ${r.requested_by_email} sees your note.` });
+      setMsg({ ok: true, text: approve ? (isIntegration(r) ? `Approved. ${r.requested_by_email} can now install ${r.item_name} themselves from Sources.` : `Approved. Set up ${r.item_name} on the ${WHERE[r.kind] ?? "relevant"} page; approving does not turn it on.`) : `Declined. ${r.requested_by_email} sees your note.` });
       await mutate();
     } catch (e) {
       setMsg({ ok: false, text: e instanceof Error ? e.message : "The decision could not be saved." });
@@ -51,7 +53,7 @@ export default function SourceRequestsQueue() {
     <section className={card} aria-labelledby="src-req" data-testid="source-requests">
       <h2 id="src-req" className="text-base font-semibold text-text-05">Requests from people</h2>
       <p className="mt-1 text-sm text-text-03">
-        Connectors, skills and plugins people asked for on Discover. Approving records your decision and shows it to them; you then set the item up where it is managed.
+        Connectors, skills and plugins people asked for on Discover. Approving records your decision and shows it to them; for an integration the person can then install it themselves; for the rest you set the item up where it is managed.
       </p>
       {msg && <p role={msg.ok ? "status" : "alert"} className={`mt-2 text-sm ${msg.ok ? "text-text-05" : "text-status-text-error-05"}`}>{msg.text}</p>}
       {!data || data.pending.length === 0 ? (
@@ -74,7 +76,7 @@ export default function SourceRequestsQueue() {
               <div className="mt-2 flex flex-wrap gap-2">
                 <button type="button" className={primary} disabled={busy} onClick={() => decide(r, true)}>Approve</button>
                 <button type="button" className={secondary} disabled={busy} onClick={() => decide(r, false)}>Decline</button>
-                <a href={r.manage_at} className={`${secondary} inline-flex items-center`}>Open {WHERE[r.kind] ?? "its page"}</a>
+                <a href={r.manage_at} className={`${secondary} inline-flex items-center`}>Open {isIntegration(r) ? "Integrations" : (WHERE[r.kind] ?? "its page")}</a>
               </div>
             </li>
           ))}
