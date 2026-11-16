@@ -8,23 +8,16 @@
 
 .opal-auth-root {
   @apply flex min-h-screen items-center justify-center;
-  /* The North Star sky: black with a faint silver glow and a scatter of
-     stars, the same in light and dark mode (decision 0007). */
+  /* The North Pole sky: polar night with a dense starfield (public/auth-sky.svg),
+     Polaris with faint star trails around it, and a soft green and blue aurora low
+     on the horizon, the same in light and dark mode (decision 0007). */
   background:
-    radial-gradient(38% 34% at 62% 38%, rgba(150, 165, 200, 0.30), transparent 70%),
-    radial-gradient(34% 30% at 34% 66%, rgba(110, 124, 160, 0.28), transparent 70%),
-    radial-gradient(40% 30% at 22% 100%, rgba(160, 172, 196, 0.22), transparent 70%),
-    radial-gradient(34% 26% at 80% 96%, rgba(120, 132, 158, 0.16), transparent 70%),
-    radial-gradient(1px 1px at 12% 18%, rgba(255, 255, 255, 0.7), transparent),
-    radial-gradient(1px 1px at 27% 62%, rgba(255, 255, 255, 0.5), transparent),
-    radial-gradient(1.5px 1.5px at 41% 28%, rgba(255, 255, 255, 0.8), transparent),
-    radial-gradient(1px 1px at 58% 12%, rgba(255, 255, 255, 0.6), transparent),
-    radial-gradient(1px 1px at 66% 48%, rgba(255, 255, 255, 0.45), transparent),
-    radial-gradient(1.5px 1.5px at 78% 22%, rgba(255, 255, 255, 0.75), transparent),
-    radial-gradient(1px 1px at 90% 58%, rgba(255, 255, 255, 0.55), transparent),
-    radial-gradient(1px 1px at 8% 80%, rgba(255, 255, 255, 0.5), transparent),
-    radial-gradient(1px 1px at 35% 88%, rgba(255, 255, 255, 0.4), transparent),
-    radial-gradient(120% 90% at 50% 0%, #1b212d 0%, #0f131b 50%, #0b0d12 100%);
+    url("/auth-sky.svg") center / cover no-repeat,
+    radial-gradient(60% 22% at 18% 96%, rgba(70, 214, 170, 0.20), transparent 72%),
+    radial-gradient(52% 20% at 46% 100%, rgba(80, 150, 255, 0.18), transparent 72%),
+    radial-gradient(40% 18% at 80% 98%, rgba(150, 120, 255, 0.14), transparent 72%),
+    radial-gradient(38% 34% at 62% 38%, rgba(150, 165, 200, 0.16), transparent 70%),
+    radial-gradient(120% 90% at 50% 0%, #121a2b 0%, #0a0f1a 52%, #060810 100%);
 }
 
 .opal-auth-card-outer {

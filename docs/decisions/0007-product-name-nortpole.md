@@ -45,7 +45,8 @@ The owner kept the workspace in its existing black-and-white look and asked only
 look for floating layers. Several palettes (gold and navy, glass tints, a black frame with a white sheet) were mocked
 up and not adopted, so the product has no accent colour.
 
-- **Sign-in and account pages** sit on a black sky with a faint silver glow and stars, in both themes. The card is
+- **Sign-in and account pages** sit on a North Pole sky in both themes: polar night, a dense starfield, Polaris with faint star trails circling it,
+  and a soft green and blue aurora low on the horizon (`apps/workspace/public/auth-sky.svg`, a generated drawing). The card is
   frosted glass (`.opal-auth-glass` in `lib/opal/src/layouts/auth/styles.css`; it takes the dark tokens so text and
   fields read on the glass) with the prompt below it in light text.
 - **Dialogs** (`.opal-modal-card`) and **popovers** are frosted glass: about 84 percent opaque with a blur, so text stays
