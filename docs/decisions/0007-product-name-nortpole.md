@@ -30,3 +30,11 @@ check the trademark registers (software, classes 9 and 42) and the `.com` and `.
   old tables: a database created before this step must be recreated, or have its tables, constraints, indexes, the
   column and the setting keys renamed by hand (done once for the sandbox). The fallbacks for the previous setting names
   were removed, since nothing set them any more.
+
+## Product icon (2026-11-16)
+
+The owner chose the **North Star**: a four-point guiding star with a long north–south axis, on the same 24×24 grid as
+the previous mark and in one colour, so it follows the theme. It replaces the six-line asterisk in the sidebar and home,
+the favicon, the logo and logotype images (which still showed the previous name as pixels), and the Craft web-app
+template icons; a home-screen icon and a GitHub social preview were added. Files and uses are listed in
+[the brand assets](../assets/brand/README.md).

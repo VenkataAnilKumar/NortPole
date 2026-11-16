@@ -14,6 +14,7 @@ export async function generateFaviconMetadata(): Promise<Metadata["icons"]> {
     icon: enterprise?.use_custom_logo
       ? "/api/enterprise-settings/logo"
       : "/nortpole.ico",
+    apple: enterprise?.use_custom_logo ? undefined : "/apple-touch-icon.png",
   };
 }
 
