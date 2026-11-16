@@ -79,3 +79,14 @@ html.dark .opal-root-layout {
 .opal-root-layout__footer[data-extra-padding="true"] {
   @apply pt-3.5;
 }
+
+/* Phones: a thinner margin so the glass panels do not cost reading width. */
+@media (max-width: 640px) {
+  .opal-root-layout {
+    padding: 6px;
+    gap: 6px;
+  }
+  .opal-root-layout__app {
+    border-radius: 18px;
+  }
+}
