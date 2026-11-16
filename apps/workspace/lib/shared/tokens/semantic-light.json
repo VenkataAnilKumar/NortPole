@@ -205,15 +205,39 @@
       "type": "color"
     },
     "theme-primary-06": {
-      "value": "{nortpole-ink-100}",
+      "value": "{nortpole-navy-100}",
       "type": "color"
     },
     "theme-primary-05": {
-      "value": "{nortpole-ink-95}",
+      "value": "{nortpole-navy-95}",
       "type": "color"
     },
     "theme-primary-04": {
-      "value": "{nortpole-ink-90}",
+      "value": "{nortpole-navy-90}",
+      "type": "color"
+    },
+    "theme-brand-05": {
+      "value": "{nortpole-navy-95}",
+      "type": "color"
+    },
+    "theme-brand-06": {
+      "value": "{nortpole-navy-100}",
+      "type": "color"
+    },
+    "theme-accent-05": {
+      "value": "{nortpole-gold-95}",
+      "type": "color"
+    },
+    "theme-accent-text-05": {
+      "value": "{nortpole-gold-ink}",
+      "type": "color"
+    },
+    "theme-accent-tint-01": {
+      "value": "{nortpole-gold-wash}",
+      "type": "color"
+    },
+    "theme-progress-05": {
+      "value": "{nortpole-teal-50}",
       "type": "color"
     },
     "theme-gradient-05": {

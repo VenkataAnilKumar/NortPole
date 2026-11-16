@@ -38,3 +38,19 @@ the previous mark and in one colour, so it follows the theme. It replaces the si
 the favicon, the logo and logotype images (which still showed the previous name as pixels), and the Craft web-app
 template icons; a home-screen icon and a GitHub social preview were added. Files and uses are listed in
 [the brand assets](../assets/brand/README.md).
+
+## Colours (2026-11-16)
+
+The owner chose the cool **Polar** palette. Tokens live in `apps/workspace/lib/shared/tokens` and compile to CSS
+variables (the Opal library bundles its own copy, so rebuild `lib/shared` then `lib/opal`).
+
+| Role | Value | Token | Where |
+|---|---|---|---|
+| North Navy | `#1f2a44` | `theme-primary-05`, `theme-brand-05` | Primary buttons and the mark in light mode, the sign-in sky |
+| Polar Gold | `#e8b04b` | `theme-accent-05` | Mark and primary buttons in dark mode, the Inbox count, the selected sidebar row's edge, focus |
+| Gold ink | `#8a5a0b` | `theme-accent-text-05` | Gold used as text on light surfaces |
+| Aurora Teal | `#2bb3a3` | `theme-progress-05` | Progress and success (reserved; not yet used in screens) |
+
+The sign-in pages sit on the navy sky (stars and a faint glow) in both modes. Neutral greys are unchanged, and status
+colours (errors, warnings) keep their own tokens.
+

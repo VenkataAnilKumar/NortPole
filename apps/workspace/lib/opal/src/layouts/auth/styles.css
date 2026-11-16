@@ -8,6 +8,21 @@
 
 .opal-auth-root {
   @apply flex min-h-screen items-center justify-center;
+  /* The North Star sky: brand navy with a faint aurora glow and a scatter of
+     stars, the same in light and dark mode (decision 0007). */
+  background:
+    radial-gradient(40% 30% at 22% 100%, rgba(43, 179, 163, 0.26), transparent 70%),
+    radial-gradient(34% 26% at 80% 96%, rgba(232, 176, 75, 0.14), transparent 70%),
+    radial-gradient(1px 1px at 12% 18%, rgba(255, 255, 255, 0.7), transparent),
+    radial-gradient(1px 1px at 27% 62%, rgba(255, 255, 255, 0.5), transparent),
+    radial-gradient(1.5px 1.5px at 41% 28%, rgba(255, 255, 255, 0.8), transparent),
+    radial-gradient(1px 1px at 58% 12%, rgba(255, 255, 255, 0.6), transparent),
+    radial-gradient(1px 1px at 66% 48%, rgba(255, 255, 255, 0.45), transparent),
+    radial-gradient(1.5px 1.5px at 78% 22%, rgba(255, 255, 255, 0.75), transparent),
+    radial-gradient(1px 1px at 90% 58%, rgba(255, 255, 255, 0.55), transparent),
+    radial-gradient(1px 1px at 8% 80%, rgba(255, 255, 255, 0.5), transparent),
+    radial-gradient(1px 1px at 35% 88%, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(120% 90% at 50% 0%, #2a3a63 0%, #1f2a44 45%, #141c30 100%);
 }
 
 .opal-auth-card-outer {
@@ -17,6 +32,15 @@
 
 .opal-auth-card-bottom-prompt {
   @apply text-center;
+}
+/* The prompt sits on the sky, not on the card. */
+.opal-auth-card-bottom-prompt,
+.opal-auth-card-bottom-prompt * {
+  color: rgba(255, 255, 255, 0.78);
+}
+.opal-auth-card-bottom-prompt a {
+  color: #fff;
+  text-decoration: underline;
 }
 
 .opal-auth-fields {

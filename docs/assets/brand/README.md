@@ -13,3 +13,6 @@ The mark is the **North Star**: a four-point guiding star on a 24×24 grid, one 
 In the product: `apps/workspace/lib/opal/src/logos/nortpole-logo.tsx` (sidebar and home), `apps/workspace/public/`
 (`nortpole.ico` favicon at 16, 32 and 48 px, `apple-touch-icon.png`, `icon-512.png`, `logo*.png`, `logotype*.png`), and
 the Craft web-app template icons.
+
+Colours: North Navy `#1f2a44`, Polar Gold `#e8b04b`, Aurora Teal `#2bb3a3`; see decision 0007 for where each is used.
+
