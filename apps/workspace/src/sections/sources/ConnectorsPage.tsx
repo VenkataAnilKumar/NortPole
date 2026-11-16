@@ -3,6 +3,8 @@
 import useSWR from "swr";
 import { errorHandlingFetcher } from "@/lib/fetcher";
 import { card, h1Class, pageClass, titleCase } from "@/sections/sources/shared";
+import InstalledIntegrations from "@/sections/sources/InstalledIntegrations";
+import { FetchError } from "@/lib/fetcher";
 
 /**
  * Connectors: the outside systems whose documents are in the workspace's search. People see which systems are
@@ -20,8 +22,12 @@ export default function ConnectorsPage() {
           Systems connected to this workspace. Assistants read from them only what your own access in that system allows. Administrators add and manage connectors.
         </p>
       </header>
+      <InstalledIntegrations kind="connector" />
       {isLoading && <p className="text-sm text-text-03">Loading connectors…</p>}
-      {error && <p role="alert" className="text-sm text-status-text-error-05">Connectors could not be loaded. Try again in a moment.</p>}
+      {error && error instanceof FetchError && error.status === 501 && (
+        <p className="text-sm text-text-03" data-testid="connectors-no-search">Document search is not set up for this workspace, so there are no connected document systems to show. Retrying will not help; an administrator sets search up.</p>
+      )}
+      {error && !(error instanceof FetchError && error.status === 501) && <p role="alert" className="text-sm text-status-text-error-05">Connectors could not be loaded. Try again in a moment.</p>}
       {data && sources.length === 0 && (
         <section className={card}>
           <h2 className="text-base font-semibold text-text-05">No systems connected yet</h2>

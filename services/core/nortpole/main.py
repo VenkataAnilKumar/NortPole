@@ -151,6 +151,7 @@ from nortpole.knowledge.source_requests.api import router as source_requests_rou
 from nortpole.work.workflow_schedules.api import router as workflow_schedules_router
 from nortpole.insight.overview.api import router as overview_router
 from nortpole.work.packs.studio import router as studio_router
+from nortpole.work.integrations.api import router as integrations_router
 from nortpole.governance.tool_catalog.api import member_router as tool_catalog_member_router
 from nortpole.governance.tool_catalog.api import router as tool_catalog_router
 from nortpole.insight.quality.api import router as quality_router
@@ -666,6 +667,7 @@ def get_application(lifespan_override: Lifespan | None = None) -> FastAPI:
     include_router_with_global_prefix_prepended(application, extensions_router)
     include_router_with_global_prefix_prepended(application, overview_router)
     include_router_with_global_prefix_prepended(application, studio_router)
+    include_router_with_global_prefix_prepended(application, integrations_router)
     include_router_with_global_prefix_prepended(application, tool_catalog_router)
     include_router_with_global_prefix_prepended(application, tool_catalog_member_router)
     include_router_with_global_prefix_prepended(application, admin_changes_router)

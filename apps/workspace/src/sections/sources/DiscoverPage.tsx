@@ -4,6 +4,7 @@ import { useState } from "react";
 import useSWR from "swr";
 import { errorHandlingFetcher } from "@/lib/fetcher";
 import { card, h1Class, pageClass } from "@/sections/sources/shared";
+import IntegrationCatalog from "@/sections/sources/IntegrationCatalog";
 
 interface Req {
   id: string; kind: string; item_key: string; item_name: string; reason: string; state: string;
@@ -68,9 +69,11 @@ export default function DiscoverPage() {
       <header className="flex flex-col gap-1">
         <h1 className={h1Class}>Discover</h1>
         <p className="text-sm text-text-03">
-          What this workspace supports but has not turned on. Ask for what would help your work; an administrator decides and sets it up. Nothing is turned on by asking.
+          The catalog of connectors and plugins: search it and install or connect right here. Below it, the other things you can ask an administrator to set up. Nothing is turned on by asking.
         </p>
       </header>
+      <IntegrationCatalog />
+      <h2 className="text-xl font-semibold text-text-05">Ask an administrator to set up</h2>
       {msg && <p role={msg.ok ? "status" : "alert"} className={`text-sm ${msg.ok ? "text-text-05" : "text-status-text-error-05"}`} data-testid="discover-message">{msg.text}</p>}
       {isLoading && <p className="text-sm text-text-03">Loading…</p>}
       {error && <p role="alert" className="text-sm text-status-text-error-05">Discover could not be loaded. Try again in a moment.</p>}

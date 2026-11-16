@@ -45,11 +45,15 @@ ANON_ENDPOINTS = [
     ("GET", "/route-policy"), ("PUT", "/admin/route-policy"), ("GET", "/admin/route-policy/audit"), ("GET", "/admin/route-tokens"),
     ("GET", "/admin/access-groups"), ("POST", "/admin/access-groups"),
     ("PUT", "/admin/access-groups/sources/1"), ("GET", "/build/approvals/live"),
+    ("GET", "/integrations"), ("GET", "/integrations/wikipedia"), ("POST", "/integrations/wikipedia/install"),
+    ("DELETE", "/integrations/wikipedia"), ("PUT", "/integrations/airtable/account"), ("DELETE", "/integrations/airtable/account"),
+    ("GET", "/admin/integrations/policy"), ("PUT", "/admin/integrations/policy"),
 ]
 ADMIN_ONLY = [
     ("GET", "/admin/route-policy/audit"), ("GET", "/admin/route-tokens"), ("PUT", "/admin/route-policy"),
     ("GET", "/admin/access-groups"), ("POST", "/admin/access-groups"),
     ("PUT", "/admin/access-groups/sources/1"),
+    ("GET", "/admin/integrations/policy"), ("PUT", "/admin/integrations/policy"),
 ]
 
 
@@ -88,6 +92,23 @@ def test_an_ordinary_user_can_use_their_own_tasks_and_preferences(session) -> No
     made = session.post(f"{API}/tasks", json={"title": SECRET_TITLE, "request": SECRET_REQUEST}, timeout=15)
     assert made.status_code == 200 and made.json()["state"] == "draft"
     assert SECRET_TITLE in [t["title"] for t in session.get(f"{API}/tasks", timeout=15).json()]
+
+
+def test_an_ordinary_user_can_browse_install_and_remove_an_allowed_integration_over_http(session) -> None:  # type: ignore[no-untyped-def]
+    listed = session.get(f"{API}/integrations", timeout=15)
+    assert listed.status_code == 200
+    by_id = {i["id"]: i for i in listed.json()["items"]}
+    assert {"wikipedia", "airtable"} <= set(by_id) and by_id["wikipedia"]["state"] == "available"
+    assert "credential" not in listed.text and "access_token" not in listed.text
+    got = session.post(f"{API}/integrations/wikipedia/install", json={"settings": {"limit": 5}}, timeout=15)
+    assert got.status_code == 200 and got.json()["state"] == "installed"
+    assert session.post(f"{API}/integrations/wikipedia/install", json={"settings": {"limit": 999}}, timeout=15).status_code == 400
+    assert session.post(f"{API}/integrations/airtable/install", json={}, timeout=15).status_code == 403, "airtable waits for approval"
+    secret = f"tok-SECRET-{RUN}"
+    refused = session.put(f"{API}/integrations/airtable/account", json={"access_token": secret}, timeout=15)
+    assert refused.status_code in (403, 409) and secret not in refused.text
+    assert session.delete(f"{API}/integrations/wikipedia", timeout=15).json()["state"] == "available"
+    assert session.get(f"{API}/integrations/nope", timeout=15).status_code == 404
 
 
 def test_another_users_task_is_not_found_not_forbidden(session) -> None:  # type: ignore[no-untyped-def]

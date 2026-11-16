@@ -86,6 +86,27 @@ def discover(db: Session) -> list[Item]:
     return connectors(db) + skills(db) + plugins(db)
 
 
+INTEGRATION_PREFIX = "integration:"
+
+
+def integration_key(integration_id: str) -> str:
+    """The request key for an integration, kept apart from connector types, packs and tools so keys never clash."""
+    return INTEGRATION_PREFIX + integration_id
+
+
+def _integration(kind: str, key: str) -> Item | None:
+    """An integration an administrator has set to "needs approval" can be requested; one that is allowed or blocked
+    has nothing to request."""
+    from nortpole.work.integrations import policy, registry
+
+    definition = registry.get(key.removeprefix(INTEGRATION_PREFIX))
+    if definition is None or definition.kind != kind or policy.resolve(definition) != "needs_approval":
+        return None
+    return Item(kind, key, definition.name, definition.description, "An administrator approves this before you can install it.")
+
+
 def find(db: Session, kind: str, key: str) -> Item | None:
+    if key.startswith(INTEGRATION_PREFIX):
+        return _integration(kind, key) if kind in ("connector", "plugin") else None
     items = {"connector": connectors, "skill": skills, "plugin": plugins}.get(kind)
     return next((i for i in items(db) if i.key == key), None) if items else None
