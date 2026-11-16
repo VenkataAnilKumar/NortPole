@@ -84,6 +84,24 @@ class StructureChecks(unittest.TestCase):
         self.data['packs']['active'] = ['packs/vertical/policy-review']
         self.assertTrue(any('Invalid active pack' in e for e in self.check()))
 
+    def _integrations(self, active):
+        self.data['integrations'] = {'active': active, 'namespaces': ['integrations/horizontal', 'integrations/vertical'], 'manifest_file': 'integration.yaml'}
+
+    def test_active_integration_needs_its_definition(self):
+        self._integrations(['integrations/horizontal/product/wikipedia'])
+        self.assertTrue(any('Invalid active integration' in e for e in self.check()))
+        folder = self.root / 'integrations/horizontal/product/wikipedia'
+        folder.mkdir(parents=True)
+        (folder / 'integration.yaml').write_text('id: wikipedia\n')
+        self.assertEqual(self.check(), [])
+
+    def test_integration_needs_a_category_folder(self):
+        folder = self.root / 'integrations/vertical/finance-rates'
+        folder.mkdir(parents=True)
+        (folder / 'integration.yaml').write_text('id: finance-rates\n')
+        self._integrations(['integrations/vertical/finance-rates'])
+        self.assertTrue(any('Invalid active integration' in e for e in self.check()))
+
     def test_removed_placeholder_service_is_obsolete(self):
         (self.root / 'services/execution').mkdir(parents=True)
         self.assertTrue(any('Obsolete directory: services/execution' in e for e in self.check()))

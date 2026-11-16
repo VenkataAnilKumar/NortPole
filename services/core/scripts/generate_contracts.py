@@ -5,6 +5,7 @@
 
 Writes:
   packages/contracts/schemas/pack-manifest.schema.json   JSON Schema of the pack manifest the server accepts
+  packages/contracts/schemas/integration.schema.json     JSON Schema of an integration definition (decision 0008)
   packages/contracts/openapi/nortpole-api.json           OpenAPI description of NortPole's own routes
 
 The schema covers structure (fields, types, lengths, enums); the server also runs cross-field checks the schema cannot
@@ -20,6 +21,7 @@ CORE = Path(__file__).resolve().parents[1]
 REPO = CORE.parents[1]
 CONTRACTS = REPO / "packages" / "contracts"
 SCHEMA_PATH = CONTRACTS / "schemas" / "pack-manifest.schema.json"
+INTEGRATION_SCHEMA_PATH = CONTRACTS / "schemas" / "integration.schema.json"
 OPENAPI_PATH = CONTRACTS / "openapi" / "nortpole-api.json"
 OWN_MODULE_PREFIXES = (
     "nortpole.governance.",
@@ -40,6 +42,15 @@ def pack_manifest_schema() -> str:
     schema = Manifest.model_json_schema()
     schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
     schema["$id"] = "https://nortpole.local/contracts/pack-manifest.schema.json"
+    return _dump(schema)
+
+
+def integration_schema() -> str:
+    from nortpole.work.integrations.manifest import Integration
+
+    schema = Integration.model_json_schema()
+    schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
+    schema["$id"] = "https://nortpole.local/contracts/integration.schema.json"
     return _dump(schema)
 
 
@@ -65,7 +76,11 @@ def nortpole_openapi() -> str:
 
 
 def outputs() -> dict[Path, str]:
-    return {SCHEMA_PATH: pack_manifest_schema(), OPENAPI_PATH: nortpole_openapi()}
+    return {
+        SCHEMA_PATH: pack_manifest_schema(),
+        INTEGRATION_SCHEMA_PATH: integration_schema(),
+        OPENAPI_PATH: nortpole_openapi(),
+    }
 
 
 def main(argv: list[str]) -> int:
