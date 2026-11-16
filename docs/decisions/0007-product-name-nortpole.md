@@ -41,8 +41,8 @@ template icons; a home-screen icon and a GitHub social preview were added. Files
 
 ## Sign-in and glass layers (2026-11-16)
 
-The owner kept the workspace in its existing black-and-white look and asked only for a new sign-in page and a glass
-look for floating layers. Several palettes (gold and navy, glass tints, a black frame with a white sheet) were mocked
+The owner first kept the workspace in its black-and-white look and asked for a new sign-in page and a glass look for
+floating layers, then asked for a modern floating-glass workspace as well. Several palettes (gold and navy, glass tints, a black frame with a white sheet) were mocked
 up and not adopted, so the product has no accent colour.
 
 - **Sign-in and account pages** sit on a North Pole sky in both themes: polar night, a dense starfield, Polaris with faint star trails circling it,
@@ -53,3 +53,9 @@ up and not adopted, so the product has no accent colour.
   on a solid-enough ground. Where a browser has no backdrop blur, dialogs fall back to their solid surface.
 - The Opal library bundles its own copy of the tokens: rebuild `lib/shared` then `lib/opal` and restart the dev server to
   see a token change.
+- **Workspace**: the sidebar and the workspace are two rounded (22 px) glass panels floating 10 px apart over a soft
+  backdrop (`.opal-root-layout` in `lib/opal/src/layouts/root/styles.css`). Light mode has a pale silver backdrop with
+  soft blue, mint and lilac glows; dark mode uses the starfield (`public/app-sky.svg`, stars only, so Polaris does not
+  show through the panels). Panels are 62 to 78 percent opaque with a blur, and fall back to solid surfaces where
+  backdrop blur is missing. Colour tokens and the controls inside the panels are unchanged.
+
