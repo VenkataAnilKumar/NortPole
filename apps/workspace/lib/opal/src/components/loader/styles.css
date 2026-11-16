@@ -3,8 +3,8 @@
 /* ---------------------------------------------------------------------------
    NortPoleLoader animation
 
-   The NortPole mark rotates a full turn while crossfading between the octagon
-   outline and the diamond logo, then briefly holds before looping. Timing:
+   The North Star turns a half turn while crossfading between its outline
+   and the filled star, then briefly holds before looping. Timing:
      0ms to 900ms: rotate 0deg to 180deg (ease in), outline to logo
      900ms to 1800ms: rotate 180deg to 360deg (ease out), logo to outline
      1800ms to 2000ms: hold at 360deg (equal to 0deg) before the loop resets
@@ -35,12 +35,12 @@
     animation-timing-function: ease-in;
   }
   45% {
-    transform: rotate(180deg);
+    transform: rotate(90deg);
     animation-timing-function: ease-out;
   }
   90%,
   100% {
-    transform: rotate(360deg);
+    transform: rotate(180deg);
   }
 }
 

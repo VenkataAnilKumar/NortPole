@@ -1,5 +1,7 @@
 import type { IconProps } from "@opal/types";
 import { illustrationStrokeWidth } from "@opal/illustrations/line-weight";
+// The NortPole empty state: the North Star over two snowy hills, with faint
+// star trails circling it (decision 0007). Neutral tokens only, no accent colour.
 const SvgEmpty = ({ size, ...props }: IconProps) => (
   <svg
     width={size}
@@ -11,24 +13,32 @@ const SvgEmpty = ({ size, ...props }: IconProps) => (
     {...props}
   >
     <path
-      d="M18.75 71.25V90C18.75 94.1421 22.1079 97.5 26.25 97.5H93.75C97.8921 97.5 101.25 94.1422 101.25 90V71.25H18.75Z"
+      d="M8 100C24 80 40 70 56 76C72 82 84 66 112 78V100H8Z"
       fill="var(--background-neutral-03)"
     />
     <path
-      d="M18.75 71.25H101.25L86.25 48.75H33.75L18.75 71.25Z"
+      d="M8 100C30 88 52 90 70 94C88 98 100 90 112 92V100H8Z"
       fill="var(--background-neutral-00)"
     />
     <path
-      d="M18.75 71.25V90C18.75 94.1421 22.1079 97.5 26.25 97.5H93.75C97.8921 97.5 101.25 94.1422 101.25 90V71.25M18.75 71.25H101.25M18.75 71.25L33.75 48.75H86.25L101.25 71.25M54.375 80.625H65.625"
+      d="M8 100C30 88 52 90 70 94C88 98 100 90 112 92"
       stroke="var(--border-03)"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
     <path
-      d="M43.125 35.625L33.75 26.25M76.875 35.625L86.25 26.25M60 28.125V15"
-      stroke="var(--theme-amber-04)"
+      d="M42 30A20 20 0 0 1 60 14M78 38A20 20 0 0 1 72 52M30 40A32 32 0 0 1 36 22M88 24A32 32 0 0 1 92 44"
+      stroke="var(--border-02)"
       strokeLinecap="round"
-      strokeLinejoin="round"
+    />
+    <path
+      d="M24 56h.01M96 60h.01M20 24h.01M100 14h.01M44 62h.01"
+      stroke="var(--border-03)"
+      strokeLinecap="round"
+    />
+    <path
+      d="M60 23.5L62.1 31.9L70 34L62.1 36.1L60 44.5L57.9 36.1L50 34L57.9 31.9Z"
+      fill="var(--text-05)"
     />
   </svg>
 );
