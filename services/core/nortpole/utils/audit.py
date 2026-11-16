@@ -115,6 +115,11 @@ class AuditAction(str, Enum):
     ADMIN_CHANGE_PROPOSE = "admin.change_propose"
     ADMIN_CHANGE_DECIDE = "admin.change_decide"
     SOURCE_REQUEST = "source.request"
+    INTEGRATION_INSTALL = "integration.install"
+    INTEGRATION_REMOVE = "integration.remove"
+    INTEGRATION_CONNECT = "integration.connect"
+    INTEGRATION_DISCONNECT = "integration.disconnect"
+    INTEGRATION_POLICY_CHANGE = "integration.policy_change"
     SOURCE_REQUEST_DECIDE = "source.request_decide"
     SCHEDULE_CHANGE = "schedule.change"
     SCHEDULE_STATE = "schedule.state"
@@ -197,6 +202,11 @@ _OCSF_CLASS_BY_ACTION: dict[AuditAction, OCSFEventClass] = {
     AuditAction.ADMIN_CHANGE_PROPOSE: OCSFEventClass.API_ACTIVITY,
     AuditAction.ADMIN_CHANGE_DECIDE: OCSFEventClass.API_ACTIVITY,
     AuditAction.SOURCE_REQUEST: OCSFEventClass.API_ACTIVITY,
+    AuditAction.INTEGRATION_INSTALL: OCSFEventClass.API_ACTIVITY,
+    AuditAction.INTEGRATION_REMOVE: OCSFEventClass.API_ACTIVITY,
+    AuditAction.INTEGRATION_CONNECT: OCSFEventClass.API_ACTIVITY,
+    AuditAction.INTEGRATION_DISCONNECT: OCSFEventClass.API_ACTIVITY,
+    AuditAction.INTEGRATION_POLICY_CHANGE: OCSFEventClass.API_ACTIVITY,
     AuditAction.SOURCE_REQUEST_DECIDE: OCSFEventClass.API_ACTIVITY,
     AuditAction.SCHEDULE_CHANGE: OCSFEventClass.API_ACTIVITY,
     AuditAction.SCHEDULE_STATE: OCSFEventClass.API_ACTIVITY,
