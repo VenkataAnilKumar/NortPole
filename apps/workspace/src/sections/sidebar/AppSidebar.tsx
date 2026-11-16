@@ -670,7 +670,7 @@ export default function AppSidebar() {
                 <span
                   data-testid="inbox-badge"
                   aria-label={`${inboxCount} in your inbox`}
-                  className="min-w-5 rounded-full bg-theme-accent-05 px-1.5 text-center text-xs font-semibold leading-5 text-[#1a1406]"
+                  className="min-w-5 rounded-full bg-text-05 px-1.5 text-center text-xs font-semibold leading-5 text-background-neutral-00"
                 >
                   {inboxCount > 99 ? "99+" : inboxCount}
                 </span>

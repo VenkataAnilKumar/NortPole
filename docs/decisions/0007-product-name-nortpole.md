@@ -39,18 +39,18 @@ the favicon, the logo and logotype images (which still showed the previous name 
 template icons; a home-screen icon and a GitHub social preview were added. Files and uses are listed in
 [the brand assets](../assets/brand/README.md).
 
-## Colours (2026-11-16)
+## Colours and frame (2026-11-16)
 
-The owner chose the cool **Polar** palette. Tokens live in `apps/workspace/lib/shared/tokens` and compile to CSS
-variables (the Opal library bundles its own copy, so rebuild `lib/shared` then `lib/opal`).
+The owner chose a **black frame and a white workspace**. There is no accent colour: buttons, the selected row and the
+progress bar are black or white by theme, and only errors and warnings keep a colour.
 
-| Role | Value | Token | Where |
-|---|---|---|---|
-| North Navy | `#1f2a44` | `theme-primary-05`, `theme-brand-05` | Primary buttons and the mark in light mode, the sign-in sky |
-| Polar Gold | `#e8b04b` | `theme-accent-05` | Mark and primary buttons in dark mode, the Inbox count, the selected sidebar row's edge, focus |
-| Gold ink | `#8a5a0b` | `theme-accent-text-05` | Gold used as text on light surfaces |
-| Aurora Teal | `#2bb3a3` | `theme-progress-05` | Progress and success (reserved; not yet used in screens) |
+| Part | Light mode | Dark mode |
+|---|---|---|
+| Frame and sidebar | Black `#0b0d12` | Black `#0b0d12` |
+| Workspace sheet | White, rounded, laid over the frame | Graphite, rounded, laid over the frame |
+| Sign-in | Black sky (faint silver glow, stars) with the card on it | Same |
 
-The sign-in pages sit on the navy sky (stars and a faint glow) in both modes. Neutral greys are unchanged, and status
-colours (errors, warnings) keep their own tokens.
-
+The sidebar carries the `dark` class so it always uses the dark tokens, whichever theme the page is in. The frame is
+`.opal-root-layout` and the sheet is `.opal-root-layout__app`, both in `lib/opal/src/layouts/root/styles.css`. The Opal
+library bundles its own copy of the tokens, so rebuild `lib/shared` then `lib/opal` and restart the dev server to see a
+token change. Glass (blur) is kept for floating layers only, such as menus and phone tab bars.

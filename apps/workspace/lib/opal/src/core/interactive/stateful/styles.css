@@ -694,9 +694,3 @@
   --interactive-foreground: var(--text-03);
   --interactive-foreground-icon: var(--text-03);
 }
-
-/* The selected sidebar row carries a gold mark on its leading edge (decision 0007). */
-.interactive[data-interactive-variant="sidebar-heavy"][data-interactive-state="selected"],
-.interactive[data-interactive-variant="sidebar-light"][data-interactive-state="selected"] {
-  box-shadow: inset 2px 0 0 var(--theme-accent-05);
-}

@@ -23,7 +23,8 @@
    column asserting `100vh` on its own is what let a leaf define the app's
    geometry (and overflow the frame on mobile, where 100vh > 100dvh). */
 .opal-sidebar-root__column {
-  @apply h-full min-h-0 flex flex-col bg-background-tint-02 pb-2 shrink-0;
+  @apply h-full min-h-0 flex flex-col pb-2 shrink-0;
+  background: transparent; /* the black frame shows through */
   width: var(--sidebar-width-expanded);
   transition: width var(--duration-sidebar-fold) ease-in-out;
 }
@@ -37,7 +38,8 @@
 
 /* Shared visual column styles for overlaid sidebar */
 .opal-sidebar-root__overlay {
-  @apply flex flex-col bg-background-tint-02 pb-2;
+  @apply flex flex-col pb-2;
+  background: #0b0d12;
   width: var(--sidebar-width-expanded);
   transition: width var(--duration-sidebar-fold) ease-in-out;
 }

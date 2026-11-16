@@ -8,11 +8,11 @@
 
 .opal-auth-root {
   @apply flex min-h-screen items-center justify-center;
-  /* The North Star sky: brand navy with a faint aurora glow and a scatter of
+  /* The North Star sky: black with a faint silver glow and a scatter of
      stars, the same in light and dark mode (decision 0007). */
   background:
-    radial-gradient(40% 30% at 22% 100%, rgba(43, 179, 163, 0.26), transparent 70%),
-    radial-gradient(34% 26% at 80% 96%, rgba(232, 176, 75, 0.14), transparent 70%),
+    radial-gradient(40% 30% at 22% 100%, rgba(160, 172, 196, 0.22), transparent 70%),
+    radial-gradient(34% 26% at 80% 96%, rgba(120, 132, 158, 0.16), transparent 70%),
     radial-gradient(1px 1px at 12% 18%, rgba(255, 255, 255, 0.7), transparent),
     radial-gradient(1px 1px at 27% 62%, rgba(255, 255, 255, 0.5), transparent),
     radial-gradient(1.5px 1.5px at 41% 28%, rgba(255, 255, 255, 0.8), transparent),
@@ -22,7 +22,7 @@
     radial-gradient(1px 1px at 90% 58%, rgba(255, 255, 255, 0.55), transparent),
     radial-gradient(1px 1px at 8% 80%, rgba(255, 255, 255, 0.5), transparent),
     radial-gradient(1px 1px at 35% 88%, rgba(255, 255, 255, 0.4), transparent),
-    radial-gradient(120% 90% at 50% 0%, #2a3a63 0%, #1f2a44 45%, #141c30 100%);
+    radial-gradient(120% 90% at 50% 0%, #1b212d 0%, #0f131b 50%, #0b0d12 100%);
 }
 
 .opal-auth-card-outer {
