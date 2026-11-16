@@ -29,7 +29,7 @@ bytes=$size
 sha256=__SUM__
 migration_revision=$head_rev
 audit_rows=$audit_rows
-product_version=${NORTPOLE_VERSION:-${NORTPOLE_VERSION:-dev}}
+product_version=${NORTPOLE_VERSION:-dev}
 MANIFEST
 sed -i "s/__SUM__/$sum/" "$dump.manifest"
 echo "wrote $dump ($size bytes)"

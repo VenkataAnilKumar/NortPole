@@ -23,9 +23,7 @@ export async function GET(req: NextRequest) {
   try {
     const resp = await fetch(
       `${
-        process.env.NEXT_PUBLIC_NORTPOLE_BACKEND_URL ||
-        process.env.NEXT_PUBLIC_NORTPOLE_BACKEND_URL || // old name, still read (decision 0007)
-        ""
+        process.env.NEXT_PUBLIC_NORTPOLE_BACKEND_URL || ""
       }/api/mcp/oauth/callback`,
       {
         method: "POST",

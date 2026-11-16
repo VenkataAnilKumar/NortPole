@@ -26,8 +26,7 @@ export function defaultAgentRedirectTarget(
 
 /** The web server's version, from its NORTPOLE_VERSION env var. Server-side only. */
 export function getWebVersion(): string {
-  // The old NORTPOLE_VERSION name is still read (decision 0007).
-  return process.env.NORTPOLE_VERSION || process.env.NORTPOLE_VERSION || "dev";
+  return process.env.NORTPOLE_VERSION || "dev";
 }
 
 /** Where the About page's version links. */

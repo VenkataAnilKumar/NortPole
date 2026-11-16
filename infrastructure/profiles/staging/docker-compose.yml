@@ -30,7 +30,7 @@ services:
     restart: unless-stopped
 
   api:
-    image: nortpole-core:${NORTPOLE_VERSION:-${NORTPOLE_VERSION:-dev}}
+    image: nortpole-core:${NORTPOLE_VERSION:-dev}
     build:
       context: ../../../services/core
     depends_on:
@@ -49,7 +49,7 @@ services:
       FILE_STORE_BACKEND: postgres
       NORTPOLE_OFFLINE_TOKENIZER: "true"
       HF_HUB_OFFLINE: "1"
-      NORTPOLE_VERSION: ${NORTPOLE_VERSION:-${NORTPOLE_VERSION:-dev}}
+      NORTPOLE_VERSION: ${NORTPOLE_VERSION:-dev}
     extra_hosts:
       - "host.docker.internal:host-gateway"   # lets a model server on this machine be used as http://host.docker.internal:<port>
     expose:
@@ -57,7 +57,7 @@ services:
     restart: unless-stopped
 
   web:
-    image: nortpole-web:${NORTPOLE_VERSION:-${NORTPOLE_VERSION:-dev}}
+    image: nortpole-web:${NORTPOLE_VERSION:-dev}
     build:
       context: ../../../apps/workspace
       args:

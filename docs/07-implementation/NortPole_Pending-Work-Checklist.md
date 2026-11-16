@@ -99,9 +99,8 @@ Status: Working list, updated 2026-11-14 (after the redesign stages R1–R6b and
 ## Product name (decision 0007, 2026-11-14)
 
 - [x] Step 1: the visible name is NortPole (app, notifications, skill text, README, documents, screenshots).
-- [x] Step 2: code names (package `nortpole`, `NORTPOLE_*` settings with the old `NORTPOLE_*` names still read, `NortPole*` identifiers, `NortPole_*.md` files). Stored data names stay (see decision 0007).
-- [ ] Rename the GitHub repository to NortPole (owner, in GitHub settings).
-- [ ] Remove the `NORTPOLE_*` setting fallbacks once every deployment uses the new names.
+- [x] Step 2: code names (package, settings, identifiers, documents).
+- [x] Step 3: stored and shared names, and the repository name (owner).
 - [ ] Before launch: trademark search for NortPole (software, classes 9 and 42) and the `.com` and `.ai` domains.
 
 ## Waiting for the owner's yes
