@@ -40,7 +40,9 @@ owner asked to build on its definitions.
 | Phase | What | Tests that close it |
 |---|---|---|
 | **1. Format and first definitions** (done) | The model, the schema, two integrations adapted from Sim (Wikipedia, Airtable), registration and the structure check, CI. | 43 unit tests, including 29 cases the format must refuse; drift and structure tests. |
-| **2. Executor and accounts** | A fixed executor runs an action: fills placeholders, URL-encodes paths, applies caps and defaults, keeps to the listed hosts, calls through route policy and the audit log, and fills the token from a stored credential. OAuth sign-in and refresh. | Tests with a local fake service; a call to an unlisted host is refused; the audit row has no arguments. |
+| **2a. Executor** (done) | `executor.py` runs an action against a definition: who may set each parameter, caps and defaults, URL-encoded paths, the exact-host rule again, the credential only in a header, no redirects, a time and size limit, JSON only, errors by status only, and one audit row per call without parameters or secrets. | 28 unit tests with a fake and a mock transport; three deliberate breaks of the safety rules were each caught. |
+| **2b. Accounts** | Stored credentials per person, OAuth sign-in and refresh, the policy check before a call, and the route from a chat or workflow to `run`. | Tests with a local fake service; a call without an account or policy is refused. |
+| ~~2~~ | Phase 2 as first written: fills placeholders, URL-encodes paths, applies caps and defaults, keeps to the listed hosts, calls through route policy and the audit log, and fills the token from a stored credential. OAuth sign-in and refresh. | Tests with a local fake service; a call to an unlisted host is refused; the audit row has no arguments. |
 | **3. Sources screens** | The catalog (search, type and category filters), Install, Connect, Request and statuses, per-item policy in the admin area. | Browser checks in light and dark; contrast and overflow checks. |
 | **4. Connectors and skills** | Connector definitions (list, get, check, content hash), permission-scoped listing, the category on packs. | Tests that a person's own token limits what is listed. |
 | **5. More definitions** | Port more of Sim's services in batches, with a helper for the common shapes. | Each definition validates; reviewed in batches. |
@@ -52,4 +54,4 @@ owner asked to build on its definitions.
 - A response can be read by path only. Sim's Wikipedia search zips four arrays together in code; NortPole's search
   action uses the standard MediaWiki query instead.
 - XML responses (arXiv) are not supported.
-- Nothing runs yet: the executor is phase 2.
+- The executor exists (phase 2a) but nothing calls it yet: stored accounts, sign-in and the policy check come in phase 2b.
