@@ -129,7 +129,7 @@ export default function InboxPage() {
             aria-selected={tab === t.id}
             aria-controls="inbox-panel"
             onClick={() => setTab(t.id)}
-            className={`min-h-11 shrink-0 px-4 text-sm font-semibold ${tab === t.id ? "border-b-2 border-text-05 text-text-05" : "text-text-03 hover:text-text-05"}`}
+            className={`min-h-11 shrink-0 px-2.5 text-sm sm:px-4 font-semibold ${tab === t.id ? "border-b-2 border-text-05 text-text-05" : "text-text-03 hover:text-text-05"}`}
             data-testid={`inbox-tab-${t.id}`}
           >
             {t.label}
