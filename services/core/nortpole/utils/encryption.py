@@ -1,5 +1,11 @@
+import base64
+import os
 from typing import Any
 from urllib.parse import urlparse, urlunparse
+
+from cryptography.fernet import Fernet, InvalidToken
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 
 from nortpole.configs.app_configs import ENCRYPTION_KEY_SECRET
 from nortpole.configs.constants import MASK_CREDENTIAL_LONG_RE, MASK_CREDENTIAL_SHORT
@@ -12,22 +18,104 @@ from nortpole.utils.variable_functionality import fetch_versioned_implementation
 logger = setup_logger()
 
 
+SEALED_PREFIX = b"np1:"
+ENV_KEY = "ENCRYPTION_KEY_SECRET"
+ENV_ALLOW_PLAINTEXT = "NORTPOLE_ALLOW_PLAINTEXT_SECRETS"
+_warned_plaintext = False
+
+
+class EncryptionError(Exception):
+    """A secret could not be sealed or opened. `code` is stable; the message never holds the secret."""
+
+    def __init__(self, code: str, message: str) -> None:
+        super().__init__(message)
+        self.code = code
+
+
+def plaintext_allowed() -> bool:
+    return os.environ.get(ENV_ALLOW_PLAINTEXT, "").strip().lower() in ("1", "true", "yes")
+
+
+def current_key() -> str:
+    # Read at call time so a key set after import (a test, a rotation run) is honoured.
+    return (os.environ.get(ENV_KEY) or ENCRYPTION_KEY_SECRET or "").strip()
+
+
+def _fernet(key: str | None) -> Fernet | None:
+    """The sealing key for `key` (or the configured one); None when there is none.
+
+    A 32-byte url-safe base64 key (what `Fernet.generate_key()` prints) is used as it is; any other text is treated as a
+    passphrase and stretched with HKDF-SHA256, so an operator can use either."""
+    material = (key if key is not None else current_key()).strip()
+    if not material:
+        return None
+    try:
+        return Fernet(material.encode())
+    except (ValueError, TypeError):
+        derived = HKDF(algorithm=hashes.SHA256(), length=32, salt=None, info=b"nortpole-secrets-v1").derive(material.encode())
+        return Fernet(base64.urlsafe_b64encode(derived))
+
+
+def generate_key() -> str:
+    return Fernet.generate_key().decode()
+
+
+def is_sealed(data: bytes) -> bool:
+    return data.startswith(SEALED_PREFIX)
+
+
 # IMPORTANT DO NOT DELETE, THIS IS USED BY fetch_versioned_implementation
 def _encrypt_string(input_str: str, key: str | None = None) -> bytes:
-    if ENCRYPTION_KEY_SECRET:
-        logger.warning("MIT version of NortPole does not support encryption of secrets.")
-    elif key is not None:
-        logger.debug("MIT encrypt called with explicit key — key ignored.")
-    return input_str.encode()
+    """Seal a secret. With no key the secret is refused, unless the deployment says plaintext is acceptable
+    (`NORTPOLE_ALLOW_PLAINTEXT_SECRETS=true`, for local development and tests), in which case it is stored as before."""
+    global _warned_plaintext
+    fernet = _fernet(key)
+    if fernet is None:
+        if not plaintext_allowed():
+            raise EncryptionError(
+                "secrets_key_missing",
+                f"{ENV_KEY} is not set, so secrets cannot be stored. Set it (python -c 'from cryptography.fernet import Fernet; "
+                f"print(Fernet.generate_key().decode())') or, for local development only, set {ENV_ALLOW_PLAINTEXT}=true.",
+            )
+        if not _warned_plaintext:
+            logger.warning("%s is not set: secrets are being stored UNENCRYPTED (%s=true).", ENV_KEY, ENV_ALLOW_PLAINTEXT)
+            _warned_plaintext = True
+        return input_str.encode()
+    return SEALED_PREFIX + fernet.encrypt(input_str.encode())
 
 
 # IMPORTANT DO NOT DELETE, THIS IS USED BY fetch_versioned_implementation
 def _decrypt_bytes(input_bytes: bytes, key: str | None = None) -> str:
-    if ENCRYPTION_KEY_SECRET:
-        logger.warning("MIT version of NortPole does not support decryption of secrets.")
-    elif key is not None:
-        logger.debug("MIT decrypt called with explicit key — key ignored.")
-    return input_bytes.decode()
+    """Open a sealed secret. A value stored before sealing existed (no prefix) is still read as plain text, so an upgrade
+    does not lock anyone out; it is sealed by the next rotation run. With an explicit `key` only a value sealed with that
+    key opens, which is how the rotation tool tells what still needs re-sealing."""
+    data = bytes(input_bytes)
+    if is_sealed(data):
+        fernet = _fernet(key)
+        if fernet is None:
+            raise EncryptionError("secrets_key_missing", f"A stored secret is sealed but {ENV_KEY} is not set.")
+        try:
+            return fernet.decrypt(data[len(SEALED_PREFIX):]).decode()
+        except InvalidToken as exc:
+            raise EncryptionError("secrets_unreadable", "A stored secret cannot be opened with this key (the key changed).") from exc
+    if key is not None:
+        raise EncryptionError("secrets_unreadable", "The value is not sealed with this key.")
+    return data.decode()
+
+
+def check_configuration() -> None:
+    """Run at startup: refuse to start where secrets would be stored readable by accident."""
+    if not current_key():
+        if plaintext_allowed():
+            logger.warning("%s is not set: secrets will be stored UNENCRYPTED (%s=true). Do not use this outside development.", ENV_KEY, ENV_ALLOW_PLAINTEXT)
+            return
+        raise RuntimeError(
+            f"{ENV_KEY} is not set. Stored secrets (connector credentials, API keys, bot tokens, integration accounts) must be "
+            f"sealed. Generate a key with `python -c 'from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())'`, "
+            f"set {ENV_KEY}, and keep it with your backups. For local development only, set {ENV_ALLOW_PLAINTEXT}=true."
+        )
+    if _decrypt_bytes(_encrypt_string("check")) != "check":
+        raise RuntimeError(f"{ENV_KEY} did not pass a seal and open check.")
 
 
 def mask_string(sensitive_str: str) -> str:

@@ -6,6 +6,8 @@ import os
 # capability and pricing assertions would otherwise depend on upstream data
 # that changes without notice. Pin the bundled copy to keep tests hermetic.
 os.environ.setdefault("LITELLM_LOCAL_MODEL_COST_MAP", "True")
+# Tests run with no sealing key; secrets are stored as plain text unless a test sets a key (see utils/encryption.py).
+os.environ.setdefault("NORTPOLE_ALLOW_PLAINTEXT_SECRETS", "true")
 
 import importlib.util  # noqa: E402
 from collections.abc import Generator  # noqa: E402

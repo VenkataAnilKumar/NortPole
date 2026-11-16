@@ -4,17 +4,18 @@ Status: **checked once in a sandbox on 2026-11-12; not a supported production de
 
 ## Start
 
-Set two secrets (never commit them), then build and start:
+Set three secrets (never commit them), then build and start:
 
 ```bash
 export POSTGRES_PASSWORD=$(openssl rand -hex 16)
 export USER_AUTH_SECRET=$(openssl rand -hex 32)
+export ENCRYPTION_KEY_SECRET=$(python3 -c 'from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())')
 docker compose build
 docker compose up -d
 curl http://127.0.0.1:3000/api/health
 ```
 
-The compose file refuses to start if either secret is missing. Only nginx is published, on `127.0.0.1:3000` (`/api/` goes to the API, everything else to the web app). The plain nginx file serves HTTP only: use the TLS overlay below before exposing it. The web image bakes the API address (`http://api:8080`) in at build time. The API applies database migrations when it starts. The first account that registers becomes the administrator.
+The compose file refuses to start if any of the three is missing. `ENCRYPTION_KEY_SECRET` seals the secrets the product stores (connector credentials, API keys, bot tokens, people's integration accounts, the Studio signing key). **Keep it with your backups and never change it without running the rotation command below:** a database restored without its key cannot open those secrets, and people would have to connect their accounts again. Only nginx is published, on `127.0.0.1:3000` (`/api/` goes to the API, everything else to the web app). The plain nginx file serves HTTP only: use the TLS overlay below before exposing it. The web image bakes the API address (`http://api:8080`) in at build time. The API applies database migrations when it starts. The first account that registers becomes the administrator.
 
 ## TLS
 
@@ -26,6 +27,15 @@ docker compose -f docker-compose.yml -f docker-compose.tls.yml up -d
 ```
 
 It publishes on all interfaces by default (it is meant to be reached from outside); set `BIND_ADDRESS`, `HTTP_PORT` and `HTTPS_PORT` to narrow or move it. The redirect assumes HTTPS is on 443. Getting and renewing a certificate (a public CA, an internal CA, or a load balancer that ends TLS instead) is a hosting decision and is not set up here.
+
+## Rotating or first sealing the key
+
+Values stored before sealing existed are read as plain text until they are sealed. To seal them, or to move to a new key, run this once from `services/core` with the new key in the environment (add `--dry-run` first to see the count; `--old-key` is the key the values are sealed with now, and is left out for plain-text values). It is safe to run again:
+
+```bash
+ENCRYPTION_KEY_SECRET=<new key> python -m nortpole.db.rotate_encryption_key --dry-run
+ENCRYPTION_KEY_SECRET=<new key> python -m nortpole.db.rotate_encryption_key [--old-key <old key>]
+```
 
 ## Backup and restore
 

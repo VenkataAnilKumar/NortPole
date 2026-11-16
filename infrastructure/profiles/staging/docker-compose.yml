@@ -1,7 +1,9 @@
 # NortPole single-host profile, lite mode: web + API + PostgreSQL + Redis.
 # No search index and no model server (see README.md next to this file).
 # Required environment (no defaults, so a missing secret stops the start):
-#   POSTGRES_PASSWORD, USER_AUTH_SECRET (random hex, e.g. `openssl rand -hex 32`)
+#   POSTGRES_PASSWORD, USER_AUTH_SECRET (random hex, e.g. `openssl rand -hex 32`),
+#   ENCRYPTION_KEY_SECRET (seals stored secrets: `python -c 'from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())'`;
+#   keep it with your backups, a database restored without it cannot open its secrets)
 name: nortpole
 services:
   db:
@@ -43,6 +45,7 @@ services:
       POSTGRES_DB: nortpole
       REDIS_HOST: redis
       USER_AUTH_SECRET: ${USER_AUTH_SECRET:?set USER_AUTH_SECRET}
+      ENCRYPTION_KEY_SECRET: ${ENCRYPTION_KEY_SECRET:?set ENCRYPTION_KEY_SECRET}
       AUTH_TYPE: basic
       DISABLE_VECTOR_DB: "true"
       CACHE_BACKEND: postgres
