@@ -65,10 +65,10 @@ def _approved_for(db: Session, user: User, integration: Integration) -> bool:
     ) is not None
 
 
-def status(db: Session, user: User, integration_id: str) -> dict[str, Any]:
+def status(db: Session, user: User, integration_id: str, config: policy.PolicyConfig | None = None) -> dict[str, Any]:
     """What the catalog shows for one integration and one person. Never a credential."""
     integration = _definition(integration_id)
-    answer = policy.resolve(integration)
+    answer = policy.resolve(integration, config)
     use = _use(db, user, integration_id)
     approved = answer == "needs_approval" and _approved_for(db, user, integration)
     if use is not None:
