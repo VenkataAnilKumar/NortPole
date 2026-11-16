@@ -12,6 +12,9 @@ PLACEHOLDERS = {'README.md', '.gitkeep', '.gitignore'}
 # packs/horizontal/<pack> or packs/vertical/<industry>/<pack>
 ACTIVE_PACK = re.compile(r'packs/(horizontal/[a-z0-9][a-z0-9-]*|vertical/[a-z0-9][a-z0-9-]*/[a-z0-9][a-z0-9-]*)')
 
+# integrations/horizontal/<category>/<id> or integrations/vertical/<category>/<id>
+ACTIVE_INTEGRATION = re.compile(r'integrations/(horizontal|vertical)/[a-z0-9][a-z0-9-]*/[a-z0-9][a-z0-9-]*')
+
 def _has_content(folder):
     for directory, folders, files in os.walk(folder):
         folders[:] = [d for d in folders if d not in IGNORED]
@@ -105,6 +108,18 @@ def validate(root):
                 for pack_id in named if isinstance(named, list) else [named]:
                     if pack_id not in pack_ids:
                         errors.append(f'Edition {edition.name} names a pack that is not active: {pack_id!r}')
+
+    integrations = inventory.get('integrations')
+    if integrations is not None:
+        if not isinstance(integrations, dict) or integrations.get('manifest_file') != 'integration.yaml' or integrations.get('namespaces') != ['integrations/horizontal', 'integrations/vertical']:
+            errors.append('Integrations inventory differs from the approved structure')
+        elif not isinstance(integrations.get('active'), list):
+            errors.append('Active integrations must be a list of repository-relative paths')
+        else:
+            for value in integrations['active']:
+                dest = local_path(value)
+                if dest is None or not ACTIVE_INTEGRATION.fullmatch(value) or not (dest / 'integration.yaml').is_file():
+                    errors.append(f'Invalid active integration or missing definition: {value!r}')
 
     for directory, folders, files in os.walk(root, followlinks=False):
         folders[:] = [d for d in folders if d not in IGNORED and not (Path(directory) / d).is_symlink()]

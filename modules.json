@@ -60,6 +60,17 @@
     "manifest_file": "manifest.yaml",
     "editions": "packs/editions"
   },
+  "integrations": {
+    "active": [
+      "integrations/horizontal/automations/airtable",
+      "integrations/horizontal/product/wikipedia"
+    ],
+    "namespaces": [
+      "integrations/horizontal",
+      "integrations/vertical"
+    ],
+    "manifest_file": "integration.yaml"
+  },
   "references": {
     "policy": "reference-only",
     "location": "V:/AI Engineer/Agentic AI and Autonmous AI/NortPole/sources"

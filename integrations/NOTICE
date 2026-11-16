@@ -1,0 +1,5 @@
+The integration definitions in this folder that say "Adapted from Sim" describe the same
+services and parameters as the matching tools in Sim (https://github.com/simstudioai/sim),
+Copyright 2026 Sim Studio, licensed under the Apache License, Version 2.0 (a copy is in
+LICENSE-APACHE-2.0). Those files were rewritten into NortPole's own declarative format;
+none of Sim's source code is included. Each adapted file names the Sim file it follows.
