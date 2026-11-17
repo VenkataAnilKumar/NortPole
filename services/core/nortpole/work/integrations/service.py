@@ -167,16 +167,9 @@ def disconnect(db: Session, user: User, integration_id: str) -> dict[str, Any]:
     return status(db, user, integration_id)
 
 
-def call(
-    db: Session,
-    user: User,
-    integration_id: str,
-    action_id: str,
-    *,
-    model_params: dict[str, Any] | None = None,
-    transport: executor.Transport | None = None,
-) -> dict[str, Any]:
-    """Make one call as this person. Checks run in a fixed order and each refusal says what to do."""
+def ready(db: Session, user: User, integration_id: str, action_id: str) -> tuple[Integration, NortPoleIntegrationUse, Any]:
+    """The checks before any call, in a fixed order: it exists, policy has not blocked it, the person installed it, connected
+    it (when it needs an account), and has this action."""
     integration = _definition(integration_id)
     if policy.resolve(integration) == "blocked":
         raise IntegrationAccessError("blocked", f"{integration.name} is blocked by your administrator.")
@@ -188,6 +181,33 @@ def call(
     action = next((a for a in integration.actions if a.id == action_id), None)
     if action is None:
         raise IntegrationAccessError("unknown_action", f"{integration.name} has no action {action_id}.")
+    return integration, use, action
+
+
+def check_arguments(db: Session, user: User, integration_id: str, action_id: str, arguments: dict[str, Any]) -> tuple[Integration, Any]:
+    """Everything `call` checks, and the arguments too, but nothing is sent: a proposal that could never run is refused
+    when it is made, so the person is never asked to approve it."""
+    integration, use, action = ready(db, user, integration_id, action_id)
+    try:
+        account = secrets.unseal(use.credential) if use.credential is not None else None
+    except secrets.SecretsError as exc:
+        raise IntegrationAccessError("not_connected" if exc.code == "secrets_unreadable" else exc.code, str(exc)) from exc
+    settings = {k: v for k, v in (use.settings or {}).items() if k in action.params}
+    executor.prepare(integration, action_id, user_params=settings, model_params=arguments, credential=account)
+    return integration, action
+
+
+def call(
+    db: Session,
+    user: User,
+    integration_id: str,
+    action_id: str,
+    *,
+    model_params: dict[str, Any] | None = None,
+    transport: executor.Transport | None = None,
+) -> dict[str, Any]:
+    """Make one call as this person. Checks run in a fixed order and each refusal says what to do."""
+    integration, use, action = ready(db, user, integration_id, action_id)
     try:
         account = secrets.unseal(use.credential) if use.credential is not None else None
     except secrets.SecretsError as exc:

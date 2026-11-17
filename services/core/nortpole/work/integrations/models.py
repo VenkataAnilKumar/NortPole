@@ -4,7 +4,7 @@ import datetime
 import uuid
 from typing import Any
 
-from sqlalchemy import DateTime, ForeignKey, String, Text, UniqueConstraint, func
+from sqlalchemy import DateTime, ForeignKey, Index, String, Text, UniqueConstraint, func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.orm import Mapped, mapped_column
@@ -30,3 +30,27 @@ class NortPoleIntegrationUse(Base):
     credential: Mapped[str | None] = mapped_column(Text, nullable=True)
     installed_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     connected_at: Mapped[datetime.datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class NortPoleIntegrationProposal(Base):
+    """A change an assistant proposed in a person's chat: one exact action with its exact arguments, waiting for that person's
+    yes. Nothing runs until they approve; what runs is exactly what is stored here. The arguments are sealed like an account
+    (they can hold the person's own data) and are readable only by their owner."""
+
+    __tablename__ = "nortpole_integration_proposal"
+    __table_args__ = (Index("ix_nortpole_integration_proposal_user_state", "user_id", "state"),)
+
+    id: Mapped[uuid.UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id: Mapped[uuid.UUID] = mapped_column(PGUUID(as_uuid=True), ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
+    integration_id: Mapped[str] = mapped_column(String(64), nullable=False)
+    integration_version: Mapped[str] = mapped_column(String(20), nullable=False)
+    action_id: Mapped[str] = mapped_column(String(64), nullable=False)
+    # What the person reads before deciding, for example "Create record in Airtable".
+    summary: Mapped[str] = mapped_column(String(200), nullable=False)
+    arguments: Mapped[str] = mapped_column(Text, nullable=False)
+    # pending, executed, failed, declined or expired.
+    state: Mapped[str] = mapped_column(String(20), nullable=False, default="pending")
+    outcome: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    created_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    expires_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    decided_at: Mapped[datetime.datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

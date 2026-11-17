@@ -1,7 +1,8 @@
 """Installed integrations as chat tools (decision 0008).
 
-A person's assistant in chat can use the integrations that person installed and connected, and only the **read** actions:
-a write is never offered to the model here, because chat has no step where a person approves one call. Each read action
+A person's assistant in chat can use the integrations that person installed and connected. A **read** action is a tool that
+runs. A **write** action is a tool that only *proposes*: it records the exact change (`proposals.py`) and tells the model it is
+waiting for the person's yes in their Inbox; nothing is sent until they approve. Each read action
 becomes one tool the model can call with the parameters meant for it; parameters only the person may set (their settings)
 never appear in the tool. A call goes through `service.call`, so the order of checks is the same as everywhere else
 (exists, not blocked by policy, installed, connected), it runs with the person's own account, and it leaves one audit row.
@@ -24,7 +25,7 @@ from nortpole.tools.interface import Tool
 from nortpole.tools.models import CodeModeExposure, ToolCallException, ToolContext
 from nortpole.utils.logger import setup_logger
 from nortpole.agents.tools import ToolInvocation, ToolOutcome
-from nortpole.work.integrations import executor, policy, registry, service
+from nortpole.work.integrations import executor, policy, proposals, registry, service
 from nortpole.work.integrations.manifest import Action, Integration, Param
 from nortpole.work.integrations.models import NortPoleIntegrationUse
 
@@ -123,9 +124,33 @@ class IntegrationChatTool(Tool):
         return ToolResult(content=text)
 
 
+class IntegrationProposalTool(IntegrationChatTool):
+    """A write action as a proposal: it records the change for the person to approve and changes nothing."""
+
+    @property
+    def description(self) -> str:
+        return (
+            f"{self._integration.name}: {self._action.name}. {self._action.description} "
+            "This PROPOSES the change: nothing happens until the person approves it in their Inbox (To approve). "
+            "Tell the person what you proposed and that it is waiting for their yes."
+        )
+
+    def _run(self, invocation: ToolInvocation, context: ToolContext) -> ToolOutcome:  # noqa: ARG002
+        try:
+            with get_session_with_current_tenant() as db:
+                user = db.get(User, self._user_id)
+                if user is None:
+                    raise service.IntegrationAccessError("not_installed", "This person is not available.")
+                row = proposals.propose(db, user, self._integration.id, self._action.id, dict(invocation.arguments))
+                summary = row.summary
+        except (service.IntegrationAccessError, executor.IntegrationCallError) as exc:
+            raise ToolCallException(str(exc), f"{self._integration.name} change could not be proposed: {exc}") from exc
+        return ToolResult(content=f"Proposed: {summary}. Nothing has been changed. It is waiting for the person to approve it in their Inbox, under To approve.")
+
+
 def chat_tools_for(user: User, taken_names: set[str] | None = None, *, transport: executor.Transport | None = None) -> list[Tool]:
-    """The tools for this person: read actions of integrations they installed, are not blocked, and (when an account is
-    needed) connected. A fault here never stops a chat; it only means fewer tools."""
+    """The tools for this person: every action of integrations they installed, are not blocked, and (when an account is
+    needed) connected; reads run, writes propose. A fault here never stops a chat; it only means fewer tools."""
     if getattr(user, "is_anonymous", False):
         return []
     taken = set(taken_names or ())
@@ -143,13 +168,14 @@ def chat_tools_for(user: User, taken_names: set[str] | None = None, *, transport
                 continue
             for action in integration.actions:
                 name = tool_name(integration, action)
-                if action.effect != "read" or name in taken:
+                if name in taken:
                     continue
                 if len(tools) >= MAX_TOOLS:
                     logger.warning("Integration chat tools capped at %s for one person", MAX_TOOLS)
                     return tools
                 taken.add(name)
-                tools.append(IntegrationChatTool(user.id, integration, action, transport=transport))
+                tool_class = IntegrationChatTool if action.effect == "read" else IntegrationProposalTool
+                tools.append(tool_class(user.id, integration, action, transport=transport))
     except Exception:  # noqa: BLE001 - chat must work without them
         logger.exception("Could not build the integration tools for chat")
         return []

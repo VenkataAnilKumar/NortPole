@@ -12,6 +12,7 @@ import { SvgEmpty } from "@opal/illustrations";
 import { useApprovalCounts } from "@/lib/approvals";
 import { useUser } from "@/providers/UserProvider";
 import LiveApprovals from "@/sections/inbox/LiveApprovals";
+import IntegrationChanges, { usePendingProposals } from "@/sections/inbox/IntegrationChanges";
 
 type Tab = "approve" | "review" | "updates";
 
@@ -63,6 +64,7 @@ export default function InboxPage() {
   const { data, error, isLoading, mutate } = useSWR<{ notifications: Notification[] }>(SWR_KEYS.notificationsPage(0, 50), errorHandlingFetcher);
   const { data: live } = useSWR<{ items: unknown[] }>(SWR_KEYS.myLiveApprovals, errorHandlingFetcher, { refreshInterval: 15_000, shouldRetryOnError: false });
   const own = useOwnWork(30_000);
+  const proposalCount = (usePendingProposals().data?.items ?? []).filter((p) => p.state === "pending").length;
   const { isAdmin } = useUser();
   const all = data?.notifications ?? [];
   const liveCount = live?.items.length ?? 0;
@@ -71,7 +73,7 @@ export default function InboxPage() {
   const updates = open.filter((n) => !isAction(n));
   const dismissed = all.filter((n) => n.dismissed);
   const counts: Record<Tab, number> = {
-    approve: own.plans.length + actionNotes.length + liveCount,
+    approve: own.plans.length + actionNotes.length + liveCount + proposalCount,
     review: own.drafts.length,
     updates: updates.length,
   };
@@ -149,6 +151,7 @@ export default function InboxPage() {
           <>
             {isAdmin && <AdminWaiting />}
             <LiveApprovals />
+            <IntegrationChanges />
             {own.plans.length > 0 && (
               <ul className={`${card} overflow-hidden`} aria-label="Plans to accept">
                 {own.plans.map((t) => <TaskRow key={t.id} t={t} label={t.schedule_name ? `Scheduled: ${t.schedule_name}. Plan ready: accept it to start the work` : "Plan ready: accept it to start the work"} action="Review the plan" />)}

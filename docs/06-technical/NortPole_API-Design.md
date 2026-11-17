@@ -104,9 +104,10 @@ These routes exist in `services/core/nortpole/work/integrations/api.py`; they ar
 | `POST /integrations/{id}/install`, `DELETE /integrations/{id}` | Install with the person's settings, or remove. | Policy (allowed, needs approval, blocked) or an approved request for that person. |
 | `PUT /integrations/{id}/account`, `DELETE /integrations/{id}/account` | Connect with a pasted token or key, or disconnect. | Installed first; the account is sealed at rest. |
 | `POST /integrations/{id}/oauth/start`, `POST /integrations/oauth/complete` | Sign in with the person's own account (OAuth with PKCE): start returns the service's address; the web page the service returns to sends the code and state. | A sealed, expiring state tied to the person; no GET changes anything. |
+| `GET /integration-proposals`, `POST /integration-proposals/{id}/approve`, `POST /integration-proposals/{id}/decline` | Changes an assistant proposed in chat: list the person's own (with the exact arguments), approve one (it runs once, as stored, after every policy check is made again), or decline. | Only the owner; a GET never writes; arguments are sealed at rest and never in the audit log. |
 | `GET /admin/integrations/policy`, `PUT /admin/integrations/policy` | See every item with its default, overrides, the answer in force and use counts; change them. | Administrator; opening a write action to everyone needs a confirmation; every change is audited. |
 
-Calls go through `service.call` (order of checks: exists, not blocked, installed, connected; then the executor with the person's own account, one audit row per call). Chat reaches it through `chat_tools.py`: each read action of an installed and connected integration is a tool in the person's default chat; write actions are never offered. No route calls it directly.
+Calls go through `service.call` (order of checks: exists, not blocked, installed, connected; then the executor with the person's own account, one audit row per call). Chat reaches it through `chat_tools.py`: each read action of an installed and connected integration is a tool in the person's default chat, and each write action is a tool that only proposes (see the proposal routes). No route calls it directly.
 
 ## Expansion endpoints (proposed, not first release)
 

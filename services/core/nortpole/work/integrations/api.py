@@ -6,6 +6,8 @@ returns a credential; a person's account goes in and is only ever used to make a
 
 from __future__ import annotations
 
+import datetime
+import uuid
 from typing import Any
 
 from fastapi import APIRouter, Depends, Query
@@ -20,7 +22,7 @@ from nortpole.db.models import User
 from nortpole.error_handling.error_codes import NortPoleErrorCode
 from nortpole.error_handling.exceptions import NortPoleError
 from nortpole.utils.audit import AuditAction, AuditOutcome
-from nortpole.work.integrations import oauth, policy, registry, service
+from nortpole.work.integrations import oauth, policy, proposals, registry, service
 from nortpole.work.integrations.manifest import Integration
 from nortpole.work.integrations.models import NortPoleIntegrationUse
 from nortpole.work.integrations.service import IntegrationAccessError
@@ -38,6 +40,12 @@ ERROR_CODES = {
     "bad_credential": NortPoleErrorCode.INVALID_INPUT,
     "no_account_needed": NortPoleErrorCode.INVALID_INPUT,
     "secrets_key_missing": NortPoleErrorCode.FEATURE_DISABLED,
+    "unknown_proposal": NortPoleErrorCode.NOT_FOUND,
+    "not_pending": NortPoleErrorCode.CONFLICT,
+    "too_many": NortPoleErrorCode.CONFLICT,
+    "changed": NortPoleErrorCode.CONFLICT,
+    "not_a_write": NortPoleErrorCode.INVALID_INPUT,
+    "too_large": NortPoleErrorCode.INVALID_INPUT,
 }
 
 
@@ -254,6 +262,62 @@ def oauth_complete(
     except IntegrationAccessError as exc:
         raise _refuse(exc) from exc
     return _view(registry.get(integration_id), service.status(db, user, integration_id))  # type: ignore[arg-type]
+
+
+# ---- changes an assistant proposed in chat ------------------------------------------------------------------------------
+
+
+class IntegrationProposalView(BaseModel):
+    id: str
+    integration_id: str
+    integration_name: str
+    action_id: str
+    summary: str
+    # The exact arguments that will be sent if approved; only the person who owns the proposal can read them.
+    arguments: dict[str, Any]
+    state: str
+    outcome: str | None
+    created_at: datetime.datetime
+    expires_at: datetime.datetime
+    decided_at: datetime.datetime | None
+
+
+class IntegrationProposalList(BaseModel):
+    items: list[IntegrationProposalView]
+
+
+@router.get("/integration-proposals")
+def list_proposals(
+    user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
+    db: Session = Depends(get_session),
+) -> IntegrationProposalList:
+    """The changes an assistant proposed for this person, waiting ones first."""
+    return IntegrationProposalList(items=[IntegrationProposalView(**proposals.view(r)) for r in proposals.list_mine(db, user)])
+
+
+@router.post("/integration-proposals/{proposal_id}/approve")
+def approve_proposal(
+    proposal_id: uuid.UUID,
+    user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
+    db: Session = Depends(get_session),
+) -> IntegrationProposalView:
+    """Approve one proposal: it runs once, exactly as stored, with every policy check made again."""
+    try:
+        return IntegrationProposalView(**proposals.view(proposals.approve(db, user, proposal_id)))
+    except IntegrationAccessError as exc:
+        raise _refuse(exc) from exc
+
+
+@router.post("/integration-proposals/{proposal_id}/decline")
+def decline_proposal(
+    proposal_id: uuid.UUID,
+    user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
+    db: Session = Depends(get_session),
+) -> IntegrationProposalView:
+    try:
+        return IntegrationProposalView(**proposals.view(proposals.decline(db, user, proposal_id)))
+    except IntegrationAccessError as exc:
+        raise _refuse(exc) from exc
 
 
 # ---- the administrator's policy -------------------------------------------------------------------------------------
