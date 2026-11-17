@@ -490,3 +490,7 @@ Web: removed 194 unused imports and variables across 119 inherited files (unused
 ### README brought up to date, 2026-11-17
 
 The README still said an assistant cannot call an installed integration from chat and that none of the integration definitions were checked. It now says chat reads directly and proposes writes for approval in the Inbox, lists which changes can need a second administrator, mentions pack ownership, and gives the real verification state (8 of 13 checked against the vendors' reference, 1 sent live, 4 unchecked). Not done: the screenshots other than Discover were not retaken (Approvals and Tools have changed slightly); they were not checked against the current screens.
+
+### README screenshots retaken, 2026-11-17
+
+All 11 README images were retaken from the running sandbox as an administrator (workspace, workflows, draft review, Inbox, Scheduled, Discover, Audit log, Approvals, Tools, Route policy, Quality). Approvals now shows the five second-administrator rules; Discover shows the 13 integrations with their logos; Tools shows the current wording. The sandbox's own data appears in them (mock model routes, test accounts such as admin@example.com and generated test addresses in the audit log). Not done: the images were not compared pixel by pixel with the old ones, and the audit-log shot starts below the page heading.
