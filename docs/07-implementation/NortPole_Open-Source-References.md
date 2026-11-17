@@ -32,7 +32,6 @@ The owner supplied eight product sites for review. This is a **desk review of of
 | Product | What the official material emphasizes | NortPole fit to test | Source and licensing signal |
 | --- | --- | --- | --- |
 | Upstream core | Enterprise knowledge indexing, permission-aware search, chat, agents, and research. | Strong context and retrieval candidate; test whether its workflow and approval model supports the first vertical. | Community Edition is MIT; Enterprise Edition is separate. |
-| [Sim](https://www.sim.ai/) | Visual and code-built workflows, knowledge base, files, tables, logs, and workspace governance. | Strong candidate for the complete workflow workspace; test evidence permissions and reviewer UX. | [Core is Apache 2.0; enterprise features have a separate production license](https://github.com/simstudioai/sim/blob/main/apps/docs/content/docs/introduction/index.mdx). |
 | [Kortix](https://kortix.com/) | Shared agents, company configuration in git, computer-based work, and self-hosting. | Reference for a company-wide agent workspace and long-running execution. | Current [repository license is Elastic License 2.0](https://github.com/kortix-ai/suna/blob/dev/LICENSE); [white-label hosting terms](https://github.com/kortix-ai/suna/blob/dev/WHITE-LABEL-LICENSE.md) add conditions. |
 | [Agno](https://www.agno.com/) | Agent SDK, AgentOS runtime, and a control plane for traces, evaluation, approvals, and scheduling. | Strong runtime/control-plane candidate; test whether its UI meets practitioner needs or needs a separate product front end. | [SDK repository is Apache 2.0](https://github.com/agno-agi/agno/blob/main/LICENSE); confirm terms for the [Control Plane](https://docs.agno.com/agent-os/control-plane) separately. |
 | [Busabase](https://busabase.com/) | Structured agent data, knowledge, apps, skills, and reviewable writes. | Candidate for persistent agent work products or reference pattern for provenance; not yet a proven replacement for retrieval or runtime. | [Repository is MIT](https://github.com/busabase/busabase/blob/main/LICENSE). |
@@ -44,9 +43,6 @@ The owner supplied eight product sites for review. This is a **desk review of of
 
 The upstream core's repository describes indexed knowledge from many applications, fine-grained permissions, deep research, custom agents, MCP actions, sandboxes, and artifacts. Its own deployment description distinguishes a full indexing stack from a Lite chat-and-agent mode, so a knowledge-focused spike should use the full mode. The company announced it is joining Zoom and says the upstream core will remain a standalone open-source product. That is relevant to the future roadmap and support relationship, but does not by itself disqualify the project. Test source permission propagation, citation provenance, workflow extension points, and what features are CE versus EE before treating the upstream core as the base.
 
-### Sim
-
-Sim's [product site](https://www.sim.ai/) presents a single workspace for visual or coded workflows, knowledge, files, tables, and block-level run logs. Its [documentation](https://github.com/simstudioai/sim/blob/main/apps/docs/content/docs/introduction/index.mdx) describes self-hosting and distinguishes Apache-licensed core from separately licensed enterprise features. This is a closer “whole workspace” comparison than a single runtime library. Test workflow approval points, retrieval permissions, export provenance, and which governance controls require an enterprise subscription.
 
 ### Kortix
 
@@ -77,7 +73,7 @@ Rerun's [site](https://rerun.build/) packages agents as approachable “coworker
 **No platform is selected as NortPole's foundation by this review.** The earlier upstream-core-first assumption should be tested against the broader options now available. Run the same thin vertical slice on three routes:
 
 1. **Upstream-core-led:** indexed context, practitioner task flow, citation, and approval.
-2. **Sim-led:** workspace and workflow, with equivalent source permission and evidence checks.
+2. **Workflow-product-led:** workspace and workflow, with equivalent source permission and evidence checks.
 3. **Agno-led:** runtime and control plane, measuring the extra work required for a practitioner-facing UI and enterprise context.
 
 Score each on permission fidelity, evidence and citation quality, review and approval behavior, restart recovery, tenant isolation, extension cost, upgrade path, operating cost, and commercial rights. Keep Busabase as a data/work-product spike only if the chosen route lacks that capability. Evaluate OpenAgents, Opengeni, Kortix, or Rerun as focused collaboration or execution references when the first workflow needs them. Do not combine all eight into one stack.

@@ -8,7 +8,7 @@ Date: 2026-11-16. Status: **accepted** by the product owner (phase 1 built). It 
 The owner wants Sources to work like a catalog: people search it and **Install** or **Connect** from the card, as in
 Claude's Customize, other open-source integration catalogs and MiniMax's plugins, grouped Horizontal (Engineering, Design, Product, Code,
 Automations, Legal, Sales, GTM) and Vertical (Law, Finance, Health, Bio, Life Science, Voice, Video, Media,
-Entertainment and more). Sim, an open-source workflow builder, already describes hundreds of services this way, and the
+Entertainment and more). Open-source workflow builders already describe hundreds of services this way, and the
 owner asked to build on its definitions.
 
 ## Decision
