@@ -458,3 +458,7 @@ A new rule, `second_for_packs` (off by default), holds trusting a signer, a key 
 ### Cleanup of padded text, 2026-11-17
 
 The log's entries from 2026-11-16 on were rewritten to what changed, what was checked and what is not done (about 55 KB shorter); entries about work later reversed were merged into one; garbled sentences left by a bulk text replacement were fixed. On the Sources screens the Discover, Connectors and Plugins headers no longer repeat themselves (a second "Catalog" heading and paragraph were removed), and the OAuth module's docstring was shortened. Not done: the entries before 2026-11-16 are still long, and no wider hunt for padded text or comments in inherited code was made.
+
+### Route walk and dead calls, 2026-11-17
+
+A browser walk of the 78 static routes ran only about half to completion before the dev server ran out of resources, so it is partial. In what it did load: every admin page requested `/api/license` and `/api/admin/billing/billing-information`, which NortPole does not have, so each page logged two 404s. The admin sidebar no longer asks for them. Four unused imports were removed from the owned backend. Not fixed: `/api/build/approvals/live` returns 403 for some roles, `/api/manage/connector-status` returns 501 when document search is off (intended), `/admin/agents` has a table nested in a div (hydration warning, inherited), and `/admin/scim`, `/admin/service-accounts` and `/admin/groups` return 404 or redirect. About 150 unused variables remain in inherited web code. The remaining routes were not re-walked.

@@ -23,11 +23,6 @@ import {
 import { SvgSearch, SvgX } from "@opal/icons";
 import { Disabled } from "@opal/core";
 import {
-  useBillingInformation,
-  useLicense,
-  hasActiveSubscription,
-} from "@/lib/billing";
-import {
   CUSTOM_ANALYTICS_ENABLED,
   NEXT_PUBLIC_CLOUD_ENABLED,
 } from "@/lib/constants";
@@ -63,18 +58,6 @@ export default function AdminSidebar() {
   const { adminCapabilities } = useUser();
   const settings = useSettings();
   const tier = settings?.tier;
-  const { data: billingData, isLoading: billingLoading } =
-    useBillingInformation();
-  const { data: licenseData, isLoading: licenseLoading } = useLicense();
-  // Default to true while loading to avoid flashing "Upgrade Plan"
-  const hasSubscriptionOrLicense =
-    billingLoading || licenseLoading
-      ? true
-      : Boolean(
-          (billingData && hasActiveSubscription(billingData)) ||
-          licenseData?.has_license
-        );
-
   // Tier is not folded in here: ENTERPRISE is declared as the route's `requiredTier`, so
   // a lower tier renders the entry disabled with an upsell rather than hiding it.
   const flags: FeatureFlags = {
@@ -82,7 +65,7 @@ export default function AdminSidebar() {
     enableCloud: NEXT_PUBLIC_CLOUD_ENABLED,
     tier,
     customAnalyticsEnabled: CUSTOM_ANALYTICS_ENABLED,
-    hasSubscription: hasSubscriptionOrLicense,
+    hasSubscription: true,
     hooksEnabled: settings?.hooks_enabled ?? false,
     queryHistoryEnabled:
       settings?.query_history_type !== "disabled" &&
