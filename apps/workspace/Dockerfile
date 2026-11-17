@@ -13,7 +13,7 @@ ARG INTERNAL_URL=http://api:8080
 ENV INTERNAL_URL=$INTERNAL_URL NEXT_TELEMETRY_DISABLED=1
 # Type errors exist today only in test files (their shared setup folder is not in the repo),
 # so the image build skips the type check; run `tsc --noEmit` separately.
-RUN SKIP_TYPE_CHECK=1 npx next build
+RUN node tools/prepare-pdf-assets.cjs && SKIP_TYPE_CHECK=1 npx next build
 
 FROM node:22-slim
 WORKDIR /app
