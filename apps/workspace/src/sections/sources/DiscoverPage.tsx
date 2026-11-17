@@ -69,7 +69,7 @@ export default function DiscoverPage() {
       <header className="flex flex-col gap-1">
         <h1 className={h1Class}>Discover</h1>
         <p className="text-sm text-text-03">
-          The catalog of connectors and plugins: search it and install or connect right here. Below it, the other things you can ask an administrator to set up. Nothing is turned on by asking.
+          Install or connect an integration, or ask an administrator for something that is not on offer yet.
         </p>
       </header>
       <IntegrationCatalog />

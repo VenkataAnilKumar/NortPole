@@ -19,10 +19,10 @@ export default function ConnectorsPage() {
       <header className="flex flex-col gap-1">
         <h1 className={h1Class}>Connectors</h1>
         <p className="text-sm text-text-03">
-          Systems connected to this workspace. Assistants read from them only what your own access in that system allows. Administrators add and manage connectors.
+          Connect your own accounts. Assistants see only what your access in each system allows.
         </p>
       </header>
-      <IntegrationCatalog kind="connector" title="Your connectors and what you can add" intro="Install a connector or connect your own account here. Anything your administrator has not allowed yet shows Request instead." />
+      <IntegrationCatalog kind="connector" />
       {isLoading && <p className="text-sm text-text-03">Loading connectors…</p>}
       {error && error instanceof FetchError && error.status === 501 && (
         <p className="text-sm text-text-03" data-testid="connectors-no-search">Document search is not set up for this workspace, so there are no connected document systems to show. Retrying will not help; an administrator sets search up.</p>

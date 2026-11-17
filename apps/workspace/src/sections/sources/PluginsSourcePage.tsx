@@ -24,7 +24,7 @@ export default function PluginsSourcePage() {
       <header className="flex flex-col gap-1">
         <h1 className={h1Class}>Plugins</h1>
         <p className="text-sm text-text-03">
-          Tools chat assistants may use here. A tool that is not allowed is never offered to an assistant. Drafts use no tools. Administrators decide what is allowed.
+          Tools assistants may use. A tool that is not allowed is never offered. Administrators decide what is allowed.
         </p>
         {craft && (
           <p className="text-sm text-text-03">
@@ -32,7 +32,7 @@ export default function PluginsSourcePage() {
           </p>
         )}
       </header>
-      <IntegrationCatalog kind="plugin" title="Your plugins and what you can add" intro="Install a plugin or connect your own account here. Anything your administrator has not allowed yet shows Request instead." />
+      <IntegrationCatalog kind="plugin" />
       {isLoading && <p className="text-sm text-text-03">Loading plugins…</p>}
       {error && <p role="alert" className="text-sm text-status-text-error-05">Plugins could not be loaded. Try again in a moment.</p>}
       {data && (
