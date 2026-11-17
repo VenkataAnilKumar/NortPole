@@ -14,7 +14,7 @@ from sqlalchemy import func, select, update
 from sqlalchemy.orm import Session
 
 from nortpole.governance.action_binding.binding import Approval, Verdict, action_fingerprint, decide_execution
-from nortpole.work.actions.autonomy import LABEL, TIERS, at_least, effective_tier
+from nortpole.work.actions.autonomy import LABEL, at_least, effective_tier
 from nortpole.work.actions.delivery import UnsafeTarget, check_target_url, deliver, deliver_email, parse_mailto
 from nortpole.work.actions.models import NortPoleAction, NortPoleActionTarget
 from nortpole.auth.permissions import require_permission

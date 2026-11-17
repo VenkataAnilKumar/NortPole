@@ -241,7 +241,7 @@ function Row({ item, req, busy, run }: {
  * The integration catalog: search it, narrow it by category and type, then install or connect
  * right on the card. What an administrator has not allowed yet shows Request instead; asking turns nothing on.
  */
-export default function IntegrationCatalog({ kind, title = "Catalog", intro }: { kind?: "connector" | "plugin"; title?: string; intro?: string } = {}) {
+export default function IntegrationCatalog({ kind }: { kind?: "connector" | "plugin" } = {}) {
   const catalog = useSWR<{ items: IntegrationItem[] }>(CATALOG_URL, errorHandlingFetcher);
   const requests = useSWR<{ my_requests: Req[] }>(REQUESTS_URL, errorHandlingFetcher);
     const [category, setCategory] = useState("all");
@@ -289,11 +289,7 @@ export default function IntegrationCatalog({ kind, title = "Catalog", intro }: {
   }, [visible]);
 
   return (
-    <section aria-labelledby="catalog-title" className="flex flex-col gap-4" data-testid="integration-catalog">
-      <div className="flex flex-col gap-1">
-        <h2 id="catalog-title" className="text-xl font-semibold text-text-05">{title}</h2>
-        <p className="text-sm text-text-03">{intro ?? "Search what is on offer and install or connect it here. Anything your administrator has not allowed yet shows Request instead."}</p>
-      </div>
+    <section aria-label="Catalog" className="flex flex-col gap-4" data-testid="integration-catalog">
       <div className="flex items-center gap-2">
         <label className="flex min-w-0 flex-1 flex-col text-sm font-medium text-text-05">
           <span className="sr-only">Search</span>

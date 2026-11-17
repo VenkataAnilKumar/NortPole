@@ -1,17 +1,13 @@
-"""Signing in to an integration's service with the person's own account (OAuth 2.0 authorization code with PKCE).
+"""Sign in to an integration's service with the person's own account (OAuth 2.0 authorization code with PKCE).
 
-An administrator registers one OAuth app per service with the service and sets its client id and secret in the deployment's
-environment (`NORTPOLE_OAUTH_<PROVIDER>_CLIENT_ID` and `..._CLIENT_SECRET`, the provider's name in capitals with dashes as
-underscores). With no client id and secret the sign-in button is not offered and the person pastes a token instead.
+An administrator registers an OAuth app per service and sets `NORTPOLE_OAUTH_<PROVIDER>_CLIENT_ID` and `..._CLIENT_SECRET`
+(provider in capitals, dashes as underscores); without them the person pastes a token instead.
 
-`start` builds the address to send the person to; the service sends them back to a page of the web app (`/app/sources/oauth`), which hands the code and state to the server in a POST, so no GET request ever changes anything. Its `state` value is sealed (encrypted and tamper-proof, with the same
-key as stored accounts) and carries who started it, for which integration, the PKCE secret and an expiry, so the server
-keeps nothing between the two steps. `finish` checks it, trades the code for tokens at the provider's token address through
-the same safe outbound transport as every call, and returns the account to store. `refresh` trades a refresh token for new
-tokens. Tokens are never logged and never leave this module except to be sealed and stored.
-
-The endpoints below are the ones each service publishes for its authorization-code flow; they have been written from the
-services' public descriptions and not yet exercised against the live services."""
+`start` builds the service's address. Its `state` is sealed (same key as stored accounts) and carries the person, the
+integration, the PKCE secret and an expiry, so the server keeps nothing between steps. The service returns to a page of the
+web app, which POSTs the code and state to `finish`; that trades the code for tokens through the same outbound transport as
+every call. `refresh` renews tokens. The provider endpoints were written from the services' public descriptions and have not
+been tried against the live services."""
 
 from __future__ import annotations
 

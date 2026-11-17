@@ -66,7 +66,7 @@ export default function IntegrationChanges() {
   return (
     <section className="flex flex-col gap-3" aria-labelledby="inbox-changes" data-testid="integration-changes">
       <h2 id="inbox-changes" className="text-base font-semibold text-text-05">Changes waiting for your yes</h2>
-      <p className="text-sm text-text-03">An assistant proposed these in a chat. Nothing has been sent. If you approve one, exactly what is shown here is sent, once, with your own account.</p>
+      <p className="text-sm text-text-03">Proposed by an assistant in chat. Nothing is sent until you approve, and then exactly what is shown here.</p>
       <p role={msg?.ok === false ? "alert" : "status"} className={`min-h-5 text-sm ${msg?.ok === false ? "text-status-text-error-05" : "text-text-05"}`}>{msg?.text ?? ""}</p>
       <ul className={`${card} overflow-hidden`} aria-label="Changes waiting for your yes">
         {waiting.map((p) => (

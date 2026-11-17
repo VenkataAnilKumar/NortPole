@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSettings } from "@/lib/settings/hooks";
 import useSWR from "swr";
 import { errorHandlingFetcher } from "@/lib/fetcher";
 import { SWR_KEYS } from "@/lib/swr-keys";
@@ -62,7 +63,7 @@ export default function InboxPage() {
   const [showDismissed, setShowDismissed] = useState(false);
   const [busyId, setBusyId] = useState<number | null>(null);
   const { data, error, isLoading, mutate } = useSWR<{ notifications: Notification[] }>(SWR_KEYS.notificationsPage(0, 50), errorHandlingFetcher);
-  const { data: live } = useSWR<{ items: unknown[] }>(SWR_KEYS.myLiveApprovals, errorHandlingFetcher, { refreshInterval: 15_000, shouldRetryOnError: false });
+  const { data: live } = useSWR<{ items: unknown[] }>(useSettings()?.nortpole_craft_enabled === true ? SWR_KEYS.myLiveApprovals : null, errorHandlingFetcher, { refreshInterval: 15_000, shouldRetryOnError: false });
   const own = useOwnWork(30_000);
   const proposalCount = (usePendingProposals().data?.items ?? []).filter((p) => p.state === "pending").length;
   const { isAdmin } = useUser();

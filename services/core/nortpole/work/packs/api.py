@@ -5,10 +5,9 @@ the active packs and start a draft task from a template."""
 from __future__ import annotations
 
 import datetime
-from uuid import UUID
 
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, Field, ValidationError
 from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
@@ -19,6 +18,7 @@ from nortpole.db.models import User
 from nortpole.error_handling.error_codes import NortPoleErrorCode
 from nortpole.error_handling.exceptions import NortPoleError
 from nortpole.work.packs.manifest import Manifest, canonical_bytes, digest, version_key
+from nortpole.work.packs import ownership
 from nortpole.work.packs.evaluation import evaluate
 from nortpole.work.packs.integrity import IntegrityReport, check_all
 from nortpole.work.packs.models import NortPolePackEvaluation, NortPolePackSigner, NortPolePackVersion
@@ -219,12 +219,7 @@ def list_signers(
             for s in db_session.scalars(select(NortPolePackSigner).order_by(NortPolePackSigner.key_id))]
 
 
-@router.post("/admin/pack-signers")
-def add_signer(
-    body: SignerIn,
-    user: User = Depends(require_permission(Permission.MANAGE_CONNECTORS)),
-    db_session: Session = Depends(get_session),
-) -> SignerView:
+def _check_signer(body: "SignerIn", db_session: Session) -> None:
     try:
         parse_public_key(body.public_key)
     except SignatureProblem as e:
@@ -233,10 +228,38 @@ def add_signer(
         raise NortPoleError(NortPoleErrorCode.INVALID_INPUT, "A signer needs a key id of at most 80 characters.")
     if db_session.get(NortPolePackSigner, body.key_id):
         raise NortPoleError(NortPoleErrorCode.CONFLICT, "A signer with that key id already exists.")
+
+
+def _held(kind: str, db_session: Session, user: User, payload: dict, summary: str):  # type: ignore[no-untyped-def]
+    """When the second-administrator rule covers packs, the change is checked now and recorded as waiting; the caller returns
+    this instead of applying it. None when the rule is off."""
+    from nortpole.governance.admin_changes import controls
+    from nortpole.governance.admin_changes.service import pending_response, propose
+
+    if not controls.required(kind):
+        return None
+    return pending_response(propose(db_session, user, kind, payload, 0, summary))
+
+
+def apply_add_signer(body: "SignerIn", db_session: Session, user: User | None, *, approver_email: str | None = None) -> "SignerView":
+    _check_signer(body, db_session)
     db_session.add(NortPolePackSigner(key_id=body.key_id, public_key=body.public_key, label=body.label[:200]))
     db_session.commit()
-    _audit(user, AuditAction.PACK_SIGNER_CHANGE, f"Trusted pack signer {body.key_id}", body.key_id)
+    _audit(user, AuditAction.PACK_SIGNER_CHANGE, f"Trusted pack signer {body.key_id}" + (f" (second administrator {approver_email})" if approver_email else ""), body.key_id)  # type: ignore[arg-type]
     return SignerView(key_id=body.key_id, label=body.label, revoked=False)
+
+
+@router.post("/admin/pack-signers")
+def add_signer(
+    body: SignerIn,
+    user: User = Depends(require_permission(Permission.MANAGE_CONNECTORS)),
+    db_session: Session = Depends(get_session),
+) -> SignerView:
+    _check_signer(body, db_session)
+    held = _held("pack_signer", db_session, user, body.model_dump(), f"Trust pack signer {body.key_id}")
+    if held is not None:
+        return held  # type: ignore[return-value]
+    return apply_add_signer(body, db_session, user)
 
 
 @router.post("/admin/pack-signers/{key_id}/revoke")
@@ -303,6 +326,11 @@ def install_pack(
         first = e.errors()[0]
         raise NortPoleError(NortPoleErrorCode.INVALID_INPUT, f"The manifest is not valid: {'.'.join(str(x) for x in first['loc'])}: {first['msg']}") from e
     signed = canonical_bytes(pkg.manifest)
+    try:
+        ownership.check_publisher(db_session, manifest.id, pkg.key_id)
+    except NortPoleError as e:
+        _audit(user, AuditAction.PACK_INSTALL, f"Refused {manifest.id} {manifest.version} from signer {pkg.key_id}: the pack belongs to another signer", manifest.id, AuditOutcome.DENIED)
+        raise e
     existing = db_session.scalar(select(NortPolePackVersion).where(
         NortPolePackVersion.pack_id == manifest.id, NortPolePackVersion.version == manifest.version))
     if existing is not None:
@@ -324,8 +352,79 @@ def install_pack(
                               signature=pkg.signature, signer_key_id=pkg.key_id, active=False)
     db_session.add(row)
     db_session.commit()
+    ownership.consume(db_session, manifest.id, pkg.key_id)
     _audit(user, AuditAction.PACK_INSTALL, f"Installed {manifest.id} {manifest.version} (digest {row.digest[:12]}, signer {pkg.key_id})", manifest.id)
     return _vview(db_session, row)
+
+
+class TransferIn(BaseModel):
+    to_key_id: str = Field(min_length=1, max_length=80)
+
+
+class TransferView(BaseModel):
+    pack_id: str
+    owner_key_id: str | None
+    to_key_id: str
+
+
+@router.post("/admin/packs/{pack_id}/transfer")
+def approve_key_change(
+    pack_id: str, body: TransferIn,
+    user: User = Depends(require_permission(Permission.MANAGE_CONNECTORS)),
+    db_session: Session = Depends(get_session),
+) -> TransferView:
+    """Approve a key change: let another trusted signer publish the next version of this pack (once). Without this, a
+    version signed by anyone but the pack's current signer is refused."""
+    ownership.check_transfer(db_session, pack_id, body.to_key_id)
+    held = _held("pack_owner", db_session, user, {"pack_id": pack_id, "to_key_id": body.to_key_id}, f"Key change for {pack_id}: let signer {body.to_key_id} publish it")
+    if held is not None:
+        return held  # type: ignore[return-value]
+    row = ownership.approve_transfer(db_session, user, pack_id, body.to_key_id)
+    return TransferView(pack_id=pack_id, owner_key_id=ownership.owner_of(db_session, pack_id), to_key_id=row.to_key_id)
+
+
+def apply_pack_change(kind: str, payload: dict, db_session: Session, proposer: User | None, *, approver_email: str) -> None:
+    """Run a held pack change as the second administrator approved it. Raises if it is no longer valid."""
+    if kind == "pack_signer":
+        apply_add_signer(SignerIn(**payload), db_session, proposer, approver_email=approver_email)
+    elif kind == "pack_owner":
+        ownership.approve_transfer(db_session, proposer, payload["pack_id"], payload["to_key_id"], approver_email=approver_email)
+    elif kind == "pack_activate":
+        apply_activate(db_session, proposer, payload["pack_id"], payload["version"], approver_email=approver_email)
+    else:
+        raise NortPoleError(NortPoleErrorCode.INVALID_INPUT, "Unknown kind of change.")
+
+
+@router.delete("/admin/packs/{pack_id}/transfer")
+def cancel_key_change(
+    pack_id: str,
+    user: User = Depends(require_permission(Permission.MANAGE_CONNECTORS)),
+    db_session: Session = Depends(get_session),
+) -> dict[str, bool]:
+    ownership.cancel_transfer(db_session, user, pack_id)
+    return {"cancelled": True}
+
+
+def _check_activate(db_session: Session, user: User | None, pack_id: str, version: str) -> NortPolePackVersion:
+    v = db_session.scalar(select(NortPolePackVersion).where(NortPolePackVersion.pack_id == pack_id, NortPolePackVersion.version == version))
+    if v is None:
+        raise NortPoleError(NortPoleErrorCode.NOT_FOUND, "Pack version not found.")
+    if _revoked(db_session, v.signer_key_id):
+        _audit(user, AuditAction.PACK_ACTIVATE, f"Refused to activate {pack_id} {version}: signer revoked", pack_id, AuditOutcome.DENIED)  # type: ignore[arg-type]
+        raise NortPoleError(NortPoleErrorCode.CONFLICT, "This pack's signer was revoked, so it cannot be activated.")
+    return v
+
+
+def apply_activate(db_session: Session, user: User | None, pack_id: str, version: str, *, approver_email: str | None = None) -> NortPolePackVersion:
+    v = _check_activate(db_session, user, pack_id, version)
+    previous = db_session.scalar(select(NortPolePackVersion.version).where(NortPolePackVersion.pack_id == pack_id, NortPolePackVersion.active.is_(True)))
+    db_session.execute(update(NortPolePackVersion).where(NortPolePackVersion.pack_id == pack_id).values(active=False))
+    v.active = True
+    db_session.commit()
+    kind = "Rolled back to" if previous and version_key(version) < version_key(previous) else "Activated"
+    _audit(user, AuditAction.PACK_ACTIVATE, f"{kind} {pack_id} {version}" + (f" (was {previous})" if previous else "")  # type: ignore[arg-type]
+           + (f" (second administrator {approver_email})" if approver_email else ""), pack_id)
+    return v
 
 
 @router.post("/admin/packs/{pack_id}/{version}/activate")
@@ -336,19 +435,11 @@ def activate(
 ) -> VersionView:
     """Make this the one active version of the pack (an upgrade, or a rollback
     when it is older). Past tasks keep the version they started from."""
-    v = db_session.scalar(select(NortPolePackVersion).where(NortPolePackVersion.pack_id == pack_id, NortPolePackVersion.version == version))
-    if v is None:
-        raise NortPoleError(NortPoleErrorCode.NOT_FOUND, "Pack version not found.")
-    if _revoked(db_session, v.signer_key_id):
-        _audit(user, AuditAction.PACK_ACTIVATE, f"Refused to activate {pack_id} {version}: signer revoked", pack_id, AuditOutcome.DENIED)
-        raise NortPoleError(NortPoleErrorCode.CONFLICT, "This pack's signer was revoked, so it cannot be activated.")
-    previous = db_session.scalar(select(NortPolePackVersion.version).where(NortPolePackVersion.pack_id == pack_id, NortPolePackVersion.active.is_(True)))
-    db_session.execute(update(NortPolePackVersion).where(NortPolePackVersion.pack_id == pack_id).values(active=False))
-    v.active = True
-    db_session.commit()
-    kind = "Rolled back to" if previous and version_key(version) < version_key(previous) else "Activated"
-    _audit(user, AuditAction.PACK_ACTIVATE, f"{kind} {pack_id} {version}" + (f" (was {previous})" if previous else ""), pack_id)
-    return _vview(db_session, v)
+    _check_activate(db_session, user, pack_id, version)
+    held = _held("pack_activate", db_session, user, {"pack_id": pack_id, "version": version}, f"Activate {pack_id} {version}")
+    if held is not None:
+        return held  # type: ignore[return-value]
+    return _vview(db_session, apply_activate(db_session, user, pack_id, version))
 
 
 @router.post("/admin/packs/{pack_id}/{version}/evaluate")
@@ -465,3 +556,13 @@ def start_from_template(
     db_session.add(task)
     db_session.commit()
     return _view(task)
+
+
+def _register_with_admin_changes() -> None:
+    from nortpole.governance.admin_changes import controls
+    from nortpole.governance.admin_changes.service import register_applier
+
+    register_applier(controls.PACK_KINDS, apply_pack_change)
+
+
+_register_with_admin_changes()

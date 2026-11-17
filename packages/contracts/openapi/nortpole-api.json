@@ -114,6 +114,11 @@
       },
       "AdminControls": {
         "properties": {
+          "second_for_packs": {
+            "default": false,
+            "title": "Second For Packs",
+            "type": "boolean"
+          },
           "second_for_retention": {
             "default": false,
             "title": "Second For Retention",
@@ -4132,6 +4137,51 @@
         "title": "ToolView",
         "type": "object"
       },
+      "TransferIn": {
+        "properties": {
+          "to_key_id": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "To Key Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "to_key_id"
+        ],
+        "title": "TransferIn",
+        "type": "object"
+      },
+      "TransferView": {
+        "properties": {
+          "owner_key_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Owner Key Id"
+          },
+          "pack_id": {
+            "title": "Pack Id",
+            "type": "string"
+          },
+          "to_key_id": {
+            "title": "To Key Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "pack_id",
+          "owner_key_id",
+          "to_key_id"
+        ],
+        "title": "TransferView",
+        "type": "object"
+      },
       "UsageRow": {
         "properties": {
           "data_class": {
@@ -4389,6 +4439,17 @@
       },
       "nortpole__governance__admin_changes__api__ControlsUpdate": {
         "properties": {
+          "second_for_packs": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Second For Packs"
+          },
           "second_for_retention": {
             "title": "Second For Retention",
             "type": "boolean"
@@ -6962,6 +7023,145 @@
           }
         ],
         "summary": "Deactivate"
+      }
+    },
+    "/admin/packs/{pack_id}/transfer": {
+      "delete": {
+        "operationId": "cancel_key_change",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pack_id",
+            "required": true,
+            "schema": {
+              "title": "Pack Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tenant_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Tenant Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "boolean"
+                  },
+                  "title": "Response Cancel Key Change Admin Packs  Pack Id  Transfer Delete",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "APIKeyCookie": []
+          },
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Cancel Key Change"
+      },
+      "post": {
+        "description": "Approve a key change: let another trusted signer publish the next version of this pack (once). Without this, a\nversion signed by anyone but the pack's current signer is refused.",
+        "operationId": "approve_key_change",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pack_id",
+            "required": true,
+            "schema": {
+              "title": "Pack Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tenant_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Tenant Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransferIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransferView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "APIKeyCookie": []
+          },
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Approve Key Change"
       }
     },
     "/admin/packs/{pack_id}/{version}/activate": {

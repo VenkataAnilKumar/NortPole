@@ -152,7 +152,8 @@ def test_the_audit_log_and_action_targets_are_admin_only(session, method: str, p
 
 
 ADMIN_PACKS = [("GET", "/admin/pack-signers"), ("POST", "/admin/pack-signers"), ("POST", "/admin/pack-signers/x/revoke"),
-               ("GET", "/admin/packs"), ("POST", "/admin/packs"), ("POST", "/admin/packs/x/1.0.0/activate"), ("POST", "/admin/packs/x/deactivate")]
+               ("GET", "/admin/packs"), ("POST", "/admin/packs"), ("POST", "/admin/packs/x/1.0.0/activate"), ("POST", "/admin/packs/x/deactivate"),
+               ("POST", "/admin/packs/x/transfer"), ("DELETE", "/admin/packs/x/transfer")]
 
 
 @pytest.mark.parametrize("method,path", ADMIN_PACKS)

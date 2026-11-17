@@ -60,3 +60,15 @@ class NortPolePackEvaluation(Base):
     cases_passed: Mapped[int] = mapped_column(Integer, nullable=False)
     details: Mapped[list[dict[str, Any]]] = mapped_column(JSONB, nullable=False)
     run_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+
+class NortPolePackTransfer(Base):
+    """An administrator's approval to let another signer publish new versions of a pack the current owner signs. It lets one
+    publish by that signer through, and goes away once that signer has published (the signer then owns the pack)."""
+
+    __tablename__ = "nortpole_pack_transfer"
+
+    pack_id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    to_key_id: Mapped[str] = mapped_column(String(80), nullable=False)
+    approved_by_email: Mapped[str] = mapped_column(String, nullable=False, default="")
+    created_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)

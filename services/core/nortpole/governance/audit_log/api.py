@@ -7,7 +7,7 @@ import json
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import Response
 from pydantic import BaseModel
-from sqlalchemy import distinct, func, or_, select
+from sqlalchemy import distinct, select
 from sqlalchemy.orm import Session
 
 from nortpole.auth.permissions import require_permission

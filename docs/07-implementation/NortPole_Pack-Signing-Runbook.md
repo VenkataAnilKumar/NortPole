@@ -46,3 +46,14 @@ If a key is lost or exposed, skip waiting: revoke it first. People lose the pack
 ## Limits
 - There is no automatic expiry of signers and no hardware-key support.
 - Revocation cannot be undone from the console; trust a new key instead.
+
+## Who may publish a new version of a pack
+
+A pack id belongs to the signer of its newest installed version. Installing a version signed by a different trusted key is refused (409) with a message naming the owner. There are two ways to hand a pack to another signer:
+
+1. **Rotate the key.** Register the new key as a trusted signer, revoke the old one, then publish. Once the owner's key is revoked, the new signer may publish a version of its packs without an approval.
+2. **Approve a key change** (the owner stays trusted, for example when a team takes over a pack): `POST /admin/packs/{pack_id}/transfer` with `{"to_key_id": "<new signer>"}`. The new signer's next version is accepted once, and then that signer owns the pack. `DELETE /admin/packs/{pack_id}/transfer` cancels an approval that has not been used.
+
+Every refusal and every approval or cancellation is written to the audit log (`pack.install` denied, `pack.owner_change`).
+
+With the second-administrator rule for packs on (Admin > Approvals), trusting a signer, a key change and activating a version are recorded as waiting and take effect only when a different administrator approves them; the Packs page says so when a change is held. Revoking a signer always takes effect at once.

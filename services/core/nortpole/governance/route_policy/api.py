@@ -19,7 +19,6 @@ from nortpole.governance.route_policy.policy import (
     RouteDecision,
     RoutePolicy,
     decide,
-    kind_for,
     load_policy,
     save_policy,
 )

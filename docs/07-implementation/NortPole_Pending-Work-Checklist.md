@@ -13,7 +13,7 @@ Status: Working list, updated 2026-11-17 (after the redesign stages R1–R6b and
 | A7 | Agents, skills, packs | Mostly built (steps 1 to 4 and 6; the document connector waits for the source system) |
 | A7b | Integrations catalog, Sources screens, personal skills, OAuth sign-in (decision 0008) | Built and tested in the sandbox; **definitions not yet verified against vendors or live services** (see the section below) |
 | A8 | Real model routes, evaluation, spend | Started |
-| A9 | Security and trust hardening | Partly built (stored secrets are now sealed; MFA and the pack takeover gap are open) |
+| A9 | Security and trust hardening | Partly built (stored secrets are now sealed and the pack takeover gap is closed; MFA and the second administrator for remaining admin actions are open) |
 | A10 | Deployment and operations | Started (CI has not yet run on GitHub: the jobs failed at once on the last four pull requests, so they were merged or left open without it) |
 | A11 | Pilot with one vertical | Planned, needs a customer |
 | A12 | Expansion | Later |
@@ -62,8 +62,8 @@ Open:
 - [ ] 21. Studio form: edit review rules, house style and test cases.
 
 **Security (A9)**
-- [ ] 22. Close the pack takeover gap: any trusted signer can publish a new version of another signer's pack; needs a key-change flow that keeps rotation working.
-- [ ] 23. A second administrator for the remaining admin actions: pack publish and activate, send destinations, tool approvals, signers.
+- [x] 22. **Pack takeover gap closed** (2026-11-17): a pack id belongs to the signer of its newest version; a version signed by another key is refused unless the owner's key was revoked (rotation) or an administrator approved a key change for that pack (`POST /admin/packs/{id}/transfer`, spent by one publish, cancellable). Refusals and approvals are audited. The second-administrator rule for the key change is covered by item 23 and the Packs admin page has the control.
+- [~] 23. **A second administrator for the remaining admin actions.** Done 2026-11-17 for packs: a new rule (Admin > Approvals, "Packs") holds trusting a pack signer, a pack key change and activating a pack version (an upgrade or a rollback) until a different administrator approves; revoking a signer is never held back (the emergency stop). Open: send destinations, tool approvals, pack install, and the other signer actions are not covered. A held change replaces an earlier waiting one of the same kind by the same person, so two activations proposed one after the other leave only the second waiting.
 - [ ] 24. A scheduled job that saves the audit-log head off the machine.
 - [x] 30. **Stored secrets are now sealed (found 2026-11-16, fixed the same day; decision 0008 note).** The inherited `EncryptedString` and `EncryptedJson` column types did not encrypt in this edition (`_encrypt_string` returned the text as bytes), so connector credentials, API keys, bot tokens and every other secret stored through them were readable in the database. They now seal with `ENCRYPTION_KEY_SECRET` (Fernet; a generated key or a passphrase), the API refuses to start without a key unless `NORTPOLE_ALLOW_PLAINTEXT_SECRETS=true` (local development and tests), values stored before sealing still read and are sealed by `python -m nortpole.db.rotate_encryption_key`, which also moves values to a new key. The Studio signing key and people's integration accounts are sealed too. **Correction:** the key-value store never used the encrypted column (it keeps plain JSON, plus a copy in the cache backend), so the Studio key was readable for that reason too; the key-value store holds settings and policies, not other secrets, so it is left as it is. **Still open:** the key is read from the environment, not a secret manager; a lost key means stored secrets cannot be opened (the staging guide says to keep it with backups); the rotation tool has no schedule; the dev and test setups store plain text on purpose.
 

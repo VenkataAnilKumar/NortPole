@@ -237,7 +237,7 @@ export default function AppSidebar() {
     { refreshInterval: 60_000 }
   );
   const { data: liveApprovals } = useSWR<{ items: unknown[] }>(
-    SWR_KEYS.myLiveApprovals,
+    useSettings()?.nortpole_craft_enabled === true ? SWR_KEYS.myLiveApprovals : null,
     errorHandlingFetcher,
     { refreshInterval: 15_000, shouldRetryOnError: false }
   );

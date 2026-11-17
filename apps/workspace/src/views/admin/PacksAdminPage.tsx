@@ -29,7 +29,10 @@ const input = "min-h-11 w-full rounded-xl border border-border-02 bg-background-
 const primary = "min-h-11 rounded-xl bg-text-05 px-5 text-sm font-semibold text-background-neutral-00 disabled:opacity-50";
 const secondary = "min-h-11 rounded-xl border border-border-02 px-4 text-sm font-semibold text-text-05 disabled:opacity-50";
 
-async function send(url: string, method: string, body?: unknown): Promise<void> {
+/** The change was recorded but not applied: a second administrator has to approve it first. */
+const HELD = "This change was not applied. It waits for a second administrator to approve it (Admin > Approvals).";
+
+async function send(url: string, method: string, body?: unknown): Promise<string | null> {
   const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: body === undefined ? undefined : JSON.stringify(body) });
   if (!res.ok) {
     let detail = "";
@@ -40,6 +43,7 @@ async function send(url: string, method: string, body?: unknown): Promise<void> 
     }
     throw new Error(typeof detail === "string" && detail ? detail : `The change could not be saved (HTTP ${res.status}).`);
   }
+  return res.status === 202 ? HELD : null;
 }
 
 /**
@@ -53,14 +57,23 @@ export default function PacksAdminPage() {
   const [keyId, setKeyId] = useState("");
   const [pub, setPub] = useState("");
   const [pkg, setPkg] = useState("");
+  const [handPack, setHandPack] = useState("");
+  const [handTo, setHandTo] = useState("");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
-  const run = async (fn: () => Promise<void>) => {
+  // A pack belongs to the signer of its newest version; the list is newest first within each pack.
+  const owners = new Map<string, string>();
+  (versions ?? []).forEach((v) => { if (!owners.has(v.pack_id)) owners.set(v.pack_id, v.signer_key_id); });
+  const handOwner = owners.get(handPack) ?? null;
+  const handChoices = (signers ?? []).filter((x) => !x.revoked && x.key_id !== handOwner);
+
+  const run = async (fn: () => Promise<string | null | void>) => {
     setBusy(true);
     setMessage(null);
     try {
-      await fn();
+      const held = await fn();
+      if (held) setMessage(held);
     } catch (e) {
       setMessage(e instanceof Error ? e.message : "The change could not be saved.");
     } finally {
@@ -78,7 +91,7 @@ export default function PacksAdminPage() {
           started keep the version they began with.
         </p>
       </header>
-      {message && <p role="alert" data-testid="packs-message" className="text-sm text-status-text-error-05">{message}</p>}
+      {message && <p role={message === HELD ? "status" : "alert"} data-testid="packs-message" className={`text-sm ${message === HELD ? "text-text-05" : "text-status-text-error-05"}`}>{message}</p>}
 
       <section className={card} aria-labelledby="signers-h">
         <h2 id="signers-h" className="mb-2 text-base font-semibold text-text-05">Trusted signers</h2>
@@ -103,11 +116,37 @@ export default function PacksAdminPage() {
               type="button"
               className={primary}
               disabled={busy || !keyId.trim() || !pub.trim()}
-              onClick={() => run(async () => { await send("/api/admin/pack-signers", "POST", { key_id: keyId.trim(), public_key: pub.trim() }); setKeyId(""); setPub(""); })}
+              onClick={() => run(async () => { const held = await send("/api/admin/pack-signers", "POST", { key_id: keyId.trim(), public_key: pub.trim() }); setKeyId(""); setPub(""); return held; })}
             >
               Trust this signer
             </button>
           </div>
+        </div>
+      </section>
+
+      <section className={card} aria-labelledby="hand-h" data-testid="key-change">
+        <h2 id="hand-h" className="mb-1 text-base font-semibold text-text-05">Hand a pack to another signer</h2>
+        <p className="mb-2 text-sm text-text-03">
+          A pack belongs to the signer of its newest version, and a version signed by anyone else is refused. To let another trusted signer publish the next version, allow it here (it works once, then that signer owns the pack). If the owner's key is revoked, no approval is needed.
+        </p>
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <label className="flex flex-1 flex-col gap-1 text-sm font-medium text-text-05">Pack
+            <select className={input} value={handPack} onChange={(e) => { setHandPack(e.target.value); setHandTo(""); }}>
+              <option value="">Choose a pack</option>
+              {[...owners.keys()].map((id) => <option key={id} value={id}>{id} (signed by {owners.get(id)})</option>)}
+            </select>
+          </label>
+          <label className="flex flex-1 flex-col gap-1 text-sm font-medium text-text-05">New signer
+            <select className={input} value={handTo} onChange={(e) => setHandTo(e.target.value)} disabled={!handPack}>
+              <option value="">Choose a trusted signer</option>
+              {handChoices.map((x) => <option key={x.key_id} value={x.key_id}>{x.key_id}{x.label ? ` (${x.label})` : ""}</option>)}
+            </select>
+          </label>
+        </div>
+        <div className="mt-2">
+          <button type="button" className={secondary} disabled={busy || !handPack || !handTo} onClick={() => run(async () => { const held = await send(`/api/admin/packs/${encodeURIComponent(handPack)}/transfer`, "POST", { to_key_id: handTo }); setHandTo(""); return held; })}>
+            Allow this signer to publish the next version
+          </button>
         </div>
       </section>
 

@@ -107,6 +107,7 @@ class AuditAction(str, Enum):
     ACTION_EXECUTE = "action.execute"
     ACTION_TARGET_CHANGE = "action.target_change"
     PACK_SIGNER_CHANGE = "pack.signer_change"
+    PACK_OWNER_CHANGE = "pack.owner_change"
     PACK_INSTALL = "pack.install"
     PACK_ACTIVATE = "pack.activate"
     PACK_EVALUATE = "pack.evaluate"
@@ -196,6 +197,7 @@ _OCSF_CLASS_BY_ACTION: dict[AuditAction, OCSFEventClass] = {
     AuditAction.ACTION_EXECUTE: OCSFEventClass.API_ACTIVITY,
     AuditAction.ACTION_TARGET_CHANGE: OCSFEventClass.API_ACTIVITY,
     AuditAction.PACK_SIGNER_CHANGE: OCSFEventClass.API_ACTIVITY,
+    AuditAction.PACK_OWNER_CHANGE: OCSFEventClass.API_ACTIVITY,
     AuditAction.PACK_INSTALL: OCSFEventClass.API_ACTIVITY,
     AuditAction.PACK_ACTIVATE: OCSFEventClass.API_ACTIVITY,
     AuditAction.PACK_EVALUATE: OCSFEventClass.API_ACTIVITY,
