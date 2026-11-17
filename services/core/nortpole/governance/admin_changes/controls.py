@@ -10,8 +10,9 @@ from nortpole.key_value_store.factory import get_kv_store
 from nortpole.key_value_store.interface import KvKeyNotFoundError
 
 KV_KEY = "nortpole_admin_controls"
-KINDS = ("route_policy", "retention", "controls", "pack_signer", "pack_owner", "pack_activate")
+KINDS = ("route_policy", "retention", "controls", "pack_signer", "pack_owner", "pack_activate", "send_target_create", "send_target_update")
 PACK_KINDS = ("pack_signer", "pack_owner", "pack_activate")
+DESTINATION_KINDS = ("send_target_create", "send_target_update")
 
 
 class AdminControls(BaseModel):
@@ -21,6 +22,8 @@ class AdminControls(BaseModel):
     # Trusting a pack signer, approving a pack key change, and activating a pack version (an upgrade or a rollback).
     # Revoking a signer is never held back: it is the emergency stop.
     second_for_packs: bool = False
+    # Registering or changing a send destination (where approved drafts may be sent).
+    second_for_destinations: bool = False
 
 
 def load() -> AdminControls:
@@ -44,6 +47,8 @@ def required(kind: str) -> bool:
         return c.second_for_retention
     if kind in PACK_KINDS:
         return c.second_for_packs
+    if kind in DESTINATION_KINDS:
+        return c.second_for_destinations
     if kind == "controls":
-        return c.second_for_route_policy or c.second_for_retention or c.second_for_packs
+        return c.second_for_route_policy or c.second_for_retention or c.second_for_packs or c.second_for_destinations
     return False

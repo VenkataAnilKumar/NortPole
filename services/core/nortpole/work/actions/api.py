@@ -161,24 +161,65 @@ def list_targets(
     return [_tview(t) for t in db_session.scalars(select(NortPoleActionTarget).order_by(NortPoleActionTarget.name))]
 
 
+def _check_new_target(db_session: Session, body: TargetIn, *, ignore_id: int | None = None) -> None:
+    try:
+        _check_target(body.kind, body.url)
+    except UnsafeTarget as e:
+        raise NortPoleError(NortPoleErrorCode.INVALID_INPUT, str(e)) from e
+    clash = select(NortPoleActionTarget.id).where(func.lower(NortPoleActionTarget.name) == body.name.lower())
+    if ignore_id is not None:
+        clash = clash.where(NortPoleActionTarget.id != ignore_id)
+    if db_session.scalar(clash):
+        raise NortPoleError(NortPoleErrorCode.CONFLICT, "A target with that name already exists.")
+
+
+def _held(kind: str, db_session: Session, user: User, payload: dict, summary: str):  # type: ignore[no-untyped-def]
+    """When the second-administrator rule covers send destinations the change is checked now and recorded as waiting."""
+    from nortpole.governance.admin_changes import controls
+    from nortpole.governance.admin_changes.service import pending_response, propose
+
+    if not controls.required(kind):
+        return None
+    return pending_response(propose(db_session, user, kind, payload, 0, summary))
+
+
+def apply_create_target(body: TargetIn, db_session: Session, user: User | None, *, approver_email: str | None = None) -> TargetView:
+    _check_new_target(db_session, body)
+    t = NortPoleActionTarget(name=body.name, kind=body.kind, tier=body.tier, url=body.url, allowed_data_classes=body.allowed_data_classes, enabled=body.enabled,
+                           require_second_approval=body.require_second_approval)
+    db_session.add(t)
+    db_session.commit()
+    record_audit(AuditAction.ACTION_TARGET_CHANGE, AuditOutcome.SUCCESS, actor=user,
+                 summary=f"Registered action target {t.name} (tier: {t.tier}; second approver: {'required' if t.require_second_approval else 'not required'}; classes: {', '.join(t.allowed_data_classes) or 'none'})"
+                 + (f" (second administrator {approver_email})" if approver_email else ""),
+                 resource_type="action_target", resource_id=t.id)
+    return _tview(t)
+
+
 @router.post("/admin/action-targets")
 def create_target(
     body: TargetIn,
     user: User = Depends(require_permission(Permission.MANAGE_CONNECTORS)),
     db_session: Session = Depends(get_session),
 ) -> TargetView:
-    try:
-        _check_target(body.kind, body.url)
-    except UnsafeTarget as e:
-        raise NortPoleError(NortPoleErrorCode.INVALID_INPUT, str(e)) from e
-    if db_session.scalar(select(NortPoleActionTarget.id).where(func.lower(NortPoleActionTarget.name) == body.name.lower())):
-        raise NortPoleError(NortPoleErrorCode.CONFLICT, "A target with that name already exists.")
-    t = NortPoleActionTarget(name=body.name, kind=body.kind, tier=body.tier, url=body.url, allowed_data_classes=body.allowed_data_classes, enabled=body.enabled,
-                           require_second_approval=body.require_second_approval)
-    db_session.add(t)
+    _check_new_target(db_session, body)
+    held = _held("send_target_create", db_session, user, body.model_dump(), f"Register send destination {body.name}")
+    if held is not None:
+        return held  # type: ignore[return-value]
+    return apply_create_target(body, db_session, user)
+
+
+def apply_update_target(target_id: int, body: TargetIn, db_session: Session, user: User | None, *, approver_email: str | None = None) -> TargetView:
+    t = db_session.get(NortPoleActionTarget, target_id)
+    if t is None:
+        raise NortPoleError(NortPoleErrorCode.NOT_FOUND, "Target not found.")
+    _check_new_target(db_session, body, ignore_id=target_id)
+    t.name, t.kind, t.tier, t.url, t.allowed_data_classes, t.enabled = body.name, body.kind, body.tier, body.url, body.allowed_data_classes, body.enabled
+    t.require_second_approval = body.require_second_approval
     db_session.commit()
     record_audit(AuditAction.ACTION_TARGET_CHANGE, AuditOutcome.SUCCESS, actor=user,
-                 summary=f"Registered action target {t.name} (tier: {t.tier}; second approver: {'required' if t.require_second_approval else 'not required'}; classes: {', '.join(t.allowed_data_classes) or 'none'})",
+                 summary=f"Changed action target {t.name} (tier: {t.tier}; second approver: {'required' if t.require_second_approval else 'not required'}; enabled: {t.enabled}; classes: {', '.join(t.allowed_data_classes) or 'none'})"
+                 + (f" (second administrator {approver_email})" if approver_email else ""),
                  resource_type="action_target", resource_id=t.id)
     return _tview(t)
 
@@ -192,17 +233,22 @@ def update_target(
     t = db_session.get(NortPoleActionTarget, target_id)
     if t is None:
         raise NortPoleError(NortPoleErrorCode.NOT_FOUND, "Target not found.")
-    try:
-        _check_target(body.kind, body.url)
-    except UnsafeTarget as e:
-        raise NortPoleError(NortPoleErrorCode.INVALID_INPUT, str(e)) from e
-    t.name, t.kind, t.tier, t.url, t.allowed_data_classes, t.enabled = body.name, body.kind, body.tier, body.url, body.allowed_data_classes, body.enabled
-    t.require_second_approval = body.require_second_approval
-    db_session.commit()
-    record_audit(AuditAction.ACTION_TARGET_CHANGE, AuditOutcome.SUCCESS, actor=user,
-                 summary=f"Changed action target {t.name} (tier: {t.tier}; second approver: {'required' if t.require_second_approval else 'not required'}; enabled: {t.enabled}; classes: {', '.join(t.allowed_data_classes) or 'none'})",
-                 resource_type="action_target", resource_id=t.id)
-    return _tview(t)
+    _check_new_target(db_session, body, ignore_id=target_id)
+    held = _held("send_target_update", db_session, user, {"target_id": target_id, **body.model_dump()}, f"Change send destination {t.name}")
+    if held is not None:
+        return held  # type: ignore[return-value]
+    return apply_update_target(target_id, body, db_session, user)
+
+
+def apply_destination_change(kind: str, payload: dict, db_session: Session, proposer: User | None, *, approver_email: str) -> None:
+    """Run a held destination change as the second administrator approved it. Raises if it is no longer valid."""
+    if kind == "send_target_create":
+        apply_create_target(TargetIn(**payload), db_session, proposer, approver_email=approver_email)
+    elif kind == "send_target_update":
+        data = dict(payload)
+        apply_update_target(int(data.pop("target_id")), TargetIn(**data), db_session, proposer, approver_email=approver_email)
+    else:
+        raise NortPoleError(NortPoleErrorCode.INVALID_INPUT, "Unknown kind of change.")
 
 
 # ---- owners ------------------------------------------------------------------
@@ -508,3 +554,13 @@ def second_decline(
     a = _move_second(db_session, a, body.version, "cancelled")
     _audit(user, AuditAction.ACTION_APPROVE, a, f"Second approval declined for sending to {a.target_name}", AuditOutcome.DENIED)
     return _aview(a, db_session)
+
+
+def _register_with_admin_changes() -> None:
+    from nortpole.governance.admin_changes import controls
+    from nortpole.governance.admin_changes.service import register_applier
+
+    register_applier(controls.DESTINATION_KINDS, apply_destination_change)
+
+
+_register_with_admin_changes()

@@ -114,6 +114,11 @@
       },
       "AdminControls": {
         "properties": {
+          "second_for_destinations": {
+            "default": false,
+            "title": "Second For Destinations",
+            "type": "boolean"
+          },
           "second_for_packs": {
             "default": false,
             "title": "Second For Packs",
@@ -4439,6 +4444,17 @@
       },
       "nortpole__governance__admin_changes__api__ControlsUpdate": {
         "properties": {
+          "second_for_destinations": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Second For Destinations"
+          },
           "second_for_packs": {
             "anyOf": [
               {
