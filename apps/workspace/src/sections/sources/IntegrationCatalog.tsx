@@ -90,15 +90,15 @@ function Card({ item, req, busy, run }: {
       )}
       {form === "connect" && (
         <form className="flex flex-col gap-2" onSubmit={(e) => { e.preventDefault(); run(async () => {
-          await send("PUT", `${base}/account`, item.needs_account ? { access_token: token } : {});
+          await send("PUT", `${base}/account`, item.auth_mode === "api_key" ? { api_key: token } : item.needs_account ? { access_token: token } : {});
           setForm(null); setToken("");
           return `${item.name} is connected with your account.`;
         }); }}>
           <label className="flex flex-col gap-1 text-sm font-medium text-text-05">
-            Your {item.name} access token
+            Your {item.name} {item.auth_mode === "api_key" ? "API key" : "access token"}
             <input type="password" autoComplete="off" className="min-h-11 rounded-xl border border-border-02 bg-background-neutral-00 px-3 text-sm text-text-05" value={token} onChange={(e) => setToken(e.target.value)} required />
           </label>
-          <p className="text-xs text-text-03">Create a personal access token in {item.name}, with only the permissions you need. It is stored sealed, used only for your own calls, and never shown again.</p>
+          <p className="text-xs text-text-03">Create {item.auth_mode === "api_key" ? "an API key" : "a personal access token"} in {item.name}, with only the permissions you need. It is stored sealed, used only for your own calls, and never shown again.</p>
           <div className="flex flex-wrap gap-2">
             <button type="submit" className={primary} disabled={busy || token.length === 0}>Connect</button>
             <button type="button" className={secondary} onClick={() => { setForm(null); setToken(""); }}>Cancel</button>

@@ -114,6 +114,7 @@
           "enum": [
             "string",
             "integer",
+            "number",
             "boolean",
             "array",
             "object"

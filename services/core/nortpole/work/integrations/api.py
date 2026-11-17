@@ -63,6 +63,8 @@ class IntegrationView(BaseModel):
     hosts: list[str]
     data_classes: list[str]
     needs_account: bool
+    # How the person signs in: none, oauth or api_key.
+    auth_mode: str
     has_writes: bool
     actions: list[IntegrationActionView]
     # The person's own state: available, needs_approval, blocked, installed or connected.
@@ -94,7 +96,7 @@ class IntegrationAccountBody(BaseModel):
 def _view(item: Integration, state: dict[str, Any]) -> IntegrationView:
     return IntegrationView(
         id=item.id, name=item.name, description=item.description, kind=item.kind, group=item.group, category=item.category,
-        version=item.version, hosts=item.hosts, data_classes=list(item.data_classes), needs_account=item.auth.mode != "none",
+        version=item.version, hosts=item.hosts, data_classes=list(item.data_classes), needs_account=item.auth.mode != "none", auth_mode=item.auth.mode,
         has_writes=any(a.effect == "write" for a in item.actions),
         actions=[IntegrationActionView(id=a.id, name=a.name, description=a.description, effect=a.effect) for a in item.actions],
         state=state["state"], policy=state["policy"], installed_version=state["installed_version"],

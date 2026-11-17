@@ -69,4 +69,4 @@ def test_no_definition_holds_a_secret_or_a_non_https_address() -> None:
     for folder in SOURCES:
         text = (folder / "integration.yaml").read_text(encoding="utf-8")
         assert "http://" not in text
-        assert "Bearer " not in text.replace("Bearer {credential.access_token}", "")
+        assert "Bearer " not in text.replace("Bearer {credential.access_token}", "").replace("Bearer {credential.api_key}", "")

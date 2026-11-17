@@ -12,6 +12,7 @@ export interface IntegrationItem {
   hosts: string[];
   data_classes: string[];
   needs_account: boolean;
+  auth_mode: "none" | "oauth" | "api_key";
   has_writes: boolean;
   actions: { id: string; name: string; description: string; effect: "read" | "write" }[];
   state: "available" | "needs_approval" | "blocked" | "installed" | "connected";

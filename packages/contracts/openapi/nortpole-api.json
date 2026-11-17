@@ -1347,6 +1347,10 @@
             "title": "Actions",
             "type": "array"
           },
+          "auth_mode": {
+            "title": "Auth Mode",
+            "type": "string"
+          },
           "category": {
             "title": "Category",
             "type": "string"
@@ -1432,6 +1436,7 @@
           "hosts",
           "data_classes",
           "needs_account",
+          "auth_mode",
           "has_writes",
           "actions",
           "state",
