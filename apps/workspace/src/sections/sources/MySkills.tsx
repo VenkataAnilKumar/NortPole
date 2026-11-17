@@ -42,7 +42,7 @@ export default function MySkills() {
         <h2 id="my-skills" className="text-xl font-semibold text-text-05">My skills</h2>
         {!adding && <button type="button" className={primary} onClick={() => { setAdding(true); setMsg(null); }}>Add skill</button>}
       </div>
-      <p className="text-sm text-text-03">Instructions you give your own chats to follow. Only you see them until you share one. Integrations suggest skills too: open one in Discover.</p>
+      <p className="text-sm text-text-03">Instructions for your own chats. Only you see them until you share one.</p>
       {adding && (
         <form
           className={`${card} flex flex-col gap-3`}

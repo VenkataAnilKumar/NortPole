@@ -69,7 +69,7 @@ export default function IntegrationsAdminPage() {
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 p-4 sm:p-8" data-testid="integrations-admin-page">
       <header className="flex flex-col gap-1">
         <h1 className="font-[family-name:var(--font-serif)] text-3xl font-medium text-text-05">Integrations</h1>
-        <p className="text-sm text-text-03">Who may use each connector and plugin. People install and connect what is allowed; they ask first for what needs approval; nobody can use what is blocked. A saved change is recorded in the audit log.</p>
+        <p className="text-sm text-text-03">Who may use each connector and plugin. Changes are recorded in the audit log.</p>
       </header>
       {isLoading && <p className="text-sm text-text-03">Loading…</p>}
       {error && <p role="alert" className="text-sm text-status-text-error-05">The policy could not be loaded. Try again in a moment.</p>}

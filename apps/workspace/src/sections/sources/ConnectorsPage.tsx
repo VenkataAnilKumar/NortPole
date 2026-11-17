@@ -25,7 +25,7 @@ export default function ConnectorsPage() {
       <IntegrationCatalog kind="connector" />
       {isLoading && <p className="text-sm text-text-03">Loading connectors…</p>}
       {error && error instanceof FetchError && error.status === 501 && (
-        <p className="text-sm text-text-03" data-testid="connectors-no-search">Document search is not set up for this workspace, so there are no connected document systems to show. Retrying will not help; an administrator sets search up.</p>
+        <p className="text-sm text-text-03" data-testid="connectors-no-search">Document search is not set up. An administrator needs to set it up.</p>
       )}
       {error && !(error instanceof FetchError && error.status === 501) && <p role="alert" className="text-sm text-status-text-error-05">Connectors could not be loaded. Try again in a moment.</p>}
       {data && sources.length === 0 && (
