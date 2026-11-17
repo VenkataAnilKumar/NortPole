@@ -171,11 +171,20 @@ function Card({ item, req, busy, run }: {
   );
 }
 
-/** A tile with the first letter, the way a directory shows a logo when there is none. */
-function Tile({ name }: { name: string }) {
+/** The service's logo, drawn in the page's text colour so it works in light and dark; a letter when there is none. */
+const LOGOS = new Set(["airtable", "dropbox", "github", "gmail", "google-calendar", "google-drive", "hubspot", "notion", "slack", "spotify", "stripe", "webflow", "wikipedia"]);
+
+function Tile({ id, name }: { id: string; name: string }) {
   return (
     <span aria-hidden="true" className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-border-02 bg-background-neutral-02 text-base font-semibold text-text-05">
-      {name.slice(0, 1).toUpperCase()}
+      {LOGOS.has(id) ? (
+        <span
+          className="block size-5 bg-text-05"
+          style={{ WebkitMask: `url(/integration-logos/${id}.svg) center / contain no-repeat`, mask: `url(/integration-logos/${id}.svg) center / contain no-repeat` }}
+        />
+      ) : (
+        name.slice(0, 1).toUpperCase()
+      )}
     </span>
   );
 }
@@ -195,7 +204,7 @@ function Row({ item, req, busy, run }: {
     <li>
       <div className="group relative flex items-center gap-3 rounded-xl px-1 py-3 hover:bg-background-tint-02">
         <button type="button" aria-expanded={open} aria-label={`${item.name}, ${sub}${status ? `, ${status}` : ""}`} onClick={() => setOpen(!open)} className="flex min-h-11 min-w-0 flex-1 items-center gap-3 text-left">
-          <Tile name={item.name} />
+          <Tile id={item.id} name={item.name} />
           <span className="flex min-w-0 flex-col">
             <span className="flex items-center gap-1.5 text-base font-medium text-text-05">
               <span className="truncate">{item.name}</span>
