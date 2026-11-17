@@ -112,3 +112,8 @@ actions:
         path: $.user
         type: object
         description: 'The person: id, name, real_name and profile.'
+skills:
+- name: slack-channel-catchup
+  description: 'Catch me up on a Slack channel: decisions, questions and what needs me.'
+  content: 'When asked to catch up on a Slack channel, list channels to find it, read its recent messages, and report: decisions
+    made, open questions, anything addressed to the person, and links worth opening. Keep it under ten lines and quote sparingly.'

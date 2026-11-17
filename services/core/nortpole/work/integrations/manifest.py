@@ -175,6 +175,14 @@ class Action(_Strict):
     response: Response
 
 
+class SuggestedSkill(_Strict):
+    """Instructions the integration suggests, which a person can add to their own skills."""
+
+    name: str = Field(pattern=r"^[a-z][a-z0-9-]{1,62}$")
+    description: str = Field(min_length=1, max_length=300)
+    content: str = Field(min_length=1, max_length=4000)
+
+
 class Integration(_Strict):
     schema_version: Literal[1] = 1
     id: str = Field(pattern=SLUG.pattern)
@@ -191,6 +199,7 @@ class Integration(_Strict):
     # What an administrator's policy starts as: people may use it, or each use needs approval.
     policy_default: Literal["allowed", "needs_approval"] = "needs_approval"
     actions: list[Action] = Field(min_length=1, max_length=30)
+    skills: list[SuggestedSkill] = Field(default_factory=list, max_length=5)
 
     @field_validator("hosts")
     @classmethod
@@ -206,6 +215,9 @@ class Integration(_Strict):
     def _rules(self) -> "Integration":
         if self.category not in CATEGORIES[self.group]:
             raise ValueError(f"{self.category!r} is not a {self.group} category")
+        skill_names = [k.name for k in self.skills]
+        if len(set(skill_names)) != len(skill_names):
+            raise ValueError("suggested skill names are unique")
         ids = [a.id for a in self.actions]
         if len(set(ids)) != len(ids):
             raise ValueError("action ids are unique")

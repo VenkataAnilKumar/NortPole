@@ -360,3 +360,16 @@ actions:
         path: $.total
         type: integer
         description: How many records match.
+skills:
+- name: hubspot-contact-brief
+  description: Prepare a short brief on a contact and their company before a call.
+  content: 'Before a call with a person in HubSpot:
+
+    1. Search contacts for the person by name or email and read the best match.
+
+    2. If they have a company, search and read it.
+
+    3. Write a brief: who they are, their company, what the properties say about the relationship, and two good questions
+    to ask.
+
+    Use only what HubSpot returns; say what is missing. Do not create or change records unless asked.'

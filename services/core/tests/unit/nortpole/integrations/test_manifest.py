@@ -126,3 +126,17 @@ def test_the_category_lists_have_no_overlap_and_are_slugs() -> None:
     horizontal, vertical = set(CATEGORIES["horizontal"]), set(CATEGORIES["vertical"])
     assert not horizontal & vertical, "an item sits in one group, so a name is not in both"
     assert all(c == c.lower() and " " not in c for c in horizontal | vertical)
+
+
+def test_suggested_skills_are_text_with_unique_names_and_a_size_limit() -> None:
+    skill = {"name": "note-taker", "description": "Takes notes.", "content": "Read the notes and list them."}
+    assert Integration.model_validate(make(skills=[skill])).skills[0].name == "note-taker"
+    for bad in (
+        make(skills=[skill, skill]),
+        make(skills=[{**skill, "name": "Not A Slug"}]),
+        make(skills=[{**skill, "content": "x" * 4001}]),
+        make(skills=[{**skill, "extra": "field"}]),
+        make(skills=[{**skill, "name": f"s{i}"} for i in range(6)]),
+    ):
+        with pytest.raises(ValidationError):
+            Integration.model_validate(bad)

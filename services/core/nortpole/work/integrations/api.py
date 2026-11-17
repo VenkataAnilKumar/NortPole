@@ -45,6 +45,12 @@ def _refuse(exc: IntegrationAccessError) -> NortPoleError:
     return NortPoleError(ERROR_CODES.get(exc.code, NortPoleErrorCode.BAD_REQUEST), str(exc))
 
 
+class IntegrationSkillView(BaseModel):
+    name: str
+    description: str
+    content: str
+
+
 class IntegrationActionView(BaseModel):
     id: str
     name: str
@@ -67,6 +73,8 @@ class IntegrationView(BaseModel):
     auth_mode: str
     has_writes: bool
     actions: list[IntegrationActionView]
+    # Skills the definition suggests; the person adds one through the personal skills routes.
+    skills: list[IntegrationSkillView]
     # The person's own state: available, needs_approval, blocked, installed or connected.
     state: str
     policy: str
@@ -99,6 +107,7 @@ def _view(item: Integration, state: dict[str, Any]) -> IntegrationView:
         version=item.version, hosts=item.hosts, data_classes=list(item.data_classes), needs_account=item.auth.mode != "none", auth_mode=item.auth.mode,
         has_writes=any(a.effect == "write" for a in item.actions),
         actions=[IntegrationActionView(id=a.id, name=a.name, description=a.description, effect=a.effect) for a in item.actions],
+        skills=[IntegrationSkillView(name=k.name, description=k.description, content=k.content) for k in item.skills],
         state=state["state"], policy=state["policy"], installed_version=state["installed_version"],
         update_available=state["installed_version"] is not None and state["installed_version"] != item.version,
     )

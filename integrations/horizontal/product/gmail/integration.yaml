@@ -85,3 +85,9 @@ actions:
         path: $.labelIds
         type: array
         description: Labels on the message.
+skills:
+- name: gmail-inbox-triage
+  description: Find the messages that need a reply and draft nothing without asking.
+  content: 'When asked to triage email, search recent unread messages, read the headers and snippets, and list: messages that
+    need a reply today, ones that are only informational, and anything that looks urgent or from a customer. Offer to draft
+    replies, and do not send anything.'

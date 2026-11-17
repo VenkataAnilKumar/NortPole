@@ -173,3 +173,22 @@ actions:
         path: $.html_url
         type: string
         description: Web address.
+skills:
+- name: github-issue-triage
+  description: Sort open issues in a repository into what needs a reply, what is blocked and what can wait.
+  content: 'When asked to triage issues in a GitHub repository:
+
+    1. Use the GitHub connector to list open issues for the repository (ask for owner and repo if missing).
+
+    2. Group them: needs a reply, blocked or waiting on someone, stale (no activity for 30 days), and ready to work on.
+
+    3. For each group give the issue number, title and one sentence on why.
+
+    4. Finish with the three issues that most deserve attention today, and say why.
+
+    Never change an issue; only read.'
+- name: github-repo-brief
+  description: 'Give a short brief of a repository: what it is, how active it is and what is open.'
+  content: 'When asked about a GitHub repository, read its details and its open issues with the GitHub connector, then write:
+    one sentence on what it is, its default branch and open issue count, and the five newest open issues. Say plainly if something
+    could not be read.'

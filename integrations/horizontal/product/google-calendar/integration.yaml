@@ -84,3 +84,8 @@ actions:
         path: $.htmlLink
         type: string
         description: Web address.
+skills:
+- name: calendar-day-brief
+  description: Summarise today's meetings and the gaps between them.
+  content: When asked about the day ahead, list events between the start and end of today, then report each meeting with its
+    time and title, the free gaps longer than 30 minutes, and any back-to-back runs. Mention clashes clearly.

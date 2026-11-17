@@ -4,6 +4,9 @@ import { useMemo, useState } from "react";
 import useSWR from "swr";
 import { errorHandlingFetcher } from "@/lib/fetcher";
 import { card } from "@/sections/sources/shared";
+import { createCustomSkillFromEditor, isSkillNameConflict } from "@/lib/skills/api";
+import type { SkillsList } from "@/lib/skills/types";
+import { SKILLS_URL } from "@/sections/sources/MySkills";
 import {
   CATALOG_URL,
   KIND_LABEL,
@@ -26,6 +29,41 @@ const STATE_LABEL: Record<IntegrationItem["state"], string> = {
 };
 
 type Type = "all" | "connector" | "plugin";
+
+/** Skills the integration suggests: each has an Add button that creates it as the person's own skill. */
+function SuggestedSkills({ item }: { item: IntegrationItem }) {
+  const { data, mutate } = useSWR<SkillsList>(SKILLS_URL, errorHandlingFetcher);
+  const [busy, setBusy] = useState<string | null>(null);
+  const [msg, setMsg] = useState<string | null>(null);
+  const have = new Set((data?.customs ?? []).filter((s) => s.user_permission === "OWNER").map((s) => s.name));
+  const add = async (k: IntegrationItem["skills"][number]) => {
+    setBusy(k.name);
+    setMsg(null);
+    try {
+      await createCustomSkillFromEditor({ name: k.name, description: k.description, instructions_markdown: k.content, auto_enable: true });
+      setMsg(`Added ${k.name} to your skills.`);
+      await mutate();
+    } catch (e) {
+      setMsg(isSkillNameConflict(e) ? `You already have ${k.name}.` : e instanceof Error ? e.message : "The skill could not be added.");
+    } finally {
+      setBusy(null);
+    }
+  };
+  return (
+    <div className="flex flex-col gap-1 text-xs text-text-03" data-testid="suggested-skills">
+      <span className="font-medium text-text-04">Suggested skills</span>
+      <ul className="flex flex-col gap-2">
+        {item.skills.map((k) => (
+          <li key={k.name} className="flex flex-wrap items-center justify-between gap-2">
+            <span className="min-w-0"><span className="font-medium text-text-05">{k.name}</span><span className="block">{k.description}</span></span>
+            <button type="button" className={secondary} disabled={busy !== null || have.has(k.name)} aria-label={`Add skill ${k.name}`} onClick={() => void add(k)}>{have.has(k.name) ? "Added" : busy === k.name ? "Adding…" : "Add"}</button>
+          </li>
+        ))}
+      </ul>
+      {msg && <span role="status" className="text-text-05">{msg}</span>}
+    </div>
+  );
+}
 
 /** The reason a person can give an administrator, and the token field for connecting, live inside the card. */
 function Card({ item, req, busy, run }: {
@@ -68,6 +106,7 @@ function Card({ item, req, busy, run }: {
           <li>Talks only to {item.hosts.join(", ")}. {item.needs_account ? "Uses your own account there." : "Needs no account."}</li>
         </ul>
       </details>
+      {item.skills.length > 0 && <SuggestedSkills item={item} />}
       {item.update_available && <p className="text-xs text-text-04">A newer version ({item.version}) is available; you have {item.installed_version}.</p>}
       {declined && req?.decision_note && <p className="text-xs text-text-04">Administrator&apos;s note: {req.decision_note}</p>}
       {item.state === "blocked" && <p className="text-xs text-text-04">Your administrator has blocked this.</p>}

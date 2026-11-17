@@ -255,3 +255,9 @@ actions:
         path: $.deleted
         type: boolean
         description: True once it is deleted.
+skills:
+- name: airtable-table-summary
+  description: Summarise what is in an Airtable table.
+  content: 'When asked what is in a table, read its fields, then a page of records, and report: what the table tracks, how
+    many records were read, common values in the main fields, and anything that looks incomplete. Do not edit records unless
+    asked.'

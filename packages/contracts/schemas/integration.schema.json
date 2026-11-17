@@ -313,6 +313,36 @@
       ],
       "title": "Response",
       "type": "object"
+    },
+    "SuggestedSkill": {
+      "additionalProperties": false,
+      "description": "Instructions the integration suggests, which a person can add to their own skills.",
+      "properties": {
+        "content": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "name": {
+          "pattern": "^[a-z][a-z0-9-]{1,62}$",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "description",
+        "content"
+      ],
+      "title": "SuggestedSkill",
+      "type": "object"
     }
   },
   "$id": "https://nortpole.local/contracts/integration.schema.json",
@@ -405,6 +435,14 @@
       "default": 1,
       "title": "Schema Version",
       "type": "integer"
+    },
+    "skills": {
+      "items": {
+        "$ref": "#/$defs/SuggestedSkill"
+      },
+      "maxItems": 5,
+      "title": "Skills",
+      "type": "array"
     },
     "version": {
       "pattern": "^\\d{1,4}\\.\\d{1,4}\\.\\d{1,4}$",

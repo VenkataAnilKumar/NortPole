@@ -89,3 +89,8 @@ actions:
         path: $.webViewLink
         type: string
         description: Web address.
+skills:
+- name: drive-find-a-document
+  description: Find a file in Google Drive from a loose description.
+  content: When asked to find a document, search Drive using the words the person gave, try one or two variations, and list
+    the best five matches with name, type, last change and link. Ask a short question if nothing fits.

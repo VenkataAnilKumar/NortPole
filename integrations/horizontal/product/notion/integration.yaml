@@ -233,3 +233,8 @@ actions:
         path: $.url
         type: string
         description: Link to the page.
+skills:
+- name: notion-page-summary
+  description: Find a Notion page and summarise it with its open tasks.
+  content: When asked to summarise something in Notion, search for it, read the page and its content, then give a five-line
+    summary and list any open to-dos or questions found in it. If several pages match, list them and ask which one.

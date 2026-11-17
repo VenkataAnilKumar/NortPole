@@ -1338,6 +1338,29 @@
         "title": "IntegrationPolicyView",
         "type": "object"
       },
+      "IntegrationSkillView": {
+        "properties": {
+          "content": {
+            "title": "Content",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "content"
+        ],
+        "title": "IntegrationSkillView",
+        "type": "object"
+      },
       "IntegrationView": {
         "properties": {
           "actions": {
@@ -1412,6 +1435,13 @@
             "title": "Policy",
             "type": "string"
           },
+          "skills": {
+            "items": {
+              "$ref": "#/components/schemas/IntegrationSkillView"
+            },
+            "title": "Skills",
+            "type": "array"
+          },
           "state": {
             "title": "State",
             "type": "string"
@@ -1439,6 +1469,7 @@
           "auth_mode",
           "has_writes",
           "actions",
+          "skills",
           "state",
           "policy",
           "installed_version",
