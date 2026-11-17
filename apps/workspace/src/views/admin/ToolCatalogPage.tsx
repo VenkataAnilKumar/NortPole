@@ -26,11 +26,11 @@ const RISK: Record<string, string> = {
   outside: "Calls systems outside the product. Each tool also needs its own approval below, which records its definition; a changed definition stops it until approved again.",
 };
 
-async function put(body: unknown): Promise<Catalog> {
+async function put(body: unknown): Promise<Catalog | "held"> {
   const res = await fetch(URL, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
   const data = await res.json().catch(() => null);
   if (!res.ok) throw new Error(typeof data?.detail === "string" ? data.detail : `The change could not be saved (HTTP ${res.status}).`);
-  return data as Catalog;
+  return res.status === 202 ? "held" : (data as Catalog);
 }
 
 /**
@@ -46,8 +46,13 @@ export default function ToolCatalogPage() {
     setBusy(true);
     setMsg(null);
     try {
-      await mutate(await put({ kinds, tools, approve }), { revalidate: false });
-      setMsg({ ok: true, text: "Saved. It applies to the next message in every chat." });
+      const saved = await put({ kinds, tools, approve });
+      if (saved === "held") {
+        setMsg({ ok: true, text: "Not applied yet: a second administrator has to approve this change (Admin > Approvals)." });
+      } else {
+        await mutate(saved, { revalidate: false });
+        setMsg({ ok: true, text: "Saved. It applies to the next message in every chat." });
+      }
     } catch (e) {
       setMsg({ ok: false, text: e instanceof Error ? e.message : "The change could not be saved." });
     } finally {

@@ -104,12 +104,7 @@ def get_catalog(
     return build(db_session)
 
 
-@router.put("")
-def put_catalog(
-    body: CatalogUpdate,
-    user: User = Depends(require_permission(Permission.FULL_ADMIN_PANEL_ACCESS)),
-    db_session: Session = Depends(get_session),
-) -> CatalogView:
+def _check_update(body: CatalogUpdate, db_session: Session) -> None:
     unknown = set(body.kinds) - set(catalog.KINDS)
     if unknown:
         raise NortPoleError(NortPoleErrorCode.INVALID_INPUT, f"Unknown tool kind: {', '.join(sorted(unknown))}")
@@ -117,15 +112,22 @@ def put_catalog(
     bad = [k for k in body.tools if k not in ids]
     if bad:
         raise NortPoleError(NortPoleErrorCode.INVALID_INPUT, f"Unknown tool id: {', '.join(sorted(bad))}")
+    bad = [k for k in body.approve if body.tools.get(k) is not True]
+    if bad:
+        raise NortPoleError(NortPoleErrorCode.INVALID_INPUT, f"A tool must be on to be approved again: {', '.join(bad)}")
+
+
+def apply_catalog_update(body: CatalogUpdate, db_session: Session, user: User | None, *, approver_email: str | None = None,
+                         expect_version: int | None = None) -> CatalogView:
+    _check_update(body, db_session)
     old = catalog.load()
+    if expect_version is not None and old.version != expect_version:
+        raise NortPoleError(NortPoleErrorCode.CONFLICT, "The tool catalog changed after this was proposed. Propose it again.")
     tools = {k: bool(v) for k, v in body.tools.items()}
     # Approving an outside tool records its current definition; anything else about it drops the record.
     rows = {str(t.id): t for t in db_session.scalars(select(Tool).where(Tool.id.in_([int(k) for k in tools]))) } if tools else {}
     pins: dict[str, str] = {}
     drift = dict(old.drift)
-    bad = [k for k in body.approve if tools.get(k) is not True]
-    if bad:
-        raise NortPoleError(NortPoleErrorCode.INVALID_INPUT, f"A tool must be on to be approved again: {', '.join(bad)}")
     for k, v in tools.items():
         t = rows[k]
         if catalog.kind_of_row(t.in_code_tool_id, t.mcp_server_id, t.openapi_schema) != "outside" or not v:
@@ -148,8 +150,26 @@ def put_catalog(
     for k in sorted(set(new.pins) - set(old.pins) | {k for k in new.pins if old.pins.get(k) not in (None, new.pins[k])}, key=int):
         bits.append(f"tool {k} approved with definition {new.pins[k][:12]}")
     record_audit(AuditAction.EXTENSION_CHANGE, AuditOutcome.SUCCESS, actor=user, resource_type="tool_catalog",
-                 summary="Tool catalog changed: " + ("; ".join(bits) or "no change"))
+                 summary="Tool catalog changed: " + ("; ".join(bits) or "no change")
+                 + (f" (second administrator {approver_email})" if approver_email else ""))
     return build(db_session)
+
+
+@router.put("")
+def put_catalog(
+    body: CatalogUpdate,
+    user: User = Depends(require_permission(Permission.FULL_ADMIN_PANEL_ACCESS)),
+    db_session: Session = Depends(get_session),
+):  # type: ignore[no-untyped-def]
+    from nortpole.governance.admin_changes import controls
+    from nortpole.governance.admin_changes.service import pending_response, propose
+
+    if controls.required("tool_catalog"):
+        # Refuse mistakes now, in a transaction that is rolled back; only a valid change is held.
+        _check_update(body, db_session)
+        old = catalog.load()
+        return pending_response(propose(db_session, user, "tool_catalog", body.model_dump(), old.version, "Change the tool catalog"))
+    return apply_catalog_update(body, db_session, user)
 
 
 class CheckResult(BaseModel):

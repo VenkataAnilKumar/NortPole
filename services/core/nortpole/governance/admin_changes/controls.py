@@ -10,7 +10,7 @@ from nortpole.key_value_store.factory import get_kv_store
 from nortpole.key_value_store.interface import KvKeyNotFoundError
 
 KV_KEY = "nortpole_admin_controls"
-KINDS = ("route_policy", "retention", "controls", "pack_signer", "pack_owner", "pack_activate", "send_target_create", "send_target_update")
+KINDS = ("route_policy", "retention", "controls", "pack_signer", "pack_owner", "pack_activate", "send_target_create", "send_target_update", "tool_catalog")
 PACK_KINDS = ("pack_signer", "pack_owner", "pack_activate")
 DESTINATION_KINDS = ("send_target_create", "send_target_update")
 
@@ -24,6 +24,8 @@ class AdminControls(BaseModel):
     second_for_packs: bool = False
     # Registering or changing a send destination (where approved drafts may be sent).
     second_for_destinations: bool = False
+    # Turning tool kinds or single tools on or off, and approving an outside tool.
+    second_for_tools: bool = False
 
 
 def load() -> AdminControls:
@@ -49,6 +51,8 @@ def required(kind: str) -> bool:
         return c.second_for_packs
     if kind in DESTINATION_KINDS:
         return c.second_for_destinations
+    if kind == "tool_catalog":
+        return c.second_for_tools
     if kind == "controls":
-        return c.second_for_route_policy or c.second_for_retention or c.second_for_packs or c.second_for_destinations
+        return c.second_for_route_policy or c.second_for_retention or c.second_for_packs or c.second_for_destinations or c.second_for_tools
     return False
