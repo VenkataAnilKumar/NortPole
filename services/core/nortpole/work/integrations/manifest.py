@@ -151,7 +151,7 @@ class Request(_Strict):
 
 class Output(_Strict):
     path: str = Field(min_length=1, max_length=120)
-    type: Literal["string", "integer", "boolean", "array", "object"]
+    type: Literal["string", "integer", "number", "boolean", "array", "object"]
     description: str = Field(min_length=1, max_length=300)
 
     @field_validator("path")

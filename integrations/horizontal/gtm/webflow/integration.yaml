@@ -1,0 +1,114 @@
+# Webflow: 3 actions. Adapted from Sim's tools/webflow/ (Apache-2.0, see ../../../NOTICE).
+# Source files: create_item.ts, get_item.ts, update_item.ts. Drafted by tools/import_sim; reviewed before use. Sign-in scopes are not set yet.
+schema_version: 1
+id: webflow
+name: Webflow
+version: 1.0.0
+description: Manage Webflow CMS collections
+kind: plugin
+group: horizontal
+category: gtm
+auth:
+  mode: oauth
+  provider: webflow
+  scopes: []
+hosts:
+- api.webflow.com
+data_classes:
+- internal
+policy_default: needs_approval
+actions:
+- id: create_item
+  name: Create Item
+  description: Create a new item in a Webflow CMS collection
+  effect: write
+  params:
+    siteId:
+      type: string
+      description: ID of the Webflow site (e.g., "580e63e98c9a982ac9b8b741")
+      required: true
+    collectionId:
+      type: string
+      description: ID of the collection (e.g., "580e63fc8c9a982ac9b8b745")
+      required: true
+    fieldData:
+      type: object
+      description: Field data for the new item as a JSON object. Keys should match collection field names.
+      required: true
+  request:
+    method: POST
+    url: https://api.webflow.com/v2/collections/{collectionId}/items
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+    body:
+      fieldData: '{fieldData}'
+  response:
+    outputs:
+      item:
+        path: $
+        type: object
+        description: The created item object
+- id: get_item
+  name: Get Item
+  description: Get a single item from a Webflow CMS collection
+  effect: read
+  params:
+    siteId:
+      type: string
+      description: ID of the Webflow site (e.g., "580e63e98c9a982ac9b8b741")
+      required: true
+    collectionId:
+      type: string
+      description: ID of the collection (e.g., "580e63fc8c9a982ac9b8b745")
+      required: true
+    itemId:
+      type: string
+      description: ID of the item to retrieve (e.g., "580e64008c9a982ac9b8b754")
+      required: true
+  request:
+    method: GET
+    url: https://api.webflow.com/v2/collections/{collectionId}/items/{itemId}
+    headers:
+      Authorization: Bearer {credential.access_token}
+  response:
+    outputs:
+      item:
+        path: $
+        type: object
+        description: The retrieved item object
+- id: update_item
+  name: Update Item
+  description: Update an existing item in a Webflow CMS collection
+  effect: write
+  params:
+    siteId:
+      type: string
+      description: ID of the Webflow site (e.g., "580e63e98c9a982ac9b8b741")
+      required: true
+    collectionId:
+      type: string
+      description: ID of the collection (e.g., "580e63fc8c9a982ac9b8b745")
+      required: true
+    itemId:
+      type: string
+      description: ID of the item to update (e.g., "580e64008c9a982ac9b8b754")
+      required: true
+    fieldData:
+      type: object
+      description: Field data to update as a JSON object. Only include fields you want to change.
+      required: true
+  request:
+    method: PATCH
+    url: https://api.webflow.com/v2/collections/{collectionId}/items/{itemId}
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+    body:
+      fieldData: '{fieldData}'
+  response:
+    outputs:
+      item:
+        path: $
+        type: object
+        description: The updated item object

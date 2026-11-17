@@ -1,0 +1,201 @@
+# Spotify: 5 actions. Adapted from Sim's tools/spotify/ (Apache-2.0, see ../../../NOTICE).
+# Source files: get_artist.ts, get_current_user.ts, get_markets.ts, get_user_profile.ts, reorder_playlist_items.ts. Drafted by tools/import_sim; reviewed before use. Sign-in scopes are not set yet.
+schema_version: 1
+id: spotify
+name: Spotify
+version: 1.0.0
+description: Search music, manage playlists, control playback, and access your library
+kind: plugin
+group: horizontal
+category: product
+auth:
+  mode: oauth
+  provider: spotify
+  scopes: []
+hosts:
+- api.spotify.com
+data_classes:
+- internal
+policy_default: needs_approval
+actions:
+- id: get_artist
+  name: Get Artist
+  description: Get detailed information about an artist on Spotify by their ID.
+  effect: read
+  params:
+    artistId:
+      type: string
+      description: The Spotify ID of the artist
+      required: true
+  request:
+    method: GET
+    url: https://api.spotify.com/v1/artists/{artistId}
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+  response:
+    outputs:
+      id:
+        path: $.id
+        type: string
+        description: Spotify artist ID
+      name:
+        path: $.name
+        type: string
+        description: Artist name
+      genres:
+        path: $.genres
+        type: array
+        description: List of genres associated with the artist
+      popularity:
+        path: $.popularity
+        type: number
+        description: Popularity score (0-100)
+      followers:
+        path: $.followers.total
+        type: number
+        description: Number of followers
+      image_url:
+        path: $.images[0].url
+        type: string
+        description: Artist image URL
+      external_url:
+        path: $.external_urls.spotify
+        type: string
+        description: Spotify URL
+- id: get_current_user
+  name: Get Current User
+  description: Get the current user's Spotify profile information.
+  effect: read
+  request:
+    method: GET
+    url: https://api.spotify.com/v1/me
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+  response:
+    outputs:
+      id:
+        path: $.id
+        type: string
+        description: Spotify user ID
+      display_name:
+        path: $.display_name
+        type: string
+        description: Display name
+      email:
+        path: $.email
+        type: string
+        description: Email address
+      country:
+        path: $.country
+        type: string
+        description: Country code
+      product:
+        path: $.product
+        type: string
+        description: Subscription level (free, premium)
+      followers:
+        path: $.followers.total
+        type: number
+        description: Number of followers
+      image_url:
+        path: $.images[0].url
+        type: string
+        description: Profile image URL
+      external_url:
+        path: $.external_urls.spotify
+        type: string
+        description: Spotify profile URL
+- id: get_markets
+  name: Get Available Markets
+  description: Get the list of markets where Spotify is available.
+  effect: read
+  request:
+    method: GET
+    url: https://api.spotify.com/v1/markets
+    headers:
+      Authorization: Bearer {credential.access_token}
+  response:
+    outputs:
+      markets:
+        path: $.markets
+        type: object
+        description: List of ISO country codes
+- id: get_user_profile
+  name: Get User Profile
+  description: Get a user's public profile.
+  effect: read
+  params:
+    userId:
+      type: string
+      description: The Spotify user ID
+      required: true
+  request:
+    method: GET
+    url: https://api.spotify.com/v1/users/{userId}
+    headers:
+      Authorization: Bearer {credential.access_token}
+  response:
+    outputs:
+      id:
+        path: $.id
+        type: string
+        description: User ID
+      display_name:
+        path: $.display_name
+        type: string
+        description: Display name
+      followers:
+        path: $.followers.total
+        type: number
+        description: Number of followers
+      image_url:
+        path: $.images[0].url
+        type: string
+        description: Profile image URL
+      external_url:
+        path: $.external_urls.spotify
+        type: string
+        description: Spotify URL
+- id: reorder_playlist_items
+  name: Reorder Playlist Items
+  description: Move tracks to a different position in a playlist.
+  effect: write
+  params:
+    playlistId:
+      type: string
+      description: The Spotify playlist ID
+      required: true
+    range_start:
+      type: integer
+      description: Start index of items to reorder
+      required: true
+    insert_before:
+      type: integer
+      description: Index to insert items before
+      required: true
+    range_length:
+      type: integer
+      description: Number of items to reorder
+      default: 1
+    snapshot_id:
+      type: string
+      description: Playlist snapshot ID for concurrency control (22-character base62 string)
+  request:
+    method: PUT
+    url: https://api.spotify.com/v1/playlists/{playlistId}/tracks
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+    body:
+      range_start: '{range_start}'
+      insert_before: '{insert_before}'
+      range_length: '{range_length}'
+      snapshot_id: '{snapshot_id}'
+  response:
+    outputs:
+      snapshot_id:
+        path: $.snapshot_id
+        type: string
+        description: New playlist snapshot ID

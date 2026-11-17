@@ -1,0 +1,1032 @@
+# HubSpot: 28 actions. Adapted from Sim's tools/hubspot/ (Apache-2.0, see ../../../NOTICE).
+# Source files: create_list.ts, get_appointment.ts, get_cart.ts, get_company.ts, get_contact.ts, get_deal.ts, get_email.ts, get_line_item.ts, get_list.ts, get_list_memberships.ts, get_marketing_event.ts, get_note.ts, get_quote.ts, get_ticket.ts, get_users.ts, list_appointments.ts, list_associations.ts, list_carts.ts, list_companies.ts, list_contacts.ts, list_deals.ts, list_emails.ts, list_line_items.ts, list_marketing_events.ts, list_notes.ts, list_owners.ts, list_quotes.ts, list_tickets.ts. Drafted by tools/import_sim; reviewed before use. Sign-in scopes are not set yet.
+schema_version: 1
+id: hubspot
+name: HubSpot
+version: 1.0.0
+description: Interact with HubSpot CRM or trigger workflows from HubSpot events
+kind: plugin
+group: horizontal
+category: sales
+auth:
+  mode: oauth
+  provider: hubspot
+  scopes: []
+hosts:
+- api.hubapi.com
+data_classes:
+- internal
+policy_default: needs_approval
+actions:
+- id: create_list
+  name: Create List
+  description: Create a new list in HubSpot. Specify the object type and processing type (MANUAL or DYNAMIC)
+  effect: write
+  params:
+    name:
+      type: string
+      description: Name of the list
+      required: true
+    objectTypeId:
+      type: string
+      description: Object type ID (e.g., "0-1" for contacts, "0-2" for companies)
+      required: true
+    processingType:
+      type: string
+      description: 'Processing type: "MANUAL" for static lists or "DYNAMIC" for active lists'
+      required: true
+  request:
+    method: POST
+    url: https://api.hubapi.com/crm/v3/lists
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+    body:
+      name: '{name}'
+      objectTypeId: '{objectTypeId}'
+      processingType: '{processingType}'
+  response:
+    outputs:
+      list:
+        path: $.list
+        type: object
+        description: HubSpot list
+      listId:
+        path: $.list.listId
+        type: string
+        description: The created list ID
+- id: get_appointment
+  name: Get Appointment
+  description: Retrieve a single appointment by ID from HubSpot
+  effect: read
+  params:
+    appointmentId:
+      type: string
+      description: The HubSpot appointment ID to retrieve
+      required: true
+    idProperty:
+      type: string
+      description: Property to use as unique identifier. If not specified, uses record ID
+    properties:
+      type: string
+      description: Comma-separated list of HubSpot property names to return (e.g., "hs_appointment_name,hs_appointment_start")
+    associations:
+      type: string
+      description: Comma-separated list of object types to retrieve associated IDs for (e.g., "contacts,companies")
+  request:
+    method: GET
+    url: https://api.hubapi.com/crm/v3/objects/appointments/{appointmentId}
+    query:
+      idProperty: '{idProperty}'
+      properties: '{properties}'
+      associations: '{associations}'
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+  response:
+    outputs:
+      appointment:
+        path: $
+        type: object
+        description: HubSpot appointment record
+      appointmentId:
+        path: $.id
+        type: string
+        description: The retrieved appointment ID
+- id: get_cart
+  name: Get Cart
+  description: Retrieve a single cart by ID from HubSpot
+  effect: read
+  params:
+    cartId:
+      type: string
+      description: The HubSpot cart ID to retrieve
+      required: true
+    properties:
+      type: string
+      description: Comma-separated list of HubSpot property names to return
+    associations:
+      type: string
+      description: Comma-separated list of object types to retrieve associated IDs for
+  request:
+    method: GET
+    url: https://api.hubapi.com/crm/v3/objects/carts/{cartId}
+    query:
+      properties: '{properties}'
+      associations: '{associations}'
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+  response:
+    outputs:
+      cart:
+        path: $
+        type: object
+        description: HubSpot CRM record
+      cartId:
+        path: $.id
+        type: string
+        description: The retrieved cart ID
+- id: get_company
+  name: Get Company
+  description: Retrieve a single company by ID or domain from HubSpot
+  effect: read
+  params:
+    companyId:
+      type: string
+      description: The HubSpot company ID (numeric string) or domain to retrieve
+      required: true
+    idProperty:
+      type: string
+      description: Property to use as unique identifier (e.g., "domain"). If not specified, uses record ID
+    properties:
+      type: string
+      description: Comma-separated list of HubSpot property names to return (e.g., "name,domain,industry")
+    associations:
+      type: string
+      description: Comma-separated list of object types to retrieve associated IDs for (e.g., "contacts,deals")
+  request:
+    method: GET
+    url: https://api.hubapi.com/crm/v3/objects/companies/{companyId}
+    query:
+      idProperty: '{idProperty}'
+      properties: '{properties}'
+      associations: '{associations}'
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+  response:
+    outputs:
+      company:
+        path: $
+        type: object
+        description: HubSpot company record
+      companyId:
+        path: $.id
+        type: string
+        description: The retrieved company ID
+- id: get_contact
+  name: Get Contact
+  description: Retrieve a single contact by ID or email from HubSpot
+  effect: read
+  params:
+    contactId:
+      type: string
+      description: The HubSpot contact ID (numeric string) or email address to retrieve
+      required: true
+    idProperty:
+      type: string
+      description: Property to use as unique identifier (e.g., "email"). If not specified, uses record ID
+    properties:
+      type: string
+      description: Comma-separated list of HubSpot property names to return (e.g., "email,firstname,lastname,phone")
+    associations:
+      type: string
+      description: Comma-separated list of object types to retrieve associated IDs for (e.g., "companies,deals")
+  request:
+    method: GET
+    url: https://api.hubapi.com/crm/v3/objects/contacts/{contactId}
+    query:
+      idProperty: '{idProperty}'
+      properties: '{properties}'
+      associations: '{associations}'
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+  response:
+    outputs:
+      contact:
+        path: $
+        type: object
+        description: HubSpot contact record
+      contactId:
+        path: $.id
+        type: string
+        description: The retrieved contact ID
+- id: get_deal
+  name: Get Deal
+  description: Retrieve a single deal by ID from HubSpot
+  effect: read
+  params:
+    dealId:
+      type: string
+      description: The HubSpot deal ID to retrieve
+      required: true
+    idProperty:
+      type: string
+      description: Property to use as unique identifier. If not specified, uses record ID
+    properties:
+      type: string
+      description: Comma-separated list of HubSpot property names to return (e.g., "dealname,amount,dealstage")
+    associations:
+      type: string
+      description: Comma-separated list of object types to retrieve associated IDs for (e.g., "contacts,companies")
+  request:
+    method: GET
+    url: https://api.hubapi.com/crm/v3/objects/deals/{dealId}
+    query:
+      idProperty: '{idProperty}'
+      properties: '{properties}'
+      associations: '{associations}'
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+  response:
+    outputs:
+      deal:
+        path: $
+        type: object
+        description: HubSpot deal record
+      dealId:
+        path: $.id
+        type: string
+        description: The retrieved deal ID
+- id: get_email
+  name: Get Email
+  description: Retrieve a single email engagement by ID from HubSpot (content requires the sales-email-read scope)
+  effect: read
+  params:
+    emailId:
+      type: string
+      description: The HubSpot email engagement ID to retrieve
+      required: true
+    properties:
+      type: string
+      description: Comma-separated list of HubSpot property names to return (e.g., "hs_email_subject,hs_email_text,hs_timestamp")
+    associations:
+      type: string
+      description: Comma-separated list of object types to retrieve associated IDs for (e.g., "contacts,companies,deals")
+  request:
+    method: GET
+    url: https://api.hubapi.com/crm/v3/objects/emails/{emailId}
+    query:
+      properties: '{properties}'
+      associations: '{associations}'
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+  response:
+    outputs:
+      email:
+        path: $
+        type: object
+        description: HubSpot email engagement record
+      emailId:
+        path: $.id
+        type: string
+        description: The retrieved email engagement ID
+- id: get_line_item
+  name: Get Line Item
+  description: Retrieve a single line item by ID from HubSpot
+  effect: read
+  params:
+    lineItemId:
+      type: string
+      description: The HubSpot line item ID to retrieve
+      required: true
+    idProperty:
+      type: string
+      description: Property to use as unique identifier. If not specified, uses record ID
+    properties:
+      type: string
+      description: Comma-separated list of HubSpot property names to return (e.g., "name,quantity,price,amount")
+    associations:
+      type: string
+      description: Comma-separated list of object types to retrieve associated IDs for (e.g., "deals,quotes")
+  request:
+    method: GET
+    url: https://api.hubapi.com/crm/v3/objects/line_items/{lineItemId}
+    query:
+      idProperty: '{idProperty}'
+      properties: '{properties}'
+      associations: '{associations}'
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+  response:
+    outputs:
+      lineItem:
+        path: $
+        type: object
+        description: HubSpot line item record
+      lineItemId:
+        path: $.id
+        type: string
+        description: The retrieved line item ID
+- id: get_list
+  name: Get List
+  description: Retrieve a single list by ID from HubSpot
+  effect: read
+  params:
+    listId:
+      type: string
+      description: The HubSpot list ID to retrieve
+      required: true
+  request:
+    method: GET
+    url: https://api.hubapi.com/crm/v3/lists/{listId}
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+  response:
+    outputs:
+      list:
+        path: $.list
+        type: object
+        description: HubSpot list
+      listId:
+        path: $.list.listId
+        type: string
+        description: The retrieved list ID
+- id: get_list_memberships
+  name: Get List Members
+  description: Retrieve the record IDs that are members of a HubSpot list, ordered by record ID
+  effect: read
+  params:
+    listId:
+      type: string
+      description: The ID of the list to read members from
+      required: true
+    limit:
+      type: string
+      description: Maximum number of results per page (max 250, default 100)
+    after:
+      type: string
+      description: Pagination cursor for next page of results (from previous response)
+  request:
+    method: GET
+    url: https://api.hubapi.com/crm/v3/lists/{listId}/memberships
+    query:
+      limit: '{limit}'
+      after: '{after}'
+    headers:
+      Authorization: Bearer {credential.access_token}
+  response:
+    outputs:
+      memberships:
+        path: $.results
+        type: array
+        description: Records that are members of the list
+      paging:
+        path: $.paging
+        type: object
+        description: Pagination information for fetching more results
+- id: get_marketing_event
+  name: Get Marketing Event
+  description: Retrieve a single marketing event by ID from HubSpot
+  effect: read
+  params:
+    eventId:
+      type: string
+      description: The HubSpot marketing event objectId to retrieve
+      required: true
+  request:
+    method: GET
+    url: https://api.hubapi.com/marketing/v3/marketing-events/{eventId}
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+  response:
+    outputs:
+      event:
+        path: $
+        type: object
+        description: HubSpot marketing event
+      eventId:
+        path: $.objectId
+        type: string
+        description: The retrieved marketing event ID
+- id: get_note
+  name: Get Note
+  description: Retrieve a single note by ID from HubSpot
+  effect: read
+  params:
+    noteId:
+      type: string
+      description: The HubSpot note ID to retrieve
+      required: true
+    properties:
+      type: string
+      description: Comma-separated list of HubSpot property names to return (e.g., "hs_note_body,hs_timestamp,hubspot_owner_id")
+    associations:
+      type: string
+      description: Comma-separated list of object types to retrieve associated IDs for (e.g., "contacts,companies,deals")
+  request:
+    method: GET
+    url: https://api.hubapi.com/crm/v3/objects/notes/{noteId}
+    query:
+      properties: '{properties}'
+      associations: '{associations}'
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+  response:
+    outputs:
+      note:
+        path: $
+        type: object
+        description: HubSpot note record
+      noteId:
+        path: $.id
+        type: string
+        description: The retrieved note ID
+- id: get_quote
+  name: Get Quote
+  description: Retrieve a single quote by ID from HubSpot
+  effect: read
+  params:
+    quoteId:
+      type: string
+      description: The HubSpot quote ID to retrieve
+      required: true
+    idProperty:
+      type: string
+      description: Property to use as unique identifier. If not specified, uses record ID
+    properties:
+      type: string
+      description: Comma-separated list of HubSpot property names to return (e.g., "hs_title,hs_expiration_date,hs_status")
+    associations:
+      type: string
+      description: Comma-separated list of object types to retrieve associated IDs for (e.g., "deals,line_items")
+  request:
+    method: GET
+    url: https://api.hubapi.com/crm/v3/objects/quotes/{quoteId}
+    query:
+      idProperty: '{idProperty}'
+      properties: '{properties}'
+      associations: '{associations}'
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+  response:
+    outputs:
+      quote:
+        path: $
+        type: object
+        description: HubSpot quote record
+      quoteId:
+        path: $.id
+        type: string
+        description: The retrieved quote ID
+- id: get_ticket
+  name: Get Ticket
+  description: Retrieve a single ticket by ID from HubSpot
+  effect: read
+  params:
+    ticketId:
+      type: string
+      description: The HubSpot ticket ID to retrieve
+      required: true
+    idProperty:
+      type: string
+      description: Property to use as unique identifier. If not specified, uses record ID
+    properties:
+      type: string
+      description: Comma-separated list of HubSpot property names to return (e.g., "subject,content,hs_ticket_priority")
+    associations:
+      type: string
+      description: Comma-separated list of object types to retrieve associated IDs for (e.g., "contacts,companies")
+  request:
+    method: GET
+    url: https://api.hubapi.com/crm/v3/objects/tickets/{ticketId}
+    query:
+      idProperty: '{idProperty}'
+      properties: '{properties}'
+      associations: '{associations}'
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+  response:
+    outputs:
+      ticket:
+        path: $
+        type: object
+        description: HubSpot ticket record
+      ticketId:
+        path: $.id
+        type: string
+        description: The retrieved ticket ID
+- id: get_users
+  name: Get Users
+  description: Retrieve all users from HubSpot account
+  effect: read
+  params:
+    limit:
+      type: string
+      description: 'Number of results to return (default: 10, max: 100)'
+    after:
+      type: string
+      description: Pagination cursor for next page of results (from previous response)
+    properties:
+      type: string
+      description: Comma-separated list of HubSpot user property names to return (e.g., "hs_email,hs_given_name,hs_family_name")
+  request:
+    method: GET
+    url: https://api.hubapi.com/crm/v3/objects/users
+    query:
+      limit: '{limit}'
+      after: '{after}'
+      properties: '{properties}'
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+  response:
+    outputs:
+      users:
+        path: $.results
+        type: array
+        description: Array of HubSpot CRM records
+      paging:
+        path: $.paging
+        type: object
+        description: Pagination information for fetching more results
+      totalItems:
+        path: $.results.length
+        type: number
+        description: Total number of users returned
+- id: list_appointments
+  name: List Appointments
+  description: Retrieve all appointments from HubSpot account with pagination support
+  effect: read
+  params:
+    limit:
+      type: string
+      description: Maximum number of results per page (max 100, default 10)
+    after:
+      type: string
+      description: Pagination cursor for next page of results (from previous response)
+    properties:
+      type: string
+      description: Comma-separated list of HubSpot property names to return (e.g., "hs_appointment_name,hs_appointment_start")
+    associations:
+      type: string
+      description: Comma-separated list of object types to retrieve associated IDs for (e.g., "contacts,companies")
+  request:
+    method: GET
+    url: https://api.hubapi.com/crm/v3/objects/appointments
+    query:
+      limit: '{limit}'
+      after: '{after}'
+      properties: '{properties}'
+      associations: '{associations}'
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+  response:
+    outputs:
+      appointments:
+        path: $.results
+        type: array
+        description: Array of HubSpot appointment records
+      paging:
+        path: $.paging
+        type: object
+        description: Pagination information for fetching more results
+- id: list_associations
+  name: List Associations
+  description: List records of one object type associated with a given record, e.g. all emails or notes logged on a contact
+  effect: read
+  params:
+    objectType:
+      type: string
+      description: Source object type (e.g., "contacts", "companies", "deals")
+      required: true
+    objectId:
+      type: string
+      description: ID of the source record
+      required: true
+    toObjectType:
+      type: string
+      description: Target object type to list associations to (e.g., "emails", "notes", "deals")
+      required: true
+    limit:
+      type: string
+      description: Maximum number of associated records per page (default 500)
+    after:
+      type: string
+      description: Pagination cursor for next page (from previous response)
+  request:
+    method: GET
+    url: https://api.hubapi.com/crm/v4/objects/{objectType}/{objectId}/associations/{toObjectType}
+    query:
+      limit: '{limit}'
+      after: '{after}'
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+  response:
+    outputs:
+      results:
+        path: $.results
+        type: array
+        description: Array of associated records
+      paging:
+        path: $.paging
+        type: object
+        description: Pagination information for fetching more results
+- id: list_carts
+  name: List Carts
+  description: Retrieve all carts from HubSpot account with pagination support
+  effect: read
+  params:
+    limit:
+      type: string
+      description: Maximum number of results per page (max 100, default 10)
+    after:
+      type: string
+      description: Pagination cursor for next page of results (from previous response)
+    properties:
+      type: string
+      description: Comma-separated list of HubSpot property names to return
+    associations:
+      type: string
+      description: Comma-separated list of object types to retrieve associated IDs for
+  request:
+    method: GET
+    url: https://api.hubapi.com/crm/v3/objects/carts
+    query:
+      limit: '{limit}'
+      after: '{after}'
+      properties: '{properties}'
+      associations: '{associations}'
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+  response:
+    outputs:
+      carts:
+        path: $.results
+        type: array
+        description: Array of HubSpot CRM records
+      paging:
+        path: $.paging
+        type: object
+        description: Pagination information for fetching more results
+- id: list_companies
+  name: List Companies
+  description: Retrieve all companies from HubSpot account with pagination support
+  effect: read
+  params:
+    limit:
+      type: string
+      description: Maximum number of results per page (max 100, default 10)
+    after:
+      type: string
+      description: Pagination cursor for next page of results (from previous response)
+    properties:
+      type: string
+      description: Comma-separated list of HubSpot property names to return (e.g., "name,domain,industry")
+    associations:
+      type: string
+      description: Comma-separated list of object types to retrieve associated IDs for (e.g., "contacts,deals")
+  request:
+    method: GET
+    url: https://api.hubapi.com/crm/v3/objects/companies
+    query:
+      limit: '{limit}'
+      after: '{after}'
+      properties: '{properties}'
+      associations: '{associations}'
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+  response:
+    outputs:
+      companies:
+        path: $.results
+        type: array
+        description: Array of HubSpot company records
+      paging:
+        path: $.paging
+        type: object
+        description: Pagination information for fetching more results
+- id: list_contacts
+  name: List Contacts
+  description: Retrieve all contacts from HubSpot account with pagination support
+  effect: read
+  params:
+    limit:
+      type: string
+      description: Maximum number of results per page (max 100, default 10)
+    after:
+      type: string
+      description: Pagination cursor for next page of results (from previous response)
+    properties:
+      type: string
+      description: Comma-separated list of HubSpot property names to return (e.g., "email,firstname,lastname,phone")
+    associations:
+      type: string
+      description: Comma-separated list of object types to retrieve associated IDs for (e.g., "companies,deals")
+  request:
+    method: GET
+    url: https://api.hubapi.com/crm/v3/objects/contacts
+    query:
+      limit: '{limit}'
+      after: '{after}'
+      properties: '{properties}'
+      associations: '{associations}'
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+  response:
+    outputs:
+      contacts:
+        path: $.results
+        type: array
+        description: Array of HubSpot contact records
+      paging:
+        path: $.paging
+        type: object
+        description: Pagination information for fetching more results
+- id: list_deals
+  name: List Deals
+  description: Retrieve all deals from HubSpot account with pagination support
+  effect: read
+  params:
+    limit:
+      type: string
+      description: Maximum number of results per page (max 100, default 10)
+    after:
+      type: string
+      description: Pagination cursor for next page of results (from previous response)
+    properties:
+      type: string
+      description: Comma-separated list of HubSpot property names to return (e.g., "dealname,amount,dealstage")
+    associations:
+      type: string
+      description: Comma-separated list of object types to retrieve associated IDs for (e.g., "contacts,companies")
+  request:
+    method: GET
+    url: https://api.hubapi.com/crm/v3/objects/deals
+    query:
+      limit: '{limit}'
+      after: '{after}'
+      properties: '{properties}'
+      associations: '{associations}'
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+  response:
+    outputs:
+      deals:
+        path: $.results
+        type: array
+        description: Array of HubSpot deal records
+      paging:
+        path: $.paging
+        type: object
+        description: Pagination information for fetching more results
+- id: list_emails
+  name: List Emails
+  description: Retrieve all email engagements from HubSpot account with pagination support
+  effect: read
+  params:
+    limit:
+      type: string
+      description: Maximum number of results per page (max 100, default 10)
+    after:
+      type: string
+      description: Pagination cursor for next page of results (from previous response)
+    properties:
+      type: string
+      description: Comma-separated list of HubSpot property names to return (e.g., "hs_email_subject,hs_email_text,hs_timestamp")
+    associations:
+      type: string
+      description: Comma-separated list of object types to retrieve associated IDs for (e.g., "contacts,companies,deals")
+  request:
+    method: GET
+    url: https://api.hubapi.com/crm/v3/objects/emails
+    query:
+      limit: '{limit}'
+      after: '{after}'
+      properties: '{properties}'
+      associations: '{associations}'
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+  response:
+    outputs:
+      emails:
+        path: $.results
+        type: array
+        description: Array of HubSpot email engagement records
+      paging:
+        path: $.paging
+        type: object
+        description: Pagination information for fetching more results
+- id: list_line_items
+  name: List Line Items
+  description: Retrieve all line items from HubSpot account with pagination support
+  effect: read
+  params:
+    limit:
+      type: string
+      description: Maximum number of results per page (max 100, default 10)
+    after:
+      type: string
+      description: Pagination cursor for next page of results (from previous response)
+    properties:
+      type: string
+      description: Comma-separated list of HubSpot property names to return (e.g., "name,quantity,price,amount")
+    associations:
+      type: string
+      description: Comma-separated list of object types to retrieve associated IDs for (e.g., "deals,quotes")
+  request:
+    method: GET
+    url: https://api.hubapi.com/crm/v3/objects/line_items
+    query:
+      limit: '{limit}'
+      after: '{after}'
+      properties: '{properties}'
+      associations: '{associations}'
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+  response:
+    outputs:
+      lineItems:
+        path: $.results
+        type: array
+        description: Array of HubSpot line item records
+      paging:
+        path: $.paging
+        type: object
+        description: Pagination information for fetching more results
+- id: list_marketing_events
+  name: List Marketing Events
+  description: Retrieve all marketing events from HubSpot account with pagination support
+  effect: read
+  params:
+    limit:
+      type: string
+      description: Maximum number of results per page (max 100, default 10)
+    after:
+      type: string
+      description: Pagination cursor for next page of results (from previous response)
+  request:
+    method: GET
+    url: https://api.hubapi.com/marketing/v3/marketing-events
+    query:
+      limit: '{limit}'
+      after: '{after}'
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+  response:
+    outputs:
+      events:
+        path: $.results
+        type: array
+        description: Array of HubSpot marketing event objects
+      paging:
+        path: $.paging
+        type: object
+        description: Pagination information for fetching more results
+- id: list_notes
+  name: List Notes
+  description: Retrieve all notes from HubSpot account with pagination support
+  effect: read
+  params:
+    limit:
+      type: string
+      description: Maximum number of results per page (max 100, default 10)
+    after:
+      type: string
+      description: Pagination cursor for next page of results (from previous response)
+    properties:
+      type: string
+      description: Comma-separated list of HubSpot property names to return (e.g., "hs_note_body,hs_timestamp,hubspot_owner_id")
+    associations:
+      type: string
+      description: Comma-separated list of object types to retrieve associated IDs for (e.g., "contacts,companies,deals")
+  request:
+    method: GET
+    url: https://api.hubapi.com/crm/v3/objects/notes
+    query:
+      limit: '{limit}'
+      after: '{after}'
+      properties: '{properties}'
+      associations: '{associations}'
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+  response:
+    outputs:
+      notes:
+        path: $.results
+        type: array
+        description: Array of HubSpot note records
+      paging:
+        path: $.paging
+        type: object
+        description: Pagination information for fetching more results
+- id: list_owners
+  name: List Owners
+  description: Retrieve all owners from HubSpot account with pagination support
+  effect: read
+  params:
+    limit:
+      type: string
+      description: Maximum number of results per page (max 100, default 100)
+    after:
+      type: string
+      description: Pagination cursor for next page of results (from previous response)
+    email:
+      type: string
+      description: Filter owners by email address
+  request:
+    method: GET
+    url: https://api.hubapi.com/crm/v3/owners
+    query:
+      limit: '{limit}'
+      after: '{after}'
+      email: '{email}'
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+  response:
+    outputs:
+      owners:
+        path: $.results
+        type: array
+        description: Array of HubSpot owner objects
+      paging:
+        path: $.paging
+        type: object
+        description: Pagination information for fetching more results
+- id: list_quotes
+  name: List Quotes
+  description: Retrieve all quotes from HubSpot account with pagination support
+  effect: read
+  params:
+    limit:
+      type: string
+      description: Maximum number of results per page (max 100, default 10)
+    after:
+      type: string
+      description: Pagination cursor for next page of results (from previous response)
+    properties:
+      type: string
+      description: Comma-separated list of HubSpot property names to return (e.g., "hs_title,hs_expiration_date,hs_status")
+    associations:
+      type: string
+      description: Comma-separated list of object types to retrieve associated IDs for (e.g., "deals,line_items")
+  request:
+    method: GET
+    url: https://api.hubapi.com/crm/v3/objects/quotes
+    query:
+      limit: '{limit}'
+      after: '{after}'
+      properties: '{properties}'
+      associations: '{associations}'
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+  response:
+    outputs:
+      quotes:
+        path: $.results
+        type: array
+        description: Array of HubSpot quote records
+      paging:
+        path: $.paging
+        type: object
+        description: Pagination information for fetching more results
+- id: list_tickets
+  name: List Tickets
+  description: Retrieve all tickets from HubSpot account with pagination support
+  effect: read
+  params:
+    limit:
+      type: string
+      description: Maximum number of results per page (max 100, default 10)
+    after:
+      type: string
+      description: Pagination cursor for next page of results (from previous response)
+    properties:
+      type: string
+      description: Comma-separated list of HubSpot property names to return (e.g., "subject,content,hs_ticket_priority")
+    associations:
+      type: string
+      description: Comma-separated list of object types to retrieve associated IDs for (e.g., "contacts,companies")
+  request:
+    method: GET
+    url: https://api.hubapi.com/crm/v3/objects/tickets
+    query:
+      limit: '{limit}'
+      after: '{after}'
+      properties: '{properties}'
+      associations: '{associations}'
+    headers:
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+  response:
+    outputs:
+      tickets:
+        path: $.results
+        type: array
+        description: Array of HubSpot ticket records
+      paging:
+        path: $.paging
+        type: object
+        description: Pagination information for fetching more results

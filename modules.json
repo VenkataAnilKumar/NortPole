@@ -63,7 +63,11 @@
   "integrations": {
     "active": [
       "integrations/horizontal/automations/airtable",
-      "integrations/horizontal/product/wikipedia"
+      "integrations/horizontal/gtm/webflow",
+      "integrations/horizontal/product/dropbox",
+      "integrations/horizontal/product/spotify",
+      "integrations/horizontal/product/wikipedia",
+      "integrations/horizontal/sales/hubspot"
     ],
     "namespaces": [
       "integrations/horizontal",

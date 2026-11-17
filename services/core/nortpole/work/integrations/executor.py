@@ -216,8 +216,8 @@ def extract(action: Action, payload: Any) -> dict[str, Any]:
     out: dict[str, Any] = {}
     for name, spec in action.response.outputs.items():
         value = read_path(payload, spec.path)
-        kinds = {"string": str, "integer": int, "boolean": bool, "array": list, "object": dict}
-        if value is not None and not isinstance(value, kinds[spec.type]):
+        kinds = {"string": str, "integer": int, "number": (int, float), "boolean": bool, "array": list, "object": dict}
+        if value is not None and (not isinstance(value, kinds[spec.type]) or (spec.type in ("integer", "number") and isinstance(value, bool))):
             value = None
         if value is None and spec.type == "array" and "[*]" in spec.path:
             value = []
