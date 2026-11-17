@@ -94,6 +94,20 @@ P02 uses a fixed, synthetic-only development workflow definition pinned by conte
 
 Before P05 acceptance, replace the fixture definition resolution with the evaluated registry/publication path. Production and customer profiles must reject the development bootstrap path. Add tests for digest mismatch, an unlisted definition and attempts to enable bootstrap in a customer/production profile. The first-workflow APIs otherwise require published, authorized versions as specified above.
 
+## Implemented: integrations (decision 0008)
+
+These routes exist in `services/core/nortpole/work/integrations/api.py`; they are not part of the proposed `/v1` design above. Every route needs a signed-in person (`basic`) unless marked administrator, and no route returns a credential.
+
+| Method and path | Purpose | Control |
+| --- | --- | --- |
+| `GET /integrations`, `GET /integrations/{id}` | The catalog with the person's own state for each item (available, needs approval, blocked, installed, connected), its actions, suggested skills and whether sign-in is set up. | Signed-in person; policy decides what each person may install. |
+| `POST /integrations/{id}/install`, `DELETE /integrations/{id}` | Install with the person's settings, or remove. | Policy (allowed, needs approval, blocked) or an approved request for that person. |
+| `PUT /integrations/{id}/account`, `DELETE /integrations/{id}/account` | Connect with a pasted token or key, or disconnect. | Installed first; the account is sealed at rest. |
+| `POST /integrations/{id}/oauth/start`, `POST /integrations/oauth/complete` | Sign in with the person's own account (OAuth with PKCE): start returns the service's address; the web page the service returns to sends the code and state. | A sealed, expiring state tied to the person; no GET changes anything. |
+| `GET /admin/integrations/policy`, `PUT /admin/integrations/policy` | See every item with its default, overrides, the answer in force and use counts; change them. | Administrator; opening a write action to everyone needs a confirmation; every change is audited. |
+
+Calls an assistant makes to an installed integration go through `service.call` (order of checks: exists, not blocked, installed, connected; then the executor with the person's own account, one audit row per call). No route or chat path calls it yet.
+
 ## Expansion endpoints (proposed, not first release)
 
 Added 2026-11-08 for the expansion features in the feature catalog. These are illustrative paths that follow the common conventions above; none is committed and none changes first-release scope.

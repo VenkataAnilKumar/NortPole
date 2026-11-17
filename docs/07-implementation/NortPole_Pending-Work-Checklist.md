@@ -1,6 +1,6 @@
 # NortPole — pending work checklist
 
-Status: Working list, updated 2026-11-14 (after the redesign stages R1–R6b and R8 and the inherited test suite work). Followed one item at a time, in the order below. The phase definitions are in the [delivery plan](NortPole_Adopted-Core-Delivery-Plan.md); what each finished piece checked and did not check is in [REVIEW](../REVIEW.md). All testing so far is sandbox-only, with stand-in models.
+Status: Working list, updated 2026-11-17 (after the redesign stages R1–R6b and R8, the inherited test suite work, and the integrations, Sources, skills and sign-in work of 2026-11-16 and 2026-11-17). Followed one item at a time, in the order below. The phase definitions are in the [delivery plan](NortPole_Adopted-Core-Delivery-Plan.md); what each finished piece checked and did not check is in [REVIEW](../REVIEW.md). All testing so far is sandbox-only, with stand-in models.
 
 ## Phase status
 
@@ -10,10 +10,11 @@ Status: Working list, updated 2026-11-14 (after the redesign stages R1–R6b and
 | A4 | Product shell and navigation (now the redesign R1–R8) | Mostly done (translations of new pages and user Privacy/Security settings wait on you) |
 | A5 | Knowledge, evidence, permissions | Built for one path (synthetic corpus) |
 | A6 | Reviewed task workflow and approvals | Built |
-| A7 | Agents, skills, packs | Mostly built (steps 1 to 4 and 6; the connector waits for the source system) |
+| A7 | Agents, skills, packs | Mostly built (steps 1 to 4 and 6; the document connector waits for the source system) |
+| A7b | Integrations catalog, Sources screens, personal skills, OAuth sign-in (decision 0008) | Built and tested in the sandbox; **definitions not yet verified against vendors or live services** (see the section below) |
 | A8 | Real model routes, evaluation, spend | Started |
-| A9 | Security and trust hardening | Partly built |
-| A10 | Deployment and operations | Started |
+| A9 | Security and trust hardening | Partly built (stored secrets are now sealed; MFA and the pack takeover gap are open) |
+| A10 | Deployment and operations | Started (CI has not yet run on GitHub: the jobs failed at once on the last four pull requests, so they were merged or left open without it) |
 | A11 | Pilot with one vertical | Planned, needs a customer |
 | A12 | Expansion | Later |
 
@@ -27,6 +28,28 @@ Status: Working list, updated 2026-11-14 (after the redesign stages R1–R6b and
 - [x] 5. **A9, hardening that needs no decision from you** (done 2026-11-13): the off-box audit head (5), an optional second approver for sends (5b), and a software bill of materials plus a CI workflow (5c; the workflow's first two jobs were run locally, the third has not run on GitHub). Blocked on you: administrator MFA and single sign-on (identity provider), a secrets manager (hosting target), an outside review before real data; The optional two-administrator rule for route policy and retention changes is built (5d, 2026-11-13); signers, destinations and other administrator actions are not covered.
 - [~] 6. **A7, agents, skills and connectors**: direction agreed 2026-11-13: govern the core's agents, tools, skills and connectors instead of building new ones ([A7 design](NortPole_A7-Agents-Skills-Connectors-Design.md), section 11). Steps 1 (tool catalog), 2 (guides), 3 (a workflow agent, plan-then-execute, search only) and 4 (outside-tool approval with pinned definitions, change check, call log) built; and 6 (Studio, an administrator editor that publishes through the normal pack path; no manifest version 2 needed) built; the pilot connector needs your source system.
 - [ ] 7. **A5 and A7 step 5, a real connector:** **Google Drive chosen** (2026-11-13; the owner has Gmail and Microsoft personal accounts, no Workspace or Microsoft 365 tenant). **Paused at the owner's request.** Plan when resumed: (a) **done 2026-11-14**: Drive permission reading and the access builder honouring it, tested on recorded Drive responses ([A5 design](NortPole_A5-Knowledge-and-Permissions-Design.md), last section); "anyone with the link" files are hidden except to the people named (the recommended default; awaiting the owner's confirmation); (b) start the sandbox search index; (c) a live test against the owner's Drive with three Gmail accounts, six shared test documents and a read-only OAuth refresh token (attached as a file, never pasted), plus approval of sandbox network access to `oauth2.googleapis.com` and `www.googleapis.com`; (d) groups cannot be tested with personal Gmail and wait for a Workspace or Microsoft 365 customer or test tenant. Open question: should "anyone with the link" files be hidden except to people named on them (recommended)?
+
+## Integrations, Sources, skills and sign-in (decision 0008, 2026-11-16 to 2026-11-17)
+
+Done (details and what each step checked and did not check are in [REVIEW](../REVIEW.md)):
+
+- [x] I1. The declarative format, executor, per-person accounts, policy per integration or category, approvals through the existing Requests queue, and 10 routes plus the administrator's policy page.
+- [x] I2. Stored secrets sealed with `ENCRYPTION_KEY_SECRET` (the inherited encrypted column types did not encrypt); a rotation command; the API refuses to start without a key.
+- [x] I3. Sources tabs Connectors, Plugins, Skills, Discover on one catalog layout, with logos, search, a category dropdown and "Yours" first; Horizontal and Vertical removed from people's screens.
+- [x] I4. Thirteen integrations written for NortPole: Wikipedia, Airtable, HubSpot, Dropbox, Spotify, Webflow, Notion, Stripe, and the connectors GitHub, Slack, Google Drive, Gmail and Google Calendar.
+- [x] I5. Personal skills: **My skills** on the Skills tab, and up to five suggested skills per integration added with one click, through the inherited skills system.
+- [x] I6. OAuth sign-in with PKCE, a sealed state, a POST-only completion, renewal before a call, and ten providers described; an optional `oauth.env` in the staging profile.
+- [x] I7. All references to the source project removed from code, definitions and documents (an earlier draft derived some definitions; they were deleted and rewritten, and the licence files with them).
+
+Open:
+
+- [ ] I8. **Verify every definition against the vendor's published documentation and with one real call** from a test account; fix or remove what fails. Nothing is verified yet; the session's fetch tool could not reach the vendor sites even after the hosts were allowed (a new session should).
+- [ ] I9. Register OAuth apps (owner) and try each sign-in against the live service; check the endpoints and scopes of all ten providers.
+- [ ] I10. Route from chat and workflows to `service.call`, so an assistant can use an installed integration (today only the routes and screens exist), with the approval step for writes.
+- [ ] I11. Slack (two tokens, errors in a 200 response) and Stripe Connect; array parameters; file downloads and uploads; a clear message for services that report errors in the body.
+- [ ] I12. More definitions in small, verified batches (Microsoft Outlook and Teams, Linear, Jira, Google Docs and Sheets); the Vertical group is empty.
+- [ ] I13. Skills tab: editing and sharing buttons, skills shared with the person, and a check of the suggested skills in real chats.
+- [ ] I14. Quality pass on the new screens: axe, dark theme and phone width were not rerun after the 2026-11-17 redesign; Jest tests for the new components wait on the missing web test setup.
 
 ## More work that needs no decision from the owner (saved 2026-11-13)
 
@@ -50,13 +73,13 @@ Status: Working list, updated 2026-11-14 (after the redesign stages R1–R6b and
 
 **Quality (A4)**
 - [ ] 28. Quality tab: details of a single run, regression alerts, test history.
-- [ ] 30. Cost in money per scheduled run (runs store tokens, not the model used; needs a column for the model).
 - [ ] 31. Accessibility checks not yet done: screen-reader output, right-to-left layout for Arabic, 200% zoom.
+- [ ] 32. Cost in money per scheduled run (runs store tokens, not the model used; needs a column for the model).
 
 **Retrieval**
 - [ ] 29. Start the search index in the sandbox (retrieval is tested only in code tests so far).
 
-**Suggested order if work continues (2026-11-14):** 7(a) Drive permission sync on recorded responses, 29 search index, 22 pack takeover gap, 25 CI checks with the full-suite job; decisions 10 (customer), 12 (cloud model) and 13 (hosting) unblock the most.
+**Suggested order if work continues (2026-11-17):** 25 first (make CI run on GitHub and require it), then I8 (verify the integrations; remove what cannot be verified), 7(a) Drive permission sync on recorded responses, 29 search index, 22 pack takeover gap, I10 (chat uses installed integrations, with approvals), I9 once OAuth apps exist; decisions 10 (customer), 12 (cloud model) and 13 (hosting) unblock the most.
 
 ## UI and admin console redesign (agreed 2026-11-13; plan in `docs/05-design/NortPole_Redesign-Plan.md`)
 
@@ -75,7 +98,9 @@ Status: Working list, updated 2026-11-14 (after the redesign stages R1–R6b and
 - Not a gap (checked 2026-11-14): Box web links. A failing test suggested they had no access list, but that test switches on Enterprise mode; in the community edition every Box document takes the source's own access setting.
 - Sandbox-only (pass on a normal machine): IPv6 `::1` binding in the sandbox proxy tests, DNS for `example.com`, the model server needs `torch`, and one Hugging Face download host blocked (the Docker image bake was therefore not run here).
 
-## Known issues (saved 2026-11-13)
+## Known issues (saved 2026-11-13, updated 2026-11-17)
+- GitHub Actions: the jobs of the last four pull requests failed within two seconds with no runner, so no CI result exists for them; the cause is on the GitHub side (runner or billing) and is not diagnosed.
+- The integration definitions and OAuth endpoints are unverified (I8, I9); an assistant cannot yet call an installed integration (I10).
 - Web build scripts: `bun run build` and `build:fast` fail at once because `apps/workspace/tools/prepare-pdf-assets.cjs` is missing, and `next build` with its type check stops at test files that import the missing `@tests/setup/*` helpers (found 2026-11-16 while upgrading Next.js). A build works as `SKIP_TYPE_CHECK=1 npx next build`. Restore the helpers or drop the script and the test-only type errors from the build.
 
 - The local 7B model obeyed hostile text in 31% of injection tests; guides' effect on a real model is not measured.
