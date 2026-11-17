@@ -8,7 +8,7 @@ import datetime
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, Field, ValidationError
 from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
@@ -19,6 +19,7 @@ from nortpole.db.models import User
 from nortpole.error_handling.error_codes import NortPoleErrorCode
 from nortpole.error_handling.exceptions import NortPoleError
 from nortpole.work.packs.manifest import Manifest, canonical_bytes, digest, version_key
+from nortpole.work.packs import ownership
 from nortpole.work.packs.evaluation import evaluate
 from nortpole.work.packs.integrity import IntegrityReport, check_all
 from nortpole.work.packs.models import NortPolePackEvaluation, NortPolePackSigner, NortPolePackVersion
@@ -303,6 +304,11 @@ def install_pack(
         first = e.errors()[0]
         raise NortPoleError(NortPoleErrorCode.INVALID_INPUT, f"The manifest is not valid: {'.'.join(str(x) for x in first['loc'])}: {first['msg']}") from e
     signed = canonical_bytes(pkg.manifest)
+    try:
+        ownership.check_publisher(db_session, manifest.id, pkg.key_id)
+    except NortPoleError as e:
+        _audit(user, AuditAction.PACK_INSTALL, f"Refused {manifest.id} {manifest.version} from signer {pkg.key_id}: the pack belongs to another signer", manifest.id, AuditOutcome.DENIED)
+        raise e
     existing = db_session.scalar(select(NortPolePackVersion).where(
         NortPolePackVersion.pack_id == manifest.id, NortPolePackVersion.version == manifest.version))
     if existing is not None:
@@ -324,8 +330,41 @@ def install_pack(
                               signature=pkg.signature, signer_key_id=pkg.key_id, active=False)
     db_session.add(row)
     db_session.commit()
+    ownership.consume(db_session, manifest.id, pkg.key_id)
     _audit(user, AuditAction.PACK_INSTALL, f"Installed {manifest.id} {manifest.version} (digest {row.digest[:12]}, signer {pkg.key_id})", manifest.id)
     return _vview(db_session, row)
+
+
+class TransferIn(BaseModel):
+    to_key_id: str = Field(min_length=1, max_length=80)
+
+
+class TransferView(BaseModel):
+    pack_id: str
+    owner_key_id: str | None
+    to_key_id: str
+
+
+@router.post("/admin/packs/{pack_id}/transfer")
+def approve_key_change(
+    pack_id: str, body: TransferIn,
+    user: User = Depends(require_permission(Permission.MANAGE_CONNECTORS)),
+    db_session: Session = Depends(get_session),
+) -> TransferView:
+    """Approve a key change: let another trusted signer publish the next version of this pack (once). Without this, a
+    version signed by anyone but the pack's current signer is refused."""
+    row = ownership.approve_transfer(db_session, user, pack_id, body.to_key_id)
+    return TransferView(pack_id=pack_id, owner_key_id=ownership.owner_of(db_session, pack_id), to_key_id=row.to_key_id)
+
+
+@router.delete("/admin/packs/{pack_id}/transfer")
+def cancel_key_change(
+    pack_id: str,
+    user: User = Depends(require_permission(Permission.MANAGE_CONNECTORS)),
+    db_session: Session = Depends(get_session),
+) -> dict[str, bool]:
+    ownership.cancel_transfer(db_session, user, pack_id)
+    return {"cancelled": True}
 
 
 @router.post("/admin/packs/{pack_id}/{version}/activate")
