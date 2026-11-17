@@ -55,3 +55,5 @@ A pack id belongs to the signer of its newest installed version. Installing a ve
 2. **Approve a key change** (the owner stays trusted, for example when a team takes over a pack): `POST /admin/packs/{pack_id}/transfer` with `{"to_key_id": "<new signer>"}`. The new signer's next version is accepted once, and then that signer owns the pack. `DELETE /admin/packs/{pack_id}/transfer` cancels an approval that has not been used.
 
 Every refusal and every approval or cancellation is written to the audit log (`pack.install` denied, `pack.owner_change`).
+
+With the second-administrator rule for packs on (Admin > Approvals), trusting a signer, a key change and activating a version are recorded as waiting and take effect only when a different administrator approves them; the Packs page says so when a change is held. Revoking a signer always takes effect at once.

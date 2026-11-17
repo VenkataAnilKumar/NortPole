@@ -17,6 +17,16 @@ from nortpole.error_handling.exceptions import NortPoleError
 from nortpole.governance.route_policy.audit import record_audit
 from nortpole.utils.audit import AuditAction, AuditOutcome
 
+# Handlers other domains register for the kinds they hold (a domain above governance cannot be imported from here).
+# Each is called as handler(kind, payload, db, proposer, approver_email=...) and raises if the change is no longer valid.
+APPLIERS: dict[str, Any] = {}
+
+
+def register_applier(kinds: tuple[str, ...], handler: Any) -> None:
+    for kind in kinds:
+        APPLIERS[kind] = handler
+
+
 EXPIRES_AFTER = datetime.timedelta(days=7)
 MAX_PENDING = 50  # a ceiling, so a runaway client cannot fill the table
 
@@ -89,6 +99,8 @@ def _apply(db: Session, c: NortPoleAdminChange, approver: User) -> None:
 
         apply_retention_update(RetentionUpdate(**c.payload), proposer, proposer_email=c.proposed_by_email,
                                approver_email=approver.email, expect_version=c.base_version)
+    elif c.kind in APPLIERS:
+        APPLIERS[c.kind](c.kind, c.payload, db, proposer, approver_email=approver.email)
     elif c.kind == "controls":
         current = controls.load()
         if current.version != c.base_version:

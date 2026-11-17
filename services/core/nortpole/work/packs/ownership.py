@@ -53,7 +53,8 @@ def consume(db: Session, pack_id: str, key_id: str) -> None:
         db.commit()
 
 
-def approve_transfer(db: Session, user: User, pack_id: str, to_key_id: str) -> NortPolePackTransfer:
+def check_transfer(db: Session, pack_id: str, to_key_id: str) -> str:
+    """The checks for a key change, without making it; returns the current owner."""
     owner = owner_of(db, pack_id)
     if owner is None:
         raise NortPoleError(NortPoleErrorCode.NOT_FOUND, "No version of that pack is installed, so it has no owner to change.")
@@ -62,14 +63,20 @@ def approve_transfer(db: Session, user: User, pack_id: str, to_key_id: str) -> N
         raise NortPoleError(NortPoleErrorCode.INVALID_INPUT, "The new signer must be a trusted signer that is not revoked.")
     if to_key_id == owner:
         raise NortPoleError(NortPoleErrorCode.INVALID_INPUT, "That signer already owns the pack.")
+    return owner
+
+
+def approve_transfer(db: Session, user: User | None, pack_id: str, to_key_id: str, *, approver_email: str | None = None) -> NortPolePackTransfer:
+    owner = check_transfer(db, pack_id, to_key_id)
     row = db.get(NortPolePackTransfer, pack_id)
+    who = approver_email or (user.email if user else "")
     if row is None:
-        row = NortPolePackTransfer(pack_id=pack_id, to_key_id=to_key_id, approved_by_email=user.email)
+        row = NortPolePackTransfer(pack_id=pack_id, to_key_id=to_key_id, approved_by_email=who)
         db.add(row)
     else:
-        row.to_key_id, row.approved_by_email = to_key_id, user.email
+        row.to_key_id, row.approved_by_email = to_key_id, who
     db.commit()
-    _audit(user, f"Approved a key change for {pack_id}: {owner} to {to_key_id}", pack_id, AuditOutcome.SUCCESS)
+    _audit(user, f"Approved a key change for {pack_id}: {owner} to {to_key_id}" + (f" (second administrator {approver_email})" if approver_email else ""), pack_id, AuditOutcome.SUCCESS)
     return row
 
 
@@ -82,7 +89,7 @@ def cancel_transfer(db: Session, user: User, pack_id: str) -> None:
     _audit(user, f"Cancelled the approved key change for {pack_id}", pack_id, AuditOutcome.SUCCESS)
 
 
-def _audit(user: User, summary: str, pack_id: str, outcome: AuditOutcome) -> None:
+def _audit(user: User | None, summary: str, pack_id: str, outcome: AuditOutcome) -> None:
     from nortpole.governance.route_policy.audit import record_audit
 
     record_audit(AuditAction.PACK_OWNER_CHANGE, outcome, actor=user, summary=summary, resource_type="pack", resource_id=pack_id)

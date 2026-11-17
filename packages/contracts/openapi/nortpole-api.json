@@ -114,6 +114,11 @@
       },
       "AdminControls": {
         "properties": {
+          "second_for_packs": {
+            "default": false,
+            "title": "Second For Packs",
+            "type": "boolean"
+          },
           "second_for_retention": {
             "default": false,
             "title": "Second For Retention",
@@ -4434,6 +4439,17 @@
       },
       "nortpole__governance__admin_changes__api__ControlsUpdate": {
         "properties": {
+          "second_for_packs": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Second For Packs"
+          },
           "second_for_retention": {
             "title": "Second For Retention",
             "type": "boolean"

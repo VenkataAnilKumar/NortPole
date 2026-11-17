@@ -6,7 +6,6 @@ import datetime
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
-from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -93,6 +92,8 @@ def cancel_change(
 class ControlsUpdate(BaseModel):
     second_for_route_policy: bool
     second_for_retention: bool
+    # Left out, it keeps its current value, so older clients keep working.
+    second_for_packs: bool | None = None
 
 
 @router.get("/controls")
@@ -109,8 +110,10 @@ def put_controls(
     """Choose which administrator changes need a second administrator. With every rule off, any change takes effect at
     once (including turning rules on). With any rule on, changing the rules itself needs a second administrator."""
     current = controls.load()
-    wanted = {"second_for_route_policy": body.second_for_route_policy, "second_for_retention": body.second_for_retention}
-    summary = "Second-administrator rules: route policy " + ("on" if wanted["second_for_route_policy"] else "off") + ", retention " + ("on" if wanted["second_for_retention"] else "off")
+    wanted = {"second_for_route_policy": body.second_for_route_policy, "second_for_retention": body.second_for_retention,
+              "second_for_packs": current.second_for_packs if body.second_for_packs is None else body.second_for_packs}
+    summary = ("Second-administrator rules: route policy " + ("on" if wanted["second_for_route_policy"] else "off")
+               + ", retention " + ("on" if wanted["second_for_retention"] else "off") + ", packs " + ("on" if wanted["second_for_packs"] else "off"))
     if controls.required("controls"):
         return service.pending_response(service.propose(db_session, user, "controls", wanted, current.version, summary))
     new = controls.AdminControls(version=current.version + 1, **wanted)
