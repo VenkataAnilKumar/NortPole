@@ -33,7 +33,7 @@ One place to ask, search and get work done over your company's knowledge:
 | | Permission-aware knowledge | Answers only use documents each person may open in the source system; Google Drive sharing is applied per document. |
 | | Audit log | A hash-chained, tamper-evident record of refusals, approvals, sends, policy changes and exports, with integrity checks, a savable head, and export. |
 | **Control** | Route policy and redaction | Mark each model as local, private or cloud, decide which class of data may go where, and redact sensitive patterns before the cloud. Blocked requests fail before anything is sent. |
-| | Approvals | Accept the plan before work runs and approve one exact draft before anything leaves; optional second approver for sends and two-administrator rules for sensitive changes, all in one queue. |
+| | Approvals | Accept the plan before work runs and approve one exact draft before anything leaves; optional second approver for sends, and optional two-administrator rules for route policy, retention, packs, send destinations and the tool catalog, all in one queue. |
 | | Tool governance | A catalog of what assistants may use; outside tools (MCP, OpenAPI) stay off until approved, with pinned definitions that stop the tool if they change. |
 | | Retention and legal hold | Set how long records are kept and hold them when needed. |
 | **Work** | Governed workflows | Ready-made, versioned workflows: plan, gather sources, cited draft, review rules, approve, export or send. |
@@ -41,7 +41,7 @@ One place to ask, search and get work done over your company's knowledge:
 | | Workflow agents | Agents plan their searches first, run as you over the sources you can open, and can never send anything. |
 | | Scheduled workflows | Recurring runs prepare the plan and wait in your Inbox; nothing continues without your yes, and a schedule pauses itself if plans go unaccepted. |
 | | Inbox | One place for plans to approve, drafts to review and updates. |
-| | Sources catalog | Connectors, Plugins, Skills and Discover: search a catalog of services, install one or sign in with your own account, and request what an administrator has not allowed yet. Each integration is declared as signed data with exact hosts; writes always start as "needs approval". |
+| | Sources catalog | Connectors, Plugins, Skills and Discover: search a catalog of services, install one or sign in with your own account, and request what an administrator has not allowed yet. Each integration is declared as signed data with exact hosts; writes always start as "needs approval". Chat can use an installed integration's read actions; for a write, the assistant can only propose it, and it waits in your Inbox until you approve exactly what will be sent. |
 | | Your own skills | Add instructions your chats follow, or add the ones an integration suggests with one click. |
 | **Insight** | Quality and cost | Draft and approval rates, unsupported-claim share, evaluation results per model, scheduled runs, and tokens and estimated cost per route. |
 
@@ -90,10 +90,10 @@ NortPole starts from the other end:
 ## What administrators control
 
 - **Model routes and data classes.** Mark each model as local, private or cloud; decide which data may go where; turn on redaction per route. A blocked request fails before anything is sent.
-- **Signed workflow packs.** Workflows ship as signed, versioned packs that run only on models they passed evaluation on, with review rules and house style built in. A Studio form lets administrators build their own.
+- **Signed workflow packs.** Workflows ship as signed, versioned packs that run only on models they passed evaluation on, with review rules and house style built in. A pack belongs to the signer of its newest version, so another signer cannot take it over without an administrator's approval. A Studio form lets administrators build their own.
 - **Integrations.** Allow, require approval for, or block each integration or whole category; see how many people installed and connected each; opening write actions to everyone needs a confirmation. Stored secrets are sealed with your key.
 - **Tools and outside systems.** A tool catalog decides what chat assistants may use; outside tools (MCP, OpenAPI) are off until approved, their definition is pinned, and a changed definition stops the tool until approved again.
-- **Approvals in one place.** Sends that need a second approver, changes that need a second administrator, requests from people, tool definitions.
+- **Approvals in one place.** Sends that need a second approver, changes that need a second administrator (route policy, retention, packs, send destinations, the tool catalog), requests from people, tool definitions.
 - **Scheduling, retention and audit.** Who may schedule; how long records are kept and a legal hold; audit-log integrity checks, a head you can save off the machine and compare later, and export.
 - **Quality and cost.** Draft and approval rates, unsupported-claim share, evaluation results per model, scheduled-run counts, and tokens and estimated cost per route.
 
@@ -131,11 +131,11 @@ flowchart LR
 
 ## Status and roadmap
 
-**Built and tested (sandbox, local models):** workspace and admin console, reviewed workflows with plans and approvals, workflow agents, scheduled workflows, signed packs and Studio, route policy and redaction, tool catalog and outside-tool approval, second approver and two-administrator rules, audit log with integrity checks, retention and legal hold, Discover and requests, Inbox, Quality, and Google Drive permission sync, an integrations catalog with per-person accounts, approvals, sealed secrets, OAuth sign-in (fake provider only) and personal skills.
+**Built and tested (sandbox, local models):** workspace and admin console, reviewed workflows with plans and approvals, workflow agents, scheduled workflows, signed packs and Studio, route policy and redaction, tool catalog and outside-tool approval, second approver and two-administrator rules, audit log with integrity checks, retention and legal hold, Discover and requests, Inbox, Quality, and Google Drive permission sync, an integrations catalog with per-person accounts, approvals, sealed secrets, OAuth sign-in (fake provider only), chat use of installed integrations (reads directly, writes as proposals approved in the Inbox) and personal skills.
 
 **Next:** a live Google Drive pilot with a search index, knowledge domains (open or restricted areas with verified documents), event-triggered workflows, and hardening for a first customer deployment (identity provider and MFA, hosting, a cloud model route).
 
-**Not yet:** a production deployment, single sign-on, and a third-party security review. All results so far come from sandbox testing. The integration definitions (13 so far) were written from each vendor's published API and are **not yet verified** against the vendors or called with real accounts, OAuth sign-in has only been tried against a fake provider, and an assistant cannot yet call an installed integration from chat.
+**Not yet:** a production deployment, single sign-on, and a third-party security review. All results so far come from sandbox testing. Of the 13 integration definitions, 8 were checked against the vendors' API reference and one (Wikipedia's page summary) was sent to the live service; the other 4 (Airtable, Dropbox, Webflow, HubSpot) are unchecked, and none has been used with a real account. OAuth sign-in has only been tried against a fake provider. Chat use of integrations has been tested with a stand-in model, not a real one. The two-administrator rule does not yet cover installing a pack, and workflows cannot call integrations yet.
 
 The full, honest list lives in the [pending-work checklist](docs/07-implementation/NortPole_Pending-Work-Checklist.md), and what each piece checked is in the [review log](docs/REVIEW.md).
 
