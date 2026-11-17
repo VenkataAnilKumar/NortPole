@@ -106,7 +106,7 @@ These routes exist in `services/core/nortpole/work/integrations/api.py`; they ar
 | `POST /integrations/{id}/oauth/start`, `POST /integrations/oauth/complete` | Sign in with the person's own account (OAuth with PKCE): start returns the service's address; the web page the service returns to sends the code and state. | A sealed, expiring state tied to the person; no GET changes anything. |
 | `GET /admin/integrations/policy`, `PUT /admin/integrations/policy` | See every item with its default, overrides, the answer in force and use counts; change them. | Administrator; opening a write action to everyone needs a confirmation; every change is audited. |
 
-Calls an assistant makes to an installed integration go through `service.call` (order of checks: exists, not blocked, installed, connected; then the executor with the person's own account, one audit row per call). No route or chat path calls it yet.
+Calls go through `service.call` (order of checks: exists, not blocked, installed, connected; then the executor with the person's own account, one audit row per call). Chat reaches it through `chat_tools.py`: each read action of an installed and connected integration is a tool in the person's default chat; write actions are never offered. No route calls it directly.
 
 ## Expansion endpoints (proposed, not first release)
 

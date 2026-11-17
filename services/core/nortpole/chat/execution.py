@@ -669,6 +669,12 @@ def create_chat_agent(
             search_usage_forcing_setting=setup.search_params.search_usage,
         )
         tools = [tool for tool_list in tools_by_type.values() for tool in tool_list]
+        # NortPole: the read actions of the integrations this person installed and connected (decision 0008). Only
+        # the default chat, and only when the request does not restrict the tool list.
+        if setup.persona_id == DEFAULT_PERSONA_ID and setup.new_msg_req.allowed_tool_ids is None:
+            from nortpole.work.integrations.chat_tools import chat_tools_for
+
+            tools.extend(chat_tools_for(user, {tool.name for tool in tools}))
 
         if setup.preferred_tool_id is not None and setup.preferred_tool_id not in {
             tool.id for tool in tools
