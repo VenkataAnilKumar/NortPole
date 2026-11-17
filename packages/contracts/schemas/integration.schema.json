@@ -223,7 +223,8 @@
           "enum": [
             "string",
             "integer",
-            "boolean"
+            "boolean",
+            "object"
           ],
           "title": "Type",
           "type": "string"
@@ -242,9 +243,7 @@
         "body": {
           "anyOf": [
             {
-              "additionalProperties": {
-                "type": "string"
-              },
+              "additionalProperties": true,
               "type": "object"
             },
             {
@@ -265,7 +264,10 @@
         "method": {
           "enum": [
             "GET",
-            "POST"
+            "POST",
+            "PUT",
+            "PATCH",
+            "DELETE"
           ],
           "title": "Method",
           "type": "string"

@@ -23,7 +23,7 @@ from dataclasses import dataclass, field
 from typing import Any, Callable
 from urllib.parse import quote, urlsplit
 
-from nortpole.work.integrations.manifest import Action, Integration, PLACEHOLDER, Param
+from nortpole.work.integrations.manifest import Action, Integration, PLACEHOLDER, Param, body_strings
 
 MAX_RESPONSE_BYTES = 2_000_000
 TIMEOUT_SECONDS = 15.0
@@ -44,7 +44,7 @@ class PreparedRequest:
     method: str
     url: str
     query: dict[str, str]
-    body: dict[str, str] | None
+    body: Any
     # Headers can hold the credential, so they never appear in a repr or a log.
     headers: dict[str, str] = field(repr=False)
 
@@ -73,6 +73,17 @@ def _check(name: str, param: Param, value: Any) -> Any:
             raise IntegrationCallError("bad_parameter", f"{name} must be at least {param.minimum}")
         if param.maximum is not None and value > param.maximum:
             raise IntegrationCallError("bad_parameter", f"{name} must be at most {param.maximum}")
+        return value
+    if param.type == "object":
+        if not isinstance(value, dict):
+            raise IntegrationCallError("bad_parameter", f"{name} must be an object")
+        try:
+            body_strings(value)
+            size = len(json.dumps(value))
+        except (ValueError, TypeError):
+            raise IntegrationCallError("bad_parameter", f"{name} holds something other than plain JSON data")
+        if size > param.max_length * 10:
+            raise IntegrationCallError("bad_parameter", f"{name} is larger than {param.max_length * 10} characters")
         return value
     if not isinstance(value, bool):
         raise IntegrationCallError("bad_parameter", f"{name} must be true or false")
@@ -153,9 +164,25 @@ def prepare(
         raise IntegrationCallError("host_not_allowed", "the address is not one this integration may call")
     query = {k: v for k, raw in request.query.items() if (v := fill(raw, encode=False)) is not None}
     headers = {k: v for k, raw in request.headers.items() if (v := fill(raw, encode=False)) is not None}
-    body = None
-    if request.body is not None:
-        body = {k: v for k, raw in request.body.items() if (v := fill(raw, encode=False)) is not None}
+    _MISSING = object()
+
+    def fill_node(node: Any) -> Any:
+        """Fill a body tree: a whole-placeholder text takes the parameter's own type; a missing optional one is dropped."""
+        if isinstance(node, str):
+            whole = PLACEHOLDER.fullmatch(node)
+            if whole and whole.group(1) not in CREDENTIAL_KEYS:
+                return values[whole.group(1)] if whole.group(1) in values else _MISSING
+            text = fill(node, encode=False)
+            return _MISSING if text is None else text
+        if isinstance(node, list):
+            items = [fill_node(i) for i in node]
+            return [i for i in items if i is not _MISSING]
+        if isinstance(node, dict):
+            kept = {k: fill_node(v) for k, v in node.items()}
+            return {k: v for k, v in kept.items() if v is not _MISSING}
+        return node
+
+    body = fill_node(request.body) if request.body is not None else None
     return PreparedRequest(method=request.method, url=url, query=query, body=body, headers=headers)
 
 
