@@ -48,6 +48,7 @@ ANON_ENDPOINTS = [
     ("GET", "/integrations"), ("GET", "/integrations/wikipedia"), ("POST", "/integrations/wikipedia/install"),
     ("DELETE", "/integrations/wikipedia"), ("PUT", "/integrations/airtable/account"), ("DELETE", "/integrations/airtable/account"),
     ("GET", "/admin/integrations/policy"), ("PUT", "/admin/integrations/policy"),
+    ("POST", "/integrations/airtable/oauth/start"), ("POST", "/integrations/oauth/complete"),
 ]
 ADMIN_ONLY = [
     ("GET", "/admin/route-policy/audit"), ("GET", "/admin/route-tokens"), ("PUT", "/admin/route-policy"),

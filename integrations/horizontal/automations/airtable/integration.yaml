@@ -1,11 +1,9 @@
-# Airtable: read bases, tables' records and single records. Sign in with your own Airtable account.
-# Adapted from Sim's tools/airtable/list_bases.ts, list_records.ts and get_record.ts
-# (Apache-2.0, see ../../../NOTICE). Write actions are left out until the format can describe a JSON body.
+# Airtable: written for NortPole from the vendor's published API reference; not yet checked against the live service.
 schema_version: 1
 id: airtable
 name: Airtable
 version: 1.0.0
-description: Read Airtable bases and records with your own Airtable account.
+description: Read and edit Airtable bases and records with your own Airtable account.
 kind: plugin
 group: horizontal
 category: automations
@@ -13,122 +11,253 @@ auth:
   mode: oauth
   provider: airtable
   scopes:
-    - data.records:read
-    - schema.bases:read
+  - data.records:read
+  - data.records:write
+  - schema.bases:read
 hosts:
-  - api.airtable.com
+- api.airtable.com
 data_classes:
-  - internal
-  - confidential
+- internal
+- confidential
 policy_default: needs_approval
 actions:
-  - id: list_bases
-    name: List bases
-    description: List the Airtable bases you can read.
-    effect: read
-    params:
+- id: list_bases
+  name: List bases
+  description: List the bases you can open.
+  effect: read
+  params:
+    offset:
+      type: string
+      description: Offset from a previous response, for the next page.
+  request:
+    method: GET
+    url: https://api.airtable.com/v0/meta/bases
+    headers: &id001
+      Authorization: Bearer {credential.access_token}
+    query:
+      offset: '{offset}'
+  response:
+    outputs:
+      bases:
+        path: $.bases[*]
+        type: array
+        description: Bases, each with an id, a name and your permission level.
       offset:
+        path: $.offset
         type: string
-        description: Pagination offset from a previous response, to fetch the next page of bases.
-    request:
-      method: GET
-      url: https://api.airtable.com/v0/meta/bases
-      query:
-        offset: "{offset}"
-      headers:
-        Authorization: Bearer {credential.access_token}
-    response:
-      outputs:
-        bases:
-          path: $.bases[*]
-          type: array
-          description: Bases you can read, each with an id and a name.
-        offset:
-          path: $.offset
-          type: string
-          description: Offset for the next page, if there is one.
-  - id: list_records
-    name: List records
-    description: Read records from an Airtable table.
-    effect: read
-    params:
-      baseId:
-        type: string
-        required: true
-        description: Airtable base ID (starts with "app", for example "appXXXXXXXXXXXXXX").
-      tableId:
-        type: string
-        required: true
-        description: Table ID (starts with "tbl") or the table name.
-      maxRecords:
-        type: integer
-        minimum: 1
-        maximum: 1000
-        description: Maximum total number of records to return.
-      filterFormula:
-        type: string
-        description: Formula that filters records, for example ({Status} = 'Open').
-      pageSize:
-        type: integer
-        minimum: 1
-        maximum: 100
-        description: Records per page (1 to 100).
+        description: Offset for the next page.
+- id: list_tables
+  name: List tables
+  description: List the tables and fields of a base.
+  effect: read
+  params:
+    baseId:
+      type: string
+      description: Base ID (starts with app).
+      required: true
+  request:
+    method: GET
+    url: https://api.airtable.com/v0/meta/bases/{baseId}/tables
+    headers: *id001
+  response:
+    outputs:
+      tables:
+        path: $.tables[*]
+        type: array
+        description: Tables, each with an id, a name and its fields.
+- id: list_records
+  name: List records
+  description: Read records from a table.
+  effect: read
+  params:
+    baseId:
+      type: string
+      description: Base ID (starts with app).
+      required: true
+    tableId:
+      type: string
+      description: Table ID (starts with tbl) or the table's name.
+      required: true
+    maxRecords:
+      type: integer
+      description: Most records to return in all.
+      minimum: 1
+      maximum: 1000
+    filterFormula:
+      type: string
+      description: An Airtable formula that keeps matching records, for example ({Status} = 'Open').
+    pageSize:
+      type: integer
+      description: Records per page (1 to 100).
+      minimum: 1
+      maximum: 100
+    offset:
+      type: string
+      description: Offset from a previous response.
+    view:
+      type: string
+      description: Name or ID of a view; only its records are returned, in its order.
+  request:
+    method: GET
+    url: https://api.airtable.com/v0/{baseId}/{tableId}
+    headers: *id001
+    query:
+      maxRecords: '{maxRecords}'
+      filterByFormula: '{filterFormula}'
+      pageSize: '{pageSize}'
+      offset: '{offset}'
+      view: '{view}'
+  response:
+    outputs:
+      records:
+        path: $.records[*]
+        type: array
+        description: Records, each with an id, a createdTime and its fields.
       offset:
+        path: $.offset
         type: string
-        description: Pagination offset from a previous response, to fetch the next page.
-      view:
+        description: Offset for the next page.
+- id: get_record
+  name: Get record
+  description: Read one record.
+  effect: read
+  params:
+    baseId:
+      type: string
+      description: Base ID.
+      required: true
+    tableId:
+      type: string
+      description: Table ID or name.
+      required: true
+    recordId:
+      type: string
+      description: Record ID (starts with rec).
+      required: true
+  request:
+    method: GET
+    url: https://api.airtable.com/v0/{baseId}/{tableId}/{recordId}
+    headers: *id001
+  response:
+    outputs:
+      id:
+        path: $.id
         type: string
-        description: View name or ID. Only records in the view are returned, in the view's order.
-    request:
-      method: GET
-      url: https://api.airtable.com/v0/{baseId}/{tableId}
-      query:
-        maxRecords: "{maxRecords}"
-        filterByFormula: "{filterFormula}"
-        pageSize: "{pageSize}"
-        offset: "{offset}"
-        view: "{view}"
-      headers:
-        Authorization: Bearer {credential.access_token}
-    response:
-      outputs:
-        records:
-          path: $.records[*]
-          type: array
-          description: Records, each with an id, a created time and its fields.
-        offset:
-          path: $.offset
-          type: string
-          description: Offset for the next page, if there is one.
-  - id: get_record
-    name: Get a record
-    description: Read one record from an Airtable table by its ID.
-    effect: read
-    params:
-      baseId:
+        description: Record ID.
+      createdTime:
+        path: $.createdTime
         type: string
-        required: true
-        description: Airtable base ID (starts with "app").
-      tableId:
+        description: When it was created.
+      fields:
+        path: $.fields
+        type: object
+        description: The record's field values.
+- id: create_record
+  name: Create record
+  description: Add a record to a table.
+  effect: write
+  params:
+    baseId:
+      type: string
+      description: Base ID.
+      required: true
+    tableId:
+      type: string
+      description: Table ID or name.
+      required: true
+    fields:
+      type: object
+      description: Field values by field name.
+      required: true
+  request:
+    method: POST
+    url: https://api.airtable.com/v0/{baseId}/{tableId}
+    headers: &id002
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+    body:
+      fields: '{fields}'
+  response:
+    outputs:
+      id:
+        path: $.id
         type: string
-        required: true
-        description: Table ID (starts with "tbl") or the table name.
-      recordId:
+        description: New record ID.
+      fields:
+        path: $.fields
+        type: object
+        description: Saved field values.
+- id: update_record
+  name: Update record
+  description: Change fields of a record; other fields stay as they are.
+  effect: write
+  params:
+    baseId:
+      type: string
+      description: Base ID.
+      required: true
+    tableId:
+      type: string
+      description: Table ID or name.
+      required: true
+    recordId:
+      type: string
+      description: Record ID.
+      required: true
+    fields:
+      type: object
+      description: Field values to change, by field name.
+      required: true
+  request:
+    method: PATCH
+    url: https://api.airtable.com/v0/{baseId}/{tableId}/{recordId}
+    headers: *id002
+    body:
+      fields: '{fields}'
+  response:
+    outputs:
+      id:
+        path: $.id
         type: string
-        required: true
-        description: Record ID (starts with "rec").
-    request:
-      method: GET
-      url: https://api.airtable.com/v0/{baseId}/{tableId}/{recordId}
-      headers:
-        Authorization: Bearer {credential.access_token}
-    response:
-      outputs:
-        id:
-          path: $.id
-          type: string
-          description: Record ID.
-        fields:
-          path: $.fields
-          type: object
-          description: The record's field values.
+        description: Record ID.
+      fields:
+        path: $.fields
+        type: object
+        description: Field values after the change.
+- id: delete_record
+  name: Delete record
+  description: Delete a record.
+  effect: write
+  params:
+    baseId:
+      type: string
+      description: Base ID.
+      required: true
+    tableId:
+      type: string
+      description: Table ID or name.
+      required: true
+    recordId:
+      type: string
+      description: Record ID.
+      required: true
+  request:
+    method: DELETE
+    url: https://api.airtable.com/v0/{baseId}/{tableId}/{recordId}
+    headers: *id001
+  response:
+    outputs:
+      id:
+        path: $.id
+        type: string
+        description: ID of the deleted record.
+      deleted:
+        path: $.deleted
+        type: boolean
+        description: True once it is deleted.
+skills:
+- name: airtable-table-summary
+  description: Summarise what is in an Airtable table.
+  content: 'When asked what is in a table, read its fields, then a page of records, and report: what the table tracks, how
+    many records were read, common values in the main fields, and anything that looks incomplete. Do not edit records unless
+    asked.'

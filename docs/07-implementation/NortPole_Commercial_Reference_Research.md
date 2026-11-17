@@ -108,7 +108,7 @@ Evidence and reading — [customer cases](https://airbyte.com/success-stories), 
 
 | NortPole area | Reference study order | Required first-party design output |
 | --- | --- | --- |
-| Workspace and Agent Studio | Dify, existing Sim reference | Draft, publish, run and review journey with version visibility |
+| Workspace and Agent Studio | Dify, existing a workflow reference product reference | Draft, publish, run and review journey with version visibility |
 | Automation Studio | n8n, Temporal | Trigger, retry, disable and reconciliation semantics |
 | Knowledge and libraries | Existing upstream core, Qdrant, Airbyte | Source/version/permission contract and revocation behavior |
 | Hybrid gateway | LiteLLM | Destination policy, capability matrix and usage contract |

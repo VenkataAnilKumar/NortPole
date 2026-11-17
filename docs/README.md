@@ -1,6 +1,6 @@
 # NortPole — document list
 
-Updated: 2026-11-05 · Status: working product definition
+Updated: 2026-11-17 · Status: working product definition
 
 The document names and numbered areas follow the convention used by the Qvora document set. Every listed file now exists. **Draft** means the content is written for review; it does not mean the product decision or implementation is complete.
 
@@ -39,6 +39,8 @@ The document names and numbered areas follow the convention used by the Qvora do
 | 07 Implementation | [Commercial reference research](07-implementation/NortPole_Commercial_Reference_Research.md) | Reference | Commercial evidence, module mappings and license boundaries. |
 | 07 Implementation | [NortPole_Pack-Signing-Runbook.md](07-implementation/NortPole_Pack-Signing-Runbook.md) | Current | Create, trust and rotate pack signing keys; what revoking does. |
 | 07 Implementation | [NortPole_A4-A7-A9-Pending-Work-Plan.md](07-implementation/NortPole_A4-A7-A9-Pending-Work-Plan.md) | Plan | Order, scope and exit evidence for the pending work in A4, A7 and A9. |
+| Decisions | [Decision records](decisions/) | Accepted | Numbered decisions: 0001 modular monorepo, 0002 hybrid routing and pilot scope, 0003 extension levels, 0004 adopt community source as the pilot core, 0005 unified direction, 0006 scalable repository structure, 0007 product name, 0008 integrations as signed data. |
+| Review log | [REVIEW.md](REVIEW.md) | Current | Dated notes on every finished piece: what it built, what was checked, and what was not. Newest entries are at the end. |
 | 07 Implementation | [NortPole_Threat-Model-and-Security-Scan.md](07-implementation/NortPole_Threat-Model-and-Security-Scan.md) | Draft | Assets, threats, controls and gaps; dependency and licence scan snapshot. Developer-written, not an independent review. |
 
 ## Source context

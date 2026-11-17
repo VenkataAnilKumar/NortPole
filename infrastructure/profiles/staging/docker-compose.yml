@@ -38,6 +38,9 @@ services:
     depends_on:
       db: {condition: service_healthy}
       redis: {condition: service_healthy}
+    env_file:
+      - path: oauth.env   # optional: client ids and secrets for signing in to services (see README)
+        required: false
     environment:
       POSTGRES_HOST: db
       POSTGRES_USER: nortpole
@@ -46,6 +49,7 @@ services:
       REDIS_HOST: redis
       USER_AUTH_SECRET: ${USER_AUTH_SECRET:?set USER_AUTH_SECRET}
       ENCRYPTION_KEY_SECRET: ${ENCRYPTION_KEY_SECRET:?set ENCRYPTION_KEY_SECRET}
+      WEB_DOMAIN: ${WEB_DOMAIN:-http://localhost:3000}   # the address people use; OAuth sign-in returns to it
       AUTH_TYPE: basic
       DISABLE_VECTOR_DB: "true"
       CACHE_BACKEND: postgres

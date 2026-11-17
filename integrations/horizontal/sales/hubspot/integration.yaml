@@ -1,0 +1,375 @@
+# HubSpot: written for NortPole from the vendor's published API reference; not yet checked against the live service.
+schema_version: 1
+id: hubspot
+name: HubSpot
+version: 1.0.0
+description: Read and edit HubSpot CRM contacts, companies and deals with your own HubSpot account.
+kind: plugin
+group: horizontal
+category: sales
+auth:
+  mode: oauth
+  provider: hubspot
+  scopes:
+  - crm.objects.contacts.read
+  - crm.objects.contacts.write
+  - crm.objects.companies.read
+  - crm.objects.deals.read
+hosts:
+- api.hubapi.com
+data_classes:
+- internal
+- confidential
+policy_default: needs_approval
+actions:
+- id: list_contacts
+  name: List contacts
+  description: List contacts in HubSpot CRM.
+  effect: read
+  params:
+    limit:
+      type: integer
+      description: Records per page (1 to 100).
+      minimum: 1
+      maximum: 100
+      default: 10
+    after:
+      type: string
+      description: Paging cursor from a previous response.
+    properties:
+      type: string
+      description: Comma-separated property names to return, for example email,firstname.
+  request:
+    method: GET
+    url: https://api.hubapi.com/crm/v3/objects/contacts
+    headers: &id001
+      Authorization: Bearer {credential.access_token}
+    query:
+      limit: '{limit}'
+      after: '{after}'
+      properties: '{properties}'
+  response:
+    outputs:
+      contacts:
+        path: $.results[*]
+        type: array
+        description: Contacts, each with an id and properties.
+      next_after:
+        path: $.paging.next.after
+        type: string
+        description: Cursor for the next page.
+- id: get_contact
+  name: Get contact
+  description: Get one contact by ID.
+  effect: read
+  params:
+    contactId:
+      type: string
+      description: The contact's ID.
+      required: true
+    properties:
+      type: string
+      description: Comma-separated property names to return.
+  request:
+    method: GET
+    url: https://api.hubapi.com/crm/v3/objects/contacts/{contactId}
+    headers: *id001
+    query:
+      properties: '{properties}'
+  response:
+    outputs:
+      id:
+        path: $.id
+        type: string
+        description: Record ID.
+      properties:
+        path: $.properties
+        type: object
+        description: Requested properties.
+- id: search_contacts
+  name: Search contacts
+  description: Search contacts by text.
+  effect: read
+  params:
+    query:
+      type: string
+      description: Text to search for.
+      required: true
+    limit:
+      type: integer
+      description: Results to return (1 to 100).
+      minimum: 1
+      maximum: 100
+      default: 10
+  request:
+    method: POST
+    url: https://api.hubapi.com/crm/v3/objects/contacts/search
+    headers: &id002
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+    body:
+      query: '{query}'
+      limit: '{limit}'
+  response:
+    outputs:
+      contacts:
+        path: $.results[*]
+        type: array
+        description: Matches, each with an id and properties.
+      total:
+        path: $.total
+        type: integer
+        description: How many records match.
+- id: create_contact
+  name: Create contact
+  description: Create a contact.
+  effect: write
+  params:
+    properties:
+      type: object
+      description: 'Property values by internal name, for example {"email": "a@b.com"}.'
+      required: true
+  request:
+    method: POST
+    url: https://api.hubapi.com/crm/v3/objects/contacts
+    headers: *id002
+    body:
+      properties: '{properties}'
+  response:
+    outputs:
+      id:
+        path: $.id
+        type: string
+        description: New record ID.
+- id: update_contact
+  name: Update contact
+  description: Change properties of a contact.
+  effect: write
+  params:
+    contactId:
+      type: string
+      description: The contact's ID.
+      required: true
+    properties:
+      type: object
+      description: Property values to change.
+      required: true
+  request:
+    method: PATCH
+    url: https://api.hubapi.com/crm/v3/objects/contacts/{contactId}
+    headers: *id002
+    body:
+      properties: '{properties}'
+  response:
+    outputs:
+      id:
+        path: $.id
+        type: string
+        description: Record ID.
+      properties:
+        path: $.properties
+        type: object
+        description: Properties after the change.
+- id: list_companies
+  name: List companies
+  description: List companies in HubSpot CRM.
+  effect: read
+  params:
+    limit:
+      type: integer
+      description: Records per page (1 to 100).
+      minimum: 1
+      maximum: 100
+      default: 10
+    after:
+      type: string
+      description: Paging cursor from a previous response.
+    properties:
+      type: string
+      description: Comma-separated property names to return, for example email,firstname.
+  request:
+    method: GET
+    url: https://api.hubapi.com/crm/v3/objects/companies
+    headers: *id001
+    query:
+      limit: '{limit}'
+      after: '{after}'
+      properties: '{properties}'
+  response:
+    outputs:
+      companies:
+        path: $.results[*]
+        type: array
+        description: Companies, each with an id and properties.
+      next_after:
+        path: $.paging.next.after
+        type: string
+        description: Cursor for the next page.
+- id: get_company
+  name: Get company
+  description: Get one company by ID.
+  effect: read
+  params:
+    companyId:
+      type: string
+      description: The company's ID.
+      required: true
+    properties:
+      type: string
+      description: Comma-separated property names to return.
+  request:
+    method: GET
+    url: https://api.hubapi.com/crm/v3/objects/companies/{companyId}
+    headers: *id001
+    query:
+      properties: '{properties}'
+  response:
+    outputs:
+      id:
+        path: $.id
+        type: string
+        description: Record ID.
+      properties:
+        path: $.properties
+        type: object
+        description: Requested properties.
+- id: search_companies
+  name: Search companies
+  description: Search companies by text.
+  effect: read
+  params:
+    query:
+      type: string
+      description: Text to search for.
+      required: true
+    limit:
+      type: integer
+      description: Results to return (1 to 100).
+      minimum: 1
+      maximum: 100
+      default: 10
+  request:
+    method: POST
+    url: https://api.hubapi.com/crm/v3/objects/companies/search
+    headers: *id002
+    body:
+      query: '{query}'
+      limit: '{limit}'
+  response:
+    outputs:
+      companies:
+        path: $.results[*]
+        type: array
+        description: Matches, each with an id and properties.
+      total:
+        path: $.total
+        type: integer
+        description: How many records match.
+- id: list_deals
+  name: List deals
+  description: List deals in HubSpot CRM.
+  effect: read
+  params:
+    limit:
+      type: integer
+      description: Records per page (1 to 100).
+      minimum: 1
+      maximum: 100
+      default: 10
+    after:
+      type: string
+      description: Paging cursor from a previous response.
+    properties:
+      type: string
+      description: Comma-separated property names to return, for example email,firstname.
+  request:
+    method: GET
+    url: https://api.hubapi.com/crm/v3/objects/deals
+    headers: *id001
+    query:
+      limit: '{limit}'
+      after: '{after}'
+      properties: '{properties}'
+  response:
+    outputs:
+      deals:
+        path: $.results[*]
+        type: array
+        description: Deals, each with an id and properties.
+      next_after:
+        path: $.paging.next.after
+        type: string
+        description: Cursor for the next page.
+- id: get_deal
+  name: Get deal
+  description: Get one deal by ID.
+  effect: read
+  params:
+    dealId:
+      type: string
+      description: The deal's ID.
+      required: true
+    properties:
+      type: string
+      description: Comma-separated property names to return.
+  request:
+    method: GET
+    url: https://api.hubapi.com/crm/v3/objects/deals/{dealId}
+    headers: *id001
+    query:
+      properties: '{properties}'
+  response:
+    outputs:
+      id:
+        path: $.id
+        type: string
+        description: Record ID.
+      properties:
+        path: $.properties
+        type: object
+        description: Requested properties.
+- id: search_deals
+  name: Search deals
+  description: Search deals by text.
+  effect: read
+  params:
+    query:
+      type: string
+      description: Text to search for.
+      required: true
+    limit:
+      type: integer
+      description: Results to return (1 to 100).
+      minimum: 1
+      maximum: 100
+      default: 10
+  request:
+    method: POST
+    url: https://api.hubapi.com/crm/v3/objects/deals/search
+    headers: *id002
+    body:
+      query: '{query}'
+      limit: '{limit}'
+  response:
+    outputs:
+      deals:
+        path: $.results[*]
+        type: array
+        description: Matches, each with an id and properties.
+      total:
+        path: $.total
+        type: integer
+        description: How many records match.
+skills:
+- name: hubspot-contact-brief
+  description: Prepare a short brief on a contact and their company before a call.
+  content: 'Before a call with a person in HubSpot:
+
+    1. Search contacts for the person by name or email and read the best match.
+
+    2. If they have a company, search and read it.
+
+    3. Write a brief: who they are, their company, what the properties say about the relationship, and two good questions
+    to ask.
+
+    Use only what HubSpot returns; say what is missing. Do not create or change records unless asked.'

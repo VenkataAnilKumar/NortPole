@@ -11233,6 +11233,9 @@
       },
       "viewStats": {
         "tooltip": "에이전트 통계 보기"
+      },
+      "by": {
+        "label": "작성자"
       }
     },
     "editor": {
@@ -11653,6 +11656,18 @@
         },
         "your": {
           "label": "내 에이전트"
+        },
+        "starred": {
+          "label": "별표"
+        },
+        "mine": {
+          "label": "내 에이전트"
+        },
+        "shared": {
+          "label": "공유받음"
+        },
+        "company": {
+          "label": "회사 에이전트"
         }
       }
     },

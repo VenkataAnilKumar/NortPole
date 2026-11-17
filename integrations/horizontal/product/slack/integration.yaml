@@ -1,0 +1,119 @@
+# Slack: read-only actions. Written for NortPole from the vendor's published API reference; not yet checked against the current documentation or called against the live service.
+schema_version: 1
+id: slack
+name: Slack
+version: 1.0.0
+description: Read Slack channels, messages and people with your own Slack account.
+kind: connector
+group: horizontal
+category: product
+auth:
+  mode: oauth
+  provider: slack
+  scopes:
+  - channels:read
+  - channels:history
+  - users:read
+hosts:
+- slack.com
+data_classes:
+- internal
+- confidential
+policy_default: needs_approval
+actions:
+- id: list_channels
+  name: List channels
+  description: List public channels in the workspace.
+  effect: read
+  params:
+    limit:
+      type: integer
+      description: Channels to return (1 to 200).
+      minimum: 1
+      maximum: 200
+      default: 100
+    cursor:
+      type: string
+      description: Cursor from a previous response, for the next page.
+  request:
+    method: GET
+    url: https://slack.com/api/conversations.list
+    query:
+      limit: '{limit}'
+      cursor: '{cursor}'
+      types: public_channel
+      exclude_archived: 'true'
+    headers: &id001
+      Authorization: Bearer {credential.access_token}
+  response:
+    outputs:
+      channels:
+        path: $.channels[*]
+        type: array
+        description: Channels, each with id, name and topic.
+      next_cursor:
+        path: $.response_metadata.next_cursor
+        type: string
+        description: Cursor for the next page.
+- id: get_channel_history
+  name: Read channel messages
+  description: Read recent messages in a channel.
+  effect: read
+  params:
+    channel:
+      type: string
+      description: Channel ID (starts with C).
+      required: true
+    limit:
+      type: integer
+      description: Messages to return (1 to 200).
+      minimum: 1
+      maximum: 200
+      default: 50
+    cursor:
+      type: string
+      description: Cursor from a previous response.
+  request:
+    method: GET
+    url: https://slack.com/api/conversations.history
+    query:
+      channel: '{channel}'
+      limit: '{limit}'
+      cursor: '{cursor}'
+    headers: *id001
+  response:
+    outputs:
+      messages:
+        path: $.messages[*]
+        type: array
+        description: Messages, newest first, each with user, text and ts.
+      next_cursor:
+        path: $.response_metadata.next_cursor
+        type: string
+        description: Cursor for the next page.
+- id: get_user
+  name: Get person
+  description: Look up a person by user ID.
+  effect: read
+  params:
+    user:
+      type: string
+      description: User ID (starts with U).
+      required: true
+  request:
+    method: GET
+    url: https://slack.com/api/users.info
+    query:
+      user: '{user}'
+    headers: *id001
+  response:
+    outputs:
+      user:
+        path: $.user
+        type: object
+        description: 'The person: id, name, real_name and profile.'
+skills:
+- name: slack-channel-catchup
+  description: 'Catch me up on a Slack channel: decisions, questions and what needs me.'
+  content: 'When asked to catch up on a Slack channel, list channels to find it, read its recent messages, and report: decisions
+    made, open questions, anything addressed to the person, and links worth opening. Keep it under ten lines and quote sparingly.'

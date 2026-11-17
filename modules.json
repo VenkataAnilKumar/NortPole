@@ -63,7 +63,18 @@
   "integrations": {
     "active": [
       "integrations/horizontal/automations/airtable",
-      "integrations/horizontal/product/wikipedia"
+      "integrations/horizontal/code/github",
+      "integrations/horizontal/gtm/webflow",
+      "integrations/horizontal/product/dropbox",
+      "integrations/horizontal/product/gmail",
+      "integrations/horizontal/product/google-calendar",
+      "integrations/horizontal/product/google-drive",
+      "integrations/horizontal/product/notion",
+      "integrations/horizontal/product/slack",
+      "integrations/horizontal/product/spotify",
+      "integrations/horizontal/product/wikipedia",
+      "integrations/horizontal/sales/hubspot",
+      "integrations/horizontal/sales/stripe"
     ],
     "namespaces": [
       "integrations/horizontal",

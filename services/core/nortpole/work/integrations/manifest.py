@@ -15,8 +15,6 @@ It runs nothing itself: a fixed executor reads it. The format is strict so a def
 Placeholders are written `{name}`. A query value that is exactly one placeholder is left out when that parameter has no
 value. Path placeholders are URL-encoded by the executor.
 
-The shape of the fields (`params`, `request`, `response`) follows the way Sim describes a tool (Apache-2.0,
-https://github.com/simstudioai/sim), adapted here into signed data.
 """
 
 from __future__ import annotations
@@ -73,7 +71,8 @@ class Auth(_Strict):
 
 
 class Param(_Strict):
-    type: Literal["string", "integer", "boolean"]
+    # "object" is a JSON object the person or model supplies; it may be placed only as a whole value in a body.
+    type: Literal["string", "integer", "boolean", "object"]
     description: str = Field(min_length=1, max_length=300)
     required: bool = False
     # Who may set it: the person only, the model only, or either.
@@ -92,6 +91,8 @@ class Param(_Strict):
             raise ValueError("minimum is above maximum")
         if self.enum is not None and self.type != "string":
             raise ValueError("enum is for strings")
+        if self.type == "object" and (self.default is not None or self.enum is not None):
+            raise ValueError("an object parameter has no default or enum")
         if self.default is not None:
             kinds = {"string": str, "integer": int, "boolean": bool}[self.type]
             if not isinstance(self.default, kinds) or (self.type == "integer" and isinstance(self.default, bool)):
@@ -101,17 +102,54 @@ class Param(_Strict):
         return self
 
 
+BODY_MAX_DEPTH = 6
+BODY_MAX_NODES = 200
+
+
+def body_strings(node: Any, depth: int = 0) -> list[str]:
+    """Every text value in a body tree; raises when the tree is too deep, too large or holds anything but JSON data."""
+    if depth > BODY_MAX_DEPTH:
+        raise ValueError(f"a body is at most {BODY_MAX_DEPTH} levels deep")
+    if node is None or isinstance(node, (bool, int)):
+        return []
+    if isinstance(node, str):
+        return [node]
+    if isinstance(node, list):
+        out: list[str] = []
+        for item in node:
+            out += body_strings(item, depth + 1)
+        return out
+    if isinstance(node, dict):
+        out = []
+        for key, item in node.items():
+            if not isinstance(key, str) or not key or len(key) > 80 or PLACEHOLDER.search(key):
+                raise ValueError("a body key is a plain name and holds no placeholder")
+            out += body_strings(item, depth + 1)
+        return out
+    raise ValueError("a body holds only text, numbers, true or false, null, lists and objects")
+
+
+def _body_nodes(node: Any) -> int:
+    if isinstance(node, dict):
+        return 1 + sum(_body_nodes(v) for v in node.values())
+    if isinstance(node, list):
+        return 1 + sum(_body_nodes(v) for v in node)
+    return 1
+
+
 class Request(_Strict):
-    method: Literal["GET", "POST"]
+    method: Literal["GET", "POST", "PUT", "PATCH", "DELETE"]
     url: str = Field(min_length=10, max_length=500)
     query: dict[str, str] = Field(default_factory=dict, max_length=20)
     headers: dict[str, str] = Field(default_factory=dict, max_length=10)
-    body: dict[str, str] | None = None
+    # A JSON tree. A text value that is exactly one placeholder takes that parameter's own type (a number stays a number,
+    # an object stays an object); a missing optional parameter leaves its key or list item out.
+    body: dict[str, Any] | None = None
 
 
 class Output(_Strict):
     path: str = Field(min_length=1, max_length=120)
-    type: Literal["string", "integer", "boolean", "array", "object"]
+    type: Literal["string", "integer", "number", "boolean", "array", "object"]
     description: str = Field(min_length=1, max_length=300)
 
     @field_validator("path")
@@ -137,6 +175,14 @@ class Action(_Strict):
     response: Response
 
 
+class SuggestedSkill(_Strict):
+    """Instructions the integration suggests, which a person can add to their own skills."""
+
+    name: str = Field(pattern=r"^[a-z][a-z0-9-]{1,62}$")
+    description: str = Field(min_length=1, max_length=300)
+    content: str = Field(min_length=1, max_length=4000)
+
+
 class Integration(_Strict):
     schema_version: Literal[1] = 1
     id: str = Field(pattern=SLUG.pattern)
@@ -153,6 +199,7 @@ class Integration(_Strict):
     # What an administrator's policy starts as: people may use it, or each use needs approval.
     policy_default: Literal["allowed", "needs_approval"] = "needs_approval"
     actions: list[Action] = Field(min_length=1, max_length=30)
+    skills: list[SuggestedSkill] = Field(default_factory=list, max_length=5)
 
     @field_validator("hosts")
     @classmethod
@@ -168,6 +215,9 @@ class Integration(_Strict):
     def _rules(self) -> "Integration":
         if self.category not in CATEGORIES[self.group]:
             raise ValueError(f"{self.category!r} is not a {self.group} category")
+        skill_names = [k.name for k in self.skills]
+        if len(set(skill_names)) != len(skill_names):
+            raise ValueError("suggested skill names are unique")
         ids = [a.id for a in self.actions]
         if len(set(ids)) != len(ids):
             raise ValueError("action ids are unique")
@@ -195,7 +245,13 @@ class Integration(_Strict):
         texts: list[tuple[str, str]] = [("url", request.url)]
         texts += [(f"query {k}", v) for k, v in request.query.items()]
         texts += [(f"header {k}", v) for k, v in request.headers.items()]
-        texts += [(f"body {k}", v) for k, v in (request.body or {}).items()]
+        try:
+            body_texts = body_strings(request.body)
+        except ValueError as e:
+            raise ValueError(f"{where}: {e}") from None
+        if request.body is not None and _body_nodes(request.body) > BODY_MAX_NODES:
+            raise ValueError(f"{where}: a body has at most {BODY_MAX_NODES} parts")
+        texts += [("body", v) for v in body_texts]
         for label, text in texts:
             for ref in PLACEHOLDER.findall(text):
                 if ref in CREDENTIAL_FIELDS:
@@ -205,13 +261,17 @@ class Integration(_Strict):
                         raise ValueError(f"{where}: {ref} needs auth mode {CREDENTIAL_FIELDS[ref]}")
                 elif ref not in action.params:
                     raise ValueError(f"{where}: {label} uses {{{ref}}}, which is not a parameter")
+                elif action.params[ref].type == "object" and not (label == "body" and text == "{" + ref + "}"):
+                    raise ValueError(f"{where}: an object parameter ({ref}) is placed only as a whole value in the body")
         for key, value in request.headers.items():
             if key.lower() in ("authorization", "cookie", "x-api-key") and not PLACEHOLDER.search(value):
                 raise ValueError(f"{where}: header {key} must take its value from the account, not a literal")
-        if request.method == "GET" and request.body:
-            raise ValueError(f"{where}: a GET has no body")
+        if request.method in ("GET", "DELETE") and request.body:
+            raise ValueError(f"{where}: a {request.method} has no body")
         if request.method == "GET" and action.effect == "write":
-            raise ValueError(f"{where}: a GET is a read; a write uses POST")
+            raise ValueError(f"{where}: a GET is a read; a write uses another method")
+        if request.method in ("PUT", "PATCH", "DELETE") and action.effect != "write":
+            raise ValueError(f"{where}: {request.method} changes something, so the action is a write")
         if self.auth.mode != "none" and not any(
             ref in CREDENTIAL_FIELDS for v in request.headers.values() for ref in PLACEHOLDER.findall(v)
         ):

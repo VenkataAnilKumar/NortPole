@@ -23,7 +23,7 @@ from dataclasses import dataclass, field
 from typing import Any, Callable
 from urllib.parse import quote, urlsplit
 
-from nortpole.work.integrations.manifest import Action, Integration, PLACEHOLDER, Param
+from nortpole.work.integrations.manifest import Action, Integration, PLACEHOLDER, Param, body_strings
 
 MAX_RESPONSE_BYTES = 2_000_000
 TIMEOUT_SECONDS = 15.0
@@ -44,7 +44,7 @@ class PreparedRequest:
     method: str
     url: str
     query: dict[str, str]
-    body: dict[str, str] | None
+    body: Any
     # Headers can hold the credential, so they never appear in a repr or a log.
     headers: dict[str, str] = field(repr=False)
 
@@ -73,6 +73,17 @@ def _check(name: str, param: Param, value: Any) -> Any:
             raise IntegrationCallError("bad_parameter", f"{name} must be at least {param.minimum}")
         if param.maximum is not None and value > param.maximum:
             raise IntegrationCallError("bad_parameter", f"{name} must be at most {param.maximum}")
+        return value
+    if param.type == "object":
+        if not isinstance(value, dict):
+            raise IntegrationCallError("bad_parameter", f"{name} must be an object")
+        try:
+            body_strings(value)
+            size = len(json.dumps(value))
+        except (ValueError, TypeError):
+            raise IntegrationCallError("bad_parameter", f"{name} holds something other than plain JSON data") from None
+        if size > param.max_length * 10:
+            raise IntegrationCallError("bad_parameter", f"{name} is larger than {param.max_length * 10} characters")
         return value
     if not isinstance(value, bool):
         raise IntegrationCallError("bad_parameter", f"{name} must be true or false")
@@ -153,9 +164,25 @@ def prepare(
         raise IntegrationCallError("host_not_allowed", "the address is not one this integration may call")
     query = {k: v for k, raw in request.query.items() if (v := fill(raw, encode=False)) is not None}
     headers = {k: v for k, raw in request.headers.items() if (v := fill(raw, encode=False)) is not None}
-    body = None
-    if request.body is not None:
-        body = {k: v for k, raw in request.body.items() if (v := fill(raw, encode=False)) is not None}
+    _MISSING = object()
+
+    def fill_node(node: Any) -> Any:
+        """Fill a body tree: a whole-placeholder text takes the parameter's own type; a missing optional one is dropped."""
+        if isinstance(node, str):
+            whole = PLACEHOLDER.fullmatch(node)
+            if whole and whole.group(1) not in CREDENTIAL_KEYS:
+                return values[whole.group(1)] if whole.group(1) in values else _MISSING
+            text = fill(node, encode=False)
+            return _MISSING if text is None else text
+        if isinstance(node, list):
+            items = [fill_node(i) for i in node]
+            return [i for i in items if i is not _MISSING]
+        if isinstance(node, dict):
+            kept = {k: fill_node(v) for k, v in node.items()}
+            return {k: v for k, v in kept.items() if v is not _MISSING}
+        return node
+
+    body = fill_node(request.body) if request.body is not None else None
     return PreparedRequest(method=request.method, url=url, query=query, body=body, headers=headers)
 
 
@@ -189,13 +216,24 @@ def extract(action: Action, payload: Any) -> dict[str, Any]:
     out: dict[str, Any] = {}
     for name, spec in action.response.outputs.items():
         value = read_path(payload, spec.path)
-        kinds = {"string": str, "integer": int, "boolean": bool, "array": list, "object": dict}
-        if value is not None and not isinstance(value, kinds[spec.type]):
+        kinds = {"string": str, "integer": int, "number": (int, float), "boolean": bool, "array": list, "object": dict}
+        if value is not None and (not isinstance(value, kinds[spec.type]) or (spec.type in ("integer", "number") and isinstance(value, bool))):
             value = None
         if value is None and spec.type == "array" and "[*]" in spec.path:
             value = []
         out[name] = value
     return out
+
+
+def form_fields(body: Any, prefix: str = "") -> list[tuple[str, str]]:
+    """A JSON-shaped body as form fields, the way Stripe-style APIs read them: `a[b]=c` for objects, `a[0]=c` for lists."""
+    if isinstance(body, dict):
+        return [f for k, v in body.items() for f in form_fields(v, f"{prefix}[{k}]" if prefix else k)]
+    if isinstance(body, list):
+        return [f for i, v in enumerate(body) for f in form_fields(v, f"{prefix}[{i}]")]
+    if body is None:
+        return []
+    return [(prefix, "true" if body is True else "false" if body is False else str(body))]
 
 
 Transport = Callable[[PreparedRequest], tuple[int, bytes, str]]
@@ -209,9 +247,12 @@ def http_transport(request: PreparedRequest, *, httpx_transport: Any = None, val
         validate = _default_validate
     validate(request.url)
     with httpx.Client(transport=httpx_transport, follow_redirects=False, timeout=TIMEOUT_SECONDS) as client:
+        is_form = any(k.lower() == "content-type" and "x-www-form-urlencoded" in v.lower() for k, v in request.headers.items())
+        payload: dict[str, Any] = {}
+        if request.body is not None:
+            payload = {"data": dict(form_fields(request.body))} if is_form else {"json": request.body}
         with client.stream(
-            request.method, request.url, params=request.query or None, headers=request.headers,
-            json=request.body if request.body is not None else None,
+            request.method, request.url, params=request.query or None, headers=request.headers, **payload,
         ) as response:
             chunks: list[bytes] = []
             total = 0

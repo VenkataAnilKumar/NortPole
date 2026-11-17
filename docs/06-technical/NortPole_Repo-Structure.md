@@ -32,7 +32,11 @@ modules.json                    Existing and planned modules, with maturity
 4. **Packs are source**: `packs/horizontal/<pack>/` and `packs/vertical/<industry>/<pack>/`, each with `manifest.yaml`,
    bundled per industry by `packs/editions/<industry>.json`. See the [packs README](../../packs/README.md) for the rules
    and their tests.
-5. **Contracts are generated** into `packages/contracts` (`make contracts`) and a test fails when they drift; the
+5. **Integrations are data**: `integrations/horizontal/<category>/<id>/integration.yaml` (and `integrations/vertical/...`),
+   registered in `modules.json`, validated by the format in `work/integrations/manifest.py` and generated into
+   `packages/contracts/schemas/integration.schema.json`. Logos for the catalog are in `apps/workspace/public/integration-logos/`.
+   See [decision 0008](../decisions/0008-integrations-as-signed-data.md).
+6. **Contracts are generated** into `packages/contracts` (`make contracts`) and a test fails when they drift; the
    [pack SDK](../../packages/pack-sdk/README.md) validates and signs packs against them (`make packs`).
 
 ## NortPole domains in `services/core/nortpole`
@@ -40,7 +44,7 @@ modules.json                    Existing and planned modules, with maturity
 | Domain | Modules | May import |
 |---|---|---|
 | `governance/` | `route_policy`, `redaction`, `tool_catalog`, `admin_changes`, `action_binding`, `audit_log`, `retention` | platform only |
-| `work/` | `tasks`, `workflow_schedules`, `packs`, `actions` | governance, knowledge |
+| `work/` | `tasks`, `workflow_schedules`, `packs`, `actions`, `integrations` | governance, knowledge |
 | `knowledge/` | `knowledge_access`, `source_requests` | governance, work |
 | `insight/` | `quality`, `overview`, `inventory` | governance, work, knowledge (nothing imports insight) |
 | top level | `extensions` (hook point), `external_permissions` (permission sync), `user_preferences` | fixed paths the inherited code looks up |
@@ -57,7 +61,7 @@ The design documents name logical owners. This is where each one is implemented:
 | `services/model-gateway` (routing, budgets, usage) | `services/core`: inherited `llm`, `governance/route_policy` (routing, redaction, usage); the folder holds the mock server |
 | `packages/contracts`, `packages/pack-sdk` | `packages/contracts` (generated) and `packages/pack-sdk` |
 | `packages/agents`, `packages/skills` | `services/core`: inherited agents and skills; pack agents and guides in pack manifests |
-| `packages/integrations` | `services/core`: inherited connectors, tools and MCP |
+| `packages/integrations` | `services/core`: inherited connectors, tools and MCP; NortPole's own integrations are data in `integrations/` (decision 0008) and run through `services/core/nortpole/work/integrations` |
 | `packages/identity-policy`, `packages/ui`, `evaluations` | `services/core` auth and policy; `apps/workspace` components; the pack evaluation gate. Separate packages are planned when needed |
 
 ## Checks

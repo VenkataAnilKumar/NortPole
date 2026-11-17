@@ -1,0 +1,91 @@
+# Google Calendar: read-only actions. Written for NortPole from the vendor's published API reference; not yet checked against the current documentation or called against the live service.
+schema_version: 1
+id: google-calendar
+name: Google Calendar
+version: 1.0.0
+description: Read events on your Google Calendar with your own Google account.
+kind: connector
+group: horizontal
+category: product
+auth:
+  mode: oauth
+  provider: google-calendar
+  scopes:
+  - https://www.googleapis.com/auth/calendar.readonly
+hosts:
+- www.googleapis.com
+data_classes:
+- internal
+- confidential
+policy_default: needs_approval
+actions:
+- id: list_events
+  name: List events
+  description: List events on your primary calendar between two times.
+  effect: read
+  params:
+    timeMin:
+      type: string
+      description: Start of the window, RFC 3339, for example 2026-11-17T00:00:00Z.
+    timeMax:
+      type: string
+      description: End of the window, RFC 3339.
+    maxResults:
+      type: integer
+      description: Events to return (1 to 250).
+      minimum: 1
+      maximum: 250
+      default: 25
+  request:
+    method: GET
+    url: https://www.googleapis.com/calendar/v3/calendars/primary/events
+    query:
+      timeMin: '{timeMin}'
+      timeMax: '{timeMax}'
+      maxResults: '{maxResults}'
+      singleEvents: 'true'
+      orderBy: startTime
+    headers: &id001
+      Authorization: Bearer {credential.access_token}
+  response:
+    outputs:
+      events:
+        path: $.items[*]
+        type: array
+        description: Events with id, summary, start, end and htmlLink.
+- id: get_event
+  name: Get event
+  description: Get one event by ID from your primary calendar.
+  effect: read
+  params:
+    eventId:
+      type: string
+      description: The event ID.
+      required: true
+  request:
+    method: GET
+    url: https://www.googleapis.com/calendar/v3/calendars/primary/events/{eventId}
+    headers: *id001
+  response:
+    outputs:
+      summary:
+        path: $.summary
+        type: string
+        description: Title.
+      start:
+        path: $.start
+        type: object
+        description: Start time.
+      end:
+        path: $.end
+        type: object
+        description: End time.
+      htmlLink:
+        path: $.htmlLink
+        type: string
+        description: Web address.
+skills:
+- name: calendar-day-brief
+  description: Summarise today's meetings and the gaps between them.
+  content: When asked about the day ahead, list events between the start and end of today, then report each meeting with its
+    time and title, the free gaps longer than 30 minutes, and any back-to-back runs. Mention clashes clearly.

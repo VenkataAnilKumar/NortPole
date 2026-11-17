@@ -1,6 +1,4 @@
-# Wikipedia: look up a page summary or search page titles. No sign-in; public data.
-# page_summary is adapted from Sim's tools/wikipedia/summary.ts (Apache-2.0, see ../../../NOTICE).
-# search is written for NortPole on the standard MediaWiki query API.
+# Wikipedia: written for NortPole from the vendor's published API reference; not yet checked against the live service.
 schema_version: 1
 id: wikipedia
 name: Wikipedia
@@ -12,75 +10,73 @@ category: product
 auth:
   mode: none
 hosts:
-  - en.wikipedia.org
+- en.wikipedia.org
 data_classes:
-  - public
+- public
 policy_default: allowed
 actions:
-  - id: page_summary
-    name: Page summary
-    description: Get the summary of a Wikipedia page by its title.
-    effect: read
-    params:
-      pageTitle:
+- id: page_summary
+  name: Page summary
+  description: Get the summary of a Wikipedia page by its title.
+  effect: read
+  params:
+    pageTitle:
+      type: string
+      description: Title of the page.
+      required: true
+  request:
+    method: GET
+    url: https://en.wikipedia.org/api/rest_v1/page/summary/{pageTitle}
+    headers: &id001
+      User-Agent: NortPole/1.0
+      Accept: application/json
+  response:
+    outputs:
+      title:
+        path: $.title
         type: string
-        required: true
-        description: Title of the Wikipedia page to get the summary for.
-    request:
-      method: GET
-      url: https://en.wikipedia.org/api/rest_v1/page/summary/{pageTitle}
-      headers:
-        User-Agent: NortPole/1.0
-        Accept: application/json
-    response:
-      outputs:
-        title:
-          path: $.title
-          type: string
-          description: Page title.
-        description:
-          path: $.description
-          type: string
-          description: Short description of the page.
-        extract:
-          path: $.extract
-          type: string
-          description: Plain-text summary.
-        url:
-          path: $.content_urls.desktop.page
-          type: string
-          description: Link to the page.
-  - id: search
-    name: Search pages
-    description: Search Wikipedia page titles and text.
-    effect: read
-    params:
-      query:
+        description: Page title.
+      description:
+        path: $.description
         type: string
-        required: true
-        description: What to search for.
-      limit:
-        type: integer
-        fill: user
-        default: 10
-        minimum: 1
-        maximum: 50
-        description: How many results to return (1 to 50).
-    request:
-      method: GET
-      url: https://en.wikipedia.org/w/api.php
-      query:
-        action: query
-        list: search
-        format: json
-        srsearch: "{query}"
-        srlimit: "{limit}"
-      headers:
-        User-Agent: NortPole/1.0
-        Accept: application/json
-    response:
-      outputs:
-        results:
-          path: $.query.search[*]
-          type: array
-          description: Matching pages, each with a title and a text snippet.
+        description: Short description.
+      extract:
+        path: $.extract
+        type: string
+        description: Plain-text summary.
+      url:
+        path: $.content_urls.desktop.page
+        type: string
+        description: Link to the page.
+- id: search
+  name: Search pages
+  description: Search Wikipedia page titles and text.
+  effect: read
+  params:
+    query:
+      type: string
+      description: What to search for.
+      required: true
+    limit:
+      type: integer
+      description: How many results to return (1 to 50).
+      fill: user
+      default: 10
+      minimum: 1
+      maximum: 50
+  request:
+    method: GET
+    url: https://en.wikipedia.org/w/api.php
+    headers: *id001
+    query:
+      action: query
+      list: search
+      format: json
+      srsearch: '{query}'
+      srlimit: '{limit}'
+  response:
+    outputs:
+      results:
+        path: $.query.search[*]
+        type: array
+        description: Matches, each with a title and a snippet.

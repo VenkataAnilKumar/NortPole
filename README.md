@@ -40,7 +40,9 @@ One place to ask, search and get work done over your company's knowledge:
 | | Signed packs and Studio | Workflows ship as signed packs that run only on models they passed evaluation on; administrators build their own in Studio. |
 | | Workflow agents | Agents plan their searches first, run as you over the sources you can open, and can never send anything. |
 | | Scheduled workflows | Recurring runs prepare the plan and wait in your Inbox; nothing continues without your yes, and a schedule pauses itself if plans go unaccepted. |
-| | Inbox and Discover | One place for plans to approve, drafts to review and updates; see what connectors, skills and tools exist and request them. |
+| | Inbox | One place for plans to approve, drafts to review and updates. |
+| | Sources catalog | Connectors, Plugins, Skills and Discover: search a catalog of services, install one or sign in with your own account, and request what an administrator has not allowed yet. Each integration is declared as signed data with exact hosts; writes always start as "needs approval". |
+| | Your own skills | Add instructions your chats follow, or add the ones an integration suggests with one click. |
 | **Insight** | Quality and cost | Draft and approval rates, unsupported-claim share, evaluation results per model, scheduled runs, and tokens and estimated cost per route. |
 
 <table>
@@ -53,7 +55,7 @@ One place to ask, search and get work done over your company's knowledge:
 <td width="50%" valign="top"><img src="docs/assets/readme/scheduled.png" alt="Scheduled workflows: recurring runs that prepare a plan and wait for your yes."><br><b>Scheduled workflows</b>: recurring runs that prepare a plan and wait for your yes.</td>
 </tr>
 <tr>
-<td width="50%" valign="top"><img src="docs/assets/readme/discover.png" alt="Discover: what the workspace supports but has not turned on, with a Request button."><br><b>Discover</b>: what the workspace supports but has not turned on, with a Request button.</td>
+<td width="50%" valign="top"><img src="docs/assets/readme/discover.png" alt="Discover: the catalog of integrations to install or connect, grouped by category."><br><b>Discover</b>: what the workspace supports but has not turned on, with a Request button.</td>
 <td width="50%" valign="top"><img src="docs/assets/readme/quality.png" alt="Quality and cost: runs, drafts, approvals and unsupported claims per pack."><br><b>Quality and cost</b>: runs, drafts, approvals and unsupported claims per pack.</td>
 </tr>
 </table>
@@ -79,7 +81,7 @@ NortPole starts from the other end:
 - **Let an agent prepare the work.** Workflow agents plan their searches first and run only what you accept — as you, over the sources you can open, and they can never send anything.
 - **Put work on a schedule.** A weekly check runs on its own, prepares the plan, and waits in your Inbox. Nothing runs further without your yes, and a schedule pauses itself if its plans keep going unaccepted.
 - **Keep track in one Inbox.** *To approve*, *To review* and *Updates* — plans waiting for you, drafts ready to check, decisions on your requests.
-- **Discover and request.** See which connectors, skills and tools exist but are not switched on, and ask for them. An administrator decides.
+- **Install and connect.** Search the catalog, install an integration and connect your own account (sign in, or paste a token); ask for what an administrator has not allowed yet. Add your own skills, or the ones an integration suggests.
 
 ![Start a workflow: ready-made, versioned workflows grouped in packs](docs/assets/readme/workflows.png)
 
@@ -89,6 +91,7 @@ NortPole starts from the other end:
 
 - **Model routes and data classes.** Mark each model as local, private or cloud; decide which data may go where; turn on redaction per route. A blocked request fails before anything is sent.
 - **Signed workflow packs.** Workflows ship as signed, versioned packs that run only on models they passed evaluation on, with review rules and house style built in. A Studio form lets administrators build their own.
+- **Integrations.** Allow, require approval for, or block each integration or whole category; see how many people installed and connected each; opening write actions to everyone needs a confirmation. Stored secrets are sealed with your key.
 - **Tools and outside systems.** A tool catalog decides what chat assistants may use; outside tools (MCP, OpenAPI) are off until approved, their definition is pinned, and a changed definition stops the tool until approved again.
 - **Approvals in one place.** Sends that need a second approver, changes that need a second administrator, requests from people, tool definitions.
 - **Scheduling, retention and audit.** Who may schedule; how long records are kept and a legal hold; audit-log integrity checks, a head you can save off the machine and compare later, and export.
@@ -128,11 +131,11 @@ flowchart LR
 
 ## Status and roadmap
 
-**Built and tested (sandbox, local models):** workspace and admin console, reviewed workflows with plans and approvals, workflow agents, scheduled workflows, signed packs and Studio, route policy and redaction, tool catalog and outside-tool approval, second approver and two-administrator rules, audit log with integrity checks, retention and legal hold, Discover and requests, Inbox, Quality, and Google Drive permission sync.
+**Built and tested (sandbox, local models):** workspace and admin console, reviewed workflows with plans and approvals, workflow agents, scheduled workflows, signed packs and Studio, route policy and redaction, tool catalog and outside-tool approval, second approver and two-administrator rules, audit log with integrity checks, retention and legal hold, Discover and requests, Inbox, Quality, and Google Drive permission sync, an integrations catalog with per-person accounts, approvals, sealed secrets, OAuth sign-in (fake provider only) and personal skills.
 
 **Next:** a live Google Drive pilot with a search index, knowledge domains (open or restricted areas with verified documents), event-triggered workflows, and hardening for a first customer deployment (identity provider and MFA, hosting, a cloud model route).
 
-**Not yet:** a production deployment, single sign-on, and a third-party security review. All results so far come from sandbox testing.
+**Not yet:** a production deployment, single sign-on, and a third-party security review. All results so far come from sandbox testing. The integration definitions (13 so far) were written from each vendor's published API and are **not yet verified** against the vendors or called with real accounts, OAuth sign-in has only been tried against a fake provider, and an assistant cannot yet call an installed integration from chat.
 
 The full, honest list lives in the [pending-work checklist](docs/07-implementation/NortPole_Pending-Work-Checklist.md), and what each piece checked is in the [review log](docs/REVIEW.md).
 

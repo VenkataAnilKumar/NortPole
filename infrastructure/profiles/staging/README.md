@@ -37,6 +37,17 @@ ENCRYPTION_KEY_SECRET=<new key> python -m nortpole.db.rotate_encryption_key --dr
 ENCRYPTION_KEY_SECRET=<new key> python -m nortpole.db.rotate_encryption_key [--old-key <old key>]
 ```
 
+## Signing in to services (OAuth)
+
+People can sign in to an integration with their own account instead of pasting a token. For each service you want, register an OAuth app with that service and put its client id and secret in `oauth.env` next to the compose file (the file is optional and must stay out of git):
+
+```
+NORTPOLE_OAUTH_GITHUB_CLIENT_ID=...
+NORTPOLE_OAUTH_GITHUB_CLIENT_SECRET=...
+```
+
+The name is the provider in capitals with dashes as underscores: `GITHUB`, `GOOGLE_DRIVE`, `GOOGLE_EMAIL` (Gmail), `GOOGLE_CALENDAR`, `HUBSPOT`, `DROPBOX`, `SPOTIFY`, `WEBFLOW`, `NOTION`, `AIRTABLE`. Register the redirect address `<WEB_DOMAIN>/app/sources/oauth` with each service, where `WEB_DOMAIN` is the address people use (set it in the environment; the default is `http://localhost:3000`). A service with no client id and secret keeps the paste-a-token form. Slack and Stripe do not use this flow here. Tokens are sealed with `ENCRYPTION_KEY_SECRET` and renewed automatically when a service gives a refresh token. The service addresses were written from the services' public descriptions and have not been tried against the live services.
+
 ## Backup and restore
 
 In this profile PostgreSQL holds everything that must survive: accounts, drafts, packs, settings, the audit log and uploaded files. Redis is rebuilt on start. The search index (retrieval overlay) is not backed up; it is rebuilt by re-indexing.

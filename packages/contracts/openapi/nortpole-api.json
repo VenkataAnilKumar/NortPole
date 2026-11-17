@@ -1218,6 +1218,42 @@
         "title": "IntegrationInstallBody",
         "type": "object"
       },
+      "IntegrationOAuthComplete": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Code",
+            "type": "string"
+          },
+          "state": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "State",
+            "type": "string"
+          }
+        },
+        "required": [
+          "state",
+          "code"
+        ],
+        "title": "IntegrationOAuthComplete",
+        "type": "object"
+      },
+      "IntegrationOAuthStart": {
+        "properties": {
+          "authorize_url": {
+            "title": "Authorize Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "authorize_url"
+        ],
+        "title": "IntegrationOAuthStart",
+        "type": "object"
+      },
       "IntegrationPolicyBody": {
         "additionalProperties": false,
         "properties": {
@@ -1338,6 +1374,29 @@
         "title": "IntegrationPolicyView",
         "type": "object"
       },
+      "IntegrationSkillView": {
+        "properties": {
+          "content": {
+            "title": "Content",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "content"
+        ],
+        "title": "IntegrationSkillView",
+        "type": "object"
+      },
       "IntegrationView": {
         "properties": {
           "actions": {
@@ -1346,6 +1405,10 @@
             },
             "title": "Actions",
             "type": "array"
+          },
+          "auth_mode": {
+            "title": "Auth Mode",
+            "type": "string"
           },
           "category": {
             "title": "Category",
@@ -1404,9 +1467,20 @@
             "title": "Needs Account",
             "type": "boolean"
           },
+          "oauth_available": {
+            "title": "Oauth Available",
+            "type": "boolean"
+          },
           "policy": {
             "title": "Policy",
             "type": "string"
+          },
+          "skills": {
+            "items": {
+              "$ref": "#/components/schemas/IntegrationSkillView"
+            },
+            "title": "Skills",
+            "type": "array"
           },
           "state": {
             "title": "State",
@@ -1432,8 +1506,11 @@
           "hosts",
           "data_classes",
           "needs_account",
+          "auth_mode",
+          "oauth_available",
           "has_writes",
           "actions",
+          "skills",
           "state",
           "policy",
           "installed_version",
@@ -8520,6 +8597,71 @@
         "summary": "Catalog"
       }
     },
+    "/integrations/oauth/complete": {
+      "post": {
+        "description": "Finish signing in: the web page the service sent the person back to hands over the code and the state. The state\nmust be one this person started; the account is connected and returned like any other connect.",
+        "operationId": "oauth_complete",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "tenant_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Tenant Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IntegrationOAuthComplete"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntegrationView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "APIKeyCookie": []
+          },
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Oauth Complete"
+      }
+    },
     "/integrations/{integration_id}": {
       "delete": {
         "operationId": "remove",
@@ -8849,6 +8991,70 @@
           }
         ],
         "summary": "Install"
+      }
+    },
+    "/integrations/{integration_id}/oauth/start": {
+      "post": {
+        "description": "The address to send the person to, to sign in with their own account. They must have installed it first.",
+        "operationId": "oauth_start",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "integration_id",
+            "required": true,
+            "schema": {
+              "title": "Integration Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tenant_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Tenant Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntegrationOAuthStart"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "APIKeyCookie": []
+          },
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Oauth Start"
       }
     },
     "/packs": {

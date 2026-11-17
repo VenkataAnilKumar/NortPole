@@ -4,6 +4,7 @@ import Link from "next/link";
 import useSWR from "swr";
 import { errorHandlingFetcher } from "@/lib/fetcher";
 import { card, h1Class, pageClass, titleCase } from "@/sections/sources/shared";
+import MySkills from "@/sections/sources/MySkills";
 
 interface Rule { severity: "block" | "warn"; message: string }
 interface GuideRef { id: string; name: string; description: string }
@@ -33,10 +34,12 @@ export default function SkillsPage() {
       <header className="flex flex-col gap-1">
         <h1 className={h1Class}>Skills</h1>
         <p className="text-sm text-text-03">
-          What the installed packs know: the guides a draft follows, the rules it is checked against and the agents that prepare it. To use one,{" "}
+          Your own skills, and what the installed packs know: the guides a draft follows, the rules it is checked against and the agents that prepare it. To use a pack,{" "}
           <Link href="/app/workflows" className="font-semibold text-text-05 underline">start a workflow</Link>. Administrators install and update packs.
         </p>
       </header>
+      <MySkills />
+      <h2 className="text-xl font-semibold text-text-05">Skills from packs</h2>
       {isLoading && <p className="text-sm text-text-03">Loading skills…</p>}
       {error && <p role="alert" className="text-sm text-status-text-error-05">Skills could not be loaded. Try again in a moment.</p>}
       {data && packs.length === 0 && (

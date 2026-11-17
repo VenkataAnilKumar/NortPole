@@ -1,0 +1,93 @@
+# Gmail: read-only actions. Written for NortPole from the vendor's published API reference; not yet checked against the current documentation or called against the live service.
+schema_version: 1
+id: gmail
+name: Gmail
+version: 1.0.0
+description: Search and read Gmail messages with your own Google account.
+kind: connector
+group: horizontal
+category: product
+auth:
+  mode: oauth
+  provider: google-email
+  scopes:
+  - https://www.googleapis.com/auth/gmail.readonly
+hosts:
+- gmail.googleapis.com
+data_classes:
+- confidential
+- restricted
+policy_default: needs_approval
+actions:
+- id: search_messages
+  name: Search messages
+  description: Search your mailbox. Use q for Gmail's search syntax.
+  effect: read
+  params:
+    q:
+      type: string
+      description: Gmail search query, for example from:alex is:unread.
+    maxResults:
+      type: integer
+      description: Messages to return (1 to 100).
+      minimum: 1
+      maximum: 100
+      default: 10
+    pageToken:
+      type: string
+      description: Token from a previous response.
+  request:
+    method: GET
+    url: https://gmail.googleapis.com/gmail/v1/users/me/messages
+    query:
+      q: '{q}'
+      maxResults: '{maxResults}'
+      pageToken: '{pageToken}'
+    headers: &id001
+      Authorization: Bearer {credential.access_token}
+  response:
+    outputs:
+      messages:
+        path: $.messages[*]
+        type: array
+        description: Matches, each with id and threadId. Use Get message for the content.
+      next_page_token:
+        path: $.nextPageToken
+        type: string
+        description: Token for the next page.
+- id: get_message
+  name: Get message
+  description: Read one message's headers and snippet by ID.
+  effect: read
+  params:
+    messageId:
+      type: string
+      description: The message ID.
+      required: true
+  request:
+    method: GET
+    url: https://gmail.googleapis.com/gmail/v1/users/me/messages/{messageId}
+    query:
+      format: metadata
+      metadataHeaders: Subject
+    headers: *id001
+  response:
+    outputs:
+      snippet:
+        path: $.snippet
+        type: string
+        description: Short preview of the text.
+      payload:
+        path: $.payload
+        type: object
+        description: Headers of the message, including Subject.
+      labelIds:
+        path: $.labelIds
+        type: array
+        description: Labels on the message.
+skills:
+- name: gmail-inbox-triage
+  description: Find the messages that need a reply and draft nothing without asking.
+  content: 'When asked to triage email, search recent unread messages, read the headers and snippets, and list: messages that
+    need a reply today, ones that are only informational, and anything that looks urgent or from a customer. Offer to draft
+    replies, and do not send anything.'

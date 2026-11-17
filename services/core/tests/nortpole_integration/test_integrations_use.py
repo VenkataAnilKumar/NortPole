@@ -11,7 +11,7 @@ from nortpole.db.engine.sql_engine import get_session_with_current_tenant
 from nortpole.db.models import User
 from nortpole.governance.route_policy.audit import NortPoleAuditEvent
 from nortpole.knowledge.source_requests.models import NortPoleSourceRequest
-from nortpole.work.integrations import policy, registry, secrets, service
+from nortpole.work.integrations import oauth, policy, registry, secrets, service
 from nortpole.work.integrations.models import NortPoleIntegrationUse
 from nortpole.work.integrations.service import IntegrationAccessError
 from tests.nortpole_integration.test_tasks_flow import _up
@@ -215,3 +215,53 @@ def test_a_changed_key_means_connect_again_not_a_crash(world, monkeypatch) -> No
         monkeypatch.setenv(secrets.ENV, secrets.generate_key())
         err = refused("not_connected", service.call, s, ann, "airtable", "list_bases", transport=fake({}))
         assert SECRET not in str(err)
+
+
+def test_an_expiring_sign_in_is_renewed_before_the_call_and_the_new_tokens_are_stored_sealed(world, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    import time
+
+    import httpx
+
+    monkeypatch.setenv("NORTPOLE_OAUTH_AIRTABLE_CLIENT_ID", "cid")
+    monkeypatch.setenv("NORTPOLE_OAUTH_AIRTABLE_CLIENT_SECRET", "csecret")
+    monkeypatch.setattr(oauth, "token_validate", lambda url: url)
+    renewals: list[str] = []
+
+    def token_endpoint(request: httpx.Request) -> httpx.Response:
+        renewals.append(request.content.decode())
+        return httpx.Response(200, json={"access_token": f"new-{SECRET}", "expires_in": 3600}, headers={"content-type": "application/json"})
+
+    monkeypatch.setattr(oauth, "token_transport", httpx.MockTransport(token_endpoint))
+    with get_session_with_current_tenant() as s:
+        ann = person(s, world, "ann")
+        s.add(NortPoleSourceRequest(kind="plugin", item_key="integration:airtable", item_name="Airtable", reason="", state="approved", requested_by_id=ann.id, requested_by_email=ann.email))
+        s.commit()
+        service.install(s, ann, "airtable")
+        service.connect(s, ann, "airtable", {"access_token": f"old-{SECRET}", "refresh_token": f"ref-{SECRET}", "expires_at": int(time.time()) + 5})
+        transport = fake({"bases": []})
+        service.call(s, ann, "airtable", "list_bases", transport=transport)
+        assert transport.seen[0].headers["Authorization"] == f"Bearer new-{SECRET}", "the call used the renewed token"  # type: ignore[attr-defined]
+        assert len(renewals) == 1 and "grant_type=refresh_token" in renewals[0]
+        raw = s.execute(text("select credential from nortpole_integration_use where user_id = :u and integration_id = 'airtable'"), {"u": ann.id}).scalar()
+        assert raw is not None and SECRET not in raw, "the renewed tokens are stored sealed"
+        service.call(s, ann, "airtable", "list_bases", transport=fake({"bases": []}))
+        assert len(renewals) == 1, "a fresh token is not renewed again"
+
+
+def test_a_sign_in_that_cannot_be_renewed_says_to_connect_again_and_leaks_nothing(world, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    import time
+
+    import httpx
+
+    monkeypatch.setenv("NORTPOLE_OAUTH_AIRTABLE_CLIENT_ID", "cid")
+    monkeypatch.setenv("NORTPOLE_OAUTH_AIRTABLE_CLIENT_SECRET", "csecret")
+    monkeypatch.setattr(oauth, "token_validate", lambda url: url)
+    monkeypatch.setattr(oauth, "token_transport", httpx.MockTransport(lambda r: httpx.Response(400, json={"error": "invalid_grant"})))
+    with get_session_with_current_tenant() as s:
+        ann = person(s, world, "ann")
+        s.add(NortPoleSourceRequest(kind="plugin", item_key="integration:airtable", item_name="Airtable", reason="", state="approved", requested_by_id=ann.id, requested_by_email=ann.email))
+        s.commit()
+        service.install(s, ann, "airtable")
+        service.connect(s, ann, "airtable", {"access_token": f"old-{SECRET}", "refresh_token": f"ref-{SECRET}", "expires_at": int(time.time()) - 10})
+        err = refused("not_connected", service.call, s, ann, "airtable", "list_bases", transport=fake({}))
+        assert "Connect it again" in str(err) and SECRET not in str(err)

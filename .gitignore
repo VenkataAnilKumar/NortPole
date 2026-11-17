@@ -18,3 +18,5 @@ celerybeat-schedule*
 # Local backups and release records written by infrastructure/profiles/staging scripts
 infrastructure/profiles/staging/backups/
 infrastructure/profiles/staging/release-*.json
+infrastructure/profiles/staging/oauth.env
+sbom.cdx.json

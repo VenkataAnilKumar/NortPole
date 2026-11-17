@@ -1,0 +1,208 @@
+# Webflow: written for NortPole from the vendor's published API reference; not yet checked against the live service.
+schema_version: 1
+id: webflow
+name: Webflow
+version: 1.0.0
+description: Read and edit Webflow sites and CMS content with your own Webflow account.
+kind: plugin
+group: horizontal
+category: gtm
+auth:
+  mode: oauth
+  provider: webflow
+  scopes:
+  - sites:read
+  - cms:read
+  - cms:write
+hosts:
+- api.webflow.com
+data_classes:
+- internal
+policy_default: needs_approval
+actions:
+- id: list_sites
+  name: List sites
+  description: List the sites you can open.
+  effect: read
+  request:
+    method: GET
+    url: https://api.webflow.com/v2/sites
+    headers: &id001
+      Authorization: Bearer {credential.access_token}
+  response:
+    outputs:
+      sites:
+        path: $.sites[*]
+        type: array
+        description: Sites with id, displayName and shortName.
+- id: list_collections
+  name: List collections
+  description: List the CMS collections of a site.
+  effect: read
+  params:
+    siteId:
+      type: string
+      description: Site ID.
+      required: true
+  request:
+    method: GET
+    url: https://api.webflow.com/v2/sites/{siteId}/collections
+    headers: *id001
+  response:
+    outputs:
+      collections:
+        path: $.collections[*]
+        type: array
+        description: Collections with id, displayName and slug.
+- id: list_items
+  name: List items
+  description: List items in a CMS collection.
+  effect: read
+  params:
+    collectionId:
+      type: string
+      description: Collection ID.
+      required: true
+    limit:
+      type: integer
+      description: Items per page (1 to 100).
+      minimum: 1
+      maximum: 100
+      default: 25
+    offset:
+      type: integer
+      description: How many items to skip.
+      minimum: 0
+      default: 0
+  request:
+    method: GET
+    url: https://api.webflow.com/v2/collections/{collectionId}/items
+    headers: *id001
+    query:
+      limit: '{limit}'
+      offset: '{offset}'
+  response:
+    outputs:
+      items:
+        path: $.items[*]
+        type: array
+        description: Items with id and fieldData.
+      total:
+        path: $.pagination.total
+        type: integer
+        description: Total items.
+- id: get_item
+  name: Get item
+  description: Get one CMS item.
+  effect: read
+  params:
+    collectionId:
+      type: string
+      description: Collection ID.
+      required: true
+    itemId:
+      type: string
+      description: Item ID.
+      required: true
+  request:
+    method: GET
+    url: https://api.webflow.com/v2/collections/{collectionId}/items/{itemId}
+    headers: *id001
+  response:
+    outputs:
+      id:
+        path: $.id
+        type: string
+        description: Item ID.
+      fieldData:
+        path: $.fieldData
+        type: object
+        description: The item's fields.
+- id: create_item
+  name: Create item
+  description: Add an item to a CMS collection (as a draft).
+  effect: write
+  params:
+    collectionId:
+      type: string
+      description: Collection ID.
+      required: true
+    fieldData:
+      type: object
+      description: Field values by field slug; name and slug are required by most collections.
+      required: true
+  request:
+    method: POST
+    url: https://api.webflow.com/v2/collections/{collectionId}/items
+    headers: &id002
+      Authorization: Bearer {credential.access_token}
+      Content-Type: application/json
+    body:
+      isDraft: true
+      fieldData: '{fieldData}'
+  response:
+    outputs:
+      id:
+        path: $.id
+        type: string
+        description: New item ID.
+      fieldData:
+        path: $.fieldData
+        type: object
+        description: Saved fields.
+- id: update_item
+  name: Update item
+  description: Change fields of a CMS item.
+  effect: write
+  params:
+    collectionId:
+      type: string
+      description: Collection ID.
+      required: true
+    itemId:
+      type: string
+      description: Item ID.
+      required: true
+    fieldData:
+      type: object
+      description: Field values to change.
+      required: true
+  request:
+    method: PATCH
+    url: https://api.webflow.com/v2/collections/{collectionId}/items/{itemId}
+    headers: *id002
+    body:
+      fieldData: '{fieldData}'
+  response:
+    outputs:
+      id:
+        path: $.id
+        type: string
+        description: Item ID.
+      fieldData:
+        path: $.fieldData
+        type: object
+        description: Fields after the change.
+- id: delete_item
+  name: Delete item
+  description: Delete a CMS item.
+  effect: write
+  params:
+    collectionId:
+      type: string
+      description: Collection ID.
+      required: true
+    itemId:
+      type: string
+      description: Item ID.
+      required: true
+  request:
+    method: DELETE
+    url: https://api.webflow.com/v2/collections/{collectionId}/items/{itemId}
+    headers: *id001
+  response:
+    outputs:
+      status:
+        path: $.message
+        type: string
+        description: Message from Webflow, if any.

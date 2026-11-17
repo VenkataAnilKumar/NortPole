@@ -9,16 +9,12 @@ import { Button, SelectCard, Text, useCreateModal } from "@opal/components";
 import { usePinnedAgents } from "@/lib/agents/hooks";
 import { noProp } from "@/lib/utils";
 import { can } from "@/lib/permissions/resource-actions";
-import { useTierAtLeast } from "@/lib/tiers/hooks";
-import { Tier } from "@/lib/tiers/types";
 import {
   SvgActions,
-  SvgBarChart,
   SvgBubbleText,
   SvgEdit,
-  SvgPinned,
+  SvgStar,
   SvgShare,
-  SvgUser,
 } from "@opal/icons";
 import { useAppPosition } from "@/lib/navigation/hooks";
 import { ShareAgentModal } from "@/lib/agents/components/ShareAgentModal";
@@ -40,16 +36,16 @@ export interface AgentCardProps {
 // component per state would remount on every toggle.
 const PinnedContext = createContext(false);
 
-/** The upright pin, turned 45° clockwise (slanted) while unpinned. */
-function RotatingPinIcon({ className, ...props }: IconProps) {
+/** A star that fills when the agent is starred (pinned). */
+function StarIcon({ className, ...props }: IconProps) {
   const pinned = useContext(PinnedContext);
   return (
-    <SvgPinned
+    <SvgStar
       {...props}
       className={cn(
         className,
-        "transition-transform duration-200 ease-out motion-reduce:transition-none",
-        !pinned && "rotate-45"
+        "transition-colors duration-200 motion-reduce:transition-none",
+        pinned && "fill-current",
       )}
     />
   );
@@ -62,9 +58,8 @@ export function AgentCard({ agent, onView, viewing = false }: AgentCardProps) {
   const { pinnedAgents, togglePinnedAgent } = usePinnedAgents();
   const pinned = useMemo(
     () => pinnedAgents.some((pinnedAgent) => pinnedAgent.id === agent.id),
-    [agent.id, pinnedAgents]
+    [agent.id, pinnedAgents],
   );
-  const businessTier = useTierAtLeast(Tier.BUSINESS);
   const shareAgentModal = useCreateModal();
 
   // A failed pin write reverts the pin; say so rather than fail silently.
@@ -76,7 +71,7 @@ export function AgentCard({ agent, onView, viewing = false }: AgentCardProps) {
         toast.error(t("card.pinFailed.message"));
       }
     },
-    [togglePinnedAgent, agent, t]
+    [togglePinnedAgent, agent, t],
   );
 
   // Start chat and auto-pin unpinned agents to the sidebar
@@ -88,7 +83,7 @@ export function AgentCard({ agent, onView, viewing = false }: AgentCardProps) {
   const pinButton = (
     <PinnedContext.Provider value={pinned}>
       <Button
-        icon={RotatingPinIcon}
+        icon={StarIcon}
         prominence="tertiary"
         size="md"
         onClick={noProp(() => void setPinned(!pinned))}
@@ -114,55 +109,66 @@ export function AgentCard({ agent, onView, viewing = false }: AgentCardProps) {
       >
         <Hoverable.Root group="AgentCard" height="full">
           {/* The card has a fixed height; the footer sits at its bottom. */}
-          <Section justifyContent="between" alignItems="stretch" gap={0}>
+          <Section
+            justifyContent="between"
+            alignItems="stretch"
+            gap={0}
+            className="relative"
+          >
             <Section gap={1} padding={1} alignItems="stretch" height="fit">
               <ContentAction
                 font="main-content-emphasis"
                 icon={(props) => <AgentAvatar agent={agent} {...props} />}
                 title={agent.name}
+                description={`${t("card.by.label")} ${
+                  agent.owner?.email?.split("@")[0] || "NortPole"
+                }`}
                 titleMaxLines={1}
                 padding={1.5}
-                rightChildren={
-                  <Section
-                    flexDirection="row"
-                    width="fit"
-                    height="fit"
-                    gap={0}
-                    padding={1}
-                  >
-                    {can(agent, "edit") && (
-                      <Hoverable.Item group="AgentCard">
-                        <Button
-                          icon={SvgEdit}
-                          prominence="tertiary"
-                          size="md"
-                          onClick={noProp(() =>
-                            navigation.go(`/app/agents/edit/${agent.id}`)
-                          )}
-                          tooltip={t("card.edit.tooltip")}
-                        />
-                      </Hoverable.Item>
-                    )}
-                    {can(agent, "share") && (
-                      <Hoverable.Item group="AgentCard">
-                        <Button
-                          icon={SvgShare}
-                          prominence="tertiary"
-                          size="md"
-                          onClick={noProp(() => shareAgentModal.toggle(true))}
-                          tooltip={t("card.share.tooltip")}
-                        />
-                      </Hoverable.Item>
-                    )}
-                    {/* A pinned agent shows its pin at rest; an unpinned one only
+              />
+              <Section
+                className="absolute right-1 top-1"
+                flexDirection="row"
+                width="fit"
+                height="fit"
+                gap={0}
+                padding={1}
+              >
+                {/* Edit and share float over the title on hover, so the
+                        title keeps the full width at rest. */}
+                <div className="absolute right-11 top-2 flex flex-row rounded-08">
+                  {can(agent, "edit") && (
+                    <Hoverable.Item group="AgentCard">
+                      <Button
+                        icon={SvgEdit}
+                        prominence="tertiary"
+                        size="md"
+                        onClick={noProp(() =>
+                          navigation.go(`/app/agents/edit/${agent.id}`),
+                        )}
+                        tooltip={t("card.edit.tooltip")}
+                      />
+                    </Hoverable.Item>
+                  )}
+                  {can(agent, "share") && (
+                    <Hoverable.Item group="AgentCard">
+                      <Button
+                        icon={SvgShare}
+                        prominence="tertiary"
+                        size="md"
+                        onClick={noProp(() => shareAgentModal.toggle(true))}
+                        tooltip={t("card.share.tooltip")}
+                      />
+                    </Hoverable.Item>
+                  )}
+                </div>
+                {/* A pinned agent shows its pin at rest; an unpinned one only
                         offers the action on hover. One wrapper either way, so the pin
                         keeps its element and its rotation animates. */}
-                    <Hoverable.Item group="AgentCard" revealed={pinned}>
-                      {pinButton}
-                    </Hoverable.Item>
-                  </Section>
-                }
-              />
+                <Hoverable.Item group="AgentCard" revealed={pinned}>
+                  {pinButton}
+                </Hoverable.Item>
+              </Section>
               {agent.description && (
                 <div className="px-2">
                   <Text
@@ -191,12 +197,6 @@ export function AgentCard({ agent, onView, viewing = false }: AgentCardProps) {
                   the uneven padding sits on a plain wrapper. */}
               <div className="px-2 py-1">
                 <Section alignItems="stretch" width="auto" height="fit" gap={1}>
-                  <Content
-                    font="secondary-body"
-                    icon={SvgUser}
-                    title={agent.owner?.email || "NortPole"}
-                    titleColor="text-03"
-                  />
                   <Content
                     font="secondary-body"
                     icon={SvgActions}
