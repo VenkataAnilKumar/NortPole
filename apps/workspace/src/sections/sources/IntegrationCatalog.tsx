@@ -104,6 +104,7 @@ function Card({ item, req, busy, run }: {
             </li>
           ))}
           <li>Talks only to {item.hosts.join(", ")}. {item.needs_account ? "Uses your own account there." : "Needs no account."}</li>
+          {item.actions.some((a) => a.effect === "read") && <li>Once installed{item.needs_account ? " and connected" : ""}, your chats can use the actions that only read. Actions that change things are never offered to chat.</li>}
         </ul>
       </details>
       {item.skills.length > 0 && <SuggestedSkills item={item} />}

@@ -16,6 +16,10 @@ from nortpole.key_value_store.factory import get_kv_store
 from nortpole.key_value_store.interface import KvKeyNotFoundError
 from nortpole.work.integrations.manifest import CATEGORIES, SLUG, Integration
 
+from nortpole.utils.logger import setup_logger
+
+logger = setup_logger()
+
 KV_KEY = "nortpole_integration_policy"
 Answer = Literal["allowed", "needs_approval", "blocked"]
 
@@ -52,6 +56,7 @@ def load() -> PolicyConfig:
     except KvKeyNotFoundError:
         return PolicyConfig()
     except Exception:  # noqa: BLE001 - a damaged setting must not open anything up
+        logger.exception("The integration policy could not be read; blocking every integration until it can be")
         return PolicyConfig(categories={f"{g}/{c}": "blocked" for g, cs in CATEGORIES.items() for c in cs})
 
 

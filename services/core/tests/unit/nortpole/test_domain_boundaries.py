@@ -37,7 +37,7 @@ INHERITED_ENTRY_POINTS: dict[str, set[str]] = {
     "nortpole/access/access.py": {"nortpole.knowledge.knowledge_access"},
     "nortpole/background/celery/tasks/nortpole_retention/tasks.py": {"nortpole.governance.retention"},
     "nortpole/background/celery/tasks/nortpole_schedules/tasks.py": {"nortpole.work.workflow_schedules"},
-    "nortpole/chat/execution.py": {"nortpole.governance.tool_catalog"},
+    "nortpole/chat/execution.py": {"nortpole.governance.tool_catalog", "nortpole.work.integrations"},
     "nortpole/chat/process_message.py": {"nortpole.governance.route_policy"},
     "nortpole/connectors/edit_plan/state.py": {"nortpole.knowledge.knowledge_access"},
     "nortpole/db/connector_credential_pair.py": {"nortpole.knowledge.knowledge_access"},

@@ -58,6 +58,6 @@ administrator's Integrations page, not on the person's screens.
 - A service that reports errors inside a successful response (Slack) shows empty outputs, not a clear message.
 - OAuth endpoints are described for ten providers; Slack's two-token response and Stripe Connect are not handled, and
   there is no background renewal (a token is renewed when a call needs it).
-- Nothing in chat or workflows calls an integration yet: the route from a chat to `service.call` is not built.
+- Chat can call the **read** actions of integrations a person installed and connected (`chat_tools.py`, default chat only, up to 40 tools, results cut at 20,000 characters); **write actions are never offered to chat**, because chat has no step where a person approves one call. Workflows do not call integrations yet. A write from chat needs an approval step (the agent runtime has a before-call hook for it, but chat does not use it and the screen has no approve button yet).
 - The integrations in the repository were written from knowledge of each vendor's API and have not been checked
   against current documentation or called against a real service.
