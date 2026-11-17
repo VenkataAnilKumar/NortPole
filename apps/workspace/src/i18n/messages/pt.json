@@ -11233,6 +11233,9 @@
       },
       "viewStats": {
         "tooltip": "Ver estatísticas do agente"
+      },
+      "by": {
+        "label": "Por"
       }
     },
     "editor": {
@@ -11653,6 +11656,18 @@
         },
         "your": {
           "label": "Seus agentes"
+        },
+        "starred": {
+          "label": "Com estrela"
+        },
+        "mine": {
+          "label": "Meus agentes"
+        },
+        "shared": {
+          "label": "Compartilhados comigo"
+        },
+        "company": {
+          "label": "Agentes da empresa"
         }
       }
     },

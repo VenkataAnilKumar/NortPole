@@ -11233,6 +11233,9 @@
       },
       "viewStats": {
         "tooltip": "查看智能体统计"
+      },
+      "by": {
+        "label": "创建者"
       }
     },
     "editor": {
@@ -11653,6 +11656,18 @@
         },
         "your": {
           "label": "您的智能体"
+        },
+        "starred": {
+          "label": "已加星标"
+        },
+        "mine": {
+          "label": "我的智能体"
+        },
+        "shared": {
+          "label": "与我共享"
+        },
+        "company": {
+          "label": "公司智能体"
         }
       }
     },

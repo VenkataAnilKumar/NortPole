@@ -7,7 +7,7 @@ import { useUser } from "@/providers/UserProvider";
 import { hasPermission } from "@/lib/permissions/utils";
 import { Permission } from "@/lib/types";
 import { checkUserOwnsAgent } from "@/lib/agents/utils";
-import { useAgents } from "@/lib/agents/hooks";
+import { useAgents, usePinnedAgents } from "@/lib/agents/hooks";
 import { MinimalAgent } from "@/lib/agents/types";
 import { SettingsLayouts } from "@opal/layouts";
 import { GridSearchInput, NoItems, NoResults } from "@/lib/common/components";
@@ -18,7 +18,7 @@ import { SvgNortPoleOctagon, SvgPlus } from "@opal/icons";
 import { useAgentsFilters } from "@/sections/agents/AgentsFilters";
 
 interface AgentsSectionProps {
-  title: string;
+  title?: string;
   description?: string;
   agents: MinimalAgent[];
   /** The agent whose viewer is open, if any. */
@@ -37,16 +37,18 @@ function AgentsSection({
 
   return (
     <div className="flex flex-col gap-4">
-      <div>
-        <Text as="p" font="heading-section" color="text-05">
-          {title}
-        </Text>
-        <Text as="p" font="secondary-body" color="text-03">
-          {description ?? ""}
-        </Text>
-      </div>
-      {/* Every card is the same height: 8.5rem (136px). */}
-      <div className="w-full grid grid-cols-1 md:grid-cols-2 auto-rows-[8.5rem] gap-2">
+      {title && (
+        <div>
+          <Text as="p" font="heading-section" color="text-05">
+            {title}
+          </Text>
+          <Text as="p" font="secondary-body" color="text-03">
+            {description ?? ""}
+          </Text>
+        </div>
+      )}
+      {/* Every card is the same height: 9.5rem (152px). */}
+      <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 auto-rows-[9.5rem] gap-2">
         {agents
           .sort((a, b) => b.id - a.id)
           .map((agent) => (
@@ -90,11 +92,17 @@ export default function AgentsCatalogPage() {
     // After the dialog unmounts and its own focus handling runs.
     requestAnimationFrame(() => opener?.focus());
   }
-  const [activeTab, setActiveTab] = useState<"all" | "your">("all");
+  type AgentsTab = "starred" | "mine" | "shared" | "company";
+  const [activeTab, setActiveTab] = useState<AgentsTab>("company");
+  const { pinnedAgents } = usePinnedAgents();
+  const starredIds = useMemo(
+    () => new Set(pinnedAgents.map((a) => a.id)),
+    [pinnedAgents],
+  );
 
   const nonBuiltinAgents = useMemo(
     () => agents.filter((a) => !a.builtin_persona),
-    [agents]
+    [agents],
   );
 
   const { filtered: agentsFilteredByFilters, filterBar } =
@@ -106,24 +114,25 @@ export default function AgentsCatalogPage() {
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
       const labelMatches = agent.labels?.some((label) =>
-        label.name.toLowerCase().includes(searchQuery.toLowerCase())
+        label.name.toLowerCase().includes(searchQuery.toLowerCase()),
       );
 
+      const owned = checkUserOwnsAgent(user, agent);
       const mineFilter =
-        activeTab === "your" ? checkUserOwnsAgent(user, agent) : true;
+        activeTab === "starred"
+          ? starredIds.has(agent.id)
+          : activeTab === "mine"
+            ? owned
+            : activeTab === "shared"
+              ? !owned && !agent.is_public
+              : true;
 
       return (nameMatches || labelMatches) && mineFilter;
     });
-  }, [agentsFilteredByFilters, searchQuery, activeTab, user]);
+  }, [agentsFilteredByFilters, searchQuery, activeTab, user, starredIds]);
 
-  const featuredAgents = memoizedCurrentlyVisibleAgents.filter(
-    (agent) => agent.is_featured
-  );
-  const allAgents = memoizedCurrentlyVisibleAgents.filter(
-    (agent) => !agent.is_featured
-  );
-
-  const agentCount = featuredAgents.length + allAgents.length;
+  const allAgents = memoizedCurrentlyVisibleAgents;
+  const agentCount = allAgents.length;
 
   const search = useSearchableGrid({
     query: searchQuery,
@@ -174,24 +183,28 @@ export default function AgentsCatalogPage() {
             <div className="flex-1">
               <Tabs
                 value={activeTab}
-                onValueChange={(value) => setActiveTab(value as "all" | "your")}
+                onValueChange={(value) => setActiveTab(value as AgentsTab)}
               >
                 <Tabs.List>
-                  <Tabs.Trigger value="all">
-                    {t("navigation.tabs.all.label")}
-                  </Tabs.Trigger>
-                  <Tabs.Trigger value="your">
-                    {t("navigation.tabs.your.label")}
-                  </Tabs.Trigger>
+                  {(["starred", "mine", "shared", "company"] as const).map(
+                    (tab) => (
+                      <Tabs.Trigger key={tab} value={tab}>
+                        {t(`navigation.tabs.${tab}.label`)}
+                      </Tabs.Trigger>
+                    ),
+                  )}
                 </Tabs.List>
                 {/* The list below is filtered by these tabs; each tab gets a panel so its aria-controls points at
                     something real. The panel only names what the list shows. */}
-                <Tabs.Content value="all" keepMounted>
-                  <span className="sr-only">{t("navigation.tabs.all.label")}</span>
-                </Tabs.Content>
-                <Tabs.Content value="your" keepMounted>
-                  <span className="sr-only">{t("navigation.tabs.your.label")}</span>
-                </Tabs.Content>
+                {(["starred", "mine", "shared", "company"] as const).map(
+                  (tab) => (
+                    <Tabs.Content key={tab} value={tab} keepMounted>
+                      <span className="sr-only">
+                        {t(`navigation.tabs.${tab}.label`)}
+                      </span>
+                    </Tabs.Content>
+                  ),
+                )}
               </Tabs>
             </div>
           </div>
@@ -220,14 +233,6 @@ export default function AgentsCatalogPage() {
           // `contents`: a box for the grid navigation that adds no layout.
           <div ref={search.gridRef} className="contents">
             <AgentsSection
-              title={t("navigation.sections.featured.title")}
-              description={t("navigation.sections.featured.description")}
-              agents={featuredAgents}
-              viewedAgentId={viewedAgentId}
-              onView={openViewer}
-            />
-            <AgentsSection
-              title={t("navigation.sections.all.title")}
               agents={allAgents}
               viewedAgentId={viewedAgentId}
               onView={openViewer}

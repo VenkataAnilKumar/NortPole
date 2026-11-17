@@ -11233,6 +11233,9 @@
       },
       "viewStats": {
         "tooltip": "View Agent Stats"
+      },
+      "by": {
+        "label": "By"
       }
     },
     "editor": {
@@ -11653,6 +11656,18 @@
         },
         "your": {
           "label": "Your Agents"
+        },
+        "starred": {
+          "label": "Starred"
+        },
+        "mine": {
+          "label": "My agents"
+        },
+        "shared": {
+          "label": "Shared with me"
+        },
+        "company": {
+          "label": "Company agents"
         }
       }
     },
