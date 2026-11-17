@@ -155,8 +155,8 @@ function Row({ item, req, busy, run }: {
   const sub = `${KIND_LABEL[item.kind]} · ${categoryLabel(item.category)}`;
   const status = item.state === "installed" ? "Installed" : item.state === "connected" ? "Connected" : item.state === "blocked" ? "Blocked" : null;
   return (
-    <li className="border-b border-border-01 last:border-b-0">
-      <div className="group relative flex items-center gap-3 rounded-xl px-2 py-3 hover:bg-background-tint-02">
+    <li className="rounded-2xl border border-border-01 bg-background-neutral-00/60">
+      <div className="group relative flex items-center gap-3 rounded-2xl px-3 py-3 hover:bg-background-tint-02">
         <button type="button" aria-expanded={open} aria-label={`${item.name}, ${sub}${status ? `, ${status}` : ""}`} onClick={() => setOpen(!open)} className="flex min-h-11 min-w-0 flex-1 items-center gap-3 text-left">
           <Tile name={item.name} />
           <span className="flex min-w-0 flex-col">
@@ -168,8 +168,11 @@ function Row({ item, req, busy, run }: {
             <span className="truncate text-xs text-text-03">{sub}{status ? ` · ${status}` : ""}</span>
           </span>
         </button>
+        {(item.state === "installed" || item.state === "connected") && (
+          <svg aria-label={status ?? ""} role="img" viewBox="0 0 16 16" className="mr-2 size-5 shrink-0 text-text-03" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="m3.5 8.5 3 3 6-6.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        )}
         {item.state === "available" && (
-          <button type="button" disabled={busy} aria-label={`Install ${item.name} quickly`} onClick={() => run(async () => { await send("POST", `${CATALOG_URL}/${item.id}/install`, {}); return `${item.name} installed${item.needs_account ? ". Open it to connect your account." : "."}`; })} className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-background-neutral-02 text-xl text-text-05 opacity-100 transition-opacity disabled:opacity-50 sm:opacity-0 sm:group-hover:opacity-100 sm:focus-visible:opacity-100">+</button>
+          <button type="button" disabled={busy} aria-label={`Install ${item.name} quickly`} onClick={() => run(async () => { await send("POST", `${CATALOG_URL}/${item.id}/install`, {}); return `${item.name} installed${item.needs_account ? ". Open it to connect your account." : "."}`; })} className="flex size-9 shrink-0 items-center justify-center rounded-lg text-xl text-text-05 border border-border-02 disabled:opacity-50">+</button>
         )}
       </div>
       {open && <div className="px-2 pb-3"><Card item={item} req={req} busy={busy} run={run} /></div>}
@@ -242,6 +245,14 @@ export default function IntegrationCatalog() {
             </button>
           ))}
         </div>
+        <div role="group" aria-label="Category" className="flex flex-wrap gap-1" data-testid="catalog-categories">
+          <button type="button" aria-pressed={category === "all"} className={`min-h-11 rounded-xl px-3 text-sm ${category === "all" ? "bg-background-neutral-02 font-semibold text-text-05" : "text-text-03 hover:text-text-05"}`} onClick={() => setCategory("all")}>All categories</button>
+          {categories.map(([c, n]) => (
+            <button key={c} type="button" aria-pressed={category === c} className={`min-h-11 rounded-xl px-3 text-sm ${category === c ? "bg-background-neutral-02 font-semibold text-text-05" : "text-text-03 hover:text-text-05"}`} onClick={() => setCategory(c)}>
+              {categoryLabel(c)} <span className="text-xs opacity-70">{n}</span>
+            </button>
+          ))}
+        </div>
       </div>
       <p role={msg?.ok === false ? "alert" : "status"} className={`min-h-5 text-sm ${msg?.ok === false ? "text-status-text-error-05" : "text-text-05"}`} data-testid="integration-message">{msg?.text ?? ""}</p>
       {catalog.isLoading && <p className="text-sm text-text-03">Loading the catalog…</p>}
@@ -257,7 +268,7 @@ export default function IntegrationCatalog() {
             <h3 className="font-[family-name:var(--font-serif)] text-2xl font-medium text-text-05">
               {GROUP_LABEL[g]} <span className="text-sm font-normal text-text-03">{g === "horizontal" ? "for any team" : "added with an industry pack"}</span>
             </h3>
-            <ul className="grid gap-x-8 md:grid-cols-2">
+            <ul className="grid gap-3 md:grid-cols-2">
               {inGroup.map((i) => (
                 <Row key={i.id} item={i} req={reqFor(i.id)} busy={busy} run={run} />
               ))}
@@ -265,21 +276,6 @@ export default function IntegrationCatalog() {
           </div>
         );
       })}
-      {categories.length > 0 && (
-        <div className="flex flex-col gap-2" data-testid="catalog-categories">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-text-05">Categories</h3>
-            {category !== "all" && <button type="button" className="min-h-11 text-sm font-medium text-text-04 underline" onClick={() => setCategory("all")}>Show all</button>}
-          </div>
-          <div role="group" aria-label="Category" className="grid grid-cols-2 gap-1 sm:grid-cols-3 lg:grid-cols-4">
-            {categories.map(([c, n]) => (
-              <button key={c} type="button" aria-pressed={category === c} className={`flex min-h-11 items-center justify-between gap-2 rounded-lg px-2 text-left text-sm ${category === c ? "bg-background-neutral-02 font-semibold text-text-05" : "text-text-04 hover:bg-background-tint-02"}`} onClick={() => { setCategory(category === c ? "all" : c); }}>
-                <span className="truncate">{categoryLabel(c)}</span><span className="text-xs text-text-03">{n}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
     </section>
   );
 }
