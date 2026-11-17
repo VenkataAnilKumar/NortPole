@@ -31,7 +31,9 @@ const input = "min-h-11 w-full rounded-xl border border-border-02 bg-background-
 const primary = "min-h-11 rounded-xl bg-text-05 px-5 text-sm font-semibold text-background-neutral-00 disabled:opacity-50";
 const secondary = "min-h-11 rounded-xl border border-border-02 px-4 text-sm font-semibold text-text-05 disabled:opacity-50";
 
-async function send(url: string, method: string, body: unknown): Promise<void> {
+const HELD = "This change was not applied. It waits for a second administrator to approve it (Admin > Approvals).";
+
+async function send(url: string, method: string, body: unknown): Promise<string | null> {
   const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
   if (!res.ok) {
     let detail = "";
@@ -42,6 +44,7 @@ async function send(url: string, method: string, body: unknown): Promise<void> {
     }
     throw new Error(typeof detail === "string" && detail ? detail : `The change could not be saved (HTTP ${res.status}).`);
   }
+  return res.status === 202 ? HELD : null;
 }
 
 function ClassPicker({ value, onChange }: { value: string[]; onChange: (v: string[]) => void }) {
@@ -79,11 +82,12 @@ export default function ActionTargetsPage() {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
-  const run = async (fn: () => Promise<void>) => {
+  const run = async (fn: () => Promise<string | null | void>) => {
     setBusy(true);
     setMessage(null);
     try {
-      await fn();
+      const held = await fn();
+      if (held) setMessage(held);
       await mutate();
     } catch (e) {
       setMessage(e instanceof Error ? e.message : "The change could not be saved.");
@@ -133,7 +137,7 @@ export default function ActionTargetsPage() {
             <input type="checkbox" className="h-4 w-4" checked={second} onChange={(e) => setSecond(e.target.checked)} />
             A second person must approve before anything is sent here
           </label>
-          {message && <p role="alert" className="text-sm text-status-text-error-05">{message}</p>}
+          {message && <p role={message === HELD ? "status" : "alert"} className={`text-sm ${message === HELD ? "text-text-05" : "text-status-text-error-05"}`}>{message}</p>}
           <div>
             <button
               type="button"
@@ -141,11 +145,12 @@ export default function ActionTargetsPage() {
               disabled={busy || !name.trim() || !url.trim()}
               onClick={() =>
                 run(async () => {
-                  await send(URL, "POST", { name, kind, tier, url, allowed_data_classes: classes, enabled: true, require_second_approval: second });
+                  const held = await send(URL, "POST", { name, kind, tier, url, allowed_data_classes: classes, enabled: true, require_second_approval: second });
                   setSecond(false);
                   setName("");
                   setUrl("");
                   setClasses([]);
+                  return held;
                 })
               }
             >
