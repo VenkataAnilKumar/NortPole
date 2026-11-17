@@ -7,7 +7,6 @@ import {
   SvgClock,
   SvgBlocks,
   SvgActivity,
-  SvgArrowExchange,
   SvgAudio,
   SvgShareWebhook,
   SvgBarChart,

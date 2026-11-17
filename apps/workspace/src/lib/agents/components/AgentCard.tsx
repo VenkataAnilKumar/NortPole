@@ -9,11 +9,8 @@ import { Button, SelectCard, Text, useCreateModal } from "@opal/components";
 import { usePinnedAgents } from "@/lib/agents/hooks";
 import { noProp } from "@/lib/utils";
 import { can } from "@/lib/permissions/resource-actions";
-import { useTierAtLeast } from "@/lib/tiers/hooks";
-import { Tier } from "@/lib/tiers/types";
 import {
   SvgActions,
-  SvgBarChart,
   SvgBubbleText,
   SvgEdit,
   SvgStar,
@@ -63,7 +60,6 @@ export function AgentCard({ agent, onView, viewing = false }: AgentCardProps) {
     () => pinnedAgents.some((pinnedAgent) => pinnedAgent.id === agent.id),
     [agent.id, pinnedAgents],
   );
-  const businessTier = useTierAtLeast(Tier.BUSINESS);
   const shareAgentModal = useCreateModal();
 
   // A failed pin write reverts the pin; say so rather than fail silently.

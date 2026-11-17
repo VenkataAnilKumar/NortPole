@@ -230,9 +230,6 @@ export default function IntegrationCatalog({ kind, title = "Catalog", intro }: {
     ];
   }, [visible]);
 
-  const chip = (active: boolean) =>
-    `min-h-11 rounded-full border px-3 text-sm font-medium ${active ? "border-text-05 bg-text-05 text-background-neutral-00" : "border-border-02 text-text-04"}`;
-
   return (
     <section aria-labelledby="catalog-title" className="flex flex-col gap-4" data-testid="integration-catalog">
       <div className="flex flex-col gap-1">

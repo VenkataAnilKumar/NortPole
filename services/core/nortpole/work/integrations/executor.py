@@ -81,7 +81,7 @@ def _check(name: str, param: Param, value: Any) -> Any:
             body_strings(value)
             size = len(json.dumps(value))
         except (ValueError, TypeError):
-            raise IntegrationCallError("bad_parameter", f"{name} holds something other than plain JSON data")
+            raise IntegrationCallError("bad_parameter", f"{name} holds something other than plain JSON data") from None
         if size > param.max_length * 10:
             raise IntegrationCallError("bad_parameter", f"{name} is larger than {param.max_length * 10} characters")
         return value

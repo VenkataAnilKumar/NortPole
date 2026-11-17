@@ -236,7 +236,7 @@ class Integration(_Strict):
         try:
             body_texts = body_strings(request.body)
         except ValueError as e:
-            raise ValueError(f"{where}: {e}")
+            raise ValueError(f"{where}: {e}") from None
         if request.body is not None and _body_nodes(request.body) > BODY_MAX_NODES:
             raise ValueError(f"{where}: a body has at most {BODY_MAX_NODES} parts")
         texts += [("body", v) for v in body_texts]
