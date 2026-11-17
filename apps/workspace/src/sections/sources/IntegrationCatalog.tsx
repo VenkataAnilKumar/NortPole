@@ -153,8 +153,8 @@ function Row({ item, req, busy, run }: {
   const sub = `${KIND_LABEL[item.kind]} · ${categoryLabel(item.category)}`;
   const status = item.state === "installed" ? "Installed" : item.state === "connected" ? "Connected" : item.state === "blocked" ? "Blocked" : null;
   return (
-    <li className="rounded-2xl border border-border-01 bg-background-neutral-00/60">
-      <div className="group relative flex items-center gap-3 rounded-2xl px-3 py-3 hover:bg-background-tint-02">
+    <li>
+      <div className="group relative flex items-center gap-3 rounded-xl px-1 py-3 hover:bg-background-tint-02">
         <button type="button" aria-expanded={open} aria-label={`${item.name}, ${sub}${status ? `, ${status}` : ""}`} onClick={() => setOpen(!open)} className="flex min-h-11 min-w-0 flex-1 items-center gap-3 text-left">
           <Tile name={item.name} />
           <span className="flex min-w-0 flex-col">
@@ -167,8 +167,9 @@ function Row({ item, req, busy, run }: {
           </span>
         </button>
         {(item.state === "installed" || item.state === "connected") && (
-          <svg aria-label={status ?? ""} role="img" viewBox="0 0 16 16" className="mr-2 size-5 shrink-0 text-text-03" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="m3.5 8.5 3 3 6-6.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          <svg aria-label={status ?? ""} role="img" viewBox="0 0 16 16" className="size-5 shrink-0 text-text-03" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="m3.5 8.5 3 3 6-6.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
         )}
+        <svg aria-hidden="true" viewBox="0 0 16 16" className={`size-4 shrink-0 text-text-03 transition-transform ${open ? "rotate-90" : ""}`} fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 8h10M9 4l4 4-4 4" strokeLinecap="round" strokeLinejoin="round" /></svg>
         {item.state === "available" && (
           <button type="button" disabled={busy} aria-label={`Install ${item.name} quickly`} onClick={() => run(async () => { await send("POST", `${CATALOG_URL}/${item.id}/install`, {}); return `${item.name} installed${item.needs_account ? ". Open it to connect your account." : "."}`; })} className="flex size-9 shrink-0 items-center justify-center rounded-lg text-xl text-text-05 border border-border-02 disabled:opacity-50">+</button>
         )}
@@ -215,6 +216,20 @@ export default function IntegrationCatalog() {
     (type === "all" || i.kind === type) &&
     (q.trim() === "" || `${i.name} ${i.description} ${i.category}`.toLowerCase().includes(q.trim().toLowerCase())));
 
+  // The way Sim lays its gallery out: what the person already has first, then one section per category, A to Z.
+  const sections = useMemo(() => {
+    const mine = visible.filter((i) => i.state === "installed" || i.state === "connected");
+    const rest = visible.filter((i) => !mine.includes(i));
+    const byCategory = new Map<string, IntegrationItem[]>();
+    rest.forEach((i) => byCategory.set(i.category, [...(byCategory.get(i.category) ?? []), i]));
+    return [
+      ...(mine.length > 0 ? [{ label: "Yours", items: mine }] : []),
+      ...[...byCategory.entries()]
+        .sort((a, b) => categoryLabel(a[0]).localeCompare(categoryLabel(b[0])))
+        .map(([c, items]) => ({ label: categoryLabel(c), items: [...items].sort((x, y) => x.name.localeCompare(y.name)) })),
+    ];
+  }, [visible]);
+
   const chip = (active: boolean) =>
     `min-h-11 rounded-full border px-3 text-sm font-medium ${active ? "border-text-05 bg-text-05 text-background-neutral-00" : "border-border-02 text-text-04"}`;
 
@@ -224,26 +239,18 @@ export default function IntegrationCatalog() {
         <h2 id="catalog-title" className="text-xl font-semibold text-text-05">Catalog</h2>
         <p className="text-sm text-text-03">Search what is on offer and install or connect it here. Anything your administrator has not allowed yet shows Request instead.</p>
       </div>
-      <div className={`${card} flex flex-col gap-3`}>
-        <label className="flex flex-col gap-1 text-sm font-medium text-text-05">
+      <div className="flex items-center gap-2">
+        <label className="flex min-w-0 flex-1 flex-col text-sm font-medium text-text-05">
           <span className="sr-only">Search</span>
-          <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search connectors and plugins" className="min-h-11 rounded-xl border border-border-02 bg-background-neutral-00 px-3 text-sm text-text-05" />
+          <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search integrations..." className="min-h-11 rounded-xl border border-border-02 bg-background-neutral-00 px-3 text-sm text-text-05" />
         </label>
-        <div role="group" aria-label="Show" className="flex flex-wrap items-center gap-2">
-          {(["all", "connector", "plugin"] as Type[]).map((t) => (
-            <button key={t} type="button" aria-pressed={type === t} className={chip(type === t)} onClick={() => setType(t)}>
-              {t === "all" ? "All" : `${KIND_LABEL[t]}s`}
-            </button>
-          ))}
-        </div>
-        <div role="group" aria-label="Category" className="flex flex-wrap gap-1" data-testid="catalog-categories">
-          <button type="button" aria-pressed={category === "all"} className={`min-h-11 rounded-xl px-3 text-sm ${category === "all" ? "bg-background-neutral-02 font-semibold text-text-05" : "text-text-03 hover:text-text-05"}`} onClick={() => setCategory("all")}>All categories</button>
-          {categories.map(([c, n]) => (
-            <button key={c} type="button" aria-pressed={category === c} className={`min-h-11 rounded-xl px-3 text-sm ${category === c ? "bg-background-neutral-02 font-semibold text-text-05" : "text-text-03 hover:text-text-05"}`} onClick={() => setCategory(c)}>
-              {categoryLabel(c)} <span className="text-xs opacity-70">{n}</span>
-            </button>
-          ))}
-        </div>
+        <label className="flex flex-col text-sm font-medium text-text-05" data-testid="catalog-categories">
+          <span className="sr-only">Category</span>
+          <select value={category} onChange={(e) => setCategory(e.target.value)} className="min-h-11 rounded-xl border border-border-02 bg-background-neutral-00 px-3 text-sm text-text-05">
+            <option value="all">All</option>
+            {categories.map(([c, n]) => (<option key={c} value={c}>{categoryLabel(c)} ({n})</option>))}
+          </select>
+        </label>
       </div>
       <p role={msg?.ok === false ? "alert" : "status"} className={`min-h-5 text-sm ${msg?.ok === false ? "text-status-text-error-05" : "text-text-05"}`} data-testid="integration-message">{msg?.text ?? ""}</p>
       {catalog.isLoading && <p className="text-sm text-text-03">Loading the catalog…</p>}
@@ -251,13 +258,16 @@ export default function IntegrationCatalog() {
       {catalog.data && visible.length === 0 && (
         <p className="text-sm text-text-03" data-testid="integration-empty">{items.length === 0 ? "Nothing is on offer yet. An administrator adds integrations to this workspace." : "Nothing matches. Try another search or category."}</p>
       )}
-      {visible.length > 0 && (
-        <ul className="grid gap-3 md:grid-cols-2" data-testid="integration-list">
-          {visible.map((i) => (
-            <Row key={i.id} item={i} req={reqFor(i.id)} busy={busy} run={run} />
-          ))}
-        </ul>
-      )}
+      {sections.map((sec) => (
+        <div key={sec.label} className="flex flex-col gap-2" data-testid={`section-${sec.label.toLowerCase()}`}>
+          <h3 className="border-b border-border-01 pb-2 text-sm text-text-03">{sec.label}</h3>
+          <ul className="grid gap-x-8 md:grid-cols-2">
+            {sec.items.map((i) => (
+              <Row key={`${sec.label}-${i.id}`} item={i} req={reqFor(i.id)} busy={busy} run={run} />
+            ))}
+          </ul>
+        </div>
+      ))}
     </section>
   );
 }
