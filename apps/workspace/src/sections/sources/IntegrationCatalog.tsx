@@ -45,7 +45,7 @@ function Card({ item, req, busy, run }: {
   const stateLabel = item.state === "needs_approval" && pending ? "Requested" : STATE_LABEL[item.state];
 
   return (
-    <li className={`${card} flex flex-col gap-2`} data-testid="integration-card" data-state={item.state}>
+    <div className={`${card} flex flex-col gap-2`} data-testid="integration-card" data-state={item.state}>
       <div className="flex flex-wrap items-start justify-between gap-2">
         <h3 className="text-base font-semibold text-text-05">{item.name}</h3>
         <span className="rounded-full border border-border-02 px-2.5 py-0.5 text-xs font-medium text-text-04" data-testid="integration-state">
@@ -130,6 +130,49 @@ function Card({ item, req, busy, run }: {
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+/** A tile with the first letter, the way a directory shows a logo when there is none. */
+function Tile({ name }: { name: string }) {
+  return (
+    <span aria-hidden="true" className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-border-02 bg-background-neutral-02 text-base font-semibold text-text-05">
+      {name.slice(0, 1).toUpperCase()}
+    </span>
+  );
+}
+
+/**
+ * One directory row: tile, name with a check (every definition is a reviewed, signed one), a one-line description and
+ * "Connector · category". It opens in place to the full card, where install, connect and request live; a plus on
+ * hover installs what the person may install straight away.
+ */
+function Row({ item, req, busy, run }: {
+  item: IntegrationItem; req: Req | null; busy: boolean; run: (fn: () => Promise<string>) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const sub = `${KIND_LABEL[item.kind]} · ${categoryLabel(item.category)}`;
+  const status = item.state === "installed" ? "Installed" : item.state === "connected" ? "Connected" : item.state === "blocked" ? "Blocked" : null;
+  return (
+    <li className="border-b border-border-01 last:border-b-0">
+      <div className="group relative flex items-center gap-3 rounded-xl px-2 py-3 hover:bg-background-tint-02">
+        <button type="button" aria-expanded={open} aria-label={`${item.name}, ${sub}${status ? `, ${status}` : ""}`} onClick={() => setOpen(!open)} className="flex min-h-11 min-w-0 flex-1 items-center gap-3 text-left">
+          <Tile name={item.name} />
+          <span className="flex min-w-0 flex-col">
+            <span className="flex items-center gap-1.5 text-base font-medium text-text-05">
+              <span className="truncate">{item.name}</span>
+              <svg aria-hidden="true" viewBox="0 0 16 16" className="size-4 shrink-0 text-text-03" fill="none" stroke="currentColor" strokeWidth="1.4"><circle cx="8" cy="8" r="6.2" /><path d="m5.4 8.2 1.8 1.8 3.4-3.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            </span>
+            <span className="truncate text-sm text-text-04">{item.description}</span>
+            <span className="truncate text-xs text-text-03">{sub}{status ? ` · ${status}` : ""}</span>
+          </span>
+        </button>
+        {item.state === "available" && (
+          <button type="button" disabled={busy} aria-label={`Install ${item.name} quickly`} onClick={() => run(async () => { await send("POST", `${CATALOG_URL}/${item.id}/install`, {}); return `${item.name} installed${item.needs_account ? ". Open it to connect your account." : "."}`; })} className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-background-neutral-02 text-xl text-text-05 opacity-100 transition-opacity disabled:opacity-50 sm:opacity-0 sm:group-hover:opacity-100 sm:focus-visible:opacity-100">+</button>
+        )}
+      </div>
+      {open && <div className="px-2 pb-3"><Card item={item} req={req} busy={busy} run={run} /></div>}
     </li>
   );
 }
@@ -183,27 +226,19 @@ export default function IntegrationCatalog() {
       </div>
       <div className={`${card} flex flex-col gap-3`}>
         <label className="flex flex-col gap-1 text-sm font-medium text-text-05">
-          Search
+          <span className="sr-only">Search</span>
           <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search connectors and plugins" className="min-h-11 rounded-xl border border-border-02 bg-background-neutral-00 px-3 text-sm text-text-05" />
         </label>
         <div role="group" aria-label="Show" className="flex flex-wrap items-center gap-2">
-          {(["all", "horizontal", "vertical"] as Show[]).map((s) => (
-            <button key={s} type="button" aria-pressed={show === s} className={chip(show === s)} onClick={() => { setShow(s); setCategory("all"); }}>
-              {s === "all" ? "All" : GROUP_LABEL[s]}
+          {(["all", "connector", "plugin"] as Type[]).map((t) => (
+            <button key={t} type="button" aria-pressed={type === t} className={chip(type === t)} onClick={() => setType(t)}>
+              {t === "all" ? "All" : `${KIND_LABEL[t]}s`}
             </button>
           ))}
           <span className="mx-1 h-5 w-px bg-border-02" aria-hidden="true" />
-          {(["all", "connector", "plugin"] as Type[]).map((t) => (
-            <button key={t} type="button" aria-pressed={type === t} className={chip(type === t)} onClick={() => setType(t)}>
-              {t === "all" ? "All types" : `${KIND_LABEL[t]}s`}
-            </button>
-          ))}
-        </div>
-        <div role="group" aria-label="Category" className="flex flex-wrap gap-2">
-          <button type="button" aria-pressed={category === "all"} className={chip(category === "all")} onClick={() => setCategory("all")}>All categories</button>
-          {categories.map(([c, n]) => (
-            <button key={c} type="button" aria-pressed={category === c} className={chip(category === c)} onClick={() => setCategory(c)}>
-              {categoryLabel(c)} <span className="text-xs opacity-70">{n}</span>
+          {(["all", "horizontal", "vertical"] as Show[]).map((g) => (
+            <button key={g} type="button" aria-pressed={show === g} className={chip(show === g)} onClick={() => { setShow(g); setCategory("all"); }}>
+              {g === "all" ? "Any group" : GROUP_LABEL[g]}
             </button>
           ))}
         </div>
@@ -217,25 +252,34 @@ export default function IntegrationCatalog() {
       {(["horizontal", "vertical"] as const).map((g) => {
         const inGroup = visible.filter((i) => i.group === g);
         if (inGroup.length === 0) return null;
-        const cats = [...new Set(inGroup.map((i) => i.category))];
         return (
           <div key={g} className="flex flex-col gap-3" data-testid={`group-${g}`}>
             <h3 className="font-[family-name:var(--font-serif)] text-2xl font-medium text-text-05">
               {GROUP_LABEL[g]} <span className="text-sm font-normal text-text-03">{g === "horizontal" ? "for any team" : "added with an industry pack"}</span>
             </h3>
-            {cats.map((c) => (
-              <div key={c} className="flex flex-col gap-2">
-                <h4 className="text-sm font-semibold text-text-04">{categoryLabel(c)}</h4>
-                <ul className="grid gap-3 sm:grid-cols-2">
-                  {inGroup.filter((i) => i.category === c).map((i) => (
-                    <Card key={i.id} item={i} req={reqFor(i.id)} busy={busy} run={run} />
-                  ))}
-                </ul>
-              </div>
-            ))}
+            <ul className="grid gap-x-8 md:grid-cols-2">
+              {inGroup.map((i) => (
+                <Row key={i.id} item={i} req={reqFor(i.id)} busy={busy} run={run} />
+              ))}
+            </ul>
           </div>
         );
       })}
+      {categories.length > 0 && (
+        <div className="flex flex-col gap-2" data-testid="catalog-categories">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-text-05">Categories</h3>
+            {category !== "all" && <button type="button" className="min-h-11 text-sm font-medium text-text-04 underline" onClick={() => setCategory("all")}>Show all</button>}
+          </div>
+          <div role="group" aria-label="Category" className="grid grid-cols-2 gap-1 sm:grid-cols-3 lg:grid-cols-4">
+            {categories.map(([c, n]) => (
+              <button key={c} type="button" aria-pressed={category === c} className={`flex min-h-11 items-center justify-between gap-2 rounded-lg px-2 text-left text-sm ${category === c ? "bg-background-neutral-02 font-semibold text-text-05" : "text-text-04 hover:bg-background-tint-02"}`} onClick={() => { setCategory(category === c ? "all" : c); }}>
+                <span className="truncate">{categoryLabel(c)}</span><span className="text-xs text-text-03">{n}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </section>
   );
 }
