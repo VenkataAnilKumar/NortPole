@@ -1,4 +1,4 @@
-# Stripe: read and write actions. Derived from open-source (Apache-2.0) tool definitions: see ../../../NOTICE. Reviewed before use; not yet checked against the vendor's own documentation.
+# Stripe: reads, deletes and two creates. Derived from open-source (Apache-2.0) tool definitions: see ../../../NOTICE. Reviewed before use; not yet checked against the vendor's own documentation.
 schema_version: 1
 id: stripe
 name: Stripe
@@ -367,3 +367,68 @@ actions:
         path: $.data
         type: array
         description: Array of matching subscription objects
+- id: create_customer
+  name: Create Customer
+  description: Create a customer in Stripe. Written from Stripe's published customers API.
+  effect: write
+  params:
+    email:
+      type: string
+      description: The customer's email address.
+    name:
+      type: string
+      description: The customer's full name or business name.
+    description:
+      type: string
+      description: A note to keep with the customer.
+  request:
+    method: POST
+    url: https://api.stripe.com/v1/customers
+    headers:
+      Authorization: Bearer {credential.api_key}
+      Content-Type: application/x-www-form-urlencoded
+    body:
+      email: '{email}'
+      name: '{name}'
+      description: '{description}'
+  response:
+    outputs:
+      id:
+        path: $.id
+        type: string
+        description: The new customer's ID.
+      email:
+        path: $.email
+        type: string
+        description: The customer's email.
+- id: create_product
+  name: Create Product
+  description: Create a product in Stripe. Written from Stripe's published products API.
+  effect: write
+  params:
+    name:
+      type: string
+      description: The product's name.
+      required: true
+    description:
+      type: string
+      description: What the product is.
+  request:
+    method: POST
+    url: https://api.stripe.com/v1/products
+    headers:
+      Authorization: Bearer {credential.api_key}
+      Content-Type: application/x-www-form-urlencoded
+    body:
+      name: '{name}'
+      description: '{description}'
+  response:
+    outputs:
+      id:
+        path: $.id
+        type: string
+        description: The new product's ID.
+      active:
+        path: $.active
+        type: boolean
+        description: Whether the product is active.

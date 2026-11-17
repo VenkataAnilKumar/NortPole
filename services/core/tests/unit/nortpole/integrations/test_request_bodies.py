@@ -98,3 +98,25 @@ def test_an_object_parameter_has_no_default() -> None:
     data["actions"][0]["params"]["props"]["default"] = "x"
     with pytest.raises(ValidationError):
         Integration.model_validate(data)
+
+
+def test_form_encoded_bodies_use_bracket_names_and_are_sent_as_a_form() -> None:
+    import httpx
+
+    from nortpole.work.integrations.executor import form_fields, http_transport
+
+    assert form_fields({"a": "1", "b": {"c": True, "d": [2, "x"]}, "gone": None}) == [
+        ("a", "1"), ("b[c]", "true"), ("b[d][0]", "2"), ("b[d][1]", "x")]
+    seen: dict = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.update(ctype=request.headers["content-type"], body=request.content.decode())
+        return httpx.Response(200, json={"id": "cus_1"})
+
+    data = writer(body={"title": "{title}", "meta": {"done": "{done}"}})
+    data["actions"][0]["request"]["headers"]["Content-Type"] = "application/x-www-form-urlencoded"
+    integration = Integration.model_validate(data)
+    req = prepare(integration, "list_notes", model_params={"title": "a b&c", "done": True}, credential=TOKEN)
+    status, body, _ = http_transport(req, httpx_transport=httpx.MockTransport(handler), validate=lambda u: u)
+    assert status == 200 and seen["ctype"].startswith("application/x-www-form-urlencoded")
+    assert seen["body"] == "title=a+b%26c&meta%5Bdone%5D=true"

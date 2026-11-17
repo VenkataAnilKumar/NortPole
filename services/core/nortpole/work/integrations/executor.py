@@ -225,6 +225,17 @@ def extract(action: Action, payload: Any) -> dict[str, Any]:
     return out
 
 
+def form_fields(body: Any, prefix: str = "") -> list[tuple[str, str]]:
+    """A JSON-shaped body as form fields, the way Stripe-style APIs read them: `a[b]=c` for objects, `a[0]=c` for lists."""
+    if isinstance(body, dict):
+        return [f for k, v in body.items() for f in form_fields(v, f"{prefix}[{k}]" if prefix else k)]
+    if isinstance(body, list):
+        return [f for i, v in enumerate(body) for f in form_fields(v, f"{prefix}[{i}]")]
+    if body is None:
+        return []
+    return [(prefix, "true" if body is True else "false" if body is False else str(body))]
+
+
 Transport = Callable[[PreparedRequest], tuple[int, bytes, str]]
 
 
@@ -236,9 +247,12 @@ def http_transport(request: PreparedRequest, *, httpx_transport: Any = None, val
         validate = _default_validate
     validate(request.url)
     with httpx.Client(transport=httpx_transport, follow_redirects=False, timeout=TIMEOUT_SECONDS) as client:
+        is_form = any(k.lower() == "content-type" and "x-www-form-urlencoded" in v.lower() for k, v in request.headers.items())
+        payload: dict[str, Any] = {}
+        if request.body is not None:
+            payload = {"data": dict(form_fields(request.body))} if is_form else {"json": request.body}
         with client.stream(
-            request.method, request.url, params=request.query or None, headers=request.headers,
-            json=request.body if request.body is not None else None,
+            request.method, request.url, params=request.query or None, headers=request.headers, **payload,
         ) as response:
             chunks: list[bytes] = []
             total = 0
