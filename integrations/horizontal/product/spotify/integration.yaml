@@ -1,4 +1,4 @@
-# Spotify: written for NortPole from the vendor's published API reference; not yet checked against the live service.
+# Spotify: Checked 2026-11-17 against the vendor's API reference (methods, URLs, parameter names, limits); not called against the live service.
 schema_version: 1
 id: spotify
 name: Spotify
@@ -41,10 +41,10 @@ actions:
       default: track
     limit:
       type: integer
-      description: Results per type (1 to 50).
+      description: Results per type (1 to 10).
       minimum: 1
-      maximum: 50
-      default: 10
+      maximum: 10
+      default: 5
   request:
     method: GET
     url: https://api.spotify.com/v1/search

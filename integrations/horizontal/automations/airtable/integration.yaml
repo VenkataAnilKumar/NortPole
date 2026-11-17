@@ -1,4 +1,4 @@
-# Airtable: written for NortPole from the vendor's published API reference; not yet checked against the live service.
+# Airtable: Not checked: the vendor's reference could not be read here. Written from the published API reference; not called against the live service.
 schema_version: 1
 id: airtable
 name: Airtable

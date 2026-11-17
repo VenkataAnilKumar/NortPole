@@ -1,4 +1,4 @@
-# Google Calendar: read-only actions. Written for NortPole from the vendor's published API reference; not yet checked against the current documentation or called against the live service.
+# Google Calendar: read-only actions. Checked 2026-11-17 against the vendor's API reference (methods, URLs, parameter names, limits); not called against the live service.
 schema_version: 1
 id: google-calendar
 name: Google Calendar

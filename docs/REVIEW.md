@@ -474,3 +474,7 @@ A new rule, `second_for_destinations` (off by default), holds registering a send
 ### Second administrator for the tool catalog (checklist item 23, tools), 2026-11-17
 
 A new rule, `second_for_tools` (off by default), holds changes to the tool catalog (kinds on or off, single tools on or off, approving an outside tool) until a different administrator approves; unknown kinds or tool ids are refused at once, and a change proposed against an older catalog version is refused when approved. Checked: one new database test (refused, held, applied) alongside the destination and pack tests, the OpenAPI contract, the CI test set. Not done: pack install is still not covered; the screens were not clicked through in a browser.
+
+### Integration definitions checked against vendor docs, 2026-11-17
+
+Read from the shell (the page-fetch tool cannot resolve hosts here): Slack, GitHub, Notion, Stripe, Spotify, Gmail, Calendar and Drive reference pages. Methods, URLs, parameter names and limits match, except Spotify search, whose limit is now 1 to 10 (was 1 to 50); fixed. Wikipedia's page summary was sent live (request built by NortPole, answer read by its extractor) and returned the expected fields; the search action was rate limited. Not checked: Airtable, Dropbox, Webflow and HubSpot (their pages are not readable as text here). Not done: no action was run end to end against a live service with a real login, and the check compared names and limits, not full response shapes. Each definition's header comment says exactly what was and was not checked.
