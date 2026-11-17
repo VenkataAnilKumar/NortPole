@@ -6,7 +6,6 @@ import { errorHandlingFetcher } from "@/lib/fetcher";
 import { card } from "@/sections/sources/shared";
 import {
   CATALOG_URL,
-  GROUP_LABEL,
   KIND_LABEL,
   REQUESTS_URL,
   categoryLabel,
@@ -26,7 +25,6 @@ const STATE_LABEL: Record<IntegrationItem["state"], string> = {
   connected: "Connected",
 };
 
-type Show = "all" | "horizontal" | "vertical";
 type Type = "all" | "connector" | "plugin";
 
 /** The reason a person can give an administrator, and the token field for connecting, live inside the card. */
@@ -55,7 +53,7 @@ function Card({ item, req, busy, run }: {
       <p className="text-sm text-text-04">{item.description}</p>
       <p className="text-xs text-text-03">
         <span className="rounded-md bg-background-neutral-02 px-1.5 py-0.5 font-semibold uppercase tracking-wide">{KIND_LABEL[item.kind]}</span>{" "}
-        {GROUP_LABEL[item.group]} · {categoryLabel(item.category)}
+        {categoryLabel(item.category)}
       </p>
       <details className="text-xs text-text-03">
         <summary className="min-h-6 cursor-pointer font-medium text-text-04">What it can do</summary>
@@ -181,14 +179,13 @@ function Row({ item, req, busy, run }: {
 }
 
 /**
- * The integration catalog: search it, narrow it by Horizontal or Vertical, category and type, then install or connect
+ * The integration catalog: search it, narrow it by category and type, then install or connect
  * right on the card. What an administrator has not allowed yet shows Request instead; asking turns nothing on.
  */
 export default function IntegrationCatalog() {
   const catalog = useSWR<{ items: IntegrationItem[] }>(CATALOG_URL, errorHandlingFetcher);
   const requests = useSWR<{ my_requests: Req[] }>(REQUESTS_URL, errorHandlingFetcher);
-  const [show, setShow] = useState<Show>("all");
-  const [category, setCategory] = useState("all");
+    const [category, setCategory] = useState("all");
   const [type, setType] = useState<Type>("all");
   const [q, setQ] = useState("");
   const [busy, setBusy] = useState(false);
@@ -207,7 +204,7 @@ export default function IntegrationCatalog() {
   const reqFor = (id: string): Req | null =>
     (requests.data?.my_requests ?? []).find((r) => r.item_key === `integration:${id}` && r.state !== "withdrawn") ?? null;
 
-  const inShow = useMemo(() => items.filter((i) => show === "all" || i.group === show), [items, show]);
+  const inShow = items;
   const categories = useMemo(() => {
     const counts = new Map<string, number>();
     inShow.forEach((i) => counts.set(i.category, (counts.get(i.category) ?? 0) + 1));
@@ -238,12 +235,6 @@ export default function IntegrationCatalog() {
               {t === "all" ? "All" : `${KIND_LABEL[t]}s`}
             </button>
           ))}
-          <span className="mx-1 h-5 w-px bg-border-02" aria-hidden="true" />
-          {(["all", "horizontal", "vertical"] as Show[]).map((g) => (
-            <button key={g} type="button" aria-pressed={show === g} className={chip(show === g)} onClick={() => { setShow(g); setCategory("all"); }}>
-              {g === "all" ? "Any group" : GROUP_LABEL[g]}
-            </button>
-          ))}
         </div>
         <div role="group" aria-label="Category" className="flex flex-wrap gap-1" data-testid="catalog-categories">
           <button type="button" aria-pressed={category === "all"} className={`min-h-11 rounded-xl px-3 text-sm ${category === "all" ? "bg-background-neutral-02 font-semibold text-text-05" : "text-text-03 hover:text-text-05"}`} onClick={() => setCategory("all")}>All categories</button>
@@ -260,22 +251,13 @@ export default function IntegrationCatalog() {
       {catalog.data && visible.length === 0 && (
         <p className="text-sm text-text-03" data-testid="integration-empty">{items.length === 0 ? "Nothing is on offer yet. An administrator adds integrations to this workspace." : "Nothing matches. Try another search or category."}</p>
       )}
-      {(["horizontal", "vertical"] as const).map((g) => {
-        const inGroup = visible.filter((i) => i.group === g);
-        if (inGroup.length === 0) return null;
-        return (
-          <div key={g} className="flex flex-col gap-3" data-testid={`group-${g}`}>
-            <h3 className="font-[family-name:var(--font-serif)] text-2xl font-medium text-text-05">
-              {GROUP_LABEL[g]} <span className="text-sm font-normal text-text-03">{g === "horizontal" ? "for any team" : "added with an industry pack"}</span>
-            </h3>
-            <ul className="grid gap-3 md:grid-cols-2">
-              {inGroup.map((i) => (
-                <Row key={i.id} item={i} req={reqFor(i.id)} busy={busy} run={run} />
-              ))}
-            </ul>
-          </div>
-        );
-      })}
+      {visible.length > 0 && (
+        <ul className="grid gap-3 md:grid-cols-2" data-testid="integration-list">
+          {visible.map((i) => (
+            <Row key={i.id} item={i} req={reqFor(i.id)} busy={busy} run={run} />
+          ))}
+        </ul>
+      )}
     </section>
   );
 }
