@@ -216,7 +216,7 @@ export default function IntegrationCatalog() {
     (type === "all" || i.kind === type) &&
     (q.trim() === "" || `${i.name} ${i.description} ${i.category}`.toLowerCase().includes(q.trim().toLowerCase())));
 
-  // The way Sim lays its gallery out: what the person already has first, then one section per category, A to Z.
+  // A gallery layout: what the person already has first, then one section per category, A to Z.
   const sections = useMemo(() => {
     const mine = visible.filter((i) => i.state === "installed" || i.state === "connected");
     const rest = visible.filter((i) => !mine.includes(i));

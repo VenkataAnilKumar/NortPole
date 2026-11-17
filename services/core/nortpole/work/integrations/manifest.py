@@ -15,8 +15,6 @@ It runs nothing itself: a fixed executor reads it. The format is strict so a def
 Placeholders are written `{name}`. A query value that is exactly one placeholder is left out when that parameter has no
 value. Path placeholders are URL-encoded by the executor.
 
-The shape of the fields (`params`, `request`, `response`) follows the way Sim describes a tool (Apache-2.0,
-https://github.com/simstudioai/sim), adapted here into signed data.
 """
 
 from __future__ import annotations

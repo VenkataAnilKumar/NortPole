@@ -1,5 +1,4 @@
-# HubSpot: 28 actions. Adapted from Sim's tools/hubspot/ (Apache-2.0, see ../../../NOTICE).
-# Source files: create_list.ts, get_appointment.ts, get_cart.ts, get_company.ts, get_contact.ts, get_deal.ts, get_email.ts, get_line_item.ts, get_list.ts, get_list_memberships.ts, get_marketing_event.ts, get_note.ts, get_quote.ts, get_ticket.ts, get_users.ts, list_appointments.ts, list_associations.ts, list_carts.ts, list_companies.ts, list_contacts.ts, list_deals.ts, list_emails.ts, list_line_items.ts, list_marketing_events.ts, list_notes.ts, list_owners.ts, list_quotes.ts, list_tickets.ts. Drafted by tools/import_sim; reviewed before use. Sign-in scopes are not set yet.
+# Derived from open-source (Apache-2.0) tool definitions: see ../../../NOTICE. Reviewed before use; not yet checked against the vendor's own documentation.
 schema_version: 1
 id: hubspot
 name: HubSpot

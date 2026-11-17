@@ -1,6 +1,6 @@
 # Wikipedia: look up a page summary or search page titles. No sign-in; public data.
-# page_summary is adapted from Sim's tools/wikipedia/summary.ts (Apache-2.0, see ../../../NOTICE).
 # search is written for NortPole on the standard MediaWiki query API.
+# Derived from open-source (Apache-2.0) tool definitions: see ../../../NOTICE. Reviewed before use; not yet checked against the vendor's own documentation.
 schema_version: 1
 id: wikipedia
 name: Wikipedia

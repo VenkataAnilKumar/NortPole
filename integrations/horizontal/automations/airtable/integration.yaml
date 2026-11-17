@@ -1,6 +1,5 @@
 # Airtable: read bases, tables' records and single records. Sign in with your own Airtable account.
-# Adapted from Sim's tools/airtable/list_bases.ts, list_records.ts and get_record.ts
-# (Apache-2.0, see ../../../NOTICE). Write actions are left out until the format can describe a JSON body.
+# Derived from open-source (Apache-2.0) tool definitions: see ../../../NOTICE. Reviewed before use; not yet checked against the vendor's own documentation.
 schema_version: 1
 id: airtable
 name: Airtable

@@ -1,5 +1,4 @@
-# Spotify: 5 actions. Adapted from Sim's tools/spotify/ (Apache-2.0, see ../../../NOTICE).
-# Source files: get_artist.ts, get_current_user.ts, get_markets.ts, get_user_profile.ts, reorder_playlist_items.ts. Drafted by tools/import_sim; reviewed before use. Sign-in scopes are not set yet.
+# Derived from open-source (Apache-2.0) tool definitions: see ../../../NOTICE. Reviewed before use; not yet checked against the vendor's own documentation.
 schema_version: 1
 id: spotify
 name: Spotify
