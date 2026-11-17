@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { errorHandlingFetcher } from "@/lib/fetcher";
 import { useSettings } from "@/lib/settings/hooks";
 import { card, h1Class, pageClass } from "@/sections/sources/shared";
-import InstalledIntegrations from "@/sections/sources/InstalledIntegrations";
+import IntegrationCatalog from "@/sections/sources/IntegrationCatalog";
 
 interface Kind { kind: string; label: string; on: boolean }
 interface Tool { name: string; kind_label: string; allowed: boolean; mine: boolean }
@@ -32,7 +32,7 @@ export default function PluginsSourcePage() {
           </p>
         )}
       </header>
-      <InstalledIntegrations kind="plugin" />
+      <IntegrationCatalog kind="plugin" title="Your plugins and what you can add" intro="Install a plugin or connect your own account here. Anything your administrator has not allowed yet shows Request instead." />
       {isLoading && <p className="text-sm text-text-03">Loading plugins…</p>}
       {error && <p role="alert" className="text-sm text-status-text-error-05">Plugins could not be loaded. Try again in a moment.</p>}
       {data && (

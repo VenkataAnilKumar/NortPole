@@ -183,11 +183,11 @@ function Row({ item, req, busy, run }: {
  * The integration catalog: search it, narrow it by category and type, then install or connect
  * right on the card. What an administrator has not allowed yet shows Request instead; asking turns nothing on.
  */
-export default function IntegrationCatalog() {
+export default function IntegrationCatalog({ kind, title = "Catalog", intro }: { kind?: "connector" | "plugin"; title?: string; intro?: string } = {}) {
   const catalog = useSWR<{ items: IntegrationItem[] }>(CATALOG_URL, errorHandlingFetcher);
   const requests = useSWR<{ my_requests: Req[] }>(REQUESTS_URL, errorHandlingFetcher);
     const [category, setCategory] = useState("all");
-  const [type, setType] = useState<Type>("all");
+  const type: Type = kind ?? "all";
   const [q, setQ] = useState("");
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
@@ -236,13 +236,13 @@ export default function IntegrationCatalog() {
   return (
     <section aria-labelledby="catalog-title" className="flex flex-col gap-4" data-testid="integration-catalog">
       <div className="flex flex-col gap-1">
-        <h2 id="catalog-title" className="text-xl font-semibold text-text-05">Catalog</h2>
-        <p className="text-sm text-text-03">Search what is on offer and install or connect it here. Anything your administrator has not allowed yet shows Request instead.</p>
+        <h2 id="catalog-title" className="text-xl font-semibold text-text-05">{title}</h2>
+        <p className="text-sm text-text-03">{intro ?? "Search what is on offer and install or connect it here. Anything your administrator has not allowed yet shows Request instead."}</p>
       </div>
       <div className="flex items-center gap-2">
         <label className="flex min-w-0 flex-1 flex-col text-sm font-medium text-text-05">
           <span className="sr-only">Search</span>
-          <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search integrations..." className="min-h-11 rounded-xl border border-border-02 bg-background-neutral-00 px-3 text-sm text-text-05" />
+          <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={kind === "connector" ? "Search connectors..." : kind === "plugin" ? "Search plugins..." : "Search integrations..."} className="min-h-11 rounded-xl border border-border-02 bg-background-neutral-00 px-3 text-sm text-text-05" />
         </label>
         <label className="flex flex-col text-sm font-medium text-text-05" data-testid="catalog-categories">
           <span className="sr-only">Category</span>
@@ -256,7 +256,7 @@ export default function IntegrationCatalog() {
       {catalog.isLoading && <p className="text-sm text-text-03">Loading the catalog…</p>}
       {catalog.error && <p role="alert" className="text-sm text-status-text-error-05">The catalog could not be loaded. Try again in a moment.</p>}
       {catalog.data && visible.length === 0 && (
-        <p className="text-sm text-text-03" data-testid="integration-empty">{items.length === 0 ? "Nothing is on offer yet. An administrator adds integrations to this workspace." : "Nothing matches. Try another search or category."}</p>
+        <p className="text-sm text-text-03" data-testid="integration-empty">{items.length === 0 ? kind === "connector" ? "No connectors are on offer yet. An administrator adds them to this workspace." : kind === "plugin" ? "No plugins are on offer yet. An administrator adds them to this workspace." : "Nothing is on offer yet. An administrator adds integrations to this workspace." : "Nothing matches. Try another search or category."}</p>
       )}
       {sections.map((sec) => (
         <div key={sec.label} className="flex flex-col gap-2" data-testid={`section-${sec.label.toLowerCase()}`}>

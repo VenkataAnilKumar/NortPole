@@ -3,7 +3,7 @@
 import useSWR from "swr";
 import { errorHandlingFetcher } from "@/lib/fetcher";
 import { card, h1Class, pageClass, titleCase } from "@/sections/sources/shared";
-import InstalledIntegrations from "@/sections/sources/InstalledIntegrations";
+import IntegrationCatalog from "@/sections/sources/IntegrationCatalog";
 import { FetchError } from "@/lib/fetcher";
 
 /**
@@ -22,7 +22,7 @@ export default function ConnectorsPage() {
           Systems connected to this workspace. Assistants read from them only what your own access in that system allows. Administrators add and manage connectors.
         </p>
       </header>
-      <InstalledIntegrations kind="connector" />
+      <IntegrationCatalog kind="connector" title="Your connectors and what you can add" intro="Install a connector or connect your own account here. Anything your administrator has not allowed yet shows Request instead." />
       {isLoading && <p className="text-sm text-text-03">Loading connectors…</p>}
       {error && error instanceof FetchError && error.status === 501 && (
         <p className="text-sm text-text-03" data-testid="connectors-no-search">Document search is not set up for this workspace, so there are no connected document systems to show. Retrying will not help; an administrator sets search up.</p>

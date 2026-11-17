@@ -1,0 +1,175 @@
+# GitHub: read-only actions. Written for NortPole from the vendor's published API reference; not yet checked against the current documentation or called against the live service.
+schema_version: 1
+id: github
+name: GitHub
+version: 1.0.0
+description: Read your GitHub repositories and issues with your own GitHub account.
+kind: connector
+group: horizontal
+category: code
+auth:
+  mode: oauth
+  provider: github
+  scopes:
+  - repo
+hosts:
+- api.github.com
+data_classes:
+- internal
+- confidential
+policy_default: needs_approval
+actions:
+- id: list_repos
+  name: List repositories
+  description: List repositories you can access.
+  effect: read
+  params:
+    perPage:
+      type: integer
+      description: Repositories per page (1 to 100).
+      minimum: 1
+      maximum: 100
+      default: 30
+    sort:
+      type: string
+      description: Sort by updated, created, pushed or full_name.
+      enum:
+      - updated
+      - created
+      - pushed
+      - full_name
+  request:
+    method: GET
+    url: https://api.github.com/user/repos
+    query:
+      per_page: '{perPage}'
+      sort: '{sort}'
+    headers: &id001
+      Authorization: Bearer {credential.access_token}
+      Accept: application/vnd.github+json
+      X-GitHub-Api-Version: '2022-11-28'
+  response:
+    outputs:
+      repos:
+        path: $[*]
+        type: array
+        description: Repositories, each with name, full_name, private, html_url and description.
+- id: get_repo
+  name: Get repository
+  description: Get one repository.
+  effect: read
+  params:
+    owner:
+      type: string
+      description: Repository owner (user or organisation).
+      required: true
+    repo:
+      type: string
+      description: Repository name.
+      required: true
+  request:
+    method: GET
+    url: https://api.github.com/repos/{owner}/{repo}
+    headers: *id001
+  response:
+    outputs:
+      name:
+        path: $.name
+        type: string
+        description: Repository name.
+      description:
+        path: $.description
+        type: string
+        description: Description.
+      html_url:
+        path: $.html_url
+        type: string
+        description: Web address.
+      default_branch:
+        path: $.default_branch
+        type: string
+        description: Default branch.
+      open_issues_count:
+        path: $.open_issues_count
+        type: integer
+        description: Open issues and pull requests.
+- id: list_issues
+  name: List issues
+  description: List issues in a repository (pull requests are included by GitHub).
+  effect: read
+  params:
+    owner:
+      type: string
+      description: Repository owner.
+      required: true
+    repo:
+      type: string
+      description: Repository name.
+      required: true
+    state:
+      type: string
+      description: open, closed or all.
+      enum:
+      - open
+      - closed
+      - all
+      default: open
+    perPage:
+      type: integer
+      description: Issues per page (1 to 100).
+      minimum: 1
+      maximum: 100
+      default: 30
+  request:
+    method: GET
+    url: https://api.github.com/repos/{owner}/{repo}/issues
+    query:
+      state: '{state}'
+      per_page: '{perPage}'
+    headers: *id001
+  response:
+    outputs:
+      issues:
+        path: $[*]
+        type: array
+        description: Issues, each with number, title, state, html_url and user.
+- id: get_issue
+  name: Get issue
+  description: Get one issue or pull request by number.
+  effect: read
+  params:
+    owner:
+      type: string
+      description: Repository owner.
+      required: true
+    repo:
+      type: string
+      description: Repository name.
+      required: true
+    issueNumber:
+      type: integer
+      description: Issue number.
+      required: true
+      minimum: 1
+  request:
+    method: GET
+    url: https://api.github.com/repos/{owner}/{repo}/issues/{issueNumber}
+    headers: *id001
+  response:
+    outputs:
+      title:
+        path: $.title
+        type: string
+        description: Title.
+      state:
+        path: $.state
+        type: string
+        description: open or closed.
+      body:
+        path: $.body
+        type: string
+        description: Text of the issue.
+      html_url:
+        path: $.html_url
+        type: string
+        description: Web address.

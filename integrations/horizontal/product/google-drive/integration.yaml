@@ -1,0 +1,91 @@
+# Google Drive: read-only actions. Written for NortPole from the vendor's published API reference; not yet checked against the current documentation or called against the live service.
+schema_version: 1
+id: google-drive
+name: Google Drive
+version: 1.0.0
+description: Find and read Google Drive file details with your own Google account.
+kind: connector
+group: horizontal
+category: product
+auth:
+  mode: oauth
+  provider: google-drive
+  scopes:
+  - https://www.googleapis.com/auth/drive.readonly
+hosts:
+- www.googleapis.com
+data_classes:
+- internal
+- confidential
+policy_default: needs_approval
+actions:
+- id: list_files
+  name: List files
+  description: List or search files you can open. Use q for Drive's search syntax.
+  effect: read
+  params:
+    q:
+      type: string
+      description: Drive search query, for example name contains 'budget'.
+    pageSize:
+      type: integer
+      description: Files to return (1 to 100).
+      minimum: 1
+      maximum: 100
+      default: 20
+    pageToken:
+      type: string
+      description: Token from a previous response.
+  request:
+    method: GET
+    url: https://www.googleapis.com/drive/v3/files
+    query:
+      q: '{q}'
+      pageSize: '{pageSize}'
+      pageToken: '{pageToken}'
+      fields: nextPageToken,files(id,name,mimeType,modifiedTime,webViewLink)
+    headers: &id001
+      Authorization: Bearer {credential.access_token}
+  response:
+    outputs:
+      files:
+        path: $.files[*]
+        type: array
+        description: Files with id, name, mimeType, modifiedTime and webViewLink.
+      next_page_token:
+        path: $.nextPageToken
+        type: string
+        description: Token for the next page.
+- id: get_file
+  name: Get file details
+  description: Get one file's details by ID.
+  effect: read
+  params:
+    fileId:
+      type: string
+      description: The file's ID.
+      required: true
+  request:
+    method: GET
+    url: https://www.googleapis.com/drive/v3/files/{fileId}
+    query:
+      fields: id,name,mimeType,modifiedTime,webViewLink,size
+    headers: *id001
+  response:
+    outputs:
+      name:
+        path: $.name
+        type: string
+        description: File name.
+      mimeType:
+        path: $.mimeType
+        type: string
+        description: File type.
+      modifiedTime:
+        path: $.modifiedTime
+        type: string
+        description: Last change.
+      webViewLink:
+        path: $.webViewLink
+        type: string
+        description: Web address.
