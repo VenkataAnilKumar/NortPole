@@ -81,14 +81,7 @@ jobs:
           FILE_STORE_BACKEND: postgres
           NORTPOLE_OFFLINE_TOKENIZER: "true"
           HF_HUB_OFFLINE: "1"
-        run: >
-          uv run --no-sync python -m pytest -q
-          tests/unit/nortpole/action_binding tests/unit/nortpole/actions tests/unit/nortpole/audit_log
-          tests/unit/nortpole/extensions tests/unit/nortpole/external_permissions tests/unit/nortpole/integrations tests/unit/nortpole/knowledge_access tests/unit/nortpole/secrets_sealing
-          tests/unit/nortpole/packs tests/unit/nortpole/redaction tests/unit/nortpole/route_policy
-          tests/unit/nortpole/tasks tests/unit/nortpole/tool_catalog tests/unit/nortpole/user_preferences
-          tests/unit/nortpole/test_schedule_cadence.py tests/unit/nortpole/skills/test_bundled_skill_scripts.py
-          tests/unit/nortpole/test_domain_boundaries.py tests/unit/nortpole/test_contracts_current.py
+        run: make -C ../.. core-test-ci
 
   pack-sdk:
     name: Pack SDK and first-party packs

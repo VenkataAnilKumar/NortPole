@@ -19,3 +19,4 @@ celerybeat-schedule*
 infrastructure/profiles/staging/backups/
 infrastructure/profiles/staging/release-*.json
 infrastructure/profiles/staging/oauth.env
+sbom.cdx.json
