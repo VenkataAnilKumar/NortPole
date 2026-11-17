@@ -4,7 +4,7 @@ import { useState } from "react";
 import useSWR from "swr";
 import { errorHandlingFetcher } from "@/lib/fetcher";
 
-interface Controls { second_for_route_policy: boolean; second_for_retention: boolean; second_for_packs: boolean; second_for_destinations: boolean }
+interface Controls { second_for_route_policy: boolean; second_for_retention: boolean; second_for_packs: boolean; second_for_destinations: boolean; second_for_tools: boolean }
 interface Change {
   id: string; kind: string; summary: string; state: string; proposed_by_email: string;
   decided_by_email: string | null; error: string | null; created_at: string; decided_at: string | null; own: boolean;
@@ -14,7 +14,7 @@ interface Changes { pending: Change[]; recent: Change[] }
 const card = "rounded-2xl border border-border-01 bg-background-neutral-00 p-5 shadow-sm";
 const primary = "min-h-11 rounded-xl bg-text-05 px-5 text-sm font-semibold text-background-neutral-00 disabled:opacity-50";
 const secondary = "min-h-11 rounded-xl border border-border-02 px-4 text-sm font-semibold text-text-05 disabled:opacity-50";
-const KIND: Record<string, string> = { route_policy: "Route policy", retention: "Retention and legal hold", controls: "Approval rules", pack_signer: "Trusting a pack signer", pack_owner: "Pack key change", pack_activate: "Activating a pack version", send_target_create: "Registering a send destination", send_target_update: "Changing a send destination" };
+const KIND: Record<string, string> = { route_policy: "Route policy", retention: "Retention and legal hold", controls: "Approval rules", pack_signer: "Trusting a pack signer", pack_owner: "Pack key change", pack_activate: "Activating a pack version", send_target_create: "Registering a send destination", send_target_update: "Changing a send destination", tool_catalog: "Changing the tool catalog" };
 const STATE: Record<string, string> = { applied: "Applied", declined: "Declined", cancelled: "Cancelled", expired: "Expired", failed: "Could not be applied" };
 
 async function send(url: string, method: string, body?: unknown): Promise<any> {
@@ -38,7 +38,7 @@ export default function AdminApprovals() {
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   if (!controls) return null;
   const rules = draft ?? controls;
-  const dirty = draft !== null && (draft.second_for_route_policy !== controls.second_for_route_policy || draft.second_for_retention !== controls.second_for_retention || draft.second_for_packs !== controls.second_for_packs || draft.second_for_destinations !== controls.second_for_destinations);
+  const dirty = draft !== null && (draft.second_for_route_policy !== controls.second_for_route_policy || draft.second_for_retention !== controls.second_for_retention || draft.second_for_packs !== controls.second_for_packs || draft.second_for_destinations !== controls.second_for_destinations || draft.second_for_tools !== controls.second_for_tools);
 
   const run = async (fn: () => Promise<string>) => {
     setBusy(true);
@@ -77,6 +77,10 @@ export default function AdminApprovals() {
         <label className="flex min-h-11 items-center gap-2 text-sm text-text-05">
           <input type="checkbox" className="h-4 w-4" checked={rules.second_for_destinations} onChange={(e) => setDraft({ ...rules, second_for_destinations: e.target.checked })} />
           Send destinations: registering one or changing where drafts may be sent
+        </label>
+        <label className="flex min-h-11 items-center gap-2 text-sm text-text-05">
+          <input type="checkbox" className="h-4 w-4" checked={rules.second_for_tools} onChange={(e) => setDraft({ ...rules, second_for_tools: e.target.checked })} />
+          Tools: turning tool kinds or single tools on or off, and approving an outside tool
         </label>
       </fieldset>
       <div className="mt-2">

@@ -99,6 +99,10 @@ def _apply(db: Session, c: NortPoleAdminChange, approver: User) -> None:
 
         apply_retention_update(RetentionUpdate(**c.payload), proposer, proposer_email=c.proposed_by_email,
                                approver_email=approver.email, expect_version=c.base_version)
+    elif c.kind == "tool_catalog":
+        from nortpole.governance.tool_catalog.api import CatalogUpdate, apply_catalog_update
+
+        apply_catalog_update(CatalogUpdate(**c.payload), db, proposer, approver_email=approver.email, expect_version=c.base_version)
     elif c.kind in APPLIERS:
         APPLIERS[c.kind](c.kind, c.payload, db, proposer, approver_email=approver.email)
     elif c.kind == "controls":

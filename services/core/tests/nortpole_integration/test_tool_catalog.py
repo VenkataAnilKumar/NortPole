@@ -187,3 +187,35 @@ def test_the_member_view_shows_names_and_status_only_and_hides_other_peoples_per
             s.delete(personal)
             s.delete(other)
             s.commit()
+
+
+def test_a_tool_catalog_change_waits_for_a_second_administrator_when_the_rule_is_on(world) -> None:  # type: ignore[no-untyped-def]
+    import json
+
+    from nortpole.governance.admin_changes import controls, service as changes
+    from nortpole.governance.admin_changes.models import NortPoleAdminChange
+
+    original = controls.load()
+    controls.save(controls.AdminControls(version=original.version + 1, second_for_tools=True))
+    with get_session_with_current_tenant() as s:
+        second = User(id=uuid.uuid4(), email=f"cat-second-{TAG}@example.com", hashed_password="x", is_active=True, is_verified=True)
+        s.add(second)
+        s.commit()
+    try:
+        with get_session_with_current_tenant() as s:
+            admin, other = s.get(User, world["admin"]), s.get(User, second.id)
+            with pytest.raises(NortPoleError):
+                cat_api.put_catalog(cat_api.CatalogUpdate(kinds={"everything": True}), user=admin, db_session=s)  # refused at once
+            held = cat_api.put_catalog(cat_api.CatalogUpdate(kinds={"outside": True}, tools={str(world["tool"]): True}), user=admin, db_session=s)
+            assert held.status_code == 202
+            cid = json.loads(held.body)["change_id"]
+            assert catalog.load().tools.get(str(world["tool"])) is None, "nothing changes before approval"
+            assert changes.approve(s, other, cid).state == "applied"
+            assert catalog.load().tools.get(str(world["tool"])) is True
+    finally:
+        controls.save(original.model_copy(update={"version": controls.load().version + 1}))
+        with get_session_with_current_tenant() as s:
+            s.query(NortPoleAdminChange).filter(NortPoleAdminChange.proposed_by_id == world["admin"]).delete(synchronize_session=False)
+            s.execute(text("delete from nortpole_audit_event where actor_user_id = :u and row_hash is null"), {"u": str(second.id)})
+            s.query(User).filter_by(id=second.id).delete()
+            s.commit()

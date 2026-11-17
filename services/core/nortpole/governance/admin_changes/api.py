@@ -95,6 +95,7 @@ class ControlsUpdate(BaseModel):
     # Left out, it keeps its current value, so older clients keep working.
     second_for_packs: bool | None = None
     second_for_destinations: bool | None = None
+    second_for_tools: bool | None = None
 
 
 @router.get("/controls")
@@ -113,10 +114,12 @@ def put_controls(
     current = controls.load()
     wanted = {"second_for_route_policy": body.second_for_route_policy, "second_for_retention": body.second_for_retention,
               "second_for_packs": current.second_for_packs if body.second_for_packs is None else body.second_for_packs,
-              "second_for_destinations": current.second_for_destinations if body.second_for_destinations is None else body.second_for_destinations}
+              "second_for_destinations": current.second_for_destinations if body.second_for_destinations is None else body.second_for_destinations,
+              "second_for_tools": current.second_for_tools if body.second_for_tools is None else body.second_for_tools}
     summary = ("Second-administrator rules: route policy " + ("on" if wanted["second_for_route_policy"] else "off")
                + ", retention " + ("on" if wanted["second_for_retention"] else "off") + ", packs " + ("on" if wanted["second_for_packs"] else "off")
-               + ", send destinations " + ("on" if wanted["second_for_destinations"] else "off"))
+               + ", send destinations " + ("on" if wanted["second_for_destinations"] else "off")
+               + ", tools " + ("on" if wanted["second_for_tools"] else "off"))
     if controls.required("controls"):
         return service.pending_response(service.propose(db_session, user, "controls", wanted, current.version, summary))
     new = controls.AdminControls(version=current.version + 1, **wanted)

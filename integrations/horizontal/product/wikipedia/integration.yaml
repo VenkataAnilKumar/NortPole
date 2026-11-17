@@ -1,4 +1,4 @@
-# Wikipedia: written for NortPole from the vendor's published API reference; not yet checked against the live service.
+# Wikipedia: Checked 2026-11-17: the page-summary request NortPole builds was sent to the live service and its answer read with NortPole's own field extractor; the search action was not (rate limited). The full call path was not run, because the sandbox cannot resolve hosts directly.
 schema_version: 1
 id: wikipedia
 name: Wikipedia

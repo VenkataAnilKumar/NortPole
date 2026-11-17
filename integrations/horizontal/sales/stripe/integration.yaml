@@ -1,4 +1,4 @@
-# Stripe: written for NortPole from the vendor's published API reference; not yet checked against the live service.
+# Stripe: Checked 2026-11-17 against the vendor's API reference (methods, URLs, parameter names, limits); not called against the live service.
 schema_version: 1
 id: stripe
 name: Stripe

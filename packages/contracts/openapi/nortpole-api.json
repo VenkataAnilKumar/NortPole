@@ -134,6 +134,11 @@
             "title": "Second For Route Policy",
             "type": "boolean"
           },
+          "second_for_tools": {
+            "default": false,
+            "title": "Second For Tools",
+            "type": "boolean"
+          },
           "version": {
             "default": 1,
             "title": "Version",
@@ -4473,6 +4478,17 @@
           "second_for_route_policy": {
             "title": "Second For Route Policy",
             "type": "boolean"
+          },
+          "second_for_tools": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Second For Tools"
           }
         },
         "required": [
@@ -8393,9 +8409,7 @@
           "200": {
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CatalogView"
-                }
+                "schema": {}
               }
             },
             "description": "Successful Response"
