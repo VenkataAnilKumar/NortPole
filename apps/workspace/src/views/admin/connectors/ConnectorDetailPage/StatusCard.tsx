@@ -9,15 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
-import {
-  Button,
-  Card,
-  Divider,
-  Popover,
-  SelectButton,
-  Text,
-  Tooltip,
-} from "@opal/components";
+import { Button, Card, Divider, Popover, SelectButton, Text } from "@opal/components";
 import { Section } from "@opal/layouts";
 import {
   SvgChevronDown,

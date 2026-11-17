@@ -4,7 +4,6 @@ import type { Route } from "next";
 import { useNavigation } from "@opal/navigation/hooks";
 import { cn } from "@opal/utils";
 import { Divider, Button, Presence, Spacer } from "@opal/components";
-import type { BadgeProps } from "@opal/components";
 import type {
   IconFunctionComponent,
   RichStr,

@@ -448,7 +448,7 @@ function OAuthDiscoveryStatus({
   onRetry,
 }: OAuthDiscoveryStatusProps) {
   const t = useTranslations("actions.mcpAuthModal.discovery");
-  const { values, setFieldValue, setValues, dirty, resetForm } =
+  const { values, setValues, dirty, resetForm } =
     useFormikContext<MCPAuthFormValues>();
   const requiresClient = discovery?.supports_automatic_registration === false;
   const rejectsClientMetadata = discovery?.supports_client_metadata === false;

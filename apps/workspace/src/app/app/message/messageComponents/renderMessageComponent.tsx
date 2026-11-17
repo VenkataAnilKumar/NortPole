@@ -1,4 +1,4 @@
-import React, { JSX, memo } from "react";
+import { JSX, memo } from "react";
 import {
   ChatPacket,
   isCodeInterpreterToolType,
@@ -15,23 +15,45 @@ import {
   RenderType,
   RendererOutput,
 } from "@/app/app/message/messageComponents/types";
-import { MessageTextRenderer } from "@/app/app/message/messageComponents/renderers/MessageTextRenderer";
+import {
+  MessageTextRenderer,
+} from "@/app/app/message/messageComponents/renderers/MessageTextRenderer";
 import { ImageToolRenderer } from "@/app/app/message/messageComponents/renderers/ImageToolRenderer";
-import { PythonToolRenderer } from "@/app/app/message/messageComponents/timeline/renderers/code/PythonToolRenderer";
-import { CodingAgentRenderer } from "@/app/app/message/messageComponents/timeline/renderers/code/CodingAgentRenderer";
+import {
+  PythonToolRenderer,
+} from "@/app/app/message/messageComponents/timeline/renderers/code/PythonToolRenderer";
+import {
+  CodingAgentRenderer,
+} from "@/app/app/message/messageComponents/timeline/renderers/code/CodingAgentRenderer";
 import {
   isCodingAgentPackets,
   NestedCall,
 } from "@/app/app/message/messageComponents/timeline/packetHelpers";
-import { ReasoningRenderer } from "@/app/app/message/messageComponents/timeline/renderers/reasoning/ReasoningRenderer";
+import {
+  ReasoningRenderer,
+} from "@/app/app/message/messageComponents/timeline/renderers/reasoning/ReasoningRenderer";
 import CustomToolRenderer from "@/app/app/message/messageComponents/renderers/CustomToolRenderer";
-import { FileReaderToolRenderer } from "@/app/app/message/messageComponents/timeline/renderers/filereader/FileReaderToolRenderer";
-import { FetchToolRenderer } from "@/app/app/message/messageComponents/timeline/renderers/fetch/FetchToolRenderer";
-import { MemoryToolRenderer } from "@/app/app/message/messageComponents/timeline/renderers/memory/MemoryToolRenderer";
-import { DeepResearchPlanRenderer } from "@/app/app/message/messageComponents/timeline/renderers/deepresearch/DeepResearchPlanRenderer";
-import { ResearchAgentRenderer } from "@/app/app/message/messageComponents/timeline/renderers/deepresearch/ResearchAgentRenderer";
-import { WebSearchToolRenderer } from "@/app/app/message/messageComponents/timeline/renderers/search/WebSearchToolRenderer";
-import { InternalSearchToolRenderer } from "@/app/app/message/messageComponents/timeline/renderers/search/InternalSearchToolRenderer";
+import {
+  FileReaderToolRenderer,
+} from "@/app/app/message/messageComponents/timeline/renderers/filereader/FileReaderToolRenderer";
+import {
+  FetchToolRenderer,
+} from "@/app/app/message/messageComponents/timeline/renderers/fetch/FetchToolRenderer";
+import {
+  MemoryToolRenderer,
+} from "@/app/app/message/messageComponents/timeline/renderers/memory/MemoryToolRenderer";
+import {
+  DeepResearchPlanRenderer,
+} from "@/app/app/message/messageComponents/timeline/renderers/deepresearch/DeepResearchPlanRenderer";
+import {
+  ResearchAgentRenderer,
+} from "@/app/app/message/messageComponents/timeline/renderers/deepresearch/ResearchAgentRenderer";
+import {
+  WebSearchToolRenderer,
+} from "@/app/app/message/messageComponents/timeline/renderers/search/WebSearchToolRenderer";
+import {
+  InternalSearchToolRenderer,
+} from "@/app/app/message/messageComponents/timeline/renderers/search/InternalSearchToolRenderer";
 
 // Different types of chat packets using discriminated unions
 interface GroupedPackets {

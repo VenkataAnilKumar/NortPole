@@ -699,7 +699,7 @@ export default function MultiModelResponseView({
       return uniformPanelW;
     });
 
-    const panelLeftEdges = selectionWidths.reduce<number[]>((acc, w, i) => {
+    const panelLeftEdges = selectionWidths.reduce<number[]>((acc, _w, i) => {
       acc.push(i === 0 ? 0 : acc[i - 1]! + selectionWidths[i - 1]! + PANEL_GAP);
       return acc;
     }, []);

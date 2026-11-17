@@ -2,9 +2,9 @@
 
 import { useState, useMemo, useCallback } from "react";
 import { useTranslations } from "next-intl";
-import { Button, Divider } from "@opal/components";
-import { SvgUsers, SvgUser, SvgLogOut } from "@opal/icons";
-import { ContentAction, toast, Section } from "@opal/layouts";
+import { Button } from "@opal/components";
+import { SvgUsers, SvgLogOut } from "@opal/icons";
+import { toast, Section } from "@opal/layouts";
 import { Modal } from "@opal/components";
 import { InputTypeIn } from "@opal/components";
 import { Dropdown } from "@opal/components";

@@ -23,14 +23,7 @@ import {
   type DropdownMenuItem,
   useCreateModal,
 } from "@opal/components";
-import {
-  Content,
-  IllustrationContent,
-  PageCenter,
-  Section,
-  SettingsLayouts,
-  toast,
-} from "@opal/layouts";
+import { IllustrationContent, PageCenter, Section, SettingsLayouts, toast } from "@opal/layouts";
 import { CardLoader, IconLoader } from "@opal/loaders";
 import { markdown } from "@opal/utils";
 import { SvgPlugBroken } from "@opal/illustrations";

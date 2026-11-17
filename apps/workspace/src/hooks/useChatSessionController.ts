@@ -89,7 +89,6 @@ export default function useChatSessionController({
   chatSessionIdRef,
   loadedIdSessionRef,
   chatInputBarRef,
-  isInitialLoad,
   submitOnLoadPerformed,
   refreshChatSessions,
   onSubmit,

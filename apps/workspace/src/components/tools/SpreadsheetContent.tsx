@@ -4,7 +4,7 @@
 // passed through raw by the backend and rendered as a single CSV sheet, so
 // routing here never depends solely on the file's display name.
 import { IconLoader } from "@opal/loaders";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import {
   Table,

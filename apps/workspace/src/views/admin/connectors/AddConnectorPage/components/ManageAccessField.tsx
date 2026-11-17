@@ -37,7 +37,6 @@ export default function ManageAccessField({
   const plans = usePlans();
   const businessTier = useTierAtLeast(Tier.BUSINESS);
   const groupsLocked: boolean = disabled === true || !businessTier;
-  const tRestriction = useTranslations("admin.connector.groupRestriction");
   const { isScopedManager } = usePermissionAuthority(
     Permission.MANAGE_CONNECTORS
   );

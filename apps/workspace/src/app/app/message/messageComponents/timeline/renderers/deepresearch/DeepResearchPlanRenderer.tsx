@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { SvgCircle } from "@opal/icons";
 
@@ -24,7 +24,7 @@ import {
 export const DeepResearchPlanRenderer: MessageRenderer<
   DeepResearchPlanPacket,
   FullChatState
-> = ({ packets, stopPacketSeen, children }) => {
+> = ({ packets, children }) => {
   const t = useTranslations("chat.messages.timeline");
   const isComplete = packets.some((p) => p.obj.type === PacketType.SECTION_END);
 

@@ -10,7 +10,6 @@ import {
   SvgCheckCircle,
   SvgClock,
   SvgEdit,
-  SvgInfo,
   SvgLock,
   SvgPlusCircle,
 } from "@opal/icons";
@@ -30,7 +29,6 @@ import { useDocumentSets } from "./hooks";
 import useFilter from "@/hooks/useFilter";
 import { can } from "@/lib/permissions/resource-actions";
 import { usePermissionAuthority } from "@/lib/permissions/hooks";
-import { ConnectorTitle } from "@/components/admin/connectors/ConnectorTitle";
 import { deleteDocumentSet } from "./lib";
 import { IllustrationContent, SettingsLayouts, toast } from "@opal/layouts";
 import SvgNoResult from "@opal/illustrations/no-result";

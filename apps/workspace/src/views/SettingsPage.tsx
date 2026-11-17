@@ -900,7 +900,7 @@ function PromptShortcuts() {
   const t = useTranslations("settings");
   const { promptShortcuts, isLoading, error, refresh } = usePromptShortcuts();
   const [shortcuts, setShortcuts] = useState<LocalShortcut[]>([]);
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [, setIsInitialLoad] = useState(true);
 
   // Initialize shortcuts when input prompts are loaded
   useEffect(() => {

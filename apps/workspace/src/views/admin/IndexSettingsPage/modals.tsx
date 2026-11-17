@@ -20,10 +20,7 @@ import {
   type VertexEmbeddingConfig,
 } from "@/lib/searchSettings/types";
 import { defaultTestModelName } from "@/lib/searchSettings";
-import {
-  connectEmbeddingProvider,
-  testEmbedding,
-} from "@/lib/searchSettings/svc";
+import { connectEmbeddingProvider } from "@/lib/searchSettings/svc";
 import {
   ApiKeyField,
   ApiUrlField,

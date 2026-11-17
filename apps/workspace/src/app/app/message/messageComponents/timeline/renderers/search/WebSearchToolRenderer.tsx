@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslations } from "next-intl";
 import { SvgSearch, SvgGlobe } from "@opal/icons";
 import { SearchToolPacket } from "@/app/app/services/streamingModels";
@@ -36,8 +35,6 @@ const queryToSourceInfo = (query: string, index: number): SourceInfo => ({
  */
 export const WebSearchToolRenderer: MessageRenderer<SearchToolPacket, {}> = ({
   packets,
-  onComplete,
-  animate,
   stopPacketSeen,
   renderType,
   children,

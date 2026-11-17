@@ -1,6 +1,6 @@
 import { cn } from "@opal/utils";
 import { Text } from "@opal/components";
-import React, { useState, ReactNode, useCallback, useMemo, memo } from "react";
+import { useState, ReactNode, useCallback, useMemo, memo } from "react";
 import { SvgCheck, SvgCode, SvgCopy } from "@opal/icons";
 import { useTranslations } from "next-intl";
 

@@ -2,9 +2,7 @@ import type {
   Project,
   CategorizedFiles,
   ProjectFile,
-  RejectedFile,
   UserFileDeleteResult,
-  UserFileStatus,
   ProjectDetails,
 } from "@/lib/projects/types";
 

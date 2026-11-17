@@ -12,13 +12,7 @@ import {
 import { getSourceMetadata } from "@/lib/connectors/utils";
 import { useAdminRouteTitle } from "@/lib/adminNavLabels";
 import { markdown } from "@opal/utils";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Formik, Form } from "formik";
 import { mutate } from "swr";
@@ -40,12 +34,7 @@ import {
   SvgChevronDown,
 } from "@opal/icons";
 import { ADMIN_ROUTES } from "@/lib/admin-routes";
-import {
-  Content,
-  ContentAction,
-  InputHorizontal,
-  InputVertical,
-} from "@opal/layouts";
+import { Content, InputHorizontal, InputVertical } from "@opal/layouts";
 import { useSettings } from "@/lib/settings/hooks";
 import useCCPairs from "@/hooks/useCCPairs";
 import { QueryHistoryType, Settings, toSettings } from "@/lib/settings/types";

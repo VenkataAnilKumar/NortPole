@@ -145,7 +145,6 @@ export const DropdownList = forwardRef<HTMLDivElement, DropdownListProps>(
     },
     ref
   ) => {
-    const strings = useOpalStrings();
     // Disabling closes the list even when a parent holds `open`; it then
     // plays its exit like any close, rather than vanishing mid-animation.
     const isOpen = isOpenProp && !disabled;

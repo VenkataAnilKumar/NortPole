@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback } from "react";
 import { useTranslations } from "next-intl";
-import { SvgCircle, SvgCheckCircle, SvgBookOpen } from "@opal/icons";
+import { SvgCircle, SvgBookOpen } from "@opal/icons";
 
 import {
   PacketType,
@@ -22,7 +22,9 @@ import {
   TimelineRendererComponent,
   TimelineRendererOutput,
 } from "@/app/app/message/messageComponents/timeline/TimelineRendererComponent";
-import { TimelineStepComposer } from "@/app/app/message/messageComponents/timeline/TimelineStepComposer";
+import {
+  TimelineStepComposer,
+} from "@/app/app/message/messageComponents/timeline/TimelineStepComposer";
 import ExpandableTextDisplay from "@/refresh-components/texts/ExpandableTextDisplay";
 import { Text } from "@opal/components";
 import {
@@ -55,10 +57,8 @@ export const ResearchAgentRenderer: MessageRenderer<
   packets,
   nestedCalls,
   state,
-  onComplete,
   renderType,
   stopPacketSeen,
-  isLastStep = true,
   isHover = false,
   children,
 }) => {

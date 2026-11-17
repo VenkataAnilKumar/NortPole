@@ -750,7 +750,7 @@ export function TextArrayField<T extends Yup.AnyObject>({
   );
 }
 
-interface TextArrayFieldBuilderProps<T extends Yup.AnyObject> {
+interface TextArrayFieldBuilderProps {
   name: string;
   label: string;
   subtext?: string | JSX.Element;
@@ -759,7 +759,7 @@ interface TextArrayFieldBuilderProps<T extends Yup.AnyObject> {
 }
 
 export function TextArrayFieldBuilder<T extends Yup.AnyObject>(
-  props: TextArrayFieldBuilderProps<T>
+  props: TextArrayFieldBuilderProps
 ): FormBodyBuilder<T> {
   const _TextArrayField: FormBodyBuilder<T> = (values) => (
     <TextArrayField {...props} values={values} />

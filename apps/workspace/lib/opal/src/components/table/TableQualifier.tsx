@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { cn } from "@opal/utils";
 import { useTableSize } from "@opal/components/table/TableSizeContext";
 import type { IconFunctionComponent } from "@opal/types";

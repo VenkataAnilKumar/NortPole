@@ -2,7 +2,6 @@
 
 import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
-import * as SliderPrimitive from "@radix-ui/react-slider";
 import {
   Button,
   Collapsible,
@@ -10,7 +9,6 @@ import {
   LineItemButton,
   PopoverMenu,
   Text,
-  Tooltip,
 } from "@opal/components";
 import {
   SvgBarChart,

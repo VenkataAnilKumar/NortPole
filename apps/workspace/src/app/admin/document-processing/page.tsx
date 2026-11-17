@@ -22,7 +22,6 @@ function Main() {
   const { appName } = useSettings();
   const {
     data: isApiKeySet,
-    error,
     mutate,
     isLoading,
   } = useSWR<{

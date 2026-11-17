@@ -1,4 +1,3 @@
-import React from "react";
 import { cn } from "@opal/utils";
 import { Text } from "@opal/components";
 

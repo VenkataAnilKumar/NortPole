@@ -72,7 +72,6 @@ export default function ScheduleTaskForm({
   isEdit,
   title,
   description,
-  onBack,
 }: ScheduleTaskFormProps) {
   const t = useTranslations("craft.tasks.form");
   const tActionPolicies = useTranslations("craft.actionPolicies");

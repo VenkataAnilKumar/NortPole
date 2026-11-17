@@ -1,10 +1,8 @@
-import type { FunctionComponent } from "react";
 import type {
   SelectDivider,
   SelectOption,
   SelectOptions,
 } from "@opal/components";
-import type { IconProps } from "@opal/types";
 import { getModelIcon, getProvider } from "@/lib/languageModels/utils";
 import type { ProviderNames } from "@/lib/languageModels/useProviderNames";
 import { AGGREGATOR_PROVIDERS } from "@/lib/languageModels/svc";
@@ -15,7 +13,6 @@ import type {
   LLMOptionGroup,
   LLMProviderDescriptor,
   ModelOptionProvider,
-  ReasoningEffortOverride,
   ProviderEntry,
 } from "@/lib/languageModels/types";
 

@@ -11,18 +11,13 @@ import {
   updateDocumentSet,
   DocumentSetCreationRequest,
 } from "./lib";
-import {
-  ConnectorStatus,
-  DocumentSetSummary,
-  FederatedConnectorConfig,
-  Permission,
-} from "@/lib/types";
+import { ConnectorStatus, DocumentSetSummary, Permission } from "@/lib/types";
 import { TextFormField } from "@/components/Field";
 import { Button } from "@opal/components";
 import { useTierAtLeast } from "@/lib/tiers/hooks";
 import { Tier } from "@/lib/tiers/types";
 import { IsPublicGroupSelector } from "@/components/IsPublicGroupSelector";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useUser } from "@/providers/UserProvider";
 import { usePermissionAuthority } from "@/lib/permissions/hooks";
 import { ConnectorMultiSelect } from "@/components/ConnectorMultiSelect";
@@ -44,8 +39,8 @@ export const DocumentSetCreationForm = ({
   const t = useTranslations("admin.documents");
   const businessTier = useTierAtLeast(Tier.BUSINESS);
   const isUpdate = existingDocumentSet !== undefined;
-  const [localCcPairs, setLocalCcPairs] = useState(ccPairs);
-  const { user } = useUser();
+  const [localCcPairs] = useState(ccPairs);
+  const { } = useUser();
   const { isGlobalHolder, isScopedManager } = usePermissionAuthority(
     Permission.MANAGE_DOCUMENT_SETS
   );

@@ -124,7 +124,6 @@ export async function submitProvider<T extends BaseLLMFormValues>({
   initialValues,
   existingLlmProvider,
   shouldMarkAsDefault,
-  isCustomProvider,
   setStatus,
   setSubmitting,
   onClose,

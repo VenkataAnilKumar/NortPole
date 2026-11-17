@@ -64,7 +64,6 @@ export default function ChatDocumentDisplay({
   isSelected,
   setPresentingDocument,
 }: ChatDocumentDisplayProps) {
-  const isInternet = document.is_internet;
   const title = useMemo(
     () => document.semantic_identifier || document.document_id,
     [document.semantic_identifier, document.document_id]

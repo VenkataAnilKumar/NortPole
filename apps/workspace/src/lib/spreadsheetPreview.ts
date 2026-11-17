@@ -20,7 +20,7 @@ export function parseSpreadsheet(
     cellFormula: false,
   });
   return workbook.SheetNames.filter(
-    (name, index) => !workbook.Workbook?.Sheets?.[index]?.Hidden
+    (_name, index) => !workbook.Workbook?.Sheets?.[index]?.Hidden
   ).map((name) => {
     const sheet = workbook.Sheets[name];
     if (!sheet?.["!ref"]) return { name, rows: [], truncated: false };

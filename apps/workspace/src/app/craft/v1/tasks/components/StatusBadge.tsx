@@ -2,7 +2,6 @@
 
 import { cn } from "@opal/utils";
 import { Text } from "@opal/components";
-import type { BadgeProps } from "@opal/components";
 import {
   SvgAlertCircle,
   SvgCheckCircle,

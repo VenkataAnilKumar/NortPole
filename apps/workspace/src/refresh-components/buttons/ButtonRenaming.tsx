@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { useFocusOnMount } from "@opal/hooks";
 import { handleEnterPress, useEscapePress } from "@/lib/typingUtils";
 import { UNNAMED_CHAT } from "@/lib/constants";

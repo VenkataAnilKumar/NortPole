@@ -710,7 +710,7 @@ export default function SourceHierarchyBrowser({
   // Navigation handlers
   const handleNavigateToRoot = () => setPath([]);
 
-  const handleNavigateToNode = (node: HierarchyNodeSummary, index: number) => {
+  const handleNavigateToNode = (_node: HierarchyNodeSummary, index: number) => {
     setPath((prev) => prev.slice(0, index + 1));
   };
 

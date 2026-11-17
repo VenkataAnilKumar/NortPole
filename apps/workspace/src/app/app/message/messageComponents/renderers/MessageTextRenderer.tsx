@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import ReactMarkdown, { Components } from "react-markdown";
 import type { PluggableList } from "unified";
@@ -99,7 +99,6 @@ export const MessageTextRenderer: MessageRenderer<
   messageNodeId,
   hasTimelineThinking,
   onComplete,
-  renderType,
   animate,
   restoredTextLength = 0,
   stopPacketSeen,

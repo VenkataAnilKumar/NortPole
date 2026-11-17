@@ -6,20 +6,11 @@ import {
   usePathname,
   useSearchParams,
 } from "@opal/navigation";
-import { SourceMetadata, ValidSources } from "@/lib/connectors/types/source";
 import { loginPath } from "@/lib/auth/paths";
 import { endIncognitoSession } from "@/app/app/services/lib";
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { SEARCH_PARAM_NAMES } from "@/app/app/services/searchParams";
 import { useLlmManager } from "@/lib/hooks";
-import { useFederatedConnectors } from "@/lib/connectors/hooks";
 import { useSendChatMessageFromURL } from "@/lib/chat/hooks";
 import NortPoleInitializingLoader from "@/components/NortPoleInitializingLoader";
 import { NortPoleDocument, MinimalNortPoleDocument } from "@/lib/search/types";
@@ -32,12 +23,9 @@ import {
   parseChatPluginIntent,
   withoutChatPluginIntent,
 } from "@/lib/plugins/chat";
-import { useSettings } from "@/lib/settings/hooks";
 import Dropzone from "react-dropzone";
 import AppInputBar, { AppInputBarHandle } from "@/sections/input/AppInputBar";
 import useChatSessions from "@/hooks/useChatSessions";
-import useCCPairs from "@/hooks/useCCPairs";
-import { useDocumentSets } from "@/lib/hooks/useDocumentSets";
 import { useAgents } from "@/lib/agents/hooks";
 import { AppPopup } from "@/app/app/components/AppPopup";
 import { useUser } from "@/providers/UserProvider";
@@ -46,7 +34,6 @@ import { NoAgentModal } from "@/lib/agents/components";
 import PreviewModal from "@/sections/modals/PreviewModal";
 import { Modal } from "@opal/components";
 import { useSendMessageToParent } from "@/lib/extension/hooks";
-import { FederatedConnectorDetail } from "@/lib/types";
 import DocumentsSidebar from "@/sections/document-sidebar/DocumentsSidebar";
 import useChatController from "@/hooks/useChatController";
 import useMultiModelChat from "@/hooks/useMultiModelChat";
@@ -57,11 +44,7 @@ import useDeepResearchToggle from "@/hooks/useDeepResearchToggle";
 import { useIncognito } from "@/providers/IncognitoProvider";
 import { isAssistant } from "@/lib/agents/utils";
 import AgentDescription from "@/app/app/components/AgentDescription";
-import {
-  useChatSessionStore,
-  useCurrentMessageHistory,
-  useCurrentMessageTree,
-} from "@/app/app/stores/useChatSessionStore";
+import { useChatSessionStore, useCurrentMessageHistory } from "@/app/app/stores/useChatSessionStore";
 import {
   useCurrentChatState,
   useIsReady,
@@ -178,7 +161,6 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
     currentChatSessionId,
     isLoading: isLoadingChatSessions,
   } = useChatSessions();
-  const { vectorDbEnabled, disable_default_assistant } = useSettings();
 
   const {
     currentMessageFiles,
@@ -384,7 +366,6 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
     (state) => state.updateCurrentDocumentSidebarVisible
   );
   const messageHistory = useCurrentMessageHistory();
-  const messageTree = useCurrentMessageTree();
   // A chat opened for the first time has nothing to show until its fetch
   // returns. A cached chat keeps rendering while it refreshes. The store takes
   // the URL's chat one effect late, so that frame counts as loading too.

@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useSettings } from "@/lib/settings/hooks";
 import { Button, CopyButton, InputTypeIn, Text } from "@opal/components";
 import { richNodes } from "@opal/utils";
-import { SvgUserPlus, SvgUserX, SvgXCircle, SvgKey } from "@opal/icons";
+import { SvgUserPlus, SvgUserX, SvgKey } from "@opal/icons";
 import { ConfirmationModalLayout } from "@opal/layouts";
 import { toast } from "@opal/layouts";
 import {

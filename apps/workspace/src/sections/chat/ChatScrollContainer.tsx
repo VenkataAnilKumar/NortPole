@@ -95,8 +95,8 @@ const ChatScrollContainer = React.memo(
       const scrolledForSessionRef = useRef<string | null>(null);
       const prevAnchorSelectorRef = useRef<string | null>(null);
 
-      const [hasContentAbove, setHasContentAbove] = useState(false);
-      const [hasContentBelow, setHasContentBelow] = useState(false);
+      const [, setHasContentAbove] = useState(false);
+      const [, setHasContentBelow] = useState(false);
       const [isAtBottom, setIsAtBottom] = useState(true);
       const isAtBottomRef = useRef(true); // Whether to follow new content
       const autoScrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(

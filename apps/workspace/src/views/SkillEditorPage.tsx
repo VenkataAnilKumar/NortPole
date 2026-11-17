@@ -20,7 +20,6 @@ import {
   InputTypeIn,
   MessageCard,
   Tooltip,
-  Text,
   useCreateModal,
 } from "@opal/components";
 import { SvgAlertTriangle, SvgBlocks, SvgShare, SvgTrash } from "@opal/icons";

@@ -1,7 +1,6 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { getSourceDisplayName } from "@/lib/connectors/utils";
 import OAuthCallbackPage from "@/components/oauth/OAuthCallbackPage";
 
 export default function FederatedOAuthCallbackPage() {

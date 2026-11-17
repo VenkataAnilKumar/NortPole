@@ -402,12 +402,6 @@ class VoiceRecorderSession {
     }
   };
 
-  private resetBackendTranscript(): void {
-    if (this.websocket?.readyState === WebSocket.OPEN) {
-      this.websocket.send(JSON.stringify({ type: "reset" }));
-    }
-  }
-
   private sendAudioBuffer(): void {
     if (
       !this.websocket ||

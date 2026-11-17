@@ -5,15 +5,7 @@ import { useTranslations } from "next-intl";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { cn, clickOnKeyDown } from "@opal/utils";
 import { Button, Text, Tooltip } from "@opal/components";
-import {
-  SvgAlertCircle,
-  SvgClock,
-  SvgFileText,
-  SvgImage,
-  SvgLoader,
-  SvgSparkle,
-  SvgX,
-} from "@opal/icons";
+import { SvgAlertCircle, SvgClock, SvgFileText, SvgImage, SvgLoader, SvgX } from "@opal/icons";
 import { isImageFile } from "@/lib/utils";
 import {
   type BuildFile,
