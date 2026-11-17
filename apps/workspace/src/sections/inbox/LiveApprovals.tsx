@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSettings } from "@/lib/settings/hooks";
 import useSWR from "swr";
 import { errorHandlingFetcher } from "@/lib/fetcher";
 import { SWR_KEYS } from "@/lib/swr-keys";
@@ -16,7 +17,7 @@ const card = "rounded-2xl border border-border-01 bg-background-neutral-00 shado
  * here, whatever the server allows elsewhere.
  */
 export default function LiveApprovals() {
-  const { data, mutate } = useSWR<ApprovalListResponse>(SWR_KEYS.myLiveApprovals, errorHandlingFetcher, {
+  const { data, mutate } = useSWR<ApprovalListResponse>(useSettings()?.nortpole_craft_enabled === true ? SWR_KEYS.myLiveApprovals : null, errorHandlingFetcher, {
     refreshInterval: 15_000,
     shouldRetryOnError: false,
   });
