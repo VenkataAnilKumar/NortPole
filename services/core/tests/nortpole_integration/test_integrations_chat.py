@@ -92,15 +92,20 @@ def test_nothing_is_offered_until_a_person_installs_and_connects(world) -> None:
         assert {"airtable_list_bases", "airtable_list_tables", "airtable_list_records", "airtable_get_record"} <= got
 
 
-def test_writes_are_never_offered_to_the_model(world) -> None:  # type: ignore[no-untyped-def]
+def test_a_write_is_offered_only_as_a_proposal_that_sends_nothing(world) -> None:  # type: ignore[no-untyped-def]
     with get_session_with_current_tenant() as s:
         ann = s.get(User, world)
         approve_and_install(s, ann, "airtable")
         service.connect(s, ann, "airtable", {"access_token": SECRET})
-        got = names(chat_tools_for(ann))
-        for write in ("airtable_create_record", "airtable_update_record", "airtable_delete_record"):
-            assert write not in got
-        assert not any(t.name.endswith(("create_record", "update_record", "delete_record")) for t in chat_tools_for(ann))
+    transport = fake({"id": "recNEW", "fields": {}})
+    tools = tools_for(world, transport)
+    creator = next(t for t in tools if t.name == "airtable_create_record")
+    assert "PROPOSES" in creator.description and "approves" in creator.description
+    out = invoke(creator, {"baseId": "appX", "tableId": "tblX", "fields": {"Name": "Ada"}})
+    assert not out.is_error and "Nothing has been changed" in out.content and SECRET not in out.content
+    assert transport.seen == [], "a proposal never reaches the service"  # type: ignore[attr-defined]
+    reader = next(t for t in tools if t.name == "airtable_list_bases")
+    assert "PROPOSES" not in reader.description
 
 
 def test_a_blocked_integration_or_a_removed_one_disappears_and_a_taken_name_is_skipped(world) -> None:  # type: ignore[no-untyped-def]

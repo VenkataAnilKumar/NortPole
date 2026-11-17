@@ -104,7 +104,7 @@ function Card({ item, req, busy, run }: {
             </li>
           ))}
           <li>Talks only to {item.hosts.join(", ")}. {item.needs_account ? "Uses your own account there." : "Needs no account."}</li>
-          {item.actions.some((a) => a.effect === "read") && <li>Once installed{item.needs_account ? " and connected" : ""}, your chats can use the actions that only read. Actions that change things are never offered to chat.</li>}
+          {item.actions.length > 0 && <li>Once installed{item.needs_account ? " and connected" : ""}, your chats can use the actions that only read. For actions that change things, an assistant can only propose the change: it waits in your Inbox, and nothing is sent until you approve it.</li>}
         </ul>
       </details>
       {item.skills.length > 0 && <SuggestedSkills item={item} />}
