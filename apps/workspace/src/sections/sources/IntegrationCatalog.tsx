@@ -156,8 +156,17 @@ function Card({ item, req, busy, run }: {
           {item.state === "needs_approval" && pending && req && (
             <button type="button" className={secondary} disabled={busy} onClick={() => run(async () => { await send("POST", `/api/sources/requests/${req.id}/withdraw`); return `Withdrew the request for ${item.name}.`; })}>Withdraw request</button>
           )}
+          {item.state === "installed" && item.needs_account && item.oauth_available && (
+            <button type="button" className={primary} disabled={busy} aria-label={`Sign in with ${item.name}`} onClick={() => run(async () => {
+              const res = await fetch(`${base}/oauth/start`, { method: "POST" });
+              const data = await res.json().catch(() => null);
+              if (!res.ok || typeof data?.authorize_url !== "string") throw new Error(typeof data?.detail === "string" ? data.detail : "Signing in could not be started.");
+              window.location.assign(data.authorize_url);
+              return `Opening ${item.name} to sign in…`;
+            })}>Sign in with {item.name}</button>
+          )}
           {item.state === "installed" && item.needs_account && (
-            <button type="button" className={primary} disabled={busy} aria-label={`Connect my account to ${item.name}`} onClick={() => setForm("connect")}>Connect my account</button>
+            <button type="button" className={item.oauth_available ? secondary : primary} disabled={busy} aria-label={`Connect my account to ${item.name}`} onClick={() => setForm("connect")}>{item.oauth_available ? "Use a token instead" : "Connect my account"}</button>
           )}
           {item.state === "connected" && (
             <button type="button" className={secondary} disabled={busy} aria-label={`Disconnect ${item.name}`} onClick={() => run(async () => { await send("DELETE", `${base}/account`); return `Disconnected ${item.name}.`; })}>Disconnect</button>

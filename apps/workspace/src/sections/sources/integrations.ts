@@ -13,6 +13,7 @@ export interface IntegrationItem {
   data_classes: string[];
   needs_account: boolean;
   auth_mode: "none" | "oauth" | "api_key";
+  oauth_available: boolean;
   has_writes: boolean;
   actions: { id: string; name: string; description: string; effect: "read" | "write" }[];
   skills: { name: string; description: string; content: string }[];

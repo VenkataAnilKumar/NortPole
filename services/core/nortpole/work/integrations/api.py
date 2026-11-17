@@ -20,7 +20,7 @@ from nortpole.db.models import User
 from nortpole.error_handling.error_codes import NortPoleErrorCode
 from nortpole.error_handling.exceptions import NortPoleError
 from nortpole.utils.audit import AuditAction, AuditOutcome
-from nortpole.work.integrations import policy, registry, service
+from nortpole.work.integrations import oauth, policy, registry, service
 from nortpole.work.integrations.manifest import Integration
 from nortpole.work.integrations.models import NortPoleIntegrationUse
 from nortpole.work.integrations.service import IntegrationAccessError
@@ -71,6 +71,8 @@ class IntegrationView(BaseModel):
     needs_account: bool
     # How the person signs in: none, oauth or api_key.
     auth_mode: str
+    # True when an administrator set up signing in with this service, so the person can sign in rather than paste a token.
+    oauth_available: bool
     has_writes: bool
     actions: list[IntegrationActionView]
     # Skills the definition suggests; the person adds one through the personal skills routes.
@@ -104,7 +106,7 @@ class IntegrationAccountBody(BaseModel):
 def _view(item: Integration, state: dict[str, Any]) -> IntegrationView:
     return IntegrationView(
         id=item.id, name=item.name, description=item.description, kind=item.kind, group=item.group, category=item.category,
-        version=item.version, hosts=item.hosts, data_classes=list(item.data_classes), needs_account=item.auth.mode != "none", auth_mode=item.auth.mode,
+        version=item.version, hosts=item.hosts, data_classes=list(item.data_classes), needs_account=item.auth.mode != "none", auth_mode=item.auth.mode, oauth_available=item.auth.mode == "oauth" and oauth.available(item.auth.provider),
         has_writes=any(a.effect == "write" for a in item.actions),
         actions=[IntegrationActionView(id=a.id, name=a.name, description=a.description, effect=a.effect) for a in item.actions],
         skills=[IntegrationSkillView(name=k.name, description=k.description, content=k.content) for k in item.skills],
@@ -197,6 +199,58 @@ def disconnect(
 ) -> IntegrationView:
     try:
         service.disconnect(db, user, integration_id)
+    except IntegrationAccessError as exc:
+        raise _refuse(exc) from exc
+    return _view(registry.get(integration_id), service.status(db, user, integration_id))  # type: ignore[arg-type]
+
+
+class IntegrationOAuthStart(BaseModel):
+    authorize_url: str
+
+
+@router.post("/integrations/{integration_id}/oauth/start")
+def oauth_start(
+    integration_id: str,
+    user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
+    db: Session = Depends(get_session),
+) -> IntegrationOAuthStart:
+    """The address to send the person to, to sign in with their own account. They must have installed it first."""
+    item = registry.get(integration_id)
+    if item is None:
+        raise NortPoleError(NortPoleErrorCode.NOT_FOUND, "That integration is not offered here.")
+    if item.auth.mode != "oauth":
+        raise NortPoleError(NortPoleErrorCode.INVALID_INPUT, f"{item.name} does not sign in with OAuth.")
+    try:
+        if service.status(db, user, integration_id)["state"] not in ("installed", "connected"):
+            raise IntegrationAccessError("not_installed", f"Install {item.name} first.")
+        url = oauth.start(user_id=str(user.id), integration_id=integration_id, provider=item.auth.provider or "", scopes=item.auth.scopes)
+    except IntegrationAccessError as exc:
+        raise _refuse(exc) from exc
+    except oauth.OAuthError as exc:
+        code = NortPoleErrorCode.FEATURE_DISABLED if exc.code in ("oauth_not_configured", "secrets_key_missing") else NortPoleErrorCode.BAD_REQUEST
+        raise NortPoleError(code, str(exc)) from exc
+    return IntegrationOAuthStart(authorize_url=url)
+
+
+class IntegrationOAuthComplete(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    state: str = Field(min_length=1, max_length=2000)
+    code: str = Field(min_length=1, max_length=2000, repr=False)
+
+
+@router.post("/integrations/oauth/complete")
+def oauth_complete(
+    body: IntegrationOAuthComplete,
+    user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
+    db: Session = Depends(get_session),
+) -> IntegrationView:
+    """Finish signing in: the web page the service sent the person back to hands over the code and the state. The state
+    must be one this person started; the account is connected and returned like any other connect."""
+    try:
+        integration_id, account = oauth.finish(state=body.state, code=body.code, user_id=str(user.id))
+        service.connect(db, user, integration_id, account)
+    except oauth.OAuthError as exc:
+        raise NortPoleError(NortPoleErrorCode.BAD_REQUEST, str(exc)) from exc
     except IntegrationAccessError as exc:
         raise _refuse(exc) from exc
     return _view(registry.get(integration_id), service.status(db, user, integration_id))  # type: ignore[arg-type]

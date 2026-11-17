@@ -19,7 +19,7 @@ from nortpole.db.models import User
 from nortpole.knowledge.source_requests import catalog
 from nortpole.knowledge.source_requests.models import NortPoleSourceRequest
 from nortpole.utils.audit import AuditAction, AuditOutcome
-from nortpole.work.integrations import executor, policy, registry, secrets
+from nortpole.work.integrations import executor, oauth, policy, registry, secrets
 from nortpole.work.integrations.manifest import Integration
 from nortpole.work.integrations.models import NortPoleIntegrationUse
 
@@ -192,6 +192,13 @@ def call(
         account = secrets.unseal(use.credential) if use.credential is not None else None
     except secrets.SecretsError as exc:
         raise IntegrationAccessError("not_connected" if exc.code == "secrets_unreadable" else exc.code, str(exc)) from exc
+    if account is not None and integration.auth.mode == "oauth" and oauth.needs_refresh(account):
+        try:
+            account = oauth.refresh(integration.auth.provider or "", account)
+            use.credential = secrets.seal(account)
+            db.commit()
+        except (oauth.OAuthError, secrets.SecretsError):
+            raise IntegrationAccessError("not_connected", f"Your {integration.name} sign-in ran out and could not be renewed. Connect it again.") from None
     # The person's settings fill only parameters meant for the person, and only those this action has; the model's
     # values fill only those meant for it. The executor enforces both again.
     settings = {k: v for k, v in (use.settings or {}).items() if k in action.params}

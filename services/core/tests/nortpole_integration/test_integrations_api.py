@@ -17,7 +17,7 @@ from nortpole.error_handling.exceptions import NortPoleError
 from nortpole.governance.route_policy.audit import NortPoleAuditEvent
 from nortpole.knowledge.source_requests import api as requests_api
 from nortpole.knowledge.source_requests.models import NortPoleSourceRequest
-from nortpole.work.integrations import api, policy, registry, secrets
+from nortpole.work.integrations import api, oauth, policy, registry, secrets
 from nortpole.work.integrations.models import NortPoleIntegrationUse
 from tests.nortpole_integration.test_tasks_flow import _up
 from tests.unit.nortpole.integrations.test_manifest import GOOD
@@ -202,3 +202,45 @@ def test_two_integrations_never_share_a_schema_name_with_another_route_module() 
             if inspect.isclass(vars(importlib.import_module(module)).get(name)):
                 clashes.append((name, module))
     assert not clashes, f"rename these: {sorted(set(clashes))}"
+
+
+def test_sign_in_with_oauth_through_the_routes_connects_the_account_and_redirects_without_secrets(world, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    from urllib.parse import parse_qs, urlsplit
+
+    import httpx
+
+    with get_session_with_current_tenant() as s:
+        ann = s.get(User, world["ann"])
+        s.add(NortPoleSourceRequest(kind="plugin", item_key="integration:airtable", item_name="Airtable", reason="", state="approved", requested_by_id=ann.id, requested_by_email=ann.email))
+        s.commit()
+        # Nobody set the client up: the button is not offered and starting says why.
+        assert not api.detail("airtable", user=ann, db=s).oauth_available
+        assert code_of(api.oauth_start, "airtable", user=ann, db=s) == NortPoleErrorCode.CONFLICT, "install first"
+        api.install("airtable", api.IntegrationInstallBody(), user=ann, db=s)
+        assert code_of(api.oauth_start, "airtable", user=ann, db=s) == NortPoleErrorCode.FEATURE_DISABLED
+        assert code_of(api.oauth_start, "wikipedia", user=ann, db=s) == NortPoleErrorCode.INVALID_INPUT, "no sign-in to do"
+        assert code_of(api.oauth_start, "nope", user=ann, db=s) == NortPoleErrorCode.NOT_FOUND
+
+        monkeypatch.setenv("NORTPOLE_OAUTH_AIRTABLE_CLIENT_ID", "cid")
+        monkeypatch.setenv("NORTPOLE_OAUTH_AIRTABLE_CLIENT_SECRET", "csecret")
+        monkeypatch.setattr(oauth, "token_validate", lambda url: url)
+        monkeypatch.setattr(oauth, "token_transport", httpx.MockTransport(lambda r: httpx.Response(200, json={"access_token": f"AT-{SECRET}", "refresh_token": f"RT-{SECRET}", "expires_in": 3600}, headers={"content-type": "application/json"})))
+        assert api.detail("airtable", user=ann, db=s).oauth_available
+        url = api.oauth_start("airtable", user=ann, db=s).authorize_url
+        state = parse_qs(urlsplit(url).query)["state"][0]
+        assert str(ann.id) not in url
+
+        # The page the service sent the person back to hands over the code; the account is connected and nothing leaks.
+        done = api.oauth_complete(api.IntegrationOAuthComplete(state=state, code="the-code"), user=ann, db=s)
+        assert done.state == "connected" and SECRET not in done.model_dump_json()
+        raw = s.execute(__import__("sqlalchemy").text("select credential from nortpole_integration_use where user_id = :u and integration_id = 'airtable'"), {"u": ann.id}).scalar()
+        assert raw and SECRET not in raw, "stored sealed"
+        assert "the-code" not in repr(api.IntegrationOAuthComplete(state=state, code="the-code")), "a code never shows in a log line"
+
+        # Refusals: a link someone else started, a link that is not one, and a refusal from the service.
+        bob = s.get(User, world["admin"])
+        assert code_of(api.oauth_complete, api.IntegrationOAuthComplete(state=state, code="c"), user=bob, db=s) == NortPoleErrorCode.BAD_REQUEST
+        assert code_of(api.oauth_complete, api.IntegrationOAuthComplete(state="not-a-state", code="c"), user=ann, db=s) == NortPoleErrorCode.BAD_REQUEST
+        monkeypatch.setattr(oauth, "token_transport", httpx.MockTransport(lambda r: httpx.Response(400, json={"error": "invalid_grant"})))
+        assert code_of(api.oauth_complete, api.IntegrationOAuthComplete(state=state, code="c"), user=ann, db=s) == NortPoleErrorCode.BAD_REQUEST
+        assert api.detail("airtable", user=ann, db=s).state == "connected", "a failed attempt leaves the account as it was"
