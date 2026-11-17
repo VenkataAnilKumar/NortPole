@@ -65,7 +65,7 @@ def test_the_catalog_lists_everything_grouped_and_filterable_with_the_persons_ow
         assert {"wikipedia", "airtable"} <= set(by_id)
         assert by_id["wikipedia"].state == "available" and by_id["airtable"].state == "needs_approval"
         assert by_id["airtable"].needs_account and not by_id["wikipedia"].needs_account
-        assert by_id["airtable"].hosts == ["api.airtable.com"] and not by_id["airtable"].has_writes
+        assert by_id["airtable"].hosts == ["api.airtable.com"] and by_id["airtable"].has_writes
         keys = [(i.group, i.category, i.name.lower()) for i in everything.items]
         assert keys == sorted(keys), "Horizontal first, then Vertical, then category, then name"
         assert [i.id for i in api.catalog(group="vertical", category=None, kind=None, q=None, user=ann, db=s).items] == []
@@ -129,7 +129,7 @@ def test_the_policy_page_shows_every_item_with_counts_and_changes_are_audited(wo
         assert rows["wikipedia"].installs >= 1 and rows["wikipedia"].effective == "allowed" and rows["airtable"].effective == "needs_approval"
         assert rows["airtable"].default == "needs_approval" and rows["airtable"].override is None
         assert code_of(api.put_policy, api.IntegrationPolicyBody(config=policy.PolicyConfig(integrations={"ghost": "blocked"})), user=admin, db=s) == NortPoleErrorCode.INVALID_INPUT
-        changed = api.put_policy(api.IntegrationPolicyBody(config=policy.PolicyConfig(integrations={"wikipedia": "blocked"}, categories={"horizontal/automations": "allowed"})), user=admin, db=s)
+        changed = api.put_policy(api.IntegrationPolicyBody(config=policy.PolicyConfig(integrations={"wikipedia": "blocked"}, categories={"horizontal/automations": "allowed"}), acknowledge_writes=True), user=admin, db=s)
         rows = {r.id: r for r in changed.items}
         assert rows["wikipedia"].effective == "blocked" and rows["airtable"].effective == "allowed" and rows["airtable"].category_override == "allowed"
     with get_session_with_current_tenant() as s:

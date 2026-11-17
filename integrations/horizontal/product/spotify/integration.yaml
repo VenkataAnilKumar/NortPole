@@ -1,200 +1,279 @@
-# Derived from open-source (Apache-2.0) tool definitions: see ../../../NOTICE. Reviewed before use; not yet checked against the vendor's own documentation.
+# Spotify: written for NortPole from the vendor's published API reference; not yet checked against the live service.
 schema_version: 1
 id: spotify
 name: Spotify
 version: 1.0.0
-description: Search music, manage playlists, control playback, and access your library
+description: Search music and read your Spotify library and playlists with your own Spotify account.
 kind: plugin
 group: horizontal
 category: product
 auth:
   mode: oauth
   provider: spotify
-  scopes: []
+  scopes:
+  - user-read-private
+  - user-top-read
+  - playlist-read-private
+  - user-read-currently-playing
 hosts:
 - api.spotify.com
 data_classes:
 - internal
 policy_default: needs_approval
 actions:
+- id: search
+  name: Search
+  description: Search for tracks, albums, artists or playlists.
+  effect: read
+  params:
+    q:
+      type: string
+      description: What to search for.
+      required: true
+    type:
+      type: string
+      description: 'What to find: track, album, artist or playlist.'
+      enum:
+      - track
+      - album
+      - artist
+      - playlist
+      default: track
+    limit:
+      type: integer
+      description: Results per type (1 to 50).
+      minimum: 1
+      maximum: 50
+      default: 10
+  request:
+    method: GET
+    url: https://api.spotify.com/v1/search
+    headers: &id001
+      Authorization: Bearer {credential.access_token}
+    query:
+      q: '{q}'
+      type: '{type}'
+      limit: '{limit}'
+  response:
+    outputs:
+      tracks:
+        path: $.tracks.items[*]
+        type: array
+        description: Matching tracks.
+      albums:
+        path: $.albums.items[*]
+        type: array
+        description: Matching albums.
+      artists:
+        path: $.artists.items[*]
+        type: array
+        description: Matching artists.
+      playlists:
+        path: $.playlists.items[*]
+        type: array
+        description: Matching playlists.
+- id: get_track
+  name: Get track
+  description: Get one track by ID.
+  effect: read
+  params:
+    trackId:
+      type: string
+      description: Spotify track ID.
+      required: true
+  request:
+    method: GET
+    url: https://api.spotify.com/v1/tracks/{trackId}
+    headers: *id001
+  response:
+    outputs:
+      name:
+        path: $.name
+        type: string
+        description: Track name.
+      artists:
+        path: $.artists[*]
+        type: array
+        description: Artists.
+      album:
+        path: $.album
+        type: object
+        description: Album.
+      duration_ms:
+        path: $.duration_ms
+        type: integer
+        description: Length in milliseconds.
+- id: get_album
+  name: Get album
+  description: Get one album by ID.
+  effect: read
+  params:
+    albumId:
+      type: string
+      description: Spotify album ID.
+      required: true
+  request:
+    method: GET
+    url: https://api.spotify.com/v1/albums/{albumId}
+    headers: *id001
+  response:
+    outputs:
+      name:
+        path: $.name
+        type: string
+        description: Album name.
+      release_date:
+        path: $.release_date
+        type: string
+        description: Release date.
+      tracks:
+        path: $.tracks.items[*]
+        type: array
+        description: Tracks on the album.
 - id: get_artist
-  name: Get Artist
-  description: Get detailed information about an artist on Spotify by their ID.
+  name: Get artist
+  description: Get one artist by ID.
   effect: read
   params:
     artistId:
       type: string
-      description: The Spotify ID of the artist
+      description: Spotify artist ID.
       required: true
   request:
     method: GET
     url: https://api.spotify.com/v1/artists/{artistId}
-    headers:
-      Authorization: Bearer {credential.access_token}
-      Content-Type: application/json
+    headers: *id001
   response:
     outputs:
-      id:
-        path: $.id
-        type: string
-        description: Spotify artist ID
       name:
         path: $.name
         type: string
-        description: Artist name
+        description: Artist name.
       genres:
         path: $.genres
         type: array
-        description: List of genres associated with the artist
-      popularity:
-        path: $.popularity
-        type: number
-        description: Popularity score (0-100)
+        description: Genres.
       followers:
         path: $.followers.total
-        type: number
-        description: Number of followers
-      image_url:
-        path: $.images[0].url
+        type: integer
+        description: Follower count.
+- id: get_playlist
+  name: Get playlist
+  description: Get one playlist by ID.
+  effect: read
+  params:
+    playlistId:
+      type: string
+      description: Spotify playlist ID.
+      required: true
+  request:
+    method: GET
+    url: https://api.spotify.com/v1/playlists/{playlistId}
+    headers: *id001
+  response:
+    outputs:
+      name:
+        path: $.name
         type: string
-        description: Artist image URL
-      external_url:
-        path: $.external_urls.spotify
+        description: Playlist name.
+      description:
+        path: $.description
         type: string
-        description: Spotify URL
-- id: get_current_user
-  name: Get Current User
-  description: Get the current user's Spotify profile information.
+        description: Description.
+      tracks:
+        path: $.tracks.items[*]
+        type: array
+        description: Items in the playlist.
+- id: get_my_profile
+  name: Get my profile
+  description: Get your own Spotify profile.
   effect: read
   request:
     method: GET
     url: https://api.spotify.com/v1/me
-    headers:
-      Authorization: Bearer {credential.access_token}
-      Content-Type: application/json
+    headers: *id001
   response:
     outputs:
-      id:
-        path: $.id
-        type: string
-        description: Spotify user ID
       display_name:
         path: $.display_name
         type: string
-        description: Display name
-      email:
-        path: $.email
+        description: Display name.
+      id:
+        path: $.id
         type: string
-        description: Email address
+        description: User ID.
       country:
         path: $.country
         type: string
-        description: Country code
-      product:
-        path: $.product
-        type: string
-        description: Subscription level (free, premium)
-      followers:
-        path: $.followers.total
-        type: number
-        description: Number of followers
-      image_url:
-        path: $.images[0].url
-        type: string
-        description: Profile image URL
-      external_url:
-        path: $.external_urls.spotify
-        type: string
-        description: Spotify profile URL
-- id: get_markets
-  name: Get Available Markets
-  description: Get the list of markets where Spotify is available.
+        description: Country.
+- id: list_my_playlists
+  name: List my playlists
+  description: List your playlists.
+  effect: read
+  params:
+    limit:
+      type: integer
+      description: Playlists to return (1 to 50).
+      minimum: 1
+      maximum: 50
+      default: 20
+  request:
+    method: GET
+    url: https://api.spotify.com/v1/me/playlists
+    headers: *id001
+    query:
+      limit: '{limit}'
+  response:
+    outputs:
+      playlists:
+        path: $.items[*]
+        type: array
+        description: Your playlists.
+- id: get_my_top_items
+  name: Get my top items
+  description: Get your most played artists or tracks.
+  effect: read
+  params:
+    type:
+      type: string
+      description: artists or tracks.
+      enum:
+      - artists
+      - tracks
+      required: true
+    limit:
+      type: integer
+      description: Items to return (1 to 50).
+      minimum: 1
+      maximum: 50
+      default: 10
+  request:
+    method: GET
+    url: https://api.spotify.com/v1/me/top/{type}
+    headers: *id001
+    query:
+      limit: '{limit}'
+  response:
+    outputs:
+      items:
+        path: $.items[*]
+        type: array
+        description: Your top items.
+- id: get_currently_playing
+  name: Get currently playing
+  description: Get what you are playing now.
   effect: read
   request:
     method: GET
-    url: https://api.spotify.com/v1/markets
-    headers:
-      Authorization: Bearer {credential.access_token}
+    url: https://api.spotify.com/v1/me/player/currently-playing
+    headers: *id001
   response:
     outputs:
-      markets:
-        path: $.markets
+      item:
+        path: $.item
         type: object
-        description: List of ISO country codes
-- id: get_user_profile
-  name: Get User Profile
-  description: Get a user's public profile.
-  effect: read
-  params:
-    userId:
-      type: string
-      description: The Spotify user ID
-      required: true
-  request:
-    method: GET
-    url: https://api.spotify.com/v1/users/{userId}
-    headers:
-      Authorization: Bearer {credential.access_token}
-  response:
-    outputs:
-      id:
-        path: $.id
-        type: string
-        description: User ID
-      display_name:
-        path: $.display_name
-        type: string
-        description: Display name
-      followers:
-        path: $.followers.total
-        type: number
-        description: Number of followers
-      image_url:
-        path: $.images[0].url
-        type: string
-        description: Profile image URL
-      external_url:
-        path: $.external_urls.spotify
-        type: string
-        description: Spotify URL
-- id: reorder_playlist_items
-  name: Reorder Playlist Items
-  description: Move tracks to a different position in a playlist.
-  effect: write
-  params:
-    playlistId:
-      type: string
-      description: The Spotify playlist ID
-      required: true
-    range_start:
-      type: integer
-      description: Start index of items to reorder
-      required: true
-    insert_before:
-      type: integer
-      description: Index to insert items before
-      required: true
-    range_length:
-      type: integer
-      description: Number of items to reorder
-      default: 1
-    snapshot_id:
-      type: string
-      description: Playlist snapshot ID for concurrency control (22-character base62 string)
-  request:
-    method: PUT
-    url: https://api.spotify.com/v1/playlists/{playlistId}/tracks
-    headers:
-      Authorization: Bearer {credential.access_token}
-      Content-Type: application/json
-    body:
-      range_start: '{range_start}'
-      insert_before: '{insert_before}'
-      range_length: '{range_length}'
-      snapshot_id: '{snapshot_id}'
-  response:
-    outputs:
-      snapshot_id:
-        path: $.snapshot_id
-        type: string
-        description: New playlist snapshot ID
+        description: The track playing now.
+      is_playing:
+        path: $.is_playing
+        type: boolean
+        description: True while playing.

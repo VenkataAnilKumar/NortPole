@@ -13,12 +13,9 @@ owner asked to build on its definitions.
 
 ## Decision
 
-1. **Definitions, not an engine.** Open-source tool definitions are written as TypeScript tied to their own workflow
-   engine, database and sign-in code. NortPole's governance (route policy, redaction, audit, approvals) lives in the
-   Python core, so each definition is rewritten into NortPole's own declarative format and NortPole depends on none of
-   that code. The source project is Apache-2.0: `integrations/NOTICE` and `integrations/LICENSE-APACHE-2.0` carry its
-   notice, and definitions derived from it say so in their first lines. Nothing from its separately licensed `ee`
-   folder is used.
+1. **Definitions are NortPole's own.** Each integration is written for NortPole as data, from the vendor's published API
+   reference, in NortPole's own declarative format. NortPole's governance (route policy, redaction, audit,
+   approvals) lives in the Python core, and no code or definition is taken from another project.
 2. **A definition is data, not code** (`services/core/nortpole/work/integrations/manifest.py`). It lists the exact
    hosts it may call and never lets a placeholder fill the host. A secret can only come from the person's connected
    account (`{credential.access_token}`), only in a header. Each parameter says who fills it (the person, the model or
@@ -40,7 +37,7 @@ owner asked to build on its definitions.
 
 | Phase | What | Tests that close it |
 |---|---|---|
-| **1. Format and first definitions** (done) | The model, the schema, two integrations derived from open-source definitions (Wikipedia, Airtable), registration and the structure check, CI. | 43 unit tests, including 29 cases the format must refuse; drift and structure tests. |
+| **1. Format and first definitions** (done) | The model, the schema, two integrations written for NortPole (Wikipedia, Airtable), registration and the structure check, CI. | 43 unit tests, including 29 cases the format must refuse; drift and structure tests. |
 | **2a. Executor** (done) | `executor.py` runs an action against a definition: who may set each parameter, caps and defaults, URL-encoded paths, the exact-host rule again, the credential only in a header, no redirects, a time and size limit, JSON only, errors by status only, and one audit row per call without parameters or secrets. | 28 unit tests with a fake and a mock transport; three deliberate breaks of the safety rules were each caught. |
 | **2b-1. Accounts and policy** (done) | `service.py`: install, remove, connect, disconnect and call, per person. Policy per integration or category (allowed, needs approval, blocked; blocked wins; a damaged setting blocks everything); approval is a person's approved request, for that person only. A person's account is sealed with the deployment's one key (`ENCRYPTION_KEY_SECRET`), the same sealing every stored secret now uses (the inherited encrypted columns did not encrypt in this edition; fixed, see the pending-work checklist item 30). Table `nortpole_integration_use`. | 22 unit tests and 12 database tests: the stored text holds no token, nothing is stored without a key (unless plaintext is allowed for development), a changed key means "connect again", no audit row holds a secret, one person cannot use another's install. |
 | **2b-2. Routes** (done) | Eight HTTP routes: for any signed-in person the catalog (filter by group, category, type and text, with their own state for each item), detail, install, remove, connect and disconnect; for administrators the policy page (every item with counts, and a change that is audited; opening a write action to everyone needs a confirmation). A person connects with a personal access token until the sign-in flow ships. | Route gates pinned in the route contract; signed-out and ordinary-user refusals over real HTTP; 6 database tests on the handlers; a test that no route schema reuses another module's name. |

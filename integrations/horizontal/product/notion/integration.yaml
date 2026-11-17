@@ -1,9 +1,9 @@
-# Notion: read and write actions. Derived from open-source (Apache-2.0) tool definitions: see ../../../NOTICE. Reviewed before use; not yet checked against the vendor's own documentation.
+# Notion: written for NortPole from the vendor's published API reference; not yet checked against the live service.
 schema_version: 1
 id: notion
 name: Notion
 version: 1.0.0
-description: Manage Notion pages
+description: Search, read and edit Notion pages and databases with your own Notion account.
 kind: plugin
 group: horizontal
 category: product
@@ -15,72 +15,221 @@ hosts:
 - api.notion.com
 data_classes:
 - internal
+- confidential
 policy_default: needs_approval
 actions:
-- id: delete_block
-  name: Delete Block
-  description: Delete (move to trash) a single Notion block
+- id: search
+  name: Search
+  description: Search pages and databases you shared with the connection.
+  effect: read
+  params:
+    query:
+      type: string
+      description: Text to search for.
+    pageSize:
+      type: integer
+      description: Results to return (1 to 100).
+      minimum: 1
+      maximum: 100
+      default: 10
+  request:
+    method: POST
+    url: https://api.notion.com/v1/search
+    headers: &id002
+      Authorization: Bearer {credential.access_token}
+      Notion-Version: '2022-06-28'
+      Content-Type: application/json
+    body:
+      query: '{query}'
+      page_size: '{pageSize}'
+  response:
+    outputs:
+      results:
+        path: $.results[*]
+        type: array
+        description: Pages and databases.
+      next_cursor:
+        path: $.next_cursor
+        type: string
+        description: Cursor for the next page.
+- id: get_page
+  name: Get page
+  description: Get a page's properties by ID.
+  effect: read
+  params:
+    pageId:
+      type: string
+      description: Page ID.
+      required: true
+  request:
+    method: GET
+    url: https://api.notion.com/v1/pages/{pageId}
+    headers: &id001
+      Authorization: Bearer {credential.access_token}
+      Notion-Version: '2022-06-28'
+  response:
+    outputs:
+      id:
+        path: $.id
+        type: string
+        description: Page ID.
+      properties:
+        path: $.properties
+        type: object
+        description: Page properties.
+      url:
+        path: $.url
+        type: string
+        description: Link to the page.
+- id: get_page_content
+  name: Get page content
+  description: Read the blocks that make up a page.
+  effect: read
+  params:
+    blockId:
+      type: string
+      description: Page or block ID.
+      required: true
+    pageSize:
+      type: integer
+      description: Blocks to return (1 to 100).
+      minimum: 1
+      maximum: 100
+      default: 50
+  request:
+    method: GET
+    url: https://api.notion.com/v1/blocks/{blockId}/children
+    headers: *id001
+    query:
+      page_size: '{pageSize}'
+  response:
+    outputs:
+      blocks:
+        path: $.results[*]
+        type: array
+        description: Blocks in order.
+      next_cursor:
+        path: $.next_cursor
+        type: string
+        description: Cursor for the next page.
+- id: get_database
+  name: Get database
+  description: Get a database's title and properties.
+  effect: read
+  params:
+    databaseId:
+      type: string
+      description: Database ID.
+      required: true
+  request:
+    method: GET
+    url: https://api.notion.com/v1/databases/{databaseId}
+    headers: *id001
+  response:
+    outputs:
+      id:
+        path: $.id
+        type: string
+        description: Database ID.
+      title:
+        path: $.title
+        type: array
+        description: Title as rich text.
+      properties:
+        path: $.properties
+        type: object
+        description: Column definitions.
+- id: query_database
+  name: Query database
+  description: List the rows of a database, optionally filtered.
+  effect: read
+  params:
+    databaseId:
+      type: string
+      description: Database ID.
+      required: true
+    filter:
+      type: object
+      description: A Notion filter object.
+    pageSize:
+      type: integer
+      description: Rows to return (1 to 100).
+      minimum: 1
+      maximum: 100
+      default: 25
+  request:
+    method: POST
+    url: https://api.notion.com/v1/databases/{databaseId}/query
+    headers: *id002
+    body:
+      filter: '{filter}'
+      page_size: '{pageSize}'
+  response:
+    outputs:
+      rows:
+        path: $.results[*]
+        type: array
+        description: Rows (pages) with their properties.
+      next_cursor:
+        path: $.next_cursor
+        type: string
+        description: Cursor for the next page.
+- id: create_page
+  name: Create page
+  description: Create a page in a page or a database.
   effect: write
   params:
-    blockId:
-      type: string
-      description: The UUID of the block to delete
+    parent:
+      type: object
+      description: 'Where it goes, for example {"database_id": "..."}.'
+      required: true
+    properties:
+      type: object
+      description: Property values as Notion expects them.
       required: true
   request:
-    method: DELETE
-    url: https://api.notion.com/v1/blocks/{blockId}
-    headers:
-      Authorization: Bearer {credential.access_token}
-      Notion-Version: '2022-06-28'
-      Content-Type: application/json
+    method: POST
+    url: https://api.notion.com/v1/pages
+    headers: *id002
+    body:
+      parent: '{parent}'
+      properties: '{properties}'
   response:
     outputs:
-      archived:
-        path: $.archived
-        type: boolean
-        description: Whether the block was archived (moved to trash)
-- id: retrieve_block
-  name: Retrieve Block
-  description: Retrieve a single Notion block by its UUID, including its type-specific content
-  effect: read
-  params:
-    blockId:
-      type: string
-      description: The UUID of the block to retrieve
-      required: true
-  request:
-    method: GET
-    url: https://api.notion.com/v1/blocks/{blockId}
-    headers:
-      Authorization: Bearer {credential.access_token}
-      Notion-Version: '2022-06-28'
-      Content-Type: application/json
-  response:
-    outputs:
-      block:
-        path: $
-        type: object
-        description: The full Notion block object. Includes a type-specific field (e.g. paragraph, heading_1, image) whose
-          shape varies by block type and is not enumerated below — read it directly off this object.
-- id: retrieve_user
-  name: Retrieve User
-  description: Retrieve a single Notion user by their UUID
-  effect: read
-  params:
-    userId:
-      type: string
-      description: The UUID of the user to retrieve
-      required: true
-  request:
-    method: GET
-    url: https://api.notion.com/v1/users/{userId}
-    headers:
-      Authorization: Bearer {credential.access_token}
-      Notion-Version: '2022-06-28'
-      Content-Type: application/json
-  response:
-    outputs:
-      email:
-        path: $.person.email
+      id:
+        path: $.id
         type: string
-        description: User email address (person users only)
+        description: New page ID.
+      url:
+        path: $.url
+        type: string
+        description: Link to the page.
+- id: update_page
+  name: Update page
+  description: Change a page's properties.
+  effect: write
+  params:
+    pageId:
+      type: string
+      description: Page ID.
+      required: true
+    properties:
+      type: object
+      description: Property values to change.
+      required: true
+  request:
+    method: PATCH
+    url: https://api.notion.com/v1/pages/{pageId}
+    headers: *id002
+    body:
+      properties: '{properties}'
+  response:
+    outputs:
+      id:
+        path: $.id
+        type: string
+        description: Page ID.
+      url:
+        path: $.url
+        type: string
+        description: Link to the page.

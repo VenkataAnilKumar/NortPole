@@ -1,100 +1,250 @@
-# Derived from open-source (Apache-2.0) tool definitions: see ../../../NOTICE. Reviewed before use; not yet checked against the vendor's own documentation.
+# Dropbox: written for NortPole from the vendor's published API reference; not yet checked against the live service.
 schema_version: 1
 id: dropbox
 name: Dropbox
 version: 1.0.0
-description: Upload, download, share, and manage files in Dropbox
+description: Browse, search and organise Dropbox files with your own Dropbox account.
 kind: plugin
 group: horizontal
 category: product
 auth:
   mode: oauth
   provider: dropbox
-  scopes: []
+  scopes:
+  - files.metadata.read
+  - files.metadata.write
+  - sharing.write
 hosts:
 - api.dropboxapi.com
 data_classes:
 - internal
+- confidential
 policy_default: needs_approval
 actions:
-- id: copy
-  name: Copy
-  description: Copy a file or folder in Dropbox
-  effect: write
+- id: list_folder
+  name: List folder
+  description: List what is in a folder. Use an empty path for the root.
+  effect: read
   params:
-    fromPath:
+    path:
       type: string
-      description: The source path of the file or folder to copy
-      required: true
-    toPath:
-      type: string
-      description: The destination path for the copied file or folder
-      required: true
-    autorename:
+      description: Folder path such as /Reports, or empty for the root.
+      default: ''
+    recursive:
       type: boolean
-      description: If true, rename the file if there is a conflict at destination
-      fill: user
+      description: Also list sub-folders.
       default: false
+    limit:
+      type: integer
+      description: Most entries per page (1 to 2000).
+      minimum: 1
+      maximum: 2000
+      default: 100
   request:
     method: POST
-    url: https://api.dropboxapi.com/2/files/copy_v2
-    headers:
+    url: https://api.dropboxapi.com/2/files/list_folder
+    headers: &id001
       Authorization: Bearer {credential.access_token}
       Content-Type: application/json
     body:
-      from_path: '{fromPath}'
-      to_path: '{toPath}'
-      autorename: '{autorename}'
+      path: '{path}'
+      recursive: '{recursive}'
+      limit: '{limit}'
+  response:
+    outputs:
+      entries:
+        path: $.entries[*]
+        type: array
+        description: Files and folders with name, path_display and id.
+      cursor:
+        path: $.cursor
+        type: string
+        description: Cursor for list_folder_continue.
+      has_more:
+        path: $.has_more
+        type: boolean
+        description: True when more entries remain.
+- id: list_folder_continue
+  name: List folder (next page)
+  description: Get the next page of a folder listing.
+  effect: read
+  params:
+    cursor:
+      type: string
+      description: Cursor from the previous page.
+      required: true
+  request:
+    method: POST
+    url: https://api.dropboxapi.com/2/files/list_folder/continue
+    headers: *id001
+    body:
+      cursor: '{cursor}'
+  response:
+    outputs:
+      entries:
+        path: $.entries[*]
+        type: array
+        description: Files and folders.
+      cursor:
+        path: $.cursor
+        type: string
+        description: Cursor for the next call.
+      has_more:
+        path: $.has_more
+        type: boolean
+        description: True when more entries remain.
+- id: get_metadata
+  name: Get file details
+  description: Get details of a file or folder by path or ID.
+  effect: read
+  params:
+    path:
+      type: string
+      description: 'Path such as /Reports/q3.pdf, or an id: value.'
+      required: true
+  request:
+    method: POST
+    url: https://api.dropboxapi.com/2/files/get_metadata
+    headers: *id001
+    body:
+      path: '{path}'
+  response:
+    outputs:
+      name:
+        path: $.name
+        type: string
+        description: Name.
+      path_display:
+        path: $.path_display
+        type: string
+        description: Path as shown.
+      size:
+        path: $.size
+        type: integer
+        description: Size in bytes (files only).
+      server_modified:
+        path: $.server_modified
+        type: string
+        description: Last change (files only).
+- id: search
+  name: Search files
+  description: Search file and folder names and contents.
+  effect: read
+  params:
+    query:
+      type: string
+      description: Text to search for.
+      required: true
+    maxResults:
+      type: integer
+      description: Results to return (1 to 1000).
+      minimum: 1
+      maximum: 1000
+      default: 20
+  request:
+    method: POST
+    url: https://api.dropboxapi.com/2/files/search_v2
+    headers: *id001
+    body:
+      query: '{query}'
+      options:
+        max_results: '{maxResults}'
+  response:
+    outputs:
+      matches:
+        path: $.matches[*]
+        type: array
+        description: Matches with the file details inside.
+      has_more:
+        path: $.has_more
+        type: boolean
+        description: True when more matches exist.
+- id: create_folder
+  name: Create folder
+  description: Create a folder.
+  effect: write
+  params:
+    path:
+      type: string
+      description: Path of the new folder, for example /Reports/2026.
+      required: true
+  request:
+    method: POST
+    url: https://api.dropboxapi.com/2/files/create_folder_v2
+    headers: *id001
+    body:
+      path: '{path}'
   response:
     outputs:
       metadata:
         path: $.metadata
         type: object
-        description: Metadata of the copied item
-- id: create_folder
-  name: Create Folder
-  description: Create a new folder in Dropbox
+        description: The new folder's details.
+- id: move
+  name: Move file or folder
+  description: Move or rename a file or folder.
   effect: write
   params:
-    path:
+    fromPath:
       type: string
-      description: The path where the folder should be created (e.g., /new-folder)
+      description: Current path.
       required: true
-    autorename:
-      type: boolean
-      description: If true, rename the folder if there is a conflict
-      fill: user
-      default: false
+    toPath:
+      type: string
+      description: New path.
+      required: true
   request:
     method: POST
-    url: https://api.dropboxapi.com/2/files/create_folder_v2
-    headers:
-      Authorization: Bearer {credential.access_token}
-      Content-Type: application/json
+    url: https://api.dropboxapi.com/2/files/move_v2
+    headers: *id001
     body:
-      path: '{path}'
-      autorename: '{autorename}'
+      from_path: '{fromPath}'
+      to_path: '{toPath}'
   response:
     outputs:
-      folder:
+      metadata:
         path: $.metadata
         type: object
-        description: The created folder metadata
+        description: Details at the new path.
+- id: copy
+  name: Copy file or folder
+  description: Copy a file or folder.
+  effect: write
+  params:
+    fromPath:
+      type: string
+      description: Path to copy.
+      required: true
+    toPath:
+      type: string
+      description: Path of the copy.
+      required: true
+  request:
+    method: POST
+    url: https://api.dropboxapi.com/2/files/copy_v2
+    headers: *id001
+    body:
+      from_path: '{fromPath}'
+      to_path: '{toPath}'
+  response:
+    outputs:
+      metadata:
+        path: $.metadata
+        type: object
+        description: Details of the copy.
 - id: delete
-  name: Delete
-  description: Delete a file or folder in Dropbox (moves to trash)
+  name: Delete file or folder
+  description: Delete a file or folder (it can be restored from Dropbox for a while).
   effect: write
   params:
     path:
       type: string
-      description: The path of the file or folder to delete
+      description: Path to delete.
       required: true
   request:
     method: POST
     url: https://api.dropboxapi.com/2/files/delete_v2
-    headers:
-      Authorization: Bearer {credential.access_token}
-      Content-Type: application/json
+    headers: *id001
     body:
       path: '{path}'
   response:
@@ -102,145 +252,29 @@ actions:
       metadata:
         path: $.metadata
         type: object
-        description: Metadata of the deleted item
-- id: get_metadata
-  name: Get Metadata
-  description: Get metadata for a file or folder in Dropbox
-  effect: read
-  params:
-    path:
-      type: string
-      description: The path of the file or folder to get metadata for
-      required: true
-    includeMediaInfo:
-      type: boolean
-      description: If true, include media info for photos/videos
-      fill: user
-      default: false
-    includeDeleted:
-      type: boolean
-      description: If true, include deleted files in results
-      fill: user
-      default: false
-  request:
-    method: POST
-    url: https://api.dropboxapi.com/2/files/get_metadata
-    headers:
-      Authorization: Bearer {credential.access_token}
-      Content-Type: application/json
-    body:
-      path: '{path}'
-      include_media_info: '{includeMediaInfo}'
-      include_deleted: '{includeDeleted}'
-  response:
-    outputs:
-      metadata:
-        path: $
-        type: object
-        description: Metadata for the file or folder
-- id: list_revisions
-  name: List Revisions
-  description: List the revision history for a file in Dropbox (files only, not folders)
-  effect: read
-  params:
-    path:
-      type: string
-      description: The path of the file to list revisions for
-      required: true
-    limit:
-      type: integer
-      description: 'Maximum number of revisions to return, 1-100 (default: 10)'
-      fill: user
-      default: 10
-    beforeRev:
-      type: string
-      description: Only return revisions before this one. Pass the rev of the last revision from a previous call to fetch
-        the next page.
-      fill: user
-  request:
-    method: POST
-    url: https://api.dropboxapi.com/2/files/list_revisions
-    headers:
-      Authorization: Bearer {credential.access_token}
-      Content-Type: application/json
-    body:
-      path: '{path}'
-      mode: path
-      limit: '{limit}'
-      before_rev: '{beforeRev}'
-  response:
-    outputs:
-      entries:
-        path: $.entries
-        type: array
-        description: The revisions for the file, most recent first
-      isDeleted:
-        path: $.is_deleted
-        type: boolean
-        description: Whether the file identified by the latest revision is deleted or moved
-      hasMore:
-        path: $.has_more
-        type: boolean
-        description: Whether there are more revisions available
-- id: move
-  name: Move
-  description: Move or rename a file or folder in Dropbox
-  effect: write
-  params:
-    fromPath:
-      type: string
-      description: The source path of the file or folder to move
-      required: true
-    toPath:
-      type: string
-      description: The destination path for the moved file or folder
-      required: true
-    autorename:
-      type: boolean
-      description: If true, rename the file if there is a conflict at destination
-      fill: user
-      default: false
-  request:
-    method: POST
-    url: https://api.dropboxapi.com/2/files/move_v2
-    headers:
-      Authorization: Bearer {credential.access_token}
-      Content-Type: application/json
-    body:
-      from_path: '{fromPath}'
-      to_path: '{toPath}'
-      autorename: '{autorename}'
-  response:
-    outputs:
-      metadata:
-        path: $.metadata
-        type: object
-        description: Metadata of the moved item
-- id: restore
-  name: Restore
-  description: Restore a specific revision of a file to the given path
+        description: Details of what was deleted.
+- id: create_shared_link
+  name: Create shared link
+  description: Create a link anyone with it can use to see a file or folder.
   effect: write
   params:
     path:
       type: string
-      description: The path to save the restored file to
-      required: true
-    rev:
-      type: string
-      description: The revision identifier to restore (from Dropbox List Revisions)
+      description: Path to share.
       required: true
   request:
     method: POST
-    url: https://api.dropboxapi.com/2/files/restore
-    headers:
-      Authorization: Bearer {credential.access_token}
-      Content-Type: application/json
+    url: https://api.dropboxapi.com/2/sharing/create_shared_link_with_settings
+    headers: *id001
     body:
       path: '{path}'
-      rev: '{rev}'
   response:
     outputs:
-      metadata:
-        path: $
-        type: object
-        description: Metadata of the restored file
+      url:
+        path: $.url
+        type: string
+        description: The shared link.
+      name:
+        path: $.name
+        type: string
+        description: Name of the shared item.

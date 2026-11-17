@@ -1,9 +1,9 @@
-# Stripe: reads, deletes and two creates. Derived from open-source (Apache-2.0) tool definitions: see ../../../NOTICE. Reviewed before use; not yet checked against the vendor's own documentation.
+# Stripe: written for NortPole from the vendor's published API reference; not yet checked against the live service.
 schema_version: 1
 id: stripe
 name: Stripe
 version: 1.0.0
-description: Process payments and manage Stripe data
+description: Read your Stripe customers, payments and invoices, and create customers and products, with your own Stripe key.
 kind: plugin
 group: horizontal
 category: sales
@@ -14,377 +14,356 @@ hosts:
 - api.stripe.com
 data_classes:
 - internal
+- confidential
 policy_default: needs_approval
 actions:
-- id: delete_invoice
-  name: Delete Invoice
-  description: Permanently delete a draft invoice
-  effect: write
-  params:
-    id:
-      type: string
-      description: Invoice ID (e.g., in_1234567890)
-      required: true
-  request:
-    method: DELETE
-    url: https://api.stripe.com/v1/invoices/{id}
-    headers:
-      Authorization: Bearer {credential.api_key}
-      Content-Type: application/x-www-form-urlencoded
-  response:
-    outputs:
-      deleted:
-        path: $.deleted
-        type: boolean
-        description: Whether the invoice was deleted
-      id:
-        path: $.id
-        type: string
-        description: The ID of the deleted invoice
-- id: delete_product
-  name: Delete Product
-  description: Permanently delete a product
-  effect: write
-  params:
-    id:
-      type: string
-      description: Product ID (e.g., prod_1234567890)
-      required: true
-  request:
-    method: DELETE
-    url: https://api.stripe.com/v1/products/{id}
-    headers:
-      Authorization: Bearer {credential.api_key}
-      Content-Type: application/x-www-form-urlencoded
-  response:
-    outputs:
-      deleted:
-        path: $.deleted
-        type: boolean
-        description: Whether the product was deleted
-      id:
-        path: $.id
-        type: string
-        description: The ID of the deleted product
-- id: retrieve_charge
-  name: Retrieve Charge
-  description: Retrieve an existing charge by ID
+- id: list_customers
+  name: List customers
+  description: List customers, newest first.
   effect: read
   params:
-    id:
-      type: string
-      description: Charge ID (e.g., ch_1234567890)
-      required: true
-  request:
-    method: GET
-    url: https://api.stripe.com/v1/charges/{id}
-    headers:
-      Authorization: Bearer {credential.api_key}
-      Content-Type: application/x-www-form-urlencoded
-  response:
-    outputs:
-      charge:
-        path: $
-        type: object
-        description: The retrieved Charge object
-- id: retrieve_event
-  name: Retrieve Event
-  description: Retrieve an existing Event by ID
-  effect: read
-  params:
-    id:
-      type: string
-      description: Event ID (e.g., evt_1234567890)
-      required: true
-  request:
-    method: GET
-    url: https://api.stripe.com/v1/events/{id}
-    headers:
-      Authorization: Bearer {credential.api_key}
-      Content-Type: application/x-www-form-urlencoded
-  response:
-    outputs:
-      event:
-        path: $
-        type: object
-        description: The retrieved Event object
-- id: retrieve_price
-  name: Retrieve Price
-  description: Retrieve an existing price by ID
-  effect: read
-  params:
-    id:
-      type: string
-      description: Price ID (e.g., price_1234567890)
-      required: true
-  request:
-    method: GET
-    url: https://api.stripe.com/v1/prices/{id}
-    headers:
-      Authorization: Bearer {credential.api_key}
-      Content-Type: application/x-www-form-urlencoded
-  response:
-    outputs:
-      price:
-        path: $
-        type: object
-        description: The retrieved price object
-- id: retrieve_product
-  name: Retrieve Product
-  description: Retrieve an existing product by ID
-  effect: read
-  params:
-    id:
-      type: string
-      description: Product ID (e.g., prod_1234567890)
-      required: true
-  request:
-    method: GET
-    url: https://api.stripe.com/v1/products/{id}
-    headers:
-      Authorization: Bearer {credential.api_key}
-      Content-Type: application/x-www-form-urlencoded
-  response:
-    outputs:
-      product:
-        path: $
-        type: object
-        description: The retrieved product object
-- id: search_charges
-  name: Search Charges
-  description: Search for charges using query syntax
-  effect: read
-  params:
-    query:
-      type: string
-      description: Search query (e.g., "status:'succeeded' AND currency:'usd'")
-      required: true
     limit:
       type: integer
-      description: Number of results to return (default 10, max 100)
-    page:
+      description: How many (1 to 100).
+      minimum: 1
+      maximum: 100
+      default: 10
+    startingAfter:
       type: string
-      description: Pagination token from metadata.next_page of the previous search; omit for the first page
+      description: ID to continue after, from the last item of the previous page.
   request:
     method: GET
-    url: https://api.stripe.com/v1/charges/search
-    query:
-      query: '{query}'
-      limit: '{limit}'
-      page: '{page}'
-    headers:
+    url: https://api.stripe.com/v1/customers
+    headers: &id001
       Authorization: Bearer {credential.api_key}
-      Content-Type: application/x-www-form-urlencoded
-  response:
-    outputs:
-      charges:
-        path: $.data
-        type: object
-        description: Array of matching Charge objects
-- id: search_customers
-  name: Search Customers
-  description: Search for customers using query syntax
-  effect: read
-  params:
     query:
-      type: string
-      description: Search query (e.g., "email:'customer@example.com'")
-      required: true
-    limit:
-      type: integer
-      description: Number of results to return (default 10, max 100)
-    page:
-      type: string
-      description: Pagination token from metadata.next_page of the previous search; omit for the first page
-  request:
-    method: GET
-    url: https://api.stripe.com/v1/customers/search
-    query:
-      query: '{query}'
       limit: '{limit}'
-      page: '{page}'
-    headers:
-      Authorization: Bearer {credential.api_key}
-      Content-Type: application/x-www-form-urlencoded
+      starting_after: '{startingAfter}'
   response:
     outputs:
       customers:
-        path: $.data
+        path: $.data[*]
         type: array
-        description: Array of matching customer objects
-- id: search_invoices
-  name: Search Invoices
-  description: Search for invoices using query syntax
+        description: Customers.
+      has_more:
+        path: $.has_more
+        type: boolean
+        description: True when more exist.
+- id: get_customer
+  name: Get customer
+  description: Get one customer by ID.
+  effect: read
+  params:
+    customerId:
+      type: string
+      description: The customer's ID.
+      required: true
+  request:
+    method: GET
+    url: https://api.stripe.com/v1/customers/{customerId}
+    headers: *id001
+  response:
+    outputs:
+      id:
+        path: $.id
+        type: string
+        description: ID.
+      object:
+        path: $.object
+        type: string
+        description: Kind of object.
+- id: search_customers
+  name: Search customers
+  description: Search customers with Stripe's query language, for example email:'a@b.com'.
   effect: read
   params:
     query:
       type: string
-      description: Search query (e.g., "customer:'cus_1234567890'")
+      description: Stripe search query.
       required: true
     limit:
       type: integer
-      description: Number of results to return (default 10, max 100)
-    page:
-      type: string
-      description: Pagination token from metadata.next_page of the previous search; omit for the first page
+      description: How many (1 to 100).
+      minimum: 1
+      maximum: 100
+      default: 10
   request:
     method: GET
-    url: https://api.stripe.com/v1/invoices/search
+    url: https://api.stripe.com/v1/customers/search
+    headers: *id001
     query:
       query: '{query}'
       limit: '{limit}'
-      page: '{page}'
-    headers:
-      Authorization: Bearer {credential.api_key}
-      Content-Type: application/x-www-form-urlencoded
+  response:
+    outputs:
+      customers:
+        path: $.data[*]
+        type: array
+        description: Matching customers.
+      has_more:
+        path: $.has_more
+        type: boolean
+        description: True when more match.
+- id: list_charges
+  name: List charges
+  description: List charges, newest first.
+  effect: read
+  params:
+    limit:
+      type: integer
+      description: How many (1 to 100).
+      minimum: 1
+      maximum: 100
+      default: 10
+    startingAfter:
+      type: string
+      description: ID to continue after, from the last item of the previous page.
+  request:
+    method: GET
+    url: https://api.stripe.com/v1/charges
+    headers: *id001
+    query:
+      limit: '{limit}'
+      starting_after: '{startingAfter}'
+  response:
+    outputs:
+      charges:
+        path: $.data[*]
+        type: array
+        description: Charges.
+      has_more:
+        path: $.has_more
+        type: boolean
+        description: True when more exist.
+- id: get_charge
+  name: Get charge
+  description: Get one charge by ID.
+  effect: read
+  params:
+    chargeId:
+      type: string
+      description: The charge's ID.
+      required: true
+  request:
+    method: GET
+    url: https://api.stripe.com/v1/charges/{chargeId}
+    headers: *id001
+  response:
+    outputs:
+      id:
+        path: $.id
+        type: string
+        description: ID.
+      object:
+        path: $.object
+        type: string
+        description: Kind of object.
+- id: list_invoices
+  name: List invoices
+  description: List invoices, newest first.
+  effect: read
+  params:
+    limit:
+      type: integer
+      description: How many (1 to 100).
+      minimum: 1
+      maximum: 100
+      default: 10
+    startingAfter:
+      type: string
+      description: ID to continue after, from the last item of the previous page.
+  request:
+    method: GET
+    url: https://api.stripe.com/v1/invoices
+    headers: *id001
+    query:
+      limit: '{limit}'
+      starting_after: '{startingAfter}'
   response:
     outputs:
       invoices:
-        path: $.data
-        type: object
-        description: Array of matching invoice objects
-- id: search_payment_intents
-  name: Search Payment Intents
-  description: Search for Payment Intents using query syntax
-  effect: read
-  params:
-    query:
-      type: string
-      description: Search query (e.g., "status:'succeeded' AND currency:'usd'")
-      required: true
-    limit:
-      type: integer
-      description: Number of results to return (default 10, max 100)
-    page:
-      type: string
-      description: Pagination token from metadata.next_page of the previous search; omit for the first page
-  request:
-    method: GET
-    url: https://api.stripe.com/v1/payment_intents/search
-    query:
-      query: '{query}'
-      limit: '{limit}'
-      page: '{page}'
-    headers:
-      Authorization: Bearer {credential.api_key}
-      Content-Type: application/x-www-form-urlencoded
-  response:
-    outputs:
-      payment_intents:
-        path: $.data
+        path: $.data[*]
         type: array
-        description: Array of matching Payment Intent objects
-- id: search_prices
-  name: Search Prices
-  description: Search for prices using query syntax
+        description: Invoices.
+      has_more:
+        path: $.has_more
+        type: boolean
+        description: True when more exist.
+- id: get_invoice
+  name: Get invoice
+  description: Get one invoice by ID.
   effect: read
   params:
-    query:
+    invoiceId:
       type: string
-      description: Search query (e.g., "active:'true' AND currency:'usd'")
+      description: The invoice's ID.
       required: true
-    limit:
-      type: integer
-      description: Number of results to return (default 10, max 100)
-    page:
-      type: string
-      description: Pagination token from metadata.next_page of the previous search; omit for the first page
   request:
     method: GET
-    url: https://api.stripe.com/v1/prices/search
-    query:
-      query: '{query}'
-      limit: '{limit}'
-      page: '{page}'
-    headers:
-      Authorization: Bearer {credential.api_key}
-      Content-Type: application/x-www-form-urlencoded
+    url: https://api.stripe.com/v1/invoices/{invoiceId}
+    headers: *id001
   response:
     outputs:
-      prices:
-        path: $.data
-        type: object
-        description: Array of matching price objects
-- id: search_products
-  name: Search Products
-  description: Search for products using query syntax
+      id:
+        path: $.id
+        type: string
+        description: ID.
+      object:
+        path: $.object
+        type: string
+        description: Kind of object.
+- id: list_products
+  name: List products
+  description: List products, newest first.
   effect: read
   params:
-    query:
-      type: string
-      description: Search query (e.g., "name:'shirt'")
-      required: true
     limit:
       type: integer
-      description: Number of results to return (default 10, max 100)
-    page:
+      description: How many (1 to 100).
+      minimum: 1
+      maximum: 100
+      default: 10
+    startingAfter:
       type: string
-      description: Pagination token from metadata.next_page of the previous search; omit for the first page
+      description: ID to continue after, from the last item of the previous page.
   request:
     method: GET
-    url: https://api.stripe.com/v1/products/search
+    url: https://api.stripe.com/v1/products
+    headers: *id001
     query:
-      query: '{query}'
       limit: '{limit}'
-      page: '{page}'
-    headers:
-      Authorization: Bearer {credential.api_key}
-      Content-Type: application/x-www-form-urlencoded
+      starting_after: '{startingAfter}'
   response:
     outputs:
       products:
-        path: $.data
-        type: object
-        description: Array of matching product objects
-- id: search_subscriptions
-  name: Search Subscriptions
-  description: Search one page of subscriptions using query syntax. Pass metadata.next_page as page to continue.
+        path: $.data[*]
+        type: array
+        description: Products.
+      has_more:
+        path: $.has_more
+        type: boolean
+        description: True when more exist.
+- id: get_product
+  name: Get product
+  description: Get one product by ID.
   effect: read
   params:
-    query:
+    productId:
       type: string
-      description: Search query (e.g., "status:'active' AND metadata['order_id']:'6735'")
+      description: The product's ID.
       required: true
-    page:
-      type: string
-      description: Pagination token from metadata.next_page. Omit for the first page and keep the same query.
-    limit:
-      type: integer
-      description: Number of results to return (default 10, max 100)
   request:
     method: GET
-    url: https://api.stripe.com/v1/subscriptions/search
+    url: https://api.stripe.com/v1/products/{productId}
+    headers: *id001
+  response:
+    outputs:
+      id:
+        path: $.id
+        type: string
+        description: ID.
+      object:
+        path: $.object
+        type: string
+        description: Kind of object.
+- id: list_prices
+  name: List prices
+  description: List prices, newest first.
+  effect: read
+  params:
+    limit:
+      type: integer
+      description: How many (1 to 100).
+      minimum: 1
+      maximum: 100
+      default: 10
+    startingAfter:
+      type: string
+      description: ID to continue after, from the last item of the previous page.
+  request:
+    method: GET
+    url: https://api.stripe.com/v1/prices
+    headers: *id001
     query:
-      query: '{query}'
       limit: '{limit}'
-      page: '{page}'
-    headers:
-      Authorization: Bearer {credential.api_key}
-      Content-Type: application/x-www-form-urlencoded
+      starting_after: '{startingAfter}'
+  response:
+    outputs:
+      prices:
+        path: $.data[*]
+        type: array
+        description: Prices.
+      has_more:
+        path: $.has_more
+        type: boolean
+        description: True when more exist.
+- id: list_subscriptions
+  name: List subscriptions
+  description: List subscriptions, newest first.
+  effect: read
+  params:
+    limit:
+      type: integer
+      description: How many (1 to 100).
+      minimum: 1
+      maximum: 100
+      default: 10
+    startingAfter:
+      type: string
+      description: ID to continue after, from the last item of the previous page.
+  request:
+    method: GET
+    url: https://api.stripe.com/v1/subscriptions
+    headers: *id001
+    query:
+      limit: '{limit}'
+      starting_after: '{startingAfter}'
   response:
     outputs:
       subscriptions:
-        path: $.data
+        path: $.data[*]
         type: array
-        description: Array of matching subscription objects
+        description: Subscriptions.
+      has_more:
+        path: $.has_more
+        type: boolean
+        description: True when more exist.
+- id: get_balance
+  name: Get balance
+  description: Get your account balance.
+  effect: read
+  request:
+    method: GET
+    url: https://api.stripe.com/v1/balance
+    headers: *id001
+  response:
+    outputs:
+      available:
+        path: $.available[*]
+        type: array
+        description: Available amounts by currency.
+      pending:
+        path: $.pending[*]
+        type: array
+        description: Pending amounts by currency.
 - id: create_customer
-  name: Create Customer
-  description: Create a customer in Stripe. Written from Stripe's published customers API.
+  name: Create customer
+  description: Create a customer.
   effect: write
   params:
     email:
       type: string
-      description: The customer's email address.
+      description: The customer's email.
     name:
       type: string
-      description: The customer's full name or business name.
+      description: The customer's name.
     description:
       type: string
       description: A note to keep with the customer.
   request:
     method: POST
     url: https://api.stripe.com/v1/customers
-    headers:
+    headers: &id002
       Authorization: Bearer {credential.api_key}
       Content-Type: application/x-www-form-urlencoded
     body:
@@ -396,14 +375,14 @@ actions:
       id:
         path: $.id
         type: string
-        description: The new customer's ID.
+        description: New customer ID.
       email:
         path: $.email
         type: string
         description: The customer's email.
 - id: create_product
-  name: Create Product
-  description: Create a product in Stripe. Written from Stripe's published products API.
+  name: Create product
+  description: Create a product.
   effect: write
   params:
     name:
@@ -416,9 +395,7 @@ actions:
   request:
     method: POST
     url: https://api.stripe.com/v1/products
-    headers:
-      Authorization: Bearer {credential.api_key}
-      Content-Type: application/x-www-form-urlencoded
+    headers: *id002
     body:
       name: '{name}'
       description: '{description}'
@@ -427,8 +404,31 @@ actions:
       id:
         path: $.id
         type: string
-        description: The new product's ID.
+        description: New product ID.
       active:
         path: $.active
         type: boolean
-        description: Whether the product is active.
+        description: True when active.
+- id: delete_invoice
+  name: Delete draft invoice
+  description: Delete an invoice that is still a draft.
+  effect: write
+  params:
+    invoiceId:
+      type: string
+      description: Invoice ID.
+      required: true
+  request:
+    method: DELETE
+    url: https://api.stripe.com/v1/invoices/{invoiceId}
+    headers: *id001
+  response:
+    outputs:
+      id:
+        path: $.id
+        type: string
+        description: ID of the deleted invoice.
+      deleted:
+        path: $.deleted
+        type: boolean
+        description: True once deleted.

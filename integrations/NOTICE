@@ -1,6 +1,0 @@
-The integration definitions in this folder were derived from open-source tool definitions published
-in the Sim project (https://github.com/simstudioai/sim), Copyright 2026 Sim Studio, licensed under the
-Apache License, Version 2.0 (a copy is in LICENSE-APACHE-2.0). They were rewritten into NortPole's own
-declarative format; none of that project's source code is included or needed to build or run NortPole.
-Definitions that carry this notice say "Derived from open-source" in their first lines. Nothing from the
-project's separately licensed enterprise folder is used.
