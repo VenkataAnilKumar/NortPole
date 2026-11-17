@@ -1,13 +1,6 @@
 "use client";
 
-import React, {
-  useCallback,
-  useEffect,
-  useId,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Formik, Form, FormikHelpers } from "formik";
 import * as Yup from "yup";
@@ -107,7 +100,6 @@ export default function OpenAPIAuthenticationModal({
   passthroughOAuthEnabled = false,
   onConnect,
   onSkip,
-  entityName = null,
   allowNoAuthentication = false,
   draftValues,
   onBack,

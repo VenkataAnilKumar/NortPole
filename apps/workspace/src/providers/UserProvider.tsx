@@ -1,15 +1,7 @@
 "use client";
 
 import { useNavigation } from "@opal/navigation";
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-  useEffect,
-  useRef,
-} from "react";
+import React, { createContext, useCallback, useContext, useState, useEffect, useRef } from "react";
 import type { ReasoningEffortOverride } from "@/lib/languageModels/types";
 import {
   User,

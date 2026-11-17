@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo } from "react";
+import { FC, useEffect, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { getSourceDisplayName } from "@/lib/connectors/utils";
 import type {
@@ -28,7 +28,9 @@ import {
   Section,
 } from "@opal/layouts";
 import { SvgRefreshCw } from "@opal/icons";
-import { useConnectorCheckActions } from "@/views/admin/connectors/AddConnectorPage/form/checkActions";
+import {
+  useConnectorCheckActions,
+} from "@/views/admin/connectors/AddConnectorPage/form/checkActions";
 import {
   InputCheckboxField,
   InputMultiUploadField,

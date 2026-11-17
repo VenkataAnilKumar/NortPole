@@ -12,7 +12,7 @@ import useColumnWidths from "@opal/components/table/hooks/useColumnWidths";
 import useDraggableRows from "@opal/components/table/hooks/useDraggableRows";
 import TableElement from "@opal/components/table/TableElement";
 import TableHeader from "@opal/components/table/TableHeader";
-import TableBody from "@opal/components/table/TableBody";
+import TableBody, { TableDndProvider } from "@opal/components/table/TableBody";
 import TableRow from "@opal/components/table/TableRow";
 import TableHead from "@opal/components/table/TableHead";
 import TableCell from "@opal/components/table/TableCell";
@@ -218,11 +218,8 @@ export function Table<TData>(props: DataTableProps<TData>) {
     pageSize: resolvedPageSize,
     selectionState,
     selectedCount,
-    selectedRowIds,
     clearSelection,
-    toggleAllPageRowsSelected,
     toggleAllRowsSelected,
-    isAllPageRowsSelected,
     isAllRowsSelected,
     isViewingSelected,
     enterViewMode,
@@ -374,6 +371,29 @@ export function Table<TData>(props: DataTableProps<TData>) {
               : undefined),
           }}
         >
+          <TableDndProvider
+            dndSortable={hasDraggable ? draggableReturn : undefined}
+            renderDragOverlay={
+                hasDraggable
+                  ? (activeId) => {
+                      const row = table
+                        .getRowModel()
+                        .rows.find((r) => getRowId(r.original) === activeId);
+                      if (!row) return null;
+                      return (
+                        <DragOverlayRow
+                          row={row}
+                          columnWidths={columnWidths}
+                          columnKindMap={columnKindMap}
+                          qualifierColumn={qualifierColumn}
+                          isSelectable={isSelectable}
+                          prominence={prominence}
+                        />
+                      );
+                    }
+                  : undefined
+              }
+          >
           <TableElement
             aria-label={label}
             selectionBehavior={selectionBehavior}
@@ -497,29 +517,7 @@ export function Table<TData>(props: DataTableProps<TData>) {
               </TableHeader>
             )}
 
-            <TableBody
-              dndSortable={hasDraggable ? draggableReturn : undefined}
-              renderDragOverlay={
-                hasDraggable
-                  ? (activeId) => {
-                      const row = table
-                        .getRowModel()
-                        .rows.find((r) => getRowId(r.original) === activeId);
-                      if (!row) return null;
-                      return (
-                        <DragOverlayRow
-                          row={row}
-                          columnWidths={columnWidths}
-                          columnKindMap={columnKindMap}
-                          qualifierColumn={qualifierColumn}
-                          isSelectable={isSelectable}
-                          prominence={prominence}
-                        />
-                      );
-                    }
-                  : undefined
-              }
-            >
+            <TableBody>
               {emptyState && table.getRowModel().rows.length === 0 && (
                 <tr>
                   <td colSpan={table.getVisibleLeafColumns().length}>
@@ -648,6 +646,7 @@ export function Table<TData>(props: DataTableProps<TData>) {
               })}
             </TableBody>
           </TableElement>
+          </TableDndProvider>
         </div>
 
         {showFooter && renderFooter(footerConfig ?? {})}

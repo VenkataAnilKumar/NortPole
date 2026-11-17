@@ -20,7 +20,6 @@ import {
   SvgStar,
   SvgStarOff,
   SvgShare,
-  SvgBarChart,
   SvgTrash,
 } from "@opal/icons";
 import { ConfirmationModalLayout } from "@opal/layouts";

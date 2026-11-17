@@ -779,7 +779,7 @@ export const connectorConfigs: Record<
                 label:
                   "connectors.google_drive.fields.include_files_shared_with_me.label",
                 name: "include_files_shared_with_me",
-                visibleCondition: (values, currentCredential) =>
+                visibleCondition: (_values, currentCredential) =>
                   currentCredential?.credential_json?.google_tokens,
                 default: false,
               },
@@ -818,7 +818,7 @@ export const connectorConfigs: Record<
                   "connectors.google_drive.fields.my_drive_emails.description",
                 label: "connectors.google_drive.fields.my_drive_emails.label",
                 name: "my_drive_emails",
-                visibleCondition: (values, currentCredential) =>
+                visibleCondition: (_values, currentCredential) =>
                   !currentCredential?.credential_json?.google_tokens,
                 default: "",
                 isTextArea: true,
@@ -839,7 +839,7 @@ export const connectorConfigs: Record<
         optional: true,
         default: "",
         isTextArea: true,
-        visibleCondition: (values, currentCredential) =>
+        visibleCondition: (_values, currentCredential) =>
           !currentCredential?.credential_json?.google_tokens,
       },
       {

@@ -50,16 +50,13 @@ const documentToSourceInfo = (doc: NortPoleDocument): SourceInfo => ({
  */
 export const FetchToolRenderer: MessageRenderer<FetchToolPacket, {}> = ({
   packets,
-  onComplete,
-  animate,
   stopPacketSeen,
   renderType,
   children,
 }) => {
   const t = useTranslations("chat.messages.timeline");
   const fetchState = constructCurrentFetchState(packets);
-  const { urls, documents, hasStarted, isLoading, isComplete } = fetchState;
-  const isCompact = renderType === RenderType.COMPACT;
+  const { urls, documents, hasStarted, isComplete } = fetchState;
   const isHighlight = renderType === RenderType.HIGHLIGHT;
 
   if (!hasStarted) {

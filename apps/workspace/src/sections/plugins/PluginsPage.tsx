@@ -5,7 +5,7 @@ import { installedPluginStatus, sortPlugins } from "@/lib/plugins/sort";
 
 import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Button, Dropdown, Text } from "@opal/components";
+import { Button, Dropdown } from "@opal/components";
 import type { RichStr } from "@opal/types";
 import {
   ContentAction,

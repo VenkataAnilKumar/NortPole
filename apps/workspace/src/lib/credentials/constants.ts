@@ -78,13 +78,6 @@ function toggle(displayName: CredentialDisplayName) {
   return { kind: "toggle", displayName } as const;
 }
 
-function checkbox<const TOptions extends CredentialFieldOptions = {}>(
-  displayName: CredentialDisplayName,
-  options?: TOptions
-) {
-  return Object.assign({ kind: "checkbox" as const, displayName }, options);
-}
-
 function file<const TOptions extends CredentialFieldOptions = {}>(
   displayName: CredentialDisplayName,
   fileType: FileTypeCategory,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { type SourceMetadata } from "@/lib/connectors/types/source";
 import useSWR from "swr";
 import { errorHandlingFetcher } from "@/lib/fetcher";

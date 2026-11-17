@@ -48,7 +48,7 @@ function NebiusTokenfactoryModalInternals({
 }: NebiusTokenfactoryModalInternalsProps) {
   const t = useTranslations("admin.languageModels.modals");
   const formikProps = useFormikContext<NebiusTokenfactoryModalValues>();
-  const { setFieldValue } = formikProps;
+  const { } = formikProps;
 
   const isFetchDisabled = !formikProps.values.api_base;
 

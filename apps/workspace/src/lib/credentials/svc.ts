@@ -65,9 +65,9 @@ export async function createCredentialWithPrivateKey(
   });
 }
 
-export async function deleteCredential<T>(
+export async function deleteCredential(
   credentialId: number,
-  force?: boolean
+  _force?: boolean
 ) {
   return await fetch(`/api/manage/credential/${credentialId}`, {
     method: "DELETE",
@@ -77,7 +77,7 @@ export async function deleteCredential<T>(
   });
 }
 
-export async function forceDeleteCredential<T>(credentialId: number) {
+export async function forceDeleteCredential(credentialId: number) {
   return await fetch(`/api/manage/credential/force/${credentialId}`, {
     method: "DELETE",
     headers: {
@@ -223,7 +223,6 @@ export async function submitCredential<T>(
   const buildSuccess = messages?.success ?? (() => "Success!");
   const buildError =
     messages?.error ?? ((detail: string) => `Error: ${detail}`);
-  let isSuccess = false;
   try {
     let response: Response;
     if (PRIVATE_KEY_FIELD_KEY in credential && credential.private_key) {
@@ -236,7 +235,6 @@ export async function submitCredential<T>(
     if (response.ok) {
       const parsed_response = await response.json();
       const credential = parsed_response.credential;
-      isSuccess = true;
       return { credential, message: buildSuccess(), isSuccess: true };
     } else {
       const errorData = await response.json();

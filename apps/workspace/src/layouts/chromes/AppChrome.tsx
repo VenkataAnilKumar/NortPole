@@ -1,17 +1,10 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ReactNode,
-} from "react";
+import { useCallback, useMemo, useRef, useState, type ReactNode } from "react";
 import { RootLayout, RootLayoutRightPanelSlotContext } from "@opal/layouts";
 import { cn, markdown } from "@opal/utils";
-import { INTERACTIVE_SELECTOR, noProp } from "@/lib/utils";
+import { INTERACTIVE_SELECTOR } from "@/lib/utils";
 import { useAppBackground } from "@/providers/AppBackgroundProvider";
 import { useTheme } from "next-themes";
 import useBrowserInfo from "@/hooks/useBrowserInfo";

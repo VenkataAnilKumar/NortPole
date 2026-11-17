@@ -118,7 +118,7 @@ export default function CreateCredential({
 
     let privateKey: TypedFile | null = null;
     const filteredCredentialValues = Object.fromEntries(
-      Object.entries(credentialValues).filter(([key, value]) => {
+      Object.entries(credentialValues).filter(([, value]) => {
         if (value instanceof TypedFile) {
           privateKey = value;
           return false;

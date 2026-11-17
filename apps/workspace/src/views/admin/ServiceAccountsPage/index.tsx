@@ -40,11 +40,7 @@ import { escapeMarkdown, markdown } from "@opal/utils";
 
 import { useBillingInformation } from "@/hooks/useBillingInformation";
 import { BillingStatus, hasActiveSubscription } from "@/lib/billing/types";
-import {
-  deleteApiKey,
-  regenerateApiKey,
-  updateApiKey,
-} from "@/views/admin/ServiceAccountsPage/svc";
+import { deleteApiKey, regenerateApiKey } from "@/views/admin/ServiceAccountsPage/svc";
 import type { APIKey } from "@/views/admin/ServiceAccountsPage/interfaces";
 import { DISCORD_SERVICE_API_KEY_NAME } from "@/views/admin/ServiceAccountsPage/interfaces";
 import ApiKeyFormModal from "@/views/admin/ServiceAccountsPage/ApiKeyFormModal";

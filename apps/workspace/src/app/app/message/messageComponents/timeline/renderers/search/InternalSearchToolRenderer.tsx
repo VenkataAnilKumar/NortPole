@@ -56,8 +56,6 @@ export const InternalSearchToolRenderer: MessageRenderer<
   {}
 > = ({
   packets,
-  onComplete,
-  animate,
   stopPacketSeen,
   renderType,
   children,

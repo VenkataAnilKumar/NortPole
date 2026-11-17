@@ -1,7 +1,7 @@
 "use client";
 
 import { IconLoader } from "@opal/loaders";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { format, startOfDay, subDays } from "date-fns";
 import useSWR from "swr";

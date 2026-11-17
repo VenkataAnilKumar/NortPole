@@ -183,11 +183,11 @@ export const useMarkdownComponents = (
     () => ({
       a: anchorCallback,
       p: paragraphCallback,
-      pre: ({ node, className, children }) => {
+      pre: ({ children }) => {
         // Don't render the pre wrapper - CodeBlock handles its own wrapper
         return <>{children}</>;
       },
-      b: ({ node, className, children }) => {
+      b: ({ className, children }) => {
         return <span className={className}>{children}</span>;
       },
       ul: ({ node, className, children, ...props }) => {

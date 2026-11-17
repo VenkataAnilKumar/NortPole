@@ -73,7 +73,6 @@ const ChatButton = memo(
       projects,
       fetchProjects,
       currentProjectId,
-      createProject,
     } = useProjectsContext();
     const pinChatAgent = usePinChatAgent();
     const [menuOpen, setMenuOpen] = useState(false);

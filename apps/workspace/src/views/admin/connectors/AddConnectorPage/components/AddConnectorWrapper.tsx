@@ -97,7 +97,7 @@ import {
   type NewAccountSchema,
 } from "@/views/admin/connectors/AddConnectorPage/newAccount";
 import { deleteConnector } from "@/lib/connector";
-import { type FormikErrorTree, firstFormikError } from "@/lib/formikErrors";
+import { firstFormikError } from "@/lib/formikErrors";
 import {
   SYNC_RESTRICTED_ACCESS_TYPE,
   toManageAccess,
@@ -106,7 +106,9 @@ import {
 import { FederatedConnectorForm } from "@/components/admin/federated/FederatedConnectorForm";
 import AuthenticationAccountSection from "@/views/admin/connectors/AddConnectorPage/sections/AuthenticationAccountSection";
 import ConnectorContentSection from "@/views/admin/connectors/AddConnectorPage/sections/ConnectorContentSection";
-import { visibleConnectorFields } from "@/views/admin/connectors/AddConnectorPage/form/ConnectorConfigFields";
+import {
+  visibleConnectorFields,
+} from "@/views/admin/connectors/AddConnectorPage/form/ConnectorConfigFields";
 import ConnectorSettingsSection from "@/views/admin/connectors/AddConnectorPage/sections/ConnectorSettingsSection";
 import ScheduleSection from "@/views/admin/connectors/AddConnectorPage/sections/ScheduleSection";
 import EditFileLocations from "@/views/admin/connectors/AddConnectorPage/form/EditFileLocations";
@@ -116,7 +118,9 @@ import {
 } from "@/views/admin/connectors/AddConnectorPage/form/checkActions";
 import CredentialBoundFields from "@/views/admin/connectors/AddConnectorPage/form/CredentialBoundFields";
 import { BoundFieldsGate } from "@/views/admin/connectors/AddConnectorPage/form/BoundFieldsGate";
-import { CredentialDerivedConfig } from "@/views/admin/connectors/AddConnectorPage/form/CredentialDerivedConfig";
+import {
+  CredentialDerivedConfig,
+} from "@/views/admin/connectors/AddConnectorPage/form/CredentialDerivedConfig";
 import {
   useConnectorChecks,
   useResetConnectorChecks,
@@ -328,14 +332,14 @@ export function AddConnectorForm({ connector, edit }: AddConnectorFormProps) {
   );
 
   const [uploading, setUploading] = useState(false);
-  const [creatingConnector, setCreatingConnector] = useState(false);
+  const [, setCreatingConnector] = useState(false);
   // Create warns of failed non-required checks before it runs.
   const advisoryModal = useCreateModal();
   // Counts View Failed Checks clicks, so the checks card opens and scrolls into view.
   const [expandChecksRequest, setExpandChecksRequest] = useState(0);
   // Edit mode: the plan shown for review, with the proposal it was computed
   // for, so a stale plan can be computed again.
-  const [planning, setPlanning] = useState(false);
+  const [, setPlanning] = useState(false);
   const [editPlan, setEditPlan] = useState<{
     proposal: ConnectorEditProposal;
     plan: ConnectorEditPlanResponse;

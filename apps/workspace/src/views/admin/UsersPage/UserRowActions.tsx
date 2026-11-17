@@ -75,11 +75,6 @@ export default function UserRowActions({
   // Keep `modal` set on close so the modal stays mounted while it animates out.
   const closeModal = () => actionModal.toggle(false);
 
-  const closeAndMutate = () => {
-    actionModal.toggle(false);
-    onMutate();
-  };
-
   // the only edition-independent way to promote/demote; group editing is EE-only
   const toggleAdminAccess = () => {
     void (async () => {

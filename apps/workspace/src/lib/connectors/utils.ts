@@ -505,7 +505,7 @@ export function statusIsNotCurrentlyActive(
 // Gmail
 // ---------------------------------------------------------------------------
 
-export const gmailConnectorNameBuilder = (values: GmailConfig) =>
+export const gmailConnectorNameBuilder = (_values: GmailConfig) =>
   "GmailConnector";
 
 // ---------------------------------------------------------------------------

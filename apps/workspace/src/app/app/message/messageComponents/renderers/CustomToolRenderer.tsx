@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import {
   PacketType,
@@ -6,7 +6,6 @@ import {
   CustomToolStart,
   CustomToolArgs,
   CustomToolDelta,
-  CustomToolErrorInfo,
   SectionEnd,
 } from "../../../services/streamingModels";
 import {

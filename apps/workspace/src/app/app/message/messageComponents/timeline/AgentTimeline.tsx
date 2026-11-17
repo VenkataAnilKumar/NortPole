@@ -10,29 +10,44 @@ import { TurnGroup } from "./transformers";
 import { cn } from "@opal/utils";
 import AgentAvatar from "@/refresh-components/avatars/AgentAvatar";
 import { TextLoader } from "@opal/loaders";
-import { useTimelineExpansion } from "@/app/app/message/messageComponents/timeline/hooks/useTimelineExpansion";
-import { useTimelineMetrics } from "@/app/app/message/messageComponents/timeline/hooks/useTimelineMetrics";
-import { useTimelineHeader } from "@/app/app/message/messageComponents/timeline/hooks/useTimelineHeader";
+import {
+  useTimelineExpansion,
+} from "@/app/app/message/messageComponents/timeline/hooks/useTimelineExpansion";
+import {
+  useTimelineMetrics,
+} from "@/app/app/message/messageComponents/timeline/hooks/useTimelineMetrics";
+import {
+  useTimelineHeader,
+} from "@/app/app/message/messageComponents/timeline/hooks/useTimelineHeader";
 import {
   useTimelineUIState,
   TimelineUIState,
 } from "@/app/app/message/messageComponents/timeline/hooks/useTimelineUIState";
 import {
-  isResearchAgentPackets,
   isSearchToolPackets,
   stepSupportsCollapsedStreaming,
   stepHasCollapsedStreamingContent,
 } from "@/app/app/message/messageComponents/timeline/packetHelpers";
-import { useTimelineStepState } from "@/app/app/message/messageComponents/timeline/hooks/useTimelineStepState";
-import { StreamingHeader } from "@/app/app/message/messageComponents/timeline/headers/StreamingHeader";
-import { CompletedHeader } from "@/app/app/message/messageComponents/timeline/headers/CompletedHeader";
+import {
+  useTimelineStepState,
+} from "@/app/app/message/messageComponents/timeline/hooks/useTimelineStepState";
+import {
+  StreamingHeader,
+} from "@/app/app/message/messageComponents/timeline/headers/StreamingHeader";
+import {
+  CompletedHeader,
+} from "@/app/app/message/messageComponents/timeline/headers/CompletedHeader";
 import { StoppedHeader } from "@/app/app/message/messageComponents/timeline/headers/StoppedHeader";
-import { ParallelStreamingHeader } from "@/app/app/message/messageComponents/timeline/headers/ParallelStreamingHeader";
+import {
+  ParallelStreamingHeader,
+} from "@/app/app/message/messageComponents/timeline/headers/ParallelStreamingHeader";
 import { useStreamingStartTime } from "@/app/app/stores/useChatSessionStore";
 import { ExpandedTimelineContent } from "./ExpandedTimelineContent";
 import { CollapsedStreamingContent } from "./CollapsedStreamingContent";
 import { TimelineRoot } from "@/app/app/message/messageComponents/timeline/primitives/TimelineRoot";
-import { TimelineHeaderRow } from "@/app/app/message/messageComponents/timeline/primitives/TimelineHeaderRow";
+import {
+  TimelineHeaderRow,
+} from "@/app/app/message/messageComponents/timeline/primitives/TimelineHeaderRow";
 
 // =============================================================================
 // Private Wrapper Components
@@ -127,7 +142,6 @@ export const AgentTimeline = React.memo(function AgentTimeline({
   hasDisplayContent = false,
   collapsible = true,
   buttonTitle,
-  "data-testid": testId,
   processingDurationSeconds,
   generatedImageCount = 0,
   toolProcessingDuration,

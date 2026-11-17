@@ -1086,7 +1086,6 @@ export default function IndexSettingsPage() {
     llmProviders,
     hasAnyLlm,
     hasAnyVisionLlm,
-    defaultLlm,
     defaultVision,
     isLoading: isLoadingLlmProviders,
   } = useLlmDefaults();

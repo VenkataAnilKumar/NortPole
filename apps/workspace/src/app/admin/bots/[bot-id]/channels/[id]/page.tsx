@@ -2,7 +2,9 @@
 
 import { use } from "react";
 import { useTranslations } from "next-intl";
-import { SlackChannelConfigCreationForm } from "@/app/admin/bots/[bot-id]/channels/SlackChannelConfigCreationForm";
+import {
+  SlackChannelConfigCreationForm,
+} from "@/app/admin/bots/[bot-id]/channels/SlackChannelConfigCreationForm";
 import { ErrorCallout } from "@/components/ErrorCallout";
 
 import { SettingsLayouts } from "@opal/layouts";
@@ -13,7 +15,6 @@ import { useAgents } from "@/lib/agents/hooks";
 import { useStandardAnswerCategories } from "@/lib/community/standardAnswers";
 import { useTierAtLeast } from "@/lib/tiers/hooks";
 import { Tier } from "@/lib/tiers/types";
-import type { StandardAnswerCategoryResponse } from "@/components/standardAnswers/getStandardAnswerCategoriesIfEE";
 
 function EditSlackChannelConfigContent({
   id,

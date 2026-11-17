@@ -6,7 +6,6 @@ import { useFocusOnMount, useGridNavigation, useHotkey } from "@opal/hooks";
 import { useTranslations } from "next-intl";
 import useSWR from "swr";
 import { SvgUsers } from "@opal/icons";
-import { Button } from "@opal/components";
 import { SettingsLayouts } from "@opal/layouts";
 import { errorHandlingFetcher } from "@/lib/fetcher";
 import type { UserGroup } from "@/lib/types";

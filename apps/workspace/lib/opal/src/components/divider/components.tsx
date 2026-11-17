@@ -9,7 +9,7 @@ import { toPlainString } from "@opal/components/text/InlineMarkdown";
 import { SvgChevronDown, SvgChevronRight } from "@opal/icons";
 import { useOpalStrings } from "@opal/strings";
 import { Interactive, type InteractiveStatelessInteraction } from "@opal/core";
-import { clickOnKeyDown, cn } from "@opal/utils";
+import { clickOnKeyDown } from "@opal/utils";
 import { spacingToRem } from "@opal/shared";
 
 // ---------------------------------------------------------------------------

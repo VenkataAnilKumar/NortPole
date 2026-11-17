@@ -37,14 +37,8 @@ import {
   SvgXOctagon,
   SvgRefreshCw,
 } from "@opal/icons";
-import type { IconFunctionComponent, RichStr } from "@opal/types";
-import {
-  cn,
-  escapeMarkdown,
-  markdown,
-  noProp,
-  smoothScrollToCenter,
-} from "@opal/utils";
+import type { IconFunctionComponent } from "@opal/types";
+import { cn, noProp, smoothScrollToCenter } from "@opal/utils";
 import { Hoverable } from "@opal/core";
 import type {
   CapabilityCheckResult,

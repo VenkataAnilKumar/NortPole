@@ -36,7 +36,6 @@ import {
 } from "@opal/icons";
 import { timeAgo } from "@opal/time";
 import type { IconFunctionComponent } from "@opal/types";
-import { noProp } from "@/lib/utils";
 import { MoveCustomAgentChatModal } from "@/lib/agents/components";
 import { ConfirmationModalLayout } from "@opal/layouts";
 

@@ -66,7 +66,7 @@ export default function OAuthFinalizePage() {
   );
   const [redirectUrl, setRedirectUrl] = useState<string | null>(null);
   const [isError, setIsError] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false); // New state
+  const [, setIsSubmitted] = useState(false); // New state
   const [pageTitle, setPageTitle] = useState(t("oauthFinalize.page.title"));
 
   const [accessibleResources, setAccessibleResources] = useState<

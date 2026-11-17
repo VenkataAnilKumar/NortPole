@@ -2,14 +2,12 @@
 
 import {
   DocumentBoostStatus,
-  Tag,
   UserGroup,
   ConnectorStatus,
   ConnectorIndexingStatusLiteResponse,
   IndexingStatusRequest,
 } from "@/lib/types";
-import { getConfiguredSources } from "@/lib/connectors/utils";
-import { SourceMetadata, ValidSources } from "@/lib/connectors/types/source";
+import { ValidSources } from "@/lib/connectors/types/source";
 import useSWR, { mutate, useSWRConfig } from "swr";
 import { errorHandlingFetcher } from "./fetcher";
 import {
@@ -20,7 +18,6 @@ import {
   useRef,
   useState,
 } from "react";
-import { InputDateRangePickerValue } from "@opal/components";
 import {
   getProviderOverrideForAgent,
   parseLlmDescriptor,
@@ -35,7 +32,7 @@ import {
   ReasoningEffortOverride,
 } from "@/lib/languageModels/types";
 import { isAnthropic } from "@/lib/languageModels/svc";
-import { DEFAULT_AGENT_ID, NEXT_PUBLIC_CLOUD_ENABLED } from "./constants";
+import { DEFAULT_AGENT_ID } from "./constants";
 import { useUser } from "@/providers/UserProvider";
 import { SEARCH_TOOL_ID } from "@/lib/tools/constants";
 import {
@@ -602,11 +599,6 @@ export function useLlmManager(
   // Manually set the LLM
   const updateCurrentLlm = (newLlm: LlmDescriptor) => {
     setManualLlm(newLlm);
-    setUserHasManuallyOverriddenLLM(true);
-  };
-
-  const updateCurrentLlmToModelName = (modelName: string) => {
-    setManualLlm(getValidLlmDescriptor(modelName));
     setUserHasManuallyOverriddenLLM(true);
   };
 

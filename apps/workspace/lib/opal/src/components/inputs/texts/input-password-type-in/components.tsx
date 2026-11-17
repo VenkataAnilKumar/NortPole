@@ -7,7 +7,6 @@ import {
   type InputTypeInProps,
   Badge,
 } from "@opal/components";
-import { cn } from "@opal/utils";
 import { SvgEye, SvgEyeClosed, SvgKey } from "@opal/icons";
 import { useOpalStrings } from "@opal/strings";
 import type { IconFunctionComponent } from "@opal/types";

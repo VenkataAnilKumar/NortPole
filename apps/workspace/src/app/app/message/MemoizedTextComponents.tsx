@@ -51,7 +51,6 @@ export const MemoizedAnchor = memo(
     docs,
     subQuestions,
     openQuestion,
-    userFiles,
     citations,
     href,
     updatePresentingDocument,

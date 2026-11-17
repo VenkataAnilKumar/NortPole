@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import CredentialSubText from "@/lib/credentials/components/CredentialFields";
 import type { ConnectionConfiguration } from "@/lib/connectors/types";
 import type { ConfigurableSources } from "@/lib/connectors/types/source";

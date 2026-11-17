@@ -85,7 +85,7 @@ export const SlackTokensForm = ({
       }}
       enableReinitialize={true}
     >
-      {({ isSubmitting, setFieldValue, values }) => (
+      {({ isSubmitting, values }) => (
         <Form className="w-full">
           {!isUpdate && (
             <div className="">

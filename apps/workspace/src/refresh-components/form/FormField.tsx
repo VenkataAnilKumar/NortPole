@@ -146,7 +146,6 @@ export const FormFieldDescription: React.FC<DescriptionProps> = ({
 export const FormFieldMessage: React.FC<MessageProps> = ({
   className,
   messages,
-  render,
 }) => {
   const { baseId, state } = useFieldContext();
   let tempState = state;

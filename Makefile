@@ -22,8 +22,10 @@ check:
 	python tools/validate_structure.py
 	python -m pytest -q tools/tests
 
+# The whole unit tree needs the default settings (vector search on, Redis cache, tokenizer download allowed); CORE_ENV
+# is the database-only setup the CI job uses for the smaller set below, and fails 14 inherited tests that need those defaults.
 core-test:
-	cd services/core && $(CORE_ENV) uv run --no-sync python -m pytest -q tests/unit/nortpole
+	cd services/core && PYTHONPATH=. AUTH_TYPE=basic uv run --no-sync python -m pytest -q tests/unit/nortpole
 
 # The backend tests CI runs for NortPole's own modules (the nightly job runs the whole suite).
 CORE_CI_TESTS = tests/unit/nortpole/action_binding tests/unit/nortpole/actions tests/unit/nortpole/audit_log \

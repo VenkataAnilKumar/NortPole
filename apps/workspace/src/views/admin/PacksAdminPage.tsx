@@ -127,7 +127,7 @@ export default function PacksAdminPage() {
       <section className={card} aria-labelledby="hand-h" data-testid="key-change">
         <h2 id="hand-h" className="mb-1 text-base font-semibold text-text-05">Hand a pack to another signer</h2>
         <p className="mb-2 text-sm text-text-03">
-          A pack belongs to the signer of its newest version, and a version signed by anyone else is refused. To let another trusted signer publish the next version, allow it here (it works once, then that signer owns the pack). If the owner's key is revoked, no approval is needed.
+          A pack belongs to the signer of its newest version; versions signed by anyone else are refused. To let another trusted signer publish the next version, allow it here (it works once, then that signer owns the pack). No approval is needed if the owner's key is revoked.
         </p>
         <div className="flex flex-col gap-2 sm:flex-row">
           <label className="flex flex-1 flex-col gap-1 text-sm font-medium text-text-05">Pack

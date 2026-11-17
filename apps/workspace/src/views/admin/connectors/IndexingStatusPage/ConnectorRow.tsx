@@ -3,16 +3,7 @@
 import { NavLink, useNavigation } from "@opal/navigation";
 import { useEffect, useState } from "react";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
-import {
-  Button,
-  Card,
-  Divider,
-  Popover,
-  Badge,
-  Text,
-  Tooltip,
-  BadgeButton,
-} from "@opal/components";
+import { Button, Card, Divider, Popover, Text, Tooltip, BadgeButton } from "@opal/components";
 import { Content, Section } from "@opal/layouts";
 import {
   SvgChevronRight,

@@ -305,7 +305,6 @@ function ChatPanelContent({
   // Disable input when pre-provisioning is in progress or failed (waiting for retry)
   const sandboxNotReady = isPreProvisioning || isPreProvisioningFailed;
   const {
-    currentMessageFiles,
     getCurrentMessageFiles,
     hasUploadingFiles,
     setActiveSession,

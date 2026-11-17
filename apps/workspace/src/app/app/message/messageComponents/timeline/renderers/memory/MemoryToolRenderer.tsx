@@ -35,8 +35,6 @@ export const MemoryToolRenderer: MessageRenderer<MemoryToolPacket, {}> = ({
     hasStarted,
     noAccess,
     memoryText,
-    operation,
-    isComplete,
     memoryId,
     index,
   } = memoryState;

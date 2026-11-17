@@ -1,4 +1,3 @@
-import React from "react";
 import { TimelineTopSpacerVariant } from "./tokens";
 
 export interface TimelineTopSpacerProps {

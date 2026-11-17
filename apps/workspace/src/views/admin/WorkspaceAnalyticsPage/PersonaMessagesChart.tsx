@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Dropdown, SelectButton } from "@opal/components";
 import { SvgNortPoleOctagon } from "@opal/icons";
-import { Section } from "@opal/layouts";
 import { usePersonaMessages, usePersonaUniqueUsers } from "@/lib/usage/hooks";
 import { useAdminAgents } from "@/lib/agents/hooks";
 import {

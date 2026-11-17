@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  createElement,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { createElement, useCallback, useEffect, useMemo, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { useDebouncedValue } from "@opal/hooks";
 import { SvgCheckCircle, SvgProgressRing, SvgXOctagon } from "@opal/icons";

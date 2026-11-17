@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { InputPasswordTypeIn } from "@opal/components";
 import * as Yup from "yup";

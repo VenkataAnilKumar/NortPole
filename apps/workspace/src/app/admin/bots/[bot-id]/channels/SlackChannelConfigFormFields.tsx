@@ -18,8 +18,12 @@ import { Button, Divider } from "@opal/components";
 import { MinimalAgent } from "@/lib/agents/types";
 import DocumentSetCard from "@/sections/cards/DocumentSetCard";
 import CollapsibleSection from "@/app/admin/agents/CollapsibleSection";
-import { StandardAnswerCategoryResponse } from "@/components/standardAnswers/getStandardAnswerCategoriesIfEE";
-import { StandardAnswerCategoryDropdownField } from "@/components/standardAnswers/StandardAnswerCategoryDropdown";
+import {
+  StandardAnswerCategoryResponse,
+} from "@/components/standardAnswers/getStandardAnswerCategoriesIfEE";
+import {
+  StandardAnswerCategoryDropdownField,
+} from "@/components/standardAnswers/StandardAnswerCategoryDropdown";
 import { InputSingleComboBox } from "@opal/components";
 import { RadioGroup } from "@/components/ui/radio-group";
 import { RadioGroupItemField } from "@/components/ui/RadioGroupItemField";
@@ -56,7 +60,6 @@ export function SlackChannelConfigFormFields({
   nonSearchAgents,
   standardAnswerCategoryResponse,
   slack_bot_id,
-  formikProps,
 }: SlackChannelConfigFormFieldsProps) {
   const t = useTranslations("admin.slackBots");
   const { appName } = useSettings();

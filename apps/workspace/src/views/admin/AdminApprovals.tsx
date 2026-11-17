@@ -57,8 +57,8 @@ export default function AdminApprovals() {
     <section className={card} aria-labelledby="apr-h" data-testid="admin-approvals">
       <h2 id="apr-h" className="text-base font-semibold text-text-05">Changes that need a second administrator</h2>
       <p className="mt-1 text-sm text-text-03">
-        When a rule is on, a change of that kind does not take effect until a different administrator approves it. Both are recorded in the audit log.
-        With only one administrator, leave these off: nobody could approve. Turning a rule on takes effect at once; changing the rules while one is on needs a second administrator too.
+        When a rule is on, a change of that kind waits until a different administrator approves it; both are recorded in the audit log.
+        With only one administrator, leave these off: nobody could approve. Turning a rule on takes effect at once; changing the rules while one is on also needs a second administrator.
       </p>
       <fieldset className="mt-3 flex flex-col gap-1">
         <legend className="sr-only">Which changes need a second administrator</legend>
