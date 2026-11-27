@@ -163,7 +163,7 @@ def test_check_now_finds_a_tool_changed_on_its_server_and_withholds_it(world) ->
         assert n == 3
 
 
-def test_the_member_view_shows_names_and_status_only_and_hides_other_peoples_personal_tools(world) -> None:  # type: ignore[no-untyped-def]
+def test_the_member_view_exposes_request_keys_only_for_unavailable_workspace_tools(world) -> None:  # type: ignore[no-untyped-def]
     with get_session_with_current_tenant() as s:
         other = User(id=uuid.uuid4(), email=f"cat-other-{TAG}@example.com", hashed_password="x", is_active=True, is_verified=True)
         s.add(other)
@@ -179,10 +179,13 @@ def test_the_member_view_shows_names_and_status_only_and_hides_other_peoples_per
             assert f"mcp_tool_{TAG}" in names and f"personal_{TAG}" not in names
             row = next(t for t in seen.tools if t.name == f"mcp_tool_{TAG}")
             assert (row.allowed, row.mine) == (False, False)
+            assert row.workspace_request_key == str(world["tool"])
+            assert all(t.workspace_request_key is None for t in seen.tools if t.allowed)
             dumped = seen.model_dump_json()
             assert f"tools-{TAG}.example.com" not in dumped and f"secret-{TAG}" not in dumped, "no hosts or definitions"
             owner_view = cat_api.get_member_catalog(user=other, db_session=s)
-            assert next(t for t in owner_view.tools if t.name == f"personal_{TAG}").mine
+            owned = next(t for t in owner_view.tools if t.name == f"personal_{TAG}")
+            assert owned.mine and owned.workspace_request_key is None
         finally:
             s.delete(personal)
             s.delete(other)

@@ -374,6 +374,12 @@ class NotificationType(str, Enum):
     SCHEDULED_TASK_PRE_APPROVED_ACTION = "scheduled_task_pre_approved_action"
     APPROVAL_REQUESTED = "approval_requested"
     SOURCE_REQUEST_DECIDED = "source_request_decided"  # a Discover request was approved or declined
+    WORKFLOW_PLAN_READY = "workflow_plan_ready"
+    WORKFLOW_DECISION_RECORDED = "workflow_decision_recorded"
+    WORKFLOW_RUN_NEEDS_REVIEW = "workflow_run_needs_review"
+    DOCUMENT_REVIEW_NEEDS_REVIEW = "document_review_needs_review"
+    WORKFLOW_RUN_FAILED = "workflow_run_failed"
+    WORKFLOW_RUN_COMPLETE = "workflow_run_complete"
     SCHEDULE_PAUSED = "schedule_paused"  # a scheduled workflow was paused (not accepted, failing, or by an administrator)
 
 
@@ -716,6 +722,7 @@ class NortPoleCeleryTask:
     CLEANUP_OAUTH_PROVIDER_GRANTS = "cleanup_oauth_provider_grants"
     NORTPOLE_RETENTION_PRUNE = "nortpole_retention_prune"
     NORTPOLE_WORKFLOW_SCHEDULES = "nortpole_workflow_schedules"
+    NORTPOLE_EXECUTE_SCHEDULE_PROPOSAL = "nortpole_execute_schedule_proposal"
     CLEANUP_OAUTH_PROVIDER_CLIENTS = "cleanup_oauth_provider_clients"
 
     # Old-index reclamation (post-reindex deletion of the now-PAST index)

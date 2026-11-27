@@ -7,6 +7,9 @@ const TARGET_SAMPLE_RATE = 24000;
 const CHUNK_INTERVAL_MS = 250;
 const DUPLICATE_FINAL_TRANSCRIPT_WINDOW_MS = 1500;
 const VOICE_STARTUP_TIMEOUT_MS = 10000;
+const SPEECH_RMS_THRESHOLD = 0.008;
+const MIN_SPEECH_SECONDS = 0.16;
+const END_OF_TURN_SILENCE_SECONDS = 1.2;
 // When VAD-based auto-stop is disabled, force-stop after this much silence as a fallback
 const SILENCE_FALLBACK_TIMEOUT_MS = 10000;
 
@@ -57,6 +60,8 @@ class VoiceRecorderSession {
   private stopResolver: ((text: string | null) => void) | null = null;
   private isActive = false;
   private disposed = false;
+  private voicedSamples = 0;
+  private silentSamples = 0;
   // Guard: true once onFinalTranscript has fired for the current utterance.
   // Prevents the same transcript from being delivered twice when VAD-triggered
   // stop causes the server to echo the final transcript a second time.
@@ -72,7 +77,7 @@ class VoiceRecorderSession {
   private onError: (error: string) => void;
   private onAudioLevel: (level: number) => void;
   private onSilenceTimeout: (() => void) | null;
-  private onVADStop: (() => void) | null;
+  private onVADStop: ((commitTranscript?: boolean) => void) | null;
   private autoStopOnSilence: boolean;
 
   constructor(
@@ -82,7 +87,7 @@ class VoiceRecorderSession {
     onAudioLevel: (level: number) => void,
     onSilenceTimeout?: () => void,
     autoStopOnSilence?: boolean,
-    onVADStop?: () => void
+    onVADStop?: (commitTranscript?: boolean) => void
   ) {
     this.onTranscriptChange = onTranscriptChange;
     this.onFinalTranscript = onFinalTranscript;
@@ -115,6 +120,8 @@ class VoiceRecorderSession {
     this.throwIfDisposed();
     this.transcript = "";
     this.audioBuffer = [];
+    this.voicedSamples = 0;
+    this.silentSamples = 0;
     this.finalTranscriptDelivered = false;
     this.lastDeliveredFinalText = null;
     this.lastDeliveredFinalAtMs = 0;
@@ -161,6 +168,7 @@ class VoiceRecorderSession {
     this.scriptNode = this.audioContext.createScriptProcessor(4096, 1, 1);
 
     this.scriptNode.onaudioprocess = (event) => {
+      if (!this.isActive) return;
       const inputData = event.inputBuffer.getChannelData(0);
       this.audioBuffer.push(new Float32Array(inputData));
 
@@ -172,6 +180,25 @@ class VoiceRecorderSession {
       const rms = Math.sqrt(sum / inputData.length);
       // Scale RMS to a more visible range (raw RMS is usually very small)
       this.onAudioLevel(Math.min(1, rms * 5));
+
+      // A chunked provider can wait for "end" before returning a final result.
+      // Detect the end of the turn here as well as accepting provider VAD.
+      if (this.autoStopOnSilence) {
+        if (rms >= SPEECH_RMS_THRESHOLD) {
+          this.voicedSamples += inputData.length;
+          this.silentSamples = 0;
+        } else if (
+          this.voicedSamples >= event.inputBuffer.sampleRate * MIN_SPEECH_SECONDS
+        ) {
+          this.silentSamples += inputData.length;
+          if (
+            this.silentSamples >=
+            event.inputBuffer.sampleRate * END_OF_TURN_SILENCE_SECONDS
+          ) {
+            this.onVADStop?.(true);
+          }
+        }
+      }
     };
 
     this.sourceNode.connect(this.scriptNode);
@@ -189,6 +216,7 @@ class VoiceRecorderSession {
     if (!this.isActive) return this.transcript || null;
 
     this.resetSilenceFallbackTimer();
+    this.sendAudioBuffer();
 
     // Stop audio capture
     if (this.sendInterval) {
@@ -354,16 +382,16 @@ class VoiceRecorderSession {
           }
         }
 
-        if (data.is_final && data.text) {
+        if (data.is_final) {
           // Resolve stop promise if waiting — must run even after stop()
           // so the caller receives the final transcript.
           if (this.stopResolver) {
-            this.stopResolver(data.text);
+            this.stopResolver(data.text || this.transcript || null);
             this.stopResolver = null;
           }
 
           // Skip VAD logic if session is no longer active
-          if (!this.isActive) return;
+          if (!this.isActive || !data.text) return;
 
           if (this.autoStopOnSilence) {
             // VAD detected silence — auto-stop and trigger callback
@@ -531,16 +559,28 @@ export function useVoiceRecorder(
       setAudioLevel,
       undefined, // onSilenceTimeout
       autoStopOnSilenceRef.current,
-      () => {
+      async (commitTranscript) => {
         // Stop only this session instance, and only clear recording state if it
         // is still the active session when stop resolves.
-        currentSession.stop().then(() => {
+        setIsProcessing(true);
+        try {
+          const transcript = await currentSession.stop();
+          if (sessionRef.current === currentSession && commitTranscript && transcript) {
+            onFinalTranscriptRef.current?.(transcript);
+          }
+        } catch (error) {
+          if (sessionRef.current === currentSession) {
+            setError(error instanceof Error ? error.message : "Failed to finish recording");
+          }
+        } finally {
           if (sessionRef.current === currentSession) {
             setIsRecording(false);
             setIsMutedState(false);
+            setIsProcessing(false);
             sessionRef.current = null;
           }
-        });
+          currentSession.cleanup();
+        }
       }
     );
     sessionRef.current = currentSession;
@@ -591,19 +631,21 @@ export function useVoiceRecorder(
   const stopRecording = useCallback(async (): Promise<string | null> => {
     if (!sessionRef.current) return null;
     const currentSession = sessionRef.current;
+    sessionRef.current = null;
 
     setIsProcessing(true);
 
     try {
+      if (!currentSession.recording) currentSession.cleanup();
       const transcript = await currentSession.stop();
       return transcript;
     } finally {
       // Only clear state if this is still the active session.
-      if (sessionRef.current === currentSession) {
+      if (sessionRef.current === null) {
         setIsRecording(false);
         setIsMutedState(false); // Reset mute state when recording stops
-        sessionRef.current = null;
       }
+      currentSession.cleanup();
       setIsProcessing(false);
     }
   }, []);

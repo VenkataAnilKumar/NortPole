@@ -11,6 +11,7 @@ import {
   useCreateModal,
 } from "@opal/components";
 import { SvgSliders } from "@opal/icons";
+import type { ChatPluginsPopoverProps } from "@/sections/plugins/ChatPluginsPopover";
 import type { MinimalAgent } from "@/lib/agents/types";
 import useCCPairs from "@/hooks/useCCPairs";
 import { hasPermission } from "@/lib/permissions/utils";
@@ -31,6 +32,7 @@ import MemberPluginConnectionDialog from "@/sections/plugins/MemberPluginConnect
 import {
   useMemberPlugins,
   memberPluginReference,
+  memberPluginName,
   type MemberPlugin,
 } from "@/lib/plugins/member";
 import { chatPluginsForAgent, setChatPluginEnabled } from "@/lib/plugins/chat";
@@ -39,12 +41,14 @@ export interface ToolsPopoverProps {
   agent: MinimalAgent;
   toolConfiguration: ToolConfigurationHandle;
   disabled?: boolean;
+  composerIntegrations?: ChatPluginsPopoverProps["composerSelection"];
 }
 
 export default function ToolsPopover({
   agent,
   toolConfiguration,
   disabled = false,
+  composerIntegrations,
 }: ToolsPopoverProps) {
   const t = useTranslations("actions");
   const builtInToolNames = useBuiltInToolNames();
@@ -65,6 +69,11 @@ export default function ToolsPopover({
   const hasNoConnectors = ccPairs.length === 0;
   const close = useCallback(() => setOpen(false), []);
   const openSources = useCallback(() => setShowSources(true), []);
+  const connectPlugin = (plugin: MemberPlugin) => {
+    setConnection({ agentId: agent.id, plugin });
+    connectionModal.toggle(true);
+    close();
+  };
 
   useEffect(() => {
     setOpen(false);
@@ -161,17 +170,13 @@ export default function ToolsPopover({
                   ...filteredTools.map((tool) => (
                     <ToolLineItem key={tool.id} tool={tool} />
                   )),
-                  <ChatPluginsPopover
+                  !composerIntegrations && <ChatPluginsPopover
                     key="plugins"
                     agent={agent}
                     toolConfiguration={toolConfiguration}
                     catalog={catalog}
                     disabled={disabled}
-                    onConnect={(plugin) => {
-                      setConnection({ agentId: agent.id, plugin });
-                      connectionModal.toggle(true);
-                      close();
-                    }}
+                    onConnect={connectPlugin}
                     onBrowse={close}
                   />,
                 ]}
@@ -180,6 +185,17 @@ export default function ToolsPopover({
           </div>
         </Popover.Content>
       </Popover>
+      {composerIntegrations && (
+        <ChatPluginsPopover
+          agent={agent}
+          toolConfiguration={toolConfiguration}
+          catalog={catalog}
+          disabled={disabled}
+          onConnect={connectPlugin}
+          onBrowse={close}
+          composerSelection={composerIntegrations}
+        />
+      )}
       <connectionModal.Provider>
         {connection && connection.agentId === agent.id && (
           <MemberPluginConnectionDialog
@@ -199,7 +215,18 @@ export default function ToolsPopover({
                   );
                 }
               );
-              if (group) setChatPluginEnabled(group, true, toolConfiguration);
+              if (group && composerIntegrations) {
+                const selection = {
+                  kind: "integration" as const,
+                  id: `${reference.kind}:${reference.id}`,
+                  label: memberPluginName(group.plugin),
+                };
+                if (!composerIntegrations.hasSelection(selection)) {
+                  composerIntegrations.toggleSelection(selection);
+                }
+              } else if (group) {
+                setChatPluginEnabled(group, true, toolConfiguration);
+              }
               connectionModal.toggle(false);
               void catalog.refresh();
             }}

@@ -10,6 +10,8 @@ from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from nortpole.db.models import Base
+from nortpole.db.pydantic_type import PydanticType
+from nortpole.work.workflow_schedules.models import KnowledgeTriggerInput
 
 
 class NortPoleTask(Base):
@@ -41,6 +43,7 @@ class NortPoleTask(Base):
     schedule_id: Mapped[uuid.UUID | None] = mapped_column(
         PGUUID(as_uuid=True), ForeignKey("nortpole_workflow_schedule.id", ondelete="SET NULL"), nullable=True, index=True
     )
+    knowledge_trigger: Mapped[KnowledgeTriggerInput | None] = mapped_column(PydanticType(KnowledgeTriggerInput))
     # The pack version this task was started from, kept so later upgrades
     # or rollbacks never change what a past run was.
     pack_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
@@ -69,7 +72,3 @@ class NortPoleTask(Base):
 
     def as_dict(self) -> dict[str, Any]:
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
-
-
-# The schedule table that `schedule_id` points to, loaded with this model so the foreign key always resolves.
-from nortpole.work.workflow_schedules import models as _schedule_models  # noqa: E402,F401

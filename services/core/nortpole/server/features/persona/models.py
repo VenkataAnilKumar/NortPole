@@ -1,9 +1,12 @@
 from datetime import datetime
+from typing import Literal
 from uuid import UUID
 
 from pydantic import BaseModel, Field
 
 from nortpole.configs.constants import DocumentSource
+from nortpole.db.agent_preview import AgentPreviewDraft
+from nortpole.db.agent_preview import AgentPilotKind
 from nortpole.db.enums import (
     HierarchyNodeType,
     PersonaAccessLevel,
@@ -160,6 +163,7 @@ class PersonaUpsertRequest(BaseModel):
     name: str
     description: str
     document_set_ids: list[int]
+    pilot: AgentPilotKind | None = None
     # None leaves the stored value/shares unchanged — sharing is managed by
     # the share endpoint, so form saves must not clobber it with stale state
     is_public: bool | None = None
@@ -196,6 +200,14 @@ class PersonaUpsertRequest(BaseModel):
     task_prompt: str
     datetime_aware: bool
 
+    def to_release_draft(self) -> AgentPreviewDraft:
+        return AgentPreviewDraft(
+            name=self.name, system_prompt=self.system_prompt, task_prompt=self.task_prompt,
+            replace_base_system_prompt=self.replace_base_system_prompt, datetime_aware=self.datetime_aware,
+            document_set_ids=self.document_set_ids, search_start_date=self.search_start_date,
+            model_configuration_id=self.default_model_configuration_id, pilot=self.pilot,
+        )
+
 
 class MinimalPersonaSnapshot(BaseModel):
     """Minimal persona model optimized for ChatPage.tsx - only includes fields actually used"""
@@ -217,6 +229,9 @@ class MinimalPersonaSnapshot(BaseModel):
     # Used to populate source filters in chat
     knowledge_sources: list[DocumentSource]
     default_model_configuration_id: int | None
+    active_release_version: int | None = None
+    active_pilot: AgentPilotKind | None = None
+    company_verified_version: int | None = None
 
     uploaded_image_id: str | None
     icon_name: str | None
@@ -248,6 +263,7 @@ class MinimalPersonaSnapshot(BaseModel):
         # Fail closed: the owner email is PII and is only included when a caller
         # explicitly opts in (owner / admin paths). See the DB-layer callers.
         include_owner_email: bool = False,
+        active_pilot: AgentPilotKind | None = None,
     ) -> "MinimalPersonaSnapshot":
         # Collect unique sources from document sets, hierarchy nodes, and attached documents
         sources: set[DocumentSource] = set()
@@ -292,6 +308,13 @@ class MinimalPersonaSnapshot(BaseModel):
             attached_document_count=len(persona.attached_documents),
             knowledge_sources=list(sources),
             default_model_configuration_id=persona.default_model_configuration_id,
+            active_release_version=persona.active_release_version,
+            active_pilot=active_pilot,
+            company_verified_version=(
+                persona.verified_release_version
+                if persona.is_public and persona.is_listed and not persona.deleted
+                else None
+            ),
             uploaded_image_id=persona.uploaded_image_id,
             icon_name=persona.icon_name,
             is_public=persona.is_public,
@@ -341,6 +364,8 @@ class PersonaSnapshot(BaseModel):
     sharing_status: PersonaSharingStatus
     document_sets: list[DocumentSetSummary]
     default_model_configuration_id: int | None = None
+    active_release_version: int | None = None
+    company_verified_version: int | None = None
     # Hierarchy nodes attached for scoped search
     hierarchy_nodes: list[HierarchyNodeSnapshot] = Field(default_factory=list)
     # Individual documents attached for scoped search
@@ -404,6 +429,12 @@ class PersonaSnapshot(BaseModel):
                 for document_set_model in persona.document_sets
             ],
             default_model_configuration_id=persona.default_model_configuration_id,
+            active_release_version=persona.active_release_version,
+            company_verified_version=(
+                persona.verified_release_version
+                if persona.is_public and persona.is_listed and not persona.deleted
+                else None
+            ),
             system_prompt=persona.system_prompt,
             replace_base_system_prompt=persona.replace_base_system_prompt,
             task_prompt=persona.task_prompt,
@@ -479,6 +510,12 @@ class FullPersonaSnapshot(PersonaSnapshot):
             ],
             search_start_date=persona.search_start_date,
             default_model_configuration_id=persona.default_model_configuration_id,
+            active_release_version=persona.active_release_version,
+            company_verified_version=(
+                persona.verified_release_version
+                if persona.is_public and persona.is_listed and not persona.deleted
+                else None
+            ),
             system_prompt=persona.system_prompt,
             replace_base_system_prompt=persona.replace_base_system_prompt,
             task_prompt=persona.task_prompt,

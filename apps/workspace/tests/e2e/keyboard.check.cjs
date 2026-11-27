@@ -13,7 +13,7 @@ const PAGES = {
   '/app/workflows/drafts': ['New draft'],
   '/app/inbox': ['To approve', 'To review', 'Updates'],
   '/app/sources/discover': ['Request'],
-  '/app/sources/plugins': [],
+  '/app/sources/tools': [],
   '/app/knowledge': [],
   '/admin/approvals': ['Save rules'],
   '/admin/scheduling': ['Save', 'Run what is due now'],

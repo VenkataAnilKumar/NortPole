@@ -17,6 +17,7 @@ from nortpole.db.enums import Permission
 from nortpole.db.models import User
 from nortpole.error_handling.error_codes import NortPoleErrorCode
 from nortpole.error_handling.exceptions import NortPoleError
+from nortpole.work.packs.chat_agents import stage_pack_chat_agent
 from nortpole.work.packs.manifest import Manifest, canonical_bytes, digest, version_key
 from nortpole.work.packs import ownership
 from nortpole.work.packs.evaluation import evaluate
@@ -130,6 +131,12 @@ class TemplateView(BaseModel):
     agent: AgentCard | None = None
 
 
+class PackChatAgentView(BaseModel):
+    id: str
+    name: str
+    description: str
+
+
 class PackView(BaseModel):
     pack_id: str
     version: str
@@ -137,6 +144,7 @@ class PackView(BaseModel):
     vertical: str
     description: str
     templates: list[TemplateView]
+    chat_agents: list[PackChatAgentView] = []
     data_classes: list[str]
     route_kinds: list[str]
     requests_send_destinations: bool
@@ -521,6 +529,10 @@ def list_packs(
                                             for g in m.get("guides", []) if g["id"] in t.get("guides", [])],
                                     agent=next((_card(m, a, False) for a in m.get("agents", []) if a["id"] == t.get("agent")), None))
                        for t in m["templates"]],
+            chat_agents=[
+                PackChatAgentView(id=a["id"], name=a["name"], description=a["description"])
+                for a in m.get("agents", []) if a.get("chat_pilot") in ("research", "reporting")
+            ],
             group="everyday" if str(m["vertical"]).lower() == "general" else "domain",
             autonomy=m.get("autonomy", "act_with_approval"), review_rules=list(m.get("review_rules", [])),
             signer_key_id=v.signer_key_id, evaluation_cases=len(m.get("evaluation_cases", [])),
@@ -530,6 +542,15 @@ def list_packs(
             ready_on_current_route=ready, readiness_note=None if ready else f"Not available on the current model: {note}.",
         ))
     return out
+
+
+@router.post("/packs/{pack_id}/{version}/chat-agents/{agent_id}/draft")
+def prepare_pack_chat_draft(
+    pack_id: str, version: str, agent_id: str,
+    user: User = Depends(require_permission(Permission.ADD_AGENTS)),
+    db_session: Session = Depends(get_session),
+) -> dict[str, int]:
+    return {"agent_id": stage_pack_chat_agent(db_session, user, pack_id, version, agent_id)}
 
 
 @router.post("/packs/{pack_id}/templates/{template_id}/task")

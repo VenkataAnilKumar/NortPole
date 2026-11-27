@@ -1,5 +1,6 @@
 "use client";
 
+import { loadPage } from "@opal/navigation";
 import React, { RefObject, useState, useCallback, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { Packet, StreamingCitation } from "@/app/app/services/streamingModels";
@@ -21,9 +22,9 @@ import MessageSwitcher from "@/app/app/message/MessageSwitcher";
 import { useIncognitoOptional } from "@/providers/IncognitoProvider";
 import SourceTag from "@/refresh-components/buttons/source-tag/SourceTag";
 import { citationsToSourceInfoArray } from "@/refresh-components/buttons/source-tag/sourceTagUtils";
-import { CopyButton, SelectButton } from "@opal/components";
+import { Button, CopyButton, SelectButton } from "@opal/components";
 import ModelSelector from "@/sections/model-selector/ModelSelector";
-import { SvgListCheck, SvgRefreshCw, SvgThumbsDown, SvgThumbsUp } from "@opal/icons";
+import { SvgFileText, SvgListCheck, SvgRefreshCw, SvgThumbsDown, SvgThumbsUp } from "@opal/icons";
 import { LlmManager } from "@/lib/hooks";
 import { RegenerationFactory } from "@/app/app/message/messageComponents/AgentMessage";
 import useFeedbackController from "@/hooks/useFeedbackController";
@@ -110,6 +111,7 @@ export interface MessageToolbarProps {
   // Copy functionality
   rawPackets: Packet[];
   finalAnswerRef: RefObject<HTMLDivElement | null>;
+  onDraftDocument?: () => void;
 
   // Feedback
   currentFeedback?: FeedbackType | null;
@@ -139,6 +141,7 @@ export default function MessageToolbar({
   onMessageSelection,
   rawPackets,
   finalAnswerRef,
+  onDraftDocument,
   currentFeedback,
   onRegenerate,
   parentMessage,
@@ -149,6 +152,7 @@ export default function MessageToolbar({
   documentMap,
 }: MessageToolbarProps) {
   const t = useTranslations("chat.messages");
+  const documentT = useTranslations("chat.documentBuilder");
   // The message's own model. chatState carries the globally selected model,
   // so per-response attribution must come from the message node itself.
   const messageTree = useCurrentMessageTree();
@@ -292,6 +296,7 @@ export default function MessageToolbar({
               getHtmlContent={() => finalAnswerRef.current?.innerHTML || ""}
               data-testid="AgentMessage/copy-button"
             />
+            {onDraftDocument && <Button size="sm" prominence="tertiary" icon={SvgFileText} tooltip={documentT("fromResponse")} onClick={onDraftDocument} />}
             {!incognitoEnabled && (
               <>
                 <SelectButton
@@ -341,7 +346,7 @@ export default function MessageToolbar({
                     return;
                   }
                   const created = (await res.json()) as { id: string };
-                  window.location.assign(`/app/workflows/drafts?task=${encodeURIComponent(created.id)}`);
+                  loadPage(`/app/workflows/drafts?task=${encodeURIComponent(created.id)}`);
                 }}
               />
             )}

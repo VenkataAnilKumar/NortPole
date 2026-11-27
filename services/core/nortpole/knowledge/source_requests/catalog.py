@@ -74,11 +74,12 @@ def plugins(db: Session) -> list[Item]:
 
     out = []
     for t in cat_api.build(db).tools:
-        if t.personal or (t.allowed and t.core_enabled):
+        key = t.workspace_request_key
+        if key is None:
             continue
         why = "Calls a system outside the workspace; its definition has to be approved." if t.kind == "outside" else \
             "Runs code the model writes." if t.kind == "code" else "Turned off for this workspace by an administrator."
-        out.append(Item("plugin", str(t.id), t.name, cat.LABEL[t.kind], why))
+        out.append(Item("plugin", key, t.name, cat.LABEL[t.kind], why))
     return sorted(out, key=lambda i: i.name.lower())
 
 

@@ -18,11 +18,15 @@ export async function fetchProjects(): Promise<Project[]> {
   return response.json();
 }
 
-export async function createProject(name: string): Promise<Project> {
-  const response = await fetch(
-    `/api/user/projects/create?name=${encodeURIComponent(name)}`,
-    { method: "POST" }
-  );
+export async function createProject(
+  name: string,
+  chatSessionId?: string
+): Promise<Project> {
+  const query = new URLSearchParams({ name });
+  if (chatSessionId) query.set("chat_session_id", chatSessionId);
+  const response = await fetch(`/api/user/projects/create?${query}`, {
+    method: "POST",
+  });
   if (!response.ok) {
     handleRequestError("Create project", response);
   }

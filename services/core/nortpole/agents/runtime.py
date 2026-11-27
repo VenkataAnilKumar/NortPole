@@ -6,7 +6,7 @@ import threading
 import time
 from collections.abc import Callable, Mapping, Sequence
 from concurrent.futures import Future
-from contextlib import ExitStack, closing
+from contextlib import ExitStack, closing, nullcontext
 from contextvars import copy_context
 from datetime import datetime, timezone
 from functools import partial
@@ -107,6 +107,7 @@ from nortpole.llm.models import (
     Message,
     NamedToolChoice,
     SystemMessage,
+    TextDeltaEvent,
     ToolCall,
     ToolChoiceOptions,
     ToolDefinition,
@@ -1604,10 +1605,17 @@ def _advance_step(run: Run, llm: LLM, prepared: PreparedStep, step: AgentStep) -
         }
     # Compaction can leave calls out of the request; new calls must not reuse them.
     reserved = frozenset(call_ids)
-    request = _compact_context(
-        run, llm, source, prepared, generation_context, tools=definitions
-    ).model_copy(update={"reserved_tool_call_ids": reserved})
-    execution_options = request.options.model_copy(deep=True)
+    prepared_answer = prepared.prepared_answer
+    request = (
+        _compact_context(
+            run, llm, source, prepared, generation_context, tools=definitions
+        ).model_copy(update={"reserved_tool_call_ids": reserved})
+        if prepared_answer is None
+        else None
+    )
+    execution_options = (request.options if request else prepared.options).model_copy(
+        deep=True
+    )
     message_id = f"{run._state.run_id}:{step.index}"
     started = MessageStartEvent(
         message_id=message_id,
@@ -1646,7 +1654,15 @@ def _advance_step(run: Run, llm: LLM, prepared: PreparedStep, step: AgentStep) -
         generation_started = time.monotonic()
         completed = False
         try:
-            with closing(llm.stream(request, generation_context)) as events:
+            events_context = (
+                closing(llm.stream(request, generation_context))
+                if request is not None
+                else nullcontext((
+                    TextDeltaEvent(content_index=0, text=prepared_answer or ""),
+                    GenerationDoneEvent(stop_reason="stop"),
+                ))
+            )
+            with events_context as events:
                 for event in events:
                     cancellation_signal.check()
                     # Socket timeouts bound blocked reads; check the total budget between events.

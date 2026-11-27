@@ -13,6 +13,7 @@ from nortpole.auth.permission_projection import persona_permissions
 from nortpole.auth.permissions import has_global_permission, has_permission
 from nortpole.auth.scoped_permissions import assert_within_scope, within_scope
 from nortpole.configs.constants import DEFAULT_PERSONA_ID, NotificationType
+from nortpole.db.agent_releases import active_agent_release, lock_agent_release_state
 from nortpole.db.constants import SLACK_BOT_PERSONA_PREFIX
 from nortpole.db.document_access import get_accessible_documents_by_ids
 from nortpole.db.document_set import filter_document_set_ids_by_user_access
@@ -24,6 +25,7 @@ from nortpole.db.enums import (
 )
 from nortpole.db.hierarchy import filter_accessible_hierarchy_node_ids
 from nortpole.db.models import (
+    AgentRelease,
     ConnectorCredentialPair,
     Document,
     DocumentSet,
@@ -52,6 +54,8 @@ from nortpole.db.scoped_permissions import (
     scoped_group_ids_subquery,
     within_managed_scope_clause,
 )
+from nortpole.error_handling.error_codes import NortPoleErrorCode
+from nortpole.error_handling.exceptions import NortPoleError
 from nortpole.server.features.persona.models import (
     FullPersonaSnapshot,
     MinimalPersonaSnapshot,
@@ -63,6 +67,7 @@ from nortpole.server.features.tool.tool_visibility import (
     is_openapi_tool,
     should_expose_tool_to_fe,
 )
+from nortpole.tools.constants import SEARCH_TOOL_ID
 from nortpole.utils.logger import setup_logger
 from nortpole.utils.variable_functionality import fetch_versioned_implementation
 
@@ -589,6 +594,9 @@ def stamp_persona_permissions(
     )
     for snapshot, persona in zip(snapshots, personas, strict=True):
         is_editable = persona.id in editable_ids
+        is_owner_or_admin = can_delete_persona(
+            user, persona, db_session, user_group_ids=user_group_ids
+        )
         snapshot.permissions = persona_permissions(
             can_edit=can_edit_persona(
                 user,
@@ -598,14 +606,11 @@ def stamp_persona_permissions(
                 managed_group_ids=managed_group_ids,
                 user_group_ids=user_group_ids,
             ),
-            # share tracks the share guard (get_editable), broader than edit's scope gate
-            can_share=is_editable,
+            can_share=is_editable and (persona.active_release_version is None or is_owner_or_admin),
             can_view_stats=can_view_persona_stats(
                 user, persona, db_session, user_group_ids=user_group_ids
             ),
-            can_delete=can_delete_persona(
-                user, persona, db_session, user_group_ids=user_group_ids
-            ),
+            can_delete=is_owner_or_admin,
             holds_add_agents=holds_add_agents,
             is_manage_agents_admin=is_manage_agents_admin,
             is_full_admin=is_full_admin,
@@ -679,6 +684,16 @@ def create_update_persona(
             document_ids=create_persona_request.document_ids,
         )
 
+        if create_persona_request.pilot is not None:
+            draft = create_persona_request.to_release_draft()
+            if draft.requires_knowledge and not persona.document_sets:
+                raise ValueError("Select at least one Knowledge library for this pilot.")
+            if persona.user_files or persona.attached_documents or persona.hierarchy_nodes or any(
+                tool.in_code_tool_id != SEARCH_TOOL_ID for tool in persona.tools
+            ):
+                raise ValueError("Pilot agents support read-only sources and no agent-level uploads.")
+            persona.agent_release_draft = draft
+
         versioned_update_persona_access = fetch_versioned_implementation(
             "nortpole.db.persona", "update_persona_access"
         )
@@ -735,9 +750,12 @@ def update_persona_shared(
     The owner never appears in the share rows: incoming owner ids are dropped
     silently so a dialog that went stale across an ownership transfer can
     still save."""
+    lock_agent_release_state(db_session, persona_id)
     persona = fetch_persona_by_id_for_user(
         db_session=db_session, persona_id=persona_id, user=user, get_editable=True
     )
+    if active_agent_release(db_session, persona_id) is not None and not can_delete_persona(user, persona, db_session):
+        raise NortPoleError(NortPoleErrorCode.INSUFFICIENT_PERMISSIONS, "Only the agent owner or an agent administrator can change this versioned agent's audience.")
 
     # Org-wide visibility is an owner/admin decision. EDITOR-level sharees may edit
     # user/group shares but must not flip is_public / public_permission. Reuse the
@@ -1072,12 +1090,27 @@ def get_minimal_persona_snapshots_for_user(
         selectinload(Persona.group_shares),
     )
     results = db_session.scalars(stmt).all()
+    released_ids = [
+        persona.id for persona in results if persona.active_release_version is not None
+    ]
+    active_pilots = {}
+    if released_ids:
+        releases = db_session.execute(
+            select(AgentRelease.persona_id, AgentRelease.configuration).where(
+                AgentRelease.persona_id.in_(released_ids),
+                AgentRelease.is_active.is_(True),
+            )
+        )
+        active_pilots = {
+            persona_id: configuration.pilot for persona_id, configuration in releases
+        }
     user_group_ids = get_user_group_ids_for_user(db_session, user.id)
     snapshots = [
         MinimalPersonaSnapshot.from_model(
             persona,
             user_permission=get_persona_access_level(persona, user, user_group_ids),
             include_owner_email=_user_may_view_persona_owner_email(user, persona),
+            active_pilot=active_pilots.get(persona.id),
         )
         for persona in results
     ]
@@ -1626,6 +1659,11 @@ def upsert_persona(
             get_editable=True,
             include_deleted=recycling_deleted,
         )
+
+    if existing_persona is not None and existing_persona.id != DEFAULT_PERSONA_ID:
+        lock_agent_release_state(db_session, existing_persona.id)
+        if active_agent_release(db_session, existing_persona.id) is not None:
+            raise NortPoleError(NortPoleErrorCode.CONFLICT, "Save a draft to change a versioned agent.")
 
     # Fetch and attach tools by IDs
     tools = None

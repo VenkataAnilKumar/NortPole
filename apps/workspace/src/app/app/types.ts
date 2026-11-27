@@ -8,7 +8,15 @@ import { ReasoningEffortOverride } from "@/lib/languageModels/types";
 
 export type FeedbackType = "like" | "dislike";
 
+export interface ComposerSelection {
+  kind: "knowledge" | "skill" | "integration" | "expense-review" | "document-review" | "search-result" | "search-library";
+  id: string;
+  label: string;
+  chunkId?: number;
+}
+
 export interface QueuedMessage {
+  selections?: ComposerSelection[];
   id: number;
   text: string;
 }
@@ -139,6 +147,7 @@ export interface ChatSession {
   current_alternate_model: string;
   current_temperature_override: number | null;
   current_reasoning_effort_override: ReasoningEffortOverride | null;
+  agent_preview_name?: string | null;
 }
 
 export interface SearchSession {
@@ -224,6 +233,8 @@ export interface BackendChatSession {
   is_processing?: boolean;
   // True for sessions pinned to an incognito record mode.
   incognito?: boolean;
+  agent_preview_name?: string | null;
+  agent_release_version?: number | null;
   // Set on a paged load when the current branch has messages before the page.
   has_older_messages?: boolean;
 }
@@ -241,6 +252,7 @@ export function toChatSession(backend: BackendChatSession): ChatSession {
     current_temperature_override: backend.current_temperature_override,
     current_reasoning_effort_override:
       backend.current_reasoning_effort_override,
+    agent_preview_name: backend.agent_preview_name,
   };
 }
 
@@ -281,6 +293,7 @@ export interface BackendMessage {
 }
 
 export interface MessageResponseIDInfo {
+  model_display_name?: string | null;
   user_message_id: number | null;
   reserved_assistant_message_id: number; // TODO: rename to agent — https://linear.app/nortpole-app/issue/ENG-3766
 }

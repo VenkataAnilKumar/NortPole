@@ -409,6 +409,8 @@ export interface CCPairBasicInfo {
   has_successful_run: boolean;
   source: ValidSources;
   status: ConnectorCredentialPairStatus;
+  indexing_state?: "configured" | "syncing" | "ready" | "attention" | "paused";
+  has_indexed_documents?: boolean;
 }
 
 export type ConnectorSummary = {

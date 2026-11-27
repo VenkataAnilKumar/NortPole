@@ -6,7 +6,7 @@ import os
 import zipfile
 from datetime import datetime
 from io import BytesIO
-from typing import IO, Annotated, Any, cast
+from typing import IO, Annotated, Any, Literal, cast
 
 from fastapi import (
     APIRouter,
@@ -21,6 +21,7 @@ from fastapi import (
 )
 from google.oauth2.credentials import Credentials
 from pydantic import BaseModel
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from nortpole.auth.email_utils import send_email
@@ -133,12 +134,14 @@ from nortpole.db.file_record import (
 )
 from nortpole.db.index_attempt import (
     get_index_attempts_for_cc_pair,
+    get_latest_index_attempts,
     get_latest_index_attempts_by_status,
     get_latest_index_attempts_parallel,
     get_latest_successful_index_attempts_parallel,
 )
 from nortpole.db.models import (
     ConnectorCredentialPair,
+    DocumentByConnectorCredentialPair,
     FederatedConnector,
     FileRecord,
     IndexAttempt,
@@ -2419,34 +2422,85 @@ Tenant ID: {tenant_id}
     )
 
 
+ConnectorReadiness = Literal["configured", "syncing", "ready", "attention", "paused"]
+
+
 class BasicCCPairInfo(BaseModel):
     has_successful_run: bool
     source: DocumentSource
     status: ConnectorCredentialPairStatus
+    indexing_state: ConnectorReadiness | None = None
+    has_indexed_documents: bool | None = None
 
 
-@router.get("/connector-status", tags=PUBLIC_API_TAGS)
+def _indexing_readiness(
+    pair: ConnectorCredentialPair,
+    latest: IndexingStatus | None,
+    has_indexed_documents: bool,
+) -> ConnectorReadiness:
+    if pair.status == ConnectorCredentialPairStatus.PAUSED:
+        return "paused"
+    if (
+        pair.status == ConnectorCredentialPairStatus.INVALID
+        or pair.in_repeated_error_state
+        or latest in (IndexingStatus.FAILED, IndexingStatus.COMPLETED_WITH_ERRORS)
+    ):
+        return "attention"
+    if latest in (IndexingStatus.NOT_STARTED, IndexingStatus.IN_PROGRESS) or pair.status in (
+        ConnectorCredentialPairStatus.INITIAL_INDEXING,
+        ConnectorCredentialPairStatus.SCHEDULED,
+    ):
+        return "syncing"
+    return "ready" if has_indexed_documents else "configured"
+
+
+@router.get("/connector-status", tags=PUBLIC_API_TAGS, response_model_exclude_none=True)
 def get_basic_connector_indexing_status(
     user: User = Depends(current_chat_accessible_user),
     db_session: Session = Depends(get_session),
+    include_indexing: bool = False,
 ) -> list[BasicCCPairInfo]:
     cc_pairs = get_connector_credential_pairs_for_user(
         db_session=db_session,
         eager_load_connector=True,
+        defer_connector_config=True,
         access_level=CCPairAccessLevel.READ,
         user=user,
     )
 
-    # NOTE: This endpoint excludes Craft connectors
+    cc_pairs = [
+        pair for pair in cc_pairs
+        if pair.connector.source != DocumentSource.INGESTION_API
+        and pair.processing_mode == ProcessingMode.REGULAR
+        and (not include_indexing or pair.status != ConnectorCredentialPairStatus.DELETING)
+    ]
+    latest = {}
+    indexed_ids: set[int] = set()
+    if include_indexing and cc_pairs:
+        pair_ids = [pair.id for pair in cc_pairs]
+        latest = {
+            attempt.connector_credential_pair_id: attempt.status
+            for attempt in get_latest_index_attempts(False, db_session, cc_pair_ids=pair_ids)
+        }
+        indexed = select(DocumentByConnectorCredentialPair.id).where(
+            DocumentByConnectorCredentialPair.connector_id == ConnectorCredentialPair.connector_id,
+            DocumentByConnectorCredentialPair.credential_id == ConnectorCredentialPair.credential_id,
+            DocumentByConnectorCredentialPair.has_been_indexed.is_(True),
+        ).exists()
+        indexed_ids = set(db_session.scalars(select(ConnectorCredentialPair.id).where(
+            ConnectorCredentialPair.id.in_(pair_ids), indexed
+        )))
+
     return [
         BasicCCPairInfo(
             has_successful_run=cc_pair.last_successful_index_time is not None,
             source=cc_pair.connector.source,
             status=cc_pair.status,
+            indexing_state=_indexing_readiness(cc_pair, latest.get(cc_pair.id), cc_pair.id in indexed_ids)
+            if include_indexing else None,
+            has_indexed_documents=cc_pair.id in indexed_ids if include_indexing else None,
         )
         for cc_pair in cc_pairs
-        if cc_pair.connector.source != DocumentSource.INGESTION_API
-        and cc_pair.processing_mode == ProcessingMode.REGULAR
     ]
 
 

@@ -211,7 +211,7 @@ def build_context_file_citation_mapping(
             number = next_number
             numbers_by_id[file_meta.file_id] = number
             next_number += 1
-        search_doc = SearchDoc(
+        search_doc = file_meta.source_document or SearchDoc(
             document_id=file_meta.file_id,
             chunk_ind=0,
             semantic_identifier=file_meta.filename,

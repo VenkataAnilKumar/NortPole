@@ -1,3 +1,4 @@
+import type { ComposerSelection } from "@/app/app/types";
 import { create } from "zustand";
 import {
   ChatState,
@@ -47,6 +48,8 @@ interface ChatSessionData {
   isLoaded: boolean;
   description?: string;
   personaId?: number;
+  agentPreviewName?: string | null;
+  agentReleaseVersion?: number | null;
   // Pinned at creation server-side, so it outlives the live UI toggle.
   incognito?: boolean;
 
@@ -159,9 +162,9 @@ interface ChatSessionStore {
   getStreamingStartTime: (sessionId: string) => number | undefined;
 
   // Actions - Queued Messages
-  enqueueMessage: (sessionId: string, message: string) => void;
+  enqueueMessage: (sessionId: string, message: string, selections?: ComposerSelection[]) => void;
   removeQueuedMessage: (sessionId: string, index: number) => void;
-  enqueueCurrentMessage: (message: string) => void;
+  enqueueCurrentMessage: (message: string, selections?: ComposerSelection[]) => void;
   removeCurrentQueuedMessage: (index: number) => void;
 
   // Actions - Render completion
@@ -532,17 +535,18 @@ export const useChatSessionStore = create<ChatSessionStore>()((set, get) => ({
   },
 
   // Queued Messages Actions
-  enqueueMessage: (sessionId: string, message: string) => {
+  enqueueMessage: (sessionId, message, selections) => {
     set((state) => {
       const session = state.sessions.get(sessionId);
       if (!session || session.queuedMessages.length >= 5) {
         return state;
       }
+      const queued = { id: nextQueuedMessageId++, text: message };
       const updatedSession = {
         ...session,
         queuedMessages: [
           ...session.queuedMessages,
-          { id: nextQueuedMessageId++, text: message },
+          selections?.length ? { ...queued, selections } : queued,
         ],
       };
       const newSessions = new Map(state.sessions);
@@ -567,10 +571,10 @@ export const useChatSessionStore = create<ChatSessionStore>()((set, get) => ({
     });
   },
 
-  enqueueCurrentMessage: (message: string) => {
+  enqueueCurrentMessage: (message, selections) => {
     const { currentSessionId } = get();
     if (currentSessionId) {
-      get().enqueueMessage(currentSessionId, message);
+      get().enqueueMessage(currentSessionId, message, selections);
     }
   },
 
@@ -635,6 +639,8 @@ export const useChatSessionStore = create<ChatSessionStore>()((set, get) => ({
       isLoaded: true,
       description: backendSession?.description,
       personaId: backendSession?.persona_id,
+      agentPreviewName: backendSession?.agent_preview_name,
+      agentReleaseVersion: backendSession?.agent_release_version,
       incognito: backendSession?.incognito ?? false,
     };
 

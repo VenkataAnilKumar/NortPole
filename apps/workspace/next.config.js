@@ -117,7 +117,9 @@ const nextConfig = {
       { source: "/app/reviewed-tasks", destination: "/app/workflows/drafts", permanent: false },
       { source: "/app/automations", destination: "/app/workflows/scheduled", permanent: false },
       { source: "/app/libraries", destination: "/app/knowledge", permanent: false },
-      { source: "/app/sources", destination: "/app/sources/discover", permanent: false },
+      { source: "/app/sources", destination: "/app/sources/integrations", permanent: false },
+      { source: "/app/sources/connectors", destination: "/app/sources/integrations", permanent: false },
+      { source: "/app/sources/plugins", destination: "/app/sources/integrations", permanent: false },
       {
         source: "/chat",
         destination: "/app",

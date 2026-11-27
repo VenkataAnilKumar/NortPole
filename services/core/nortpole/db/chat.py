@@ -34,13 +34,16 @@ from nortpole.chat.models import (
 )
 from nortpole.chat.response import message_thinking
 from nortpole.configs.chat_configs import HARD_DELETE_CHATS
-from nortpole.configs.constants import ANONYMOUS_USER_UUID, MessageType
+from nortpole.configs.constants import ANONYMOUS_USER_UUID, DEFAULT_PERSONA_ID, MessageType
 from nortpole.context.search.models import InferenceSection, SavedSearchDoc
 from nortpole.context.search.models import SearchDoc as ServerSearchDoc
+from nortpole.db.agent_preview import AgentPreview
+from nortpole.db.agent_releases import active_agent_release, lock_agent_release_state
 from nortpole.db.enums import (
     IncognitoRecordMode,
     record_mode_persists_content,
 )
+from nortpole.db.project_access import project_has_members, require_project
 from nortpole.db.models import (
     ChatMessage,
     ChatMessage__SearchDoc,
@@ -66,7 +69,7 @@ from nortpole.server.query_and_chat.models import (
 )
 from nortpole.server.query_and_chat.streaming_models import StreamingError
 from nortpole.utils.logger import setup_logger
-from nortpole.utils.postgres_sanitization import sanitize_string
+from nortpole.utils.postgres_sanitization import sanitize_json_like, sanitize_string
 
 logger = setup_logger()
 
@@ -351,7 +354,16 @@ def create_chat_session(
     project_id: int | None = None,
     incognito_record_mode: IncognitoRecordMode | None = None,
     session_id: UUID | None = None,
+    *,
+    commit: bool = True,
+    agent_preview: AgentPreview | None = None,
+    agent_preview_fingerprint: str | None = None,
 ) -> ChatSession:
+    release_id = None
+    if persona_id is not None and persona_id != DEFAULT_PERSONA_ID and agent_preview is None:
+        lock_agent_release_state(db_session, persona_id, read=True)
+        release = active_agent_release(db_session, persona_id)
+        release_id = release.id if release is not None else None
     chat_session = ChatSession(
         # Caller-supplied only for incognito, where uploads name the session
         # before it exists so the server can verify them.
@@ -365,10 +377,14 @@ def create_chat_session(
         slack_thread_id=slack_thread_id,
         project_id=project_id,
         incognito_record_mode=incognito_record_mode,
+        agent_release_id=release_id,
+        agent_preview=agent_preview,
+        agent_preview_fingerprint=agent_preview_fingerprint,
     )
 
     db_session.add(chat_session)
-    db_session.commit()
+    if commit:
+        db_session.commit()
 
     return chat_session
 
@@ -438,6 +454,23 @@ def update_chat_session(
     chat_session = get_chat_session_by_id(
         chat_session_id=chat_session_id, user_id=user_id, db_session=db_session
     )
+
+    if sharing_status == ChatSessionSharedStatus.PUBLIC:
+        if chat_session.agent_preview is not None:
+            raise NortPoleError(
+                NortPoleErrorCode.INSUFFICIENT_PERMISSIONS,
+                "Agent preview chats are private.",
+            )
+        project_id = chat_session.project_id
+        if project_id is not None:
+            require_project(project_id, user_id, db_session, minimum="editor", lock=True)
+        db_session.refresh(chat_session, with_for_update=True)
+        if chat_session.project_id != project_id:
+            raise NortPoleError(NortPoleErrorCode.CONFLICT, "The chat moved. Reload and try again.")
+        if project_id is not None and project_has_members(project_id, db_session):
+            raise NortPoleError(
+                NortPoleErrorCode.CONFLICT, "Chats in shared projects use project access."
+            )
 
     if chat_session.deleted:
         raise ValueError("Trying to rename a deleted chat session")
@@ -807,6 +840,8 @@ def get_chat_message_page_ids(
     db_session: Session,
     limit: int,
     before_message_id: int | None = None,
+    *,
+    include_siblings: bool = True,
 ) -> tuple[set[int], bool]:
     """One page of a session's current branch, for paged loading.
 
@@ -853,8 +888,9 @@ def get_chat_message_page_ids(
 
     page = branch[-limit:]
     page_ids = set(page)
-    for message_id in page:
-        page_ids.update(children_by_parent.get(message_id, []))
+    if include_siblings:
+        for message_id in page:
+            page_ids.update(children_by_parent.get(message_id, []))
     return page_ids, len(branch) > limit
 
 
@@ -896,7 +932,11 @@ def reserve_chat_response_ids(
     db_session: Session,
     chat_session_id: UUID,
     parent_message_id: int,
-    model_display_names: list[str],
+    model_display_names: list[str | None],
+    receipt_review_needs_review: bool | None = None,
+    document_review_needs_review: bool | None = None,
+    document_review_report: dict | None = None,
+    search_evidence_provenance: dict | None = None,
 ) -> list[int]:
     """Reserve assistant responses and select the last response as the active branch."""
     if not model_display_names:
@@ -911,6 +951,10 @@ def reserve_chat_response_ids(
             token_count=15,
             message_type=MessageType.ASSISTANT,
             model_display_name=display_name,
+            receipt_review_needs_review=receipt_review_needs_review,
+            document_review_needs_review=document_review_needs_review,
+            document_review_report=sanitize_json_like(document_review_report),
+            search_evidence_provenance=search_evidence_provenance,
         )
         db_session.add(msg)
         reserved.append(msg)
@@ -1060,6 +1104,23 @@ def set_as_latest_chat_message(
     db_session.commit()
 
 
+# Store the origin of a chat source separately from connector-supplied metadata.
+_SELECTED_EVIDENCE_KEY = "__nortpole_chat_selected_evidence"
+
+
+def is_selected_search_evidence(document: DBSearchDoc) -> bool:
+    return (document.doc_metadata or {}).get(_SELECTED_EVIDENCE_KEY) == "true"
+
+
+def _stored_search_doc_metadata(
+    metadata: dict[str, str | list[str]], *, selected_evidence: bool = False
+) -> dict[str, str | list[str]]:
+    stored = {key: value for key, value in metadata.items() if key != _SELECTED_EVIDENCE_KEY}
+    if selected_evidence:
+        stored[_SELECTED_EVIDENCE_KEY] = "true"
+    return stored
+
+
 def create_db_search_doc(
     server_search_doc: ServerSearchDoc,
     db_session: Session,
@@ -1078,7 +1139,9 @@ def create_db_search_doc(
         source_type=server_search_doc.source_type,
         boost=server_search_doc.boost,
         hidden=server_search_doc.hidden,
-        doc_metadata=server_search_doc.metadata,
+        doc_metadata=_stored_search_doc_metadata(
+            server_search_doc.metadata, selected_evidence=server_search_doc.selected_evidence,
+        ),
         is_relevant=server_search_doc.is_relevant,
         relevance_explanation=(
             sanitize_string(server_search_doc.relevance_explanation)
@@ -1133,6 +1196,8 @@ def translate_db_search_doc_to_saved_search_doc(
     db_search_doc: DBSearchDoc,
     remove_doc_content: bool = False,
 ) -> SavedSearchDoc:
+    metadata = dict(db_search_doc.doc_metadata or {}) if not remove_doc_content else {}
+    selected_evidence = metadata.pop(_SELECTED_EVIDENCE_KEY, None) == "true"
     return SavedSearchDoc(
         db_doc_id=db_search_doc.id,
         score=db_search_doc.score,
@@ -1144,7 +1209,8 @@ def translate_db_search_doc_to_saved_search_doc(
         source_type=db_search_doc.source_type,
         boost=db_search_doc.boost,
         hidden=db_search_doc.hidden,
-        metadata=db_search_doc.doc_metadata if not remove_doc_content else {},
+        metadata=metadata,
+        selected_evidence=selected_evidence,
         match_highlights=(
             db_search_doc.match_highlights if not remove_doc_content else []
         ),
@@ -1313,7 +1379,7 @@ def create_search_doc_from_inference_section(
         source_type=inference_section.center_chunk.source_type,
         boost=inference_section.center_chunk.boost,
         hidden=inference_section.center_chunk.hidden,
-        doc_metadata=inference_section.center_chunk.metadata,
+        doc_metadata=_stored_search_doc_metadata(inference_section.center_chunk.metadata),
         score=score,
         is_relevant=is_relevant,
         relevance_explanation=relevance_explanation,
@@ -1348,7 +1414,9 @@ def create_search_doc_from_saved_search_doc(
         boost=saved_search_doc.boost,
         hidden=saved_search_doc.hidden,
         # Map metadata -> doc_metadata (DB column name)
-        doc_metadata=saved_search_doc.metadata,
+        doc_metadata=_stored_search_doc_metadata(
+            saved_search_doc.metadata, selected_evidence=saved_search_doc.selected_evidence,
+        ),
         # SavedSearchDoc.score exists and defaults to 0.0
         score=saved_search_doc.score or 0.0,
         match_highlights=saved_search_doc.match_highlights,

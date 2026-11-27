@@ -76,10 +76,11 @@ export async function updateReasoningEffortForChatSession(
   return response;
 }
 
-// Mirrors backend `CreateChatSessionID`. Older servers omit `incognito`.
+// Older servers can omit the mode and pinned version.
 interface CreateChatSessionResponse {
   chat_session_id: string;
   incognito?: boolean;
+  agent_release_version?: number | null;
 }
 
 export async function createChatSession(
@@ -88,7 +89,7 @@ export async function createChatSession(
   projectId: number | null,
   incognito: boolean = false,
   incognitoSessionId: string | null = null
-): Promise<string> {
+): Promise<CreateChatSessionResponse> {
   const createChatSessionResponse = await fetch(
     "/api/chat/create-chat-session",
     {
@@ -124,7 +125,7 @@ export async function createChatSession(
   if (incognito && chatSessionResponseJson.incognito !== true) {
     throw Error("Server did not honor the incognito request");
   }
-  return chatSessionResponseJson.chat_session_id;
+  return chatSessionResponseJson;
 }
 
 export async function endIncognitoSession(sessionId: string): Promise<boolean> {
@@ -147,6 +148,7 @@ export type PacketType =
   | StreamingError
   | MessageResponseIDInfo
   | MultiModelMessageResponseIDInfo
+  | { response_model_name: string; response_model_index: number }
   | StreamStopInfo
   | UserKnowledgeFilePacket
   | Packet;
@@ -180,6 +182,7 @@ export interface SendMessageParams {
   // Preferred tool for this request; invocation is not guaranteed
   preferredToolId?: number | null;
   // LLM override parameters
+  chatModelMode?: "auto" | "manual";
   modelProvider?: string;
   modelVersion?: string;
   modelConfigurationId?: number | null;
@@ -191,6 +194,12 @@ export interface SendMessageParams {
   // Additional context injected into the LLM call but not stored/shown in chat.
   // Used e.g. by Chrome extension "Read this tab" feature.
   additionalContext?: string;
+  skillIds?: string[];
+  groundSelectedKnowledge?: boolean;
+  searchEvidence?: { documents?: { document_id: string; chunk_id: number }[]; library_id?: number };
+  receiptReviewPolicyTitle?: string;
+  documentReview?: boolean;
+  documentReviewPack?: string;
 }
 
 export class ChatSendRejectedError extends Error {}
@@ -205,6 +214,7 @@ export async function* sendMessage({
   deepResearch,
   enabledToolIds,
   preferredToolId,
+  chatModelMode,
   modelProvider,
   modelVersion,
   modelConfigurationId,
@@ -212,6 +222,12 @@ export async function* sendMessage({
   llmOverrides,
   origin,
   additionalContext,
+  skillIds,
+  groundSelectedKnowledge,
+  searchEvidence,
+  receiptReviewPolicyTitle,
+  documentReview,
+  documentReviewPack,
 }: SendMessageParams): AsyncGenerator<PacketType, void, unknown> {
   // Build payload for new send-chat-message API
   const payload = {
@@ -223,8 +239,9 @@ export async function* sendMessage({
     deep_research: deepResearch ?? false,
     allowed_tool_ids: enabledToolIds,
     preferred_tool_id: preferredToolId ?? null,
+    model_selection: chatModelMode,
     llm_override:
-      temperature || modelVersion || modelConfigurationId != null
+      temperature != null || modelVersion || modelConfigurationId != null
         ? {
             temperature,
             model_provider: modelProvider,
@@ -237,6 +254,12 @@ export async function* sendMessage({
     // Default to "unknown" for consistency with backend; callers should set explicitly
     origin: origin ?? "unknown",
     additional_context: additionalContext ?? null,
+    skill_ids: skillIds?.length ? skillIds : undefined,
+    ground_selected_knowledge: groundSelectedKnowledge || undefined,
+    search_evidence: searchEvidence,
+    receipt_review_policy_title: receiptReviewPolicyTitle,
+    document_review: documentReview,
+    document_review_pack: documentReviewPack,
   };
 
   const body = JSON.stringify(payload);

@@ -1,5 +1,7 @@
 "use client";
 
+import { loadPage } from "@opal/navigation";
+import { useTranslations as useWorkspaceTranslations } from "next-intl";
 import { IconLoader } from "@opal/loaders";
 import React, { useCallback } from "react";
 import { useTranslations } from "next-intl";
@@ -16,6 +18,8 @@ import { useCreateModal } from "@opal/components";
 import { FileCard } from "@/sections/cards/FileCard";
 import { hasNonImageFiles } from "@/lib/utils";
 import { cn } from "@opal/utils";
+import ProjectOutputs from "./ProjectOutputs";
+import { ProjectSharing } from "./ProjectSharing";
 import {
   SvgAddLines,
   SvgFiles,
@@ -34,23 +38,10 @@ export default function ProjectContextPanel({
   availableContextTokens = 128_000,
   setPresentingDocument,
 }: ProjectContextPanelProps) {
+  const workspaceText = useWorkspaceTranslations("workspaceUi");
   const t = useTranslations("chat");
   const addInstructionModal = useCreateModal();
   const projectFilesModal = useCreateModal();
-  // Convert ProjectFile to MinimalNortPoleDocument format for viewing
-  const handleOnView = useCallback(
-    (file: ProjectFile) => {
-      if (!setPresentingDocument) return;
-
-      const documentForViewer: MinimalNortPoleDocument = {
-        document_id: `project_file__${file.file_id}`,
-        semantic_identifier: file.name,
-      };
-
-      setPresentingDocument(documentForViewer);
-    },
-    [setPresentingDocument]
-  );
   const {
     currentProjectDetails,
     currentProjectId,
@@ -62,12 +53,29 @@ export default function ProjectContextPanel({
     projects,
     renameProject,
   } = useProjectsContext();
+  const currentProject = projects.find((project) => project.id === currentProjectId);
+  const canEdit = !!currentProject && currentProject.role !== "viewer";
+  const shared = currentProject?.shared === true;
+  const projectOwnerId = currentProject?.user_id;
+  const handleOnView = useCallback(
+    (file: ProjectFile) => {
+      if ((shared || file.user_id !== projectOwnerId) && currentProjectId && file.status !== UserFileStatus.UPLOADING) {
+        loadPage(`/api/user/projects/${currentProjectId}/files/${encodeURIComponent(file.id)}/download`);
+        return;
+      }
+      setPresentingDocument?.({
+        document_id: `project_file__${file.file_id}`,
+        semantic_identifier: file.name,
+      });
+    },
+    [currentProjectId, projectOwnerId, setPresentingDocument, shared]
+  );
   const handleUploadFiles = useCallback(
     async (files: File[]) => {
-      if (!files || files.length === 0) return;
+      if (!canEdit || !files || files.length === 0) return;
       beginUpload(Array.from(files), currentProjectId);
     },
-    [currentProjectId, beginUpload]
+    [canEdit, currentProjectId, beginUpload]
   );
 
   const totalFiles = allCurrentProjectFiles.length;
@@ -90,6 +98,7 @@ export default function ProjectContextPanel({
 
   // Nested dropzone for drag-and-drop within ProjectContextPanel
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    disabled: !canEdit,
     noClick: true,
     noKeyboard: true,
     multiple: true,
@@ -99,11 +108,14 @@ export default function ProjectContextPanel({
     },
   });
 
-  const currentProject = projects.find((p) => p.id === currentProjectId);
   const projectName =
     currentProject?.name || t("projects.contextPanel.loadingProject.label");
 
-  if (!currentProjectId) return null; // no selection yet
+  if (!currentProjectId) return null;
+  if (isLoadingProjectDetails && !currentProjectDetails) return <IconLoader />;
+  if (!currentProject || !currentProjectDetails) {
+    return <p role="alert" className="mx-auto p-6 text-text-05">{workspaceText("thisProjectIsUnavailable")}</p>;
+  }
 
   // Detect if there are any non-image files in the displayed files
   // to determine if images should be compact
@@ -122,11 +134,11 @@ export default function ProjectContextPanel({
           description={t("projects.contextPanel.filesModal.description")}
           recentFiles={[...allCurrentProjectFiles]}
           onView={handleOnView}
-          handleUploadChange={handleUploadChange}
-          onDelete={async (file: ProjectFile) => {
+          handleUploadChange={canEdit ? handleUploadChange : undefined}
+          onDelete={canEdit ? async (file: ProjectFile) => {
             if (!currentProjectId) return;
             await unlinkFileFromProject(currentProjectId, file.id);
-          }}
+          } : undefined}
         />
       </projectFilesModal.Provider>
 
@@ -136,13 +148,22 @@ export default function ProjectContextPanel({
           orientation="stacked"
           icon={SvgFolderOpen}
           title={projectName}
-          editable
+          editable={canEdit}
           onTitleChange={async (newName) => {
             if (currentProjectId && newName) {
               await renameProject(currentProjectId, newName);
             }
           }}
         />
+
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <p className="text-sm text-text-03">
+            {shared ? "Shared project" : "Private project"}
+            {currentProject.role === "viewer" && " · Viewer"}
+            {currentProject.role === "editor" && " · Editor"}
+          </p>
+          <ProjectSharing key={currentProject.id} project={currentProject} />
+        </div>
 
         <Divider paddingParallel={0} paddingPerpendicular={0} />
 
@@ -158,7 +179,7 @@ export default function ProjectContextPanel({
           descriptionMaxLines={2}
           padding={0}
           center
-          rightChildren={
+          rightChildren={canEdit && (
             <Button
               prominence="tertiary"
               icon={SvgAddLines}
@@ -167,8 +188,10 @@ export default function ProjectContextPanel({
             >
               {t("projects.contextPanel.setInstructionsButton.label")}
             </Button>
-          }
+          )}
         />
+
+        <ProjectOutputs key={currentProjectId} projectId={currentProjectId} canEdit={canEdit} />
 
         <div
           className="flex flex-col gap-2 pb-2"
@@ -180,7 +203,7 @@ export default function ProjectContextPanel({
             description={t("projects.contextPanel.files.description")}
             padding={0}
             center
-            rightChildren={
+            rightChildren={canEdit && (
               <FilePickerPopover
                 trigger={(open) => (
                   <Button
@@ -208,15 +231,13 @@ export default function ProjectContextPanel({
                   (f) => f.id
                 )}
               />
-            }
+            )}
           />
 
           {/* Hidden input just to satisfy dropzone contract; we rely on FilePicker for clicks */}
           <input {...getInputProps()} />
 
-          {isLoadingProjectDetails && !currentProjectDetails ? (
-            <IconLoader />
-          ) : allCurrentProjectFiles.length > 0 ? (
+          {allCurrentProjectFiles.length > 0 ? (
             <>
               {/* Mobile / small screens: just show a button to view files */}
               <div className="sm:hidden">
@@ -236,12 +257,13 @@ export default function ProjectContextPanel({
                   <FileCard
                     key={f.id}
                     file={f}
-                    removeFile={async (fileId: string) => {
+                    removeFile={canEdit ? async (fileId: string) => {
                       if (!currentProjectId) return;
                       await unlinkFileFromProject(currentProjectId, fileId);
-                    }}
+                    } : undefined}
                     onFileClick={handleOnView}
                     compactImages={shouldCompactImages}
+                    showImagePreview={!shared && f.user_id === projectOwnerId}
                   />
                 ))}
 
@@ -279,7 +301,7 @@ export default function ProjectContextPanel({
               <Text as="p" font="secondary-body" color="inherit">
                 {isDragActive
                   ? t("projects.contextPanel.dropFiles.message")
-                  : t("projects.contextPanel.emptyFiles.message")}
+                  : canEdit ? t("projects.contextPanel.emptyFiles.message") : "No project files"}
               </Text>
             </div>
           )}

@@ -7,6 +7,7 @@ export {
   useNavigation,
   useRouteRendering,
   loadPage,
+  clearQueryParameter,
   Navigation,
   type NavigationOptions,
   type LinkProps,

@@ -15,6 +15,7 @@ import { SvgChevronRight, SvgCodeFile, SvgPlug } from "@opal/icons";
 import { Section } from "@opal/layouts";
 import { IconLoader } from "@opal/loaders";
 import { useFocusOnMount } from "@opal/hooks";
+import type { ComposerSelection } from "@/app/app/types";
 import type { MinimalAgent } from "@/lib/agents/types";
 import {
   chatPluginsForAgent,
@@ -40,6 +41,10 @@ export interface ChatPluginsPopoverProps {
   catalog: ReturnType<typeof useMemberPlugins>;
   onConnect: (plugin: MemberPlugin) => void;
   onBrowse: () => void;
+  composerSelection?: {
+    hasSelection: (item: ComposerSelection) => boolean;
+    toggleSelection: (item: ComposerSelection) => void;
+  };
 }
 
 export default function ChatPluginsPopover({
@@ -49,8 +54,10 @@ export default function ChatPluginsPopover({
   catalog,
   onConnect,
   onBrowse,
+  composerSelection,
 }: ChatPluginsPopoverProps) {
   const t = useTranslations("actions.memberPlugins");
+  const quickAdd = useTranslations("chat.quickAdd");
   const { plugins, isLoading, errors, refresh } = catalog;
   const appPosition = useAppPosition();
   const pathname = usePathname();
@@ -77,7 +84,11 @@ export default function ChatPluginsPopover({
       ? `/app?${searchParams.toString()}`
       : `/app?agentId=${agent.id}`;
 
-  const browseLink = navigation.linkTo(memberPluginsHref(returnTo));
+  const browseLink = navigation.linkTo(
+    composerSelection ? "/app/sources/integrations" : memberPluginsHref(returnTo)
+  );
+  const menuLabel = composerSelection ? quickAdd("integrations") : t("chat.trigger.label");
+  const searchLabel = composerSelection ? quickAdd("searchIntegrations") : t("chat.search.placeholder");
 
   function handleBrowse(event: React.MouseEvent<HTMLElement>) {
     if (appPosition.chat() === null) {
@@ -122,6 +133,16 @@ export default function ChatPluginsPopover({
     <>
       <Popover open={open} onOpenChange={changeOpen}>
         <Popover.Trigger asChild>
+          {composerSelection ? (
+            <Button
+              icon={SvgPlug}
+              aria-label={menuLabel}
+              tooltip={menuLabel}
+              prominence="tertiary"
+              disabled={disabled}
+              interaction={open ? "hover" : "rest"}
+            />
+          ) : (
           <LineItemButton
             font="main-ui-action"
             ref={trigger}
@@ -159,27 +180,31 @@ export default function ChatPluginsPopover({
               changeOpen(true);
             }}
           />
+          )}
         </Popover.Trigger>
         <Popover.Content
           // No room beside the parent menu on phones, so open over it.
-          side={isMobile ? "top" : "right"}
-          align={isMobile ? "start" : "end"}
-          alignOffset={isMobile ? 0 : -5}
+          side={composerSelection || isMobile ? "top" : "right"}
+          align={composerSelection || isMobile ? "start" : "end"}
+          alignOffset={composerSelection || isMobile ? 0 : -5}
           width={60}
-          aria-label={t("chat.trigger.label")}
+          aria-label={menuLabel}
           onPointerEnter={cancelHover}
           onPointerLeave={(event) => {
-            if (event.pointerType === "mouse") hover(false);
+            if (!composerSelection && event.pointerType === "mouse") hover(false);
           }}
-          onCloseAutoFocus={(event) => event.preventDefault()}
+          onCloseAutoFocus={(event) => {
+            if (!composerSelection) event.preventDefault();
+          }}
           onEscapeKeyDown={(event) => {
+            if (composerSelection) return;
             event.preventDefault();
             event.stopPropagation();
             setOpen(false);
             trigger.current?.focus();
           }}
           onKeyDown={(event) => {
-            if (event.key !== "ArrowLeft") return;
+            if (composerSelection || event.key !== "ArrowLeft") return;
             if (
               event.target instanceof HTMLInputElement &&
               event.target.selectionStart !== 0
@@ -196,7 +221,7 @@ export default function ChatPluginsPopover({
             footer={
               <LineItemButton
                 font="main-ui-action"
-                title={t("chat.browse.label")}
+                title={composerSelection ? quickAdd("manageIntegrations") : t("chat.browse.label")}
                 icon={SvgPlug}
                 href={browseLink.href}
                 onClick={handleBrowse}
@@ -212,10 +237,11 @@ export default function ChatPluginsPopover({
                 icon="search"
                 variant="internal"
                 value={search}
-                placeholder={t("chat.search.placeholder")}
-                aria-label={t("chat.search.placeholder")}
+                placeholder={searchLabel}
+                aria-label={searchLabel}
                 onChange={(event) => setSearch(event.target.value)}
               />,
+              composerSelection && <Text key="heading" font="secondary-body" color="text-04">{menuLabel}</Text>,
               isLoading && (
                 <div
                   key="loading"
@@ -257,7 +283,12 @@ export default function ChatPluginsPopover({
                   plugin.connection.kind === "checking" ||
                   plugin.connection.kind === "unconfigured" ||
                   plugin.connection.kind === "unavailable";
-                const enabled = isChatPluginEnabled(group, toolConfiguration);
+                const selection: ComposerSelection = {
+                  kind: "integration", id: `${reference.kind}:${reference.id}`, label: name,
+                };
+                const enabled = composerSelection
+                  ? composerSelection.hasSelection(selection)
+                  : isChatPluginEnabled(group, toolConfiguration);
                 return (
                   <LineItemButton
                     font="main-ui-action"
@@ -265,9 +296,11 @@ export default function ChatPluginsPopover({
                     title={name}
                     titleMaxLines={1}
                     description={
-                      plugin.connection.kind === "connected" || needsConnection
-                        ? undefined
-                        : t(`chat.connection.${plugin.connection.kind}`)
+                      plugin.connection.kind === "connected"
+                        ? (composerSelection ? quickAdd("connected") : undefined)
+                        : needsConnection
+                          ? undefined
+                          : t(`chat.connection.${plugin.connection.kind}`)
                     }
                     descriptionMaxLines={1}
                     icon={
@@ -300,13 +333,13 @@ export default function ChatPluginsPopover({
                             (unavailable && !enabled)
                           }
                           aria-label={t("chat.toggle.ariaLabel", { name })}
-                          onCheckedChange={(enabled) =>
-                            setChatPluginEnabled(
-                              group,
-                              enabled,
-                              toolConfiguration
-                            )
-                          }
+                          onCheckedChange={(enabled) => {
+                            if (composerSelection) {
+                              composerSelection.toggleSelection(selection);
+                            } else {
+                              setChatPluginEnabled(group, enabled, toolConfiguration);
+                            }
+                          }}
                         />
                       )
                     }
@@ -316,7 +349,9 @@ export default function ChatPluginsPopover({
               !isLoading && !hasError && matching.length === 0 && (
                 <div key="empty" className="p-2">
                   <Text font="secondary-body" color="text-03">
-                    {t(search ? "chat.empty.searchText" : "chat.empty.text")}
+                    {composerSelection
+                      ? quickAdd(search ? "noMatches" : "noIntegrations")
+                      : t(search ? "chat.empty.searchText" : "chat.empty.text")}
                   </Text>
                 </div>
               ),

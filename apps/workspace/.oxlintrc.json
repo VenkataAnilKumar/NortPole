@@ -33,6 +33,11 @@
     "navigation/no-naked-navigation": "error",
     "nextjs/no-img-element": "off",
     "jsx-a11y/prefer-tag-over-role": "off",
+    // Named scroll regions use tabindex so keyboard users can scroll wide tables.
+    "jsx-a11y/label-has-associated-control": ["error", {
+      "controlComponents": ["NativeInput", "NativeSelect", "NativeTextArea"]
+    }],
+    "jsx-a11y/no-noninteractive-tabindex": ["error", { "roles": ["tabpanel", "region"] }],
     "react/exhaustive-deps": "off",
     "typescript/no-unused-vars": "off",
     "unicorn/no-thenable": "off",

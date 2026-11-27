@@ -21,6 +21,7 @@ import {
   ConfirmationModalLayout,
   IllustrationContent,
   SettingsLayouts,
+  ResponsiveLayout,
   CardGrid,
   Content,
   Section,
@@ -67,10 +68,14 @@ import { useSettings } from "@/lib/settings/hooks";
 
 interface SkillsPageProps {
   admin?: boolean;
+  surface?: "sources";
 }
 
-export default function SkillsPage({ admin = false }: SkillsPageProps) {
+export default function SkillsPage({ admin = false, surface }: SkillsPageProps) {
   const t = useTranslations("skills");
+  const workspaceText = useTranslations("workspaceUi");
+  const inSources = surface === "sources";
+  const skillPath = inSources ? "/app/sources/skills" : "/craft/v1/skills";
   const bulkCopy = useTranslations("skills.bulk");
   const { isAdmin } = useUser();
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -84,7 +89,7 @@ export default function SkillsPage({ admin = false }: SkillsPageProps) {
   const navigation = useNavigation();
   const externalAppIdParam = useSearchParams().get("externalAppId");
   const focusedExternalAppId =
-    externalAppIdParam !== null && /^\d+$/.test(externalAppIdParam)
+    !inSources && externalAppIdParam !== null && /^\d+$/.test(externalAppIdParam)
       ? Number(externalAppIdParam)
       : null;
   const { data, error, isLoading, refresh } = useUserSkills();
@@ -120,7 +125,7 @@ export default function SkillsPage({ admin = false }: SkillsPageProps) {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   useOnMount(() => {
-    searchInputRef.current?.focus();
+    if (!inSources) searchInputRef.current?.focus();
   });
 
   async function deleteSkill() {
@@ -165,7 +170,7 @@ export default function SkillsPage({ admin = false }: SkillsPageProps) {
   }
 
   function handleEdit(item: CustomSkillCardItem) {
-    navigation.go(`/craft/v1/skills/edit/${item.id}`);
+    navigation.go(`${skillPath}/edit/${item.id}`);
   }
 
   async function updateSkillEnabled(
@@ -357,13 +362,14 @@ export default function SkillsPage({ admin = false }: SkillsPageProps) {
     const q = searchQuery.trim().toLowerCase();
     return items.filter(
       (item) =>
+        (!inSources || item.source === "custom") &&
         (focusedAppName === null ||
           item.external_app?.external_app_id === focusedExternalAppId) &&
         (!q ||
           item.name.toLowerCase().includes(q) ||
           item.description.toLowerCase().includes(q))
     );
-  }, [focusedAppName, focusedExternalAppId, items, searchQuery]);
+  }, [focusedAppName, focusedExternalAppId, inSources, items, searchQuery]);
 
   const selectableItems = visibleItems.filter(
     (item): item is CustomSkillCardItem => item.source === "custom"
@@ -474,323 +480,320 @@ export default function SkillsPage({ admin = false }: SkillsPageProps) {
         t("page.preview.unavailableFallback"))
       : null;
 
-  return (
-    <SettingsLayouts.Root data-testid="SkillsPage/container">
-      <SettingsLayouts.Header
-        icon={SvgBlocks}
-        title={t("page.header.title")}
-        description={
-          admin ? bulkCopy("adminDescription") : t("page.header.description")
-        }
-        actions={[
-          <Dropdown
-            key="primary"
-            open={createMenuOpen}
-            onOpenChange={setCreateMenuOpen}
-          >
-            <Dropdown.Trigger asChild>
-              <Button icon={SvgPlus}>
-                {t("page.createMenu.trigger.label")}
-              </Button>
-            </Dropdown.Trigger>
-            <Dropdown.Data
-              label={t("page.createMenu.trigger.label")}
-              items={[
-                {
-                  kind: "action",
-                  id: "scratch",
-                  icon: SvgEdit,
-                  title: t("page.createMenu.scratch.title"),
-                  description: t("page.createMenu.scratch.description", {
-                    appName,
-                  }),
-                  onSelect: () => navigation.go("/craft/v1/skills/new"),
-                },
-                {
-                  kind: "action",
-                  id: "upload",
-                  icon: SvgUploadCloud,
-                  title: t("page.createMenu.upload.title"),
-                  description: t("page.createMenu.upload.description"),
-                  onSelect: () => setCreateOpen(true),
-                },
-                {
-                  kind: "action",
-                  id: "github",
-                  icon: SvgGitHub,
-                  title: t("page.createMenu.github.title"),
-                  description: t("page.createMenu.github.description"),
-                  onSelect: () => githubImportModal.toggle(true),
-                },
-              ]}
-            />
-          </Dropdown>,
+  const createMenu = (
+    <Dropdown
+      key="primary"
+      open={createMenuOpen}
+      onOpenChange={setCreateMenuOpen}
+    >
+      <Dropdown.Trigger asChild>
+        <Button icon={SvgPlus}>
+          {t("page.createMenu.trigger.label")}
+        </Button>
+      </Dropdown.Trigger>
+      <Dropdown.Data
+        label={t("page.createMenu.trigger.label")}
+        items={[
+          {
+            kind: "action",
+            id: "scratch",
+            icon: SvgEdit,
+            title: t("page.createMenu.scratch.title"),
+            description: t("page.createMenu.scratch.description", {
+              appName,
+            }),
+            onSelect: () => navigation.go(`${skillPath}/new`),
+          },
+          {
+            kind: "action",
+            id: "upload",
+            icon: SvgUploadCloud,
+            title: t("page.createMenu.upload.title"),
+            description: t("page.createMenu.upload.description"),
+            onSelect: () => setCreateOpen(true),
+          },
+          {
+            kind: "action",
+            id: "github",
+            icon: SvgGitHub,
+            title: t("page.createMenu.github.title"),
+            description: t("page.createMenu.github.description"),
+            onSelect: () => githubImportModal.toggle(true),
+          },
         ]}
-      >
-        <InputTypeIn
-          ref={searchInputRef}
-          placeholder={t("page.search.placeholder")}
-          value={searchQuery}
-          readOnly={bulkBusy}
-          onChange={(event) => {
-            setSearchQuery(event.target.value);
-            setSelectedIds(new Set());
-            setBulkFailures([]);
-          }}
-          icon="search"
+      />
+    </Dropdown>
+  );
+  const searchInput = (
+    <InputTypeIn
+      ref={searchInputRef}
+      placeholder={t("page.search.placeholder")}
+      value={searchQuery}
+      readOnly={bulkBusy}
+      onChange={(event) => {
+        setSearchQuery(event.target.value);
+        setSelectedIds(new Set());
+        setBulkFailures([]);
+      }}
+      icon="search"
+    />
+  );
+
+  const noSkills = items.length === 0 || (inSources && !searchQuery.trim());
+  const skillList = (
+    <>
+      {bulkFailures.length > 0 && (
+        <MessageCard
+          variant="error"
+          title={bulkCopy("partialFailure", { count: bulkFailures.length })}
+          description={bulkFailures
+            .map((failure) => `${failure.name}: ${failure.detail}`)
+            .join("\n")}
         />
-      </SettingsLayouts.Header>
+      )}
 
-      <SettingsLayouts.Body>
-        {bulkFailures.length > 0 && (
-          <MessageCard
-            variant="error"
-            title={bulkCopy("partialFailure", { count: bulkFailures.length })}
-            description={bulkFailures
-              .map((failure) => `${failure.name}: ${failure.detail}`)
-              .join("\n")}
-          />
-        )}
+      {focusedAppName && (
+        <MessageCard
+          variant="info"
+          title={t("page.focusedApp.title", { appName: focusedAppName })}
+          description={t("page.focusedApp.description", {
+            appName: focusedAppName,
+          })}
+          rightChildren={
+            <Button
+              prominence="secondary"
+              {...navigation.linkTo("/craft/v1/skills")}
+            >
+              {t("page.focusedApp.showAll.label")}
+            </Button>
+          }
+        />
+      )}
 
-        {focusedAppName && (
-          <MessageCard
-            variant="info"
-            title={t("page.focusedApp.title", { appName: focusedAppName })}
-            description={t("page.focusedApp.description", {
-              appName: focusedAppName,
-            })}
-            rightChildren={
-              <Button
-                prominence="secondary"
-                {...navigation.linkTo("/craft/v1/skills")}
-              >
-                {t("page.focusedApp.showAll.label")}
-              </Button>
-            }
-          />
-        )}
+      {isLoading && <IconLoader />}
 
-        {isLoading && <IconLoader />}
+      {error && !isLoading && (
+        <MessageCard
+          variant="error"
+          title={t("page.loadError.title")}
+          description={t("page.loadError.description")}
+        />
+      )}
 
-        {error && !isLoading && (
-          <MessageCard
-            variant="error"
-            title={t("page.loadError.title")}
-            description={t("page.loadError.description")}
-          />
-        )}
-
-        {!isLoading && !error && (
-          <>
-            {visibleItems.length === 0 ? (
-              <IllustrationContent
-                illustration={SvgNoResult}
-                title={
-                  items.length === 0
-                    ? t("page.empty.noSkills.title")
-                    : t("page.empty.noMatches.title")
-                }
-                description={
-                  items.length === 0
-                    ? t("page.empty.noSkills.description")
-                    : t("page.empty.noMatches.description")
-                }
-              />
-            ) : (
-              <>
-                {selectableItems.length > 0 ? (
-                  <>
-                    <Section height="auto" gap={2} alignItems="stretch">
+      {!isLoading && !error && (
+        <>
+          {visibleItems.length === 0 ? (
+            <IllustrationContent
+              illustration={SvgNoResult}
+              title={
+                noSkills
+                  ? t("page.empty.noSkills.title")
+                  : t("page.empty.noMatches.title")
+              }
+              description={
+                noSkills
+                  ? t("page.empty.noSkills.description")
+                  : t("page.empty.noMatches.description")
+              }
+            />
+          ) : (
+            <>
+              {selectableItems.length > 0 ? (
+                <>
+                  <Section height="auto" gap={2} alignItems="stretch">
+                    <Section
+                      role="group"
+                      aria-label={t("page.browse.title")}
+                      flexDirection="row"
+                      justifyContent="between"
+                      height={2.25}
+                      gap={2}
+                    >
                       <Section
-                        role="group"
-                        aria-label={t("page.browse.title")}
                         flexDirection="row"
-                        justifyContent="between"
-                        height={2.25}
+                        justifyContent="start"
+                        width="auto"
+                        height="auto"
                         gap={2}
+                        className="shrink-0"
                       >
+                        <InputCheckbox
+                          aria-label={bulkCopy("selectAll")}
+                          checked={
+                            selectedItems.length === selectableItems.length
+                          }
+                          indeterminate={
+                            selectedItems.length > 0 &&
+                            selectedItems.length < selectableItems.length
+                          }
+                          disabled={bulkBusy}
+                          onCheckedChange={(checked) =>
+                            setSelectedIds(
+                              new Set(
+                                checked
+                                  ? selectableItems.map((item) => item.id)
+                                  : []
+                              )
+                            )
+                          }
+                        />
+                        <Text font="secondary-body" color="text-03">
+                          {selectedItems.length > 0
+                            ? bulkCopy("selected", {
+                                count: selectedItems.length,
+                              })
+                            : t("page.browse.title")}
+                        </Text>
+                      </Section>
+                      {selectedItems.length > 0 && (
                         <Section
                           flexDirection="row"
-                          justifyContent="start"
                           width="auto"
-                          height="auto"
+                          height="full"
                           gap={2}
-                          className="shrink-0"
+                          justifyContent="start"
+                          className="min-w-0 overflow-x-auto"
                         >
-                          <InputCheckbox
-                            aria-label={bulkCopy("selectAll")}
-                            checked={
-                              selectedItems.length === selectableItems.length
-                            }
-                            indeterminate={
-                              selectedItems.length > 0 &&
-                              selectedItems.length < selectableItems.length
-                            }
-                            disabled={bulkBusy}
-                            onCheckedChange={(checked) =>
-                              setSelectedIds(
-                                new Set(
-                                  checked
-                                    ? selectableItems.map((item) => item.id)
-                                    : []
-                                )
-                              )
-                            }
-                          />
-                          <Text font="secondary-body" color="text-03">
-                            {selectedItems.length > 0
-                              ? bulkCopy("selected", {
-                                  count: selectedItems.length,
-                                })
-                              : t("page.browse.title")}
-                          </Text>
-                        </Section>
-                        {selectedItems.length > 0 && (
-                          <Section
-                            flexDirection="row"
-                            width="auto"
-                            height="full"
-                            gap={2}
-                            justifyContent="start"
-                            className="min-w-0 overflow-x-auto"
+                          <Button
+                            prominence="secondary"
+                            icon={SvgShare}
+                            disabled={bulkLocked || !canManageSelected}
+                            onClick={() => setBulkSharingOpen(true)}
                           >
-                            <Button
-                              prominence="secondary"
-                              icon={SvgShare}
-                              disabled={bulkLocked || !canManageSelected}
-                              onClick={() => setBulkSharingOpen(true)}
-                            >
-                              {bulkCopy("share")}
-                            </Button>
-                            <Dropdown align="end" disabled={bulkLocked}>
-                              <Dropdown.Trigger asChild>
-                                <Button
-                                  prominence="tertiary"
-                                  icon={SvgMoreHorizontal}
-                                  aria-label={bulkCopy("moreActions")}
-                                  tooltip={bulkCopy("moreActions")}
-                                  disabled={bulkLocked}
-                                />
-                              </Dropdown.Trigger>
-                              <Dropdown.Data
-                                label={bulkCopy("moreActions")}
-                                items={[
-                                  { kind: "group", items: bulkToggleActions },
-                                  {
-                                    kind: "group",
-                                    items: [
-                                      {
-                                        kind: "action",
-                                        id: "delete",
-                                        icon: SvgTrash,
-                                        title: bulkCopy("delete"),
-                                        danger: true,
-                                        disabled:
-                                          !canManageSelected ||
-                                          (!isAdmin &&
-                                            selectedItems.some(
-                                              (item) =>
-                                                item.skill
-                                                  .installation_policy ===
-                                                "REQUIRED"
-                                            )),
-                                        onSelect: () => {
-                                          setBulkDeleteTargets(selectedItems);
-                                          bulkDeleteModal.toggle(true);
-                                        },
-                                      },
-                                    ],
-                                  },
-                                ]}
+                            {bulkCopy("share")}
+                          </Button>
+                          <Dropdown align="end" disabled={bulkLocked}>
+                            <Dropdown.Trigger asChild>
+                              <Button
+                                prominence="tertiary"
+                                icon={SvgMoreHorizontal}
+                                aria-label={bulkCopy("moreActions")}
+                                tooltip={bulkCopy("moreActions")}
+                                disabled={bulkLocked}
                               />
-                            </Dropdown>
-                          </Section>
-                        )}
-                      </Section>
-                      <CardGrid>
-                        {selectableItems.map((item) => (
-                          <SkillCard
-                            key={item.id}
-                            selection={{
-                              checked: selectedIds.has(item.id),
-                              disabled: bulkBusy,
-                              onCheckedChange: (checked) =>
-                                setSelectedIds((current) => {
-                                  const next = new Set(current);
-                                  if (checked) next.add(item.id);
-                                  else next.delete(item.id);
-                                  return next;
-                                }),
-                            }}
-                            item={item}
-                            hasEnabledNameConflict={
-                              !item.enabled && enabledItemByName.has(item.name)
-                            }
-                            onEdit={handleEdit}
-                            onShare={(skill) =>
-                              setSkillDialog({ item: skill, tab: "sharing" })
-                            }
-                            onDelete={(skill) => {
-                              setDeleteTarget(skill);
-                              deleteModal.toggle(true);
-                            }}
-                            onClick={(skill) =>
-                              setSkillDialog({ item: skill, tab: "details" })
-                            }
-                            onEnabledChange={(skill, enabled) =>
-                              void updateSkillEnabled(skill, enabled)
-                            }
-                            enablementPending={
-                              bulkBusy || pendingSkillIds.has(item.id)
-                            }
-                          />
-                        ))}
-                      </CardGrid>
+                            </Dropdown.Trigger>
+                            <Dropdown.Data
+                              label={bulkCopy("moreActions")}
+                              items={[
+                                { kind: "group", items: bulkToggleActions },
+                                {
+                                  kind: "group",
+                                  items: [
+                                    {
+                                      kind: "action",
+                                      id: "delete",
+                                      icon: SvgTrash,
+                                      title: bulkCopy("delete"),
+                                      danger: true,
+                                      disabled:
+                                        !canManageSelected ||
+                                        (!isAdmin &&
+                                          selectedItems.some(
+                                            (item) =>
+                                              item.skill
+                                                .installation_policy ===
+                                              "REQUIRED"
+                                          )),
+                                      onSelect: () => {
+                                        setBulkDeleteTargets(selectedItems);
+                                        bulkDeleteModal.toggle(true);
+                                      },
+                                    },
+                                  ],
+                                },
+                              ]}
+                            />
+                          </Dropdown>
+                        </Section>
+                      )}
                     </Section>
-                    <TextSeparator
-                      count={selectableItems.length}
-                      text={t("page.countSeparator.label", {
-                        count: selectableItems.length,
-                      })}
-                    />
-                  </>
-                ) : !searchQuery.trim() ? (
-                  <IllustrationContent
-                    illustration={SvgNoResult}
-                    title={t("page.empty.noSkills.title")}
-                    description={t("page.empty.noSkills.description")}
-                  />
-                ) : null}
-                {visibleBuiltins.length > 0 && (
-                  <Collapsible
-                    title={t("page.builtins.title", {
-                      count: visibleBuiltins.length,
-                    })}
-                    open={
-                      builtinsOpen ||
-                      (searchQuery.trim() !== "" && visibleBuiltins.length > 0)
-                    }
-                    onOpenChange={setBuiltinsOpen}
-                  >
                     <CardGrid>
-                      {visibleBuiltins.map((item) => (
+                      {selectableItems.map((item) => (
                         <SkillCard
                           key={item.id}
+                          selection={{
+                            checked: selectedIds.has(item.id),
+                            disabled: bulkBusy,
+                            onCheckedChange: (checked) =>
+                              setSelectedIds((current) => {
+                                const next = new Set(current);
+                                if (checked) next.add(item.id);
+                                else next.delete(item.id);
+                                return next;
+                              }),
+                          }}
                           item={item}
+                          hasEnabledNameConflict={
+                            !item.enabled && enabledItemByName.has(item.name)
+                          }
+                          onEdit={handleEdit}
+                          onShare={(skill) =>
+                            setSkillDialog({ item: skill, tab: "sharing" })
+                          }
+                          onDelete={(skill) => {
+                            setDeleteTarget(skill);
+                            deleteModal.toggle(true);
+                          }}
                           onClick={(skill) =>
                             setSkillDialog({ item: skill, tab: "details" })
+                          }
+                          onEnabledChange={(skill, enabled) =>
+                            void updateSkillEnabled(skill, enabled)
+                          }
+                          enablementPending={
+                            bulkBusy || pendingSkillIds.has(item.id)
                           }
                         />
                       ))}
                     </CardGrid>
-                  </Collapsible>
-                )}
-              </>
-            )}
-          </>
-        )}
-      </SettingsLayouts.Body>
+                  </Section>
+                  <TextSeparator
+                    count={selectableItems.length}
+                    text={t("page.countSeparator.label", {
+                      count: selectableItems.length,
+                    })}
+                  />
+                </>
+              ) : !searchQuery.trim() ? (
+                <IllustrationContent
+                  illustration={SvgNoResult}
+                  title={t("page.empty.noSkills.title")}
+                  description={t("page.empty.noSkills.description")}
+                />
+              ) : null}
+              {visibleBuiltins.length > 0 && (
+                <Collapsible
+                  title={t("page.builtins.title", {
+                    count: visibleBuiltins.length,
+                  })}
+                  open={
+                    builtinsOpen ||
+                    (searchQuery.trim() !== "" && visibleBuiltins.length > 0)
+                  }
+                  onOpenChange={setBuiltinsOpen}
+                >
+                  <CardGrid>
+                    {visibleBuiltins.map((item) => (
+                      <SkillCard
+                        key={item.id}
+                        item={item}
+                        onClick={(skill) =>
+                          setSkillDialog({ item: skill, tab: "details" })
+                        }
+                      />
+                    ))}
+                  </CardGrid>
+                </Collapsible>
+              )}
+            </>
+          )}
+        </>
+      )}
+    </>
+  );
 
+  const dialogs = (
+    <>
       <BulkSkillSharingModal
         count={selectedItems.length}
         canChangeOrgAccess={
@@ -869,7 +872,7 @@ export default function SkillsPage({ admin = false }: SkillsPageProps) {
         onContinue={(draft) => {
           const draftId = stageSkillCreationDraft(draft);
           setCreateOpen(false);
-          navigation.go(`/craft/v1/skills/new?draft=${draftId}`);
+          navigation.go(`${skillPath}/new?draft=${draftId}`);
         }}
       />
 
@@ -940,6 +943,37 @@ export default function SkillsPage({ admin = false }: SkillsPageProps) {
           </ConfirmationModalLayout>
         )}
       </switchModal.Provider>
+    </>
+  );
+
+  if (inSources) {
+    return (
+      <section className="flex flex-col gap-3" aria-labelledby="my-skills" data-testid="my-skills">
+        <ResponsiveLayout display="flex" className="flex-wrap items-center justify-between gap-2">
+          <h2 id="my-skills" className="text-xl font-semibold text-text-05">
+            {workspaceText("mySkills")}
+          </h2>
+          {createMenu}
+        </ResponsiveLayout>
+        {searchInput}
+        {skillList}
+        {dialogs}
+      </section>
+    );
+  }
+
+  return (
+    <SettingsLayouts.Root data-testid="SkillsPage/container">
+      <SettingsLayouts.Header
+        icon={SvgBlocks}
+        title={t("page.header.title")}
+        description={admin ? bulkCopy("adminDescription") : t("page.header.description")}
+        actions={[createMenu]}
+      >
+        {searchInput}
+      </SettingsLayouts.Header>
+      <SettingsLayouts.Body>{skillList}</SettingsLayouts.Body>
+      {dialogs}
     </SettingsLayouts.Root>
   );
 }

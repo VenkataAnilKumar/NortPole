@@ -304,3 +304,35 @@ def test_list_files_requires_its_variant() -> None:
         _gateway().list_files(  # ty: ignore[missing-argument]
             user_email=_ADMIN, fields="nextPageToken, files(id)"
         )
+
+
+def test_pilot_reads_live_named_grant_across_permissions_pages() -> None:
+    ops = _gateway()
+    with (
+        mock.patch.object(ops, "_auth") as auth,
+        mock.patch.object(ops, "_get_capped_json") as get,
+    ):
+        auth.return_value.primary_admin_email = _ADMIN
+        get.side_effect = [
+            {"id": "pilot-file", "trashed": False},
+            {
+                "permissions": [
+                    {"type": "group", "role": "reader", "emailAddress": "tester@co.com"},
+                    {"type": "user", "role": "reader", "emailAddress": "tester@co.com", "expirationTime": "2000-01-01T00:00:00Z"},
+                    {"type": "user", "role": "writer", "emailAddress": "tester@co.com", "deleted": True},
+                ],
+                "nextPageToken": "next",
+            },
+            {"permissions": [{"type": "user", "role": "reader", "emailAddress": "Tester@co.com"}]},
+        ]
+        assert ops.confirm_named_file_access(file_id="pilot-file", viewer_email="tester@co.com")
+        assert get.call_count == 3
+        assert get.call_args.kwargs["params"]["pageToken"] == "next"
+
+
+@pytest.mark.parametrize("file", [None, {"id": "pilot-file", "trashed": True}, {"id": "other", "trashed": False}])
+def test_pilot_withholds_unavailable_drive_files(file: dict | None) -> None:
+    ops = _gateway()
+    with mock.patch.object(ops, "_auth"), mock.patch.object(ops, "_get_capped_json", return_value=file) as get:
+        assert not ops.confirm_named_file_access(file_id="pilot-file", viewer_email="tester@co.com")
+        assert get.call_count == 1

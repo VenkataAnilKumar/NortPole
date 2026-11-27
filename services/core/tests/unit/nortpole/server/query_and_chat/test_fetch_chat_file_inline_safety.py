@@ -51,12 +51,15 @@ def _setup(
     return file_store
 
 
-def _call(if_none_match: str | None = None, parsed: bool = False) -> Response:
+def _call(
+    if_none_match: str | None = None, parsed: bool = False, fresh: bool = False
+) -> Response:
     headers = {"if-none-match": if_none_match} if if_none_match else {}
     return fetch_chat_file(
         file_id=FILE_ID,
         request=cast(Request, SimpleNamespace(headers=headers)),
         parsed=parsed,
+        fresh=fresh,
         user=cast(User, SimpleNamespace(id=uuid4())),
         db_session=MagicMock(),
     )
@@ -155,6 +158,13 @@ def test_pre_policy_etag_is_not_revalidated(monkeypatch: pytest.MonkeyPatch) -> 
     assert response.status_code == 200
     assert response.headers["etag"] == CURRENT_ETAG
     assert response.headers["content-disposition"].startswith("attachment;")
+
+
+def test_search_file_links_use_a_fresh_response(monkeypatch: pytest.MonkeyPatch) -> None:
+    _setup(monkeypatch, "text/plain")
+    response = _call(if_none_match=CURRENT_ETAG, fresh=True)
+    assert response.status_code == 200
+    assert response.headers["cache-control"] == "private, no-store"
 
 
 def test_parsed_spreadsheet_etag_is_versioned(monkeypatch: pytest.MonkeyPatch) -> None:

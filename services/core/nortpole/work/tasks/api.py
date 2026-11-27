@@ -16,15 +16,17 @@ from sqlalchemy import func, select, update
 from sqlalchemy.orm import Session
 
 from nortpole.auth.permissions import require_permission
+from nortpole.configs.constants import NotificationType
 from nortpole.db.engine.sql_engine import get_session
 from nortpole.db.enums import Permission
 from nortpole.db.models import User
+from nortpole.db.notification import create_notification
 from nortpole.error_handling.error_codes import NortPoleErrorCode
 from nortpole.error_handling.exceptions import NortPoleError
 from nortpole.governance.route_policy.audit import record_audit
 from nortpole.work.tasks.models import NortPoleTask
 from nortpole.work.tasks.drafter import draft_answer
-from nortpole.work.tasks.evidence import gather_evidence
+from nortpole.work.tasks.evidence import gather_evidence, gather_trigger_evidence
 from nortpole.work.tasks.claims import (
     KEEP,
     REMOVE,
@@ -39,6 +41,7 @@ from nortpole.work.tasks.planner import PlanError, PlanResult, draft_plan
 from nortpole.work.tasks.relevance import filter_relevant
 from nortpole.work.tasks.untrusted import looks_like_instructions, neutralize_passage
 from nortpole.work.tasks.states import EDITABLE, InvalidTransition, TaskAction, TaskState, next_state
+from nortpole.work.workflow_schedules.notifications import notify_scheduled_task_result
 from nortpole.utils.audit import AuditAction, AuditOutcome
 from nortpole.utils.logger import setup_logger
 
@@ -185,12 +188,23 @@ def _own(db: Session, task_id: UUID, user: User) -> NortPoleTask:
     return task
 
 
+_REVIEW_DECISIONS = {
+    (TaskState.PLAN_REVIEW, TaskAction.ACCEPT): "Plan accepted",
+    (TaskState.PLAN_REVIEW, TaskAction.REVISE): "Plan sent back to edit",
+    (TaskState.PLAN_REVIEW, TaskAction.CANCEL): "Plan cancelled",
+    (TaskState.DRAFT_READY, TaskAction.APPROVE): "Draft approved",
+    (TaskState.DRAFT_READY, TaskAction.REVISE): "Draft sent back to edit",
+    (TaskState.DRAFT_READY, TaskAction.CANCEL): "Draft cancelled",
+}
+
+
 def _move(db: Session, task_id: UUID, user: User, version: int, action: TaskAction, **values: object) -> NortPoleTask:
     """Apply one state move as a single conditional update on (owner, state,
     version). Exactly one of two racing requests can win."""
     task = _own(db, task_id, user)
+    previous_state = TaskState(task.state)
     try:
-        new_state = next_state(TaskState(task.state), action)
+        new_state = next_state(previous_state, action)
     except InvalidTransition as e:
         raise NortPoleError(NortPoleErrorCode.CONFLICT, str(e)) from e
     if task.version != version:
@@ -209,9 +223,28 @@ def _move(db: Session, task_id: UUID, user: User, version: int, action: TaskActi
     if result.rowcount != 1:
         db.rollback()
         raise NortPoleError(NortPoleErrorCode.CONFLICT, "This task changed since you opened it. Reload and try again.")
+    decision = _REVIEW_DECISIONS.get((previous_state, action))
+    if decision:
+        create_notification(
+            user_id=user.id,
+            notif_type=NotificationType.WORKFLOW_DECISION_RECORDED,
+            db_session=db,
+            title=f"{decision} · {task.title}",
+            description=f"Reviewed task version {version}.",
+            additional_data={
+                "task_id": str(task.id),
+                "task_version": version,
+                "decision": action.value,
+            },
+            autocommit=False,
+            refresh_existing=False,
+        )
     db.commit()
     db.expire_all()
-    return _own(db, task_id, user)
+    task = _own(db, task_id, user)
+    if action in {TaskAction.RUN_FAILED, TaskAction.DRAFT_DONE}:
+        notify_scheduled_task_result(db, task)
+    return task
 
 
 def _audit(user: User, action: AuditAction, task: NortPoleTask, summary: str, outcome: AuditOutcome = AuditOutcome.SUCCESS) -> None:
@@ -223,10 +256,20 @@ def _audit(user: User, action: AuditAction, task: NortPoleTask, summary: str, ou
 def list_tasks(
     user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
     db_session: Session = Depends(get_session),
+    waiting_only: bool = False,
 ) -> list[TaskView]:
-    rows = list(db_session.scalars(
-        select(NortPoleTask).where(NortPoleTask.owner_id == user.id).order_by(NortPoleTask.updated_at.desc()).limit(200)
-    ))
+    query = (
+        select(NortPoleTask)
+        .where(NortPoleTask.owner_id == user.id)
+        .order_by(NortPoleTask.updated_at.desc())
+    )
+    if waiting_only:
+        query = query.where(
+            NortPoleTask.state.in_((TaskState.PLAN_REVIEW.value, TaskState.DRAFT_READY.value))
+        )
+    else:
+        query = query.limit(200)
+    rows = list(db_session.scalars(query))
     views = [_view(t) for t in rows]
     ids = {t.schedule_id for t in rows if t.schedule_id is not None}
     if ids:
@@ -419,7 +462,10 @@ def run_task(
         from nortpole.work.packs.guidance import guides_for, style_for
 
         agent = agent_for(db_session, task.pack_id, task.pack_version, task.pack_template)
-        if agent is not None:
+        if task.knowledge_trigger is not None:
+            evidence = gather_trigger_evidence(db_session, user, task.knowledge_trigger)
+            guides = guides_for(db_session, task.pack_id, task.pack_version, task.pack_template)
+        elif agent is not None:
             # Plan-then-execute: run exactly the accepted search steps, as the owner, in code. The model is not asked
             # what to do next; nothing it reads can add a step.
             queries = planned_searches(task.plan, agent)

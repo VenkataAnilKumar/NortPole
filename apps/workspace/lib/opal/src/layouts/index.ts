@@ -151,3 +151,5 @@ export {
   PageCenter,
   type PageCenterProps,
 } from "@opal/layouts/page-center/components";
+
+export { ResponsiveLayout } from "@opal/layouts/responsive-layout";

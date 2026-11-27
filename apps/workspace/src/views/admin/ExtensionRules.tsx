@@ -1,5 +1,7 @@
 "use client";
 
+import { ActionButton, NativeInput, NativeSelect, NativeTextArea } from "@opal/components";
+import { useTranslations as useWorkspaceTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import useSWR, { mutate } from "swr";
 import { errorHandlingFetcher } from "@/lib/fetcher";
@@ -15,6 +17,7 @@ const input = "min-h-11 w-full rounded-xl border border-border-02 bg-background-
 
 /** What people may add: personal skills on or off, and which hosts an MCP server may use. */
 export default function ExtensionRules() {
+  const workspaceText = useWorkspaceTranslations("workspaceUi");
   const { data } = useSWR<Rules>(URL, errorHandlingFetcher);
   const [skills, setSkills] = useState<"off" | "self_serve">("self_serve");
   const [enabled, setEnabled] = useState(false);
@@ -58,29 +61,19 @@ export default function ExtensionRules() {
   if (!data) return null;
   return (
     <section className={card} aria-labelledby="ext-h" data-testid="extension-rules">
-      <h2 id="ext-h" className="text-base font-semibold text-text-05">Extension rules</h2>
-      <p className="mt-1 text-sm text-text-03">
-        What people may add. A &quot;request, then administrator approves&quot; level is not built yet; plugins exist only in the sandboxed-task feature, which does not run here.
-      </p>
-      <label className="mt-3 flex flex-col gap-1 text-sm font-medium text-text-05">
-        Personal skills
-        <select className={input} value={skills} onChange={(e) => setSkills(e.target.value as "off" | "self_serve")}>
-          <option value="self_serve">Self-serve: people may add their own</option>
-          <option value="off">Off: nobody may add or change a personal skill</option>
-        </select>
+      <h2 id="ext-h" className="text-base font-semibold text-text-05">{workspaceText("extensionRules")}</h2>
+      <p className="mt-1 text-sm text-text-03">{workspaceText("whatPeopleMayAddARequestThenAdministratorApproves")}</p>
+      <label className="mt-3 flex flex-col gap-1 text-sm font-medium text-text-05">{workspaceText("personalSkills_a7a520")}<NativeSelect className={input} value={skills} onChange={(e) => setSkills(e.target.value as "off" | "self_serve")}>
+          <option value="self_serve">{workspaceText("selfServePeopleMayAddTheirOwn")}</option>
+          <option value="off">{workspaceText("offNobodyMayAddOrChangeAPersonalSkill")}</option>
+        </NativeSelect>
       </label>
       <label className="mt-3 flex min-h-10 cursor-pointer items-center gap-2 text-sm text-text-05">
-        <input type="checkbox" checked={enabled} onChange={(e) => setEnabled(e.target.checked)} />
-        Only allow MCP servers on these hosts (also stops calls to servers already saved on other hosts)
-      </label>
-      <label className="mt-2 flex flex-col gap-1 text-sm font-medium text-text-05">
-        Allowed hosts, one per line (example.com, or *.example.com for any subdomain)
-        <textarea className={`${input} py-2`} rows={4} value={hosts} onChange={(e) => setHosts(e.target.value)} disabled={!enabled && hosts === ""} />
+        <NativeInput type="checkbox" checked={enabled} onChange={(e) => setEnabled(e.target.checked)} />{workspaceText("onlyAllowMcpServersOnTheseHostsAlsoStops")}</label>
+      <label className="mt-2 flex flex-col gap-1 text-sm font-medium text-text-05">{workspaceText("allowedHostsOnePerLineExampleComOrExample")}<NativeTextArea className={`${input} py-2`} rows={4} value={hosts} onChange={(e) => setHosts(e.target.value)} disabled={!enabled && hosts === ""} />
       </label>
       <div className="mt-3">
-        <button type="button" disabled={busy} onClick={save} className="min-h-11 rounded-xl border border-border-02 px-4 text-sm font-semibold text-text-05 disabled:opacity-50">
-          Save rules
-        </button>
+        <ActionButton type="button" disabled={busy} onClick={save} className="min-h-11 rounded-xl border border-border-02 px-4 text-sm font-semibold text-text-05 disabled:opacity-50">{workspaceText("saveRules")}</ActionButton>
       </div>
       {msg && <p role={msg.ok ? "status" : "alert"} className={`mt-2 text-sm ${msg.ok ? "text-text-05" : "text-status-text-error-05"}`} data-testid="extension-message">{msg.text}</p>}
     </section>

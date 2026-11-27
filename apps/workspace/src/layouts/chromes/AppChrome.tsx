@@ -9,21 +9,20 @@ import { useAppBackground } from "@/providers/AppBackgroundProvider";
 import { useTheme } from "next-themes";
 import useBrowserInfo from "@/hooks/useBrowserInfo";
 import ShareChatSessionModal from "@/sections/modals/ShareChatSessionModal";
+import { useActiveProject } from "@/lib/projects/hooks";
 import { useProjectsContext } from "@/lib/projects/providers";
 import useChatSessions from "@/hooks/useChatSessions";
-import {
-  shouldShowMoveModal,
-  showErrorNotification,
-} from "@/lib/sidebar/utils";
+import { showErrorNotification } from "@/lib/sidebar/utils";
 import { handleMoveOperation } from "@/lib/sidebar/svc";
-import { LOCAL_STORAGE_KEYS } from "@/lib/sidebar/constants";
+import type { ChatSession } from "@/app/app/types";
+import type { Project } from "@/lib/projects/types";
 import { deleteChatSession, endIncognitoSession } from "@/app/app/services/lib";
 import {
   exportChatSession,
   ChatExportFormat,
 } from "@/lib/chat/exportChatSession";
 import { UNNAMED_CHAT } from "@/lib/constants";
-import { MoveCustomAgentChatModal } from "@/lib/agents/components";
+import { MoveProjectChatModal } from "@/lib/projects/components/MoveProjectChatModal";
 import { ConfirmationModalLayout } from "@opal/layouts";
 import FrostedDiv from "@/refresh-components/FrostedDiv";
 import {
@@ -88,12 +87,14 @@ function Header() {
     toggleIncognito,
     setIncognitoEnabled,
   } = useIncognito();
+  const sharedProject = useActiveProject()?.shared === true;
   const shareModal = useCreateModal();
   const deleteModal = useCreateModal();
-  const moveCustomAgentModal = useCreateModal();
-  const [pendingMoveProjectId, setPendingMoveProjectId] = useState<
-    number | null
-  >(null);
+  const moveProjectChatModal = useCreateModal();
+  const [pendingMove, setPendingMove] = useState<{
+    chat: ChatSession;
+    project: Project;
+  } | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [modePopoverOpen, setModePopoverOpen] = useState(false);
   const {
@@ -122,54 +123,36 @@ function Header() {
 
   const availableProjects = useMemo(() => {
     if (!projects) return [];
-    return projects.filter((project) => project.id !== currentProjectId);
+    return projects.filter((project) => project.id !== currentProjectId && project.role !== "viewer");
   }, [projects, currentProjectId]);
 
   const resetMoveState = useCallback(() => {
-    setPendingMoveProjectId(null);
-    moveCustomAgentModal.toggle(false);
-  }, [moveCustomAgentModal.toggle]);
+    setPendingMove(null);
+    moveProjectChatModal.toggle(false);
+  }, [moveProjectChatModal.toggle]);
 
-  const performMove = useCallback(
-    async (targetProjectId: number) => {
-      if (!currentChatSession) return;
-      try {
-        await handleMoveOperation({
-          chatSession: currentChatSession,
-          targetProjectId,
-          refreshChatSessions,
-          refreshCurrentProjectDetails,
-          fetchProjects,
-          currentProjectId,
-        });
-        resetMoveState();
-        setMenuOpen(false);
-      } catch (error) {
-        console.error("Failed to move chat session:", error);
-      }
-    },
-    [
-      currentChatSession,
-      refreshChatSessions,
-      refreshCurrentProjectDetails,
-      fetchProjects,
-      currentProjectId,
-      resetMoveState,
-    ]
-  );
+  function handleMoveClick(project: Project) {
+    if (!currentChatSession) return;
+    setPendingMove({ chat: currentChatSession, project });
+    moveProjectChatModal.toggle(true);
+  }
 
-  const handleMoveClick = useCallback(
-    (projectId: number) => {
-      if (!currentChatSession) return;
-      if (shouldShowMoveModal(currentChatSession)) {
-        setPendingMoveProjectId(projectId);
-        moveCustomAgentModal.toggle(true);
-        return;
-      }
-      void performMove(projectId);
-    },
-    [currentChatSession, moveCustomAgentModal.toggle, performMove]
-  );
+  async function performMove(target: { chat: ChatSession; project: Project }) {
+    resetMoveState();
+    try {
+      await handleMoveOperation({
+        chatSession: target.chat,
+        targetProjectId: target.project.id,
+        refreshChatSessions,
+        refreshCurrentProjectDetails,
+        fetchProjects,
+        currentProjectId,
+      });
+      setMenuOpen(false);
+    } catch {
+      // The move service already reports a failure.
+    }
+  }
 
   const handleDeleteChat = useCallback(async () => {
     if (!currentChatSession) return;
@@ -275,7 +258,7 @@ function Header() {
           id: `project-${project.id}`,
           icon: SvgFolderIn,
           title: project.name,
-          onSelect: () => handleMoveClick(project.id),
+          onSelect: () => handleMoveClick(project),
         })
       ),
     ],
@@ -306,13 +289,13 @@ function Header() {
     ],
   };
   const menuItems: DropdownMenuItem[] = [
-    {
-      kind: "action",
+    ...(currentChatSession?.agent_preview_name ? [] : [{
+      kind: "action" as const,
       id: "move",
       icon: SvgFolderIn,
       title: t("moveToProject.label"),
       onSelect: (views) => views.push("move"),
-    },
+    }] satisfies DropdownMenuItem[]),
     {
       kind: "action",
       id: "export",
@@ -346,22 +329,16 @@ function Header() {
         )}
       </shareModal.Provider>
 
-      <moveCustomAgentModal.Provider>
-        <MoveCustomAgentChatModal
-          onCancel={resetMoveState}
-          onConfirm={async (doNotShowAgain: boolean) => {
-            if (doNotShowAgain && typeof window !== "undefined") {
-              window.localStorage.setItem(
-                LOCAL_STORAGE_KEYS.HIDE_MOVE_CUSTOM_AGENT_MODAL,
-                "true"
-              );
-            }
-            if (pendingMoveProjectId != null) {
-              await performMove(pendingMoveProjectId);
-            }
-          }}
-        />
-      </moveCustomAgentModal.Provider>
+      <moveProjectChatModal.Provider>
+        {pendingMove && (
+          <MoveProjectChatModal
+            projectName={pendingMove.project.name}
+            shared={pendingMove.project.shared}
+            onCancel={resetMoveState}
+            onConfirm={() => void performMove(pendingMove)}
+          />
+        )}
+      </moveProjectChatModal.Provider>
 
       <deleteModal.Provider>
         <ConfirmationModalLayout
@@ -540,7 +517,7 @@ function Header() {
                   currentChatSession.id === appPosition.chat() &&
                   !incognitoEnabled && (
                     <FrostedDiv className="flex shrink flex-row items-center">
-                      <Button
+                      {!sharedProject && !currentChatSession.agent_preview_name && <Button
                         icon={SvgShare}
                         prominence="tertiary"
                         interaction={shareModal.isOpen ? "hover" : "rest"}
@@ -549,7 +526,7 @@ function Header() {
                         aria-label="share-chat-button"
                       >
                         {t("share.label")}
-                      </Button>
+                      </Button>}
                       <Dropdown
                         width={60}
                         open={menuOpen}

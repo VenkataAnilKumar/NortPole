@@ -14,6 +14,7 @@ KV_KEY = "nortpole_schedule_controls"
 class ScheduleControls(BaseModel):
     version: int = 1
     enabled: bool = False
+    source_events_enabled: bool = False
     groups: list[str] = Field(default_factory=list)  # group names; empty means everyone, once enabled
     max_per_person: int = Field(default=10, ge=1, le=50)
 

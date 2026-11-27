@@ -354,6 +354,7 @@ class SearchDoc(BaseModel):
     # since a standard search will never find a hidden doc, this can only ever
     # be `True` when doing an admin search
     hidden: bool
+    selected_evidence: bool = False
     metadata: dict[str, str | list[str]]
     score: float | None = None
     is_relevant: bool | None = None

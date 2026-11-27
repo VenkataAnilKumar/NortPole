@@ -144,7 +144,10 @@ test.each([
       currentSessionId: isNewSession ? null : "session",
     });
     if (!isNewSession) useChatSessionStore.getState().createSession("session");
-    jest.mocked(createChatSession).mockResolvedValue("session");
+    jest.mocked(createChatSession).mockResolvedValue({
+      chat_session_id: "session",
+      agent_release_version: 4,
+    });
     const restoreInputBar = jest.fn();
     const { result, unmount } = renderHook(() =>
       useChatController({
@@ -171,6 +174,8 @@ test.each([
     await waitFor(() =>
       expect(llmManager.persistOverrides).toHaveBeenCalledWith("session")
     );
+    expect(useChatSessionStore.getState().sessions.get("session")?.agentReleaseVersion)
+      .toBe(isNewSession ? 4 : undefined);
     expect(
       useChatSessionStore.getState().sessions.get("")?.abortController
     ).not.toBe(
@@ -183,7 +188,8 @@ test.each([
       await act(async () => result.current.stopGenerating());
       expect(restoreInputBar).toHaveBeenCalledWith(
         "Do not send this after Stop",
-        []
+        [],
+        undefined
       );
     } else {
       useChatSessionStore

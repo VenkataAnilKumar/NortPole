@@ -326,7 +326,6 @@ export default function PdfDocumentViewer({
               ref={observeViewport}
               className="min-w-0 flex-1 overflow-auto bg-background-neutral-02 p-4"
               role="region"
-              // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- Focus lets keyboard users scroll the PDF viewport.
               tabIndex={isActive ? 0 : -1}
               aria-label={t("page.preview", { page: activePage })}
             >

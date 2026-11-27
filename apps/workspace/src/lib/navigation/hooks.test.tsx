@@ -39,3 +39,31 @@ test("keeps conversation routing separate from Plugins", () => {
   expect(result.current.chat()).toBe("existing-chat");
   expect(result.current.href()).toBe("/app?chatId=existing-chat");
 });
+
+test.each(["/app/agents", "/app/agents/create", "/app/agents/edit/42"])(
+  "keeps the Agents sidebar destination selected on %s",
+  (pathname) => {
+    mockPathname = pathname;
+    const { result } = renderHook(() => useAppPosition());
+    expect(result.current.isAgents()).toBe(true);
+    expect(result.current.href()).toBe("/app/agents");
+  }
+);
+
+test.each(["/app/projects", "/app/projects/42/chats/project-chat"])(
+  "recognizes %s as part of Projects",
+  (pathname) => {
+    mockPathname = pathname;
+    const { result } = renderHook(() => useAppPosition());
+    expect(result.current.isProjects()).toBe(true);
+    expect(result.current.href()).toBe("/app/projects");
+    expect(result.current.isNewSession()).toBe(false);
+  }
+);
+
+test("keeps project workspace links on their existing route", () => {
+  mockParams = new URLSearchParams("projectId=42");
+  const { result } = renderHook(() => useAppPosition());
+  expect(result.current.project()).toBe(42);
+  expect(result.current.href()).toBe("/app?projectId=42");
+});

@@ -194,6 +194,14 @@ export function loadPage(
   else window.location.assign(url);
 }
 
+/** Remove a consumed query parameter from the current history entry. */
+export function clearQueryParameter(parameter: string) {
+  const url = new URL(window.location.href);
+  if (!url.searchParams.has(parameter)) return;
+  url.searchParams.delete(parameter);
+  window.history.replaceState(window.history.state, "", url);
+}
+
 /**
  * Whether a click is a plain left click on a link that opens in this tab and
  * does not download, which a link may take over.

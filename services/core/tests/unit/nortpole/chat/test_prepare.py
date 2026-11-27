@@ -4,7 +4,7 @@ from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
 from threading import Event
 from typing import cast
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, PropertyMock, patch
 from uuid import UUID, uuid4
 
 import pytest
@@ -30,8 +30,9 @@ from nortpole.chat.prompt_utils import build_chat_prompt, prepare_prompt
 from nortpole.configs.constants import DEFAULT_PERSONA_ID, MessageType
 from nortpole.context.models import UserInfo, UserMemoryContext
 from nortpole.context.search.models import PersonaSearchInfo
+from nortpole.db.agent_preview import AgentPreview
 from nortpole.db.enums import IncognitoRecordMode
-from nortpole.db.models import ChatMessage, ChatSession, Persona, User, UserProject
+from nortpole.db.models import AgentRelease, ChatMessage, ChatSession, Persona, User, UserProject
 from nortpole.error_handling.error_codes import NortPoleErrorCode
 from nortpole.error_handling.exceptions import NortPoleError
 from nortpole.file_store.models import (
@@ -366,13 +367,21 @@ def test_attachment_loading_releases_preparation_session_before_reservation_fail
         db_session: Session,
         chat_session_id: UUID,
         parent_message_id: int,
-        model_display_names: list[str],
+        model_display_names: list[str | None],
+        receipt_review_needs_review: bool | None,
+        document_review_needs_review: bool | None,
+        document_review_report: dict | None,
+        search_evidence_provenance: dict | None,
     ) -> list[int]:
         nonlocal reservation_attempted
         del db_session, chat_session_id, model_display_names
         reservation_attempted = True
         assert active_sessions == 1
         assert parent_message_id == 2
+        assert receipt_review_needs_review is None
+        assert document_review_needs_review is None
+        assert document_review_report is None
+        assert search_evidence_provenance is None
         raise RuntimeError("Response reservation failed")
 
     monkeypatch.setattr(
@@ -417,6 +426,7 @@ def test_admission_precedes_model_setup_and_releases_after_setup_failure() -> No
 
     cache = FakeCache()
     session_id = uuid4()
+    root = ChatMessage(message_type=MessageType.SYSTEM, message="")
     request = SendMessageRequest(message="hello", chat_session_id=session_id)
 
     def fail_model_setup(*_args: object) -> None:
@@ -428,8 +438,9 @@ def test_admission_precedes_model_setup_and_releases_after_setup_failure() -> No
         patch("nortpole.chat.process_message.get_session_with_current_tenant"),
         patch(
             "nortpole.chat.process_message._load_session",
-            return_value=SimpleNamespace(id=session_id, persona=None),
+            return_value=SimpleNamespace(id=session_id, persona_id=DEFAULT_PERSONA_ID, persona=Persona(id=DEFAULT_PERSONA_ID, name="Default"), project_id=None, incognito_record_mode=None, agent_preview=None),
         ),
+        patch("nortpole.chat.process_message.load_message_branch", return_value=([], root)),
         patch("nortpole.chat.process_message._select_models", side_effect=fail_model_setup),
         pytest.raises(RuntimeError, match="model setup failed"),
     ):
@@ -719,6 +730,7 @@ def test_storage_saves_its_resolved_input(
     store.prepare_messages.return_value = (stored_history, "prior-run", None)
     with (
         patch("nortpole.chat.process_message.convert_chat_history", return_value=source),
+        patch("nortpole.chat.process_message.load_temporary_evidence", return_value={}),
         patch("nortpole.chat.process_message.RedisChatHistoryStore", return_value=store),
     ):
         setup = prepare_chat_turn(
@@ -876,3 +888,118 @@ def test_project_instructions_supplement_agent_prompt(
         assert isinstance(history[1], UserMessage)
     else:
         assert isinstance(history[0], SystemMessage)
+
+
+def test_previous_search_evidence_denial_precedes_model_and_message(
+    chat_session: ChatSession, _mock_chat_preparation: None
+) -> None:
+    previous = ChatMessage(id=4, message_type=MessageType.ASSISTANT)
+    with (
+        patch(
+            "nortpole.chat.process_message.load_message_branch",
+            return_value=([previous], previous),
+        ),
+        patch(
+            "nortpole.chat.process_message.verify_search_evidence_history",
+            side_effect=NortPoleError(
+                NortPoleErrorCode.INSUFFICIENT_PERMISSIONS, "Start a new chat"
+            ),
+        ) as check_history,
+        patch("nortpole.chat.process_message._select_models") as select_models,
+        patch("nortpole.chat.process_message.create_new_chat_message") as save_message,
+        pytest.raises(NortPoleError, match="Start a new chat"),
+    ):
+        prepare_chat_turn(
+            SendMessageRequest(message="Follow up", chat_session_id=chat_session.id),
+            User(id=uuid4(), email="reader@example.com"),
+            llm_overrides=None,
+        )
+    check_history.assert_called_once()
+    assert check_history.call_args.args[0] == [previous]
+    select_models.assert_not_called()
+    save_message.assert_not_called()
+
+
+@pytest.mark.parametrize("published", [False, True])
+def test_versioned_chat_uses_pinned_configuration_and_ignores_turn_overrides(
+    chat_session: ChatSession, _mock_chat_preparation: None, published: bool,
+) -> None:
+    chat_session.persona.system_prompt = "Live instructions"
+    snapshot = AgentPreview(
+        name="Draft", system_prompt="Preview instructions", model_configuration_id=44,
+    )
+    release = (
+        AgentRelease(version=2, configuration=snapshot, dependency_fingerprint="stored")
+        if published else None
+    )
+    if release is None:
+        chat_session.agent_preview = snapshot
+    request = SendMessageRequest(
+        message="Test question", chat_session_id=chat_session.id, deep_research=True,
+        skill_ids=[uuid4()], allowed_tool_ids=[3], additional_context="Injected request context",
+    )
+    from nortpole.llm.override_models import LLMOverride
+
+    llm = ScriptedLLM([])
+    config = llm.config.model_copy(update={"model_configuration_id": 44})
+    with (
+        patch.object(ScriptedLLM, "config", new_callable=PropertyMock, return_value=config),
+        patch("nortpole.chat.process_message.pinned_agent_release", return_value=release),
+        patch("nortpole.chat.process_message.validate_agent_release_dependencies", return_value=[]),
+        patch("nortpole.chat.process_message.require_preview_model", return_value=44),
+        patch("nortpole.chat.process_message._select_models", return_value=[(llm, "Test")]) as select_models,
+        patch("nortpole.chat.process_message.execute_hook") as hook,
+    ):
+        setup = prepare_chat_turn(
+            request, User(id=uuid4(), email="tester@example.com"),
+            llm_overrides=[LLMOverride(model_configuration_id=8)],
+        )
+    try:
+        assert setup.is_agent_preview is not published
+        assert setup.agent_release_version == (2 if published else None)
+        assert setup.custom_agent_prompt == "Preview instructions"
+        assert setup.tool_configuration.tools == []
+        assert setup.additional_context is None
+        assert not setup.new_msg_req.deep_research
+        assert setup.new_msg_req.skill_ids is None
+        assert setup.new_msg_req.allowed_tool_ids == []
+        assert setup.new_msg_req.llm_override is not None
+        assert setup.new_msg_req.llm_override.model_configuration_id == 44
+        assert select_models.call_args.args[3] is None
+        hook.assert_not_called()
+    finally:
+        setup.admission.release()
+
+
+@pytest.mark.parametrize("select_document", [False, True])
+def test_document_analysis_rejects_missing_or_inaccessible_evidence_before_saving(
+    chat_session: ChatSession, _mock_chat_preparation: None, select_document: bool,
+) -> None:
+    from nortpole.server.query_and_chat.models import SearchEvidenceReference, SearchEvidenceSelection
+
+    chat_session.agent_preview = AgentPreview(
+        name="Document Analysis", system_prompt="Compare evidence",
+        model_configuration_id=44, pilot="document-analysis", document_set_ids=[8],
+    )
+    request = SendMessageRequest(message="Compare", chat_session_id=chat_session.id)
+    if select_document:
+        request.search_evidence = SearchEvidenceSelection(documents=[
+            SearchEvidenceReference(document_id="restricted", chunk_id=0),
+        ])
+    llm = ScriptedLLM([])
+    config = llm.config.model_copy(update={"model_configuration_id": 44})
+    with (
+        patch.object(ScriptedLLM, "config", new_callable=PropertyMock, return_value=config),
+        patch("nortpole.chat.process_message.preview_library_names", return_value=["Policies"]),
+        patch("nortpole.chat.process_message.enabled_policy_libraries", return_value=[]),
+        patch("nortpole.chat.process_message.require_preview_model", return_value=44),
+        patch("nortpole.chat.process_message._select_models", return_value=[(llm, "Test")]) as model,
+        patch("nortpole.chat.process_message.resolve_search_evidence", return_value=([], True)) as evidence,
+        patch("nortpole.chat.process_message.create_new_chat_message") as create_message,
+        pytest.raises(NortPoleError) as denied,
+    ):
+        prepare_chat_turn(request, User(id=uuid4(), email="tester@example.com"), llm_overrides=None)
+    assert denied.value.error_code == NortPoleErrorCode.INVALID_INPUT
+    assert model.called is select_document
+    assert evidence.called is select_document
+    create_message.assert_not_called()

@@ -143,14 +143,17 @@ function Harness({
   initial,
   callbacks,
   temperatureManager,
+  compactSingle,
 }: {
   initial: SelectedModel[];
   callbacks?: Callbacks;
   temperatureManager?: TemperatureManager;
+  compactSingle?: boolean;
 }) {
   const [models, setModels] = useState(initial);
   return (
     <MultiModelSelector
+      compactSingle={compactSingle}
       selectedModels={models}
       onAdd={(model) => {
         callbacks?.onAdd(model);
@@ -481,6 +484,17 @@ describe("MultiModelSelector", () => {
     // Drop the own properties so the prototype getters apply again.
     Reflect.deleteProperty(document.documentElement, "clientWidth");
     Reflect.deleteProperty(document.documentElement, "clientHeight");
+  });
+
+  test("the Chat control shows model pills only after a second model is added", async () => {
+    const user = setupUser();
+    render(<Harness initial={[selected("Model A")]} compactSingle />);
+
+    const control = screen.getByTestId("model-selector");
+    expect(within(control).queryByRole("button", { name: "Model A" })).not.toBeInTheDocument();
+    await openFromAdd(user);
+    await user.click(row("Model B"));
+    expect(pillNames()).toEqual(["Model B", "Model A"]);
   });
 
   // -------------------------------------------------------------------------

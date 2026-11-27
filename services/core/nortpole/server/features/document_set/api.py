@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Depends, Query
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from nortpole.access.hierarchy_access import get_user_external_group_ids
 from nortpole.auth.permission_projection import document_set_permissions
 from nortpole.auth.permissions import (
     has_permission,
@@ -16,8 +18,10 @@ from nortpole.db.connector_credential_pair import (
     CCPairAccessLevel,
     get_connector_credential_pairs_for_user,
 )
+from nortpole.db.document_access import apply_document_access_filter
 from nortpole.db.document_set import (
     check_document_sets_are_public,
+    construct_document_id_select_by_docset,
     fetch_all_document_sets_for_user,
     get_document_set_by_id,
     get_document_set_by_id_for_user,
@@ -30,19 +34,26 @@ from nortpole.db.document_set import (
 from nortpole.db.document_set import delete_document_set as db_delete_document_set
 from nortpole.db.engine.sql_engine import get_session
 from nortpole.db.enums import Permission, PermissionAuthority
-from nortpole.db.models import User
+from nortpole.db.models import Document, User
 from nortpole.error_handling.error_codes import NortPoleErrorCode
 from nortpole.error_handling.exceptions import NortPoleError
 from nortpole.server.features.document_set.models import (
     CheckDocSetPublicRequest,
     CheckDocSetPublicResponse,
+    CollectionDocument,
+    CollectionDocumentPage,
     DocumentSetCreationRequest,
     DocumentSetSummary,
     DocumentSetUpdateRequest,
 )
+from nortpole.server.features.document_set.output_contributions import router as contribution_router
+from nortpole.server.features.document_set.policy_rules import router as policy_router
+from nortpole.server.utils_vector_db import require_vector_db
 from shared_configs.contextvars import get_current_tenant_id
 
 router = APIRouter(prefix="/manage")
+router.include_router(contribution_router)
+router.include_router(policy_router)
 
 
 @router.post("/admin/document-set")
@@ -332,6 +343,48 @@ def list_document_sets_for_user(
             )
         )
     return summaries
+
+
+@router.get(
+    "/document-set/{document_set_id}/documents",
+    dependencies=[Depends(require_vector_db)],
+)
+def list_collection_documents(
+    document_set_id: int,
+    cursor: str | None = None,
+    limit: int = Query(30, ge=1, le=100),
+    user: User = Depends(require_permission(Permission.READ_SEARCH)),
+    db_session: Session = Depends(get_session),
+) -> CollectionDocumentPage:
+    if get_document_set_by_id_for_user(
+        db_session, document_set_id, user, get_editable=False
+    ) is None:
+        raise NortPoleError(NortPoleErrorCode.DOCUMENT_SET_NOT_FOUND)
+
+    member_ids = construct_document_id_select_by_docset(document_set_id).order_by(None)
+    stmt = select(
+        Document.id, Document.semantic_id, Document.link, Document.doc_updated_at
+    ).where(Document.id.in_(member_ids), Document.hidden.is_(False))
+    stmt = apply_document_access_filter(
+        db_session,
+        stmt,
+        user.email,
+        get_user_external_group_ids(db_session, user),
+        user_id=user.id,
+    )
+    if cursor is not None:
+        stmt = stmt.where(Document.id > cursor)
+
+    rows = db_session.execute(
+        stmt.distinct().order_by(Document.id).limit(limit + 1)
+    ).all()
+    return CollectionDocumentPage(
+        documents=[
+            CollectionDocument(id=doc_id, title=title, link=link, updated_at=updated_at)
+            for doc_id, title, link, updated_at in rows[:limit]
+        ],
+        next_cursor=rows[limit - 1][0] if len(rows) > limit else None,
+    )
 
 
 @router.get("/document-set-public")

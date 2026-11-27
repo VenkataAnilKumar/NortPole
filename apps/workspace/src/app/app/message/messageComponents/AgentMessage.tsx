@@ -1,6 +1,8 @@
 "use client";
 
+import { useTranslations as useWorkspaceTranslations } from "next-intl";
 import { getToolKey } from "@/app/app/message/messageComponents/toolDisplayHelpers";
+import dynamic from "next/dynamic";
 
 import React, {
   useRef,
@@ -8,8 +10,10 @@ import React, {
   useMemo,
   useEffect,
   useLayoutEffect,
+  useState,
 } from "react";
 import {
+  MessageStart,
   Packet,
   PacketType,
   StopReason,
@@ -42,6 +46,11 @@ import { cn } from "@opal/utils";
 import { useTranslations } from "next-intl";
 import { useChatSessionStore } from "@/app/app/stores/useChatSessionStore";
 import { getLatestMessageChain } from "@/app/app/services/messageTree";
+import { draftFromResponse } from "@/lib/chat/documentDraft";
+import { transformLinkUri } from "@/lib/utils";
+import OutputActions from "@/sections/chat/OutputActions";
+
+const DocumentModal = dynamic(() => import("@/sections/chat/DocumentModal"), { loading: () => null });
 
 // Type for the regeneration factory function passed from ChatUI
 export type RegenerationFactory = (regenerationRequest: {
@@ -51,12 +60,15 @@ export type RegenerationFactory = (regenerationRequest: {
 }) => (modelOverride: LlmDescriptor) => Promise<void>;
 
 export interface AgentMessageProps {
+  pilotOutputName?: string;
+  showPilotEvidence?: boolean;
   rawPackets: Packet[];
   restoredPacketCount?: number;
   packetCount?: number; // Tracked separately for React memo comparison (avoids reading from mutated array)
   chatState: FullChatState;
   nodeId: number;
   messageId?: number;
+  responseModelName?: string | null;
   currentFeedback?: FeedbackType | null;
   llmManager: LlmManager | null;
   otherMessagesCanSwitchTo?: number[];
@@ -87,6 +99,9 @@ function arePropsEqual(
   return (
     prev.nodeId === next.nodeId &&
     prev.messageId === next.messageId &&
+    prev.responseModelName === next.responseModelName &&
+    prev.pilotOutputName === next.pilotOutputName &&
+    prev.showPilotEvidence === next.showPilotEvidence &&
     prev.currentFeedback === next.currentFeedback &&
     // Compare packetCount (primitive) instead of rawPackets.length
     // The array is mutated in place, so reading .length from prev and next would return same value
@@ -119,6 +134,7 @@ const AgentMessage = React.memo(function AgentMessage({
   chatState,
   nodeId,
   messageId,
+  responseModelName,
   currentFeedback,
   llmManager,
   otherMessagesCanSwitchTo,
@@ -130,7 +146,10 @@ const AgentMessage = React.memo(function AgentMessage({
   disableTTS,
   fullWidthChat,
   onComplete,
+  pilotOutputName,
+  showPilotEvidence,
 }: AgentMessageProps) {
+  const workspaceText = useWorkspaceTranslations("workspaceUi");
   // Returning to a mounted session restores its retained output immediately.
   const mountedPrefix = useRef({ nodeId, count: rawPackets.length });
   const mounted =
@@ -142,6 +161,8 @@ const AgentMessage = React.memo(function AgentMessage({
   }, [mounted]);
   const restoredPacketCount = Math.max(replayPacketCount, mounted.count);
   const t = useTranslations("chat.messages");
+  const documentT = useTranslations("chat.documentBuilder");
+  const [documentBody, setDocumentBody] = useState<string | null>(null);
   const markdownRef = useRef<HTMLDivElement>(null);
   const finalAnswerRef = useRef<HTMLDivElement>(null);
 
@@ -264,6 +285,31 @@ const AgentMessage = React.memo(function AgentMessage({
     return extras.length > 0 ? [...propDocs, ...extras] : propDocs;
   }, [chatState.docs, documentMap, documentMap.size]);
 
+  const citedIds = new Set(Object.values(mergedCitations));
+  const completePilotText = pilotOutputName && isComplete && !hideFooter && stopReason === StopReason.FINISHED
+    ? removeThinkingTokens(getTextContent(rawPackets)) : "";
+  const pilotAnswer = typeof completePilotText === "string" ? completePilotText.trim() : "";
+  const uncitedEvidence = new Map<string, NonNullable<MessageStart["final_documents"]>[number]>();
+  const pilotEvidence = new Map<string, NonNullable<MessageStart["final_documents"]>[number]>();
+  if (isComplete) {
+    for (const packet of rawPackets) {
+      if (packet.obj.type !== PacketType.MESSAGE_START) continue;
+      for (const document of (packet.obj as MessageStart).final_documents ?? []) {
+        if (showPilotEvidence) pilotEvidence.set(document.document_id, document);
+        if ((showPilotEvidence || document.selected_evidence) && !citedIds.has(document.document_id)) {
+          uncitedEvidence.set(document.document_id, document);
+        }
+      }
+    }
+  }
+
+  const pilotReferences = pilotAnswer ? [...pilotEvidence.values()].flatMap((document) => {
+    const href = document.link ? transformLinkUri(document.link) : "";
+    if (!href) return [];
+    const citation = Object.entries(mergedCitations).find(([, id]) => id === document.document_id)?.[0];
+    return ["- " + (citation ? "[" + citation + "] " : "") + "<" + href.replace(/[<>]/g, encodeURIComponent) + ">"];
+  }) : [];
+
   // Create a chatState that uses streaming citations and documents for immediate rendering.
   // Memoized with granular dependencies to prevent cascading re-renders.
   // Note: chatState object is recreated upstream on every render, so we depend on
@@ -347,27 +393,22 @@ const AgentMessage = React.memo(function AgentMessage({
     const textContent = removeThinkingTokens(getTextContent(rawPackets));
     if (!(typeof textContent === "string" && textContent.length > 0)) return;
 
-    // Only autoplay messages that were observed streaming in this lifecycle.
-    // Prevents historical, already-complete chats from re-triggering read-aloud on mount.
-    if (!isComplete) {
-      if (!hasObservedPacketGrowthRef.current) {
-        return;
-      }
+    // Only autoplay a locally growing response. Finish on the server's stop
+    // packet because audio-synced rendering can wait for the final audio.
+    if (!hasObservedPacketGrowthRef.current) return;
+    if (!stopPacketSeen) {
       hasStreamedIncompleteRef.current = true;
       streamTTSRef.current(textContent, false, nodeId);
       return;
     }
 
-    if (hasStreamedIncompleteRef.current) {
-      streamTTSRef.current(textContent, true, nodeId);
-      ttsCompletedRef.current = true;
-    }
+    streamTTSRef.current(textContent, true, nodeId);
+    ttsCompletedRef.current = true;
   }, [
     disableTTS,
     stopTTS,
     packetCount,
     replayPacketCount,
-    isComplete,
     rawPackets,
     nodeId,
     stopPacketSeen,
@@ -499,6 +540,44 @@ const AgentMessage = React.memo(function AgentMessage({
         )}
       </div>
 
+      {uncitedEvidence.size > 0 && (
+        <section aria-label={showPilotEvidence ? "Additional evidence" : "Selected evidence"} className="my-2 rounded-lg border border-border-01 p-3 text-sm text-text-03">
+          <h3 className="font-semibold text-text-05">{showPilotEvidence ? "Additional evidence" : "Selected evidence"}</h3>
+          <p className="mt-1">{workspaceText("chatReceivedTheseSourcesForThisAnswer")}</p>
+          <ul className="mt-2 flex flex-col gap-1">
+            {[...uncitedEvidence.values()].map((document) => {
+              const label = document.semantic_identifier || "Source";
+              const href = transformLinkUri(document.link);
+              return (
+                <li key={document.document_id} className="break-words">
+                  {href ? (
+                    <a href={href} target="_blank" rel="noopener noreferrer" className="font-medium text-text-05 underline">
+                      {label}
+                    </a>
+                  ) : label}
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
+
+      {isComplete && !hideFooter && responseModelName && (
+        <details className="my-1 ps-1 text-text-03 text-sm">
+          <summary className="cursor-pointer w-fit">
+            {t("agentMessage.responseDetails.label")}
+          </summary>
+          <p>{t("agentMessage.responseDetails.model", { model: responseModelName })}</p>
+        </details>
+      )}
+
+      {pilotOutputName && pilotAnswer && (
+        <OutputActions name={pilotOutputName} projectOnly artifact={{
+          kind: "document",
+          payload: { body: pilotReferences.length ? `${pilotAnswer}\n\n## Sources supplied\n${pilotReferences.join("\n")}` : pilotAnswer },
+        }} />
+      )}
+
       {/* Feedback buttons - only show when streaming and rendering complete */}
       {isComplete && !hideFooter && (
         <MessageToolbar
@@ -520,8 +599,13 @@ const AgentMessage = React.memo(function AgentMessage({
           currentModelProvider={chatState.overriddenModelProvider}
           citations={citations}
           documentMap={documentMap}
+          onDraftDocument={llmManager && rawPackets.length ? () => {
+            const answer = removeThinkingTokens(getTextContent(rawPackets));
+            if (typeof answer === "string" && answer.trim()) setDocumentBody(draftFromResponse(answer, mergedCitations, mergedDocs, documentT("sources")));
+          } : undefined}
         />
       )}
+      {documentBody !== null && <DocumentModal initialBody={documentBody} onClose={() => setDocumentBody(null)} />}
     </div>
   );
 }, arePropsEqual);

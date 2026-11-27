@@ -228,6 +228,7 @@ class DocumentQuery:
             document_id=document_id,
             attached_document_ids=index_filters.attached_document_ids,
             hierarchy_node_ids=index_filters.hierarchy_node_ids,
+            forced_document_sets=index_filters.forced_document_set,
         )
         final_get_ids_query: dict[str, Any] = {
             "query": {"bool": {"filter": filter_clauses}},
@@ -1136,7 +1137,8 @@ class DocumentQuery:
                 applied for this. Defaults to None.
                 NOTE: See DocumentChunk.max_chunk_size.
             document_id: The document ID to retrieve. If None, no filter will be
-                applied for this. Defaults to None.
+                applied for this. An exact ID must still satisfy any knowledge
+                scope and access filters.
             attached_document_ids: Document IDs explicitly attached to the
                 assistant. If provided along with hierarchy_node_ids, documents
                 matching EITHER criteria will be retrieved (OR logic).
@@ -1145,10 +1147,6 @@ class DocumentQuery:
                 contains any of these values.
 
         Raises:
-            ValueError: document_id and attached_document_ids were supplied
-                together. This is not allowed because they operate on the same
-                schema field, and it does not semantically make sense to use
-                them together.
             ValueError: Too many of one of the collection arguments was
                 supplied.
 
@@ -1572,11 +1570,6 @@ class DocumentQuery:
             # sets of terms are not expected to perform any differently than
             # individual term clauses.
             return {"terms": {ANCESTOR_HIERARCHY_NODE_IDS_FIELD_NAME: list(node_ids)}}
-
-        if document_id is not None and attached_document_ids is not None:
-            raise ValueError(
-                "document_id and attached_document_ids cannot be used together."
-            )
 
         filter_clauses: list[dict[str, Any]] = []
 

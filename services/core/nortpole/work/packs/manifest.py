@@ -84,6 +84,7 @@ class AgentSpec(_Strict):
     guides: list[str] = Field(default_factory=list, max_length=GUIDES_PER_TEMPLATE_MAX)
     tools: list[str] = Field(min_length=1, max_length=len(WORKFLOW_TOOLS))
     max_searches: int = Field(default=3, ge=1, le=MAX_SEARCHES_LIMIT)
+    chat_pilot: Literal["research", "reporting"] | None = None
 
     @field_validator("id")
     @classmethod

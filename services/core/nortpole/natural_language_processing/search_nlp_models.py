@@ -66,7 +66,10 @@ from nortpole.natural_language_processing.exceptions import (
     EmbeddingRequestRejectedError,
     ModelServerRateLimitError,
 )
-from nortpole.natural_language_processing.utils import get_tokenizer, tokenizer_trim_content
+from nortpole.natural_language_processing.utils import (
+    get_tokenizer,
+    tokenizer_trim_content,
+)
 from nortpole.server.metrics.embedding import (
     observe_embedding_client,
     track_embedding_in_progress,
@@ -1011,6 +1014,10 @@ class CloudEmbedding:
             if e.response.status_code == 401:
                 raise AuthenticationError(provider=str(self.provider))
 
+            if text_type == EmbedTextType.QUERY:
+                logger.warning("Query embedding request failed (%s)", type(e).__name__)
+                raise RuntimeError("Query embedding request failed") from None
+
             error_string = format_embedding_error(
                 e,
                 str(self.provider),
@@ -1031,6 +1038,10 @@ class CloudEmbedding:
         except Exception as e:
             if is_authentication_error(e):
                 raise AuthenticationError(provider=str(self.provider))
+
+            if text_type == EmbedTextType.QUERY:
+                logger.warning("Query embedding request failed (%s)", type(e).__name__)
+                raise RuntimeError("Query embedding request failed") from None
 
             error_string = format_embedding_error(
                 e,

@@ -141,7 +141,8 @@ def _scheduled(db: Session, since: datetime.datetime) -> dict:
     runs = db.execute(select(NortPoleWorkflowRun.outcome, NortPoleWorkflowRun.input_tokens, NortPoleWorkflowRun.output_tokens,
                              NortPoleTask.state)
                       .outerjoin(NortPoleTask, NortPoleTask.id == NortPoleWorkflowRun.task_id)
-                      .where(NortPoleWorkflowRun.fired_at >= since)).all()
+                      .where(NortPoleWorkflowRun.fired_at >= since,
+                             NortPoleWorkflowRun.outcome.not_in(("queued", "running")))).all()
     plans = [r for r in runs if r.outcome == "plan_ready"]
     accepted = sum(1 for r in plans if r.state in ACCEPTED)
     paused = db.scalar(select(func.count()).select_from(NortPoleWorkflowSchedule)
@@ -149,7 +150,7 @@ def _scheduled(db: Session, since: datetime.datetime) -> dict:
                               NortPoleWorkflowSchedule.pause_reason.in_(("unaccepted", "skipped")))) or 0
     return {
         "runs": len(runs), "plans": len(plans), "accepted": accepted, "accepted_rate": _rate(accepted, len(plans)),
-        "failed_or_skipped": sum(1 for r in runs if r.outcome in ("plan_failed", "skipped")),
+        "failed_or_skipped": sum(1 for r in runs if r.outcome in ("plan_failed", "skipped", "failed", "interrupted")),
         "auto_paused_schedules": paused,
         "input_tokens": sum(r.input_tokens for r in runs), "output_tokens": sum(r.output_tokens for r in runs),
         "active_schedules": db.scalar(select(func.count()).select_from(NortPoleWorkflowSchedule)

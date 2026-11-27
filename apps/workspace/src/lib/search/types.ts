@@ -62,6 +62,7 @@ export interface MinimalNortPoleDocument {
 }
 
 export interface NortPoleDocument extends MinimalNortPoleDocument {
+  selected_evidence?: boolean;
   link: string;
   source_type: ValidSources;
   source_types?: ValidSources[] | null;

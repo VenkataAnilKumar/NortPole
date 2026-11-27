@@ -1,6 +1,6 @@
 # NortPole — document list
 
-Updated: 2026-11-17 · Status: working product definition
+Updated: 2026-11-26 · Status: pilot product documentation
 
 The document names and numbered areas follow the convention used by the Qvora document set. Every listed file now exists. **Draft** means the content is written for review; it does not mean the product decision or implementation is complete.
 
@@ -11,10 +11,12 @@ The document names and numbered areas follow the convention used by the Qvora do
 | 02 Product | [NortPole_Product-Definition.md](02-product/NortPole_Product-Definition.md) | Draft | Working customer, use case, offer, and product scope. |
 | 03 Market | [NortPole_Market-Assessment.md](03-market/NortPole_Market-Assessment.md) | Draft | Target segment criteria, alternatives, buying process, and demand evidence plan. |
 | 03 Market | [NortPole_Competitive-Analysis.md](03-market/NortPole_Competitive-Analysis.md) | Draft | Initial landscape and pilot comparison rubric. |
+| 03 Market | [Enterprise agent platforms and NortPole Knowledge](03-market/NortPole_Enterprise-Agent-Platforms-Knowledge-Review.md) | Reference | Hebbia, Cohere North, Glean, and WRITER comparison, with recommendations for Knowledge and research. |
 | 04 Specs | [NortPole_First-Workflow-PRD.md](04-specs/NortPole_First-Workflow-PRD.md) | Draft | First workflow, requirements, acceptance criteria, and release gates. |
 | 04 Specs | [NortPole_User-Journey.md](04-specs/NortPole_User-Journey.md) | Draft | Candidate practitioner and administrator journeys. |
 | 04 Specs | [NortPole_User-Stories.md](04-specs/NortPole_User-Stories.md) | Draft | First-workflow stories and phased platform capability epics. |
 | 04 Specs | [NortPole_Feature-Spec.md](04-specs/NortPole_Feature-Spec.md) | Draft | Ten-layer platform feature catalog and detailed first-workflow behavior. |
+| 04 Specs | [Enterprise Search PRD](04-specs/NortPole_Enterprise-Search-PRD.md) | Proposed | Competitive research, Search page design, permissions, and release acceptance criteria. |
 | 04 Specs | [NortPole_North-Feature-Mapping.md](04-specs/NortPole_North-Feature-Mapping.md) | Draft | Cohere North capabilities mapped to the PF catalog, with gaps and suggested sequence; secondary sources only. |
 | 05 Design | [NortPole_UI-Spec.md](05-design/NortPole_UI-Spec.md) | Draft | Screens, states, interactions, and accessibility details. |
 | 05 Design | [NortPole_Design-System.md](05-design/NortPole_Design-System.md) | Draft | Interaction rules and visual token categories; final brand pending. |
@@ -37,6 +39,11 @@ The document names and numbered areas follow the convention used by the Qvora do
 | 07 Implementation | [NortPole_Source-Repository-Mapping.md](07-implementation/NortPole_Source-Repository-Mapping.md) | Draft | Local source evidence, reuse candidates, gaps and source identity correction. |
 | 07 Implementation | [NortPole_Open-Source-References.md](07-implementation/NortPole_Open-Source-References.md) | Draft | External project shortlist, eight-platform review, and due diligence; kept outside the product definition. |
 | 07 Implementation | [Commercial reference research](07-implementation/NortPole_Commercial_Reference_Research.md) | Reference | Commercial evidence, module mappings and license boundaries. |
+| 07 Implementation | [Enterprise Search implementation plan](07-implementation/NortPole_Enterprise-Search-Implementation-Plan.md) | Proposed | Ordered engineering work, pilot gates, and verification for Knowledge, Chats, Workflows, and cited Chat handoff. |
+| 07 Implementation | [Enterprise Workflows plan](07-implementation/NortPole_Enterprise-Workflows-Plan.md) | In progress | Platform research, workflow requirements, shared scheduling architecture, and verification. |
+| 07 Implementation | [Inbox and Projects plan](07-implementation/NortPole_Inbox-and-Projects-Plan.md) | In progress | Competitive research, requirements, move and decision behavior, and verification. |
+| 07 Implementation | [Horizontal Agents delivery plan](07-implementation/NortPole_Horizontal-Agents-Delivery-Plan.md) | In progress | Requirements, design, architecture, delivery increments, and review gates for Research and Document Analysis. |
+| 07 Implementation | [Agent Catalog](07-implementation/NortPole_Horizontal-Agent-Catalog.md) | Pilot | How to find, start, and test the reusable assistants in Agent Catalog. |
 | 07 Implementation | [NortPole_Pack-Signing-Runbook.md](07-implementation/NortPole_Pack-Signing-Runbook.md) | Current | Create, trust and rotate pack signing keys; what revoking does. |
 | 07 Implementation | [NortPole_A4-A7-A9-Pending-Work-Plan.md](07-implementation/NortPole_A4-A7-A9-Pending-Work-Plan.md) | Plan | Order, scope and exit evidence for the pending work in A4, A7 and A9. |
 | Decisions | [Decision records](decisions/) | Accepted | Numbered decisions: 0001 modular monorepo, 0002 hybrid routing and pilot scope, 0003 extension levels, 0004 adopt community source as the pilot core, 0005 unified direction, 0006 scalable repository structure, 0007 product name, 0008 integrations as signed data. |
@@ -47,7 +54,7 @@ The document names and numbered areas follow the convention used by the Qvora do
 
 The [document review](REVIEW.md) records consistency fixes, requirement traceability, and decisions still needed before implementation. The product definition owns scope; the PRD owns first-release acceptance; the feature, UI, API, and data documents elaborate those requirements. Reference research does not select a dependency or alter scope.
 
-The owner's earlier chats establish two related ideas: a horizontal super intelligent agent platform and a vertical super intelligent agent platform. These are planning inputs. This workspace has no application implementation or customer validation. External project research and chat provenance are kept in [NortPole_Open-Source-References.md](07-implementation/NortPole_Open-Source-References.md).
+The pilot workspace is implemented in `apps/workspace` and `services/core`. Start with the [product overview](02-product/NortPole_Product-Overview.md#the-enterprise-workspace) for the current member experience and the [UI specification](05-design/NortPole_UI-Spec.md#user-portal) for navigation and behavior. Market and launch hypotheses remain in the product and market documents. External project research is kept in [NortPole_Open-Source-References.md](07-implementation/NortPole_Open-Source-References.md).
 
 ## Working decisions
 

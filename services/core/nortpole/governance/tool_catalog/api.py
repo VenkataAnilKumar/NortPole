@@ -50,6 +50,12 @@ class ToolView(BaseModel):
     description: str = ""
     definition_preview: str = ""
 
+    @property
+    def workspace_request_key(self) -> str | None:
+        if self.personal or (self.allowed and self.core_enabled):
+            return None
+        return str(self.id)
+
 
 class CatalogView(BaseModel):
     version: int
@@ -230,6 +236,7 @@ class MemberToolView(BaseModel):
     kind_label: str
     allowed: bool
     mine: bool  # a personal tool this person added
+    workspace_request_key: str | None = None
 
 
 class MemberCatalogView(BaseModel):
@@ -242,8 +249,7 @@ def get_member_catalog(
     user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
     db_session: Session = Depends(get_session),
 ) -> MemberCatalogView:
-    """What chat assistants may use, for anyone signed in: names, kinds and whether each is allowed. No hosts,
-    definitions or agent names, and only this person's own personal tools."""
+    """Tool availability and workspace request keys. Personal tools are visible only to their owners."""
     view = build(db_session)
     rows = {t.id: t for t in db_session.scalars(select(Tool))}
     tools = []
@@ -251,5 +257,11 @@ def get_member_catalog(
         owner = rows[t.id].user_id if t.id in rows else None
         if owner is not None and owner != user.id:
             continue
-        tools.append(MemberToolView(name=t.name, kind_label=catalog.LABEL[t.kind], allowed=t.allowed and t.core_enabled, mine=owner is not None))
+        tools.append(MemberToolView(
+            name=t.name,
+            kind_label=catalog.LABEL[t.kind],
+            allowed=t.allowed and t.core_enabled,
+            mine=owner is not None,
+            workspace_request_key=t.workspace_request_key,
+        ))
     return MemberCatalogView(kinds=view.kinds, tools=tools)

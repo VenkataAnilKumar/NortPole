@@ -26,12 +26,28 @@ from nortpole.auth.users import (
     current_limited_user,
     scope_exempt,
 )
+from nortpole.chat.agent_preview import create_preview_chat
+from nortpole.chat.agent_pilots import AgentPilotInput, describe_pilot
+from nortpole.chat.agent_releases import (
+    AgentPublishRequest,
+    AgentReleaseDetails,
+    AgentReleaseState,
+    AgentRollbackRequest,
+    AgentVerificationRequest,
+    get_agent_release_state,
+    publish_agent_release,
+    rollback_agent_release,
+    save_agent_release_draft,
+    set_agent_verification,
+)
 from nortpole.configs.app_configs import DISABLE_VECTOR_DB
 from nortpole.configs.constants import PUBLIC_API_TAGS, FileOrigin, MilestoneRecordType
+from nortpole.db.agent_preview import AgentPreviewDraft
+from nortpole.db.agent_releases import active_agent_release, lock_agent_release_state
 from nortpole.db.engine.sql_engine import get_session
 from nortpole.db.enums import Permission, PermissionAuthority, PersonaSharePermission
 from nortpole.db.file_record import get_filerecord_by_file_id_optional
-from nortpole.db.models import User
+from nortpole.db.models import Persona, Tool, User
 from nortpole.db.persona import (
     can_delete_persona,
     can_edit_persona,
@@ -56,6 +72,7 @@ from nortpole.db.persona import (
     update_persona_shared,
     update_persona_visibility,
     update_personas_display_priority,
+    user_can_access_persona,
 )
 from nortpole.db.persona_sharing import (
     get_persona_access_level,
@@ -88,6 +105,7 @@ from nortpole.server.manage.llm.api import get_valid_model_configuration_ids_for
 from nortpole.server.manage.llm.provider_cache import invalidate_provider_listing_cache
 from nortpole.server.models import DisplayPriorityRequest
 from nortpole.server.settings.store import load_settings
+from nortpole.tools.constants import SEARCH_TOOL_ID
 from nortpole.utils.logger import setup_logger
 from nortpole.utils.telemetry import mt_cloud_telemetry
 from nortpole.utils.variable_functionality import fetch_versioned_implementation
@@ -371,6 +389,76 @@ def _sniff_avatar_mime_type(header: bytes) -> str | None:
 """Endpoints for all"""
 
 
+@basic_router.post("/preview")
+def preview_new_agent(
+    draft: AgentPreviewDraft,
+    user: User = Depends(require_permission(Permission.ADD_AGENTS, allow_scope=True)),
+    db_session: Session = Depends(get_session),
+) -> dict[str, UUID]:
+    return {"chat_session_id": create_preview_chat(draft, None, user, db_session).id}
+
+
+@basic_router.post("/{persona_id}/preview")
+def preview_existing_agent(
+    persona_id: int,
+    draft: AgentPreviewDraft,
+    user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
+    db_session: Session = Depends(get_session),
+) -> dict[str, UUID]:
+    return {"chat_session_id": create_preview_chat(draft, persona_id, user, db_session).id}
+
+
+@basic_router.get("/{persona_id}/versions")
+def get_agent_versions(
+    persona_id: int,
+    user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
+    db_session: Session = Depends(get_session),
+) -> AgentReleaseState:
+    return get_agent_release_state(persona_id, user, db_session)
+
+
+@basic_router.get("/{persona_id}/pilot-input")
+def get_published_pilot_input(
+    persona_id: int,
+    user: User = Depends(require_permission(Permission.READ_CHAT)),
+    db_session: Session = Depends(get_session),
+) -> AgentPilotInput | None:
+    if not user_can_access_persona(db_session, persona_id, user):
+        raise NortPoleError(NortPoleErrorCode.NOT_FOUND, "Agent unavailable.")
+    release = active_agent_release(db_session, persona_id)
+    return describe_pilot(release.configuration, user, db_session) if release else None
+
+
+@basic_router.post("/{persona_id}/versions/publish")
+def publish_agent_version(
+    persona_id: int,
+    body: AgentPublishRequest,
+    user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
+    db_session: Session = Depends(get_session),
+) -> AgentReleaseDetails:
+    return publish_agent_release(persona_id, body, user, db_session)
+
+
+@basic_router.post("/{persona_id}/versions/rollback")
+def rollback_agent_version(
+    persona_id: int,
+    body: AgentRollbackRequest,
+    user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
+    db_session: Session = Depends(get_session),
+) -> AgentReleaseDetails:
+    return rollback_agent_release(persona_id, body, user, db_session)
+
+
+@admin_router.put("/{persona_id}/versions/verification")
+def update_agent_version_verification(
+    persona_id: int,
+    body: AgentVerificationRequest,
+    user: User = Depends(require_permission(Permission.MANAGE_AGENTS)),
+    db_session: Session = Depends(get_session),
+) -> AgentReleaseDetails:
+    return set_agent_verification(persona_id, body, user, db_session)
+
+
 @basic_router.post("", tags=PUBLIC_API_TAGS)
 def create_persona(
     persona_upsert_request: PersonaUpsertRequest,
@@ -411,6 +499,28 @@ def update_persona(
 ) -> PersonaSnapshot:
     _validate_user_knowledge_enabled(persona_upsert_request, "update")
     _validate_vector_db_knowledge(persona_upsert_request)
+
+    lock_agent_release_state(db_session, persona_id)
+    active = active_agent_release(db_session, persona_id)
+    persona = db_session.get(Persona, persona_id)
+    pending = persona.agent_release_draft if persona is not None else None
+    if active is not None or (pending is not None and pending.pilot is not None):
+        if persona is None or persona.deleted:
+            raise NortPoleError(NortPoleErrorCode.NOT_FOUND, "Agent unavailable.")
+        draft = persona_upsert_request
+        if draft.is_public is not None or draft.users is not None or draft.groups is not None:
+            raise NortPoleError(NortPoleErrorCode.INVALID_INPUT, "Manage this agent's audience from Share.")
+        if draft.user_file_ids or draft.document_ids or draft.hierarchy_node_ids or any(
+            (tool := db_session.get(Tool, tool_id)) is None or tool.in_code_tool_id != SEARCH_TOOL_ID
+            for tool_id in set(draft.tool_ids)
+        ):
+            raise NortPoleError(NortPoleErrorCode.INVALID_INPUT, "Versioned drafts support instructions, a model, and Knowledge libraries.")
+        current = pending or (active.configuration if active is not None else None)
+        snapshot = draft.to_release_draft()
+        if current is not None:
+            snapshot = snapshot.model_copy(update={"pilot": current.pilot, "pack_source": current.pack_source})
+        save_agent_release_draft(persona, snapshot, user, db_session)
+        return FullPersonaSnapshot.from_model(persona)
 
     persona_snapshot = create_update_persona(
         persona_id=persona_id,
@@ -769,6 +879,9 @@ def get_persona(
             persona, user, user_group_ids
         )
         is_editable = is_persona_editable_by_user(db_session, persona.id, user)
+        is_owner_or_admin = can_delete_persona(
+            user, persona, db_session, user_group_ids=user_group_ids
+        )
         snapshot.permissions = persona_permissions(
             can_edit=can_edit_persona(
                 user,
@@ -777,14 +890,11 @@ def get_persona(
                 is_editable=is_editable,
                 user_group_ids=user_group_ids,
             ),
-            # share tracks the share guard (get_editable), broader than edit's scope gate
-            can_share=is_editable,
+            can_share=is_editable and (persona.active_release_version is None or is_owner_or_admin),
             can_view_stats=can_view_persona_stats(
                 user, persona, db_session, user_group_ids=user_group_ids
             ),
-            can_delete=can_delete_persona(
-                user, persona, db_session, user_group_ids=user_group_ids
-            ),
+            can_delete=is_owner_or_admin,
             # delete/publish also gate on ADD_AGENTS (GATE 1); edit/share don't
             holds_add_agents=has_permission(user, Permission.ADD_AGENTS)
             is not PermissionAuthority.NONE,

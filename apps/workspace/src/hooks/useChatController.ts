@@ -88,10 +88,13 @@ import { SelectedModel } from "@/sections/model-selector/MultiModelSelector";
 import type { ToolConfigurationHandle } from "@/lib/tools/hooks";
 import {
   effectiveChatPreferredToolId,
+  chatPluginsForAgent,
   enabledChatToolIds,
 } from "@/lib/plugins/chat";
 import type { MemberPlugin } from "@/lib/plugins/member";
 import { ProjectFile, useProjectsContext } from "@/lib/projects/providers";
+import type { ComposerSelection } from "@/app/app/types";
+import { memberPluginReference } from "@/lib/plugins/member";
 import { useIncognito } from "@/providers/IncognitoProvider";
 import { projectFilesToFileDescriptors } from "@/lib/projects/utils";
 import { useAvailableSources } from "@/lib/connectors/hooks";
@@ -105,6 +108,7 @@ const SYSTEM_MESSAGE_ID = -3;
 
 export interface OnSubmitProps {
   message: string;
+  composerSelections?: ComposerSelection[];
   //from chat input bar
   currentMessageFiles: ProjectFile[];
   // from the chat bar???
@@ -142,7 +146,7 @@ interface UseChatControllerProps {
   searchParams: URLSearchParams;
   resetInputBar: () => void;
   /** Puts a message and its files back after a send fails before it starts. */
-  restoreInputBar: (message: string, files: ProjectFile[]) => void;
+  restoreInputBar: (message: string, files: ProjectFile[], selections?: ComposerSelection[]) => void;
 }
 
 export default function useChatController({
@@ -270,14 +274,17 @@ export default function useChatController({
 
   const updateStatesWithNewSessionId = (
     newSessionId: string,
-    incognito = false
+    incognito: boolean,
+    agentReleaseVersion?: number | null,
   ) => {
     // Create new session in store if it doesn't exist
     const existingSession = sessions.get(newSessionId);
     if (!existingSession) {
       // Pinned here so vote suppression holds even before any backend
       // session fetch stores the flag.
-      createSession(newSessionId, { incognito });
+      createSession(newSessionId, { incognito, agentReleaseVersion });
+    } else if (agentReleaseVersion !== undefined) {
+      useChatSessionStore.getState().updateSessionData(newSessionId, { agentReleaseVersion });
     }
 
     // Set as current session
@@ -391,6 +398,7 @@ export default function useChatController({
       modelOverride,
       regenerationRequest,
       additionalContext,
+      composerSelections,
       selectedModels,
     }: OnSubmitProps) => {
       const submissionStore = useChatSessionStore.getState();
@@ -409,8 +417,9 @@ export default function useChatController({
       }
       // Read at submit time so no caller can capture a stale value.
       const incognito = incognitoEnabledRef.current ?? false;
+      const documentReview = composerSelections?.find((item) => item.kind === "document-review");
       const isMultiModel =
-        !regenerationRequest && (selectedModels?.length ?? 0) >= 2;
+        !documentReview && !regenerationRequest && (selectedModels?.length ?? 0) >= 2;
       const projectId = searchParams.get(SEARCH_PARAM_NAMES.PROJECT_ID);
       const paramsWithoutProject = new URLSearchParams(searchParams.toString());
       paramsWithoutProject.delete(SEARCH_PARAM_NAMES.PROJECT_ID);
@@ -520,6 +529,7 @@ export default function useChatController({
       }
 
       let currChatSessionId: string;
+      let agentReleaseVersion: number | null | undefined;
       // Check both the prop and the store's currentSessionId to determine if this is a new session
       // For pages like NRF where existingChatSessionId is always null, we need to check if
       // we already have a session from a previous message
@@ -538,13 +548,15 @@ export default function useChatController({
         // The caller already cleared the input bar, so a failure here must
         // give the message back instead of dropping it.
         try {
-          currChatSessionId = await createChatSession(
+          const createdSession = await createChatSession(
             incognito ? 0 : activeAgent?.id || 0,
             searchParamBasedChatSessionName,
             projectId ? parseInt(projectId) : null,
             incognito,
             incognito ? incognitoSessionId : null
           );
+          currChatSessionId = createdSession.chat_session_id;
+          agentReleaseVersion = createdSession.agent_release_version;
         } catch (error) {
           console.error("Failed to create chat session:", error);
           toast.error(t("createSessionFailed.toast"));
@@ -563,7 +575,7 @@ export default function useChatController({
               scroll: false,
             });
           }
-          restoreInputBar(message, currentMessageFiles);
+          restoreInputBar(message, currentMessageFiles, composerSelections);
           return;
         }
 
@@ -600,23 +612,23 @@ export default function useChatController({
       // update the selected model for the chat session if one is specified so that
       // it persists across page reloads. Do not `await` here so that the message
       // request can continue and this will just happen in the background.
-      // NOTE: only set the model override for the chat session once we send a
-      // message with it. If the user switches models and then starts a new
-      // chat session, it is unexpected for that model to be used when they
-      // return to this session the next day.
-      let finalLLM = modelOverride || llmManager.currentLlm;
-      updateLlmOverrideForChatSession(
-        currChatSessionId,
-        structureValue(
-          finalLLM.name || "",
-          finalLLM.provider || "",
-          finalLLM.modelName || "",
-          finalLLM.modelConfigurationId
-        )
-      );
+      // The New / Chat request writes its selection with the accepted turn.
+      // Legacy callers still use the session model endpoint.
+      if (llmManager.chatModelMode === undefined) {
+        const finalLLM = modelOverride ?? llmManager.currentLlm;
+        void updateLlmOverrideForChatSession(
+          currChatSessionId,
+          structureValue(
+            finalLLM.name || "",
+            finalLLM.provider || "",
+            finalLLM.modelName || "",
+            finalLLM.modelConfigurationId
+          )
+        );
+      }
 
       // mark the session as the current session
-      updateStatesWithNewSessionId(currChatSessionId, incognito);
+      updateStatesWithNewSessionId(currChatSessionId, incognito, agentReleaseVersion);
 
       // Navigate immediately for new sessions (before streaming starts)
       if (isNewSession) {
@@ -840,7 +852,7 @@ export default function useChatController({
           store.currentSessionId === frozenSessionId &&
           !regenerationRequest
         ) {
-          restoreInputBar(message, currentMessageFiles);
+          restoreInputBar(message, currentMessageFiles, composerSelections);
         }
       };
       controller.signal.addEventListener("abort", discardUnsentTurn, {
@@ -872,6 +884,7 @@ export default function useChatController({
 
       let newUserMessageId: number | null = null;
       let newAgentMessageId: number | null = null;
+      let singleModelDisplayName: string | null = null;
 
       // Multi-model per-model state (indexed by model_index from backend)
       const numModels = selectedModels?.length ?? 0;
@@ -1017,6 +1030,8 @@ export default function useChatController({
               toolCall: finalMessage?.tool_call || toolCall,
               stackTrace: stackTrace,
               overridden_model: finalMessage?.overridden_model,
+              modelDisplayName:
+                finalMessage?.model_display_name ?? singleModelDisplayName,
               stopReason: stopReason,
               packets: packets,
               packetCount: packets.length,
@@ -1122,6 +1137,49 @@ export default function useChatController({
           sendAcknowledged: stack.acknowledged,
           readerFinished,
         });
+        const chatModelMode =
+          isMultiModel || modelOverride ? undefined : llmManager.chatModelMode;
+        const requestModel =
+          isMultiModel || chatModelMode === "auto"
+            ? undefined
+            : (modelOverride ?? llmManager.currentLlm);
+        const selections = composerSelections ?? [];
+        const knowledge = selections
+          .filter((item) => item.kind === "knowledge")
+          .map((item) => item.id);
+        const evidenceDocuments = selections.flatMap((item) =>
+          item.kind === "search-result" && item.chunkId !== undefined
+            ? [{ document_id: item.id, chunk_id: item.chunkId }]
+            : []
+        );
+        const evidenceLibrary = selections.find((item) => item.kind === "search-library");
+        const searchEvidence = evidenceDocuments.length
+          ? { documents: evidenceDocuments }
+          : evidenceLibrary
+            ? { library_id: Number(evidenceLibrary.id) }
+            : undefined;
+        const integrations = new Set(
+          selections.filter((item) => item.kind === "integration").map((item) => item.id)
+        );
+        const disabledToolIds = new Set(toolConfiguration.disabledToolIds);
+        if (knowledge.length && activeAgent) {
+          const searchTool = activeAgent.tools.find(
+            (tool) => tool.enabled && tool.in_code_tool_id === SEARCH_TOOL_ID
+          );
+          if (searchTool) disabledToolIds.delete(searchTool.id);
+        }
+        if (activeAgent && integrations.size) {
+          for (const { plugin, toolIds } of chatPluginsForAgent(memberPlugins ?? [], activeAgent)) {
+            const reference = memberPluginReference(plugin);
+            const selected =
+              integrations.has(`${reference.kind}:${reference.id}`) &&
+              plugin.connection.kind === "connected";
+            for (const id of toolIds) {
+              if (selected) disabledToolIds.delete(id);
+              else disabledToolIds.add(id);
+            }
+          }
+        }
         updateCurrentMessageFIFO(stack, {
           signal: controller.signal,
           message: currMessage,
@@ -1136,45 +1194,47 @@ export default function useChatController({
             return parentId === SYSTEM_MESSAGE_ID ? null : parentId;
           })(),
           chatSessionId: currChatSessionId,
-          filters: buildFilters(
+          filters: searchEvidence ? null : buildFilters(
             selectedSearchSources,
-            toolConfiguration.filters.documentSets,
+            knowledge.length ? knowledge : toolConfiguration.filters.documentSets,
             toolConfiguration.filters.timeRange
               ? { from: toolConfiguration.filters.timeRange.from }
               : null,
             toolConfiguration.filters.tags
           ),
-          modelProvider: isMultiModel
-            ? undefined
-            : modelOverride?.name || llmManager.currentLlm.name || undefined,
-          modelVersion: isMultiModel
-            ? undefined
-            : modelOverride?.modelName ||
-              llmManager.currentLlm.modelName ||
+          groundSelectedKnowledge: !searchEvidence && knowledge.length > 0,
+          searchEvidence,
+          receiptReviewPolicyTitle: selections.find((item) => item.kind === "expense-review")?.id,
+          documentReview: documentReview ? true : undefined,
+          documentReviewPack: documentReview?.id || undefined,
+          chatModelMode,
+          modelProvider: requestModel?.name || undefined,
+          modelVersion: requestModel
+            ? requestModel.modelName ||
               searchParams?.get(SEARCH_PARAM_NAMES.MODEL_VERSION) ||
-              undefined,
-          modelConfigurationId: isMultiModel
-            ? undefined
-            : modelOverride
-              ? (modelOverride.modelConfigurationId ?? undefined)
-              : (llmManager.currentLlm.modelConfigurationId ?? undefined),
+              undefined
+            : undefined,
+          modelConfigurationId: requestModel?.modelConfigurationId ?? undefined,
           // Only a chosen temperature is sent, zero included. Without one the
           // backend resolves the admin default, then GEN_AI_TEMPERATURE.
           temperature: llmManager.hasTemperatureOverride
             ? llmManager.temperature
             : undefined,
-          deepResearch,
+          deepResearch: documentReview ? false : deepResearch,
           // Only sent when something is actually disabled. To the backend an
           // explicit list is a whitelist, and this one is built from the tools
           // the frontend can see — which excludes those marked
           // `expose_to_frontend=False`. Sending it always would quietly
           // withhold tools nobody chose to disable.
           enabledToolIds: activeAgent
-            ? enabledChatToolIds(activeAgent.tools, toolConfiguration)
+            ? enabledChatToolIds(activeAgent.tools, {
+                disabledToolIds: [...disabledToolIds],
+              })
             : undefined,
-          preferredToolId: effectivePreferredToolId,
+          preferredToolId: documentReview ? undefined : effectivePreferredToolId,
           origin: messageOrigin,
           additionalContext,
+          skillIds: selections.filter((item) => item.kind === "skill").map((item) => item.id),
           llmOverrides: isMultiModel
             ? selectedModels!.map((m) => ({
                 model_provider: m.name,
@@ -1246,8 +1306,12 @@ export default function useChatController({
             if (
               (packet as MessageResponseIDInfo).reserved_assistant_message_id
             ) {
-              newAgentMessageId = (packet as MessageResponseIDInfo)
-                .reserved_assistant_message_id;
+              const reservation = packet as MessageResponseIDInfo;
+              newAgentMessageId = reservation.reserved_assistant_message_id;
+              singleModelDisplayName = reservation.model_display_name ?? null;
+              singleModelDirty = true;
+              pendingFlush = true;
+              continue;
             }
 
             // Multi-model: handle reserved IDs for N parallel model responses.
@@ -1270,6 +1334,19 @@ export default function useChatController({
                 }
               }
               userNodeDirty = true;
+              pendingFlush = true;
+              continue;
+            }
+
+            if ("response_model_name" in packet) {
+              if (isMultiModel) {
+                modelDisplayNames[packet.response_model_index] =
+                  packet.response_model_name;
+                dirtyModelIndices.add(packet.response_model_index);
+              } else {
+                singleModelDisplayName = packet.response_model_name;
+                singleModelDirty = true;
+              }
               pendingFlush = true;
               continue;
             }
@@ -1593,6 +1670,7 @@ export default function useChatController({
     [
       // Narrow to stable fields from managers to avoid re-creation
       selectedSearchSources,
+      llmManager.chatModelMode,
       llmManager.currentLlm,
       llmManager.temperature,
       llmManager.hasTemperatureOverride,

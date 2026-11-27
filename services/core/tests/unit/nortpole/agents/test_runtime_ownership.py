@@ -699,3 +699,20 @@ def test_first_cancellation_reason_survives_an_expired_run_deadline(
     else:
         assert state.failure is None
     assert run.wait_for_idle(5)
+
+
+def test_prepared_answer_is_recorded_without_calling_the_model() -> None:
+    def unexpected_model_call(*_: object) -> AssistantMessage:
+        pytest.fail("Prepared answers must not send content to the model")
+
+    agent = Agent(
+        FakeModelClient(unexpected_model_call),
+        generation_context=GenerationContext(flow=LLMFlow.CHAT_RESPONSE),
+        prepare_step=lambda _: PreparedStep(
+            prepared_answer="Verified amount and policy [[2]].",
+            allowed_tool_names=frozenset(),
+        ),
+    )
+    result = agent.start(background=False, max_steps=1).result()
+    assert result.output.text == "Verified amount and policy [[2]]."
+    assert result.stop_reason == RunStatus.COMPLETE

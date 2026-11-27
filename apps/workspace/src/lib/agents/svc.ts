@@ -13,6 +13,7 @@ function buildAgentUpsertRequest(
   params: AgentUpsertParameters
 ): AgentUpsertRequest {
   return {
+    pilot: params.pilot,
     name: params.name,
     description: params.description,
     system_prompt: params.system_prompt,

@@ -25,7 +25,8 @@ from nortpole.chat.models import (
     ToolRecordReference,
     ToolReplayData,
 )
-from nortpole.configs.constants import DocumentSource, MessageType
+from nortpole.configs.constants import DocumentSource, MessageType, NotificationType
+from nortpole.db.notification import create_notification
 from nortpole.context.search.models import SearchDoc
 from nortpole.db.chat import (
     MAX_AGENT_DEPTH,
@@ -294,6 +295,27 @@ def save_chat_turn(
             existing_files = assistant_message.files or []
             assistant_message.files = existing_files + referenced
 
+    if persist_content and assistant_message.document_review_needs_review and assistant_message.response_status == RunStatus.COMPLETE:
+        session = assistant_message.chat_session
+        if session.user_id is not None:
+            try:
+                with db_session.begin_nested():
+                    create_notification(
+                        user_id=session.user_id,
+                        notif_type=NotificationType.DOCUMENT_REVIEW_NEEDS_REVIEW,
+                        db_session=db_session,
+                        title="A document review needs your attention",
+                        description="Open the cited report to review the findings.",
+                        additional_data={
+                            "chat_session_id": str(session.id),
+                            "message_id": assistant_message.id,
+                            "link": f"/app/workflows/runs?review={assistant_message.id}",
+                        },
+                        autocommit=False,
+                        refresh_existing=False,
+                    )
+            except Exception:
+                logger.exception("Could not notify the owner of document review %s", assistant_message.id)
     db_session.commit()
 
 
@@ -359,6 +381,8 @@ def save_chat_response_to_db(
             raise ValueError(
                 "Chat history store does not match the session recording mode"
             )
+        if response.request_params and response.request_params.served_model:
+            message.model_display_name = sanitize_string(response.request_params.served_model)
         message.error = (
             (
                 sanitize_string(response.error)

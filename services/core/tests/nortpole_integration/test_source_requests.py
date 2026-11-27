@@ -2,12 +2,14 @@
 administrator's decision, and what the audit records."""
 
 import uuid
+from datetime import datetime, timedelta, timezone
 
 import pytest
 from sqlalchemy import text
 
 from nortpole.db.engine.sql_engine import get_session_with_current_tenant
-from nortpole.db.models import MCPServer, Notification, Tool, User
+from nortpole.configs.constants import DocumentSource
+from nortpole.db.models import Connector, MCPServer, Notification, Tool, User
 from nortpole.error_handling.exceptions import NortPoleError
 from nortpole.work.packs.models import NortPolePackVersion
 from nortpole.knowledge.source_requests import api
@@ -100,3 +102,46 @@ def test_one_waiting_request_per_item_then_withdraw_and_decide(world) -> None:  
         actions = [a for a, _ in rows]
         assert actions.count("source.request") == 3 and actions.count("source.request_decide") == 1
         assert all(REASON not in (d or "") for _, d in rows), "the person's reason is not copied into the audit log"
+
+
+def test_connector_card_retains_the_latest_decision_beyond_recent_activity(world) -> None:  # type: ignore[no-untyped-def]
+    with get_session_with_current_tenant() as s:
+        ann = s.get(User, world["ann"])
+        bob = s.get(User, world["bob"])
+        now = datetime.now(timezone.utc)
+        older = NortPoleSourceRequest(
+            kind="connector", item_key="box", item_name="Box", state="declined",
+            requested_by_id=ann.id, requested_by_email=ann.email,
+            created_at=now - timedelta(days=2),
+        )
+        latest = NortPoleSourceRequest(
+            kind="connector", item_key="box", item_name="Box", state="approved",
+            requested_by_id=ann.id, requested_by_email=ann.email,
+            decision_note="Set it up during the pilot.", created_at=now - timedelta(days=1),
+        )
+        s.add_all([
+            older,
+            latest,
+            Connector(name=f"test-box-{TAG}", source=DocumentSource.BOX, connector_specific_config={}),
+        ])
+        s.add_all([
+            NortPoleSourceRequest(
+                kind="skill", item_key=f"unrelated-{index}", item_name="Unrelated",
+                state="declined", requested_by_id=ann.id, requested_by_email=ann.email,
+                created_at=now,
+            )
+            for index in range(21)
+        ])
+        s.flush()
+
+        view = api.get_discover(user=ann, db_session=s)
+        box = next(source for source in view.workspace_sources if source.key == "box")
+        assert all(entry.id != latest.id for entry in view.my_requests)
+        assert not box.requestable
+        assert box.my_request is not None and box.my_request.id == latest.id
+        assert box.my_request.decision_note == "Set it up during the pilot."
+        assert box.my_request.manage_at == "/admin/connectors/box"
+
+        other = api.get_discover(user=bob, db_session=s)
+        assert next(source for source in other.workspace_sources if source.key == "box").my_request is None
+        s.rollback()

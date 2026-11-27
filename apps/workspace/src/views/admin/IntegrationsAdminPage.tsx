@@ -1,5 +1,8 @@
 "use client";
 
+import { ResponsiveLayout } from "@opal/layouts";
+import { ActionButton, NativeSelect } from "@opal/components";
+import { useTranslations as useWorkspaceTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { errorHandlingFetcher } from "@/lib/fetcher";
@@ -25,6 +28,7 @@ const ANSWER: Record<Answer, string> = { allowed: "Allowed", needs_approval: "Ne
  * integration's own default, and blocked anywhere wins. Letting everyone use a write action needs a confirmation.
  */
 export default function IntegrationsAdminPage() {
+  const workspaceText = useWorkspaceTranslations("workspaceUi");
   const { data, error, isLoading, mutate } = useSWR<Policy>(URL, errorHandlingFetcher);
   const [items, setItems] = useState<Record<string, Answer>>({});
   const [cats, setCats] = useState<Record<string, Answer>>({});
@@ -66,19 +70,19 @@ export default function IntegrationsAdminPage() {
   const rows = data?.items ?? [];
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 p-4 sm:p-8" data-testid="integrations-admin-page">
+    <ResponsiveLayout display="flex" className="mx-auto w-full max-w-5xl flex-col gap-6 p-4 sm:p-8" data-testid="integrations-admin-page">
       <header className="flex flex-col gap-1">
-        <h1 className="font-[family-name:var(--font-serif)] text-3xl font-medium text-text-05">Integrations</h1>
-        <p className="text-sm text-text-03">Who may use each connector and plugin. Changes are recorded in the audit log.</p>
+        <h1 className="font-[family-name:var(--font-serif)] text-3xl font-medium text-text-05">{workspaceText("integrations")}</h1>
+        <p className="text-sm text-text-03">{workspaceText("whoMayUseEachConnectorAndPluginChangesAre")}</p>
       </header>
-      {isLoading && <p className="text-sm text-text-03">Loading…</p>}
-      {error && <p role="alert" className="text-sm text-status-text-error-05">The policy could not be loaded. Try again in a moment.</p>}
+      {isLoading && <p className="text-sm text-text-03">{workspaceText("loading")}</p>}
+      {error && <p role="alert" className="text-sm text-status-text-error-05">{workspaceText("thePolicyCouldNotBeLoadedTryAgainIn")}</p>}
       <p role={msg?.ok === false ? "alert" : "status"} className={`min-h-5 text-sm ${msg?.ok === false ? "text-status-text-error-05" : "text-text-05"}`} data-testid="integrations-message">{msg?.text ?? ""}</p>
       {needsConfirm && (
-        <div className={`${card} flex flex-wrap items-center justify-between gap-3`} role="group" aria-label="Confirm">
-          <p className="text-sm text-text-05">This lets people use actions that change things in outside systems without asking first.</p>
-          <button type="button" className={primary} disabled={busy} onClick={() => save(true)}>Confirm and save</button>
-        </div>
+        <ResponsiveLayout className={`${card} flex flex-wrap items-center justify-between gap-3`} role="group" aria-label={workspaceText("confirm")}>
+          <p className="text-sm text-text-05">{workspaceText("thisLetsPeopleUseActionsThatChangeThingsIn")}</p>
+          <ActionButton type="button" className={primary} disabled={busy} onClick={() => save(true)}>{workspaceText("confirmAndSave")}</ActionButton>
+        </ResponsiveLayout>
       )}
       {(["horizontal", "vertical"] as const).map((g) => {
         const inGroup = rows.filter((r) => r.group === g);
@@ -91,34 +95,32 @@ export default function IntegrationsAdminPage() {
               const key = `${g}/${c}`;
               return (
                 <div key={c} className={card} data-testid="policy-category">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
+                  <ResponsiveLayout display="flex" className="flex-wrap items-center justify-between gap-2">
                     <h3 className="text-base font-semibold text-text-05">{categoryLabel(c)}</h3>
-                    <label className="flex items-center gap-2 text-sm text-text-04">
-                      Whole category
-                      <select className={select} value={cats[key] ?? ""} onChange={(e) => set("cat", key, e.target.value)} aria-label={`Policy for the whole ${categoryLabel(c)} category`}>
-                        <option value="">Use each one&apos;s own</option>
+                    <label className="flex items-center gap-2 text-sm text-text-04">{workspaceText("wholeCategory")}<NativeSelect className={select} value={cats[key] ?? ""} onChange={(e) => set("cat", key, e.target.value)} aria-label={`Policy for the whole ${categoryLabel(c)} category`}>
+                        <option value="">{workspaceText("useEachOneSOwn")}</option>
                         {(Object.keys(ANSWER) as Answer[]).map((a) => <option key={a} value={a}>{ANSWER[a]}</option>)}
-                      </select>
+                      </NativeSelect>
                     </label>
-                  </div>
+                  </ResponsiveLayout>
                   <div className="mt-3 overflow-x-auto">
                     <table className="w-full min-w-[34rem] text-sm">
-                      <caption className="sr-only">{categoryLabel(c)} integrations and who may use them</caption>
+                      <caption className="sr-only">{categoryLabel(c)}{" "}{workspaceText("integrationsAndWhoMayUseThem")}</caption>
                       <thead>
-                        <tr><th scope="col" className="py-2 pr-3 text-left font-medium text-text-03">Integration</th><th scope="col" className="py-2 pr-3 text-left font-medium text-text-03">Policy</th><th scope="col" className="py-2 pr-3 text-left font-medium text-text-03">In force</th><th scope="col" className="py-2 text-right font-medium text-text-03">Installed / connected</th></tr>
+                        <tr><th scope="col" className="py-2 pr-3 text-left font-medium text-text-03">{workspaceText("integration")}</th><th scope="col" className="py-2 pr-3 text-left font-medium text-text-03">{workspaceText("policy")}</th><th scope="col" className="py-2 pr-3 text-left font-medium text-text-03">{workspaceText("inForce")}</th><th scope="col" className="py-2 text-right font-medium text-text-03">{workspaceText("installedConnected")}</th></tr>
                       </thead>
                       <tbody>
                         {inGroup.filter((r) => r.category === c).map((r) => (
                           <tr key={r.id} className="border-t border-border-01" data-testid="policy-row">
                             <th scope="row" className="py-2 pr-3 text-left align-top font-normal text-text-05">
                               <span className="font-medium">{r.name}</span>
-                              <span className="block text-xs text-text-03">{KIND_LABEL[r.kind]}{r.has_writes ? " · can change things" : " · reads only"} · its default: {ANSWER[r.default]}</span>
+                              <span className="block text-xs text-text-03">{KIND_LABEL[r.kind]}{r.has_writes ? " · can change things" : " · reads only"}{" "}{workspaceText("itsDefault")}{" "}{ANSWER[r.default]}</span>
                             </th>
                             <td className="py-2 pr-3 align-top">
-                              <select className={select} value={items[r.id] ?? ""} onChange={(e) => set("item", r.id, e.target.value)} aria-label={`Policy for ${r.name}`}>
-                                <option value="">Use the default</option>
+                              <NativeSelect className={select} value={items[r.id] ?? ""} onChange={(e) => set("item", r.id, e.target.value)} aria-label={`Policy for ${r.name}`}>
+                                <option value="">{workspaceText("useTheDefault")}</option>
                                 {(Object.keys(ANSWER) as Answer[]).map((a) => <option key={a} value={a}>{ANSWER[a]}</option>)}
-                              </select>
+                              </NativeSelect>
                             </td>
                             <td className="py-2 pr-3 align-top text-text-05" data-testid="policy-effective">{ANSWER[r.effective]}</td>
                             <td className="py-2 text-right align-top tabular-nums text-text-04">{r.installs} / {r.connected}</td>
@@ -134,11 +136,11 @@ export default function IntegrationsAdminPage() {
         );
       })}
       {data && (
-        <div className="flex flex-wrap gap-2">
-          <button type="button" className={primary} disabled={busy || !dirty} onClick={() => save(false)}>Save changes</button>
-          <button type="button" className={secondary} disabled={busy || !dirty} onClick={() => { setItems(data.config.integrations); setCats(data.config.categories); setNeedsConfirm(false); setMsg(null); }}>Discard changes</button>
-        </div>
+        <ResponsiveLayout display="flex" className="flex-wrap gap-2">
+          <ActionButton type="button" className={primary} disabled={busy || !dirty} onClick={() => save(false)}>{workspaceText("saveChanges")}</ActionButton>
+          <ActionButton type="button" className={secondary} disabled={busy || !dirty} onClick={() => { setItems(data.config.integrations); setCats(data.config.categories); setNeedsConfirm(false); setMsg(null); }}>{workspaceText("discardChanges")}</ActionButton>
+        </ResponsiveLayout>
       )}
-    </div>
+    </ResponsiveLayout>
   );
 }

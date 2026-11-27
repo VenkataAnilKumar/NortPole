@@ -80,7 +80,6 @@ function SourceTile({
 export default function ConnectorsPage() {
   const t = useTranslations("admin.addConnector");
   const adminRouteTitle = useAdminRouteTitle();
-  const sources = useMemo(() => listSourceMetadata(), []);
 
   const [rawSearchTerm, setSearchTerm] = useState("");
   const searchTerm = useDeferredValue(rawSearchTerm);
@@ -88,6 +87,11 @@ export default function ConnectorsPage() {
   const { data: federatedConnectors } = useFederatedConnectors();
   const settings = useSettings();
   const { appName } = settings;
+  const showExtraConnectors = settings.show_extra_connectors;
+  const sources = useMemo(
+    () => listSourceMetadata({ showExtraConnectors }),
+    [showExtraConnectors]
+  );
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -134,18 +138,8 @@ export default function ConnectorsPage() {
       },
       {} as Record<SourceCategory, SourceMetadata[]>
     );
-    // The extra-connectors setting hides the AI & Observability section.
-    if (settings?.show_extra_connectors === false) {
-      const filteredCategories = Object.entries(categories).filter(
-        ([category]) => category !== SourceCategory.AiObservability
-      );
-      return Object.fromEntries(filteredCategories) as Record<
-        SourceCategory,
-        SourceMetadata[]
-      >;
-    }
     return categories;
-  }, [sources, filterSources, searchTerm, settings?.show_extra_connectors]);
+  }, [sources, filterSources, searchTerm]);
 
   // When searching, dedupe Popular against whatever is already in results
   const resultIds = useMemo(() => {

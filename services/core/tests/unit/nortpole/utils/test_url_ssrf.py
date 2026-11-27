@@ -12,11 +12,23 @@ import requests
 
 from nortpole.utils.url import (
     SSRFException,
+    _PinnedHostAdapter,
     _is_ip_private_or_reserved,
     _validate_and_resolve_url,
     ssrf_safe_get,
     validate_outbound_http_url,
 )
+
+
+def test_pinned_https_uses_origin_hostname_through_proxy() -> None:
+    adapter = _PinnedHostAdapter("example.com")
+    pool = adapter.proxy_manager_for("http://proxy.example:8080").connection_from_url(
+        "https://93.184.216.34/"
+    )
+
+    assert pool.host == "93.184.216.34"
+    assert pool.conn_kw["server_hostname"] == "example.com"
+    assert pool.assert_hostname == "example.com"
 
 
 class TestIsIpPrivateOrReserved:

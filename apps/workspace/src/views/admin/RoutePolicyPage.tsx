@@ -1,5 +1,8 @@
 "use client";
 
+import { ResponsiveLayout } from "@opal/layouts";
+import { ActionButton, NativeInput, NativeSelect } from "@opal/components";
+import { useTranslations as useWorkspaceTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import useSWR, { mutate } from "swr";
 import { errorHandlingFetcher } from "@/lib/fetcher";
@@ -27,7 +30,7 @@ function toDraft(v: RoutePolicyView): Draft {
   return { defaultClass: v.default_data_class, allowed: structuredClone(v.allowed), kinds, redact: [...(v.redact_route_kinds ?? [])] };
 }
 
-async function callJson(url: string, method: string, body: unknown) {
+async function callJson(url: string, method: string, body: { default_data_class: string; allowed: Record<string, string[]>; route_kinds: Record<string, RouteKind>; redact_route_kinds: string[] } | { provider_id: number; data_class: string }) {
   const res = await fetch(url, {
     method,
     headers: { "Content-Type": "application/json" },
@@ -65,6 +68,7 @@ const select =
   "min-h-10 rounded-xl border border-border-02 bg-background-neutral-00 px-3 text-sm text-text-05";
 
 export default function RoutePolicyPage() {
+  const workspaceText = useWorkspaceTranslations("workspaceUi");
   const { data: policy, error } = useRoutePolicy();
   const { data: audit } = useSWR<AuditEvent[]>(AUDIT_URL, errorHandlingFetcher, { refreshInterval: 15000 });
   const { data: tokens } = useSWR<{ route_kind: string; model_name: string; calls: number; prompt_tokens: number; completion_tokens: number; estimated_cost_cents: number | null; unpriced_calls: number }[]>(
@@ -94,10 +98,10 @@ export default function RoutePolicyPage() {
   );
 
   if (error) {
-    return <div className="p-8 text-sm text-text-05">Could not load the route policy.</div>;
+    return <div className="p-8 text-sm text-text-05">{workspaceText("couldNotLoadTheRoutePolicy")}</div>;
   }
   if (!policy || !draft) {
-    return <div className="p-8 text-sm text-text-03">Loading route policy…</div>;
+    return <div className="p-8 text-sm text-text-03">{workspaceText("loadingRoutePolicy")}</div>;
   }
 
   const toggle = (cls: DataClass, kind: RouteKind) =>
@@ -150,30 +154,26 @@ export default function RoutePolicyPage() {
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 p-8" data-testid="route-policy-page">
+    <ResponsiveLayout display="flex" className="mx-auto w-full max-w-4xl flex-col gap-6 p-8" data-testid="route-policy-page">
       <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold text-text-05">Route policy</h1>
-        <p className="text-sm text-text-03">
-          Decide which model routes may process which data. A request to a blocked route fails before any
-          content is sent, and fallback never leaves the allowed set. Policy v{policy.version}.
+        <h1 className="text-2xl font-semibold text-text-05">{workspaceText("routePolicy")}</h1>
+        <p className="text-sm text-text-03">{workspaceText("decideWhichModelRoutesMayProcessWhichDataA")}{policy.version}.
         </p>
       </header>
 
       <section aria-labelledby="rp-routes" className={card}>
-        <h2 id="rp-routes" className="mb-1 text-base font-semibold text-text-05">Routes</h2>
-        <p className="mb-4 text-sm text-text-03">
-          Set the type of each registered model provider. A provider with no type is treated as cloud.
-        </p>
+        <h2 id="rp-routes" className="mb-1 text-base font-semibold text-text-05">{workspaceText("routes")}</h2>
+        <p className="mb-4 text-sm text-text-03">{workspaceText("setTheTypeOfEachRegisteredModelProviderA")}</p>
         {policy.routes.length === 0 ? (
-          <p className="text-sm text-text-03">No model providers are registered yet.</p>
+          <p className="text-sm text-text-03">{workspaceText("noModelProvidersAreRegisteredYet")}</p>
         ) : (
-          <div className="overflow-x-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2" role="region" aria-label="Model routes" tabIndex={0}>
+          <div className="overflow-x-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2" role="region" aria-label={workspaceText("modelRoutes")} tabIndex={0}>
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-text-03">
-                <th className="py-2 pr-3 font-medium">Provider</th>
-                <th className="py-2 pr-3 font-medium">Models</th>
-                <th className="py-2 font-medium">Route type</th>
+                <th className="py-2 pr-3 font-medium">{workspaceText("provider")}</th>
+                <th className="py-2 pr-3 font-medium">{workspaceText("models")}</th>
+                <th className="py-2 font-medium">{workspaceText("routeType")}</th>
               </tr>
             </thead>
             <tbody>
@@ -182,8 +182,8 @@ export default function RoutePolicyPage() {
                   <td className="py-3 pr-3 font-medium text-text-05">{r.name ?? r.provider}</td>
                   <td className="py-3 pr-3 text-text-03">{r.model_names.join(", ") || "None visible"}</td>
                   <td className="py-3">
-                    <label className="sr-only" htmlFor={`kind-${r.provider_id}`}>Route type for {r.name ?? r.provider}</label>
-                    <select
+                    <label className="sr-only" htmlFor={`kind-${r.provider_id}`}>{workspaceText("routeTypeFor")}{" "}{r.name ?? r.provider}</label>
+                    <NativeSelect
                       id={`kind-${r.provider_id}`}
                       className={select}
                       value={draft.kinds[r.provider_id]}
@@ -194,8 +194,8 @@ export default function RoutePolicyPage() {
                       {policy.route_kinds.map((k) => (
                         <option key={k} value={k}>{KIND_LABEL[k]}</option>
                       ))}
-                    </select>
-                    {!r.kind_assigned && <span className="ml-2 text-xs text-text-03">not set yet</span>}
+                    </NativeSelect>
+                    {!r.kind_assigned && <span className="ml-2 text-xs text-text-03">{workspaceText("notSetYet")}</span>}
                   </td>
                 </tr>
               ))}
@@ -206,15 +206,12 @@ export default function RoutePolicyPage() {
       </section>
 
       <section aria-labelledby="rp-redact" className={card} data-testid="redaction-settings">
-        <h2 id="rp-redact" className="mb-1 text-base font-semibold text-text-05">Sensitive-data redaction</h2>
-        <p className="mb-3 text-sm text-text-03">
-          Before a request is sent to the ticked route types, email addresses, phone numbers, card numbers (checksum-checked), national-ID-style numbers, IBANs, API keys, tokens and private keys are replaced with a placeholder such as [REDACTED:EMAIL].
-          Names, addresses and free-text secrets are not detected. Counts of replaced items are kept; the text is not.
-        </p>
-        <div className="flex flex-wrap gap-4">
+        <h2 id="rp-redact" className="mb-1 text-base font-semibold text-text-05">{workspaceText("sensitiveDataRedaction")}</h2>
+        <p className="mb-3 text-sm text-text-03">{workspaceText("beforeARequestIsSentToTheTickedRoute")}</p>
+        <ResponsiveLayout display="flex" className="flex-wrap gap-4">
           {policy.route_kinds.map((k) => (
             <label key={k} className="inline-flex min-h-10 cursor-pointer items-center gap-2 text-sm text-text-05">
-              <input
+              <NativeInput
                 type="checkbox"
                 checked={draft.redact.includes(k)}
                 onChange={() =>
@@ -224,18 +221,18 @@ export default function RoutePolicyPage() {
               {KIND_LABEL[k]}
             </label>
           ))}
-        </div>
-        <p className="mt-2 text-xs text-text-03">Saved with the rest of the policy below.</p>
+        </ResponsiveLayout>
+        <p className="mt-2 text-xs text-text-03">{workspaceText("savedWithTheRestOfThePolicyBelow")}</p>
       </section>
 
       <section aria-labelledby="rp-matrix" className={card}>
-        <h2 id="rp-matrix" className="mb-1 text-base font-semibold text-text-05">Allowed routes by data class</h2>
-        <p className="mb-4 text-sm text-text-03">Tick the route types that may process each class of data.</p>
-        <div className="overflow-x-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2" role="region" aria-label="Allowed routes by data class" tabIndex={0}>
+        <h2 id="rp-matrix" className="mb-1 text-base font-semibold text-text-05">{workspaceText("allowedRoutesByDataClass")}</h2>
+        <p className="mb-4 text-sm text-text-03">{workspaceText("tickTheRouteTypesThatMayProcessEachClass")}</p>
+        <div className="overflow-x-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2" role="region" aria-label={workspaceText("allowedRoutesByDataClass")} tabIndex={0}>
         <table className="w-full text-sm">
           <thead>
             <tr className="text-left text-text-03">
-              <th className="py-2 pr-3 font-medium">Data class</th>
+              <th className="py-2 pr-3 font-medium">{workspaceText("dataClass")}</th>
               {policy.route_kinds.map((k) => (
                 <th key={k} className="py-2 pr-3 text-center font-medium">{KIND_LABEL[k]}</th>
               ))}
@@ -250,7 +247,7 @@ export default function RoutePolicyPage() {
                   return (
                     <td key={k} className="py-3 pr-3 text-center">
                       <label className="inline-flex min-h-10 min-w-10 cursor-pointer items-center justify-center">
-                        <input
+                        <NativeInput
                           type="checkbox"
                           className="h-5 w-5"
                           checked={on}
@@ -267,9 +264,9 @@ export default function RoutePolicyPage() {
           </tbody>
         </table>
         </div>
-        <div className="mt-4 flex flex-wrap items-center gap-3">
-          <label htmlFor="rp-default" className="text-sm font-medium text-text-05">This workspace's data class</label>
-          <select
+        <ResponsiveLayout display="flex" className="mt-4 flex-wrap items-center gap-3">
+          <label htmlFor="rp-default" className="text-sm font-medium text-text-05">{workspaceText("thisWorkspaceSDataClass")}</label>
+          <NativeSelect
             id="rp-default"
             className={select}
             value={draft.defaultClass}
@@ -278,50 +275,48 @@ export default function RoutePolicyPage() {
             {policy.data_classes.map((c) => (
               <option key={c} value={c}>{CLASS_LABEL[c]}</option>
             ))}
-          </select>
-          <span className="text-xs text-text-03">Used for every task until per-task classification exists.</span>
-        </div>
+          </NativeSelect>
+          <span className="text-xs text-text-03">{workspaceText("usedForEveryTaskUntilPerTaskClassificationExists")}</span>
+        </ResponsiveLayout>
       </section>
 
-      <div className="flex flex-wrap items-center gap-3">
-        <button
+      <ResponsiveLayout display="flex" className="flex-wrap items-center gap-3">
+        <ActionButton
           type="button"
           onClick={save}
           disabled={!dirty || saving}
           className="min-h-11 rounded-xl bg-text-05 px-5 text-sm font-semibold text-background-neutral-00 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {saving ? "Saving…" : "Save policy"}
-        </button>
+        </ActionButton>
         {dirty && (
-          <button
+          <ActionButton
             type="button"
             onClick={() => setDraft(toDraft(policy))}
             className="min-h-11 rounded-xl border border-border-02 px-5 text-sm font-semibold text-text-05"
-          >
-            Discard changes
-          </button>
+          >{workspaceText("discardChanges")}</ActionButton>
         )}
         {status && (
           <p role="status" className={`text-sm ${status.ok ? "text-status-success-05" : "text-status-text-error-05"}`}>
             {status.text}
           </p>
         )}
-      </div>
+      </ResponsiveLayout>
 
       <section aria-labelledby="rp-test" className={card}>
-        <h2 id="rp-test" className="mb-1 text-base font-semibold text-text-05">Test a request against the saved policy</h2>
-        <div className="mt-3 flex flex-wrap items-end gap-3">
-          <div className="flex flex-col gap-1">
-            <label htmlFor="rp-test-class" className="text-xs font-medium text-text-03">Data class</label>
-            <select id="rp-test-class" className={select} value={testClass} onChange={(e) => setTestClass(e.target.value as DataClass)}>
+        <h2 id="rp-test" className="mb-1 text-base font-semibold text-text-05">{workspaceText("testARequestAgainstTheSavedPolicy")}</h2>
+        <ResponsiveLayout display="flex" className="mt-3 flex-wrap items-end gap-3">
+          <ResponsiveLayout display="flex" className="flex-col gap-1">
+            <label htmlFor="rp-test-class" className="text-xs font-medium text-text-03">{workspaceText("dataClass")}</label>
+            <NativeSelect id="rp-test-class" className={select} value={testClass} onChange={(e) => setTestClass(e.target.value as DataClass)}>
               {policy.data_classes.map((c) => (
                 <option key={c} value={c}>{CLASS_LABEL[c]}</option>
               ))}
-            </select>
-          </div>
-          <div className="flex flex-col gap-1">
-            <label htmlFor="rp-test-route" className="text-xs font-medium text-text-03">Requested route</label>
-            <select
+            </NativeSelect>
+          </ResponsiveLayout>
+          <ResponsiveLayout display="flex" className="flex-col gap-1">
+            <label htmlFor="rp-test-route" className="text-xs font-medium text-text-03">{workspaceText("requestedRoute")}</label>
+            <NativeSelect
               id="rp-test-route"
               className={select}
               value={testProvider ?? policy.routes[0]?.provider_id ?? ""}
@@ -330,12 +325,10 @@ export default function RoutePolicyPage() {
               {policy.routes.map((r) => (
                 <option key={r.provider_id} value={r.provider_id}>{r.name ?? r.provider}</option>
               ))}
-            </select>
-          </div>
-          <button type="button" onClick={runTest} className="min-h-10 rounded-xl border border-border-02 px-4 text-sm font-semibold text-text-05">
-            Run test
-          </button>
-        </div>
+            </NativeSelect>
+          </ResponsiveLayout>
+          <ActionButton type="button" onClick={runTest} className="min-h-10 rounded-xl border border-border-02 px-4 text-sm font-semibold text-text-05">{workspaceText("runTest")}</ActionButton>
+        </ResponsiveLayout>
         {testResult && (
           <p
             role="status"
@@ -349,22 +342,20 @@ export default function RoutePolicyPage() {
       </section>
 
       <section aria-labelledby="rp-usage" className={card} data-testid="route-usage">
-        <h2 id="rp-usage" className="text-base font-semibold text-text-05">Where requests ran (last 30 days)</h2>
-        <p className="mt-1 text-sm text-text-03">
-          Allowed model requests, counted by route, model, data class and purpose. These are request counts only: no people and no text. Tokens and cost are in the next section.
-        </p>
+        <h2 id="rp-usage" className="text-base font-semibold text-text-05">{workspaceText("whereRequestsRanLast30Days")}</h2>
+        <p className="mt-1 text-sm text-text-03">{workspaceText("allowedModelRequestsCountedByRouteModelDataClass")}</p>
         {!usage || usage.length === 0 ? (
-          <p className="mt-3 text-sm text-text-03">No model requests have been counted yet.</p>
+          <p className="mt-3 text-sm text-text-03">{workspaceText("noModelRequestsHaveBeenCountedYet")}</p>
         ) : (
-          <div className="overflow-x-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2" role="region" aria-label="Requests by route" tabIndex={0}>
+          <div className="overflow-x-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2" role="region" aria-label={workspaceText("requestsByRoute")} tabIndex={0}>
           <table className="mt-3 w-full text-left text-sm">
             <thead>
               <tr className="text-text-03">
-                <th className="py-2 pr-3 font-medium">Route</th>
-                <th className="py-2 pr-3 font-medium">Model</th>
-                <th className="py-2 pr-3 font-medium">Data class</th>
-                <th className="py-2 pr-3 font-medium">Purpose</th>
-                <th className="py-2 text-right font-medium">Requests</th>
+                <th className="py-2 pr-3 font-medium">{workspaceText("route_499952")}</th>
+                <th className="py-2 pr-3 font-medium">{workspaceText("model")}</th>
+                <th className="py-2 pr-3 font-medium">{workspaceText("dataClass")}</th>
+                <th className="py-2 pr-3 font-medium">{workspaceText("purpose")}</th>
+                <th className="py-2 text-right font-medium">{workspaceText("requests")}</th>
               </tr>
             </thead>
             <tbody>
@@ -384,24 +375,21 @@ export default function RoutePolicyPage() {
       </section>
 
       <section aria-labelledby="rp-tokens" className={card} data-testid="route-tokens">
-        <h2 id="rp-tokens" className="text-base font-semibold text-text-05">Tokens and estimated cost (last 30 days)</h2>
-        <p className="mt-1 text-sm text-text-03">
-          Tokens the models reported using, by route and model. Cost is an estimate from the price list, not an invoice. A model with no price
-          on the list shows &ldquo;not priced&rdquo; instead of zero; a route marked local counts as free. No people and no text are stored here.
-        </p>
+        <h2 id="rp-tokens" className="text-base font-semibold text-text-05">{workspaceText("tokensAndEstimatedCostLast30Days")}</h2>
+        <p className="mt-1 text-sm text-text-03">{workspaceText("tokensTheModelsReportedUsingByRouteAndModel")}</p>
         {!tokens || tokens.length === 0 ? (
-          <p className="mt-3 text-sm text-text-03">No model calls with token counts have been recorded yet.</p>
+          <p className="mt-3 text-sm text-text-03">{workspaceText("noModelCallsWithTokenCountsHaveBeenRecorded")}</p>
         ) : (
-          <div className="overflow-x-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2" role="region" aria-label="Tokens and cost by route" tabIndex={0}>
+          <div className="overflow-x-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2" role="region" aria-label={workspaceText("tokensAndCostByRoute")} tabIndex={0}>
             <table className="mt-3 w-full text-left text-sm">
               <thead>
                 <tr className="text-text-03">
-                  <th scope="col" className="py-2 pr-3 font-medium">Route</th>
-                  <th scope="col" className="py-2 pr-3 font-medium">Model</th>
-                  <th scope="col" className="py-2 pr-3 text-right font-medium">Calls</th>
-                  <th scope="col" className="py-2 pr-3 text-right font-medium">Prompt tokens</th>
-                  <th scope="col" className="py-2 pr-3 text-right font-medium">Answer tokens</th>
-                  <th scope="col" className="py-2 text-right font-medium">Estimated cost</th>
+                  <th scope="col" className="py-2 pr-3 font-medium">{workspaceText("route_499952")}</th>
+                  <th scope="col" className="py-2 pr-3 font-medium">{workspaceText("model")}</th>
+                  <th scope="col" className="py-2 pr-3 text-right font-medium">{workspaceText("calls")}</th>
+                  <th scope="col" className="py-2 pr-3 text-right font-medium">{workspaceText("promptTokens")}</th>
+                  <th scope="col" className="py-2 pr-3 text-right font-medium">{workspaceText("answerTokens")}</th>
+                  <th scope="col" className="py-2 text-right font-medium">{workspaceText("estimatedCost")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -417,7 +405,7 @@ export default function RoutePolicyPage() {
                         ? "not priced"
                         : `$${(t.estimated_cost_cents / 100).toFixed(t.estimated_cost_cents === 0 ? 2 : 4)}`}
                       {t.estimated_cost_cents !== null && t.unpriced_calls > 0 && (
-                        <span className="block text-xs text-text-03">{t.unpriced_calls} of {t.calls} calls not priced</span>
+                        <span className="block text-xs text-text-03">{t.unpriced_calls} of {t.calls}{" "}{workspaceText("callsNotPriced")}</span>
                       )}
                     </td>
                   </tr>
@@ -429,23 +417,21 @@ export default function RoutePolicyPage() {
       </section>
 
       <section aria-labelledby="rp-audit" className={card}>
-        <h2 id="rp-audit" className="mb-1 text-base font-semibold text-text-05">Recent activity</h2>
-        <p className="mb-3 text-sm text-text-03">
-          Policy changes and requests the server refused. Entries hold who, what and when, never message content.
-        </p>
+        <h2 id="rp-audit" className="mb-1 text-base font-semibold text-text-05">{workspaceText("recentActivity")}</h2>
+        <p className="mb-3 text-sm text-text-03">{workspaceText("policyChangesAndRequestsTheServerRefusedEntriesHold")}</p>
         {!audit ? (
-          <p className="text-sm text-text-03">Loading…</p>
+          <p className="text-sm text-text-03">{workspaceText("loading")}</p>
         ) : audit.length === 0 ? (
-          <p className="text-sm text-text-03">Nothing recorded yet.</p>
+          <p className="text-sm text-text-03">{workspaceText("nothingRecordedYet")}</p>
         ) : (
-          <div className="overflow-x-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2" role="region" aria-label="Recent activity" tabIndex={0}>
+          <div className="overflow-x-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2" role="region" aria-label={workspaceText("recentActivity")} tabIndex={0}>
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-text-03">
-                <th className="py-2 pr-3 font-medium">When</th>
-                <th className="py-2 pr-3 font-medium">Event</th>
-                <th className="py-2 pr-3 font-medium">Who</th>
-                <th className="py-2 font-medium">Details</th>
+                <th className="py-2 pr-3 font-medium">{workspaceText("when")}</th>
+                <th className="py-2 pr-3 font-medium">{workspaceText("event")}</th>
+                <th className="py-2 pr-3 font-medium">{workspaceText("who")}</th>
+                <th className="py-2 font-medium">{workspaceText("details")}</th>
               </tr>
             </thead>
             <tbody>
@@ -468,6 +454,6 @@ export default function RoutePolicyPage() {
           </div>
         )}
       </section>
-    </div>
+    </ResponsiveLayout>
   );
 }

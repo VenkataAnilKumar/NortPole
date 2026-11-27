@@ -17,7 +17,7 @@ import {
 import { Hoverable, Disabled } from "@opal/core";
 import { FullAgent, PersonaSharingStatus } from "@/lib/agents/types";
 import { buildAgentAvatarUrl } from "@/lib/agents/utils";
-import { Formik, Form, FieldArray } from "formik";
+import { Formik, Form, FieldArray, type FormikHelpers } from "formik";
 import * as Yup from "yup";
 import InputTypeInField from "@/refresh-components/form/InputTypeInField";
 import InputTextAreaField from "@/refresh-components/form/InputTextAreaField";
@@ -82,6 +82,9 @@ import { ToolSnapshot } from "@/lib/tools/types";
 import { MCPTool } from "@/lib/mcp/types";
 import { MCPServerCard } from "@/lib/mcp/components";
 import { useAppPosition } from "@/lib/navigation/hooks";
+import AgentVersions, { useAgentVersions } from "./AgentVersions";
+import AgentTemplatePicker from "./AgentTemplatePicker";
+import { AGENT_PILOTS, type AgentPilotKind } from "@/lib/agents/pilots";
 import { isDateInFuture } from "@/lib/dateUtils";
 import {
   deleteAgent,
@@ -443,9 +446,17 @@ export default function AgentEditorPage({
   const shareAgentModal = useCreateModal();
   const deleteAgentModal = useCreateModal();
   const { permissions } = useUser();
+  const showVersions = existingAgent && !existingAgent.builtin_persona && (
+    can(existingAgent, "edit") || can(existingAgent, "publish")
+  );
+  const { data: releaseState, isLoading: isLoadingReleases, mutate: refreshReleases, error: releaseError } = useAgentVersions(showVersions ? existingAgent.id : undefined);
+  const isVersioned = releaseState?.active_version != null;
+  const runtimeDraft = releaseState?.draft ?? releaseState?.versions.find((version) => version.is_active)?.configuration;
+  const packSource = runtimeDraft?.pack_source;
+  const savesDraft = isVersioned || Boolean(runtimeDraft?.pilot);
   // Prefer the server's per-agent answer; a new agent has none yet, so fall back to the
   // global token — which is exactly what the projection stamps for `feature`.
-  const canShare = !existingAgent || can(existingAgent, "share");
+  const canShare = !existingAgent || (can(existingAgent, "share") && (!isVersioned || releaseState?.can_publish));
   const canDelete = can(existingAgent, "delete");
   const canUpdateFeaturedStatus = existingAgent
     ? can(existingAgent, "feature")
@@ -500,6 +511,8 @@ export default function AgentEditorPage({
   );
 
   const [isTogglingListed, setIsTogglingListed] = useState(false);
+  const [isCreatingPreview, setIsCreatingPreview] = useState(false);
+  const [previewChatId, setPreviewChatId] = useState<string | null>(null);
   const handleToggleListed = useCallback(async () => {
     if (!existingAgent) return;
     setIsTogglingListed(true);
@@ -591,15 +604,16 @@ export default function AgentEditorPage({
   );
 
   const initialValues = {
+    pilot: runtimeDraft?.pilot ?? (null as AgentPilotKind | null),
     // General
     icon_name: existingAgent?.icon_name ?? null,
     uploaded_image_id: existingAgent?.uploaded_image_id ?? null,
     remove_image: false,
-    name: existingAgent?.name ?? "",
+    name: runtimeDraft?.name ?? existingAgent?.name ?? "",
     description: existingAgent?.description ?? "",
 
     // Prompts
-    instructions: existingAgent?.system_prompt ?? "",
+    instructions: runtimeDraft?.system_prompt ?? existingAgent?.system_prompt ?? "",
     starter_messages: Array.from(
       { length: STARTER_MESSAGES_COUNT },
       (_, i) => existingAgent?.starter_messages?.[i]?.message ?? ""
@@ -607,7 +621,7 @@ export default function AgentEditorPage({
 
     // Knowledge - enabled if the agent has the internal search tool attached
     // or any knowledge sources attached.
-    enable_knowledge:
+    enable_knowledge: runtimeDraft ? runtimeDraft.document_set_ids.length > 0 :
       (existingAgent?.tools?.some(
         (tool) => tool.in_code_tool_id === SEARCH_TOOL_ID
       ) ??
@@ -616,7 +630,7 @@ export default function AgentEditorPage({
       (existingAgent?.hierarchy_nodes?.length ?? 0) > 0 ||
       (existingAgent?.attached_documents?.length ?? 0) > 0 ||
       (existingAgent?.user_file_ids?.length ?? 0) > 0,
-    document_set_ids: existingAgent?.document_sets?.map((ds) => ds.id) ?? [],
+    document_set_ids: runtimeDraft?.document_set_ids ?? existingAgent?.document_sets?.map((ds) => ds.id) ?? [],
     // Individual document IDs from hierarchy browsing
     document_ids: existingAgent?.attached_documents?.map((doc) => doc.id) ?? [],
     // Hierarchy node IDs (folders/spaces/channels) for scoped search
@@ -628,13 +642,15 @@ export default function AgentEditorPage({
 
     // Advanced
     default_model_configuration_id:
-      existingAgent?.default_model_configuration_id ?? null,
-    knowledge_cutoff_date: existingAgent?.search_start_date
+      runtimeDraft ? runtimeDraft.model_configuration_id : (existingAgent?.default_model_configuration_id ?? null),
+    knowledge_cutoff_date: runtimeDraft
+      ? (runtimeDraft.search_start_date ? new Date(runtimeDraft.search_start_date) : null)
+      : existingAgent?.search_start_date
       ? new Date(existingAgent.search_start_date)
       : null,
     replace_base_system_prompt:
-      existingAgent?.replace_base_system_prompt ?? false,
-    reminders: existingAgent?.task_prompt ?? "",
+      runtimeDraft?.replace_base_system_prompt ?? existingAgent?.replace_base_system_prompt ?? false,
+    reminders: runtimeDraft?.task_prompt ?? existingAgent?.task_prompt ?? "",
     // For new agents, default to false for optional tools to avoid
     // "Tool not available" errors when the tool isn't configured.
     // For existing agents, preserve the current tool configuration.
@@ -779,7 +795,48 @@ export default function AgentEditorPage({
     ),
   });
 
-  async function handleSubmit(values: typeof initialValues) {
+  async function handleTestInChat(values: typeof initialValues) {
+    const previewTab = window.open("about:blank", "_blank");
+    if (previewTab) previewTab.opener = null;
+    setIsCreatingPreview(true);
+    setPreviewChatId(null);
+    try {
+      const response = await fetch(
+        existingAgent ? `/api/persona/${existingAgent.id}/preview` : "/api/persona/preview",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            pilot: values.pilot,
+            name: values.name.trim(),
+            system_prompt: values.instructions,
+            task_prompt: values.reminders || "",
+            replace_base_system_prompt: values.replace_base_system_prompt,
+            datetime_aware: runtimeDraft?.datetime_aware ?? existingAgent?.datetime_aware ?? false,
+            document_set_ids: values.enable_knowledge ? values.document_set_ids : [],
+            search_start_date: values.knowledge_cutoff_date,
+            model_configuration_id: values.default_model_configuration_id,
+          }),
+        }
+      );
+      if (!response.ok) {
+        throw new Error(await parseErrorDetail(response, t("editor.preview.error")));
+      }
+      const { chat_session_id: chatId }: { chat_session_id: string } = await response.json();
+      if (previewTab && !previewTab.closed) {
+        previewTab.location.replace(appPosition.linkToChat(chatId).href);
+      } else {
+        setPreviewChatId(chatId);
+      }
+    } catch (error) {
+      previewTab?.close();
+      toast.error(error instanceof Error ? error.message : t("editor.preview.error"));
+    } finally {
+      setIsCreatingPreview(false);
+    }
+  }
+
+  async function handleSubmit(values: typeof initialValues, helpers: FormikHelpers<typeof initialValues>) {
     try {
       // Map conversation starters
       const starterMessages = values.starter_messages
@@ -850,7 +907,8 @@ export default function AgentEditorPage({
 
       // Build submission data
       const submissionData: AgentUpsertParameters = {
-        name: values.name,
+        pilot: values.pilot,
+        name: values.name.trim(),
         description: values.description,
         document_set_ids: values.enable_knowledge
           ? values.document_set_ids
@@ -858,9 +916,9 @@ export default function AgentEditorPage({
         // Sharing on saved agents is managed by the share dialog — omitting
         // the fields here keeps form saves from clobbering it. Creates carry
         // the draft share state captured before the agent existed.
-        is_public: existingAgent ? undefined : values.is_public,
-        users: existingAgent ? undefined : values.shared_user_ids,
-        groups: existingAgent ? undefined : values.shared_group_ids,
+        is_public: existingAgent ? undefined : !values.pilot && values.is_public,
+        users: existingAgent || values.pilot ? undefined : values.shared_user_ids,
+        groups: existingAgent || values.pilot ? undefined : values.shared_group_ids,
         default_model_configuration_id:
           values.default_model_configuration_id ?? null,
         starter_messages: finalAgentStarterMessages,
@@ -871,7 +929,7 @@ export default function AgentEditorPage({
         icon_name: values.icon_name,
         search_start_date: values.knowledge_cutoff_date || null,
         label_ids: values.label_ids,
-        is_featured: values.is_featured,
+        is_featured: !existingAgent && values.pilot ? false : values.is_featured,
         // display_priority: ...,
 
         user_file_ids: values.enable_knowledge ? values.user_file_ids : [],
@@ -883,7 +941,7 @@ export default function AgentEditorPage({
         system_prompt: values.instructions,
         replace_base_system_prompt: values.replace_base_system_prompt,
         task_prompt: values.reminders || "",
-        datetime_aware: existingAgent ? existingAgent.datetime_aware : false,
+        datetime_aware: runtimeDraft?.datetime_aware ?? existingAgent?.datetime_aware ?? false,
       };
 
       // Call API
@@ -916,13 +974,19 @@ export default function AgentEditorPage({
       // Success
       const agent: Omit<Agent, "user_permission"> =
         await personaResponse.json();
+      if (savesDraft) {
+        helpers.resetForm({ values });
+        await refreshReleases();
+        toast.success(t("editor.versions.saved"));
+        return;
+      }
 
       // clear() (not clearDraft) so an in-flight debounced write is cancelled too.
       clearAgentDraftRef.current?.();
 
       // Apply the leveled share draft captured in the dialog before the
       // agent existed (the create payload only carries viewer-level ids)
-      if (!existingAgent && values.shared_draft) {
+      if (!existingAgent && !values.pilot && values.shared_draft) {
         const draft = values.shared_draft;
         const shareError = await updateAgentShares(
           agent.id,
@@ -945,9 +1009,11 @@ export default function AgentEditorPage({
         }
       }
       toast.success(
-        t(existingAgent ? "editor.toasts.updated" : "editor.toasts.created", {
-          name: agent.name,
-        })
+        values.pilot
+          ? t("editor.versions.saved")
+          : t(existingAgent ? "editor.toasts.updated" : "editor.toasts.created", {
+              name: agent.name,
+            })
       );
 
       // Refresh agents list and the specific agent
@@ -957,7 +1023,8 @@ export default function AgentEditorPage({
       }
 
       // Immediately start a chat with this agent.
-      appPosition.openAgent(agent.id);
+      if (values.pilot) navigation.go(`/app/agents/edit/${agent.id}`);
+      else appPosition.openAgent(agent.id);
     } catch (error) {
       console.error("Submit error:", error);
       toast.error(t("editor.toasts.genericError", { error: String(error) }));
@@ -1048,7 +1115,7 @@ export default function AgentEditorPage({
   // initialValues on mount — if tools haven't loaded yet, the initial values
   // won't include MCP tool fields. Later, toggling those fields would make
   // the form permanently dirty since they have no baseline to compare against.
-  if (isToolsLoading || isMcpLoading || isOpenApiLoading) {
+  if (isToolsLoading || isMcpLoading || isOpenApiLoading || isLoadingReleases) {
     return null;
   }
 
@@ -1060,6 +1127,7 @@ export default function AgentEditorPage({
         className="h-full w-full"
       >
         <Formik
+          key={packSource?.version}
           initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
@@ -1080,7 +1148,27 @@ export default function AgentEditorPage({
           }}
           initialStatus={{ warnings: {} }}
         >
-          {({ isSubmitting, isValid, dirty, values, setFieldValue }) => {
+          {({ isSubmitting, isValid, dirty, values, setFieldValue, setValues }) => {
+            const dynamicFields: Record<string, unknown> = values;
+            const requiresKnowledge = !values.pilot || AGENT_PILOTS[values.pilot].requiresKnowledge;
+            const creatingPilot = !existingAgent && Boolean(values.pilot);
+            const needsKnowledge =
+              Boolean(values.pilot) &&
+              requiresKnowledge &&
+              (!values.enable_knowledge || !values.document_set_ids.length);
+            const needsPilotSetup = creatingPilot || needsKnowledge;
+            const previewHasActions =
+              values.image_generation || values.web_search || values.open_url ||
+              values.code_interpreter || values.coding_agent ||
+              openApiTools.some((tool) => dynamicFields[`openapi_tool_${tool.id}`] === true) ||
+              mcpServers.some((server) => {
+                const field = dynamicFields[`mcp_server_${server.id}`];
+                return typeof field === "object" && field !== null && "enabled" in field && field.enabled === true;
+              });
+            const previewHasAttachments = values.enable_knowledge && (
+              values.user_file_ids.length > 0 || values.document_ids.length > 0 ||
+              values.hierarchy_node_ids.length > 0 || (requiresKnowledge && values.document_set_ids.length === 0)
+            );
             // Keep the ref in sync so async upload callbacks read current ids.
             userFileIdsRef.current = values.user_file_ids;
 
@@ -1240,6 +1328,25 @@ export default function AgentEditorPage({
                       cancel
                       actions={[
                         <Tooltip
+                          key="preview"
+                          tooltip={previewHasActions || previewHasAttachments
+                            ? t("editor.preview.readOnly") : undefined}
+                        >
+                          <Button
+                            type="button"
+                            prominence="secondary"
+                            disabled={isSubmitting || isCreatingPreview || !isValid || Boolean(previewHasActions) || Boolean(previewHasAttachments) || Boolean(needsPilotSetup)}
+                            onClick={() => void handleTestInChat(values)}
+                          >
+                            {t(isCreatingPreview ? "editor.preview.opening" : "editor.preview.label")}
+                          </Button>
+                        </Tooltip>,
+                        ...(previewChatId ? [
+                          <Button key="preview-chat" href={appPosition.linkToChat(previewChatId).href} target="_blank" rel="noopener" prominence="secondary">
+                            {t("editor.preview.open")}
+                          </Button>,
+                        ] : []),
+                        <Tooltip
                           key="save"
                           tooltip={
                             isSubmitting
@@ -1259,13 +1366,16 @@ export default function AgentEditorPage({
                               isSubmitting ||
                               !isValid ||
                               !dirty ||
+                              (creatingPilot && needsKnowledge) ||
                               hasUploadingFiles
                             }
                             type="submit"
                           >
-                            {existingAgent
-                              ? t("editor.header.save.label")
-                              : t("editor.header.create.label")}
+                            {savesDraft || creatingPilot
+                              ? t("editor.versions.save")
+                              : existingAgent
+                                ? t("editor.header.save.label")
+                                : t("editor.header.create.label")}
                           </Button>
                         </Tooltip>,
                       ]}
@@ -1274,6 +1384,47 @@ export default function AgentEditorPage({
 
                     {/* Agent Form Content */}
                     <SettingsLayouts.Body>
+                      {!existingAgent && (
+                        <AgentTemplatePicker
+                          value={values.pilot}
+                          onChange={(kind) => {
+                            if (kind === values.pilot) return;
+                            const previous = values.pilot
+                              ? AGENT_PILOTS[values.pilot]
+                              : undefined;
+                            const next = kind ? AGENT_PILOTS[kind] : undefined;
+                            const prefill = (current: string, oldDefault?: string, newDefault?: string) =>
+                              !current.trim() || current === oldDefault
+                                ? newDefault ?? ""
+                                : current;
+                            void setValues({
+                              ...values,
+                              pilot: kind,
+                              name: prefill(values.name, previous?.name, next?.name),
+                              description: prefill(values.description, previous?.description, next?.description),
+                              instructions: prefill(values.instructions, previous?.instructions, next?.instructions),
+                              starter_messages: values.starter_messages.map((current, index) =>
+                                prefill(current, previous?.starters[index], next?.starters[index])
+                              ),
+                              enable_knowledge: next?.requiresKnowledge ?? Boolean(
+                                values.document_set_ids.length || values.document_ids.length ||
+                                values.hierarchy_node_ids.length || values.user_file_ids.length
+                              ),
+                            });
+                          }}
+                        />
+                      )}
+                      {packSource && <p className="text-sm text-text-03">
+                        {t("packChat.origin", { pack: packSource.pack_id, version: packSource.version })}
+                      </p>}
+                      {showVersions && releaseError && (
+                        <p role="alert" className="text-sm text-text-03">{t("editor.versions.error")}</p>
+                      )}
+                      {existingAgent && releaseState && (
+                        <AgentVersions agentId={existingAgent.id} state={releaseState} refresh={refreshReleases}
+                          hasUnsavedChanges={dirty}
+                          libraryNames={new Map((documentSets ?? []).map((library) => [library.id, library.name]))} />
+                      )}
                       {/* Drafts only for new agents; edits are assumed minor. */}
                       {!existingAgent && (
                         <AgentDraftManager
@@ -1331,11 +1482,12 @@ export default function AgentEditorPage({
                         >
                           <InputTextAreaField
                             name="instructions"
+                            variant={packSource ? "readOnly" : undefined}
                             placeholder={t(
                               "editor.prompts.instructions.placeholder"
                             )}
                             rightSection={
-                              <InsertUserVariableMenu fieldName="instructions" />
+                              !packSource && <InsertUserVariableMenu fieldName="instructions" />
                             }
                           />
                         </InputVertical>
@@ -1404,7 +1556,7 @@ export default function AgentEditorPage({
                         />
                         <Card border="solid" rounding={4}>
                           <Section>
-                            {canShare && (
+                            {canShare && !creatingPilot && (
                               <InputHorizontal
                                 title={t("editor.share.share.title")}
                                 description={t(
@@ -1421,7 +1573,7 @@ export default function AgentEditorPage({
                                 </Button>
                               </InputHorizontal>
                             )}
-                            {canUpdateFeaturedStatus && (
+                            {canUpdateFeaturedStatus && !creatingPilot && (
                               <>
                                 <InputHorizontal
                                   withLabel="is_featured"
@@ -1708,7 +1860,7 @@ export default function AgentEditorPage({
                                   "modals.viewer.overwritePrompts.description"
                                 )}
                               >
-                                <InputSwitchField name="replace_base_system_prompt" />
+                                <InputSwitchField name="replace_base_system_prompt" disabled={Boolean(packSource)} />
                               </InputHorizontal>
                             </Section>
                           </Card>
@@ -1721,11 +1873,12 @@ export default function AgentEditorPage({
                             >
                               <InputTextAreaField
                                 name="reminders"
+                                variant={packSource ? "readOnly" : undefined}
                                 placeholder={t(
                                   "editor.advanced.reminders.placeholder"
                                 )}
                                 rightSection={
-                                  <InsertUserVariableMenu fieldName="reminders" />
+                                  !packSource && <InsertUserVariableMenu fieldName="reminders" />
                                 }
                               />
                             </InputVertical>

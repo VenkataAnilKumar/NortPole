@@ -46,6 +46,7 @@ export function getNotificationIcon(
     case NotificationType.TRIAL_ENDS_TWO_DAYS:
     case NotificationType.LICENSE_EXPIRY_WARNING:
     case NotificationType.SCHEDULED_TASK_FAILED:
+    case NotificationType.WORKFLOW_RUN_FAILED:
     case NotificationType.SCHEDULED_TASK_AWAITING_APPROVAL:
       return SvgAlertTriangle;
 

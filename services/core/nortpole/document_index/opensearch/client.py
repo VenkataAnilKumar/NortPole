@@ -1,4 +1,3 @@
-import json
 import logging
 import time
 from collections import Counter
@@ -55,7 +54,9 @@ from nortpole.document_index.opensearch.schema import (
     DocumentChunkWithoutVectors,
     get_opensearch_doc_chunk_id,
 )
-from nortpole.document_index.opensearch.search import DEFAULT_OPENSEARCH_MAX_RESULT_WINDOW
+from nortpole.document_index.opensearch.search import (
+    DEFAULT_OPENSEARCH_MAX_RESULT_WINDOW,
+)
 from nortpole.server.metrics.opensearch_search import (
     observe_opensearch_search,
     record_opensearch_search_error,
@@ -294,30 +295,6 @@ def _raise_summarized_by_query_error(e: TransportError, index_name: str) -> NoRe
     if is_cluster_block_error(e):
         raise OpenSearchIndexWriteBlockedError(message) from None
     raise RuntimeError(message) from None
-
-
-def get_new_body_without_vectors(body: dict[str, Any]) -> dict[str, Any]:
-    """Recursively replaces vectors in the body with their length.
-
-    TODO(andrei): Do better.
-
-    Args:
-        body: The body to replace the vectors.
-
-    Returns:
-        A copy of body with vectors replaced with their length.
-    """
-    new_body: dict[str, Any] = {}
-    for k, v in body.items():
-        if k == "vector":
-            new_body[k] = len(v)
-        elif isinstance(v, dict):
-            new_body[k] = get_new_body_without_vectors(v)
-        elif isinstance(v, list) and len(v) > 0 and isinstance(v[0], dict):
-            new_body[k] = [get_new_body_without_vectors(item) for item in v]
-        else:
-            new_body[k] = v
-    return new_body
 
 
 class OpenSearchClient(AbstractContextManager):
@@ -1945,7 +1922,7 @@ class OpenSearchIndexClient(OpenSearchClient):
                     params=params,
                 )
                 client_duration_s = time.perf_counter() - t0
-                hits, time_took, timed_out, phase_took, profile = (
+                hits, time_took, timed_out, phase_took, _profile = (
                     self._get_hits_and_profile_from_search_result(result)
                 )
                 # Inside the try/except so that server-side timeouts (which
@@ -1957,8 +1934,6 @@ class OpenSearchIndexClient(OpenSearchClient):
                     time_took=time_took,
                     timed_out=timed_out,
                     phase_took=phase_took,
-                    profile=profile,
-                    body=body,
                     search_pipeline_id=search_pipeline_id,
                     raise_on_timeout=True,
                 )
@@ -2020,7 +1995,7 @@ class OpenSearchIndexClient(OpenSearchClient):
                     index=self._index_name, body=body, params=params
                 )
                 client_duration_s = time.perf_counter() - t0
-                hits, time_took, timed_out, phase_took, profile = (
+                hits, time_took, timed_out, phase_took, _profile = (
                     self._get_hits_and_profile_from_search_result(result)
                 )
                 # Inside the try/except so that server-side timeouts (which
@@ -2032,8 +2007,6 @@ class OpenSearchIndexClient(OpenSearchClient):
                     time_took=time_took,
                     timed_out=timed_out,
                     phase_took=phase_took,
-                    profile=profile,
-                    body=body,
                     raise_on_timeout=True,
                 )
                 if self._emit_metrics:
@@ -2415,8 +2388,6 @@ class OpenSearchIndexClient(OpenSearchClient):
         time_took: int | None,
         timed_out: bool | None,
         phase_took: dict[str, Any],
-        profile: dict[str, Any],
-        body: dict[str, Any],
         search_pipeline_id: str | None = None,
         raise_on_timeout: bool = False,
     ) -> None:
@@ -2426,8 +2397,6 @@ class OpenSearchIndexClient(OpenSearchClient):
             time_took: The time taken to execute the search in milliseconds.
             timed_out: Whether the search timed out.
             phase_took: The time taken to execute each phase of the search.
-            profile: The profile for the search.
-            body: The body of the search request for logging.
             search_pipeline_id: The ID of the search pipeline used for the
                 search, if any, for logging. Defaults to None.
             raise_on_timeout: Whether to raise an exception if the search timed
@@ -2440,16 +2409,12 @@ class OpenSearchIndexClient(OpenSearchClient):
         if time_took and time_took > CLIENT_THRESHOLD_TO_LOG_SLOW_SEARCH_MS:
             logger.warning(
                 "OpenSearch client warning: Search for index %s took %s milliseconds.\n"
-                "Body: %s\n"
                 "Search pipeline ID: %s\n"
-                "Phase took: %s\n"
-                "Profile: %s\n",
+                "Phase took: %s",
                 self._index_name,
                 time_took,
-                get_new_body_without_vectors(body),
                 search_pipeline_id,
                 phase_took,
-                json.dumps(profile, indent=2),
             )
         if timed_out:
             error_str = f"OpenSearch client error: Search timed out for index {self._index_name}."

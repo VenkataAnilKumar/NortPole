@@ -12,7 +12,7 @@ import { SvgSlack } from "@opal/logos";
 import { useSlackChannelConfigs } from "@/app/admin/bots/[bot-id]/hooks";
 import { useDocumentSets } from "@/app/admin/documents/sets/hooks";
 import { useAgents } from "@/lib/agents/hooks";
-import { useStandardAnswerCategories } from "@/lib/community/standardAnswers";
+import { getStandardAnswerCategories } from "@/lib/community/standardAnswers";
 import { useTierAtLeast } from "@/lib/tiers/hooks";
 import { Tier } from "@/lib/tiers/types";
 
@@ -48,7 +48,7 @@ function EditSlackChannelConfigContent({
     data: standardAnswerCategories,
     isLoading: isStdAnswerLoading,
     error: stdAnswerError,
-  } = useStandardAnswerCategories();
+  } = getStandardAnswerCategories();
 
   const isLoading =
     isChannelsLoading ||

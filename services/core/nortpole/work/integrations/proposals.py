@@ -94,10 +94,19 @@ def effective_state(row: NortPoleIntegrationProposal) -> str:
     return "expired" if row.state == "pending" and row.expires_at < _now() else row.state
 
 
-def list_mine(db: Session, user: User) -> list[NortPoleIntegrationProposal]:
+def list_mine(db: Session, user: User, *, pending_only: bool = False) -> list[NortPoleIntegrationProposal]:
     """Read only (a GET never writes); expiry is worked out when each row is shown."""
-    rows = db.scalars(select(NortPoleIntegrationProposal).where(NortPoleIntegrationProposal.user_id == user.id)
-                      .order_by(NortPoleIntegrationProposal.created_at.desc()).limit(LIST_LIMIT)).all()
+    query = (
+        select(NortPoleIntegrationProposal)
+        .where(NortPoleIntegrationProposal.user_id == user.id)
+        .order_by(NortPoleIntegrationProposal.created_at.desc())
+    )
+    if pending_only:
+        return list(db.scalars(query.where(
+            NortPoleIntegrationProposal.state == "pending",
+            NortPoleIntegrationProposal.expires_at >= _now(),
+        )))
+    rows = db.scalars(query.limit(LIST_LIMIT)).all()
     return sorted(rows, key=lambda r: effective_state(r) != "pending")
 
 

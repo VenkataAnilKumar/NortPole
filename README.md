@@ -2,28 +2,30 @@
 
 **The governed AI workspace for teams that cannot afford a wrong answer.**
 
-NortPole lets people ask questions and run multi-step work over their company's own knowledge — policies, contracts, files in their drives — and get cited answers and drafts back. Every step is governed: you approve the plan before work runs, you approve the exact draft before anything leaves, the system only reads what each person is allowed to open, and every action lands in a tamper-evident audit log.
+NortPole lets teams ask questions over company knowledge, use reusable agents, and run workflows that produce cited drafts. In a reviewed workflow, you approve the plan before work runs and approve a specific draft before it is sent. Knowledge access follows each user's permissions, and governance events are recorded in a tamper-evident audit log.
 
 > **Status: pilot preview.** The product runs end to end and is tested in a sandbox with local models. We are looking for **design partners** — one team, one workflow — for a first pilot. See [Work with us](#work-with-us).
 
-![The NortPole AI workspace: ask a question or start a ready-made workflow, choose where it runs, and find your Inbox, Search, Workflows, Knowledge, Sources and agents in one place](docs/assets/readme/workspace.png)
+![NortPole Workspace with New, Search, Inbox, Agents, Workflows, Projects, Knowledge, and Sources in the sidebar](docs/assets/readme/workspace.png)
 
 ---
 
 ## The AI workspace
 
-One place to ask, search and get work done over your company's knowledge:
+The sidebar lists these destinations in order. **Recents** appears below the main navigation.
 
 | In the workspace | What it does |
 |---|---|
-| **New** | Ask a question or start a ready-made workflow (*Cited brief*, *Find the policy*, *Compare two documents*). Attach files and choose which knowledge to use. |
-| **Run on** | Choose where the work runs (local, private or cloud model), within what the administrator's route policy allows. A blocked route is shown with the reason and is never used. |
-| **Inbox** | Plans waiting for your yes, drafts ready to review, and updates on your requests. |
-| **Search** | One search over company knowledge, showing only what you may open. |
-| **Workflows** | Start versioned workflows from signed packs, keep them on a schedule, and find your drafts. |
-| **Knowledge** and **Sources** | What the workspace knows, which systems are connected, and what you can ask to have switched on. |
-| **Agents** and **Projects** | Chat assistants with the knowledge and tools they may use, and folders for related work. |
-| **Admin Panel** | For administrators: approvals, route policy, packs, tools, people, audit and quality. |
+| **New** | Start a chat or use a task starter. Choose an available agent, model route, project, or context. |
+| **Search** | Search accessible Knowledge, chats, and workflow activity from one page. |
+| **Inbox** | Review plans and drafts that need attention and follow updates on your requests. |
+| **Agents** | Open **Agent Catalog** to find company, shared, personal, or starred agents and start a chat. Authorized members can create agents. |
+| **Workflows** | Start a versioned workflow, manage schedules, and find drafts and runs. |
+| **Projects** | Search, open, and create projects from a single page. Keep related chats, files, instructions, and outputs together. |
+| **Knowledge** | Browse accessible collections and manage personal files when enabled. |
+| **Sources** | Browse **Integrations**, **Tools**, **Skills**, and **Discover**. Connect permitted integrations, manage reusable instructions, and request workspace capabilities. |
+
+Administrators use **Admin Panel** for approvals, route policy, packs, tools, access, audit, and quality. See the [workspace guide](docs/02-product/NortPole_Product-Overview.md#the-enterprise-workspace) for how the destinations work together.
 
 ## Core features
 
@@ -41,8 +43,8 @@ One place to ask, search and get work done over your company's knowledge:
 | | Workflow agents | Agents plan their searches first, run as you over the sources you can open, and can never send anything. |
 | | Scheduled workflows | Recurring runs prepare the plan and wait in your Inbox; nothing continues without your yes, and a schedule pauses itself if plans go unaccepted. |
 | | Inbox | One place for plans to approve, drafts to review and updates. |
-| | Sources catalog | Connectors, Plugins, Skills and Discover: search a catalog of services, install one or sign in with your own account, and request what an administrator has not allowed yet. Each integration is declared as signed data with exact hosts; writes always start as "needs approval". Chat can use an installed integration's read actions; for a write, the assistant can only propose it, and it waits in your Inbox until you approve exactly what will be sent. |
-| | Your own skills | Add instructions your chats follow, or add the ones an integration suggests with one click. |
+| | Sources catalog | Browse integrations by category, connect an account or request workspace setup, and request eligible tools from their rows. Discover groups requests for workspace sources, packs, and tools and tracks their decisions. Chat can use permitted read actions from installed integrations. Proposed writes wait for approval in Inbox. |
+| | Skills | See the built-in skills available to your account and the skills supplied by active packs. Create, import, edit, share, and enable custom skills according to your permissions. |
 | **Insight** | Quality and cost | Draft and approval rates, unsupported-claim share, evaluation results per model, scheduled runs, and tokens and estimated cost per route. |
 
 <table>
@@ -55,7 +57,7 @@ One place to ask, search and get work done over your company's knowledge:
 <td width="50%" valign="top"><img src="docs/assets/readme/scheduled.png" alt="Scheduled workflows: recurring runs that prepare a plan and wait for your yes."><br><b>Scheduled workflows</b>: recurring runs that prepare a plan and wait for your yes.</td>
 </tr>
 <tr>
-<td width="50%" valign="top"><img src="docs/assets/readme/discover.png" alt="Discover: the catalog of integrations to install or connect, grouped by category."><br><b>Discover</b>: what the workspace supports but has not turned on, with a Request button.</td>
+<td width="50%" valign="top"><img src="docs/assets/readme/discover.png" alt="Discover with search, category filtering, and requestable workspace sources."><br><b>Discover</b> lets members find and request workspace sources, packs, and tools.</td>
 <td width="50%" valign="top"><img src="docs/assets/readme/quality.png" alt="Quality and cost: runs, drafts, approvals and unsupported claims per pack."><br><b>Quality and cost</b>: runs, drafts, approvals and unsupported claims per pack.</td>
 </tr>
 </table>
@@ -81,7 +83,7 @@ NortPole starts from the other end:
 - **Let an agent prepare the work.** Workflow agents plan their searches first and run only what you accept — as you, over the sources you can open, and they can never send anything.
 - **Put work on a schedule.** A weekly check runs on its own, prepares the plan, and waits in your Inbox. Nothing runs further without your yes, and a schedule pauses itself if its plans keep going unaccepted.
 - **Keep track in one Inbox.** *To approve*, *To review* and *Updates* — plans waiting for you, drafts ready to check, decisions on your requests.
-- **Install and connect.** Search the catalog, install an integration and connect your own account (sign in, or paste a token); ask for what an administrator has not allowed yet. Add your own skills, or the ones an integration suggests.
+- **Install and connect.** Browse **Sources → Integrations** to connect a permitted account or request workspace setup. Open an indexed source's **View Knowledge** link to see the accessible collections that use it.
 
 ![Start a workflow: ready-made, versioned workflows grouped in packs](docs/assets/readme/workflows.png)
 

@@ -32,3 +32,11 @@ class PaginatedNotifications(BaseModel):
 class NotificationSummary(BaseModel):
     total_items: int
     undismissed_count: int
+
+
+class InboxNotificationSummary(BaseModel):
+    approve: int
+    review: int
+    updates: int
+    dismissed: int
+    history: int

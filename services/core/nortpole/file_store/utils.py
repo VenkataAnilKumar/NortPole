@@ -335,7 +335,7 @@ def verify_user_files(
         ValueError: If any file does not belong to the user or is not found
     """
     from nortpole.db.models import Project__UserFile
-    from nortpole.db.projects import check_project_ownership
+    from nortpole.db.project_access import require_project
 
     user_file_descriptors: list[tuple[UUID, str]] = []
     project_file_ids = []
@@ -373,11 +373,7 @@ def verify_user_files(
                 "Project files provided but no project_id specified for verification"
             )
 
-        # Verify user owns the project
-        if not check_project_ownership(project_id, user_id, db_session):
-            raise ValueError(
-                f"User {user_id} does not have access to project {project_id}"
-            )
+        require_project(project_id, user_id, db_session, minimum="editor")
 
         # Verify all project files belong to the specified project
         user_files_in_project = (
@@ -385,6 +381,7 @@ def verify_user_files(
             .join(Project__UserFile)
             .filter(
                 Project__UserFile.project_id == project_id,
+                UserFile.incognito.is_(False),
                 UserFile.file_id.in_(project_file_ids),
             )
             .all()

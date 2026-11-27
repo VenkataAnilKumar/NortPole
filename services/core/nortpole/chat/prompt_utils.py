@@ -774,12 +774,18 @@ def _create_context_files_message(
             if idx - 1 < len(context_files.file_metadata)
             else None
         )
+        number = (
+            citation_numbers[metadata.file_id]
+            if citation_numbers is not None and metadata is not None
+            else idx
+        )
+        is_knowledge = metadata is not None and metadata.source_document is not None
         documents.append(
             ContextDocument(
-                document=citation_numbers[metadata.file_id]
-                if citation_numbers is not None and metadata is not None
-                else idx,
+                document=number,
                 title=metadata.filename or None if metadata is not None else None,
+                source="Knowledge" if is_knowledge else None,
+                citation=f"[[{number}]]" if is_knowledge else None,
                 contents=file_text,
             )
         )

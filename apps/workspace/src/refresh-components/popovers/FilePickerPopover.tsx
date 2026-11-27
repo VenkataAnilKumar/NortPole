@@ -120,6 +120,7 @@ interface FilePickerItemsProps {
   onFileClick: (file: ProjectFile) => void;
   triggerUploadPicker: () => void;
   openRecentFilesModal: () => void;
+  uploadLabel?: string;
 }
 
 /**
@@ -132,6 +133,7 @@ function useFilePickerItems({
   onFileClick,
   triggerUploadPicker,
   openRecentFilesModal,
+  uploadLabel,
 }: FilePickerItemsProps): DropdownMenuItem[] {
   const t = useTranslations("common.filePicker");
   const hasFiles = recentFiles.length > 0;
@@ -175,7 +177,7 @@ function useFilePickerItems({
       kind: "action",
       id: "upload-files",
       icon: SvgUploadSquare,
-      title: t("uploadFiles.title"),
+      title: uploadLabel ?? t("uploadFiles.title"),
       description: t("uploadFiles.description"),
       onSelect: triggerUploadPicker,
     },
@@ -192,6 +194,9 @@ function useFilePickerItems({
 }
 
 export interface FilePickerPopoverProps {
+  leadingItems?: DropdownMenuItem[];
+  menuLabel?: string;
+  uploadLabel?: string;
   onPickRecent?: (file: ProjectFile) => void;
   onUnpickRecent?: (file: ProjectFile) => void;
   onFileClick?: (file: ProjectFile) => void;
@@ -207,6 +212,9 @@ export default function FilePickerPopover({
   handleUploadChange,
   trigger,
   selectedFileIds,
+  leadingItems,
+  menuLabel,
+  uploadLabel,
 }: FilePickerPopoverProps) {
   const t = useTranslations("common.filePicker");
   const { allRecentFiles } = useProjectsContext();
@@ -230,6 +238,7 @@ export default function FilePickerPopover({
       setOpen(false);
     },
     triggerUploadPicker,
+    uploadLabel,
     openRecentFilesModal: () => recentFilesModal.toggle(true),
   });
 
@@ -313,11 +322,14 @@ export default function FilePickerPopover({
         />
       </recentFilesModal.Provider>
 
-      <Dropdown width={60} open={open} onOpenChange={setOpen}>
+      <Dropdown side={leadingItems ? "top" : undefined} width={60} open={open} onOpenChange={setOpen}>
         <Dropdown.Trigger asChild>
           {typeof trigger === "function" ? trigger(open) : trigger}
         </Dropdown.Trigger>
-        <Dropdown.Data label={t("uploadFiles.title")} items={items} />
+        <Dropdown.Data
+          label={menuLabel ?? t("uploadFiles.title")}
+          items={leadingItems ? [...leadingItems, ...items] : items}
+        />
       </Dropdown>
     </>
   );

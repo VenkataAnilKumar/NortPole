@@ -345,14 +345,16 @@ class ProviderOperation(BaseModel):
     """Diagnostics for one provider call, including its retry attempts."""
 
     request_params: GenerationRequestParams | None = None
+    served_model: str | None = None
 
 
 def _event_with_request_params(
     event: GenerationEvent, operation: ProviderOperation
 ) -> GenerationEvent:
-    return event.model_copy(
-        update={"request_params": copy.deepcopy(operation.request_params)}
-    )
+    request_params = copy.deepcopy(operation.request_params)
+    if request_params is not None and operation.served_model:
+        request_params.served_model = operation.served_model
+    return event.model_copy(update={"request_params": request_params})
 
 
 class _DeadlineCancellationSignal(CancellationSignal):
@@ -2031,6 +2033,8 @@ class LitellmLLM(LLM):
                     chunk_routed: str | None = self._routed_model(model_response.model)
                     if chunk_routed and chunk_routed != routed_model:
                         routed_model = chunk_routed
+                        if operation is not None:
+                            operation.served_model = routed_model
                         record_llm_routed_model(routed_model)
                     # Track LLM cost when usage info is available (typically in the last chunk)
                     if model_response.usage:

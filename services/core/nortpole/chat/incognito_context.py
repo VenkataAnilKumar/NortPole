@@ -120,6 +120,7 @@ def _retained_state(
     retained_ids = {message.id for message in context.messages}
     state = IncognitoState(
         messages=list(context.messages),
+        evidence_by_response=context.evidence_by_response.copy(),
         file_metadata={
             file_id: metadata
             for file_id, metadata in context.file_metadata.items()
@@ -599,6 +600,7 @@ def save_incognito_response(
     admission: ChatTurnAdmission,
     message_id: int,
     messages: Sequence[Message],
+    evidence: dict | None = None,
 ) -> None:
     """Save root and child replay in one value; reject conflicting retries."""
     messages = [
@@ -626,7 +628,9 @@ def save_incognito_response(
         if state is None:
             raise RuntimeError("Incognito session ended")
         if previous := state.responses.get(response_key):
-            if previous.replay_digest != record.replay_digest:
+            if previous.replay_digest != record.replay_digest or (
+                state.evidence_by_response.get(response_key) != evidence
+            ):
                 raise ValueError("Incognito response already has different content")
             already_saved = True
             return None
@@ -635,6 +639,8 @@ def save_incognito_response(
         if response is not None:
             context.previous_run_id = response.run_id
         context.responses = {**state.responses, response_key: record}
+        if evidence:
+            context.evidence_by_response = {**state.evidence_by_response, response_key: evidence}
         return _retained_state(
             context,
             protected_response=response_key,

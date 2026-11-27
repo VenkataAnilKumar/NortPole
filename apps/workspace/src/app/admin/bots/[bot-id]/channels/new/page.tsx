@@ -11,7 +11,7 @@ import { SettingsLayouts } from "@opal/layouts";
 import { SvgSlack } from "@opal/logos";
 import { useDocumentSets } from "@/app/admin/documents/sets/hooks";
 import { useAgents } from "@/lib/agents/hooks";
-import { useStandardAnswerCategories } from "@/lib/community/standardAnswers";
+import { getStandardAnswerCategories } from "@/lib/community/standardAnswers";
 import { useTierAtLeast } from "@/lib/tiers/hooks";
 import { Tier } from "@/lib/tiers/types";
 import type { StandardAnswerCategoryResponse } from "@/components/standardAnswers/getStandardAnswerCategoriesIfEE";
@@ -36,7 +36,7 @@ function NewChannelConfigContent({ slackBotId }: { slackBotId: number }) {
     data: standardAnswerCategories,
     isLoading: isStdAnswerLoading,
     error: stdAnswerError,
-  } = useStandardAnswerCategories();
+  } = getStandardAnswerCategories();
 
   if (
     isDocSetsLoading ||

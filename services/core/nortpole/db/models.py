@@ -32,6 +32,7 @@ from sqlalchemy import (
     event,
     func,
     inspect,
+    select,
     text,
     true,
     update,
@@ -46,6 +47,7 @@ from sqlalchemy.orm import (
     DeclarativeBase,
     Mapped,
     Mapper,
+    column_property,
     mapped_column,
     relationship,
     validates,
@@ -74,6 +76,7 @@ from nortpole.configs.constants import (
 from nortpole.connectors.models import InputType
 from nortpole.context.search.models import SearchDocsResponse
 from nortpole.db.backfill_models import PendingBackfill
+from nortpole.db.agent_preview import AgentPreview, AgentPreviewDraft
 from nortpole.db.enums import (
     AccessType,
     AccountType,
@@ -3455,6 +3458,33 @@ Messages Tables
 """
 
 
+class AgentRelease(Base):
+    __tablename__ = "agent_release"
+    __table_args__ = (
+        UniqueConstraint("persona_id", "version"),
+        UniqueConstraint("persona_id", "test_chat_id"),
+        Index("ix_agent_release_active", "persona_id", unique=True, postgresql_where=text("is_active")),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    persona_id: Mapped[int] = mapped_column(ForeignKey("persona.id", ondelete="CASCADE"))
+    version: Mapped[int]
+    configuration: Mapped[AgentPreview] = mapped_column(PydanticType(AgentPreview, sanitize_strings=True))
+    dependency_fingerprint: Mapped[str] = mapped_column(String(64))
+    # Evidence identifiers survive transcript retention without storing test prompts or answers here.
+    test_chat_id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True))
+    test_response_id: Mapped[int]
+    tested_by: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True))
+    tested_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True))
+    published_by: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True))
+    published_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True))
+    is_active: Mapped[bool]
+    withdrawn_at: Mapped[datetime.datetime | None] = mapped_column(DateTime(timezone=True))
+    withdrawn_by: Mapped[UUID | None] = mapped_column(PGUUID(as_uuid=True))
+    verified_at: Mapped[datetime.datetime | None] = mapped_column(DateTime(timezone=True))
+    verified_by: Mapped[UUID | None] = mapped_column(PGUUID(as_uuid=True))
+
+
 class ChatSession(Base):
     __tablename__ = "chat_session"
     __table_args__ = (
@@ -3476,6 +3506,11 @@ class ChatSession(Base):
         ForeignKey("chat_message.id", ondelete="CASCADE"), nullable=True, index=True
     )
     agent_name: Mapped[str | None] = mapped_column(String, nullable=True)
+    agent_preview: Mapped[AgentPreview | None] = mapped_column(
+        PydanticType(AgentPreview, sanitize_strings=True, none_as_null=True), nullable=True
+    )
+    agent_preview_fingerprint: Mapped[str | None] = mapped_column(String(64))
+    agent_release_id: Mapped[int | None] = mapped_column(ForeignKey("agent_release.id", name="fk_chat_session_agent_release"))
     restoration_config: Mapped[ResearchConfiguration | None] = mapped_column(
         PydanticType(ResearchConfiguration, sanitize_strings=True), nullable=True
     )
@@ -3590,9 +3625,25 @@ class ChatMessage(Base):
         # failed-session check, retention/GC deletes and the cascade delete of
         # a session's messages), which otherwise seq-scan chat_message.
         Index("ix_chat_message_chat_session_id", "chat_session_id"),
+        Index(
+            "ix_chat_message_expense_review_runs",
+            "id",
+            postgresql_where=text("receipt_review_needs_review IS NOT NULL"),
+        ),
+        Index(
+            "ix_chat_message_document_review_runs", "id",
+            postgresql_where=text("document_review_needs_review IS NOT NULL"),
+        ),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
+
+    # NULL for regular chat. Set only for explicit Expense Review runs.
+    receipt_review_needs_review: Mapped[bool | None] = mapped_column(
+        Boolean, nullable=True
+    )
+    document_review_needs_review: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+    document_review_report: Mapped[dict | None] = mapped_column(PGJSONB(none_as_null=True))
 
     response_status: Mapped[RunStatus | None] = mapped_column(
         Enum(
@@ -3669,6 +3720,9 @@ class ChatMessage(Base):
     files: Mapped[list[FileDescriptor] | None] = mapped_column(
         postgresql.JSONB(), nullable=True
     )
+
+    # References and fingerprints for Search evidence that reached this response.
+    search_evidence_provenance: Mapped[dict | None] = mapped_column(PGJSONB(none_as_null=True))
 
     # Maps the citation numbers to a SearchDoc id
     citations: Mapped[dict[int, int] | None] = mapped_column(
@@ -3920,6 +3974,32 @@ class ToolCall(Base):
         # The order the tool returned them in, which a fetch call's replay
         # shows. Rows saved before `position` existed fall back to id order.
         order_by=lambda: [ToolCall__SearchDoc.position, SearchDoc.id],
+    )
+
+
+class DocumentReviewDecision(Base):
+    """One owner decision on an immutable finding in a saved review."""
+
+    __tablename__ = "document_review_decision"
+    __table_args__ = (
+        Index("ix_document_review_decision_finding", "message_id", "finding_number", "id"),
+        UniqueConstraint("message_id", "request_id", name="uq_document_review_decision_request"),
+        CheckConstraint("finding_number > 0", name="ck_document_review_decision_finding"),
+        CheckConstraint(
+            "action IN ('revision_requested', 'exception_accepted', 'resolved')",
+            name="ck_document_review_decision_action",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    message_id: Mapped[int] = mapped_column(ForeignKey("chat_message.id", ondelete="CASCADE"))
+    finding_number: Mapped[int] = mapped_column(Integer)
+    actor_id: Mapped[UUID | None] = mapped_column(ForeignKey("user.id", ondelete="SET NULL"))
+    request_id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True))
+    action: Mapped[str] = mapped_column(String(24))
+    reason: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(),
     )
 
 
@@ -4413,6 +4493,7 @@ class DocumentSet(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String, unique=True)
     description: Mapped[str | None] = mapped_column(String)
+    policy_configuration: Mapped[dict | None] = mapped_column(PGJSONB, nullable=True)
     user_id: Mapped[UUID | None] = mapped_column(
         ForeignKey("user.id", ondelete="CASCADE"), nullable=True
     )
@@ -4653,6 +4734,12 @@ class Persona__PersonaLabel(Base):
 
 class Persona(Base):
     __tablename__ = "persona"
+    __table_args__ = (
+        UniqueConstraint("user_id", "chat_pack_id", "chat_pack_agent_id", name="uq_persona_owned_pack_chat_agent"),
+    )
+
+    chat_pack_id: Mapped[str | None] = mapped_column(String(64))
+    chat_pack_agent_id: Mapped[str | None] = mapped_column(String(64))
 
     id: Mapped[int] = mapped_column(primary_key=True)
     # Owner user. SET NULL (not CASCADE) so deleting a user orphans their
@@ -4668,6 +4755,27 @@ class Persona(Base):
     )
     name: Mapped[str] = mapped_column(String)
     description: Mapped[str] = mapped_column(String)
+    agent_release_draft: Mapped[AgentPreviewDraft | None] = mapped_column(
+        PydanticType(AgentPreviewDraft, sanitize_strings=True, none_as_null=True), nullable=True
+    )
+    active_release_version: Mapped[int | None] = column_property(
+        select(AgentRelease.version)
+        .where(AgentRelease.persona_id == id, AgentRelease.is_active.is_(True))
+        .correlate_except(AgentRelease)
+        .scalar_subquery()
+    )
+
+    verified_release_version: Mapped[int | None] = column_property(
+        select(AgentRelease.version)
+        .where(
+            AgentRelease.persona_id == id,
+            AgentRelease.is_active.is_(True),
+            AgentRelease.withdrawn_at.is_(None),
+            AgentRelease.verified_at.is_not(None),
+        )
+        .correlate_except(AgentRelease)
+        .scalar_subquery()
+    )
 
     # Canonical FK encoding both provider and model for the persona's LLM override.
     # NOTE: only applied on actual response generation — not used for auto-detected
@@ -6115,6 +6223,21 @@ class InputPrompt__User(Base):
     disabled: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
 
 
+class ProjectMember(Base):
+    __tablename__ = "project_member"
+    __table_args__ = (
+        CheckConstraint("role in ('viewer', 'editor')", name="project_member_role"),
+    )
+
+    project_id: Mapped[int] = mapped_column(
+        ForeignKey("user_project.id", ondelete="CASCADE"), primary_key=True
+    )
+    user_id: Mapped[UUID] = mapped_column(
+        ForeignKey("user.id", ondelete="CASCADE"), primary_key=True, index=True
+    )
+    role: Mapped[str] = mapped_column(String(6))
+
+
 class Project__UserFile(Base):
     __tablename__ = "project__user_file"
 
@@ -6163,6 +6286,20 @@ class UserDocument(str, Enum):
     CHAT = "chat"
     RECENT = "recent"
     FILE = "file"
+
+
+class ProjectOutput(Base):
+    __tablename__ = "project_output"
+
+    id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True)
+    project_id: Mapped[int] = mapped_column(
+        ForeignKey("user_project.id", ondelete="CASCADE"), primary_key=True, index=True
+    )
+    name: Mapped[str] = mapped_column(String(150))
+    kind: Mapped[str] = mapped_column(String(20))
+    payload: Mapped[dict[str, Any]] = mapped_column(PGJSONB)
+    version: Mapped[int] = mapped_column(Integer)
+    updated_at: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True))
 
 
 class UserFile(Base):

@@ -40,6 +40,10 @@ Tests for upstream deployment files that NortPole does not ship now check NortPo
 index image) and were removed where it does not (the Craft compose file and CLI copy, the model-server image).
 Tests that switch on Enterprise mode are skipped with a stated reason.
 
+## Workspace lint plugins
+
+The anti-slop, i18n, navigation and Opal plugins in `apps/workspace/tools/oxlint` were restored from `web/tools/oxlint` at commit `919578e`. They supply the rules already referenced by the workspace Oxlint configuration.
+
 ## Brand assets and documents
 
 - Upstream brand assets were removed and replaced with new NortPole placeholder assets: `public/logo*.png`, `logo.svg`, `logotype*.png`, `nortpole.ico`, `OpenSource.png`, the chat background images and thumbnails, the inline logo components in `lib/opal/src/logos` and `lib/opal/src/icons`, and the favicon and app icons in the sandbox web template. The wordmark text uses a system font; final brand artwork and typeface are still open.

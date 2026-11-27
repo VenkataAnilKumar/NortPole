@@ -1,5 +1,8 @@
 "use client";
 
+import { ResponsiveLayout } from "@opal/layouts";
+import { NavLink } from "@opal/navigation";
+import { useTranslations as useWorkspaceTranslations } from "next-intl";
 import useSWR from "swr";
 import { errorHandlingFetcher } from "@/lib/fetcher";
 import { useApprovalCounts } from "@/lib/approvals";
@@ -27,24 +30,23 @@ function Stat({ label, value, warn }: { label: string; value: number; warn?: boo
 
 /** What needs an administrator's attention now. Counts, reasons and system messages only: never the title or text of anyone's task. */
 export default function OverviewPage() {
+  const workspaceText = useWorkspaceTranslations("workspaceUi");
   const { data, error, isLoading } = useSWR<Overview>("/api/admin/overview", errorHandlingFetcher, { refreshInterval: 60000 });
   const approvals = useApprovalCounts();
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col gap-5 p-4 sm:p-8" data-testid="overview-page">
+    <ResponsiveLayout display="flex" className="mx-auto w-full max-w-5xl flex-col gap-5 p-4 sm:p-8" data-testid="overview-page">
       <div>
-        <h1 className="text-2xl font-semibold text-text-05">Overview</h1>
-        <p className="mt-1 text-sm text-text-03">
-          What needs attention{data ? ` in the last ${data.window_days} days` : ""}. It shows counts and reasons, never the content of anyone&apos;s tasks.
-        </p>
+        <h1 className="text-2xl font-semibold text-text-05">{workspaceText("overview")}</h1>
+        <p className="mt-1 text-sm text-text-03">{workspaceText("whatNeedsAttention")}{data ? ` in the last ${data.window_days} days` : ""}{workspaceText("itShowsCountsAndReasonsNeverTheContentOf")}</p>
       </div>
-      {error && <p role="alert" className="text-sm text-status-text-error-05">The overview could not be loaded.</p>}
-      {isLoading && <p className="text-sm text-text-03">Loading…</p>}
+      {error && <p role="alert" className="text-sm text-status-text-error-05">{workspaceText("theOverviewCouldNotBeLoaded")}</p>}
+      {isLoading && <p className="text-sm text-text-03">{workspaceText("loading")}</p>}
       {approvals.loaded && (
         <section className={card} aria-labelledby="ov-approvals" data-testid="overview-approvals">
-          <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h2 id="ov-approvals" className="text-base font-semibold text-text-05">Waiting for an administrator</h2>
-            <a href="/admin/approvals" className="text-sm font-semibold text-text-05 underline">Open Approvals</a>
-          </div>
+          <ResponsiveLayout display="flex" className="flex-wrap items-baseline justify-between gap-2">
+            <h2 id="ov-approvals" className="text-base font-semibold text-text-05">{workspaceText("waitingForAnAdministrator")}</h2>
+            <NavLink href="/admin/approvals" className="text-sm font-semibold text-text-05 underline">{workspaceText("openApprovals")}</NavLink>
+          </ResponsiveLayout>
           <p className="mt-1 text-sm text-text-04">
             {approvals.total === 0
               ? "Nothing is waiting."
@@ -55,15 +57,15 @@ export default function OverviewPage() {
       {data && (
         <>
           <section className={card} aria-labelledby="ov-runs">
-            <h2 id="ov-runs" className="text-base font-semibold text-text-05">Tasks</h2>
-            <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <Stat label="Plans that failed" value={data.runs.failed_plans} warn />
-              <Stat label="Runs that failed" value={data.runs.failed_runs} warn />
-              <Stat label="Drafts waiting for review" value={data.runs.drafts_ready} />
-              <Stat label="Approved" value={data.runs.approved} />
-            </div>
+            <h2 id="ov-runs" className="text-base font-semibold text-text-05">{workspaceText("tasks")}</h2>
+            <ResponsiveLayout display="grid" className="mt-3 grid-cols-2 gap-3 sm:grid-cols-4">
+              <Stat label={workspaceText("plansThatFailed")} value={data.runs.failed_plans} warn />
+              <Stat label={workspaceText("runsThatFailed")} value={data.runs.failed_runs} warn />
+              <Stat label={workspaceText("draftsWaitingForReview")} value={data.runs.drafts_ready} />
+              <Stat label={workspaceText("approved")} value={data.runs.approved} />
+            </ResponsiveLayout>
             {data.runs.recent_errors.length > 0 && (
-              <ul className="mt-3 flex flex-col gap-1 text-sm text-text-04" aria-label="Recent failures">
+              <ul className="mt-3 flex flex-col gap-1 text-sm text-text-04" aria-label={workspaceText("recentFailures")}>
                 {data.runs.recent_errors.map((e, i) => (
                   <li key={i}><span className="text-text-03">{when(e.at)}</span> · {e.state === "plan_failed" ? "plan" : "run"}: {e.error}</li>
                 ))}
@@ -72,10 +74,10 @@ export default function OverviewPage() {
           </section>
 
           <section className={card} aria-labelledby="ov-refusals">
-            <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <h2 id="ov-refusals" className="text-base font-semibold text-text-05">Refused requests</h2>
-              <a href="/admin/audit" className="text-sm font-semibold text-text-05 underline">Open the audit log</a>
-            </div>
+            <ResponsiveLayout display="flex" className="flex-wrap items-baseline justify-between gap-2">
+              <h2 id="ov-refusals" className="text-base font-semibold text-text-05">{workspaceText("refusedRequests")}</h2>
+              <NavLink href="/admin/audit" className="text-sm font-semibold text-text-05 underline">{workspaceText("openTheAuditLog")}</NavLink>
+            </ResponsiveLayout>
             <p className="mt-1 text-sm text-text-04">
               {data.refusals.total === 0 ? "Nothing was refused." : `${data.refusals.total} refused: ` + data.refusals.by_action.map((a) => `${a.action} ${a.count}`).join(", ") + "."}
             </p>
@@ -88,9 +90,9 @@ export default function OverviewPage() {
             )}
           </section>
 
-          <div className="grid gap-5 lg:grid-cols-2">
+          <ResponsiveLayout display="grid" className="gap-5 lg:grid-cols-2">
             <section className={card} aria-labelledby="ov-packs">
-              <h2 id="ov-packs" className="text-base font-semibold text-text-05">Packs</h2>
+              <h2 id="ov-packs" className="text-base font-semibold text-text-05">{workspaceText("packs")}</h2>
               <p className="mt-1 text-sm text-text-04">
                 {data.packs.active} active.{" "}
                 {data.packs.unavailable.length === 0 ? "All are available on the current model." : `${data.packs.unavailable.length} not available to people:`}
@@ -102,7 +104,7 @@ export default function OverviewPage() {
               </ul>
             </section>
             <section className={card} aria-labelledby="ov-chain">
-              <h2 id="ov-chain" className="text-base font-semibold text-text-05">Audit log integrity</h2>
+              <h2 id="ov-chain" className="text-base font-semibold text-text-05">{workspaceText("auditLogIntegrity")}</h2>
               <p className={`mt-1 text-sm ${data.audit_chain.ok ? "text-text-04" : "text-status-text-error-05"}`} data-testid="ov-chain">
                 {data.audit_chain.ok
                   ? `Intact: ${data.audit_chain.checked} events checked.`
@@ -110,10 +112,10 @@ export default function OverviewPage() {
                 {data.audit_chain.unhashed_rows ? ` ${data.audit_chain.unhashed_rows} older events predate the chain.` : ""}
               </p>
             </section>
-          </div>
+          </ResponsiveLayout>
 
           <section className={card} aria-labelledby="ov-setup">
-            <h2 id="ov-setup" className="text-base font-semibold text-text-05">Setup</h2>
+            <h2 id="ov-setup" className="text-base font-semibold text-text-05">{workspaceText("setup")}</h2>
             <ul className="mt-2 flex flex-col divide-y divide-border-01">
               {data.setup.map((x) => (
                 <li key={x.item} className="flex flex-wrap items-baseline justify-between gap-2 py-2" data-testid="ov-setup-row">
@@ -121,13 +123,13 @@ export default function OverviewPage() {
                     <span className={`font-semibold ${x.ok ? "text-text-05" : "text-status-text-error-05"}`}>{x.ok ? "" : "Needs attention: "}{x.item}</span>
                     <span className="text-text-04"> · {x.note}</span>
                   </div>
-                  <a href={x.href} className="text-sm font-semibold text-text-05 underline">Open</a>
+                  <a href={x.href} className="text-sm font-semibold text-text-05 underline">{workspaceText("open")}</a>
                 </li>
               ))}
             </ul>
           </section>
         </>
       )}
-    </div>
+    </ResponsiveLayout>
   );
 }

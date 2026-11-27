@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 from nortpole.db.enums import UserFileStatus
 from nortpole.db.models import UserFile, UserProject
+from nortpole.db.project_access import ProjectRole
 from nortpole.db.projects import CategorizedFilesResult
 from nortpole.file_store.models import ChatFileType
 from nortpole.server.query_and_chat.chat_utils import mime_type_to_chat_file_type
@@ -79,6 +80,10 @@ class CategorizedFilesSnapshot(BaseModel):
         )
 
 
+class ProjectChatSnapshot(ChatSessionDetails):
+    is_owned: bool
+
+
 class UserProjectSnapshot(BaseModel):
     id: int
     name: str
@@ -86,10 +91,15 @@ class UserProjectSnapshot(BaseModel):
     created_at: datetime
     user_id: UUID | None
     instructions: str | None = None
-    chat_sessions: list[ChatSessionDetails]
+    role: ProjectRole
+    shared: bool
+    chat_sessions: list[ProjectChatSnapshot]
 
     @classmethod
-    def from_model(cls, model: UserProject) -> "UserProjectSnapshot":
+    def from_model(
+        cls, model: UserProject, *, viewer_id: UUID | None = None,
+        role: ProjectRole = "owner", shared: bool = False,
+    ) -> "UserProjectSnapshot":
         return cls(
             id=model.id,
             name=model.name,
@@ -97,12 +107,18 @@ class UserProjectSnapshot(BaseModel):
             created_at=model.created_at,
             user_id=model.user_id,
             instructions=model.instructions,
+            role=role,
+            shared=shared,
             # A project lists its sessions by title, so an incognito chat would
             # surface here the same way it would in the sidebar.
             chat_sessions=[
-                ChatSessionDetails.from_model(chat)
+                ProjectChatSnapshot(
+                    **ChatSessionDetails.from_model(chat).model_dump(),
+                    is_owned=chat.user_id == (viewer_id or model.user_id),
+                )
                 for chat in model.chat_sessions
                 if not chat.deleted and chat.incognito_record_mode is None
+                and chat.spawned_by_message_id is None
             ],
         )
 

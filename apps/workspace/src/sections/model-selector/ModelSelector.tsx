@@ -59,6 +59,8 @@ export interface ModelSelectorProps {
    * (modelConfigurationId === null), which callers should treat as "clear."
    */
   includeGlobalDefault?: boolean;
+  includeAutomatic?: boolean;
+  modelBlockedReason?: (option: LLMOption) => string | undefined;
   /** Which side of the trigger the popover prefers to open on. */
   side?: "top" | "bottom" | "left" | "right";
 }
@@ -76,6 +78,8 @@ export default function ModelSelector({
   reasoningManager,
   disabled = false,
   includeGlobalDefault = false,
+  includeAutomatic = false,
+  modelBlockedReason,
   side = "top",
 }: ModelSelectorProps) {
   const t = useTranslations("chat.modelSelector");
@@ -166,10 +170,11 @@ export default function ModelSelector({
 
   const handleSelect = useCallback(
     (option: LLMOption) => {
+      if (modelBlockedReason?.(option)) return;
       onChange(option);
       setOpen(false);
     },
-    [onChange]
+    [modelBlockedReason, onChange]
   );
 
   const modelDetail = useModelDetailManagers(
@@ -208,6 +213,8 @@ export default function ModelSelector({
           onSelect={handleSelect}
           isSelected={isSelected}
           includeGlobalDefault={includeGlobalDefault}
+          includeAutomatic={includeAutomatic}
+          modelBlockedReason={modelBlockedReason}
           globalDefaultDisplayName={globalDefaultDisplayName}
           scrollContainerRef={scrollContainerRef}
           modelDetail={modelDetail}

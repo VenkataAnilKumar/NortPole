@@ -24,7 +24,8 @@ type AppPositionType =
   | { location: "agent" | "project"; id: number }
   | {
       location:
-        | "more-agents"
+        | "agents"
+        | "projects"
         | "new-session"
         | "user-settings"
         | "shared-chat"
@@ -32,7 +33,8 @@ type AppPositionType =
         | "workflows"
         | "knowledge"
         | "sources"
-        | "inbox";
+        | "inbox"
+        | "search";
     };
 
 /** A row id, or null for a parameter that is absent or is not one. */
@@ -63,8 +65,10 @@ function hrefFor(value: AppPositionType): Route {
       return routeWithQuery("/app", {
         [SEARCH_PARAM_NAMES.PROJECT_ID]: value.id,
       });
-    case "more-agents":
+    case "agents":
       return "/app/agents";
+    case "projects":
+      return "/app/projects";
     case "plugins":
       return "/app/plugins";
     case "workflows":
@@ -75,6 +79,8 @@ function hrefFor(value: AppPositionType): Route {
       return "/app/sources/discover";
     case "inbox":
       return "/app/inbox";
+    case "search":
+      return "/app/search";
     case "user-settings":
       return "/app/settings";
     case "shared-chat":
@@ -197,8 +203,12 @@ class AppPosition {
     return this.value.location === "new-session";
   }
 
-  isMoreAgents(): boolean {
-    return this.value.location === "more-agents";
+  isAgents(): boolean {
+    return this.value.location === "agents";
+  }
+
+  isProjects(): boolean {
+    return this.value.location === "projects";
   }
 
   isPlugins(): boolean {
@@ -217,6 +227,10 @@ class AppPosition {
   /** Skills, Connectors and Plugins; a person's own plugins page sits under Sources too. */
   isSources(): boolean {
     return this.value.location === "sources" || this.value.location === "plugins";
+  }
+
+  isSearch(): boolean {
+    return this.value.location === "search";
   }
 
   isInbox(): boolean {
@@ -304,11 +318,17 @@ export function useAppPosition(): AppPosition {
     if (pathname === "/app/sources" || pathname.startsWith("/app/sources/")) {
       return new AppPosition({ location: "sources" }, navigation);
     }
+    if (pathname === "/app/search") {
+      return new AppPosition({ location: "search" }, navigation);
+    }
     if (pathname === "/app/inbox" || pathname.startsWith("/app/inbox/")) {
       return new AppPosition({ location: "inbox" }, navigation);
     }
-    if (pathname.startsWith("/app/agents")) {
-      return new AppPosition({ location: "more-agents" }, navigation);
+    if (pathname === "/app/agents" || pathname.startsWith("/app/agents/")) {
+      return new AppPosition({ location: "agents" }, navigation);
+    }
+    if (pathname === "/app/projects" || pathname.startsWith("/app/projects/")) {
+      return new AppPosition({ location: "projects" }, navigation);
     }
     if (chatId)
       return new AppPosition({ location: "chat", id: chatId }, navigation);

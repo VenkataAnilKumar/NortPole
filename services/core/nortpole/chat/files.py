@@ -16,6 +16,7 @@ from nortpole.configs.app_configs import DISABLE_VECTOR_DB
 from nortpole.configs.constants import DEFAULT_PERSONA_ID, FileOrigin
 from nortpole.context.search.models import SearchDoc
 from nortpole.context.search.utils import sandbox_filename_for_document
+from nortpole.db.enums import UserFileStatus
 from nortpole.db.file_record import FileRecordNotFoundError
 from nortpole.db.models import ChatMessage, Persona, UserFile
 from nortpole.db.projects import get_user_files_from_project
@@ -176,8 +177,11 @@ def resolve_context_user_files(
                 db_session=db_session,
             )
         )
-    if persona.id != DEFAULT_PERSONA_ID and persona.user_files:
-        user_files.extend(persona.user_files)
+    if persona.id != DEFAULT_PERSONA_ID:
+        user_files.extend(
+            file for file in persona.user_files
+            if not file.incognito and file.status not in (UserFileStatus.FAILED, UserFileStatus.DELETING)
+        )
     seen_ids: set[UUID] = set()
     selected_files: list[UserFile] = []
     for user_file in user_files:

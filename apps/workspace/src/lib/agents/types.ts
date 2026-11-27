@@ -67,6 +67,9 @@ export interface MinimalAgent {
   attached_document_count?: number;
   knowledge_sources?: ValidSources[];
   default_model_configuration_id?: number | null;
+  active_release_version?: number | null;
+  active_pilot?: import("./pilots").AgentPilotKind | null;
+  company_verified_version?: number | null;
   uploaded_image_id?: string;
   icon_name?: string;
   is_public: boolean;
@@ -110,6 +113,7 @@ export interface FullAgent extends Agent {
 // ── Upsert / API parameter types ──────────────────────────────────────────────
 
 export interface AgentUpsertParameters {
+  pilot?: import("./pilots").AgentPilotKind | null;
   name: string;
   description: string;
   system_prompt: string;
@@ -137,6 +141,7 @@ export interface AgentUpsertParameters {
 }
 
 export interface AgentUpsertRequest {
+  pilot?: import("./pilots").AgentPilotKind | null;
   name: string;
   description: string;
   system_prompt: string;

@@ -9,6 +9,7 @@ from pydantic import BaseModel, ConfigDict
 from typing_extensions import TypedDict  # noreorder
 
 from nortpole.configs.constants import FileOrigin
+from nortpole.context.search.models import SearchDoc
 
 
 class _LazyContent:
@@ -213,6 +214,7 @@ class ContextFileMetadata(BaseModel):
     file_id: str
     filename: str
     file_content: str
+    source_document: SearchDoc | None = None
 
 
 class FileToolMetadata(BaseModel):

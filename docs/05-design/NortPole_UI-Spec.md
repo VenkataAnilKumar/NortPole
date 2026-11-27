@@ -1,6 +1,6 @@
 # NortPole — UI specification
 
-Status: **platform surfaces and proposed first-workflow screens** · Updated: 2026-11-09
+Status: **current pilot workspace navigation and proposed platform surfaces** · Updated: 2026-11-26
 
 ## Portal and surface inventory (L01)
 
@@ -22,23 +22,31 @@ Use the same tenant policies and run contracts across these surfaces. Pack views
 
 ## User Portal
 
-The employee workspace opens on a request composer with recent tasks and approved workflows nearby. Task detail keeps the request, current status, output, citations and run activity together. Reviewers see decisions only for the records and versions they are authorized to review.
+The sidebar opens the member destinations below in this order. **Recents** appears below the main navigation. The account menu provides personal settings, and authorized admins can open **Admin Panel** from the sidebar.
 
-Tab names are short. Each tab can have sub-tabs; sub-tabs are proposed and appear only when their capability is usable and authorized. Earlier drafts listed Knowledge, Skills and Connectors as tabs. Knowledge is now **Libraries**; Skills is a sub-tab of Agents; personal connectors sit under My Files and Settings, and plugins under Apps and Packs.
+| Sidebar destination | Views and controls | Member workflow |
+| --- | --- | --- |
+| **New** | Chat composer, task starters, context and model controls | Start a chat, choose an agent or project, and attach permitted files, Knowledge, integrations, or skills. |
+| **Search** | Knowledge, Chats, Workflows | Find content and activity within the member's access. Open the matching item or bring selected Knowledge results into Chat. |
+| **Inbox** | To approve, To review, Updates | Review pending work and request decisions. Approval applies to the specific plan, draft version, or action shown. |
+| **Agents** | Agent Catalog | Search and filter reusable assistants. Start Chat from an agent card, or use New Agent when authorized. |
+| **Workflows** | Start, Scheduled, My drafts, Runs | Start a versioned workflow, manage schedules, reopen drafts, and inspect runs. |
+| **Projects** | Project list, search, New Project | Open a project to work with related chats, files, instructions, and outputs. Owners can delete projects after confirmation. |
+| **Knowledge** | Collections, My files when enabled | Browse collections within the member's access and manage personal files. |
+| **Sources** | Integrations, Tools, Skills, Discover | Find connected services, assistant capabilities, reusable skills, and workspace requests. |
 
-| Tab | Sub-tabs | User features | Earliest delivery |
-| --- | --- | --- | --- |
-| New task | Ask, Task, Model, Quick starts | Describe a request, choose an approved workflow and a model route, then get a cited answer (Ask) or save a draft (Task). An explicit Start shows the scope before anything runs. Slash commands run permitted skills. | Fixture composer, then pilot evidence |
-| Tasks | Active, Drafts, Done, Detail | Open drafts, explicitly start a run, inspect progress, replay and retry steps, reopen results. | Fixture |
-| Search | Answers, Sources, Filters | Cited answers over permitted sources with access state and versions; turn a result into a task. | Pilot |
-| Agents | Approved, Mine, Shared, Skills, Studio | Discover and launch approved agents with visible permissions, tools and the routes each has passed evaluation on. Skills lists approved reusable capabilities. Studio is the authoring surface. | Pilot selected workflow, then catalog; Skills and Studio expansion |
-| Libraries | Shared, Team, Status | Browse permitted shared knowledge, search it, and see indexing, freshness and conflicts. | Pilot one source, then expansion |
-| Automations | Schedules, Triggers, History | View schedules, triggers and run history. Authorized users can pause or change schedules. | Expansion |
-| Apps and Packs | Installed, Browse, Plugins | Open installed domain applications and workflows within granted permissions. Plugins are installed by an administrator. | Pilot selected pack, then catalog |
-| My Files | Uploads, Connected, Memory | Uploaded files with parsing status; personal connected accounts where policy allows; view, edit and delete memory. | Pilot as required; Connected and Memory expansion |
-| Projects | Overview, Tasks, People | Organize shared goals, files, instructions, tasks and deliverables. | Expansion |
-| Inbox | Needs action, Resolved, Updates | Follow assignments, approvals and results. Authorized reviewers act on a specific version or action payload. | Pilot review, then unified inbox |
-| Settings | Profile, Appearance, Models, Notifications, Memory, Accounts, Prompts, Privacy, Security | See User Settings below. | Pilot as required |
+### Agent Catalog and Projects
+
+**Agent Catalog** is inside **Agents**. Its filters are **Starred**, **My agents**, **Shared with me**, and **Company agents**. On entry, it checks Company agents first, then Shared with me, My agents, and Starred, and opens the first populated view. An explicit tab choice stays selected while the member searches. Pinned agents can appear as sidebar shortcuts.
+
+**Projects** opens the searchable project list directly. A project card opens its workspace. **New Project** uses the same creation flow as project work started from Chat.
+
+### Sources and Knowledge
+
+- **Integrations** groups workspace connectors and personal integrations by category. Workspace sources show indexing information when available to the member. **View Knowledge** on a source card filters Knowledge to accessible collections using that source. **Clear source filter** restores the collection list.
+- **Tools** shows what assistants may use under workspace policy. Members can request eligible tools from their rows and see the decision and any admin note. Approval and tool setup are separate steps.
+- **Skills** lists built-ins visible to the member, custom skills they own or can access, and capabilities from active packs. Custom skill management includes creation, file or GitHub import, editing, sharing, and enablement, based on permissions. Integrations can also suggest skills that members add to their own list.
+- **Discover** supports search and category filters for workspace sources, inactive packs, and tools. **Your requests** stays accessible with filters applied. Pending requests and approved items awaiting setup refresh while the page is visible. Once the administrator sets up an item, it leaves the requestable catalog and its approval stays in request history.
 
 ### Model route picker
 
@@ -81,7 +89,7 @@ Tab names are short; sub-tabs are proposed. Mapping from earlier names: Organiza
 | Usage | Spend, Quotas, Export | Track spend by user, group and agent; apply quotas, rate limits and cost alerts; export metering. | Expansion |
 | Platform | Deploy, Keys, API, Backup | Manage the deployment profile, customer-managed keys and residency, API access, webhooks, feature flags, backups and recovery. | Pilot operational setup, then broader controls |
 
-The fixture exposes New task and Tasks. Pilot navigation adds only working search, library, review and administration capabilities. Expand tabs when their workflows are usable and authorized. Agent Studio remains the authoring surface, and the Developer Portal remains the integration surface. These are proposed navigation and delivery scopes.
+The admin table describes the proposed organization and delivery scope. The current member sidebar is documented under [User Portal](#user-portal).
 
 ## Screen inventory
 

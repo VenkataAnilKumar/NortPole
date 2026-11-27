@@ -8,6 +8,12 @@ export enum NotificationType {
   SCHEDULED_TASK_PRE_APPROVED_ACTION = "scheduled_task_pre_approved_action",
   APPROVAL_REQUESTED = "approval_requested",
   SOURCE_REQUEST_DECIDED = "source_request_decided",
+  WORKFLOW_DECISION_RECORDED = "workflow_decision_recorded",
+  WORKFLOW_PLAN_READY = "workflow_plan_ready",
+  WORKFLOW_RUN_NEEDS_REVIEW = "workflow_run_needs_review",
+  DOCUMENT_REVIEW_NEEDS_REVIEW = "document_review_needs_review",
+  WORKFLOW_RUN_FAILED = "workflow_run_failed",
+  WORKFLOW_RUN_COMPLETE = "workflow_run_complete",
   SCHEDULE_PAUSED = "schedule_paused",
 
   // SvgAlertTriangle
@@ -60,3 +66,6 @@ export interface NotificationSummary {
   total_items: number;
   undismissed_count: number;
 }
+
+export type InboxTab = "approve" | "review" | "updates" | "dismissed" | "history";
+export type InboxNotificationSummary = Record<InboxTab, number>;

@@ -16,7 +16,10 @@ from nortpole.configs.app_configs import DISABLE_VECTOR_DB
 from nortpole.context.search.models import IndexFilters, InferenceChunk
 from nortpole.context.search.preprocessing.access_filters import build_access_filters_for_user
 from nortpole.db.models import User
+from nortpole.error_handling.error_codes import NortPoleErrorCode
+from nortpole.error_handling.exceptions import NortPoleError
 from nortpole.utils.logger import setup_logger
+from nortpole.work.workflow_schedules.models import KnowledgeTriggerInput
 
 logger = setup_logger()
 
@@ -87,3 +90,27 @@ def gather_evidence(db_session: Session, user: User, query: str, limit: int = MA
     if DISABLE_VECTOR_DB:
         return []
     return chunks_to_evidence(_search(db_session, user, query, limit), limit)
+
+
+def gather_trigger_evidence(db: Session, user: User, source: KnowledgeTriggerInput) -> list[Evidence]:
+    from nortpole.db.search_settings import get_active_search_settings
+    from nortpole.document_index.factory import get_default_document_index
+    from nortpole.document_index.interfaces import DocumentSectionRequest
+    from nortpole.work.workflow_schedules.source_events import require_current_source
+
+    library = require_current_source(db, user, source)
+    settings = get_active_search_settings(db)
+    index = get_default_document_index(settings.primary, settings.secondary)
+    access = build_access_filters_for_user(user, db)
+    chunks = index.id_based_retrieval(
+        [DocumentSectionRequest(document_id=source.document_id, min_chunk_ind=0, max_chunk_ind=3)],
+        IndexFilters(
+            access_control_list=access.access_control_list, cc_pair_access=access.cc_pair_access,
+            forced_document_set=[library.name],
+        ),
+    )
+    require_current_source(db, user, source)
+    evidence = chunks_to_evidence([chunk for chunk in chunks if chunk.document_id == source.document_id and not chunk.hidden])
+    if not evidence:
+        raise NortPoleError(NortPoleErrorCode.CONFLICT, "The triggering document is unavailable in the Knowledge index.")
+    return evidence

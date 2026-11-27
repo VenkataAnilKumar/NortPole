@@ -7,7 +7,9 @@ export interface Project {
   created_at: string;
   user_id: string;
   instructions: string | null;
-  chat_sessions: ChatSession[];
+  role?: "owner" | "viewer" | "editor";
+  shared?: boolean;
+  chat_sessions: (ChatSession & { is_owned?: boolean })[];
 }
 
 /**
@@ -19,7 +21,7 @@ export interface Project {
  */
 export interface ProjectSearchMatch {
   project: Project;
-  chatSessions: ChatSession[];
+  chatSessions: Project["chat_sessions"];
   chatMatched: boolean;
 }
 

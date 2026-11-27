@@ -33,6 +33,9 @@ from nortpole.db.models import (
     Credential,
     Document,
     DocumentByConnectorCredentialPair,
+    DocumentSet,
+    DocumentSet__ConnectorCredentialPair,
+    DocumentSet__UserGroup,
     User,
     User__UserGroup,
     UserGroup,
@@ -42,6 +45,7 @@ from nortpole.db.models import (
 from nortpole.document_index.interfaces import IndexingMetadata, MetadataUpdateRequest, TenantState
 from nortpole.error_handling.exceptions import NortPoleError
 from nortpole.knowledge.knowledge_access.group_admin import SourceGroupsUpdate, set_source_groups
+from nortpole.server.features.document_set.api import list_collection_documents
 from nortpole.document_index.opensearch.opensearch_document_index import (
     OpenSearchDocumentIndex,
 )
@@ -185,6 +189,43 @@ def test_member_finds_it_and_outsider_does_not(world) -> None:  # type: ignore[n
     ids, _access, idx = world
     assert DOC_ID in _search_as(idx, ids["member"])
     assert DOC_ID not in _search_as(idx, ids["outsider"])
+
+
+def test_collection_browsing_requires_document_and_collection_access(world) -> None:  # type: ignore[no-untyped-def]
+    ids, _access, _idx = world
+    with get_session_with_current_tenant() as session:
+        member = session.get(User, ids["member"])
+        outsider = session.get(User, ids["outsider"])
+        assert member is not None and outsider is not None
+        collection = DocumentSet(name=f"browse-{RUN}", is_public=True)
+        session.add(collection)
+        session.flush()
+        session.add(
+            DocumentSet__ConnectorCredentialPair(
+                document_set_id=collection.id, connector_credential_pair_id=ids["ccs"][0]
+            )
+        )
+        session.flush()
+
+        def browse(user: User) -> list[str]:
+            page = list_collection_documents(collection.id, None, 30, user, session)
+            return [document.id for document in page.documents]
+
+        assert browse(member) == [DOC_ID]
+        assert browse(outsider) == []
+
+        collection.is_public = False
+        session.add(
+            DocumentSet__UserGroup(
+                document_set_id=collection.id, user_group_id=ids["research"]
+            )
+        )
+        session.flush()
+        assert browse(member) == [DOC_ID]
+        with pytest.raises(NortPoleError) as exc:
+            browse(outsider)
+        assert exc.value.status_code == 404
+        session.rollback()
 
 
 def _resync(idx, doc_id: str) -> None:  # type: ignore[no-untyped-def]

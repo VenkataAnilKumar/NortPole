@@ -1,9 +1,15 @@
 "use client";
 
+import { ResponsiveLayout } from "@opal/layouts";
+import { ActionButton, NativeInput, NativeTextArea } from "@opal/components";
+import { NavLink } from "@opal/navigation";
+import { useTranslations as useWorkspaceTranslations } from "next-intl";
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
-import useSWR from "swr";
+import { useSearchParams } from "@opal/navigation";
+import useSWR, { mutate as mutateCache } from "swr";
 import { errorHandlingFetcher } from "@/lib/fetcher";
+import { invalidateNotificationCaches } from "@/lib/notifications/api";
+import { SWR_KEYS } from "@/lib/swr-keys";
 import TaskActions from "@/sections/reviewedTasks/TaskActions";
 
 const URL = "/api/tasks";
@@ -57,7 +63,11 @@ const input = "w-full rounded-xl border border-border-02 bg-background-neutral-0
 const primary = "min-h-11 rounded-xl bg-text-05 px-5 text-sm font-semibold text-background-neutral-00 disabled:opacity-50";
 const secondary = "min-h-11 rounded-xl border border-border-02 px-4 text-sm font-semibold text-text-05 disabled:opacity-50";
 
-async function call(path: string, method: string, body: unknown): Promise<Task> {
+type TaskRequest =
+  | { title: string; request: string; desired_output: string; version?: number }
+  | { version: number; note?: string; draft_hash?: string | null; decision?: "keep" | "remove" };
+
+async function call(path: string, method: string, body: TaskRequest): Promise<Task> {
   const res = await fetch(path, {
     method,
     headers: { "Content-Type": "application/json" },
@@ -84,6 +94,7 @@ function DraftForm({
   onSaved: (t: Task) => void;
   onCancel?: () => void;
 }) {
+  const workspaceText = useWorkspaceTranslations("workspaceUi");
   const [title, setTitle] = useState(task?.title ?? "");
   const [request, setRequest] = useState(task?.request ?? "");
   const [output, setOutput] = useState(task?.desired_output ?? "");
@@ -104,36 +115,30 @@ function DraftForm({
   };
 
   return (
-    <div className="flex flex-col gap-3">
-      <label className="flex flex-col gap-1 text-sm font-medium text-text-05">
-        Title
-        <input className={`${input} min-h-11`} value={title} maxLength={200} onChange={(e) => setTitle(e.target.value)} />
+    <ResponsiveLayout display="flex" className="flex-col gap-3">
+      <label className="flex flex-col gap-1 text-sm font-medium text-text-05">{workspaceText("title")}<NativeInput className={`${input} min-h-11`} value={title} maxLength={200} onChange={(e) => setTitle(e.target.value)} />
       </label>
-      <label className="flex flex-col gap-1 text-sm font-medium text-text-05">
-        What should this draft do?
-        <textarea className={input} rows={4} value={request} maxLength={8000} onChange={(e) => setRequest(e.target.value)} />
+      <label className="flex flex-col gap-1 text-sm font-medium text-text-05">{workspaceText("whatShouldThisDraftDo")}<NativeTextArea className={input} rows={4} value={request} maxLength={8000} onChange={(e) => setRequest(e.target.value)} />
       </label>
-      <label className="flex flex-col gap-1 text-sm font-medium text-text-05">
-        Desired output <span className="font-normal text-text-03">(optional)</span>
-        <input className={`${input} min-h-11`} value={output} maxLength={8000} onChange={(e) => setOutput(e.target.value)} />
+      <label className="flex flex-col gap-1 text-sm font-medium text-text-05">{workspaceText("desiredOutput")}{" "}<span className="font-normal text-text-03">(optional)</span>
+        <NativeInput className={`${input} min-h-11`} value={output} maxLength={8000} onChange={(e) => setOutput(e.target.value)} />
       </label>
       {error && <p role="alert" className="text-sm text-status-text-error-05">{error}</p>}
-      <div className="flex flex-wrap gap-2">
-        <button type="button" className={primary} disabled={busy || !title.trim() || !request.trim()} onClick={save}>
+      <ResponsiveLayout display="flex" className="flex-wrap gap-2">
+        <ActionButton type="button" className={primary} disabled={busy || !title.trim() || !request.trim()} onClick={save}>
           {busy ? "Saving…" : "Save draft"}
-        </button>
+        </ActionButton>
         {onCancel && (
-          <button type="button" className={secondary} disabled={busy} onClick={onCancel}>
-            Cancel
-          </button>
+          <ActionButton type="button" className={secondary} disabled={busy} onClick={onCancel}>{workspaceText("cancel")}</ActionButton>
         )}
-      </div>
-      <p className="text-xs text-text-03">Saving a draft runs nothing. Work begins only when you press Start.</p>
-    </div>
+      </ResponsiveLayout>
+      <p className="text-xs text-text-03">{workspaceText("savingADraftRunsNothingWorkBeginsOnlyWhen")}</p>
+    </ResponsiveLayout>
   );
 }
 
-function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<unknown> }) {
+function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<void> }) {
+  const workspaceText = useWorkspaceTranslations("workspaceUi");
   const [editing, setEditing] = useState(false);
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
@@ -170,7 +175,7 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
     }
   };
 
-  const act = async (name: string, path: string, body: unknown) => {
+  const act = async (name: string, path: string, body: TaskRequest) => {
     setBusy(name);
     setError(null);
     try {
@@ -186,12 +191,12 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
 
   return (
     <article className={card} data-testid="task-detail" aria-labelledby="task-title">
-      <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
+      <ResponsiveLayout display="flex" className="mb-3 flex-wrap items-start justify-between gap-3">
         <h2 id="task-title" className="min-w-0 text-lg font-semibold text-text-05">{task.title}</h2>
         <span data-testid="task-state" className="rounded-full border border-border-01 px-2.5 py-0.5 text-xs font-medium text-text-03">
           {STATE_LABEL[task.state]}
         </span>
-      </div>
+      </ResponsiveLayout>
 
       {editing ? (
         <DraftForm
@@ -205,10 +210,9 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
       ) : (
         <>
           <p className="whitespace-pre-wrap text-sm text-text-05">{task.request}</p>
-          {task.desired_output && <p className="mt-2 text-sm text-text-03">Desired output: {task.desired_output}</p>}
+          {task.desired_output && <p className="mt-2 text-sm text-text-03">{workspaceText("desiredOutput_2668fe")}{" "}{task.desired_output}</p>}
           {task.revision_note && task.state === "draft" && (
-            <p className="mt-3 rounded-xl bg-background-neutral-01 px-3 py-2 text-sm text-text-05">
-              Your revision note: {task.revision_note}
+            <p className="mt-3 rounded-xl bg-background-neutral-01 px-3 py-2 text-sm text-text-05">{workspaceText("yourRevisionNote")}{" "}{task.revision_note}
             </p>
           )}
         </>
@@ -216,17 +220,12 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
 
       {task.plan && task.state !== "draft" && (
         <section className="mt-4" aria-labelledby="plan-h">
-          <h3 id="plan-h" className="mb-2 text-sm font-semibold text-text-05">
-            Proposed plan
-            {task.plan_route && (
-              <span className="ml-2 font-normal text-text-03">drafted on the {ROUTE_LABEL[task.plan_route] ?? task.plan_route} route</span>
+          <h3 id="plan-h" className="mb-2 text-sm font-semibold text-text-05">{workspaceText("proposedPlan")}{task.plan_route && (
+              <span className="ml-2 font-normal text-text-03">{workspaceText("draftedOnThe")}{" "}{ROUTE_LABEL[task.plan_route] ?? task.plan_route} route</span>
             )}
           </h3>
           {task.plan.some((s) => s.startsWith("Search: ")) && (
-            <p className="mb-2 text-xs text-text-03" data-testid="agent-plan-note">
-              This workflow is run by an agent. After you accept, the product runs exactly these searches, as you, over the libraries you can open.
-              Nothing else is called, and nothing is sent.
-            </p>
+            <p className="mb-2 text-xs text-text-03" data-testid="agent-plan-note">{workspaceText("thisWorkflowIsRunByAnAgentAfterYou")}</p>
           )}
           <ol className="list-decimal space-y-1 pl-5 text-sm text-text-05" data-testid="task-plan">
             {task.plan.map((step, i) => (
@@ -242,9 +241,7 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
       )}
       {task.draft_text && (task.state === "draft_ready" || task.state === "approved") && (
         <section className="mt-5 border-t border-border-01 pt-4" aria-labelledby="draft-h" data-testid="task-draft">
-          <h3 id="draft-h" className="mb-2 text-sm font-semibold text-text-05">
-            Draft
-            <span className="ml-2 font-normal text-text-03" data-testid="draft-version">
+          <h3 id="draft-h" className="mb-2 text-sm font-semibold text-text-05">{workspaceText("draft")}<span className="ml-2 font-normal text-text-03" data-testid="draft-version">
               version {task.draft_version ?? 1}
               {latestBy === "owner"
                 ? " · edited by you"
@@ -254,10 +251,8 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
             </span>
           </h3>
           {editingDraft ? (
-            <div className="flex flex-col gap-2">
-              <label className="flex flex-col gap-1 text-sm font-medium text-text-05">
-                Edit the draft. Cite only the numbered sources below, like [1].
-                <textarea
+            <ResponsiveLayout display="flex" className="flex-col gap-2">
+              <label className="flex flex-col gap-1 text-sm font-medium text-text-05">{workspaceText("editTheDraftCiteOnlyTheNumberedSourcesBelow")}<NativeTextArea
                   className={input}
                   rows={6}
                   maxLength={20000}
@@ -265,8 +260,8 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
                   onChange={(e) => setDraftText(e.target.value)}
                 />
               </label>
-              <div className="flex flex-wrap gap-2">
-                <button
+              <ResponsiveLayout display="flex" className="flex-wrap gap-2">
+                <ActionButton
                   type="button"
                   className={primary}
                   disabled={!!busy || !draftText.trim()}
@@ -291,12 +286,10 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
                   }}
                 >
                   {busy === "save-draft" ? "Saving…" : "Save as a new version"}
-                </button>
-                <button type="button" className={secondary} disabled={!!busy} onClick={() => setEditingDraft(false)}>
-                  Cancel
-                </button>
-              </div>
-            </div>
+                </ActionButton>
+                <ActionButton type="button" className={secondary} disabled={!!busy} onClick={() => setEditingDraft(false)}>{workspaceText("cancel")}</ActionButton>
+              </ResponsiveLayout>
+            </ResponsiveLayout>
           ) : task.draft_claims && task.draft_claims.length > 0 ? (
             <ul className="flex flex-col gap-2" data-testid="task-claims">
               {task.draft_claims.map((c) => {
@@ -320,24 +313,20 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
                             : "unsupported · needs your decision"}
                     </span>
                     {needsDecision && (
-                      <span className="ml-2 inline-flex gap-1">
-                        <button
+                      <ResponsiveLayout as="span" display="inlineFlex" className="ml-2 gap-1">
+                        <ActionButton
                           type="button"
                           className="min-h-9 rounded-lg border border-border-02 px-3 text-xs font-semibold text-text-05 disabled:opacity-50"
                           disabled={!!busy}
                           onClick={() => act(`keep-${c.i}`, `/claims/${c.i}`, { version: task.version, decision: "keep" })}
-                        >
-                          Keep
-                        </button>
-                        <button
+                        >{workspaceText("keep")}</ActionButton>
+                        <ActionButton
                           type="button"
                           className="min-h-9 rounded-lg border border-border-02 px-3 text-xs font-semibold text-text-05 disabled:opacity-50"
                           disabled={!!busy}
                           onClick={() => act(`remove-${c.i}`, `/claims/${c.i}`, { version: task.version, decision: "remove" })}
-                        >
-                          Remove
-                        </button>
-                      </span>
+                        >{workspaceText("remove")}</ActionButton>
+                      </ResponsiveLayout>
                     )}
                   </li>
                 );
@@ -347,7 +336,7 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
             <p className="whitespace-pre-wrap text-sm text-text-05">{task.draft_text}</p>
           )}
           {task.draft_sources && task.draft_sources.length > 0 ? (
-            <ol className="mt-3 space-y-1 text-xs text-text-03" aria-label="Sources" data-testid="task-sources">
+            <ol className="mt-3 space-y-1 text-xs text-text-03" aria-label={workspaceText("sources")} data-testid="task-sources">
               {task.draft_sources.map((src) => (
                 <li key={src.n}>
                   [{src.n}]{" "}
@@ -356,15 +345,13 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
                   ) : (
                     src.title
                   )}
-                  {!src.cited && <span className="ml-1">(found but not cited)</span>}
+                  {!src.cited && <span className="ml-1">{workspaceText("foundButNotCited")}</span>}
                   {src.flagged && (
-                    <span className="ml-2 text-status-text-warning-05" data-testid="source-flagged">
-                      contains text that reads like an instruction to the model
-                    </span>
+                    <span className="ml-2 text-status-text-warning-05" data-testid="source-flagged">{workspaceText("containsTextThatReadsLikeAnInstructionToThe")}</span>
                   )}
                   {src.passage && (
                     <details className="mt-1">
-                      <summary className="cursor-pointer">Passage the model saw</summary>
+                      <summary className="cursor-pointer">{workspaceText("passageTheModelSaw")}</summary>
                       <p className="mt-1 whitespace-pre-wrap rounded-lg bg-background-neutral-01 px-2 py-1">{src.passage}</p>
                     </details>
                   )}
@@ -372,7 +359,7 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
               ))}
             </ol>
           ) : (
-            <p className="mt-3 text-xs text-text-03">No permitted source was found for this request.</p>
+            <p className="mt-3 text-xs text-text-03">{workspaceText("noPermittedSourceWasFoundForThisRequest")}</p>
           )}
           <p className="mt-3 text-xs text-text-03">
             {task.state === "approved"
@@ -380,7 +367,7 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
               : "Only sources you can open were used. Approving covers exactly this draft; a new run needs a new approval."}
           </p>
           {task.state === "draft_ready" && !editingDraft && !task.withheld && (
-            <button
+            <ActionButton
               type="button"
               className={`${secondary} mt-3`}
               disabled={!!busy}
@@ -388,18 +375,15 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
                 setDraftText(task.draft_text ?? "");
                 setEditingDraft(true);
               }}
-            >
-              Edit draft
-            </button>
+            >{workspaceText("editDraft")}</ActionButton>
           )}
           {task.draft_versions && task.draft_versions.length > 1 && (
             <details className="mt-3 text-xs text-text-03" data-testid="draft-history">
-              <summary className="cursor-pointer">Previous versions ({task.draft_versions.length - 1})</summary>
+              <summary className="cursor-pointer">{workspaceText("previousVersions")}{task.draft_versions.length - 1})</summary>
               <ol className="mt-2 space-y-2">
                 {task.draft_versions.slice(0, -1).reverse().map((v) => (
                   <li key={v.v} className="rounded-lg border border-border-01 px-3 py-2">
-                    <div className="font-medium text-text-05">
-                      Version {v.v} · {v.by === "owner" ? "edited by you" : "written by the model"} · {new Date(v.at).toLocaleString()}
+                    <div className="font-medium text-text-05">{workspaceText("version_2da600")}{" "}{v.v} · {v.by === "owner" ? "edited by you" : "written by the model"} · {new Date(v.at).toLocaleString()}
                     </div>
                     <p className="mt-1 whitespace-pre-wrap">{v.text}</p>
                   </li>
@@ -408,8 +392,7 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
             </details>
           )}
           {task.exported_at && (
-            <p className="mt-1 text-xs text-text-03" data-testid="task-exported">
-              Last exported {new Date(task.exported_at).toLocaleString()}.
+            <p className="mt-1 text-xs text-text-03" data-testid="task-exported">{workspaceText("lastExported")}{" "}{new Date(task.exported_at).toLocaleString()}.
             </p>
           )}
         </section>
@@ -423,35 +406,29 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
       {error && <p role="alert" className="mt-3 text-sm text-status-text-error-05">{error}</p>}
 
       {!editing && (
-        <div className="mt-4 flex flex-wrap gap-2">
+        <ResponsiveLayout display="flex" className="mt-4 flex-wrap gap-2">
           {task.state === "draft" && (
             <>
-              <button type="button" className={primary} disabled={!!busy} onClick={() => act("start", "/start", { version: task.version })}>
+              <ActionButton type="button" className={primary} disabled={!!busy} onClick={() => act("start", "/start", { version: task.version })}>
                 {busy === "start" ? "Drafting a plan…" : "Start"}
-              </button>
-              <button type="button" className={secondary} disabled={!!busy} onClick={() => setEditing(true)}>
-                Edit
-              </button>
+              </ActionButton>
+              <ActionButton type="button" className={secondary} disabled={!!busy} onClick={() => setEditing(true)}>{workspaceText("edit")}</ActionButton>
             </>
           )}
           {task.state === "plan_review" && (
-            <button type="button" className={primary} disabled={!!busy} onClick={() => act("accept", "/plan/accept", { version: task.version })}>
+            <ActionButton type="button" className={primary} disabled={!!busy} onClick={() => act("accept", "/plan/accept", { version: task.version })}>
               {busy === "accept" ? "Accepting…" : "Accept plan"}
-            </button>
+            </ActionButton>
           )}
           {(task.state === "plan_review" || task.state === "plan_failed") && (
-            <div className="flex w-full flex-wrap items-end gap-2">
-              <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm font-medium text-text-05">
-                What should change?
-                <input className={`${input} min-h-11`} value={note} maxLength={8000} onChange={(e) => setNote(e.target.value)} />
+            <ResponsiveLayout display="flex" className="w-full flex-wrap items-end gap-2">
+              <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm font-medium text-text-05">{workspaceText("whatShouldChange")}<NativeInput className={`${input} min-h-11`} value={note} maxLength={8000} onChange={(e) => setNote(e.target.value)} />
               </label>
-              <button type="button" className={secondary} disabled={!!busy} onClick={() => act("revise", "/plan/revise", { version: task.version, note })}>
-                Revise
-              </button>
-            </div>
+              <ActionButton type="button" className={secondary} disabled={!!busy} onClick={() => act("revise", "/plan/revise", { version: task.version, note })}>{workspaceText("revise")}</ActionButton>
+            </ResponsiveLayout>
           )}
           {(task.rule_results ?? []).length > 0 && (
-            <ul className="w-full text-sm" data-testid="rule-results" aria-label="Pack review rules">
+            <ul className="w-full text-sm" data-testid="rule-results" aria-label={workspaceText("packReviewRules")}>
               {(task.rule_results ?? []).map((r, i) => (
                 <li key={i} className={r.passed ? "text-text-03" : r.severity === "block" ? "text-status-text-error-05" : "text-status-text-warning-05"}>
                   {r.passed ? "Met" : r.severity === "block" ? "Not met (must be fixed to approve)" : "Warning"}: {r.message} <span className="text-xs">({r.detail})</span>
@@ -460,7 +437,7 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
             </ul>
           )}
           {task.state === "draft_ready" && task.draft_hash && !task.withheld && (
-            <button
+            <ActionButton
               type="button"
               className={primary}
               disabled={!!busy || openClaims > 0 || (task.rule_results ?? []).some((r) => !r.passed && r.severity === "block")}
@@ -468,46 +445,36 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
               onClick={() => act("approve", "/approve", { version: task.version, draft_hash: task.draft_hash })}
             >
               {busy === "approve" ? "Approving…" : openClaims > 0 ? `Approve (${openClaims} claim${openClaims === 1 ? "" : "s"} to decide)` : "Approve this draft"}
-            </button>
+            </ActionButton>
           )}
           {task.state === "approved" && (
-            <button type="button" className={primary} disabled={!!busy} onClick={exportDraft}>
+            <ActionButton type="button" className={primary} disabled={!!busy} onClick={exportDraft}>
               {busy === "export" ? "Checking access…" : "Export as Markdown"}
-            </button>
+            </ActionButton>
           )}
           {(task.state === "approved" || task.state === "draft_ready") && (
-            <a href={`/app/workflows/scheduled?task=${encodeURIComponent(task.id)}`} className={`${secondary} inline-flex items-center`} data-testid="repeat-on-schedule">
-              Repeat on a schedule…
-            </a>
+            <NavLink href={`/app/workflows/scheduled?task=${encodeURIComponent(task.id)}`} className={`${secondary} inline-flex items-center`} data-testid="repeat-on-schedule">{workspaceText("repeatOnASchedule")}</NavLink>
           )}
           {task.state === "draft_ready" && (
-            <div className="flex w-full flex-wrap items-end gap-2">
-              <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm font-medium text-text-05">
-                What should change?
-                <input className={`${input} min-h-11`} value={note} maxLength={8000} onChange={(e) => setNote(e.target.value)} />
+            <ResponsiveLayout display="flex" className="w-full flex-wrap items-end gap-2">
+              <label className="flex min-w-0 flex-1 flex-col gap-1 text-sm font-medium text-text-05">{workspaceText("whatShouldChange")}<NativeInput className={`${input} min-h-11`} value={note} maxLength={8000} onChange={(e) => setNote(e.target.value)} />
               </label>
-              <button type="button" className={secondary} disabled={!!busy} onClick={() => act("revise", "/plan/revise", { version: task.version, note })}>
-                Revise
-              </button>
-            </div>
+              <ActionButton type="button" className={secondary} disabled={!!busy} onClick={() => act("revise", "/plan/revise", { version: task.version, note })}>{workspaceText("revise")}</ActionButton>
+            </ResponsiveLayout>
           )}
           {(task.state === "plan_accepted" || task.state === "run_failed") && (
-            <button type="button" className={primary} disabled={!!busy} onClick={() => act("run", "/run", { version: task.version })}>
+            <ActionButton type="button" className={primary} disabled={!!busy} onClick={() => act("run", "/run", { version: task.version })}>
               {busy === "run" ? "Gathering sources and drafting…" : task.state === "run_failed" ? "Try again" : "Run plan"}
-            </button>
+            </ActionButton>
           )}
           {(task.state === "draft" || task.state === "plan_review" || task.state === "plan_failed" || task.state === "plan_accepted" || task.state === "run_failed" || task.state === "draft_ready") && (
-            <button type="button" className={`${secondary} ml-auto`} disabled={!!busy} onClick={() => act("cancel", "/cancel", { version: task.version })}>
-              Cancel draft
-            </button>
+            <ActionButton type="button" className={`${secondary} ml-auto`} disabled={!!busy} onClick={() => act("cancel", "/cancel", { version: task.version })}>{workspaceText("cancelDraft")}</ActionButton>
           )}
-        </div>
+        </ResponsiveLayout>
       )}
       {task.state === "approved" && !task.withheld && <TaskActions taskId={task.id} />}
       {task.state === "plan_accepted" && (
-        <p className="mt-4 text-sm text-text-03">
-          Plan accepted. Run it to gather sources you can open and write a cited draft.
-        </p>
+        <p className="mt-4 text-sm text-text-03">{workspaceText("planAcceptedRunItToGatherSourcesYouCan")}</p>
       )}
     </article>
   );
@@ -519,30 +486,42 @@ function TaskDetail({ task, onChange }: { task: Task; onChange: () => Promise<un
  * drafted only on a route the administrator's policy allows.
  */
 export default function ReviewedTasksPage() {
+  const workspaceText = useWorkspaceTranslations("workspaceUi");
   const { data, error, isLoading, mutate } = useSWR<Task[]>(URL, errorHandlingFetcher);
   const params = useSearchParams();
   const [selected, setSelected] = useState<string | null>(params.get("task"));
   const [creating, setCreating] = useState(false);
   const tasks = data ?? [];
-  const current = tasks.find((t) => t.id === selected) ?? null;
+  const listedTask = tasks.find((t) => t.id === selected);
+  const { data: linkedTask, error: linkedError, mutate: refreshLinkedTask } = useSWR<Task>(
+    !isLoading && selected && !listedTask ? `${URL}/${encodeURIComponent(selected)}` : null,
+    errorHandlingFetcher
+  );
+  const current = listedTask ?? linkedTask;
+  const refreshTasks = async () => {
+    await Promise.all([
+      mutate(),
+      refreshLinkedTask(),
+      mutateCache(SWR_KEYS.inboxWaitingTasks),
+      invalidateNotificationCaches(),
+    ]);
+  };
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 p-4 sm:p-8" data-testid="reviewed-tasks-page">
+    <ResponsiveLayout display="flex" className="mx-auto w-full max-w-5xl flex-col gap-6 p-4 sm:p-8" data-testid="reviewed-tasks-page">
       <header className="flex flex-wrap items-end justify-between gap-3">
-        <div className="flex flex-col gap-1">
-          <h1 className="font-[family-name:var(--font-serif)] text-3xl font-medium text-text-05">My drafts</h1>
-          <p className="text-sm text-text-03">Write the request, start it when ready, and approve the plan before any work runs.</p>
-        </div>
+        <ResponsiveLayout display="flex" className="flex-col gap-1">
+          <h1 className="font-[family-name:var(--font-serif)] text-3xl font-medium text-text-05">{workspaceText("myDrafts")}</h1>
+          <p className="text-sm text-text-03">{workspaceText("writeTheRequestStartItWhenReadyAndApprove")}</p>
+        </ResponsiveLayout>
         {!creating && (
-          <button type="button" className={primary} onClick={() => setCreating(true)}>
-            New draft
-          </button>
+          <ActionButton type="button" className={primary} onClick={() => setCreating(true)}>{workspaceText("newDraft")}</ActionButton>
         )}
       </header>
 
       {creating && (
         <section className={card} aria-labelledby="new-task">
-          <h2 id="new-task" className="mb-3 text-base font-semibold text-text-05">New draft</h2>
+          <h2 id="new-task" className="mb-3 text-base font-semibold text-text-05">{workspaceText("newDraft")}</h2>
           <DraftForm
             task={null}
             onSaved={async (t) => {
@@ -555,19 +534,19 @@ export default function ReviewedTasksPage() {
         </section>
       )}
 
-      <div className="grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-cols-[18rem_minmax(0,1fr)]">
-        <nav aria-label="Your drafts">
+      <ResponsiveLayout display="grid" className="grid-cols-[minmax(0,1fr)] gap-4 md:grid-cols-[18rem_minmax(0,1fr)]">
+        <nav aria-label={workspaceText("yourDrafts")}>
           {isLoading ? (
-            <p className="text-sm text-text-03">Loading…</p>
+            <p className="text-sm text-text-03">{workspaceText("loading")}</p>
           ) : error ? (
-            <p role="alert" className="text-sm text-text-05">Drafts could not be loaded.</p>
+            <p role="alert" className="text-sm text-text-05">{workspaceText("draftsCouldNotBeLoaded")}</p>
           ) : tasks.length === 0 ? (
-            <p className="text-sm text-text-03">No drafts yet.</p>
+            <p className="text-sm text-text-03">{workspaceText("noDraftsYet")}</p>
           ) : (
             <ul className="flex flex-col gap-2">
               {tasks.map((t) => (
                 <li key={t.id}>
-                  <button
+                  <ActionButton
                     type="button"
                     onClick={() => setSelected(t.id)}
                     aria-current={t.id === selected ? "true" : undefined}
@@ -575,7 +554,7 @@ export default function ReviewedTasksPage() {
                   >
                     <span className="w-full truncate text-sm font-semibold text-text-05">{t.title}</span>
                     <span className="text-xs text-text-03">{STATE_LABEL[t.state]}</span>
-                  </button>
+                  </ActionButton>
                 </li>
               ))}
             </ul>
@@ -583,12 +562,16 @@ export default function ReviewedTasksPage() {
         </nav>
         <div>
           {current ? (
-            <TaskDetail key={`${current.id}-${current.version}`} task={current} onChange={() => mutate()} />
+            <TaskDetail key={`${current.id}-${current.version}`} task={current} onChange={refreshTasks} />
+          ) : selected ? (
+            <p role={linkedError ? "alert" : "status"} className="text-sm text-text-03">
+              {linkedError ? "This draft could not be opened." : "Loading draft…"}
+            </p>
           ) : (
-            tasks.length > 0 && <p className="text-sm text-text-03">Pick a draft to see it.</p>
+            tasks.length > 0 && <p className="text-sm text-text-03">{workspaceText("pickADraftToSeeIt")}</p>
           )}
         </div>
-      </div>
-    </div>
+      </ResponsiveLayout>
+    </ResponsiveLayout>
   );
 }
