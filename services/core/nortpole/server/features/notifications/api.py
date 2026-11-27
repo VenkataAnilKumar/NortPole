@@ -208,11 +208,6 @@ def get_inbox_summary_api(
     user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
     db_session: Session = Depends(get_session),
 ) -> InboxNotificationSummary:
-    if _polled_ensures_due(user.id):
-        announcement_ok = _ensure_system_announcement_notification(user, db_session)
-        license_ok = _ensure_license_expiry_notification(user, db_session)
-        if announcement_ok and license_ok:
-            _mark_polled_ensures_done(user.id)
     return InboxNotificationSummary.model_validate(
         count_inbox_notifications(user, db_session)
     )

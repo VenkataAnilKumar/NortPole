@@ -109,9 +109,8 @@ def _find(
 
 
 def _save_rule(
-    document_set_id: int, payload: PolicyRuleInput, user: User, db: Session, rule_id: UUID | None = None,
+    library: DocumentSet, payload: PolicyRuleInput, user: User, db: Session, rule_id: UUID | None = None,
 ) -> RuleView:
-    library = _library(db, user, document_set_id, write=True)
     configuration = PolicyConfiguration.model_validate(library.policy_configuration or {})
     index = _find(library, configuration, rule_id, user) if rule_id is not None else len(configuration.rules)
     if index >= MAX_RULES:
@@ -135,12 +134,14 @@ def _save_rule(
 
 @router.post("", status_code=201)
 def add_rule(document_set_id: int, payload: PolicyRuleInput, user: Editor, db: Database) -> RuleView:
-    return _save_rule(document_set_id, payload, user, db)
+    library = _library(db, user, document_set_id, write=True)
+    return _save_rule(library, payload, user, db)
 
 
 @router.put("/{rule_id}")
 def edit_rule(document_set_id: int, rule_id: UUID, payload: PolicyRuleInput, user: Editor, db: Database) -> RuleView:
-    return _save_rule(document_set_id, payload, user, db, rule_id)
+    library = _library(db, user, document_set_id, write=True)
+    return _save_rule(library, payload, user, db, rule_id)
 
 
 @router.delete("/{rule_id}", status_code=204)

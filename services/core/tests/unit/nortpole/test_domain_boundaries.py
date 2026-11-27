@@ -37,14 +37,29 @@ INHERITED_ENTRY_POINTS: dict[str, set[str]] = {
     "nortpole/access/access.py": {"nortpole.knowledge.knowledge_access"},
     "nortpole/background/celery/tasks/nortpole_retention/tasks.py": {"nortpole.governance.retention"},
     "nortpole/background/celery/tasks/nortpole_schedules/tasks.py": {"nortpole.work.workflow_schedules"},
-    "nortpole/chat/execution.py": {"nortpole.governance.tool_catalog", "nortpole.work.integrations"},
-    "nortpole/chat/process_message.py": {"nortpole.governance.route_policy"},
+    # Agent previews and releases validate pack compatibility and apply route or audit policy.
+    "nortpole/chat/agent_preview.py": {"nortpole.governance.route_policy", "nortpole.work.packs"},
+    "nortpole/chat/agent_releases.py": {"nortpole.governance.route_policy", "nortpole.work.packs"},
+    "nortpole/chat/document_review.py": {"nortpole.work.packs"},
+    "nortpole/chat/execution.py": {
+        "nortpole.governance.tool_catalog", "nortpole.work.integrations", "nortpole.work.workflow_schedules",
+    },
+    "nortpole/chat/process_message.py": {
+        "nortpole.governance.route_policy", "nortpole.work.document_reviews", "nortpole.work.packs",
+    },
     "nortpole/connectors/edit_plan/state.py": {"nortpole.knowledge.knowledge_access"},
     "nortpole/db/connector_credential_pair.py": {"nortpole.knowledge.knowledge_access"},
     "nortpole/db/connector_edit_requests.py": {"nortpole.knowledge.knowledge_access"},
     "nortpole/llm/multi_llm.py": {"nortpole.governance.redaction", "nortpole.governance.route_policy"},
     "nortpole/server/features/build/approvals/api.py": {
         "nortpole.governance.action_binding", "nortpole.governance.route_policy",
+    },
+    # Search and Chat present permission-filtered activity and review state from their owning domains.
+    "nortpole/server/features/search/activity.py": {
+        "nortpole.knowledge.knowledge_access", "nortpole.work.workflow_schedules",
+    },
+    "nortpole/server/query_and_chat/chat_backend.py": {
+        "nortpole.work.document_reviews", "nortpole.work.tasks", "nortpole.work.workflow_schedules",
     },
     "nortpole/tools/interface.py": {"nortpole.governance.tool_catalog"},
     "nortpole/tools/tool_constructor.py": {"nortpole.governance.tool_catalog"},

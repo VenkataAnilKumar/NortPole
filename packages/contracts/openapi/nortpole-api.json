@@ -722,6 +722,247 @@
         "title": "ClaimDecision",
         "type": "object"
       },
+      "CreatedSchedule": {
+        "properties": {
+          "at_time": {
+            "title": "At Time",
+            "type": "string"
+          },
+          "cadence": {
+            "title": "Cadence",
+            "type": "string"
+          },
+          "copied_from_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Copied From Id"
+          },
+          "expense_review": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ExpenseReviewInputs"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "initial_plan": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RunView"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "last_run": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RunView"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "month_day": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Month Day"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "next_run_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Run At"
+          },
+          "notify_needs_review": {
+            "title": "Notify Needs Review",
+            "type": "boolean"
+          },
+          "notify_plan_ready": {
+            "title": "Notify Plan Ready",
+            "type": "boolean"
+          },
+          "notify_run_complete": {
+            "title": "Notify Run Complete",
+            "type": "boolean"
+          },
+          "notify_run_failed": {
+            "title": "Notify Run Failed",
+            "type": "boolean"
+          },
+          "pack_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pack Id"
+          },
+          "pack_template": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pack Template"
+          },
+          "pause_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pause Reason"
+          },
+          "pause_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pause Text"
+          },
+          "run_on": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Run On"
+          },
+          "shared_with_groups": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Shared With Groups",
+            "type": "array"
+          },
+          "source_library_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Library Id"
+          },
+          "state": {
+            "title": "State",
+            "type": "string"
+          },
+          "timezone": {
+            "title": "Timezone",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "unaccepted_streak": {
+            "title": "Unaccepted Streak",
+            "type": "integer"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          },
+          "weekday": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weekday"
+          },
+          "when": {
+            "title": "When",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "notify_plan_ready",
+          "notify_needs_review",
+          "notify_run_failed",
+          "notify_run_complete",
+          "name",
+          "title",
+          "pack_id",
+          "pack_template",
+          "expense_review",
+          "cadence",
+          "at_time",
+          "timezone",
+          "weekday",
+          "month_day",
+          "run_on",
+          "when",
+          "next_run_at",
+          "state",
+          "pause_reason",
+          "pause_text",
+          "unaccepted_streak",
+          "last_run",
+          "shared_with_groups",
+          "copied_from_id",
+          "version"
+        ],
+        "title": "CreatedSchedule",
+        "type": "object"
+      },
       "Decision": {
         "properties": {
           "approve": {
@@ -739,6 +980,96 @@
           "approve"
         ],
         "title": "Decision",
+        "type": "object"
+      },
+      "DecisionRequest": {
+        "properties": {
+          "action": {
+            "enum": [
+              "revision_requested",
+              "exception_accepted",
+              "resolved"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "expected_latest_id": {
+            "anyOf": [
+              {
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Latest Id"
+          },
+          "reason": {
+            "default": "",
+            "maxLength": 1000,
+            "title": "Reason",
+            "type": "string"
+          },
+          "request_id": {
+            "format": "uuid",
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "request_id",
+          "expected_latest_id",
+          "action"
+        ],
+        "title": "DecisionRequest",
+        "type": "object"
+      },
+      "DecisionView": {
+        "properties": {
+          "action": {
+            "enum": [
+              "revision_requested",
+              "exception_accepted",
+              "resolved"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "actor_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actor Id"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "action",
+          "reason",
+          "created_at",
+          "actor_id"
+        ],
+        "title": "DecisionView",
         "type": "object"
       },
       "DiscoverItem": {
@@ -799,11 +1130,19 @@
             },
             "title": "My Requests",
             "type": "array"
+          },
+          "workspace_sources": {
+            "items": {
+              "$ref": "#/components/schemas/WorkspaceSourceOption"
+            },
+            "title": "Workspace Sources",
+            "type": "array"
           }
         },
         "required": [
           "items",
-          "my_requests"
+          "my_requests",
+          "workspace_sources"
         ],
         "title": "DiscoverView",
         "type": "object"
@@ -840,6 +1179,33 @@
         "title": "DraftEdit",
         "type": "object"
       },
+      "DriveCsvSource": {
+        "properties": {
+          "app_id": {
+            "exclusiveMinimum": 0.0,
+            "title": "App Id",
+            "type": "integer"
+          },
+          "filename_pattern": {
+            "default": "*.csv",
+            "maxLength": 200,
+            "pattern": "\\S",
+            "title": "Filename Pattern",
+            "type": "string"
+          },
+          "folder_id": {
+            "pattern": "^[A-Za-z0-9_-]{1,128}$",
+            "title": "Folder Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "app_id",
+          "folder_id"
+        ],
+        "title": "DriveCsvSource",
+        "type": "object"
+      },
       "EditSchedule": {
         "properties": {
           "at_time": {
@@ -850,6 +1216,16 @@
           "cadence": {
             "title": "Cadence",
             "type": "string"
+          },
+          "expense_review": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ExpenseReviewInputs"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "month_day": {
             "anyOf": [
@@ -868,6 +1244,50 @@
             "title": "Name",
             "type": "string"
           },
+          "notify_needs_review": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notify Needs Review"
+          },
+          "notify_plan_ready": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notify Plan Ready"
+          },
+          "notify_run_complete": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notify Run Complete"
+          },
+          "notify_run_failed": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notify Run Failed"
+          },
           "run_on": {
             "anyOf": [
               {
@@ -879,6 +1299,18 @@
               }
             ],
             "title": "Run On"
+          },
+          "source_library_id": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Library Id"
           },
           "timezone": {
             "maxLength": 64,
@@ -958,6 +1390,48 @@
         "title": "EvalView",
         "type": "object"
       },
+      "ExpenseReviewInputs": {
+        "properties": {
+          "csv_file_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Csv File Id"
+          },
+          "drive_source": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DriveCsvSource"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "library_id": {
+            "exclusiveMinimum": 0.0,
+            "title": "Library Id",
+            "type": "integer"
+          },
+          "policy_title": {
+            "default": "",
+            "maxLength": 300,
+            "title": "Policy Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "library_id"
+        ],
+        "title": "ExpenseReviewInputs",
+        "type": "object"
+      },
       "ExportResult": {
         "properties": {
           "filename": {
@@ -978,6 +1452,97 @@
           "markdown"
         ],
         "title": "ExportResult",
+        "type": "object"
+      },
+      "FindingComparison": {
+        "properties": {
+          "addressed": {
+            "default": false,
+            "title": "Addressed",
+            "type": "boolean"
+          },
+          "previous_number": {
+            "title": "Previous Number",
+            "type": "integer"
+          },
+          "revised_number": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revised Number"
+          }
+        },
+        "required": [
+          "previous_number"
+        ],
+        "title": "FindingComparison",
+        "type": "object"
+      },
+      "FindingView": {
+        "properties": {
+          "citation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReviewCitation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "decisions": {
+            "items": {
+              "$ref": "#/components/schemas/DecisionView"
+            },
+            "title": "Decisions",
+            "type": "array"
+          },
+          "document_quote": {
+            "title": "Document Quote",
+            "type": "string"
+          },
+          "explanation": {
+            "title": "Explanation",
+            "type": "string"
+          },
+          "is_open": {
+            "title": "Is Open",
+            "type": "boolean"
+          },
+          "number": {
+            "title": "Number",
+            "type": "integer"
+          },
+          "policy_quote": {
+            "title": "Policy Quote",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "aligned",
+              "conflict",
+              "needs_review"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "number",
+          "status",
+          "explanation",
+          "document_quote",
+          "policy_quote",
+          "citation",
+          "decisions",
+          "is_open"
+        ],
+        "title": "FindingView",
         "type": "object"
       },
       "GroupCreate": {
@@ -1888,6 +2453,17 @@
           "name": {
             "title": "Name",
             "type": "string"
+          },
+          "workspace_request_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Workspace Request Key"
           }
         },
         "required": [
@@ -1921,6 +2497,11 @@
           },
           "scheduling_allowed": {
             "title": "Scheduling Allowed",
+            "type": "boolean"
+          },
+          "source_events_allowed": {
+            "default": false,
+            "title": "Source Events Allowed",
             "type": "boolean"
           }
         },
@@ -1975,6 +2556,16 @@
             "title": "Desired Output",
             "type": "string"
           },
+          "expense_review": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ExpenseReviewInputs"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "month_day": {
             "anyOf": [
               {
@@ -1991,6 +2582,26 @@
             "minLength": 1,
             "title": "Name",
             "type": "string"
+          },
+          "notify_needs_review": {
+            "default": true,
+            "title": "Notify Needs Review",
+            "type": "boolean"
+          },
+          "notify_plan_ready": {
+            "default": false,
+            "title": "Notify Plan Ready",
+            "type": "boolean"
+          },
+          "notify_run_complete": {
+            "default": false,
+            "title": "Notify Run Complete",
+            "type": "boolean"
+          },
+          "notify_run_failed": {
+            "default": true,
+            "title": "Notify Run Failed",
+            "type": "boolean"
           },
           "pack_id": {
             "anyOf": [
@@ -2013,6 +2624,11 @@
               }
             ],
             "title": "Pack Template"
+          },
+          "prepare_now": {
+            "default": false,
+            "title": "Prepare Now",
+            "type": "boolean"
           },
           "request": {
             "anyOf": [
@@ -2037,6 +2653,18 @@
               }
             ],
             "title": "Run On"
+          },
+          "source_library_id": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Library Id"
           },
           "task_id": {
             "anyOf": [
@@ -2107,12 +2735,43 @@
         "title": "NotificationPreferences",
         "type": "object"
       },
+      "PackChatAgentView": {
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description"
+        ],
+        "title": "PackChatAgentView",
+        "type": "object"
+      },
       "PackView": {
         "properties": {
           "autonomy": {
             "default": "act_with_approval",
             "title": "Autonomy",
             "type": "string"
+          },
+          "chat_agents": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/PackChatAgentView"
+            },
+            "title": "Chat Agents",
+            "type": "array"
           },
           "data_classes": {
             "items": {
@@ -2295,6 +2954,160 @@
           "message"
         ],
         "title": "Problem",
+        "type": "object"
+      },
+      "ProposalPreview": {
+        "properties": {
+          "desired_output": {
+            "default": "",
+            "title": "Desired Output",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "next_run_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Run At"
+          },
+          "private_review": {
+            "default": false,
+            "title": "Private Review",
+            "type": "boolean"
+          },
+          "request": {
+            "title": "Request",
+            "type": "string"
+          },
+          "schedule_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Schedule Id"
+          },
+          "when": {
+            "title": "When",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "request",
+          "when"
+        ],
+        "title": "ProposalPreview",
+        "type": "object"
+      },
+      "ProposalResult": {
+        "properties": {
+          "detail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detail"
+          },
+          "outcome": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outcome"
+          },
+          "run_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Run Id"
+          },
+          "schedule_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Schedule Id"
+          }
+        },
+        "title": "ProposalResult",
+        "type": "object"
+      },
+      "ProposalView": {
+        "properties": {
+          "expires_at": {
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "operation": {
+            "title": "Operation",
+            "type": "string"
+          },
+          "preview": {
+            "$ref": "#/components/schemas/ProposalPreview"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ProposalResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "state": {
+            "title": "State",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "operation",
+          "state",
+          "preview",
+          "result",
+          "expires_at"
+        ],
+        "title": "ProposalView",
         "type": "object"
       },
       "Propose": {
@@ -2562,6 +3375,177 @@
         "title": "RetentionView",
         "type": "object"
       },
+      "ReviewCitation": {
+        "properties": {
+          "link": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Link"
+          },
+          "number": {
+            "title": "Number",
+            "type": "integer"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "number",
+          "title",
+          "link"
+        ],
+        "title": "ReviewCitation",
+        "type": "object"
+      },
+      "ReviewContext": {
+        "properties": {
+          "library_id": {
+            "title": "Library Id",
+            "type": "integer"
+          },
+          "library_name": {
+            "title": "Library Name",
+            "type": "string"
+          },
+          "pack_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pack Id"
+          },
+          "pack_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pack Version"
+          }
+        },
+        "required": [
+          "library_id",
+          "library_name"
+        ],
+        "title": "ReviewContext",
+        "type": "object"
+      },
+      "ReviewView": {
+        "properties": {
+          "can_review_revision": {
+            "default": false,
+            "title": "Can Review Revision",
+            "type": "boolean"
+          },
+          "chat_session_id": {
+            "format": "uuid",
+            "title": "Chat Session Id",
+            "type": "string"
+          },
+          "context": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReviewContext"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "file_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File Name"
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/FindingView"
+            },
+            "title": "Findings",
+            "type": "array"
+          },
+          "message_id": {
+            "title": "Message Id",
+            "type": "integer"
+          },
+          "open_findings": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Open Findings"
+          },
+          "pack_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pack Name"
+          },
+          "revised_reviews": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Revised Reviews",
+            "type": "array"
+          },
+          "revision": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RevisionComparison"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "message_id",
+          "chat_session_id",
+          "file_name",
+          "created_at",
+          "pack_name",
+          "open_findings",
+          "findings"
+        ],
+        "title": "ReviewView",
+        "type": "object"
+      },
       "Revise": {
         "properties": {
           "note": {
@@ -2578,6 +3562,62 @@
           "version"
         ],
         "title": "Revise",
+        "type": "object"
+      },
+      "RevisionComparison": {
+        "properties": {
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/FindingComparison"
+            },
+            "title": "Findings",
+            "type": "array"
+          },
+          "new_findings": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "New Findings",
+            "type": "array"
+          },
+          "previous_id": {
+            "title": "Previous Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "previous_id",
+          "findings",
+          "new_findings"
+        ],
+        "title": "RevisionComparison",
+        "type": "object"
+      },
+      "RevisionRequest": {
+        "properties": {
+          "file_id": {
+            "format": "uuid",
+            "title": "File Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "file_id"
+        ],
+        "title": "RevisionRequest",
+        "type": "object"
+      },
+      "RevisionResult": {
+        "properties": {
+          "message_id": {
+            "title": "Message Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "message_id"
+        ],
+        "title": "RevisionResult",
         "type": "object"
       },
       "RouteCheckRequest": {
@@ -2843,8 +3883,33 @@
         "title": "RouteView",
         "type": "object"
       },
+      "RunOutcomeCheck": {
+        "properties": {
+          "detail": {
+            "title": "Detail",
+            "type": "string"
+          }
+        },
+        "required": [
+          "detail"
+        ],
+        "title": "RunOutcomeCheck",
+        "type": "object"
+      },
       "RunView": {
         "properties": {
+          "chat_session_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chat Session Id"
+          },
           "fired_at": {
             "format": "date-time",
             "title": "Fired At",
@@ -2919,6 +3984,7 @@
           "outcome",
           "reason",
           "task_id",
+          "chat_session_id",
           "task_state",
           "route_kind",
           "input_tokens",
@@ -2947,6 +4013,11 @@
             "minimum": 1.0,
             "title": "Max Per Person",
             "type": "integer"
+          },
+          "source_events_enabled": {
+            "default": false,
+            "title": "Source Events Enabled",
+            "type": "boolean"
           },
           "version": {
             "default": 1,
@@ -2978,6 +4049,16 @@
               }
             ],
             "title": "Copied From Id"
+          },
+          "expense_review": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ExpenseReviewInputs"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "id": {
             "format": "uuid",
@@ -3020,6 +4101,22 @@
               }
             ],
             "title": "Next Run At"
+          },
+          "notify_needs_review": {
+            "title": "Notify Needs Review",
+            "type": "boolean"
+          },
+          "notify_plan_ready": {
+            "title": "Notify Plan Ready",
+            "type": "boolean"
+          },
+          "notify_run_complete": {
+            "title": "Notify Run Complete",
+            "type": "boolean"
+          },
+          "notify_run_failed": {
+            "title": "Notify Run Failed",
+            "type": "boolean"
           },
           "pack_id": {
             "anyOf": [
@@ -3084,6 +4181,17 @@
             "title": "Shared With Groups",
             "type": "array"
           },
+          "source_library_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Library Id"
+          },
           "state": {
             "title": "State",
             "type": "string"
@@ -3122,10 +4230,15 @@
         },
         "required": [
           "id",
+          "notify_plan_ready",
+          "notify_needs_review",
+          "notify_run_failed",
+          "notify_run_complete",
           "name",
           "title",
           "pack_id",
           "pack_template",
+          "expense_review",
           "cadence",
           "at_time",
           "timezone",
@@ -4447,6 +5560,44 @@
         "title": "VersionView",
         "type": "object"
       },
+      "WorkspaceSourceOption": {
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "my_request": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RequestView"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "requestable": {
+            "title": "Requestable",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "description",
+          "requestable"
+        ],
+        "title": "WorkspaceSourceOption",
+        "type": "object"
+      },
       "nortpole__governance__admin_changes__api__ControlsUpdate": {
         "properties": {
           "second_for_destinations": {
@@ -4569,6 +5720,17 @@
             "minimum": 1.0,
             "title": "Max Per Person",
             "type": "integer"
+          },
+          "source_events_enabled": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Events Enabled"
           }
         },
         "required": [
@@ -8801,11 +9963,243 @@
         "summary": "Admin Pause"
       }
     },
+    "/chat/document-reviews/{message_id}": {
+      "get": {
+        "operationId": "get_review",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "message_id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "title": "Message Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tenant_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Tenant Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "APIKeyCookie": []
+          },
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Get Review"
+      }
+    },
+    "/chat/document-reviews/{message_id}/findings/{number}/decisions": {
+      "post": {
+        "operationId": "record_decision",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "message_id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "title": "Message Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "number",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "title": "Number",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tenant_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Tenant Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "APIKeyCookie": []
+          },
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Record Decision"
+      }
+    },
+    "/chat/document-reviews/{message_id}/revisions": {
+      "post": {
+        "operationId": "review_revision",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "message_id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "title": "Message Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tenant_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Tenant Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevisionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevisionResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "APIKeyCookie": []
+          },
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Review Revision"
+      }
+    },
     "/integration-proposals": {
       "get": {
         "description": "The changes an assistant proposed for this person, waiting ones first.",
         "operationId": "list_proposals",
         "parameters": [
+          {
+            "in": "query",
+            "name": "pending_only",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Pending Only",
+              "type": "boolean"
+            }
+          },
           {
             "in": "query",
             "name": "tenant_id",
@@ -9699,6 +11093,91 @@
         "summary": "Start From Template"
       }
     },
+    "/packs/{pack_id}/{version}/chat-agents/{agent_id}/draft": {
+      "post": {
+        "operationId": "prepare_pack_chat_draft",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pack_id",
+            "required": true,
+            "schema": {
+              "title": "Pack Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "version",
+            "required": true,
+            "schema": {
+              "title": "Version",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "agent_id",
+            "required": true,
+            "schema": {
+              "title": "Agent Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tenant_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Tenant Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "integer"
+                  },
+                  "title": "Response Prepare Pack Chat Draft Packs  Pack Id   Version  Chat Agents  Agent Id  Draft Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "APIKeyCookie": []
+          },
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Prepare Pack Chat Draft"
+      }
+    },
     "/route-policy": {
       "get": {
         "operationId": "get_route_policy",
@@ -10019,6 +11498,16 @@
       "get": {
         "operationId": "list_tasks",
         "parameters": [
+          {
+            "in": "query",
+            "name": "waiting_only",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Waiting Only",
+              "type": "boolean"
+            }
+          },
           {
             "in": "query",
             "name": "tenant_id",
@@ -11097,7 +12586,7 @@
     },
     "/tool-catalog": {
       "get": {
-        "description": "What chat assistants may use, for anyone signed in: names, kinds and whether each is allowed. No hosts,\ndefinitions or agent names, and only this person's own personal tools.",
+        "description": "Tool availability and workspace request keys. Personal tools are visible only to their owners.",
         "operationId": "get_member_catalog",
         "parameters": [
           {
@@ -11267,6 +12756,151 @@
         "summary": "Put User Preferences"
       }
     },
+    "/workflow-schedule-proposals": {
+      "get": {
+        "operationId": "list_workflow_schedule_proposals",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "chat_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Chat Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tenant_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Tenant Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ProposalView"
+                  },
+                  "title": "Response List Workflow Schedule Proposals Workflow Schedule Proposals Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "APIKeyCookie": []
+          },
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "List Workflow Schedule Proposals"
+      }
+    },
+    "/workflow-schedule-proposals/{proposal_id}/{decision}": {
+      "post": {
+        "operationId": "decide_proposal",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "proposal_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Proposal Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "decision",
+            "required": true,
+            "schema": {
+              "enum": [
+                "confirm",
+                "dismiss"
+              ],
+              "title": "Decision",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tenant_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Tenant Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProposalView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "APIKeyCookie": []
+          },
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Decide Proposal"
+      }
+    },
     "/workflow-schedules": {
       "get": {
         "operationId": "list_mine",
@@ -11355,7 +12989,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ScheduleView"
+                  "$ref": "#/components/schemas/CreatedSchedule"
                 }
               }
             },
@@ -11387,6 +13021,23 @@
       "get": {
         "operationId": "list_shared",
         "parameters": [
+          {
+            "in": "query",
+            "name": "include",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Include"
+            }
+          },
           {
             "in": "query",
             "name": "tenant_id",
@@ -11787,6 +13438,80 @@
         "summary": "Resume Schedule"
       }
     },
+    "/workflow-schedules/{schedule_id}/run-now": {
+      "post": {
+        "operationId": "run_now",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "schedule_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Schedule Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tenant_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Tenant Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VersionOnly"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "APIKeyCookie": []
+          },
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Run Now"
+      }
+    },
     "/workflow-schedules/{schedule_id}/runs": {
       "get": {
         "operationId": "list_runs",
@@ -11799,6 +13524,23 @@
               "format": "uuid",
               "title": "Schedule Id",
               "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "include",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Include"
             }
           },
           {
@@ -11853,6 +13595,154 @@
           }
         ],
         "summary": "List Runs"
+      }
+    },
+    "/workflow-schedules/{schedule_id}/runs/{run_id}/check-outcome": {
+      "post": {
+        "operationId": "check_run_outcome",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "schedule_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Schedule Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Run Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tenant_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Tenant Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunOutcomeCheck"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "APIKeyCookie": []
+          },
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Check Run Outcome"
+      }
+    },
+    "/workflow-schedules/{schedule_id}/runs/{run_id}/retry": {
+      "post": {
+        "operationId": "retry_run",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "schedule_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Schedule Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Run Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tenant_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Tenant Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "APIKeyCookie": []
+          },
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "summary": "Retry Run"
       }
     },
     "/workflow-schedules/{schedule_id}/share": {

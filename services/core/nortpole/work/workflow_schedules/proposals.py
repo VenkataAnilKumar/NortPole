@@ -177,7 +177,7 @@ def propose(
     db.commit()
 
 
-@router.get("/workflow-schedule-proposals")
+@router.get("/workflow-schedule-proposals", name="list_workflow_schedule_proposals")
 def list_proposals(
     chat_id: UUID,
     user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
