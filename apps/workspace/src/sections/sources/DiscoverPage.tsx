@@ -4,8 +4,12 @@ import { ResponsiveLayout } from "@opal/layouts";
 import { ActionButton, NativeInput, NativeSelect, NativeTextArea } from "@opal/components";
 import { NavLink } from "@opal/navigation";
 import { useTranslations as useWorkspaceTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
+import { SOURCE_CATEGORY_LABEL_KEYS, SOURCE_DESCRIPTION_KEYS } from "@/lib/connectors/constants";
+import type { SourceMetadata } from "@/lib/connectors/types/source";
+import { listSourceMetadata } from "@/lib/connectors/utils";
+import { useSettings } from "@/lib/settings/hooks";
 import { errorHandlingFetcher } from "@/lib/fetcher";
 import { card, h1Class, pageClass } from "@/sections/sources/shared";
 import { primary, REQUESTS_URL, secondary, send } from "@/sections/sources/integrations";
@@ -41,6 +45,15 @@ function Status({ request, awaitingSetup = false }: { request: Req; awaitingSetu
  */
 export default function DiscoverPage() {
   const workspaceText = useWorkspaceTranslations("workspaceUi");
+  const connectorText = useWorkspaceTranslations("admin.addConnector");
+  const { show_extra_connectors } = useSettings();
+  const connectorCatalog = useMemo(
+    () => new Map<string, SourceMetadata>(
+      listSourceMetadata({ showExtraConnectors: show_extra_connectors ?? undefined })
+        .map((source) => [source.internalName, source]),
+    ),
+    [show_extra_connectors],
+  );
   const groups = [
     { kind: "connector", heading: workspaceText("workspaceSources"), note: "Company systems whose documents could be searched. You would only see what you can open there." },
     { kind: "skill", heading: workspaceText("packs"), note: workspaceText("discoverPacksAwaitingActivation") },
@@ -79,14 +92,29 @@ export default function DiscoverPage() {
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
   const searchTerm = query.trim().toLowerCase();
+  const discoverItems = (data?.items ?? []).flatMap((item) => {
+    const source = item.kind === "connector" ? connectorCatalog.get(item.key) : undefined;
+    if (item.kind === "connector" && !source) return [];
+    const name = source?.displayName ?? item.name;
+    const description = source ? connectorText(SOURCE_DESCRIPTION_KEYS[source.internalName]) : item.description;
+    const categoryLabel = source ? connectorText(SOURCE_CATEGORY_LABEL_KEYS[source.category]) : "";
+    return [{ ...item, name, description, source, categoryLabel }];
+  });
+  const sourceCategories = [...new Set(
+    [...connectorCatalog.values()].map((source) => source.category),
+  )]
+    .map((key) => ({ key, label: connectorText(SOURCE_CATEGORY_LABEL_KEYS[key]) }))
+    .sort((a, b) => a.label.localeCompare(b.label));
   const visibleGroups = groups
-    .filter((group) => category === "all" || group.kind === category)
+    .filter((group) => category === "all" || group.kind === category ||
+      (group.kind === "connector" && category.startsWith("source:")))
     .map((group) => ({
       ...group,
-      items: (data?.items ?? []).filter(
-        (item) => item.kind === group.kind &&
-          `${item.name} ${item.description}`.toLowerCase().includes(searchTerm),
-      ),
+      items: discoverItems.filter((item) =>
+        item.kind === group.kind &&
+        (!category.startsWith("source:") || category === `source:${item.source?.category}`) &&
+        `${item.key} ${item.name} ${item.description} ${item.categoryLabel}`.toLowerCase().includes(searchTerm),
+      ).sort((a, b) => a.name.localeCompare(b.name)),
     }))
     .filter((group) => !searchTerm || group.items.length > 0);
 
@@ -135,6 +163,13 @@ export default function DiscoverPage() {
               {groups.map((group) => (
                 <option key={group.kind} value={group.kind}>{group.heading}</option>
               ))}
+              {sourceCategories.length > 0 && (
+                <optgroup label={workspaceText("workspaceSources")}>
+                  {sourceCategories.map(({ key, label }) => (
+                    <option key={key} value={`source:${key}`}>{label}</option>
+                  ))}
+                </optgroup>
+              )}
             </NativeSelect>
           </label>
           {(query !== "" || category !== "all") && (
@@ -172,10 +207,17 @@ export default function DiscoverPage() {
                   const id = `${i.kind}:${i.key}`;
                   const awaitingSetup = i.my_request?.state === "approved";
                   const open = i.my_request?.state === "pending" || awaitingSetup;
+                  const Icon = i.source?.icon;
                   return (
                     <li key={id} id={i.kind === "connector" ? `workspace-source-${i.key}` : undefined} className={`${card} flex flex-col gap-2`} data-testid="discover-item">
                       <ResponsiveLayout display="flex" className="flex-wrap items-start justify-between gap-2">
-                        <h3 className="text-base font-semibold text-text-05">{i.name}</h3>
+                        <ResponsiveLayout display="flex" className="items-center gap-2">
+                          {Icon && <span aria-hidden="true"><Icon size={20} /></span>}
+                          <div>
+                            <h3 className="text-base font-semibold text-text-05">{i.name}</h3>
+                            {i.categoryLabel && <p className="text-xs text-text-03">{i.categoryLabel}</p>}
+                          </div>
+                        </ResponsiveLayout>
                         {i.my_request && <Status request={i.my_request} awaitingSetup={awaitingSetup} />}
                       </ResponsiveLayout>
                       {i.description && <p className="text-sm text-text-04">{i.description}</p>}

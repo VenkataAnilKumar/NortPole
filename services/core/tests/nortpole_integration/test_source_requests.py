@@ -12,7 +12,7 @@ from nortpole.configs.constants import DocumentSource
 from nortpole.db.models import Connector, MCPServer, Notification, Tool, User
 from nortpole.error_handling.exceptions import NortPoleError
 from nortpole.work.packs.models import NortPolePackVersion
-from nortpole.knowledge.source_requests import api
+from nortpole.knowledge.source_requests import api, catalog
 from nortpole.knowledge.source_requests.models import NortPoleSourceRequest
 from nortpole.governance.tool_catalog import api as cat_api
 from nortpole.governance.tool_catalog import catalog as cat
@@ -144,4 +144,34 @@ def test_connector_card_retains_the_latest_decision_beyond_recent_activity(world
 
         other = api.get_discover(user=bob, db_session=s)
         assert next(source for source in other.workspace_sources if source.key == "box").my_request is None
+        s.rollback()
+
+
+def test_discover_and_integrations_share_connector_requests(world) -> None:  # type: ignore[no-untyped-def]
+    with get_session_with_current_tenant() as s:
+        ann = s.get(User, world["ann"])
+        view = api.get_discover(user=ann, db_session=s)
+        sources = {source.key: source for source in view.workspace_sources}
+        assert len(sources) >= 57
+        assert "mock_connector" not in sources
+        assert "user_file" not in sources
+        available = {item.key for item in view.items if item.kind == "connector"}
+        assert available == {key for key, source in sources.items() if source.requestable}
+
+        # Exercise a connector outside Discover's former shortlist.
+        request = api.create_request(
+            api.NewRequest(kind="connector", item_key="azure_datalake"),
+            user=ann,
+            db_session=s,
+        )
+        assert request.manage_at == "/admin/connectors/azure_datalake"
+        view = api.get_discover(user=ann, db_session=s)
+        discovered = next(item for item in view.items if item.key == "azure_datalake")
+        integration = next(source for source in view.workspace_sources if source.key == "azure_datalake")
+        assert discovered.my_request == integration.my_request == request
+        api.withdraw_request(request.id, user=ann, db_session=s)
+
+        s.add(Connector(name=f"test-azure-{TAG}", source=DocumentSource.AZURE_DATALAKE, connector_specific_config={}))
+        s.flush()
+        assert catalog.find(s, "connector", "azure_datalake") is None
         s.rollback()
