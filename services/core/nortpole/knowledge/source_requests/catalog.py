@@ -9,34 +9,53 @@ from dataclasses import dataclass
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from nortpole.configs.app_configs import SHOW_EXTRA_CONNECTORS
 from nortpole.configs.constants import DocumentSource
+from nortpole.configs.constants import DocumentSourceDescription
+from nortpole.connectors.registry import CONNECTOR_CLASS_MAP
 from nortpole.db.models import Connector
 from nortpole.work.packs.models import NortPolePackVersion
 
 KINDS = ("connector", "skill", "plugin")
 
-# Connector types offered on Discover, with what each would read. A short, reviewed list rather than every connector
-# the core has: these are the common company systems. Each would only show people documents they can open there.
-CONNECTORS: dict[str, tuple[str, str]] = {
-    DocumentSource.GOOGLE_DRIVE.value: ("Google Drive", "Reads files and folders in Google Drive."),
-    DocumentSource.SHAREPOINT.value: ("SharePoint", "Reads SharePoint sites and document libraries."),
-    DocumentSource.ONEDRIVE.value: ("OneDrive", "Reads files in OneDrive."),
-    DocumentSource.CONFLUENCE.value: ("Confluence", "Reads Confluence spaces and pages."),
-    DocumentSource.NOTION.value: ("Notion", "Reads Notion pages and databases."),
-    DocumentSource.JIRA.value: ("Jira", "Reads Jira issues and comments."),
-    DocumentSource.SLACK.value: ("Slack", "Reads messages in Slack channels."),
-    DocumentSource.TEAMS.value: ("Microsoft Teams", "Reads messages in Teams channels."),
-    DocumentSource.GMAIL.value: ("Gmail", "Reads email in Gmail."),
-    DocumentSource.OUTLOOK.value: ("Outlook", "Reads email in Outlook."),
-    DocumentSource.SALESFORCE.value: ("Salesforce", "Reads Salesforce records."),
-    DocumentSource.HUBSPOT.value: ("HubSpot", "Reads HubSpot records."),
-    DocumentSource.ZENDESK.value: ("Zendesk", "Reads Zendesk tickets and help articles."),
-    DocumentSource.GITHUB.value: ("GitHub", "Reads GitHub issues, pull requests and files."),
-    DocumentSource.BOX.value: ("Box", "Reads files in Box."),
-    DocumentSource.DROPBOX.value: ("Dropbox", "Reads files in Dropbox."),
-    DocumentSource.WEB.value: ("Website", "Reads pages from a website you choose."),
+# Display names whose product spelling differs from the source identifier.
+_CONNECTOR_NAMES = {
+    DocumentSource.AZURE_DATALAKE: "Azure Data Lake Storage",
+    DocumentSource.BOOKSTACK: "BookStack",
+    DocumentSource.CLICKUP: "ClickUp",
+    DocumentSource.FRESHDESK: "Freshdesk",
+    DocumentSource.GITBOOK: "GitBook",
+    DocumentSource.GITHUB: "GitHub",
+    DocumentSource.GITLAB: "GitLab",
+    DocumentSource.HIGHSPOT: "Highspot",
+    DocumentSource.HUBSPOT: "HubSpot",
+    DocumentSource.IMAP: "Email",
+    DocumentSource.LUMAPPS: "LumApps",
+    DocumentSource.MEDIAWIKI: "MediaWiki",
+    DocumentSource.OCI_STORAGE: "Oracle Storage",
+    DocumentSource.ONEDRIVE: "OneDrive",
+    DocumentSource.PRODUCTBOARD: "Productboard",
+    DocumentSource.R2: "Cloudflare R2",
+    DocumentSource.S3: "Amazon S3",
+    DocumentSource.SALESFORCE: "Salesforce",
+    DocumentSource.SHAREPOINT: "SharePoint",
+    DocumentSource.TEAMS: "Microsoft Teams",
+    DocumentSource.TESTRAIL: "TestRail",
+    DocumentSource.WEB: "Website",
+    DocumentSource.XENFORO: "XenForo",
+    DocumentSource.YOUTRACK: "YouTrack",
 }
-
+CONNECTORS = {
+    source.value: (
+        _CONNECTOR_NAMES.get(source, source.value.replace("_", " ").title()),
+        DocumentSourceDescription.get(source, ""),
+    )
+    for source in CONNECTOR_CLASS_MAP
+    if source is not DocumentSource.MOCK_CONNECTOR
+}
+CONNECTOR_APPROVAL = (
+    "An administrator connects the source and sets who can access its documents."
+)
 
 @dataclass
 class Item:
@@ -47,11 +66,21 @@ class Item:
     why_approval: str  # why an administrator has to turn it on
 
 
-def connectors(db: Session) -> list[Item]:
-    have = {str(getattr(s, "value", s)) for s in db.scalars(select(Connector.source).distinct())}
-    return [Item("connector", k, n, d, "Brings company documents into search; an administrator connects it and sets who can see what.")
-            for k, (n, d) in CONNECTORS.items() if k not in have]
+def connector_options() -> dict[str, tuple[str, str]]:
+    return {
+        key: metadata
+        for key, metadata in CONNECTORS.items()
+        if SHOW_EXTRA_CONNECTORS or key != DocumentSource.BRAINTRUST.value
+    }
 
+
+def connectors(db: Session) -> list[Item]:
+    configured = set(db.scalars(select(Connector.source).distinct()))
+    return [
+        Item("connector", key, name, description, CONNECTOR_APPROVAL)
+        for key, (name, description) in connector_options().items()
+        if key not in configured
+    ]
 
 def skills(db: Session) -> list[Item]:
     rows = db.scalars(select(NortPolePackVersion).order_by(NortPolePackVersion.installed_at)).all()

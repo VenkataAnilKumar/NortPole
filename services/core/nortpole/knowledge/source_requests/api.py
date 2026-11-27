@@ -110,12 +110,7 @@ def get_discover(
     latest: dict[tuple[str, str], NortPoleSourceRequest] = {}
     for r in mine:  # newest first, so the first seen is the latest
         latest.setdefault((r.kind, r.item_key), r)
-    items = []
-    for i in catalog.discover(db_session):
-        r = latest.get((i.kind, i.key))
-        items.append(DiscoverItem(kind=i.kind, key=i.key, name=i.name, description=i.description, why_approval=i.why_approval,
-                                  my_request=_view(r) if r and r.state != "withdrawn" else None))
-    requestable_sources = {item.key for item in items if item.kind == "connector"}
+    connector_options = catalog.connector_options()
     # The catalog needs one status per connector even after it leaves the
     # recent activity list or becomes configured.
     request = NortPoleSourceRequest
@@ -126,13 +121,28 @@ def get_discover(
             .where(
                 request.requested_by_id == user.id,
                 request.kind == "connector",
-                request.item_key.in_(tuple(catalog.CONNECTORS)),
+                request.item_key.in_(connector_options),
             )
             .distinct(request.item_key)
             .order_by(request.item_key, request.created_at.desc(), request.id.desc())
         )
         if row.state != "withdrawn"
     }
+    items = []
+    for item in catalog.discover(db_session):
+        if item.kind == "connector":
+            my_request = connector_requests.get(item.key)
+        else:
+            row = latest.get((item.kind, item.key))
+            my_request = _view(row) if row and row.state != "withdrawn" else None
+        items.append(
+            DiscoverItem(
+                kind=item.kind, key=item.key, name=item.name,
+                description=item.description, why_approval=item.why_approval,
+                my_request=my_request,
+            )
+        )
+    requestable_sources = {item.key for item in items if item.kind == "connector"}
     return DiscoverView(
         items=items,
         my_requests=[_view(r) for r in mine[:20]],
@@ -142,7 +152,7 @@ def get_discover(
                 requestable=key in requestable_sources,
                 my_request=connector_requests.get(key),
             )
-            for key, (name, description) in catalog.CONNECTORS.items()
+            for key, (name, description) in connector_options.items()
         ],
     )
 
