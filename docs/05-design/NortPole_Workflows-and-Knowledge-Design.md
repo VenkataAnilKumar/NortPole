@@ -97,9 +97,11 @@ Deleting a person deletes their schedules (cascade). Deactivating a person pause
 
 `schedule.change` (create, edit, share, delete), `schedule.state` (pause, resume, auto-pause, admin pause), `schedule.fire` (outcome and reason; no request text), `schedule.controls` (admin settings). Titles and requests stay out of the audit record, as for drafts.
 
-### 3.7 Event triggers (R6c, later)
+### 3.7 Event triggers (R6c)
 
-Start a scheduled-style run when a connected source changes (for example, a new file in a Drive folder). Off by default, enabled per group, only for sources the owner can read, and still stopping at the plan. Waits for the Google Drive connector.
+The first trigger watches indexed content changes in a Knowledge library. An administrator enables Knowledge triggers for the workspace's existing scheduling groups, and an individual creates a workflow with a selected library and a prompt. The scheduling worker checks for changes every five minutes. It records the triggering document revision and prepares a plan in the owner's Inbox. After plan approval, the workflow rechecks the library, document access and indexed version before gathering evidence from that document.
+
+The change journal stores document IDs and hashes with a seven-day delivery window. A schedule can reserve each event once and keeps up to three queued, running or unapproved plans. Pausing or switching libraries starts a new delivery window on resume or save. Revisions that are already superseded at delivery and revisions indexed before the watch began are ineligible.
 
 ### 3.8 Tests
 

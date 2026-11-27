@@ -1,5 +1,9 @@
 "use client";
 
+import { ResponsiveLayout } from "@opal/layouts";
+import { useTranslations as useWorkspaceTranslations } from "next-intl";
+import { NavLink } from "@opal/navigation";
+import type { Route } from "next";
 import useSWR from "swr";
 import { errorHandlingFetcher } from "@/lib/fetcher";
 
@@ -11,24 +15,25 @@ interface Target { name: string; tier?: string; enabled: boolean }
 const card = "rounded-2xl border border-border-01 bg-background-neutral-00 p-5 shadow-sm";
 const TIER: Record<string, string> = { act_with_approval: "act with approval", draft_only: "draft only", read_only: "read only" };
 
-function Row({ title, where, href, children }: { title: string; where: string; href: string; children: React.ReactNode }) {
+function Row({ title, where, destination, children }: { title: string; where: string; destination: Route; children: React.ReactNode }) {
+  const workspaceText = useWorkspaceTranslations("workspaceUi");
   return (
     <li className={card} data-testid="gov-row">
-      <div className="flex flex-wrap items-start justify-between gap-3">
+      <ResponsiveLayout display="flex" className="flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <h2 className="text-base font-semibold text-text-05">{title}</h2>
           <p className="mt-1 text-sm text-text-05">{children}</p>
         </div>
-        <a href={href} className="min-h-11 rounded-xl border border-border-02 px-4 py-2.5 text-sm font-semibold text-text-05">
-          Change in {where}
-        </a>
-      </div>
+        <NavLink href={destination} className="min-h-11 rounded-xl border border-border-02 px-4 py-2.5 text-sm font-semibold text-text-05">{workspaceText("changeIn")}{" "}{where}
+        </NavLink>
+      </ResponsiveLayout>
     </li>
   );
 }
 
 /** Where each governance control lives and what it is set to now. Read-only; each link opens the page that changes it. */
 export default function GovernancePage() {
+  const workspaceText = useWorkspaceTranslations("workspaceUi");
   const { data: rp } = useSWR<RoutePolicy>("/api/route-policy", errorHandlingFetcher);
   const { data: ext } = useSWR<Extensions>("/api/admin/extensions", errorHandlingFetcher);
   const { data: ret } = useSWR<Retention>("/api/admin/retention", errorHandlingFetcher);
@@ -36,39 +41,31 @@ export default function GovernancePage() {
 
   const tiers = (targets ?? []).reduce<Record<string, number>>((m, t: Target) => ({ ...m, [t.tier ?? "act_with_approval"]: (m[t.tier ?? "act_with_approval"] ?? 0) + 1 }), {});
   return (
-    <div className="mx-auto flex w-full max-w-4xl flex-col gap-4 p-4 sm:p-8" data-testid="governance-page">
+    <ResponsiveLayout display="flex" className="mx-auto w-full max-w-4xl flex-col gap-4 p-4 sm:p-8" data-testid="governance-page">
       <div>
-        <h1 className="text-2xl font-semibold text-text-05">Governance</h1>
-        <p className="mt-1 text-sm text-text-03">
-          The controls that decide what may reach a model, what may be sent out, and what is kept. This page only shows their current setting; each link opens the page where it is changed.
-        </p>
+        <h1 className="text-2xl font-semibold text-text-05">{workspaceText("governance")}</h1>
+        <p className="mt-1 text-sm text-text-03">{workspaceText("theControlsThatDecideWhatMayReachAModel")}</p>
       </div>
       <ul className="flex flex-col gap-4">
-        <Row title="Model routes and data classes" where="Route policy" href="/admin/route-policy">
-          {rp ? <>The workspace treats its data as <b>{rp.default_data_class}</b>. Cloud routes may process: {Object.entries(rp.allowed).filter(([, k]) => k.includes("cloud")).map(([c]) => c).join(", ") || "no data class"}.</> : "Loading…"}
+        <Row title={workspaceText("modelRoutesAndDataClasses")} where="Route policy" destination="/admin/route-policy">
+          {rp ? <>{workspaceText("theWorkspaceTreatsItsDataAs")}{" "}<b>{rp.default_data_class}</b>{workspaceText("cloudRoutesMayProcess")}{" "}{Object.entries(rp.allowed).filter(([, k]) => k.includes("cloud")).map(([c]) => c).join(", ") || "no data class"}.</> : "Loading…"}
         </Row>
-        <Row title="Sensitive-data redaction" where="Route policy" href="/admin/route-policy">
-          {rp ? <>Listed patterns (emails, phone and card numbers, keys and similar) are replaced before sending to: <b>{(rp.redact_route_kinds ?? []).join(", ") || "no route type"}</b>.</> : "Loading…"}
+        <Row title={workspaceText("sensitiveDataRedaction")} where="Route policy" destination="/admin/route-policy">
+          {rp ? <>{workspaceText("listedPatternsEmailsPhoneAndCardNumbersKeysAnd")}{" "}<b>{(rp.redact_route_kinds ?? []).join(", ") || "no route type"}</b>.</> : "Loading…"}
         </Row>
-        <Row title="Send destinations and how far they may go" where="Send destinations" href="/admin/action-targets">
+        <Row title={workspaceText("sendDestinationsAndHowFarTheyMayGo")} where="Send destinations" destination="/admin/action-targets">
           {targets ? <>{targets.length} destination{targets.length === 1 ? "" : "s"}: {Object.entries(tiers).map(([t, n]) => `${n} ${TIER[t] ?? t}`).join(", ") || "none registered"}.</> : "Loading…"}
         </Row>
-        <Row title="What people may add" where="Inventory" href="/admin/inventory">
-          {ext ? <>Personal skills: <b>{ext.personal_skills === "off" ? "off" : "self-serve"}</b>. MCP host allowlist: <b>{ext.mcp_allowlist_enabled ? `on (${ext.mcp_allowed_hosts.length} host${ext.mcp_allowed_hosts.length === 1 ? "" : "s"})` : "off"}</b>.</> : "Loading…"}
+        <Row title={workspaceText("whatPeopleMayAdd")} where="Inventory" destination="/admin/inventory">
+          {ext ? <>{workspaceText("personalSkills")}{" "}<b>{ext.personal_skills === "off" ? "off" : "self-serve"}</b>{workspaceText("mcpHostAllowlist")}{" "}<b>{ext.mcp_allowlist_enabled ? `on (${ext.mcp_allowed_hosts.length} host${ext.mcp_allowed_hosts.length === 1 ? "" : "s"})` : "off"}</b>.</> : "Loading…"}
         </Row>
-        <Row title="Retention, legal hold and audit export" where="Audit log" href="/admin/audit">
-          {ret ? <>Audit events kept {ret.audit_days === null ? "forever" : `${ret.audit_days} days`}; usage counts {ret.usage_days === null ? "forever" : `${ret.usage_days} days`}. Legal hold: <b>{ret.legal_hold ? `on (${ret.hold_reason})` : "off"}</b>. The periods are placeholders until you set them.</> : "Loading…"}
+        <Row title={workspaceText("retentionLegalHoldAndAuditExport")} where="Audit log" destination="/admin/audit">
+          {ret ? <>{workspaceText("auditEventsKept")}{" "}{ret.audit_days === null ? "forever" : `${ret.audit_days} days`}{workspaceText("usageCounts")}{" "}{ret.usage_days === null ? "forever" : `${ret.usage_days} days`}{workspaceText("legalHold")}{" "}<b>{ret.legal_hold ? `on (${ret.hold_reason})` : "off"}</b>{workspaceText("thePeriodsArePlaceholdersUntilYouSetThem")}</> : "Loading…"}
         </Row>
-        <Row title="Signed packs and who signs them" where="Packs" href="/admin/packs">
-          Packs install only if signed by a trusted signer, and run only on models they passed evaluation on.
-        </Row>
-        <Row title="Changes that need a second administrator" where="Approvals" href="/admin/approvals">
-          Which kinds of change need a second administrator, and the changes waiting for one.
-        </Row>
-        <Row title="Who did what" where="Audit log" href="/admin/audit">
-          Refusals, policy changes, approvals, sends and exports are written to the audit log.
-        </Row>
+        <Row title={workspaceText("signedPacksAndWhoSignsThem")} where="Packs" destination="/admin/packs">{workspaceText("packsInstallOnlyIfSignedByATrustedSigner")}</Row>
+        <Row title={workspaceText("changesThatNeedASecondAdministrator")} where="Approvals" destination="/admin/approvals">{workspaceText("whichKindsOfChangeNeedASecondAdministratorAnd")}</Row>
+        <Row title={workspaceText("whoDidWhat")} where="Audit log" destination="/admin/audit">{workspaceText("refusalsPolicyChangesApprovalsSendsAndExportsAreWritten")}</Row>
       </ul>
-    </div>
+    </ResponsiveLayout>
   );
 }

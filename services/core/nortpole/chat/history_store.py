@@ -9,6 +9,7 @@ from typing import Protocol
 from uuid import UUID
 
 from nortpole.agents.models import AgentInfo, CompactionCheckpoint
+from nortpole.chat.history_access import workspace_evidence_keys
 from nortpole.chat.chat_processing_checker import ChatTurnAdmission
 from nortpole.chat.citation_processor import CitationMapping
 from nortpole.chat.incognito_context import (
@@ -77,6 +78,21 @@ def _selected_history(
     ], selected_response
 
 
+def load_temporary_evidence(chat_session_id: UUID) -> dict[str, dict]:
+    return load_incognito_context(chat_session_id).evidence_by_response
+
+
+def load_temporary_question(chat_session_id: UUID, message_id: int) -> str:
+    for message in load_incognito_context(chat_session_id).messages:
+        if (
+            isinstance(message, UserMessage)
+            and message.id == f"chat:{message_id}"
+            and isinstance(message.content, str)
+        ):
+            return message.content
+    return ""
+
+
 class ChatHistoryStore(Protocol):
     """Persist conversation content; chat owns message-tree metadata and session execution."""
 
@@ -139,11 +155,13 @@ class RedisChatHistoryStore(ChatHistoryStore):
         chat_session_id: UUID,
         visible_message_ids: Sequence[int],
         admission: ChatTurnAdmission | None = None,
+        evidence: dict | None = None,
     ) -> None:
         self.message_id = message_id
         self.chat_session_id = chat_session_id
         self.visible_message_ids = tuple(visible_message_ids)
         self.admission = admission
+        self.evidence = evidence
 
     def list_agents(self) -> list[AgentInfo]:
         return load_incognito_agent_metadata(
@@ -292,6 +310,12 @@ class RedisChatHistoryStore(ChatHistoryStore):
                         if document_id in documents:
                             sources[number] = documents[document_id]
                 pending.extend(record.child_runs)
+        evidence = dict(self.evidence or {})
+        indexed = workspace_evidence_keys(response.all_search_docs.values())
+        if indexed:
+            evidence["tool_sources"] = [
+                [doc_id, chunk, source.value] for doc_id, chunk, source in sorted(indexed)
+            ]
         save_incognito_response(
             self.chat_session_id,
             response.response,
@@ -299,6 +323,7 @@ class RedisChatHistoryStore(ChatHistoryStore):
             admission=self.admission,
             message_id=self.message_id,
             messages=messages,
+            evidence=evidence or None,
         )
 
 
@@ -310,6 +335,7 @@ def get_chat_history_store(
     visible_message_ids: Sequence[int] = (),
     branch: ChatBranch | None = None,
     admission: ChatTurnAdmission | None = None,
+    evidence: dict | None = None,
 ) -> ChatHistoryStore:
     if persist_content:
         return PostgresChatHistoryStore(
@@ -320,4 +346,5 @@ def get_chat_history_store(
         chat_session_id=chat_session_id,
         visible_message_ids=visible_message_ids,
         admission=admission,
+        evidence=evidence,
     )

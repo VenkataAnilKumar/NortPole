@@ -19,16 +19,13 @@ import {
   createProject as createProjectService,
 } from "@/lib/projects/svc";
 import { useProjectsContext } from "@/lib/projects/providers";
-import { MoveCustomAgentChatModal } from "@/lib/agents/components";
+import { MoveProjectChatModal } from "@/lib/projects/components/MoveProjectChatModal";
 import { UNNAMED_CHAT } from "@/lib/constants";
 import ShareChatSessionModal from "@/sections/modals/ShareChatSessionModal";
 import { Button, SidebarTab, useCreateModal } from "@opal/components";
 import { Hoverable } from "@opal/core";
-import { DRAG_TYPES, LOCAL_STORAGE_KEYS } from "@/lib/sidebar/constants";
-import {
-  shouldShowMoveModal,
-  showErrorNotification,
-} from "@/lib/sidebar/utils";
+import { DRAG_TYPES } from "@/lib/sidebar/constants";
+import { showErrorNotification } from "@/lib/sidebar/utils";
 import { handleMoveOperation } from "@/lib/sidebar/svc";
 import ButtonRenaming from "@/refresh-components/buttons/ButtonRenaming";
 import { useAppPosition } from "@/lib/navigation/hooks";
@@ -76,12 +73,12 @@ const ChatButton = memo(
     } = useProjectsContext();
     const pinChatAgent = usePinChatAgent();
     const [menuOpen, setMenuOpen] = useState(false);
-    const [pendingMoveProjectId, setPendingMoveProjectId] = useState<
-      number | null
-    >(null);
-    const moveCustomAgentModal = useCreateModal();
-    const [navigateAfterMoveProjectId, setNavigateAfterMoveProjectId] =
-      useState<number | null>(null);
+    const [pendingMove, setPendingMove] = useState<{
+      id?: number;
+      name: string;
+      shared?: boolean;
+    } | null>(null);
+    const moveProjectChatModal = useCreateModal();
 
     // Drag and drop setup for chat sessions
     const dragId = `${DRAG_TYPES.CHAT}-${chatSession.id}`;
@@ -95,7 +92,7 @@ const ChatButton = memo(
         chatSession,
         projectId: project?.id,
       },
-      disabled: !draggable || renaming,
+      disabled: !draggable || renaming || Boolean(chatSession.agent_preview_name),
     });
 
     // Sync local name state when chatSession.name changes (e.g., after auto-naming)
@@ -126,9 +123,8 @@ const ChatButton = memo(
     const filteredProjects = useMemo(() => {
       // Trimmed, as the list's own filter trims it.
       const term = searchTerm.trim().toLowerCase();
-      if (!term) return projects;
       return projects.filter((project) =>
-        project.name.toLowerCase().includes(term)
+        project.role !== "viewer" && project.name.toLowerCase().includes(term)
       );
     }, [projects, searchTerm]);
 
@@ -159,7 +155,7 @@ const ChatButton = memo(
               id: `project-${targetProject.id}`,
               icon: SvgFolder,
               title: targetProject.name,
-              onSelect: () => handleChatMove(targetProject),
+              onSelect: () => confirmChatMove(targetProject),
             })
           ),
         // A create row when no project matches the search.
@@ -177,7 +173,7 @@ const ChatButton = memo(
                       projectName: searchTerm.trim(),
                     }),
                     onSelect: () =>
-                      handleCreateProjectAndMove(searchTerm.trim()),
+                      confirmChatMove({ name: searchTerm.trim() }),
                   },
                 ],
               },
@@ -186,13 +182,13 @@ const ChatButton = memo(
       ],
     };
     const menuItems: DropdownMenuItem[] = [
-      {
-        kind: "action",
+      ...(project?.shared || chatSession.agent_preview_name ? [] : [{
+        kind: "action" as const,
         id: "share",
         icon: SvgShare,
         title: t("chatButton.share.label"),
         onSelect: () => shareModal.toggle(true),
-      },
+      }]),
       {
         kind: "action",
         id: "rename",
@@ -200,13 +196,13 @@ const ChatButton = memo(
         title: t("chatButton.rename.label"),
         onSelect: () => setRenaming(true),
       },
-      {
-        kind: "action",
+      ...(chatSession.agent_preview_name ? [] : [{
+        kind: "action" as const,
         id: "move",
         icon: SvgFolderIn,
         title: t("chatButton.moveToProject.label"),
         onSelect: (views) => views.push("move"),
-      },
+      }] satisfies DropdownMenuItem[]),
       ...(project
         ? [
             {
@@ -240,7 +236,7 @@ const ChatButton = memo(
 
     async function handleClick(event: React.MouseEvent<HTMLElement>) {
       chatLink.onClick(event);
-      await pinChatAgent(chatSession);
+      if (!chatSession.agent_preview_name) await pinChatAgent(chatSession);
     }
 
     async function handleRename(newName: string) {
@@ -270,30 +266,44 @@ const ChatButton = memo(
       }
     }
 
-    async function performMove(targetProjectId: number) {
+    function confirmChatMove(target: { id?: number; name: string; shared?: boolean }) {
+      setPendingMove(target);
+      moveProjectChatModal.toggle(true);
+    }
+
+    function closeMove() {
+      moveProjectChatModal.toggle(false);
+      setPendingMove(null);
+    }
+
+    async function performMove(target: { id?: number; name: string }) {
+      if (target.id === undefined) {
+        let newProject: Project;
+        try {
+          newProject = await createProjectService(target.name, chatSession.id);
+        } catch {
+          showErrorNotification(t("chatButton.createProjectError.message"));
+          return;
+        }
+        setSearchTerm("");
+        appPosition.openProject(newProject.id);
+        await Promise.allSettled([refreshChatSessions(), fetchProjects()]);
+        return;
+      }
+
       try {
         await handleMoveOperation({
           chatSession,
-          targetProjectId,
+          targetProjectId: target.id,
           refreshChatSessions,
           refreshCurrentProjectDetails,
           fetchProjects,
           currentProjectId,
         });
         setSearchTerm("");
-      } catch (error) {
-        // handleMoveOperation already handles error notification
-        console.error("Failed to move chat:", error);
+      } catch {
+        // The move service already reports a failure.
       }
-    }
-
-    async function handleChatMove(targetProject: Project) {
-      if (shouldShowMoveModal(chatSession)) {
-        setPendingMoveProjectId(targetProject.id);
-        moveCustomAgentModal.toggle(true);
-        return;
-      }
-      await performMove(targetProject.id);
     }
 
     async function handleRemoveFromProject() {
@@ -306,38 +316,6 @@ const ChatButton = memo(
         setSearchTerm("");
       } catch (error) {
         console.error("Failed to remove chat from project:", error);
-      }
-    }
-
-    async function handleCreateProjectAndMove(projectName: string) {
-      try {
-        // Create the new project using the service directly (without navigation)
-        const newProject = await createProjectService(projectName);
-
-        // Refresh projects list to include the new project
-        await fetchProjects();
-
-        // Mark that we want to navigate to this project after moving
-        setNavigateAfterMoveProjectId(newProject.id);
-
-        // Check if we should show the move modal for custom agents
-        if (shouldShowMoveModal(chatSession)) {
-          setPendingMoveProjectId(newProject.id);
-          moveCustomAgentModal.toggle(true);
-          setSearchTerm("");
-          return;
-        }
-
-        // Move the chat to the newly created project
-        await performMove(newProject.id);
-
-        // Navigate to the new project to see the chat
-        appPosition.openProject(newProject.id);
-        setNavigateAfterMoveProjectId(null);
-      } catch (error) {
-        console.error("Failed to create project and move chat:", error);
-        showErrorNotification(t("chatButton.createProjectError.message"));
-        setNavigateAfterMoveProjectId(null);
       }
     }
 
@@ -425,35 +403,20 @@ const ChatButton = memo(
           </ConfirmationModalLayout>
         </deleteModal.Provider>
 
-        <moveCustomAgentModal.Provider>
-          <MoveCustomAgentChatModal
-            onCancel={() => {
-              moveCustomAgentModal.toggle(false);
-              setPendingMoveProjectId(null);
-              setNavigateAfterMoveProjectId(null);
-            }}
-            onConfirm={async (doNotShowAgain: boolean) => {
-              if (doNotShowAgain && typeof window !== "undefined") {
-                window.localStorage.setItem(
-                  LOCAL_STORAGE_KEYS.HIDE_MOVE_CUSTOM_AGENT_MODAL,
-                  "true"
-                );
-              }
-              const target = pendingMoveProjectId;
-              const shouldNavigate = navigateAfterMoveProjectId;
-              moveCustomAgentModal.toggle(false);
-              setPendingMoveProjectId(null);
-              if (target != null) {
-                await performMove(target);
-                // Navigate if this was triggered by creating a new project
-                if (shouldNavigate != null) {
-                  appPosition.openProject(shouldNavigate);
-                  setNavigateAfterMoveProjectId(null);
-                }
-              }
-            }}
-          />
-        </moveCustomAgentModal.Provider>
+        <moveProjectChatModal.Provider>
+          {pendingMove && (
+            <MoveProjectChatModal
+              projectName={pendingMove.name}
+              shared={pendingMove.shared}
+              createProject={pendingMove.id === undefined}
+              onCancel={closeMove}
+              onConfirm={() => {
+                closeMove();
+                void performMove(pendingMove);
+              }}
+            />
+          )}
+        </moveProjectChatModal.Provider>
 
         <shareModal.Provider>
           <ShareChatSessionModal

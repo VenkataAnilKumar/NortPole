@@ -394,6 +394,11 @@ def _make_setup(n_models: int = 1) -> MagicMock:
     # Fields consumed by SearchToolConfig / CustomToolConfig / FileReaderToolConfig
     # constructors during model preparation — must be typed correctly for Pydantic.
     setup.new_msg_req.deep_research = False
+    setup.new_msg_req.search_evidence = None
+    setup.is_agent_preview = False
+    setup.agent_release_version = None
+    setup.evidence_question = None
+    setup.research_evidence = False
     setup.new_msg_req.internal_search_filters = None
     setup.new_msg_req.allowed_tool_ids = None
     setup.new_msg_req.include_citations = True
@@ -3570,3 +3575,24 @@ def test_user_stop_after_run_deadline_keeps_live_and_saved_timeout(
         finally:
             turn.delivery.reader.close()
             _wait_for_chat_workers(chat_workers)
+
+
+@pytest.mark.parametrize("mode", ["search", "preview", "published"])
+def test_evidence_only_chat_does_not_enable_tools_or_code(mode: str) -> None:
+    from nortpole.server.query_and_chat.models import SearchEvidenceSelection
+
+    setup = _make_setup(n_models=1)
+    setup.is_agent_preview = mode == "preview"
+    setup.agent_release_version = 1 if mode == "published" else None
+    if mode == "search":
+        setup.new_msg_req.search_evidence = SearchEvidenceSelection(library_id=1)
+    with (
+        patch("nortpole.chat.execution.CODE_MODE_ENABLED", True),
+        patch("nortpole.chat.execution.code_allowed", return_value=True),
+        patch("nortpole.chat.execution.construct_tools") as construct_tools,
+        patch("nortpole.chat.execution.ChatAgent") as chat_agent,
+    ):
+        create_chat_agent(setup, MagicMock(), 0, CancellationSignal(), True)
+    construct_tools.assert_not_called()
+    assert chat_agent.call_args.kwargs["tools"] == []
+    assert chat_agent.call_args.kwargs["code_mode"] is False

@@ -214,12 +214,16 @@ export const SWR_KEYS = {
   userPatScopes: "/api/user/pats/scopes",
   notifications: "/api/notifications",
   notificationsSummary: "/api/notifications/summary",
+  inboxNotificationSummary: "/api/notifications/inbox-summary",
+  inboxWaitingTasks: "/api/tasks?waiting_only=true",
+  inboxPendingProposals: "/api/integration-proposals?pending_only=true",
   myLiveApprovals: "/api/build/approvals/live",
-  notificationsPage: (pageNum: number, pageSize: number) => {
+  notificationsPage: (pageNum: number, pageSize: number, inboxTab?: string) => {
     const params = new URLSearchParams({
       page_num: pageNum.toString(),
       page_size: pageSize.toString(),
     });
+    if (inboxTab) params.set("inbox_tab", inboxTab);
     return `/api/notifications?${params.toString()}`;
   },
   notificationsBySeverity: (minSeverity: string, pageSize: number) => {

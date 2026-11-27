@@ -157,6 +157,9 @@ def start_chat_turn(
             else MessageResponseIDInfo(
                 user_message_id=setup.user_message_id,
                 reserved_assistant_message_id=setup.responses[0].message_id,
+                model_display_name=(
+                    setup.responses[0].display_name if setup.receipt_review is None else None
+                ),
             )
         )
         if query_observation is not None:
@@ -280,6 +283,7 @@ class ChatTurnExecution:
                     message_id=response.message_id,
                     chat_session_id=self.setup.chat_session_id,
                     admission=self.setup.admission,
+                    evidence=self.setup.search_evidence_provenance,
                     persist_content=record_mode_persists_content(
                         self.setup.incognito_record_mode
                     ),
@@ -629,10 +633,15 @@ def create_chat_agent(
     llm = setup.responses[response_index].llm
     with cancellation_scope(cancellation):
         cancellation.check()
+        evidence_only = (
+            setup.new_msg_req.search_evidence is not None
+            or setup.is_agent_preview
+            or setup.agent_release_version is not None
+        )
         filters = setup.new_msg_req.internal_search_filters
         source_types = filters.source_type if filters else None
         # Tools open DB sessions on demand, so model I/O cannot retain a connection.
-        tools_by_type = construct_tools(
+        tools_by_type = {} if evidence_only else construct_tools(
             configuration=setup.tool_configuration,
             user=user,
             llm=llm,
@@ -665,16 +674,35 @@ def create_chat_agent(
                 user_file_ids=setup.available_files.user_file_ids,
                 chat_file_ids=setup.available_files.chat_file_ids,
             ),
-            allowed_tool_ids=setup.new_msg_req.allowed_tool_ids,
+            allowed_tool_ids=[] if setup.document_review is not None else setup.new_msg_req.allowed_tool_ids,
             search_usage_forcing_setting=setup.search_params.search_usage,
         )
         tools = [tool for tool_list in tools_by_type.values() for tool in tool_list]
         # NortPole: the read actions of the integrations this person installed and connected (decision 0008). Only
         # the default chat, and only when the request does not restrict the tool list.
-        if setup.persona_id == DEFAULT_PERSONA_ID and setup.new_msg_req.allowed_tool_ids is None:
+        if (
+            not evidence_only
+            and setup.document_review is None
+            and setup.persona_id == DEFAULT_PERSONA_ID
+            and setup.new_msg_req.allowed_tool_ids is None
+        ):
             from nortpole.work.integrations.chat_tools import chat_tools_for
 
             tools.extend(chat_tools_for(user, {tool.name for tool in tools}))
+
+        if (
+            not evidence_only
+            and setup.incognito_record_mode is None
+            and setup.document_review is None
+            and setup.receipt_review is None
+            and setup.slack_context is None
+            and not setup.new_msg_req.deep_research
+            and len(setup.responses) == 1
+            and setup.new_msg_req.allowed_tool_ids is None
+        ):
+            from nortpole.work.workflow_schedules.chat_tools import tools_for
+
+            tools.extend(tools_for(user, setup.chat_session_id, setup.user_message_id, {tool.name for tool in tools}))
 
         if setup.preferred_tool_id is not None and setup.preferred_tool_id not in {
             tool.id for tool in tools
@@ -733,9 +761,20 @@ def create_chat_agent(
             messages=list(setup.messages),
             tools=tools,
             # NortPole: code mode runs code, so it also needs the catalog's "code" kind on.
-            code_mode=CODE_MODE_ENABLED and code_allowed(),
+            code_mode=(
+                not evidence_only
+                and setup.document_review is None
+                and CODE_MODE_ENABLED
+                and code_allowed()
+            ),
             custom_agent_prompt=setup.custom_agent_prompt,
             additional_context=setup.additional_context,
+            receipt_review=setup.receipt_review,
+            document_review=setup.document_review,
+            evidence_question=setup.evidence_question,
+            research_evidence=setup.research_evidence,
+            policy_answer=setup.policy_answer,
+            prepared_answer=setup.prepared_answer,
             context_files=setup.extracted_context_files,
             persona=setup.persona,
             base_system_prompt=setup.base_system_prompt,

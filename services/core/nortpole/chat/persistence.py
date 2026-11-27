@@ -19,6 +19,7 @@ from nortpole.chat.models import (
 )
 from nortpole.chat.presentation import project_response
 from nortpole.chat.stream_buffer import ChatDelivery
+from nortpole.server.query_and_chat.models import ResponseModelInfo
 from nortpole.llm.cancellation import AgentCancelled, CancelReason
 from nortpole.llm.interfaces import LLM
 from nortpole.server.query_and_chat.streaming_models import StreamingError
@@ -181,6 +182,13 @@ class ChatResponsePersistence(RunStore):
                     )
                 raise
             else:
+                if response.request_params and response.request_params.served_model:
+                    self.delivery.publish(
+                        ResponseModelInfo(
+                            response_model_name=response.request_params.served_model,
+                            response_model_index=self.model_index,
+                        )
+                    )
                 with self._lock:
                     self._report(
                         ChatResponseOutcome(

@@ -1,8 +1,8 @@
-# Evidence brief 1.0.0: workflow pack source. Validate with the core's pack tests; build and sign with the pack SDK (decision 0006).
+# Evidence brief 1.1.0: workflow pack source. Validate with the core's pack tests; build and sign with the pack SDK (decision 0006).
 schema_version: 1
 id: everyday-brief
 name: Evidence brief
-version: 1.0.0
+version: 1.1.0
 vertical: general
 description: 'Domain-neutral workflows: a cited brief, finding the policy that covers a question, and comparing
   two documents.'
@@ -43,3 +43,12 @@ templates:
   review_rules: []
   desired_output: A list of differences with citations
 evaluation_cases: []
+agents:
+- id: evidence-research
+  name: Evidence Research
+  description: Find supporting passages in approved Knowledge and produce a cited brief.
+  instructions: Use the approved Knowledge collections to find supporting passages. Cite the evidence and identify missing information.
+  tools:
+  - search
+  max_searches: 3
+  chat_pilot: research

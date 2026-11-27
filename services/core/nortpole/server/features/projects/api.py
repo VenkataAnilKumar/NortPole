@@ -12,6 +12,7 @@ from fastapi import (
     UploadFile,
 )
 from pydantic import BaseModel
+from sqlalchemy import and_, exists, or_, select, update
 from sqlalchemy.orm import Session
 
 from nortpole.auth.permissions import require_permission
@@ -27,12 +28,12 @@ from nortpole.configs.constants import (
 )
 from nortpole.db.chat import get_owned_chat_session
 from nortpole.db.engine.sql_engine import get_session
-from nortpole.db.enums import Permission, UserFileStatus
+from nortpole.db.enums import ChatSessionSharedStatus, Permission, UserFileStatus
 from nortpole.db.incognito import mark_incognito_user_files_deleting
-from nortpole.db.models import Project__UserFile, User, UserFile, UserProject
+from nortpole.db.models import ChatSession, Project__UserFile, ProjectMember, User, UserFile, UserProject
+from nortpole.db.project_access import project_has_members, require_project
 from nortpole.db.persona import get_personas_by_ids
 from nortpole.db.projects import (
-    check_project_ownership,
     get_project_token_count,
     upload_files_to_user_files_with_indexing,
 )
@@ -45,6 +46,8 @@ from nortpole.server.features.projects.models import (
     UserFileSnapshot,
     UserProjectSnapshot,
 )
+from nortpole.server.features.projects.collaboration import router as collaboration_router
+from nortpole.server.features.projects.outputs import router as outputs_router
 from nortpole.utils.logger import setup_logger
 from shared_configs.contextvars import get_current_tenant_id
 
@@ -52,6 +55,8 @@ logger = setup_logger()
 
 
 router = APIRouter(prefix="/user/projects")
+router.include_router(outputs_router)
+router.include_router(collaboration_router)
 
 # `user_project.name` and `user_project.description` are both varchar(255). Longer
 # values make Postgres reject the write, which surfaces as a 500.
@@ -65,6 +70,32 @@ def _validate_project_field_length(value: str, field_name: str) -> None:
             f"Project {field_name} cannot be longer than "
             f"{_MAX_PROJECT_FIELD_LENGTH} characters",
         )
+
+
+def _set_chat_project(
+    db_session: Session, user_id: UUID, chat_session_id: str, project_id: int | None,
+    *, private_only: bool = False,
+) -> None:
+    try:
+        chat_id = UUID(chat_session_id)
+    except ValueError as exc:
+        raise NortPoleError(NortPoleErrorCode.NOT_FOUND, "Chat session not found") from exc
+    stmt = (
+        update(ChatSession)
+        .where(
+            ChatSession.id == chat_id,
+            ChatSession.user_id == user_id,
+            ChatSession.spawned_by_message_id.is_(None),
+            ChatSession.deleted.is_(False),
+            ChatSession.incognito_record_mode.is_(None),
+            ChatSession.agent_preview.is_(None),
+        )
+        .values(project_id=project_id)
+    )
+    if private_only:
+        stmt = stmt.where(ChatSession.shared_status == ChatSessionSharedStatus.PRIVATE)
+    if db_session.execute(stmt).rowcount != 1:
+        raise NortPoleError(NortPoleErrorCode.NOT_FOUND, "Chat session not found")
 
 
 class UserFileDeleteResult(BaseModel):
@@ -150,17 +181,29 @@ def get_projects(
     db_session: Session = Depends(get_session),
 ) -> list[UserProjectSnapshot]:
     user_id = user.id
-    projects = (
-        db_session.query(UserProject).filter(UserProject.user_id == user_id).all()
+    any_member = exists().where(ProjectMember.project_id == UserProject.id).correlate(UserProject)
+    stmt = (
+        select(UserProject, ProjectMember.role, any_member)
+        .outerjoin(
+            ProjectMember,
+            and_(ProjectMember.project_id == UserProject.id, ProjectMember.user_id == user_id),
+        )
+        .where(or_(UserProject.user_id == user_id, ProjectMember.user_id == user_id))
     )
-    return [UserProjectSnapshot.from_model(project) for project in projects]
-
+    return [
+        UserProjectSnapshot.from_model(
+            project, viewer_id=user_id, shared=shared,
+            role="owner" if project.user_id == user_id else ("editor" if role == "editor" else "viewer"),
+        )
+        for project, role, shared in db_session.execute(stmt)
+    ]
 
 @router.post("/create", tags=PUBLIC_API_TAGS)
 def create_project(
     name: str,
     user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
     db_session: Session = Depends(get_session),
+    chat_session_id: str | None = None,
 ) -> UserProjectSnapshot:
     if name == "":
         raise HTTPException(status_code=400, detail="Project name cannot be empty")
@@ -168,6 +211,13 @@ def create_project(
     user_id = user.id
     project = UserProject(name=name, user_id=user_id)
     db_session.add(project)
+    if chat_session_id is not None:
+        db_session.flush()
+        try:
+            _set_chat_project(db_session, user_id, chat_session_id, project.id)
+        except NortPoleError:
+            db_session.rollback()
+            raise
     db_session.commit()
     return UserProjectSnapshot.from_model(project)
 
@@ -223,6 +273,8 @@ def upload_user_files(
 
         return CategorizedFilesSnapshot.from_result(categorized_files_result)
 
+    except HTTPException:
+        raise
     except Exception as e:
         logger.exception("Error uploading files - %s: %s", type(e).__name__, str(e))
         raise HTTPException(
@@ -241,16 +293,10 @@ def get_project(
     user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
     db_session: Session = Depends(get_session),
 ) -> UserProjectSnapshot:
-    user_id = user.id
-    project = (
-        db_session.query(UserProject)
-        .filter(UserProject.id == project_id, UserProject.user_id == user_id)
-        .one_or_none()
+    project, role = require_project(project_id, user.id, db_session)
+    return UserProjectSnapshot.from_model(
+        project, viewer_id=user.id, role=role, shared=project_has_members(project.id, db_session)
     )
-    if project is None:
-        raise HTTPException(status_code=404, detail="Project not found")
-    return UserProjectSnapshot.from_model(project)
-
 
 @router.get("/files/{project_id}", tags=PUBLIC_API_TAGS)
 def get_files_in_project(
@@ -258,18 +304,14 @@ def get_files_in_project(
     user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
     db_session: Session = Depends(get_session),
 ) -> list[UserFileSnapshot]:
-    user_id = user.id
-    # filtering files by owner alone 200s an empty list, leaking that the id exists
-    if not check_project_ownership(project_id, user_id, db_session):
-        raise NortPoleError(NortPoleErrorCode.NOT_FOUND, "Project not found")
-
+    require_project(project_id, user.id, db_session)
     user_files = (
         db_session.query(UserFile)
         .join(Project__UserFile, UserFile.id == Project__UserFile.user_file_id)
         .filter(
             Project__UserFile.project_id == project_id,
-            UserFile.user_id == user_id,
-            UserFile.status != UserFileStatus.FAILED,
+            UserFile.incognito.is_(False),
+            UserFile.status.notin_((UserFileStatus.FAILED, UserFileStatus.DELETING)),
         )
         .order_by(Project__UserFile.created_at.desc())
         .all()
@@ -289,22 +331,16 @@ def unlink_user_file_from_project(
 
     Does not delete the underlying file; only removes the association.
     """
-    user_id = user.id
-    project = (
-        db_session.query(UserProject)
-        .filter(UserProject.id == project_id, UserProject.user_id == user_id)
-        .one_or_none()
-    )
-    if project is None:
-        raise HTTPException(status_code=404, detail="Project not found")
-
-    user_file = (
-        db_session.query(UserFile)
-        .filter(UserFile.id == file_id, UserFile.user_id == user_id)
-        .one_or_none()
+    project, _ = require_project(project_id, user.id, db_session, minimum="editor", lock=True)
+    user_file = db_session.scalar(
+        select(UserFile).join(Project__UserFile).where(
+            Project__UserFile.project_id == project.id,
+            UserFile.id == file_id,
+            UserFile.incognito.is_(False),
+        )
     )
     if user_file is None:
-        raise HTTPException(status_code=404, detail="File not found")
+        return Response(status_code=204)
 
     # Remove the association if it exists
     if user_file in project.user_files:
@@ -335,18 +371,10 @@ def link_user_file_to_project(
     Creates the association in the Project__UserFile join table if it does not exist.
     Returns the linked user file snapshot.
     """
-    user_id = user.id
-    project = (
-        db_session.query(UserProject)
-        .filter(UserProject.id == project_id, UserProject.user_id == user_id)
-        .one_or_none()
-    )
-    if project is None:
-        raise HTTPException(status_code=404, detail="Project not found")
-
+    project, _ = require_project(project_id, user.id, db_session, minimum="editor", lock=True)
     user_file = (
         db_session.query(UserFile)
-        .filter(UserFile.id == file_id, UserFile.user_id == user_id)
+        .filter(UserFile.id == file_id, UserFile.user_id == user.id, UserFile.incognito.is_(False))
         .one_or_none()
     )
     if user_file is None:
@@ -377,15 +405,7 @@ def get_project_instructions(
     user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
     db_session: Session = Depends(get_session),
 ) -> ProjectInstructionsResponse:
-    user_id = user.id
-    project = (
-        db_session.query(UserProject)
-        .filter(UserProject.id == project_id, UserProject.user_id == user_id)
-        .one_or_none()
-    )
-
-    if project is None:
-        raise HTTPException(status_code=404, detail="Project not found")
+    project, _ = require_project(project_id, user.id, db_session, minimum="viewer")
 
     return ProjectInstructionsResponse(instructions=project.instructions)
 
@@ -406,15 +426,7 @@ def upsert_project_instructions(
     db_session: Session = Depends(get_session),
 ) -> ProjectInstructionsResponse:
     """Create or update this project's instructions stored on the project itself."""
-    # Ensure the project exists and belongs to the user
-    user_id = user.id
-    project = (
-        db_session.query(UserProject)
-        .filter(UserProject.id == project_id, UserProject.user_id == user_id)
-        .one_or_none()
-    )
-    if project is None:
-        raise HTTPException(status_code=404, detail="Project not found")
+    project, _ = require_project(project_id, user.id, db_session, minimum="editor", lock=True)
     project.instructions = body.instructions
 
     db_session.commit()
@@ -466,14 +478,7 @@ def update_project(
     user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
     db_session: Session = Depends(get_session),
 ) -> UserProjectSnapshot:
-    user_id = user.id
-    project = (
-        db_session.query(UserProject)
-        .filter(UserProject.id == project_id, UserProject.user_id == user_id)
-        .one_or_none()
-    )
-    if project is None:
-        raise HTTPException(status_code=404, detail="Project not found")
+    project, role = require_project(project_id, user.id, db_session, minimum="editor", lock=True)
 
     if body.name is not None:
         _validate_project_field_length(body.name, "name")
@@ -484,7 +489,9 @@ def update_project(
 
     db_session.commit()
     db_session.refresh(project)
-    return UserProjectSnapshot.from_model(project)
+    return UserProjectSnapshot.from_model(
+        project, viewer_id=user.id, role=role, shared=project_has_members(project.id, db_session)
+    )
 
 
 @router.delete("/{project_id}", tags=PUBLIC_API_TAGS)
@@ -493,14 +500,7 @@ def delete_project(
     user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
     db_session: Session = Depends(get_session),
 ) -> Response:
-    user_id = user.id
-    project = (
-        db_session.query(UserProject)
-        .filter(UserProject.id == project_id, UserProject.user_id == user_id)
-        .one_or_none()
-    )
-    if project is None:
-        raise HTTPException(status_code=404, detail="Project not found")
+    project, _ = require_project(project_id, user.id, db_session, minimum="owner", lock=True)
 
     # Unlink chat sessions from this project
     for chat in project.chat_sessions:
@@ -636,13 +636,11 @@ def move_chat_session(
     user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
     db_session: Session = Depends(get_session),
 ) -> Response:
-    user_id = user.id
-    chat_session = get_owned_chat_session(body.chat_session_id, user_id, db_session)
-    if chat_session is None:
-        raise NortPoleError(NortPoleErrorCode.NOT_FOUND, "Chat session not found")
-    if not check_project_ownership(project_id, user_id, db_session):
-        raise NortPoleError(NortPoleErrorCode.NOT_FOUND, "Project not found")
-    chat_session.project_id = project_id
+    _, role = require_project(project_id, user.id, db_session, minimum="editor", lock=True)
+    _set_chat_project(
+        db_session, user.id, body.chat_session_id, project_id,
+        private_only=role != "owner" or project_has_members(project_id, db_session),
+    )
     db_session.commit()
     return Response(status_code=204)
 
@@ -653,11 +651,7 @@ def remove_chat_session(
     user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
     db_session: Session = Depends(get_session),
 ) -> Response:
-    user_id = user.id
-    chat_session = get_owned_chat_session(body.chat_session_id, user_id, db_session)
-    if chat_session is None:
-        raise HTTPException(status_code=404, detail="Chat session not found")
-    chat_session.project_id = None
+    _set_chat_project(db_session, user.id, body.chat_session_id, None)
     db_session.commit()
     return Response(status_code=204)
 
@@ -692,33 +686,12 @@ def get_chat_session_project_files(
     user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
     db_session: Session = Depends(get_session),
 ) -> list[UserFileSnapshot]:
-    """Return user files for the project linked to the given chat session.
-
-    If the chat session has no project, returns an empty list.
-    Only returns files owned by the current user and not FAILED.
-    """
-    user_id = user.id
-
-    chat_session = get_owned_chat_session(chat_session_id, user_id, db_session)
-    if chat_session is None:
+    chat_session = get_owned_chat_session(chat_session_id, user.id, db_session)
+    if chat_session is None or chat_session.deleted:
         raise HTTPException(status_code=404, detail="Chat session not found")
-
     if chat_session.project_id is None:
         return []
-
-    user_files = (
-        db_session.query(UserFile)
-        .filter(
-            UserFile.projects.any(id=chat_session.project_id),
-            UserFile.user_id == user_id,
-            UserFile.status != UserFileStatus.FAILED,
-        )
-        .order_by(UserFile.created_at.desc())
-        .all()
-    )
-
-    return [UserFileSnapshot.from_model(user_file) for user_file in user_files]
-
+    return get_files_in_project(chat_session.project_id, user, db_session)
 
 @router.get("/{project_id}/token-count", response_model=TokenCountResponse)
 def get_project_total_token_count(
@@ -728,20 +701,8 @@ def get_project_total_token_count(
 ) -> TokenCountResponse:
     """Return sum of token_count for all user files in the given project for the current user."""
 
-    # Verify the project belongs to the current user
-    user_id = user.id
-    project = (
-        db_session.query(UserProject)
-        .filter(UserProject.id == project_id, UserProject.user_id == user_id)
-        .one_or_none()
-    )
-    if project is None:
-        raise HTTPException(status_code=404, detail="Project not found")
-
     total_tokens = get_project_token_count(
-        project_id=project_id,
-        user_id=user_id,
-        db_session=db_session,
+        project_id=project_id, user_id=user.id, db_session=db_session
     )
 
     return TokenCountResponse(total_tokens=total_tokens)

@@ -58,9 +58,18 @@ class DiscoverItem(BaseModel):
     my_request: RequestView | None = None
 
 
+class WorkspaceSourceOption(BaseModel):
+    key: str
+    name: str
+    description: str
+    requestable: bool
+    my_request: RequestView | None = None
+
+
 class DiscoverView(BaseModel):
     items: list[DiscoverItem]
     my_requests: list[RequestView]
+    workspace_sources: list[WorkspaceSourceOption]
 
 
 class NewRequest(BaseModel):
@@ -75,10 +84,16 @@ class Decision(BaseModel):
 
 
 def _view(r: NortPoleSourceRequest) -> RequestView:
+    if r.item_key.startswith(catalog.INTEGRATION_PREFIX):
+        manage_at = "/admin/integrations"
+    elif r.kind == "connector" and r.item_key in catalog.CONNECTORS:
+        manage_at = f"/admin/connectors/{r.item_key}"
+    else:
+        manage_at = WHERE.get(r.kind, "/admin/approvals")
     return RequestView(id=r.id, kind=r.kind, item_key=r.item_key, item_name=r.item_name, reason=r.reason, state=r.state,
                        requested_by_email=r.requested_by_email, decided_by_email=r.decided_by_email, decision_note=r.decision_note,
                        created_at=r.created_at, decided_at=r.decided_at,
-                       manage_at="/admin/integrations" if r.item_key.startswith(catalog.INTEGRATION_PREFIX) else WHERE.get(r.kind, "/admin/approvals"))
+                       manage_at=manage_at)
 
 
 def _mine(db: Session, user: User) -> list[NortPoleSourceRequest]:
@@ -100,7 +115,36 @@ def get_discover(
         r = latest.get((i.kind, i.key))
         items.append(DiscoverItem(kind=i.kind, key=i.key, name=i.name, description=i.description, why_approval=i.why_approval,
                                   my_request=_view(r) if r and r.state != "withdrawn" else None))
-    return DiscoverView(items=items, my_requests=[_view(r) for r in mine[:20]])
+    requestable_sources = {item.key for item in items if item.kind == "connector"}
+    # The catalog needs one status per connector even after it leaves the
+    # recent activity list or becomes configured.
+    request = NortPoleSourceRequest
+    connector_requests = {
+        row.item_key: _view(row)
+        for row in db_session.scalars(
+            select(request)
+            .where(
+                request.requested_by_id == user.id,
+                request.kind == "connector",
+                request.item_key.in_(tuple(catalog.CONNECTORS)),
+            )
+            .distinct(request.item_key)
+            .order_by(request.item_key, request.created_at.desc(), request.id.desc())
+        )
+        if row.state != "withdrawn"
+    }
+    return DiscoverView(
+        items=items,
+        my_requests=[_view(r) for r in mine[:20]],
+        workspace_sources=[
+            WorkspaceSourceOption(
+                key=key, name=name, description=description,
+                requestable=key in requestable_sources,
+                my_request=connector_requests.get(key),
+            )
+            for key, (name, description) in catalog.CONNECTORS.items()
+        ],
+    )
 
 
 @router.post("/sources/requests")

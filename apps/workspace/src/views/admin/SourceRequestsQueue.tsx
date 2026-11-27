@@ -1,5 +1,8 @@
 "use client";
 
+import { ResponsiveLayout } from "@opal/layouts";
+import { ActionButton, NativeInput } from "@opal/components";
+import { useTranslations as useWorkspaceTranslations } from "next-intl";
 import { useState } from "react";
 import useSWR from "swr";
 import { errorHandlingFetcher } from "@/lib/fetcher";
@@ -14,7 +17,6 @@ export const SOURCE_REQUESTS_URL = "/api/admin/source-requests";
 const card = "rounded-2xl border border-border-01 bg-background-neutral-00 p-5 shadow-sm";
 const primary = "min-h-11 rounded-xl bg-text-05 px-4 text-sm font-semibold text-background-neutral-00 disabled:opacity-50";
 const secondary = "min-h-11 rounded-xl border border-border-02 px-4 text-sm font-semibold text-text-05 disabled:opacity-50";
-const KIND: Record<string, string> = { connector: "Connector", skill: "Skill (pack)", plugin: "Plugin (tool)" };
 const WHERE: Record<string, string> = { connector: "Connectors", skill: "Packs", plugin: "Tools" };
 // An integration is not set up by an administrator: once approved, the person installs it themselves.
 const isIntegration = (r: { item_key: string }) => r.item_key.startsWith("integration:");
@@ -24,6 +26,12 @@ const isIntegration = (r: { item_key: string }) => r.item_key.startsWith("integr
  * on, so each approved request links to the page where it is set up.
  */
 export default function SourceRequestsQueue() {
+  const workspaceText = useWorkspaceTranslations("workspaceUi");
+  const requestKinds = new Map([
+    ["connector", "Connector"],
+    ["skill", workspaceText("pack")],
+    ["plugin", "Plugin (tool)"],
+  ]);
   const { data, mutate } = useSWR<Requests>(SOURCE_REQUESTS_URL, errorHandlingFetcher, { refreshInterval: 30000 });
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
@@ -51,45 +59,42 @@ export default function SourceRequestsQueue() {
 
   return (
     <section className={card} aria-labelledby="src-req" data-testid="source-requests">
-      <h2 id="src-req" className="text-base font-semibold text-text-05">Requests from people</h2>
-      <p className="mt-1 text-sm text-text-03">
-        Connectors, skills and plugins people asked for on Discover. Approving records your decision and shows it to them; for an integration the person can then install it themselves; for the rest you set the item up where it is managed.
-      </p>
+      <h2 id="src-req" className="text-base font-semibold text-text-05">{workspaceText("requestsFromPeople")}</h2>
+      <p className="mt-1 text-sm text-text-03">{workspaceText("sourceRequestsDescription")}</p>
       {msg && <p role={msg.ok ? "status" : "alert"} className={`mt-2 text-sm ${msg.ok ? "text-text-05" : "text-status-text-error-05"}`}>{msg.text}</p>}
       {!data || data.pending.length === 0 ? (
-        <p className="mt-3 text-sm text-text-03">Nothing is waiting.</p>
+        <p className="mt-3 text-sm text-text-03">{workspaceText("nothingIsWaiting")}</p>
       ) : (
         <ul className="mt-3 flex flex-col gap-3">
           {data.pending.map((r) => (
             <li key={r.id} className="rounded-xl border border-border-01 px-3 py-3" data-testid="source-request">
               <p className="text-sm text-text-05">
-                <span className="font-medium">{r.item_name}</span> <span className="text-text-03">· {KIND[r.kind] ?? r.kind} · from {r.requested_by_email} · {new Date(r.created_at).toLocaleString()}</span>
+                <span className="font-medium">{r.item_name}</span> <span className="text-text-03">· {requestKinds.get(r.kind) ?? r.kind}{" "}{workspaceText("from_0d1bb0")}{" "}{r.requested_by_email} · {new Date(r.created_at).toLocaleString()}</span>
               </p>
               {r.reason && <p className="mt-1 whitespace-pre-wrap text-sm text-text-04">“{r.reason}”</p>}
-              <label className="mt-2 flex flex-col gap-1 text-sm font-medium text-text-05">
-                Note to {r.requested_by_email} (optional)
-                <input
+              <label className="mt-2 flex flex-col gap-1 text-sm font-medium text-text-05">{workspaceText("noteTo")}{" "}{r.requested_by_email} (optional)
+                <NativeInput
                   className="min-h-11 rounded-xl border border-border-02 bg-background-neutral-00 px-3 text-sm text-text-05"
                   maxLength={500} value={notes[r.id] ?? ""} onChange={(e) => setNotes({ ...notes, [r.id]: e.target.value })}
                 />
               </label>
-              <div className="mt-2 flex flex-wrap gap-2">
-                <button type="button" className={primary} disabled={busy} onClick={() => decide(r, true)}>Approve</button>
-                <button type="button" className={secondary} disabled={busy} onClick={() => decide(r, false)}>Decline</button>
-                <a href={r.manage_at} className={`${secondary} inline-flex items-center`}>Open {isIntegration(r) ? "Integrations" : (WHERE[r.kind] ?? "its page")}</a>
-              </div>
+              <ResponsiveLayout display="flex" className="mt-2 flex-wrap gap-2">
+                <ActionButton type="button" className={primary} disabled={busy} onClick={() => decide(r, true)}>{workspaceText("approve")}</ActionButton>
+                <ActionButton type="button" className={secondary} disabled={busy} onClick={() => decide(r, false)}>{workspaceText("decline")}</ActionButton>
+                <a href={r.manage_at} className={`${secondary} inline-flex items-center`}>{workspaceText("open")}{" "}{isIntegration(r) ? "Integrations" : (WHERE[r.kind] ?? "its page")}</a>
+              </ResponsiveLayout>
             </li>
           ))}
         </ul>
       )}
       {data && data.recent.length > 0 && (
         <div className="mt-4">
-          <h3 className="text-sm font-semibold text-text-05">Recently decided</h3>
+          <h3 className="text-sm font-semibold text-text-05">{workspaceText("recentlyDecided")}</h3>
           <ul className="mt-1 flex flex-col gap-1 text-sm text-text-04">
             {data.recent.map((r) => (
               <li key={r.id}>
                 {r.state === "approved" ? "Approved" : "Declined"}: {r.item_name} for {r.requested_by_email} (by {r.decided_by_email})
-                {r.state === "approved" && <> · <a href={r.manage_at} className="font-semibold text-text-05 underline">set it up</a></>}
+                {r.state === "approved" && <> · <a href={r.manage_at} className="font-semibold text-text-05 underline">{workspaceText("setItUp")}</a></>}
               </li>
             ))}
           </ul>

@@ -4,6 +4,22 @@
       "additionalProperties": false,
       "description": "A workflow agent: a planner with instructions that proposes tool steps, which the person accepts and code runs.\nIt acts as the person asking, can only propose sends, and never calls anything itself.",
       "properties": {
+        "chat_pilot": {
+          "anyOf": [
+            {
+              "enum": [
+                "research",
+                "reporting"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Chat Pilot"
+        },
         "description": {
           "maxLength": 500,
           "minLength": 1,

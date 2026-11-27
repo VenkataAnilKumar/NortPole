@@ -429,3 +429,7 @@ export {
   EndOfList,
   type EndOfListProps,
 } from "@opal/components/end-of-list/components";
+
+/* Native controls and rich action surfaces */
+export { NativeInput, NativeSelect, NativeTextArea } from "@opal/components/inputs/native-fields";
+export { ActionButton } from "@opal/components/buttons/action-button";

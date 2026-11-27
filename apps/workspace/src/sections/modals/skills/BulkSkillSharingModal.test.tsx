@@ -101,10 +101,10 @@ describe("BulkSkillSharingModal", () => {
     });
     await user.type(search, "sub");
     expect(
-      screen.queryByRole("option", { name: /thomas@nortpole\.app/ })
+      screen.queryByRole("option", { name: /thomas@nortpole\.local/ })
     ).not.toBeInTheDocument();
     fireEvent.click(
-      await screen.findByRole("option", { name: /subash@nortpole\.app/ })
+      await screen.findByRole("option", { name: /subash@nortpole\.local/ })
     );
     expect(search).toHaveValue("");
     await user.type(search, "cash");

@@ -9,5 +9,5 @@ export async function searchDocuments(
   _query: string,
   _options?: unknown
 ): Promise<SearchFullResponse> {
-  return { search_docs: [] } as unknown as SearchFullResponse;
+  return { all_executed_queries: [], search_docs: [] };
 }

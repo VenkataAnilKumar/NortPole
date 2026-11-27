@@ -1,5 +1,6 @@
 "use client";
 
+import { NavLink } from "@opal/navigation";
 import React, {
   createContext,
   useContext,
@@ -156,6 +157,7 @@ export function ProjectFolderButton({ project }: ProjectFolderButtonProps) {
   const { renameProject, deleteProject } = useProjectsContext();
   const [isEditing, setIsEditing] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const isOwner = !project.role || project.role === "owner";
 
   // Unfold whichever project the user moves into, so its chats are visible on
   // arrival. Only ever opens — folding it again while still inside the project
@@ -168,6 +170,7 @@ export function ProjectFolderButton({ project }: ProjectFolderButtonProps) {
   const dropId = `project-${project.id}`;
   const { setNodeRef, isOver } = useDroppable({
     id: dropId,
+    disabled: project.role === "viewer",
     data: {
       type: DRAG_TYPES.PROJECT,
       project,
@@ -257,7 +260,7 @@ export function ProjectFolderButton({ project }: ProjectFolderButtonProps) {
                 selected={isOpenProject && (appPosition.isProject() || !open)}
                 /* While renaming, drop the click target so the input stays usable. */
                 onClick={isEditing ? undefined : noProp(handleTextClick)}
-                rightChildren={
+                rightChildren={isOwner && (
                   <>
                     {/* The click stays here: the tab underneath opens the project. */}
                     <div role="presentation" onClick={noProp()}>
@@ -282,7 +285,7 @@ export function ProjectFolderButton({ project }: ProjectFolderButtonProps) {
                       items={menuItems}
                     />
                   </>
-                }
+                )}
               >
                 {isEditing ? (
                   <ButtonRenaming
@@ -302,12 +305,22 @@ export function ProjectFolderButton({ project }: ProjectFolderButtonProps) {
       {/* Project Chat-Sessions */}
       {open &&
         project.chat_sessions.map((chatSession) => (
+          chatSession.is_owned === false || project.role === "viewer" ? (
+            <NavLink
+              key={chatSession.id}
+              className="ms-5 block truncate rounded-lg px-3 py-2 text-sm text-text-04 hover:bg-background-tint-02"
+              href={`/app/projects/${project.id}/chats/${chatSession.id}`}
+            >
+              {chatSession.name || "Untitled chat"}
+            </NavLink>
+          ) : (
           <ChatButton
             key={chatSession.id}
             chatSession={chatSession}
             project={project}
             draggable
           />
+          )
         ))}
     </div>
   );

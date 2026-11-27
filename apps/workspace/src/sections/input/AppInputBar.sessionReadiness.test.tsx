@@ -48,7 +48,11 @@ jest.mock("next/navigation", () => ({
   useRouter: () => ({}),
 }));
 jest.mock("@/lib/navigation/hooks", () => ({
-  useAppPosition: () => ({ isNewSession: () => false, chat: () => "session" }),
+  useAppPosition: () => ({
+    isNewSession: () => false,
+    chat: () => "session",
+    project: () => null,
+  }),
 }));
 jest.mock("@/lib/settings/hooks", () => ({
   useSettings: () => ({ appName: "NortPole" }),

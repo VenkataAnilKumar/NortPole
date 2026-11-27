@@ -1,7 +1,9 @@
 "use client";
 
+import { useNavigation } from "@opal/navigation";
 import { IconLoader } from "@opal/loaders";
 import React, { useCallback, useMemo, useState } from "react";
+import { useProjects } from "@/lib/projects/hooks";
 import { useLocale, useTranslations } from "next-intl";
 import { deleteChatSession } from "@/app/app/services/lib";
 import {
@@ -25,7 +27,7 @@ import {
   type DropdownView,
 } from "@opal/components";
 import { Hoverable } from "@opal/core";
-import { DEFAULT_AGENT_ID, UNNAMED_CHAT } from "@/lib/constants";
+import { UNNAMED_CHAT } from "@/lib/constants";
 import {
   SvgBubbleText,
   SvgChevronLeft,
@@ -36,10 +38,8 @@ import {
 } from "@opal/icons";
 import { timeAgo } from "@opal/time";
 import type { IconFunctionComponent } from "@opal/types";
-import { MoveCustomAgentChatModal } from "@/lib/agents/components";
-import { ConfirmationModalLayout } from "@opal/layouts";
-
-const LS_HIDE_MOVE_CUSTOM_AGENT_MODAL_KEY = "nortpole:hideMoveCustomAgentModal";
+import { MoveProjectChatModal } from "@/lib/projects/components/MoveProjectChatModal";
+import { ConfirmationModalLayout, toast } from "@opal/layouts";
 
 interface ProjectChatItemProps {
   chat: ChatSession;
@@ -60,10 +60,12 @@ function ProjectChatItem({
   const locale = useLocale();
   const [menuOpen, setMenuOpen] = useState(false);
   const deleteModal = useCreateModal();
-  const [pendingMoveProjectId, setPendingMoveProjectId] = useState<
-    number | null
-  >(null);
-  const moveCustomAgentModal = useCreateModal();
+  const [pendingMove, setPendingMove] = useState<{
+    id: number;
+    label: string;
+    shared?: boolean;
+  } | null>(null);
+  const moveProjectChatModal = useCreateModal();
 
   const lastUpdateTime = useMemo(
     () => timeAgo(chat.time_updated, locale),
@@ -72,8 +74,6 @@ function ProjectChatItem({
 
   const { refreshChatSessions, removeSession } = useChatSessions();
   const { fetchProjects, projects } = useProjectsContext();
-
-  const isChatUsingDefaultAgent = chat.persona_id === DEFAULT_AGENT_ID;
 
   const handleConfirmDelete = useCallback(
     async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -107,23 +107,10 @@ function ProjectChatItem({
     [chat.id, fetchProjects, refreshChatSessions, afterRefresh]
   );
 
-  const handleMoveChatSession = useCallback(
-    async (item: { id: number; label: string }) => {
-      const hideModal =
-        typeof window !== "undefined" &&
-        window.localStorage.getItem(LS_HIDE_MOVE_CUSTOM_AGENT_MODAL_KEY) ===
-          "true";
-
-      if (!isChatUsingDefaultAgent && !hideModal) {
-        setPendingMoveProjectId(item.id);
-        moveCustomAgentModal.toggle(true);
-        return;
-      }
-
-      await performMove(item.id);
-    },
-    [isChatUsingDefaultAgent, performMove, moveCustomAgentModal]
-  );
+  function handleMoveChatSession(item: { id: number; label: string; shared?: boolean }) {
+    setPendingMove(item);
+    moveProjectChatModal.toggle(true);
+  }
 
   const handleRemoveFromProject = useCallback(async () => {
     await removeChatSessionFromProjectService(chat.id);
@@ -149,7 +136,7 @@ function ProjectChatItem({
         onSelect: (views) => views.pop(),
       },
       ...projects
-        .filter((candidate) => candidate.id !== projectId)
+        .filter((candidate) => candidate.id !== projectId && candidate.role !== "viewer")
         .map(
           (target): DropdownMenuItem => ({
             kind: "action",
@@ -157,7 +144,7 @@ function ProjectChatItem({
             icon: SvgFolder,
             title: target.name,
             onSelect: () =>
-              handleMoveChatSession({ id: target.id, label: target.name }),
+              handleMoveChatSession({ id: target.id, label: target.name, shared: target.shared }),
           })
         ),
     ],
@@ -213,26 +200,25 @@ function ProjectChatItem({
         </ConfirmationModalLayout>
       </deleteModal.Provider>
 
-      <moveCustomAgentModal.Provider>
-        <MoveCustomAgentChatModal
-          onCancel={() => {
-            moveCustomAgentModal.toggle(false);
-            setPendingMoveProjectId(null);
-          }}
-          onConfirm={async (doNotShowAgain) => {
-            if (doNotShowAgain && typeof window !== "undefined") {
-              window.localStorage.setItem(
-                LS_HIDE_MOVE_CUSTOM_AGENT_MODAL_KEY,
-                "true"
-              );
-            }
-            const target = pendingMoveProjectId;
-            moveCustomAgentModal.toggle(false);
-            setPendingMoveProjectId(null);
-            if (target != null) await performMove(target);
-          }}
-        />
-      </moveCustomAgentModal.Provider>
+      <moveProjectChatModal.Provider>
+        {pendingMove && (
+          <MoveProjectChatModal
+            projectName={pendingMove.label}
+            shared={pendingMove.shared}
+            onCancel={() => {
+              moveProjectChatModal.toggle(false);
+              setPendingMove(null);
+            }}
+            onConfirm={() => {
+              moveProjectChatModal.toggle(false);
+              setPendingMove(null);
+              void performMove(pendingMove.id).catch(() => {
+                toast.error("Failed to move chat. Please try again.");
+              });
+            }}
+          />
+        )}
+      </moveProjectChatModal.Provider>
 
       <Hoverable.Root group={chat.id} width="full">
         <LineItemButton
@@ -293,6 +279,7 @@ function ProjectChatItem({
 
 export default function ProjectChatSessionList() {
   const t = useTranslations("chat");
+  const navigation = useNavigation();
   const {
     currentProjectDetails,
     currentProjectId,
@@ -300,8 +287,10 @@ export default function ProjectChatSessionList() {
     isLoadingProjectDetails,
   } = useProjectsContext();
   const { agents } = useAgents();
+  const { projects } = useProjects();
+  const project = projects.find((item) => item.id === currentProjectId);
 
-  const projectChats: ChatSession[] = useMemo(() => {
+  const projectChats = useMemo(() => {
     const sessions = currentProjectDetails?.project?.chat_sessions || [];
     return [...sessions].sort(
       (a, b) =>
@@ -309,7 +298,7 @@ export default function ProjectChatSessionList() {
     );
   }, [currentProjectDetails?.project?.chat_sessions]);
 
-  if (!currentProjectId) return null;
+  if (!currentProjectId || !project) return null;
 
   return (
     <div className="flex flex-col gap-6 pt-6 mx-auto">
@@ -345,6 +334,16 @@ export default function ProjectChatSessionList() {
                 )) as IconFunctionComponent)
               : SvgBubbleText;
 
+            if (chat.is_owned === false || project.role === "viewer") {
+              return (
+                <LineItemButton
+                  key={chat.id}
+                  {...navigation.linkTo(`/app/projects/${currentProjectId}/chats/${chat.id}`)}
+                  icon={SvgBubbleText}
+                  title={chat.name || UNNAMED_CHAT}
+                />
+              );
+            }
             return (
               <div key={chat.id} className="px-1">
                 <ProjectChatItem

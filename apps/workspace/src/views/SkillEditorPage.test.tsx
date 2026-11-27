@@ -196,6 +196,19 @@ describe("SkillEditorPage", () => {
     consoleError.mockRestore();
   });
 
+  it("returns to Sources after creating a skill from Sources", async () => {
+    const user = setupUser();
+    mockCreateCustomSkillFromEditor.mockResolvedValue(existingSkill());
+    render(<SkillEditorPage surface="sources" />);
+
+    await fillRequiredFields(user);
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() =>
+      expect(mockRouterReplace).toHaveBeenCalledWith("/app/sources/skills")
+    );
+  });
+
   it("prefills an uploaded draft without creating it until Save", async () => {
     const user = setupUser();
     const upload = new File(["bundle"], "report-writer.zip");

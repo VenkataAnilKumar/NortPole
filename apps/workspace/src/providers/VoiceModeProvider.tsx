@@ -59,6 +59,8 @@ const REVEAL_LEAD_SECONDS = 0.28;
 const MAX_CATCHUP_CHARS_PER_FRAME = 8;
 
 interface VoiceModeContextType {
+  voiceModeEnabled: boolean;
+  setVoiceModeEnabled: (enabled: boolean) => void;
   /** Whether TTS audio is currently playing */
   isTTSPlaying: boolean;
   /** Whether manual read-aloud playback is currently speaking */
@@ -146,8 +148,9 @@ function findChunkBoundary(text: string): number {
 export function VoiceModeProvider({ children }: { children: React.ReactNode }) {
   const { user } = useUser();
   const { ttsEnabled } = useVoiceStatus();
+  const [voiceModeEnabled, setVoiceModeEnabled] = useState(false);
   const autoPlayback =
-    (user?.preferences?.voice_auto_playback ?? false) && ttsEnabled;
+    (voiceModeEnabled || (user?.preferences?.voice_auto_playback ?? false)) && ttsEnabled;
   const playbackSpeed = user?.preferences?.voice_playback_speed ?? 1.0;
 
   const [isTTSPlaying, setIsTTSPlaying] = useState(false);
@@ -409,7 +412,7 @@ export function VoiceModeProvider({ children }: { children: React.ReactNode }) {
 
   // Handle incoming audio data from WebSocket
   const handleAudioData = useCallback(
-    async (data: ArrayBuffer) => {
+    (data: ArrayBuffer) => {
       // Track total bytes for duration estimation
       totalBytesReceivedRef.current += data.byteLength;
 
@@ -513,6 +516,7 @@ export function VoiceModeProvider({ children }: { children: React.ReactNode }) {
       return;
     }
     const ws = new WebSocket(pendingWsConnection.url);
+    ws.binaryType = "arraybuffer";
     connectingWsRef.current = ws;
 
     ws.onopen = () => {
@@ -538,18 +542,12 @@ export function VoiceModeProvider({ children }: { children: React.ReactNode }) {
       pendingTextRef.current = [];
     };
 
-    ws.onmessage = async (event) => {
+    ws.onmessage = (event) => {
       if (connectAttemptRef.current !== pendingWsConnection.id) {
         return;
       }
-      if (event.data instanceof Blob) {
-        const arrayBuffer = await event.data.arrayBuffer();
-        // Re-check after the await: a supersede during decoding must not
-        // append this socket's audio to the replacement stream.
-        if (connectAttemptRef.current !== pendingWsConnection.id) {
-          return;
-        }
-        handleAudioData(arrayBuffer);
+      if (event.data instanceof ArrayBuffer) {
+        handleAudioData(event.data);
       } else if (typeof event.data === "string") {
         try {
           const msg = JSON.parse(event.data);
@@ -1095,6 +1093,8 @@ export function VoiceModeProvider({ children }: { children: React.ReactNode }) {
         audioProgress,
         revealedCharCount,
         isAudioSyncActive,
+        voiceModeEnabled,
+        setVoiceModeEnabled,
         autoPlayback,
         isAwaitingAutoPlaybackStart,
         isTTSMuted,

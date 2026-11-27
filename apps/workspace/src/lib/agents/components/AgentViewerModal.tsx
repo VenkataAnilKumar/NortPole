@@ -1,9 +1,14 @@
 "use client";
 
+import AgentVerificationBadge from "./AgentVerificationBadge";
 import { useNavigation } from "@opal/navigation";
 import { useCallback, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
+import useSWR from "swr";
 import { FullAgent } from "@/lib/agents/types";
+import { AGENT_PILOTS, type AgentPilotInput } from "@/lib/agents/pilots";
+import { errorHandlingFetcher } from "@/lib/fetcher";
+import { useAppPosition } from "@/lib/navigation/hooks";
 import { Modal } from "@opal/components";
 import {
   Content,
@@ -190,10 +195,21 @@ export interface AgentViewerModalProps {
 }
 export function AgentViewerModal({ agent, onClose }: AgentViewerModalProps) {
   const t = useTranslations("agents.modals");
+  const card = useTranslations("agents.card");
   const navigation = useNavigation();
+  const appPosition = useAppPosition();
   const { allRecentFiles } = useProjectsContext();
   const { llmProviders } = useLanguageModelsForAgent(agent.id);
   const { appName } = useSettings();
+  const published = agent.active_release_version != null;
+  const { data: pilotInput, error: pilotError } = useSWR<AgentPilotInput | null>(
+    published ? `/api/persona/${agent.id}/pilot-input` : null,
+    errorHandlingFetcher
+  );
+  const pilot = pilotError ? undefined : pilotInput;
+  // Open the agent's chat while requirements are unknown so an inline send
+  // can't bypass the file, document, or reporting inputs.
+  const opensInChat = published && pilot !== null;
 
   const handleStartChat = useCallback(
     (message: string) => {
@@ -207,10 +223,17 @@ export function AgentViewerModal({ agent, onClose }: AgentViewerModalProps) {
     [agent.id, navigation]
   );
 
+  const documentSets = pilot
+    ? agent.document_sets?.filter((set) =>
+        pilot.libraries.some((library) => library.id === set.id)
+      )
+    : agent.document_sets;
   const hasKnowledge =
-    (agent.document_sets && agent.document_sets.length > 0) ||
-    (agent.hierarchy_nodes && agent.hierarchy_nodes.length > 0) ||
-    (agent.user_file_ids && agent.user_file_ids.length > 0);
+    Boolean(documentSets?.length) ||
+    (!pilot && Boolean(agent.hierarchy_nodes?.length || agent.user_file_ids?.length));
+  const showKnowledge = pilot
+    ? AGENT_PILOTS[pilot.kind].requiresKnowledge
+    : !opensInChat;
 
   // Categorize tools into MCP, OpenAPI, and built-in
   const mcpToolsByServerId = useMemo(() => {
@@ -259,7 +282,11 @@ export function AgentViewerModal({ agent, onClose }: AgentViewerModalProps) {
       <Modal.Content
         width="lg"
         height="lg"
-        bottomSlot={<AgentChatInput agent={agent} onSubmit={handleStartChat} />}
+        bottomSlot={
+          opensInChat ? undefined : (
+            <AgentChatInput agent={agent} onSubmit={handleStartChat} />
+          )
+        }
       >
         <Modal.Header
           icon={(props) => <AgentAvatar agent={agent} {...props} size={24} />}
@@ -270,6 +297,7 @@ export function AgentViewerModal({ agent, onClose }: AgentViewerModalProps) {
         <Modal.Body>
           {/* Metadata */}
           <Section flexDirection="row" justifyContent="start">
+            {agent.company_verified_version != null && <AgentVerificationBadge version={agent.company_verified_version} />}
             {agent.is_featured && (
               <Content
                 font="main-ui-body"
@@ -301,64 +329,91 @@ export function AgentViewerModal({ agent, onClose }: AgentViewerModalProps) {
             <Text color="text-03">{agent.description}</Text>
           )}
 
-          {/* Knowledge */}
-          <Divider paddingParallel={0} paddingPerpendicular={0} />
-          <Section gap={2} alignItems="start">
-            <Content
-              font="main-content-emphasis"
-              title={t("viewer.knowledge.title")}
-            />
-            {hasKnowledge ? (
-              <Section
-                gap={2}
-                flexDirection="row"
-                justifyContent="start"
-                wrap
-                alignItems="start"
-              >
-                {agent.document_sets?.map((docSet) => (
-                  <DocumentSetCard key={docSet.id} documentSet={docSet} />
-                ))}
-                {agent.user_file_ids?.map((fileId) => {
-                  const file = allRecentFiles.find((f) => f.id === fileId);
-                  if (!file) return null;
-                  return <FileCard key={fileId} file={file} />;
-                })}
+          {pilot && (
+            <Card border="solid" rounding={4} padding={4}>
+              <Section gap={3} alignItems="start" height="fit">
+                <Content
+                  font="main-content-emphasis"
+                  title={t("viewer.pilotGuide.inputTitle")}
+                  description={t(`viewer.pilotGuide.${pilot.kind}.input`)}
+                />
+                <Content
+                  font="main-content-emphasis"
+                  title={t("viewer.pilotGuide.outputTitle")}
+                  description={t(`viewer.pilotGuide.${pilot.kind}.output`)}
+                />
               </Section>
-            ) : (
-              <EmptyMessageCard
-                sizePreset="main-ui"
-                title={t("viewer.knowledge.empty.title")}
-              />
-            )}
-          </Section>
+            </Card>
+          )}
+
+          {/* Knowledge */}
+          {showKnowledge && (
+            <>
+              <Divider paddingParallel={0} paddingPerpendicular={0} />
+              <Section gap={2} alignItems="start">
+                <Content
+                  font="main-content-emphasis"
+                  title={t("viewer.knowledge.title")}
+                />
+                {hasKnowledge ? (
+                  <Section
+                    gap={2}
+                    flexDirection="row"
+                    justifyContent="start"
+                    wrap
+                    alignItems="start"
+                  >
+                    {documentSets?.map((docSet) => (
+                      <DocumentSetCard key={docSet.id} documentSet={docSet} />
+                    ))}
+                    {!pilot && agent.user_file_ids?.map((fileId) => {
+                      const file = allRecentFiles.find((f) => f.id === fileId);
+                      if (!file) return null;
+                      return <FileCard key={fileId} file={file} />;
+                    })}
+                  </Section>
+                ) : (
+                  <EmptyMessageCard
+                    sizePreset="main-ui"
+                    title={t("viewer.knowledge.empty.title")}
+                  />
+                )}
+              </Section>
+            </>
+          )}
 
           {/* Actions & Tools */}
-          <Collapsible title={t("viewer.actions.title")}>
-            {hasActions ? (
-              <Section gap={2} alignItems="start">
-                {mcpServersWithTools.map(({ server, tools }) => (
-                  <ViewerMCPServerCard
-                    key={server.id}
-                    server={server}
-                    tools={tools}
-                  />
-                ))}
-                {openApiTools.map((tool) => (
-                  <ViewerOpenApiToolCard key={tool.id} tool={tool} />
-                ))}
-              </Section>
-            ) : (
-              <EmptyMessageCard
-                sizePreset="main-ui"
-                title={t("viewer.actions.empty.title")}
-              />
-            )}
-          </Collapsible>
+          {(!pilot || hasActions) && (
+            <Collapsible title={t("viewer.actions.title")}>
+              {hasActions ? (
+                <Section gap={2} alignItems="start">
+                  {mcpServersWithTools.map(({ server, tools }) => (
+                    <ViewerMCPServerCard
+                      key={server.id}
+                      server={server}
+                      tools={tools}
+                    />
+                  ))}
+                  {openApiTools.map((tool) => (
+                    <ViewerOpenApiToolCard key={tool.id} tool={tool} />
+                  ))}
+                </Section>
+              ) : (
+                <EmptyMessageCard
+                  sizePreset="main-ui"
+                  title={t("viewer.actions.empty.title")}
+                />
+              )}
+            </Collapsible>
+          )}
 
           {/* More Info (Collapsible) */}
           <Divider paddingParallel={0} paddingPerpendicular={0} />
-          <Collapsible title={t("viewer.moreInfo.title")}>
+          <Collapsible
+            key={pilot ? "pilot" : "standard"}
+            title={t("viewer.moreInfo.title")}
+            defaultOpen={!pilot}
+          >
             <Section gap={2} alignItems="start">
               {agent.system_prompt && (
                 <Content
@@ -412,35 +467,47 @@ export function AgentViewerModal({ agent, onClose }: AgentViewerModalProps) {
           )}
 
           {/* Conversation Starters */}
-          {agent.starter_messages && agent.starter_messages.length > 0 && (
-            <>
-              <Divider paddingParallel={0} paddingPerpendicular={0} />
-              <Content
-                font="main-content-emphasis"
-                title={t("viewer.conversationStarters.title")}
-              />
-              <div className="grid grid-cols-2 gap-1 w-full">
-                {agent.starter_messages.map((starter, index) => (
-                  <Interactive.Stateless
-                    key={index}
-                    onClick={() => handleStartChat(starter.message)}
-                    prominence="tertiary"
-                  >
-                    <Interactive.Container>
-                      <Content
-                        font="main-ui-body"
-                        icon={SvgBubbleText}
-                        title={starter.message}
-                        titleColor="text-03"
-                        width="full"
-                      />
-                    </Interactive.Container>
-                  </Interactive.Stateless>
-                ))}
-              </div>
-            </>
-          )}
+          {!opensInChat &&
+            agent.starter_messages &&
+            agent.starter_messages.length > 0 && (
+                <>
+                  <Divider paddingParallel={0} paddingPerpendicular={0} />
+                  <Content
+                    font="main-content-emphasis"
+                    title={t("viewer.conversationStarters.title")}
+                  />
+                  <div className="grid grid-cols-2 gap-1 w-full">
+                    {agent.starter_messages.map((starter, index) => (
+                      <Interactive.Stateless
+                        key={index}
+                        onClick={() => handleStartChat(starter.message)}
+                        prominence="tertiary"
+                      >
+                        <Interactive.Container>
+                          <Content
+                            font="main-ui-body"
+                            icon={SvgBubbleText}
+                            title={starter.message}
+                            titleColor="text-03"
+                            width="full"
+                          />
+                        </Interactive.Container>
+                      </Interactive.Stateless>
+                    ))}
+                  </div>
+                </>
+            )}
         </Modal.Body>
+        {opensInChat && (
+          <Modal.Footer>
+            <Button
+              rightIcon={SvgBubbleText}
+              onClick={() => appPosition.openAgent(agent.id)}
+            >
+              {card("startChat.label")}
+            </Button>
+          </Modal.Footer>
+        )}
       </Modal.Content>
     </Modal>
   );

@@ -409,9 +409,11 @@ export interface ModelSelectorContentProps {
   onSelect: (option: LLMOption) => void;
   isSelected: (option: LLMOption) => boolean;
   isDisabled?: (option: LLMOption) => boolean;
+  modelBlockedReason?: (option: LLMOption) => string | undefined;
   scrollContainerRef?: React.RefObject<HTMLDivElement | null>;
   /** When true, a "Global Default Model" entry is prepended to the list. */
   includeGlobalDefault?: boolean;
+  includeAutomatic?: boolean;
   /** The global default label supplied by a host with explicit provider data. */
   globalDefaultDisplayName?: string | null;
   /** When provided, model rows gain a drill-in settings pane. */
@@ -431,8 +433,10 @@ export default function ModelSelectorContent({
   onSelect,
   isSelected,
   isDisabled,
+  modelBlockedReason,
   scrollContainerRef: externalScrollRef,
   includeGlobalDefault = false,
+  includeAutomatic = false,
   globalDefaultDisplayName: globalDefaultDisplayNameProp,
   modelDetail,
   onDetailSelect,
@@ -634,14 +638,15 @@ export default function ModelSelectorContent({
 
   const renderModelItem = (option: LLMOption) => {
     const selected = isSelected(option);
-    const disabled = isDisabled?.(option) ?? false;
+    const blockedReason = modelBlockedReason?.(option);
+    const disabled = Boolean(blockedReason) || (isDisabled?.(option) ?? false);
 
     // Skip the model-id description when it would just repeat the display name.
-    const description: string | undefined = option.isAuto
+    const description: string | undefined = blockedReason ?? (option.isAuto
       ? t("autoItem.description")
       : option.modelName !== option.displayName
         ? option.modelName
-        : undefined;
+        : undefined);
 
     return (
       <Disabled key={llmOptionKey(option)} disabled={disabled}>
@@ -657,7 +662,7 @@ export default function ModelSelectorContent({
             description={description}
             onClick={() => onSelect(option)}
             rightChildren={
-              modelDetail ? (
+              modelDetail && !blockedReason ? (
                 <Hoverable.Item group="model-row" variant="appear-on-hover">
                   <Button
                     icon={SvgSliders}
@@ -722,7 +727,21 @@ export default function ModelSelectorContent({
                 />,
               ]
             : []),
-          ...(autoOption && !requiresImageInput && !isLoading
+          ...(includeAutomatic && !isLoading
+            ? [
+                <LineItemButton
+                  key="automatic"
+                  font="main-ui-action"
+                  selectVariant="select-heavy"
+                  state={isSelected(GLOBAL_DEFAULT_LLM_OPTION) ? "selected" : "empty"}
+                  icon={SvgSparkle}
+                  title={t("autoItem.label")}
+                  onClick={() => onSelect(GLOBAL_DEFAULT_LLM_OPTION)}
+                  rounding={2}
+                />,
+              ]
+            : []),
+          ...(!includeAutomatic && autoOption && !requiresImageInput && !isLoading
             ? [renderModelItem(autoOption)]
             : []),
           null,

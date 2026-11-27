@@ -1,5 +1,7 @@
 # NortPole — UI and admin console redesign
 
+This document records the November 13 redesign plan. Refer to the [current workspace specification](NortPole_UI-Spec.md#user-portal) for the implemented member sidebar and Sources tabs.
+
 Agreed with the owner on 2026-11-13. This plan follows UI plan U1–U6 (`NortPole_UI-Plan.md`) and replaces its navigation. Every stage ends with the quality pass: light and dark, 1280 and 390 pixels wide, axe WCAG 2.1 A/AA, keyboard.
 
 ## The rule behind the split

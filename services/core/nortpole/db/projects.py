@@ -19,6 +19,7 @@ from nortpole.configs.constants import (
 )
 from nortpole.db.enums import UserFileStatus
 from nortpole.db.models import Project__UserFile, User, UserFile, UserProject
+from nortpole.db.project_access import project_has_members, require_project
 from nortpole.server.documents.connector import upload_files
 from nortpole.server.features.projects.projects_file_utils import (
     RejectedFile,
@@ -127,8 +128,9 @@ def upload_files_to_user_files_with_indexing(
     incognito_session_id: UUID | None = None,
 ) -> CategorizedFilesResult:
     if project_id is not None and user is not None:
-        if not check_project_ownership(project_id, user.id, db_session):
-            raise HTTPException(status_code=404, detail="Project not found")
+        require_project(project_id, user.id, db_session, minimum="editor", lock=True)
+        if incognito_session_id is not None and project_has_members(project_id, db_session):
+            raise HTTPException(400, "Incognito files cannot be added to a shared project")
 
     categorized_files_result = create_user_files(
         files,
@@ -182,36 +184,22 @@ def upload_files_to_user_files_with_indexing(
     )
 
 
-def check_project_ownership(
-    project_id: int, user_id: UUID | None, db_session: Session
-) -> bool:
-    # In no-auth mode, all projects are accessible
-    if user_id is None:
-        # Verify project exists
-        return (
-            db_session.query(UserProject).filter(UserProject.id == project_id).first()
-            is not None
-        )
-
-    return (
-        db_session.query(UserProject)
-        .filter(UserProject.id == project_id, UserProject.user_id == user_id)
-        .first()
-        is not None
-    )
-
-
 def get_user_files_from_project(
     project_id: int, user_id: UUID | None, db_session: Session
 ) -> list[UserFile]:
-    # First check if the user owns the project
-    if not check_project_ownership(project_id, user_id, db_session):
+    try:
+        require_project(project_id, user_id, db_session)
+    except HTTPException:
         return []
 
     return (
         db_session.query(UserFile)
         .join(Project__UserFile)
-        .filter(Project__UserFile.project_id == project_id)
+        .filter(
+            Project__UserFile.project_id == project_id,
+            UserFile.incognito.is_(False),
+            UserFile.status.notin_((UserFileStatus.FAILED, UserFileStatus.DELETING)),
+        )
         .all()
     )
 
@@ -249,10 +237,11 @@ def get_project_token_count(
     if project_id is None:
         return 0
 
+    require_project(project_id, user_id, db_session)
     total_tokens = (
         db_session.query(func.coalesce(func.sum(UserFile.token_count), 0))
         .filter(
-            UserFile.user_id == user_id,
+            UserFile.incognito.is_(False),
             UserFile.projects.any(id=project_id),
         )
         .scalar()

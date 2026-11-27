@@ -4,6 +4,7 @@ from typing import Annotated, Any, Literal
 from uuid import UUID
 
 from pydantic import (
+    AliasChoices,
     BaseModel,
     BeforeValidator,
     ConfigDict,
@@ -27,6 +28,8 @@ from nortpole.agents.models import (
 from nortpole.agents.tools import InputDecision
 from nortpole.cache.interface import CacheBackend
 from nortpole.chat.chat_processing_checker import ChatTurnAdmission
+from nortpole.chat.receipt_review import ReceiptReview
+from nortpole.chat.document_review import DocumentReview
 from nortpole.configs.constants import MessageType
 from nortpole.context.models import UserMemoryContext
 from nortpole.context.search.models import SearchDoc, SearchDocsResponse
@@ -50,6 +53,7 @@ from nortpole.nortpolebot.slack.models import SlackContext
 from nortpole.server.query_and_chat.models import (
     MessageResponseIDInfo,
     MultiModelMessageResponseIDInfo,
+    ResponseModelInfo,
     SendMessageRequest,
 )
 from nortpole.server.query_and_chat.streaming_models import (
@@ -73,6 +77,12 @@ MAX_DISCOVERED_AGENTS = 128
 _MESSAGE_ADAPTER = TypeAdapter(Message)
 _INCOGNITO_IMAGES = TypeAdapter(list[SavedLoadedFile])
 _INCOGNITO_DETAILS = TypeAdapter(SavedToolResultDetails)
+
+
+class PolicyAnswer(BaseModel):
+    document_id: str | None = None
+    value: str = ""
+    excerpt: str = ""
 
 
 class PromptMetadata(CompactionMetadata):
@@ -305,6 +315,7 @@ class IncognitoState(BaseModel):
     file_metadata: dict[str, FileToolMetadata] = Field(default_factory=dict)
     previous_run_id: str | None = None
     responses: dict[str, IncognitoAgentResponse] = Field(default_factory=dict)
+    evidence_by_response: dict[str, dict] = Field(default_factory=dict)
 
 
 class SavedAgentContext(BaseModel):
@@ -362,10 +373,15 @@ class CreateChatSessionID(BaseModel):
     incognito: bool = False
 
 
+class CreateChatSessionResponse(CreateChatSessionID):
+    agent_release_version: int | None = None
+
+
 AnswerStreamPart = (
     Packet
     | MessageResponseIDInfo
     | MultiModelMessageResponseIDInfo
+    | ResponseModelInfo
     | StreamingError
     | CreateChatSessionID
 )
@@ -572,6 +588,8 @@ class ChatReminderContext(BaseModel):
 
 
 class ContextDocument(BaseModel):
+    source: str | None = None
+    citation: str | None = None
     document: int
     title: str | None = None
     contents: str
@@ -627,6 +645,14 @@ class ChatFeatureState(BaseModel):
     base_prompt: str
     custom_prompt: str | None
     request_context: str | None = None
+    receipt_review: ReceiptReview | None = None
+    document_review: DocumentReview | None = None
+    evidence_question: str | None = Field(
+        default=None, validation_alias=AliasChoices("evidence_question", "document_analysis_question")
+    )
+    research_evidence: bool = False
+    policy_answer: PolicyAnswer | None = None
+    prepared_answer: str | None = Field(default=None, validation_alias=AliasChoices("prepared_answer", "spreadsheet_answer"))
     reminders_enabled: bool
 
     elapsed_seconds: float
@@ -660,9 +686,12 @@ class ChatTurnSetup(BaseModel):
     persona: PersonaPromptConfig
     base_system_prompt: str
     tool_configuration: PersonaToolConfiguration
+    is_agent_preview: bool = False
+    agent_release_version: int | None = None
     research_tool_id: int | None
     checkpoint: CompactionCheckpoint | None
     user_message_id: int
+    search_evidence_provenance: dict | None = None
     user_identity: LLMUserIdentity
     responses: list[ReservedChatResponse]
     messages: list[Message]
@@ -670,6 +699,12 @@ class ChatTurnSetup(BaseModel):
     previous_run_id: str | None = None
     additional_context: str | None = None
     extracted_context_files: ExtractedContextFiles
+    receipt_review: ReceiptReview | None = None
+    document_review: DocumentReview | None = None
+    evidence_question: str | None = None
+    research_evidence: bool = False
+    policy_answer: PolicyAnswer | None = None
+    prepared_answer: str | None = None
     # Fences processing status and identifies the buffered stream.
     stream_id: int
     reasoning_effort: ReasoningEffort

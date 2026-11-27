@@ -156,12 +156,14 @@ export interface FileCardProps {
   removeFile?: (fileId: string) => void;
   onFileClick?: (file: ProjectFile) => void;
   compactImages?: boolean;
+  showImagePreview?: boolean;
 }
 export function FileCard({
   file,
   removeFile,
   onFileClick,
   compactImages = false,
+  showImagePreview = true,
 }: FileCardProps) {
   const t = useTranslations("cards");
   const typeLabel = useMemo(() => {
@@ -174,8 +176,8 @@ export function FileCard({
   }, [file.name]);
 
   const isImage = useMemo(() => {
-    return isImageFile(file.name);
-  }, [file.name]);
+    return showImagePreview && isImageFile(file.name);
+  }, [file.name, showImagePreview]);
 
   const imageUrl = useMemo(() => {
     if (isImage && file.file_id) {

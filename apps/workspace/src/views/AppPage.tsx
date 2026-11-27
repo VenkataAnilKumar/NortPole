@@ -11,6 +11,9 @@ import { endIncognitoSession } from "@/app/app/services/lib";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { SEARCH_PARAM_NAMES } from "@/app/app/services/searchParams";
 import { useLlmManager } from "@/lib/hooks";
+import { ADMIN_ROUTES } from "@/lib/admin-routes";
+import { usePermissionAuthority } from "@/lib/permissions/hooks";
+import { Permission } from "@/lib/types";
 import { useSendChatMessageFromURL } from "@/lib/chat/hooks";
 import NortPoleInitializingLoader from "@/components/NortPoleInitializingLoader";
 import { NortPoleDocument, MinimalNortPoleDocument } from "@/lib/search/types";
@@ -24,6 +27,7 @@ import {
   withoutChatPluginIntent,
 } from "@/lib/plugins/chat";
 import Dropzone from "react-dropzone";
+import type { ComposerSelection } from "@/app/app/types";
 import AppInputBar, { AppInputBarHandle } from "@/sections/input/AppInputBar";
 import useChatSessions from "@/hooks/useChatSessions";
 import { useAgents } from "@/lib/agents/hooks";
@@ -37,8 +41,9 @@ import { useSendMessageToParent } from "@/lib/extension/hooks";
 import DocumentsSidebar from "@/sections/document-sidebar/DocumentsSidebar";
 import useChatController from "@/hooks/useChatController";
 import useMultiModelChat from "@/hooks/useMultiModelChat";
-import RoutePicker from "@/sections/model-selector/RoutePicker";
 import { useActiveAgent } from "@/lib/agents/hooks";
+import { DEFAULT_AGENT_ID } from "@/lib/constants";
+import ComposerContextPickers from "@/sections/input/ComposerContextPickers";
 import useChatSessionController from "@/hooks/useChatSessionController";
 import useDeepResearchToggle from "@/hooks/useDeepResearchToggle";
 import { useIncognito } from "@/providers/IncognitoProvider";
@@ -92,6 +97,9 @@ import { useFullWidthChat } from "@/providers/FullWidthChatProvider";
 import SearchUI from "@/sections/SearchUI";
 import { motion, AnimatePresence } from "motion/react";
 import { useTranslations } from "next-intl";
+import useSWR from "swr";
+import { errorHandlingFetcher } from "@/lib/fetcher";
+import { AGENT_PILOTS, type AgentPilotInput } from "@/lib/agents/pilots";
 
 interface FadeProps {
   show: boolean;
@@ -161,6 +169,14 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
     currentChatSessionId,
     isLoading: isLoadingChatSessions,
   } = useChatSessions();
+  const loadedAgentPreviewName = useChatSessionStore((state) =>
+    currentChatSessionId ? state.sessions.get(currentChatSessionId)?.agentPreviewName : null
+  );
+  const agentPreviewName = currentChatSession?.agent_preview_name ?? loadedAgentPreviewName;
+  const agentReleaseVersion = useChatSessionStore((state) =>
+    currentChatSessionId ? state.sessions.get(currentChatSessionId)?.agentReleaseVersion : null
+  );
+  const versionCopy = useTranslations("agents.editor.versions");
 
   const {
     currentMessageFiles,
@@ -183,6 +199,13 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
   const { user: resolvedUser } = useCurrentUser();
 
   const activeAgent = useActiveAgent();
+  const displayedAgentVersion = agentReleaseVersion ?? (currentChatSessionId ? null : activeAgent?.active_release_version);
+  const readOnlyAgent = Boolean(agentPreviewName) || displayedAgentVersion != null;
+  const pilotInputPath = readOnlyAgent ? (
+    currentChatSessionId ? `/api/chat/pilot-input/${currentChatSessionId}` :
+      activeAgent ? `/api/persona/${activeAgent.id}/pilot-input` : null
+  ) : null;
+  const { data: agentPilot, isLoading: isLoadingPilot } = useSWR<AgentPilotInput | null>(pilotInputPath, errorHandlingFetcher);
 
   // An explicit agent pick supersedes project context — the two cannot both
   // scope a new chat. This used to ride on the agent-selection callback, but
@@ -278,7 +301,7 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
   // opens (`PARAMS_TO_SKIP` in `app/app/services/lib.tsx`), so `currentProjectId`
   // is null inside a project chat. This value is what reaches the backend, so
   // reading the search param let a project chat send deep research and error.
-  const { isLoading: isLoadingProjects } = useProjects();
+  const { projects, isLoading: isLoadingProjects, error: projectsError } = useProjects();
   const activeProject = useActiveProject();
   // Withhold until the projects snapshot has loaded: an unloaded list makes a
   // project chat look like a normal one, and this value reaches the backend.
@@ -290,8 +313,11 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
 
   const llmManager = useLlmManager(
     currentChatSession ?? undefined,
-    activeAgent
+    activeAgent,
+    true
   );
+  const { isGlobalHolder: canManageModels } = usePermissionAuthority(Permission.MANAGE_LLMS);
+  const noChatProvider = !llmManager.isLoadingProviders && !llmManager.hasAnyProvider;
 
   const {
     showOnboarding,
@@ -343,11 +369,38 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
   }, [setCurrentMessageFiles]);
 
   const restoreInputBar = useCallback(
-    (message: string, files: ProjectFile[]) => {
-      chatInputBarRef.current?.restore(message, files);
+    (message: string, files: ProjectFile[], selections?: ComposerSelection[]) => {
+      chatInputBarRef.current?.restore(message, files, selections);
     },
     []
   );
+
+  const prepareComposerScope = (projectId: number | null, enteringNewSession: boolean) => {
+    chatInputBarRef.current?.prepareScopeChange(enteringNewSession);
+    setCurrentMessageFiles((files) =>
+      files.filter((file) => file.project_id === null || file.project_id === projectId)
+    );
+  };
+
+  const selectComposerAgent = (id: number) => {
+    if (id === activeAgent?.id) return;
+    prepareComposerScope(null, id === DEFAULT_AGENT_ID);
+    if (id === DEFAULT_AGENT_ID) {
+      appPosition.openNewSession({ scroll: false });
+    } else {
+      appPosition.openAgent(id, { scroll: false });
+    }
+  };
+
+  const selectComposerProject = (id: number | null) => {
+    if (id === appPosition.project()) return;
+    prepareComposerScope(id, id === null);
+    if (id === null) {
+      appPosition.openNewSession({ scroll: false });
+    } else {
+      appPosition.openProject(id, { scroll: false });
+    }
+  };
 
   // Add refs needed by useChatSessionController
   const chatSessionIdRef = useRef<string | null>(currentChatSessionId);
@@ -432,6 +485,9 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
   const isStreaming = currentChatState === "streaming";
 
   const multiModel = useMultiModelChat(llmManager);
+  const clearComparison = multiModel.clearModels;
+  const comparisonAgentId = activeAgent?.id;
+  useEffect(() => clearComparison(), [clearComparison, comparisonAgentId]);
 
   const { fullWidthChat } = useFullWidthChat();
 
@@ -464,33 +520,6 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
       preMultiModelFoldedRef.current = null;
     }
   }, [multiModel.isMultiModelActive]);
-
-  // Sync single-model selection to llmManager so the submission path uses
-  // the correct provider/version. Guard against echoing derived state back
-  // — only call updateCurrentLlm when the selection actually differs from
-  // currentLlm, otherwise the initial [] → [currentLlmModel] sync would
-  // pin `userHasManuallyOverriddenLLM=true` with whatever was resolved
-  // first (often the default model before the session's alt_model loads).
-  useEffect(() => {
-    if (multiModel.selectedModels.length === 1) {
-      const model = multiModel.selectedModels[0]!;
-      const current = llmManager.currentLlm;
-      if (
-        model.provider !== current.provider ||
-        model.modelName !== current.modelName ||
-        model.name !== current.name ||
-        (model.modelConfigurationId ?? null) !==
-          (current.modelConfigurationId ?? null)
-      ) {
-        llmManager.updateCurrentLlm({
-          name: model.name,
-          provider: model.provider,
-          modelName: model.modelName,
-          modelConfigurationId: model.modelConfigurationId,
-        });
-      }
-    }
-  }, [multiModel.selectedModels]);
 
   const {
     onSubmit,
@@ -604,18 +633,21 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
   }
 
   const onChat = useCallback(
-    (message: string) => {
-      if (multiModel.isMultiModelActive) {
+    (message: string, composerSelections?: ComposerSelection[]) => {
+      const expenseReview = composerSelections?.some(({ kind }) => kind === "expense-review");
+      const useMultipleModels = multiModel.isMultiModelActive && !expenseReview;
+      if (useMultipleModels) {
         foldSidebarForMultiModel();
       }
       resetInputBar();
       onSubmit({
         message,
+        composerSelections,
         currentMessageFiles,
         deepResearch:
           deepResearchEnabledForCurrentWorkflow &&
-          !multiModel.isMultiModelActive,
-        selectedModels: multiModel.isMultiModelActive
+          !useMultipleModels && !expenseReview,
+        selectedModels: useMultipleModels
           ? multiModel.selectedModels
           : undefined,
       });
@@ -666,18 +698,21 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
   );
 
   const handleAppInputBarSubmit = useCallback(
-    async (message: string) => {
+    async (message: string, composerSelections?: ComposerSelection[]) => {
       // If we're in an existing chat session, always use chat mode
       // (appMode only applies to new sessions)
       if (currentChatSessionId) {
+        const expenseReview = composerSelections?.some(({ kind }) => kind === "expense-review");
+        const useMultipleModels = multiModel.isMultiModelActive && !expenseReview;
         resetInputBar();
         onSubmit({
           message,
+          composerSelections,
           currentMessageFiles,
           deepResearch:
             deepResearchEnabledForCurrentWorkflow &&
-            !multiModel.isMultiModelActive,
-          selectedModels: multiModel.isMultiModelActive
+            !useMultipleModels && !expenseReview,
+          selectedModels: useMultipleModels
             ? multiModel.selectedModels
             : undefined,
         });
@@ -689,10 +724,14 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
         return;
       }
 
-      // Incognito always routes to chat: the search path runs its own
-      // persistence and none of the incognito safeguards.
-      if (incognitoEnabledRef.current) {
-        onChat(message);
+      // Scoped and incognito turns use chat's session creation and persistence.
+      if (
+        incognitoEnabledRef.current ||
+        composerSelections?.length ||
+        appPosition.isAgent() ||
+        appPosition.isProject()
+      ) {
+        onChat(message, composerSelections);
         return;
       }
 
@@ -707,6 +746,7 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
       submitQuery,
       onChat,
       incognitoEnabledRef,
+      appPosition,
       resetInputBar,
       onSubmit,
       currentMessageFiles,
@@ -788,6 +828,24 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
   if (!activeAgent && !isLoadingAgents) {
     return <NoAgentModal />;
   }
+
+  const projectCanWrite =
+    !appPosition.isProject() ||
+    (currentProjectDetails !== null && currentProjectDetails.project.role !== "viewer" &&
+      projects.some((project) => project.id === currentProjectId && project.role !== "viewer"));
+  const composerDisabled =
+    !projectCanWrite ||
+    noChatProvider ||
+    (onboardingVisible &&
+      showOnboarding &&
+      !isLoadingOnboarding &&
+      onboardingState.stepIndex <
+        STEP_CONFIG[OnboardingStep.OptionalSetup].index);
+  const showQuickStarts =
+    !currentChatSessionId &&
+    (isWelcomeFocus || (appPosition.isProject() && projectCanWrite)) &&
+    state.phase === "idle" &&
+    (!isNewSession || state.appMode !== "search");
 
   const hasAgentStarterMessages =
     (activeAgent?.starter_messages?.length ?? 0) > 0;
@@ -886,9 +944,10 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
             it react-dropzone handles the same paste again and attaches the
             image twice. */}
         <Dropzone
-          onDrop={(acceptedFiles) =>
-            handleMessageSpecificFileUpload(acceptedFiles)
-          }
+          onDrop={(acceptedFiles) => {
+            if (!readOnlyAgent) handleMessageSpecificFileUpload(acceptedFiles);
+          }}
+          noDrag={readOnlyAgent}
           noClick
           noPaste
         >
@@ -935,6 +994,9 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
                         fullWidth={fullWidthActive}
                       >
                         <ChatUI
+                          showPilotEvidence={Boolean(agentPilot)}
+                          pilotOutputName={agentPilot && agentReleaseVersion != null && !agentPreviewName ? AGENT_PILOTS[agentPilot.kind].name : undefined}
+                          scheduleProposalChatId={incognitoEnabled || readOnlyAgent ? undefined : storeSessionId ?? undefined}
                           activeAgent={activeAgent!}
                           llmManager={llmManager}
                           deepResearchEnabled={
@@ -1067,7 +1129,7 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
                       alignItems="end"
                       className={cn(
                         "max-w-(--app-chat-column-width)",
-                        "max-sm:!flex-col max-sm:!items-center max-sm:gap-3",
+                        "max-sm:!flex-col max-sm:!items-center",
                         FULL_WIDTH_TRANSITION
                       )}
                     >
@@ -1075,31 +1137,7 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
                         agent={activeAgent}
                         isDefaultAgent={isPlainChat}
                       />
-                      {!isSearch &&
-                        !(
-                          state.phase === "idle" && state.appMode === "search"
-                        ) &&
-                        activeAgent &&
-                        llmManager.hasAnyProvider && (
-                          <RoutePicker
-                            selectedModels={multiModel.selectedModels}
-                            onReplace={multiModel.replaceModel}
-                            providers={llmManager.llmProviders}
-                          />
-                        )}
                     </Section>
-                    {isPlainChat &&
-                      isWelcomeFocus &&
-                      Boolean(user?.personalization?.name) && (
-                      <div className="w-full max-w-(--app-chat-column-width)">
-                        <QuickStartCards
-                          onPick={(prompt) => {
-                            chatInputBarRef.current?.restore(prompt, []);
-                            chatInputBarRef.current?.focus();
-                          }}
-                        />
-                      </div>
-                    )}
                     <Spacer rem={1.5} />
                   </Fade>
                 </div>
@@ -1175,17 +1213,54 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
                           isSearch ? "h-[14px]" : "h-0"
                         )}
                       />
-                      {appPosition.isChat() && activeAgent && (
-                        <div className="pb-1">
-                          <RoutePicker
-                            selectedModels={multiModel.selectedModels}
-                            onReplace={multiModel.replaceModel}
-                            providers={llmManager.llmProviders}
-                            direction="up"
-                          />
+                      {showQuickStarts && (
+                        <QuickStartCards
+                          disabled={composerDisabled}
+                          onPick={(prompt) =>
+                            chatInputBarRef.current?.insertStarter(prompt)
+                          }
+                        />
+                      )}
+                      {noChatProvider && (
+                        <div role="status" className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-border-01 bg-background-neutral-00 px-4 py-3">
+                          <div>
+                            <p className="text-sm font-semibold text-text-05">{t("noChatModel.title")}</p>
+                            <p className="text-sm text-text-03">{t("noChatModel.description")}</p>
+                          </div>
+                          {canManageModels && (
+                            <Button prominence="secondary" {...navigation.linkTo(ADMIN_ROUTES.LLM_MODELS.path)}>
+                              {t("noChatModel.manageModels")}
+                            </Button>
+                          )}
                         </div>
                       )}
-                      <AppInputBar
+                      {agentPreviewName && (
+                        <div role="status" className="mb-3 rounded-xl border border-border-01 bg-background-neutral-00 px-4 py-3">
+                          <p className="text-sm font-semibold text-text-05">{t("agentPreview.title", { name: agentPreviewName })}</p>
+                          <p className="text-sm text-text-03">{t("agentPreview.description")}</p>
+                        </div>
+                      )}
+                      {displayedAgentVersion != null && (
+                        <p className="mb-2 px-2 text-sm text-text-03">{versionCopy("version", { version: displayedAgentVersion })}</p>
+                      )}
+                      {projectCanWrite && <AppInputBar
+                        showQuickAdd
+                        previewOnly={readOnlyAgent}
+                        agentPilot={agentPilot}
+                        contextPickers={
+                          showQuickStarts && !incognitoEnabled && currentChatState === "input" ? (
+                            <ComposerContextPickers
+                              agents={agents}
+                              activeAgent={activeAgent}
+                              projects={projects}
+                              projectId={appPosition.project()}
+                              projectsLoading={isLoadingProjects}
+                              projectsFailed={Boolean(projectsError)}
+                              onAgentChange={selectComposerAgent}
+                              onProjectChange={selectComposerProject}
+                            />
+                          ) : undefined
+                        }
                         toolConfiguration={toolConfiguration}
                         memberPlugins={memberPlugins.plugins}
                         ref={chatInputBarRef}
@@ -1194,6 +1269,7 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
                         }
                         toggleDeepResearch={toggleDeepResearch}
                         isMultiModelActive={multiModel.isMultiModelActive}
+                        modelComparison={multiModel}
                         llmManager={llmManager}
                         initialMessage={
                           searchParams?.get(SEARCH_PARAM_NAMES.USER_PROMPT) ||
@@ -1207,17 +1283,8 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
                         setPresentingDocument={setPresentingDocument}
                         // Intentionally enabled during name-only onboarding (showOnboarding=false)
                         // since LLM providers are already configured and the user can chat.
-                        disabled={
-                          (!llmManager.isLoadingProviders &&
-                            llmManager.hasAnyProvider === false) ||
-                          // Only while the onboarding steps are on screen.
-                          (onboardingVisible &&
-                            showOnboarding &&
-                            !isLoadingOnboarding &&
-                            onboardingState.stepIndex <
-                              STEP_CONFIG[OnboardingStep.OptionalSetup].index)
-                        }
-                      />
+                        disabled={composerDisabled || isLoadingPilot}
+                      />}
                       <div
                         className={cn(
                           "transition-all duration-150 ease-in-out overflow-hidden",

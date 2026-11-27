@@ -13,9 +13,8 @@ export function useProjects() {
     SWR_KEYS.userProjects,
     errorHandlingFetcher,
     {
-      revalidateOnFocus: false,
-      revalidateIfStale: false,
-      dedupingInterval: 30000,
+      refreshInterval: 30_000,
+      focusThrottleInterval: 5_000,
     }
   );
 

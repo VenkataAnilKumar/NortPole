@@ -125,6 +125,7 @@ class PreparedStep(BaseModel):
 
     model_config = ConfigDict(extra="forbid", arbitrary_types_allowed=True, frozen=True)
     system_prompt: str = ""
+    prepared_answer: str | None = None
     allowed_tool_names: frozenset[str] | None = None
     tool_phase: str | None = None
     options: GenerationOptions = Field(default_factory=GenerationOptions)

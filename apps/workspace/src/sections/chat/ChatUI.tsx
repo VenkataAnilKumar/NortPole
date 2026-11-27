@@ -7,6 +7,7 @@ import React, {
   useMemo,
   useRef,
 } from "react";
+import { useSearchParams } from "@opal/navigation";
 import { Message } from "@/app/app/types";
 import { NortPoleDocument, MinimalNortPoleDocument } from "@/lib/search/types";
 import HumanMessage from "@/app/app/message/HumanMessage";
@@ -25,13 +26,17 @@ import {
   useCurrentMessageHistory,
   useCurrentMessageTree,
   useHasOlderMessages,
+  useIsLoadingOlderMessages,
+  useChatSessionStore,
   useLoadingError,
   useUncaughtError,
 } from "@/app/app/stores/useChatSessionStore";
 import WindowedRow from "@/sections/chat/WindowedRow";
 import OlderMessagesLoader from "@/sections/chat/OlderMessagesLoader";
 import { useOptionalScrollContainer } from "@/sections/chat/ScrollContainerContext";
+import { loadOlderChatMessages } from "@/lib/chat/pagedSession";
 import { cn } from "@opal/utils";
+import ScheduleProposals from "@/sections/chat/ScheduleProposals";
 
 /** Width constraint for normal (non-multi-model) messages. */
 // The chat column's width comes from the page (`--app-chat-column-width`, set
@@ -56,6 +61,9 @@ export const FULL_WIDTH_TRANSITION =
   "transition-[max-width] duration-300 ease-in-out motion-reduce:transition-none";
 
 export interface ChatUIProps {
+  pilotOutputName?: string;
+  showPilotEvidence?: boolean;
+  scheduleProposalChatId?: string;
   activeAgent: MinimalAgent;
   llmManager: LlmManager;
   setPresentingDocument: (doc: MinimalNortPoleDocument | null) => void;
@@ -113,6 +121,9 @@ const ChatUI = React.memo(
     anchorNodeId,
     selectedModels,
     fullWidthChat,
+    scheduleProposalChatId,
+    pilotOutputName,
+    showPilotEvidence,
   }: ChatUIProps) => {
     // Get messages and error state from store
     const messages = useCurrentMessageHistory();
@@ -167,6 +178,38 @@ const ChatUI = React.memo(
         ? { nodeId: firstNodeId, top: firstRow.offsetTop }
         : null;
     }, [scrollContainerRef, firstNodeId]);
+
+    const params = useSearchParams();
+    const requestedMessage = Number(params?.get("message"));
+    const requestedChat = params?.get("chatId");
+    const currentChat = useChatSessionStore((state) => state.currentSessionId);
+    const loadingOlder = useIsLoadingOlderMessages();
+    const focusedResult = useRef<string | null>(null);
+    const target = messages.find((message) => message.messageId === requestedMessage);
+    const oldestMessage = messages[0]?.messageId;
+    useEffect(() => {
+      if (!requestedChat || requestedChat !== currentChat ||
+          !Number.isSafeInteger(requestedMessage) || requestedMessage <= 0) {
+        focusedResult.current = null;
+        return;
+      }
+      const key = `${requestedChat}:${requestedMessage}`;
+      if (focusedResult.current === key) return;
+      if (target) {
+        const frame = requestAnimationFrame(() => {
+          const row = document.getElementById(`message-${target.nodeId}`);
+          if (!row) return;
+          focusedResult.current = key;
+          row.setAttribute("tabindex", "-1");
+          row.scrollIntoView({ block: "center" });
+          row.focus({ preventScroll: true });
+        });
+        return () => cancelAnimationFrame(frame);
+      }
+      if (hasOlderMessages && !loadingOlder && oldestMessage != null && requestedMessage < oldestMessage) {
+        void loadOlderChatMessages(requestedChat);
+      }
+    }, [currentChat, hasOlderMessages, loadingOlder, oldestMessage, requestedChat, requestedMessage, target]);
 
     // Reading-width cap on messages, from the page's chat column width.
     const msgWidth = cn(MSG_W, FULL_WIDTH_TRANSITION);
@@ -259,7 +302,7 @@ const ChatUI = React.memo(
             const pinned =
               rowsFromEnd <= PINNED_ROWS ||
               message.is_generating ||
-              message.nodeId === anchorNodeId;
+              message.nodeId === anchorNodeId || message.nodeId === target?.nodeId;
             const initiallyMounted = rowsFromEnd <= INITIALLY_MOUNTED_ROWS;
             const parentMessage = message.parentNodeId
               ? messageTree?.get(message.parentNodeId)
@@ -354,6 +397,8 @@ const ChatUI = React.memo(
                 >
                   {(message.type !== "error" || message.packets.length > 0) && (
                     <AgentMessage
+                      showPilotEvidence={showPilotEvidence}
+                      pilotOutputName={message.type === "assistant" ? pilotOutputName : undefined}
                       fullWidthChat={fullWidthChat}
                       rawPackets={message.packets}
                       packetCount={message.packetCount}
@@ -361,6 +406,7 @@ const ChatUI = React.memo(
                       chatState={chatStateData}
                       nodeId={message.nodeId}
                       messageId={message.messageId}
+                      responseModelName={message.modelDisplayName}
                       currentFeedback={message.currentFeedback}
                       llmManager={llmManager}
                       otherMessagesCanSwitchTo={
@@ -396,6 +442,14 @@ const ChatUI = React.memo(
             return null;
           })}
 
+          {scheduleProposalChatId && (
+            <ScheduleProposals
+              key={scheduleProposalChatId}
+              chatId={scheduleProposalChatId}
+              streaming={chatState !== "input"}
+              className={cn("w-full self-center", msgWidth)}
+            />
+          )}
           {(error || loadError) && (
             <div className={cn("p-4 w-full self-center", msgWidth)}>
               <ErrorBanner

@@ -1,5 +1,9 @@
 "use client";
 
+import { ResponsiveLayout } from "@opal/layouts";
+import { ActionButton } from "@opal/components";
+import { NavLink } from "@opal/navigation";
+import { useTranslations as useWorkspaceTranslations } from "next-intl";
 import { useState } from "react";
 import { useSettings } from "@/lib/settings/hooks";
 import useSWR from "swr";
@@ -17,6 +21,7 @@ const card = "rounded-2xl border border-border-01 bg-background-neutral-00 shado
  * here, whatever the server allows elsewhere.
  */
 export default function LiveApprovals() {
+  const workspaceText = useWorkspaceTranslations("workspaceUi");
   const { data, mutate } = useSWR<ApprovalListResponse>(useSettings()?.nortpole_craft_enabled === true ? SWR_KEYS.myLiveApprovals : null, errorHandlingFetcher, {
     refreshInterval: 15_000,
     shouldRetryOnError: false,
@@ -42,9 +47,7 @@ export default function LiveApprovals() {
 
   return (
     <section aria-labelledby="live-approvals" data-testid="live-approvals" className="flex flex-col gap-3">
-      <h2 id="live-approvals" className="text-sm font-semibold text-text-05">
-        Waiting for your decision
-      </h2>
+      <h2 id="live-approvals" className="text-sm font-semibold text-text-05">{workspaceText("waitingForYourDecision")}</h2>
       {failed && (
         <p role="alert" className="text-sm text-status-text-error-05">{failed}</p>
       )}
@@ -57,27 +60,24 @@ export default function LiveApprovals() {
             </div>
             {first?.description && <p className="mb-3 text-sm text-text-03">{first.description}</p>}
             <PayloadView payload={a.display_payload} />
-            <p className="mt-3 text-xs text-text-03">
-              Your decision covers this one action with exactly the content shown above. A different action asks again.
-            </p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              <button
+            <p className="mt-3 text-xs text-text-03">{workspaceText("yourDecisionCoversThisOneActionWithExactlyThe")}</p>
+            <ResponsiveLayout display="flex" className="mt-3 flex-wrap gap-2">
+              <ActionButton
                 type="button"
                 disabled={busy === a.approval_id}
                 onClick={() => decide(a.approval_id, "approve_once")}
                 className="min-h-11 rounded-xl bg-text-05 px-5 text-sm font-semibold text-background-neutral-00 disabled:opacity-50"
               >
                 {busy === a.approval_id ? "Working…" : "Approve this action"}
-              </button>
-              <button
+              </ActionButton>
+              <ActionButton
                 type="button"
                 disabled={busy === a.approval_id}
                 onClick={() => decide(a.approval_id, "reject")}
                 className="min-h-11 rounded-xl border border-border-02 px-5 text-sm font-semibold text-text-05 disabled:opacity-50"
-              >
-                Reject
-              </button>
-            </div>
+              >{workspaceText("reject")}</ActionButton>
+              <NavLink href={`/craft/v1?sessionId=${encodeURIComponent(a.session_id)}`} className="inline-flex min-h-11 items-center rounded-xl border border-border-02 px-5 text-sm font-semibold text-text-05">{workspaceText("openCraftSession")}</NavLink>
+            </ResponsiveLayout>
           </article>
         );
       })}

@@ -71,6 +71,7 @@ import { externalAppAdminUrl } from "@/app/craft/v1/apps/admin/skillAssociationN
 interface SkillEditorPageProps {
   skillId?: string;
   draftId?: string;
+  surface?: "sources";
   externalAppId?: number;
   externalAppName?: string;
 }
@@ -78,6 +79,7 @@ interface SkillEditorPageProps {
 export default function SkillEditorPage({
   skillId,
   draftId,
+  surface,
   externalAppId,
   externalAppName,
 }: SkillEditorPageProps) {
@@ -85,6 +87,7 @@ export default function SkillEditorPage({
   const isCreating = skillId === undefined;
   const hasAppContext = externalAppId !== undefined;
   const isCreatingForApp = isCreating && hasAppContext;
+  const skillPath = surface === "sources" ? "/app/sources/skills" : "/craft/v1/skills";
   const navigation = useNavigation();
   const { isAdmin, user } = useUser();
   const creationDraft = useMemo(
@@ -210,7 +213,7 @@ export default function SkillEditorPage({
 
   function leaveEditor() {
     navigation.go(
-      hasAppContext ? externalAppAdminUrl(externalAppId) : "/craft/v1/skills"
+      hasAppContext ? externalAppAdminUrl(externalAppId) : skillPath
     );
   }
 
@@ -267,7 +270,7 @@ export default function SkillEditorPage({
         navigation.go(
           isCreatingForApp
             ? externalAppAdminUrl(externalAppId)
-            : "/craft/v1/skills",
+            : skillPath,
           { replace: true }
         );
         return;

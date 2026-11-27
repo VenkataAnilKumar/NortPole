@@ -43,6 +43,7 @@ from nortpole.llm.factory import (
     llm_from_provider,
 )
 from nortpole.server.api_key_usage import check_api_key_usage
+from nortpole.server.features.search.activity import router as activity_search_router
 from nortpole.server.features.search.models import (
     BaseSearchRequest,
     RawSearchRequest,
@@ -50,6 +51,7 @@ from nortpole.server.features.search.models import (
     SearchResponse,
     SearchResult,
 )
+from nortpole.server.features.search.workspace import router as workspace_search_router
 from nortpole.server.manage.llm.models import LLMProviderView
 from nortpole.server.query_and_chat.token_limit import (
     check_model_spend_limits,
@@ -71,6 +73,8 @@ from nortpole.utils.fleet_query_telemetry import QueryMode, telemetry_query
 from shared_configs.contextvars import get_current_tenant_id
 
 router = APIRouter(prefix="/search")
+router.include_router(workspace_search_router)
+router.include_router(activity_search_router)
 
 
 @router.post(

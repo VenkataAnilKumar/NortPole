@@ -7,15 +7,18 @@ import { useUser } from "@/providers/UserProvider";
 import { hasPermission } from "@/lib/permissions/utils";
 import { Permission } from "@/lib/types";
 import { checkUserOwnsAgent } from "@/lib/agents/utils";
+import { createAgentCatalogMatcher } from "@/lib/agents/catalogSearch";
+import { getAgentInputType, type AgentInputType } from "@/lib/agents/pilots";
 import { useAgents, usePinnedAgents } from "@/lib/agents/hooks";
 import { MinimalAgent } from "@/lib/agents/types";
-import { SettingsLayouts } from "@opal/layouts";
+import { Section, SettingsLayouts } from "@opal/layouts";
 import { GridSearchInput, NoItems, NoResults } from "@/lib/common/components";
 import { useSearchableGrid } from "@opal/hooks";
 import { useNavigation } from "@opal/navigation";
 import { Button, EndOfList, Tabs, Text } from "@opal/components";
 import { SvgNortPoleOctagon, SvgPlus } from "@opal/icons";
 import { useAgentsFilters } from "@/sections/agents/AgentsFilters";
+import { AgentInputFilter } from "@/sections/agents/AgentInputFilter";
 
 interface AgentsSectionProps {
   title?: string;
@@ -47,8 +50,7 @@ function AgentsSection({
           </Text>
         </div>
       )}
-      {/* Every card is the same height: 9.5rem (152px). */}
-      <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 auto-rows-[9.5rem] gap-2">
+      <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 auto-rows-[minmax(9.5rem,auto)] gap-2">
         {agents
           .sort((a, b) => b.id - a.id)
           .map((agent) => (
@@ -66,6 +68,12 @@ function AgentsSection({
 
 // e2e locator, not user copy.
 const NEW_AGENT_BUTTON_ARIA_LABEL = "AgentsPage/new-agent-button";
+const AGENT_TABS = ["starred", "mine", "shared", "company"] as const;
+type AgentsTab = (typeof AGENT_TABS)[number];
+
+function isCompanyAgent(agent: MinimalAgent) {
+  return agent.is_public && agent.is_listed;
+}
 
 export default function AgentsCatalogPage() {
   const t = useTranslations("agents");
@@ -74,6 +82,7 @@ export default function AgentsCatalogPage() {
   const navigation = useNavigation();
   const canCreateAgent = hasPermission(permissions, Permission.ADD_AGENTS);
   const [searchQuery, setSearchQuery] = useState("");
+  const [inputType, setInputType] = useState<AgentInputType | "all">("all");
   // One viewer for the listing, so the id lives here rather than in whichever
   // card happened to be clicked.
   const [viewedAgentId, setViewedAgentId] = useState<number | null>(null);
@@ -92,8 +101,7 @@ export default function AgentsCatalogPage() {
     // After the dialog unmounts and its own focus handling runs.
     requestAnimationFrame(() => opener?.focus());
   }
-  type AgentsTab = "starred" | "mine" | "shared" | "company";
-  const [activeTab, setActiveTab] = useState<AgentsTab>("company");
+  const [selectedTab, setSelectedTab] = useState<AgentsTab | null>(null);
   const { pinnedAgents } = usePinnedAgents();
   const starredIds = useMemo(
     () => new Set(pinnedAgents.map((a) => a.id)),
@@ -105,31 +113,40 @@ export default function AgentsCatalogPage() {
     [agents],
   );
 
+  let initialTab: AgentsTab = "company";
+  if (!selectedTab && !nonBuiltinAgents.some(isCompanyAgent)) {
+    if (nonBuiltinAgents.some((agent) => !agent.is_public && !checkUserOwnsAgent(user, agent))) {
+      initialTab = "shared";
+    } else if (nonBuiltinAgents.some((agent) => checkUserOwnsAgent(user, agent))) {
+      initialTab = "mine";
+    } else if (nonBuiltinAgents.some((agent) => starredIds.has(agent.id))) {
+      initialTab = "starred";
+    }
+  }
+  const activeTab = selectedTab ?? initialTab;
+
   const { filtered: agentsFilteredByFilters, filterBar } =
     useAgentsFilters(nonBuiltinAgents);
 
   const memoizedCurrentlyVisibleAgents = useMemo(() => {
+    const matchesQuery = createAgentCatalogMatcher(searchQuery);
     return agentsFilteredByFilters.filter((agent) => {
-      const nameMatches = agent.name
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
-      const labelMatches = agent.labels?.some((label) =>
-        label.name.toLowerCase().includes(searchQuery.toLowerCase()),
-      );
+      if (!matchesQuery(agent)) return false;
+      if (inputType !== "all" && getAgentInputType(agent) !== inputType) return false;
 
       const owned = checkUserOwnsAgent(user, agent);
-      const mineFilter =
-        activeTab === "starred"
-          ? starredIds.has(agent.id)
-          : activeTab === "mine"
-            ? owned
-            : activeTab === "shared"
-              ? !owned && !agent.is_public
-              : true;
-
-      return (nameMatches || labelMatches) && mineFilter;
+      switch (activeTab) {
+        case "starred":
+          return starredIds.has(agent.id);
+        case "mine":
+          return owned;
+        case "shared":
+          return !owned && !agent.is_public;
+        case "company":
+          return isCompanyAgent(agent);
+      }
     });
-  }, [agentsFilteredByFilters, searchQuery, activeTab, user, starredIds]);
+  }, [agentsFilteredByFilters, searchQuery, inputType, activeTab, user, starredIds]);
 
   const allAgents = memoizedCurrentlyVisibleAgents;
   const agentCount = allAgents.length;
@@ -183,10 +200,13 @@ export default function AgentsCatalogPage() {
             <div className="flex-1">
               <Tabs
                 value={activeTab}
-                onValueChange={(value) => setActiveTab(value as AgentsTab)}
+                onValueChange={(value) => {
+                  const tab = AGENT_TABS.find((option) => option === value);
+                  if (tab) setSelectedTab(tab);
+                }}
               >
                 <Tabs.List>
-                  {(["starred", "mine", "shared", "company"] as const).map(
+                  {AGENT_TABS.map(
                     (tab) => (
                       <Tabs.Trigger key={tab} value={tab}>
                         {t(`navigation.tabs.${tab}.label`)}
@@ -196,7 +216,7 @@ export default function AgentsCatalogPage() {
                 </Tabs.List>
                 {/* The list below is filtered by these tabs; each tab gets a panel so its aria-controls points at
                     something real. The panel only names what the list shows. */}
-                {(["starred", "mine", "shared", "company"] as const).map(
+                {AGENT_TABS.map(
                   (tab) => (
                     <Tabs.Content key={tab} value={tab} keepMounted>
                       <span className="sr-only">
@@ -208,7 +228,10 @@ export default function AgentsCatalogPage() {
               </Tabs>
             </div>
           </div>
-          <div className="flex flex-row gap-2">{filterBar}</div>
+          <Section flexDirection="row" justifyContent="start" height="fit" gap={2} wrap>
+            {filterBar}
+            <AgentInputFilter value={inputType} onChange={setInputType} />
+          </Section>
         </div>
       </SettingsLayouts.Header>
 

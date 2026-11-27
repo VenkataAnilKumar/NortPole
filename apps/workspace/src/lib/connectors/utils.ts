@@ -5,6 +5,7 @@ import {
 } from "@/lib/connectors/constants";
 import {
   type SourceMetadata,
+  SourceCategory,
   ValidSources,
   type ConfigurableSources,
 } from "@/lib/connectors/types/source";
@@ -537,12 +538,14 @@ export function getSourceMetadata(sourceType: ValidSources): SourceMetadata {
   return fillSourceMetadata(partialMetadata, sourceType);
 }
 
-export function listSourceMetadata(): SourceMetadata[] {
+export function listSourceMetadata({ showExtraConnectors }: {
+  showExtraConnectors?: boolean;
+} = {}): SourceMetadata[] {
   /* This gives back all the viewable / common sources, primarily for
   display in the Add Connector page */
   const entries = Object.entries(SOURCE_METADATA_MAP)
     .filter(
-      ([source, _]) =>
+      ([source, metadata]) =>
         source !== "not_applicable" &&
         source !== "ingestion_api" &&
         source !== "mock_connector" &&
@@ -551,7 +554,8 @@ export function listSourceMetadata(): SourceMetadata[] {
         // user_file is for internal use (projects), not the Add Connector page
         source !== "user_file" &&
         // craft_file backs the Craft user library, which has its own upload UI
-        source !== "craft_file"
+        source !== "craft_file" &&
+        (showExtraConnectors !== false || metadata.category !== SourceCategory.AiObservability)
     )
     .map(([source, metadata]) => {
       return fillSourceMetadata(metadata, source as ValidSources);

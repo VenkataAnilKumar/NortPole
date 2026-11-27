@@ -16,13 +16,19 @@ from nortpole.agents.models import (
 )
 from nortpole.agents.runtime import Agent, RestorableFeature
 from nortpole.chat.citation_processor import DynamicCitationProcessor
+from nortpole.chat.receipt_review import ReceiptReview
+from nortpole.chat.document_review import DocumentReview
+from nortpole.chat.policy_rules import render_policy_answer
+from nortpole.chat.verified_excerpts import select_excerpts
 from nortpole.chat.citation_utils import (
     build_context_file_citation_mapping,
+    extract_citation_order_from_text,
     message_citation_sources,
 )
 from nortpole.chat.errors import build_empty_llm_response_error
 from nortpole.chat.files import build_python_chat_files_from_search_docs
 from nortpole.chat.models import (
+    PolicyAnswer,
     ChatFeatureState,
     ChatMessageMetadata,
     CitationMode,
@@ -98,7 +104,19 @@ class ChatAgent(Agent, RestorableFeature):
         agent_id: str | None = None,
         additional_context: str | None = None,
         code_mode: bool = False,
+        receipt_review: ReceiptReview | None = None,
+        document_review: DocumentReview | None = None,
+        evidence_question: str | None = None,
+        research_evidence: bool = False,
+        policy_answer: PolicyAnswer | None = None,
+        prepared_answer: str | None = None,
     ) -> None:
+        self.receipt_review = receipt_review
+        self.document_review = document_review
+        self.evidence_question = evidence_question
+        self.research_evidence = research_evidence
+        self.policy_answer = policy_answer
+        self.prepared_answer = prepared_answer
         self.custom_agent_prompt = custom_agent_prompt
         self.additional_context = additional_context
         self.context_files = context_files.model_copy(deep=True)
@@ -190,6 +208,12 @@ class ChatAgent(Agent, RestorableFeature):
             base_prompt=self.base_system_prompt,
             custom_prompt=self.custom_agent_prompt,
             request_context=self.additional_context,
+            receipt_review=self.receipt_review,
+            document_review=self.document_review,
+            evidence_question=self.evidence_question,
+            research_evidence=self.research_evidence,
+            policy_answer=self.policy_answer,
+            prepared_answer=self.prepared_answer,
             reminders_enabled=self.reminders_enabled,
             elapsed_seconds=max(0.0, time.monotonic() - self.started),
             citation_sources=self.citation_processor.citation_to_doc,
@@ -215,6 +239,12 @@ class ChatAgent(Agent, RestorableFeature):
             or saved.base_prompt != self.base_system_prompt
             or saved.custom_prompt != self.custom_agent_prompt
             or saved.request_context != self.additional_context
+            or saved.receipt_review != self.receipt_review
+            or saved.document_review != self.document_review
+            or saved.evidence_question != self.evidence_question
+            or saved.research_evidence != self.research_evidence
+            or saved.policy_answer != self.policy_answer
+            or saved.prepared_answer != self.prepared_answer
             or saved.reminders_enabled != self.reminders_enabled
         ):
             raise ValueError("Chat restoration configuration does not match")
@@ -274,6 +304,45 @@ class ChatAgent(Agent, RestorableFeature):
                     self._update_tool_context([message])
             # Query expansion applies to the current turn only.
             self.has_called_search_tool = False
+        if any(item is not None for item in (
+            self.receipt_review, self.document_review, self.evidence_question, self.policy_answer, self.prepared_answer,
+        )):
+            citations = {doc.document_id: number for number, doc in self.initial_citations.items()}
+            sources = dict(self.citation_processor.citation_to_doc)
+            documents = list(self.gathered_documents)
+            if self.prepared_answer is not None:
+                answer = self.prepared_answer
+            elif self.evidence_question is not None or self.policy_answer is not None:
+                answer = (
+                    render_policy_answer(self.policy_answer, citations)
+                    if self.policy_answer is not None
+                    else select_excerpts(
+                        self.evidence_question or "",
+                        self.context_files.file_metadata,
+                        citations,
+                        research=self.research_evidence,
+                    )
+                )
+                shown = set(extract_citation_order_from_text(answer))
+                sources = {number: doc for number, doc in sources.items() if number in shown}
+                document_ids = {doc.document_id for doc in sources.values()}
+                documents = [doc for doc in documents if doc.document_id in document_ids]
+            elif self.document_review is not None:
+                answer = self.document_review.answer(citations)
+            else:
+                assert self.receipt_review is not None
+                source = self.receipt_review.source_id
+                answer = self.receipt_review.answer(citations.get(source) if source else None)
+            return PreparedStep(
+                prepared_answer=answer,
+                allowed_tool_names=frozenset(),
+                output_metadata=ChatMessageMetadata(
+                    sources=sources,
+                    documents=documents,
+                    include_citations=self.include_citations,
+                    elapsed_seconds=max(0.0, time.monotonic() - self.started),
+                ),
+            )
         results = [
             message
             for message in state.messages

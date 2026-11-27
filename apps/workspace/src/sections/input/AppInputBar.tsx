@@ -1,5 +1,6 @@
 "use client";
 
+import { ActionButton, NativeInput } from "@opal/components";
 import { useNavigation } from "@opal/navigation";
 import { Section } from "@opal/layouts";
 import { IconLoader } from "@opal/loaders";
@@ -12,6 +13,10 @@ import React, {
 } from "react";
 import { useTranslations } from "next-intl";
 import { MinimalAgent } from "@/lib/agents/types";
+import { useQuickAddItems } from "./useQuickAddItems";
+import ExpenseReviewForm from "@/sections/input/ExpenseReviewForm";
+import DocumentReviewForm from "@/sections/input/DocumentReviewForm";
+import type { ComposerSelection } from "@/app/app/types";
 import { InputPrompt } from "@/app/app/types";
 import { LlmManager } from "@/lib/hooks";
 import usePromptShortcuts from "@/hooks/usePromptShortcuts";
@@ -41,6 +46,12 @@ import { ProjectFile } from "@/lib/projects/types";
 import { isFilePending } from "@/lib/projects/utils";
 import FilePickerPopover from "@/refresh-components/popovers/FilePickerPopover";
 import { ToolsPopover } from "@/lib/tools/components";
+import ModelSelector from "@/sections/model-selector/ModelSelector";
+import MultiModelSelector from "@/sections/model-selector/MultiModelSelector";
+import type { UseMultiModelChatReturn } from "@/hooks/useMultiModelChat";
+import type { LLMOption } from "@/lib/languageModels/types";
+import RoutePicker from "@/sections/model-selector/RoutePicker";
+import { useRoutePolicy } from "@/lib/routePolicy/hooks";
 import MCPConnectionPrompt from "@/lib/mcp/components/MCPConnectionPrompt";
 import {
   getIconForAction,
@@ -48,6 +59,8 @@ import {
 } from "@/app/app/services/actionUtils";
 import {
   SvgArrowUp,
+  SvgAudio,
+  SvgSettings,
   SvgGlobe,
   SvgHourglass,
   SvgMicrophone,
@@ -67,6 +80,10 @@ import {
   Text,
 } from "@opal/components";
 import { useQueryController } from "@/providers/QueryControllerProvider";
+import { takeSearchEvidence } from "@/lib/chat/searchHandoff";
+import type { AgentPilotInput } from "@/lib/agents/pilots";
+import { PilotDocumentPicker } from "./PilotDocumentPicker";
+import { ReportingInputs, type ReportingSelection } from "./ReportingInputs";
 import { useIncognito } from "@/providers/IncognitoProvider";
 import MicrophoneButton from "@/sections/input/MicrophoneButton";
 import Waveform from "@/components/voice/Waveform";
@@ -83,14 +100,20 @@ import { handleInputNavKeys } from "@/sections/input/inputBarKeys";
 export interface AppInputBarHandle {
   reset: () => void;
   /** Puts back a message and files that failed to send, unless a newer draft exists. */
-  restore: (message: string, files: ProjectFile[]) => void;
+  restore: (message: string, files: ProjectFile[], selections?: ComposerSelection[]) => void;
   focus: () => void;
+  insertStarter: (prompt: string) => void;
+  prepareScopeChange: (enteringNewSession: boolean) => void;
 }
 
 export interface AppInputBarProps {
   initialMessage?: string;
   stopGenerating: () => void;
-  onSubmit: (message: string) => void;
+  onSubmit: (message: string, selections?: ComposerSelection[]) => void;
+  showQuickAdd?: boolean;
+  previewOnly?: boolean;
+  agentPilot?: AgentPilotInput | null;
+  contextPickers?: React.ReactNode;
   llmManager: LlmManager;
   chatState: ChatState;
 
@@ -103,6 +126,7 @@ export interface AppInputBarProps {
   setPresentingDocument?: (document: MinimalNortPoleDocument) => void;
   toggleDeepResearch: () => void;
   isMultiModelActive?: boolean;
+  modelComparison?: Pick<UseMultiModelChatReturn, "selectedModels" | "addModel" | "removeModel" | "replaceModel">;
   disabled: boolean;
   /**
    * Owned by the surface rather than read here, because the send path reads
@@ -121,6 +145,10 @@ const AppInputBar = React.memo(
     initialMessage = "",
     stopGenerating,
     onSubmit,
+    contextPickers,
+    showQuickAdd = false,
+    previewOnly = false,
+    agentPilot,
     chatState,
     activeAgent,
     memberPlugins,
@@ -129,6 +157,7 @@ const AppInputBar = React.memo(
     deepResearchEnabled,
     toggleDeepResearch,
     isMultiModelActive,
+    modelComparison,
     setPresentingDocument,
     disabled,
     toolConfiguration,
@@ -138,6 +167,13 @@ const AppInputBar = React.memo(
     onToggleTabReading,
   }: AppInputBarProps) => {
     const t = useTranslations("chat.input");
+    const quickAddCopy = useTranslations("chat.quickAdd");
+    const expenseCopy = useTranslations("chat.expenseReview");
+    const reportingCopy = useTranslations("agents.reporting");
+    const spreadsheetCopy = useTranslations("agents.spreadsheetAnalysis");
+    const meetingCopy = useTranslations("agents.meetingRecap");
+    const meetingPilot = agentPilot?.kind === "meeting-recap";
+    const modelRouteCopy = useTranslations("chat.modelRoute");
     const { incognitoEnabled } = useIncognito();
     const [isRecording, setIsRecording] = useState(false);
     const [recordingCycleCount, setRecordingCycleCount] = useState(0);
@@ -205,13 +241,18 @@ const AppInputBar = React.memo(
       messages: queuedMessages,
       inputIsEmpty: !message,
       onRemove: removeCurrentQueuedMessage,
-      onEdit: setMessage,
+      onEdit: (text, queued) => {
+        setMessage(text);
+        if (queued?.selections?.length) {
+          setContext({ scope: selectionScope, items: queued.selections });
+        }
+      },
     });
 
     const filesWrapperRef = useRef<HTMLDivElement>(null);
     const filesContentRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
-    const { state } = useQueryController();
+    const { state, setAppMode } = useQueryController();
     const isClassifying = state.phase === "classifying";
     const isSearchActive =
       state.phase === "searching" || state.phase === "search-results";
@@ -223,10 +264,24 @@ const AppInputBar = React.memo(
       isAwaitingAutoPlaybackStart,
       isTTSMuted,
       toggleTTSMute,
+      voiceModeEnabled,
+      setVoiceModeEnabled,
     } = useVoiceMode();
-    const { sttEnabled } = useVoiceStatus();
+    const { sttEnabled, ttsEnabled } = useVoiceStatus();
     // Show mic button: always if STT configured, or greyed-out for admins to prompt setup
     const showMicButton = sttEnabled || isAdmin;
+    const requiredModelId = activeAgent?.id
+      ? activeAgent.default_model_configuration_id
+      : null;
+    const modelLabel =
+      llmManager.llmProviders
+        ?.flatMap((provider) => provider.model_configurations)
+        .find(
+          (model) =>
+            model.id === (requiredModelId ?? llmManager.currentLlm?.modelConfigurationId)
+        )
+        ?.effectiveDisplayName ??
+      (requiredModelId ? undefined : llmManager.currentLlm?.modelName);
     const isVoicePlaybackActive =
       isTTSPlaying || isTTSLoading || isAwaitingAutoPlaybackStart;
     const isVoicePlaybackControllable = isVoicePlaybackActive && !isRecording;
@@ -237,6 +292,17 @@ const AppInputBar = React.memo(
     const appMode = state.phase === "idle" ? state.appMode : undefined;
     const isSearchMode =
       (isNewSession && appMode === "search") || isSearchActive;
+    const { data: routePolicy } = useRoutePolicy();
+    const modelBlockedReason = (option: LLMOption) => {
+      if (option.isAuto) return undefined;
+      const blocked = routePolicy?.routes.find((route) =>
+        route.provider_id === option.providerId && !route.allowed
+      );
+      return blocked ? blocked.reason ?? modelRouteCopy("blocked") : undefined;
+    };
+    const showRoutePicker =
+      llmManager.chatModelMode !== undefined && !isMultiModelActive &&
+      !isSearchMode && Boolean(routePolicy?.routes.length);
     const combinedSettingsData = useSettings();
 
     const activePlaceholder =
@@ -250,7 +316,7 @@ const AppInputBar = React.memo(
               })
             : isSearchMode
               ? t("appInputBar.input.searchPlaceholder")
-              : t("appInputBar.input.placeholder");
+              : meetingPilot ? meetingCopy("placeholder") : t("appInputBar.input.placeholder");
 
     // Keyed by chat session id, or "new" until the session is created.
     const chatSessionId = appPosition.chat();
@@ -263,6 +329,7 @@ const AppInputBar = React.memo(
     } = useDraft<string>({ key: chatDraftStorageKey });
     const draftSeededRef = useRef(false);
     const skipNextDraftSaveRef = useRef(false);
+    const keepDraftOnNewSessionRef = useRef(false);
     const prevDraftKeyRef = useRef(chatDraftStorageKey);
     // Snapshot of message, read non-reactively in the restore effect so seeding
     // doesn't re-run on every keystroke.
@@ -314,27 +381,116 @@ const AppInputBar = React.memo(
       setIsRecording(nextIsRecording);
     }, []);
 
+    const selectionScope = JSON.stringify([
+      chatSessionId,
+      appPosition.project(),
+      activeAgent?.id,
+    ]);
+    const [context, setContext] = useState<{
+      scope: typeof selectionScope;
+      items: ComposerSelection[];
+    } | null>(null);
+    useEffect(() => {
+      if (!isNewSession || !user?.id || activeAgent?.id === undefined) return;
+      const evidence = takeSearchEvidence(String(user.id));
+      if (!evidence.length) return;
+      setAppMode("chat");
+      setContext({ scope: selectionScope, items: evidence });
+      inputRef.current?.focus();
+    }, [activeAgent?.id, inputRef, isNewSession, selectionScope, setAppMode, user?.id]);
+
+    const [review, setReview] = useState<{
+      scope: string;
+      kind: "expense-review" | "document-review";
+      library?: string;
+      option?: string;
+    } | null>(null);
+    const activeReview = review?.scope === selectionScope && !isSearchMode ? review : null;
+    const selections = context?.scope === selectionScope ? context.items : undefined;
+    const pilotDocuments = selections?.filter((item) => item.kind === "search-result") ?? [];
+    const missingPilotDocuments = agentPilot?.kind === "document-analysis" && pilotDocuments.length === 0;
+    const { currentMessageFiles, setCurrentMessageFiles } = useProjectsContext();
+    const reporting = agentPilot?.kind === "reporting" ? agentPilot : null;
+    const spreadsheetPilot = agentPilot?.kind === "spreadsheet-analysis";
+    const [spreadsheetError, setSpreadsheetError] = useState<string | null>(null);
+    const missingSpreadsheet = spreadsheetPilot && (
+      currentMessageFiles.length !== 1 || !/\.(csv|xlsx)$/i.test(currentMessageFiles[0]?.name ?? "")
+    );
+    const [reportSelection, setReportSelection] = useState<{
+      scope: string;
+      value: ReportingSelection;
+    } | null>(null);
+    const report = reportSelection?.scope === selectionScope ? reportSelection.value : undefined;
+    const reportStart = report?.start ?? "";
+    const reportEnd = report?.end ?? "";
+    const selectedReportSources = JSON.stringify(reporting?.libraries
+      .filter((library) => report?.libraryIds.includes(library.id)).map((library) => library.name) ?? []);
+    const missingReportInputs = Boolean(reporting && (
+      !reportStart || !reportEnd || reportStart > reportEnd || selectedReportSources === "[]"
+    ));
+    const missingPilotInputs = missingPilotDocuments || missingReportInputs || missingSpreadsheet;
+    const formatMessage = useCallback((text: string) => reporting
+      ? `Reporting period: ${reportStart} to ${reportEnd}\nKnowledge sources: ${selectedReportSources}\n\n${text.trim()}`
+      : text, [reporting, reportStart, reportEnd, selectedReportSources]);
+    const matches = (first: ComposerSelection, second: ComposerSelection) =>
+      first.kind === second.kind && first.id === second.id;
+    const hasSelection = (item: ComposerSelection) =>
+      selections?.some((selected) => matches(selected, item)) ?? false;
+    const toggleSelection = (item: ComposerSelection) => {
+      setContext((previous) => {
+        const items = previous?.scope === selectionScope ? previous.items : [];
+        return {
+          scope: selectionScope,
+          items: items.some((selected) => matches(selected, item))
+            ? items.filter((selected) => !matches(selected, item))
+            : [...items, item],
+        };
+      });
+    };
+    const insertStarter = (prompt: string) => {
+      if (disabled) return;
+      const existing = message.trimEnd();
+      setMessage(existing ? `${existing}\n\n${prompt}` : prompt);
+      inputRef.current?.focus();
+      setCursorToEnd();
+    };
+    const { items: quickAddItems, libraries, reviewPacks } = useQuickAddItems({
+      enabled: showQuickAdd && !previewOnly,
+      agent: activeAgent,
+      select: toggleSelection,
+      insertPrompt: insertStarter,
+      openExpenseReview: () => setReview({ scope: selectionScope, kind: "expense-review" }),
+      openDocumentReview: () => setReview({ scope: selectionScope, kind: "document-review" }),
+    });
+    const enqueueWithSelections = () => {
+      enqueueCurrentMessage(formatMessage(message.trim()), selections);
+      setContext(null);
+    };
+
     // Wrapper for onSubmit that stops TTS first to prevent overlapping voices
     const handleSubmit = useCallback(
       (text: string) => {
         stopTTS();
-        onSubmit(text);
+        setReview(null);
+        if (selections?.length) {
+          onSubmit(text, selections);
+          setContext(null);
+        } else {
+          onSubmit(text);
+        }
       },
-      [stopTTS, onSubmit]
+      [stopTTS, onSubmit, selections]
     );
     const submitMessage = useCallback(
       (text: string) => {
-        if (chatState !== "input" || !text.trim()) {
+        if (chatState !== "input" || !text.trim() || missingPilotInputs) {
           return;
         }
-        handleSubmit(text);
+        handleSubmit(formatMessage(text));
         clearChatDraft();
       },
-      [chatState, handleSubmit, clearChatDraft]
+      [chatState, handleSubmit, clearChatDraft, missingPilotInputs, formatMessage]
     );
-
-    const { currentMessageFiles, setCurrentMessageFiles } =
-      useProjectsContext();
 
     // Expose reset and focus methods to parent via ref
     React.useImperativeHandle(ref, () => ({
@@ -344,18 +500,55 @@ const AppInputBar = React.memo(
           clearChatDraft();
         }
       },
-      restore: (text: string, files: ProjectFile[]) => {
+      restore: (text, files, restoredSelections) => {
         // Keep a draft the user started while the failed send was pending.
         if (message.trim() || currentMessageFiles.length > 0) return;
         setMessage(text);
         setCurrentMessageFiles(files);
+        const restoredReview = restoredSelections?.find(
+          ({ kind }) => kind === "expense-review" || kind === "document-review"
+        );
+        if (restoredReview) {
+          setReview({
+            scope: selectionScope,
+            kind: restoredReview.kind === "expense-review" ? "expense-review" : "document-review",
+            option: restoredReview.id,
+            library: restoredSelections?.find(({ kind }) => kind === "knowledge")?.id,
+          });
+          return;
+        }
+        if (!selections?.length && restoredSelections?.length) {
+          setContext({ scope: selectionScope, items: restoredSelections });
+        }
         setCursorToEnd();
+      },
+      insertStarter,
+      prepareScopeChange: (enteringNewSession) => {
+        keepDraftOnNewSessionRef.current = enteringNewSession;
+        setContext(null);
+        setReview(null);
       },
       focus: () => {
         inputRef.current?.focus();
         setCursorToEnd();
       },
     }));
+
+    const submitReview = (kind: "expense-review" | "document-review", library: string, option: string) => {
+      const isExpense = kind === "expense-review";
+      const request = isExpense ? expenseCopy("request") : "Review the attached document against the selected Knowledge library.";
+      const notes = message.trim();
+      const text = notes === request || notes.startsWith(`${request}\n\n`)
+        ? notes
+        : [request, notes].filter(Boolean).join("\n\n");
+      stopTTS();
+      setReview(null);
+      setContext(null);
+      onSubmit(text, [
+        { kind: "knowledge", id: library, label: library },
+        { kind, id: option, label: isExpense ? expenseCopy("title") : "Document Review" },
+      ]);
+    };
 
     // Sync non-empty prop changes to internal state (e.g. NRFPage reads URL params
     // after mount). Intentionally skips empty strings — clearing is handled via the
@@ -371,7 +564,9 @@ const AppInputBar = React.memo(
       (isNewSession || recordingCycleCount === 1);
 
     useEffect(() => {
-      if (isNewSession && !initialMessage) {
+      const keepDraft = keepDraftOnNewSessionRef.current;
+      keepDraftOnNewSessionRef.current = false;
+      if (isNewSession && !initialMessage && !keepDraft) {
         clearMessage();
       }
     }, [isNewSession, initialMessage]);
@@ -385,10 +580,11 @@ const AppInputBar = React.memo(
     const { isLoading: isLoadingProjects } = useProjects();
     const activeProject = useActiveProject();
 
-    // A file isn't queryable until processing completes, so gate send on it.
+    // Search and file tools require indexing. Spreadsheet Analysis reads the
+    // uploaded bytes directly as soon as the upload succeeds.
     const hasPendingFiles = useMemo(
-      () => currentMessageFiles.some((file) => isFilePending(file.status)),
-      [currentMessageFiles]
+      () => !spreadsheetPilot && currentMessageFiles.some((file) => isFilePending(file.status)),
+      [currentMessageFiles, spreadsheetPilot]
     );
 
     // Convert ProjectFile to MinimalNortPoleDocument format for viewing
@@ -435,10 +631,14 @@ const AppInputBar = React.memo(
       prevRenderCompleteRef.current = latestMessageRenderComplete;
 
       if (!wasReady && isReady && queuedMessages.length > 0) {
-        const nextMessage = queuedMessages[0]!.text;
+        const nextMessage = queuedMessages[0]!;
         isAutoSending.current = true;
         stopTTS();
-        onSubmit(nextMessage);
+        if (nextMessage.selections?.length) {
+          onSubmit(nextMessage.text, nextMessage.selections);
+        } else {
+          onSubmit(nextMessage.text);
+        }
         isAutoSending.current = false;
         removeCurrentQueuedMessage(0);
       }
@@ -472,7 +672,7 @@ const AppInputBar = React.memo(
     function handlePaste(event: React.ClipboardEvent) {
       if (disabled) return;
       const pastedFiles = getPastedFilesIfNoText(event.clipboardData);
-      if (pastedFiles.length > 0) {
+      if (!previewOnly && pastedFiles.length > 0) {
         event.preventDefault();
         handleFileUpload(pastedFiles);
         return;
@@ -614,6 +814,26 @@ const AppInputBar = React.memo(
       }
     }
 
+    const selectionChips = !isSearchMode && Boolean(selections?.length) && (
+      <div className="flex flex-wrap gap-1.5 px-2 py-1.5">
+        {selections?.map((item) => (
+          <ActionButton
+            key={`${item.kind}:${item.id}`}
+            type="button"
+            aria-label={quickAddCopy("remove", { name: item.label })}
+            className="inline-flex max-w-full items-center gap-1.5 rounded-lg border border-border-01 px-2 py-1 text-xs text-text-04 hover:bg-background-neutral-01"
+            onClick={() => toggleSelection(item)}
+          >
+            <span className="truncate">{item.label}</span>
+            <SvgX aria-hidden="true" className="size-3 shrink-0" />
+          </ActionButton>
+        ))}
+      </div>
+    );
+
+    const fileMenuLabel = showQuickAdd
+      ? quickAddCopy("label")
+      : t("appInputBar.attachFilesButton.tooltip");
     const chatControls = (
       <div
         {...(isSearchMode ? { inert: true } : {})}
@@ -626,7 +846,7 @@ const AppInputBar = React.memo(
         )}
       >
         {/* Bottom left controls */}
-        <div className="flex flex-row items-center">
+        {!previewOnly && <div className="flex flex-row items-center">
           {/* (+) button - always visible */}
           <FilePickerPopover
             onFileClick={handleFileClick}
@@ -651,14 +871,17 @@ const AppInputBar = React.memo(
             trigger={(open) => (
               <Button
                 disabled={disabled}
-                icon={SvgPaperclip}
-                tooltip={t("appInputBar.attachFilesButton.tooltip")}
-                aria-label={t("appInputBar.attachFilesButton.tooltip")}
+                icon={showQuickAdd ? SvgPlus : SvgPaperclip}
+                tooltip={fileMenuLabel}
+                aria-label={fileMenuLabel}
                 interaction={open ? "hover" : "rest"}
                 prominence="tertiary"
               />
             )}
             selectedFileIds={currentMessageFiles.map((f) => f.id)}
+            leadingItems={quickAddItems}
+            menuLabel={showQuickAdd ? quickAddCopy("label") : undefined}
+            uploadLabel={showQuickAdd ? quickAddCopy("localFiles") : undefined}
           />
 
           {/* Controls that load in when data is ready */}
@@ -677,6 +900,9 @@ const AppInputBar = React.memo(
                 agent={activeAgent}
                 toolConfiguration={toolConfiguration}
                 disabled={disabled}
+                composerIntegrations={
+                  showQuickAdd ? { hasSelection, toggleSelection } : undefined
+                }
               />
             )}
             {onToggleTabReading ? (
@@ -749,17 +975,104 @@ const AppInputBar = React.memo(
               );
             })()}
           </div>
-        </div>
+        </div>}
 
         {/* Bottom right controls */}
         <div className="flex flex-row items-center gap-1">
-          {showMicButton &&
+          {!previewOnly && modelComparison && !requiredModelId && !isSearchMode && (
+            <Disabled disabled={disabled || chatState !== "input"}>
+              <MultiModelSelector
+                compactSingle
+                selectedModels={modelComparison.selectedModels}
+                onAdd={modelComparison.addModel}
+                onRemove={modelComparison.removeModel}
+                onReplace={modelComparison.replaceModel}
+                requiresImageInput={llmManager.imageFilesPresent}
+                modelBlockedReason={modelBlockedReason}
+              />
+            </Disabled>
+          )}
+          {!previewOnly && llmManager.chatModelMode && !isMultiModelActive && (
+            requiredModelId ? (
+              <Popover>
+                <Popover.Trigger asChild>
+                  <Button
+                    icon={SvgSettings}
+                    aria-label={t("appInputBar.modelSettings.label")}
+                    prominence="tertiary"
+                  />
+                </Popover.Trigger>
+                <Popover.Content side="top" align="end">
+                  <div className="flex flex-col gap-2 p-3">
+                    <Text>{modelLabel || t("appInputBar.modelSettings.unavailable")}</Text>
+                    <Text>{t("appInputBar.modelSettings.required")}</Text>
+                  </div>
+                </Popover.Content>
+              </Popover>
+            ) : (
+              <ModelSelector
+                agentId={activeAgent?.id}
+                value={
+                  llmManager.chatModelMode === "manual"
+                    ? (llmManager.currentLlm.modelConfigurationId ?? null)
+                    : null
+                }
+                includeAutomatic
+                modelBlockedReason={modelBlockedReason}
+                requiresImageInput={llmManager.imageFilesPresent}
+                disabled={disabled || llmManager.isLoadingProviders}
+                onChange={(option) => {
+                  if (option.modelConfigurationId == null) {
+                    llmManager.resetChatModel?.();
+                  } else {
+                    llmManager.updateCurrentLlm(option);
+                  }
+                }}
+                renderTrigger={() => (
+                  <Button
+                    icon={SvgSettings}
+                    prominence="tertiary"
+                    disabled={disabled || llmManager.isLoadingProviders}
+                    aria-label={t("appInputBar.modelSettings.label")}
+                    tooltip={t("appInputBar.modelSettings.current", {
+                      model:
+                        llmManager.chatModelMode === "auto"
+                          ? t("appInputBar.modelSettings.auto")
+                          : (modelLabel || t("appInputBar.modelSettings.unavailable")),
+                    })}
+                  />
+                )}
+              />
+            )
+          )}
+          {!previewOnly && sttEnabled && ttsEnabled && (
+            <Button
+              icon={SvgAudio}
+              prominence={voiceModeEnabled ? "primary" : "tertiary"}
+              aria-pressed={voiceModeEnabled ?? false}
+              aria-label={t("appInputBar.voiceMode.label")}
+              tooltip={t(
+                voiceModeEnabled ? "appInputBar.voiceMode.on" : "appInputBar.voiceMode.off"
+              )}
+              disabled={disabled}
+              onClick={() => {
+                if (voiceModeEnabled) {
+                  stopTTS({ manual: true });
+                  void stopRecordingRef.current?.();
+                }
+                setVoiceModeEnabled(!voiceModeEnabled);
+              }}
+            />
+          )}
+          {!previewOnly && showMicButton &&
             (sttEnabled ? (
               <MicrophoneButton
                 onTranscription={(text) => setMessage(text)}
                 disabled={disabled || chatState === "streaming"}
-                autoSend={user?.preferences?.voice_auto_send ?? false}
-                autoListen={user?.preferences?.voice_auto_playback ?? false}
+                autoSend={voiceModeEnabled || (user?.preferences?.voice_auto_send ?? false)}
+                autoListen={
+                  voiceModeEnabled || (user?.preferences?.voice_auto_playback ?? false)
+                }
                 isNewSession={isNewSession}
                 chatState={chatState}
                 onRecordingChange={handleRecordingChange}
@@ -789,7 +1102,8 @@ const AppInputBar = React.memo(
               (isCheckingCompletion && chatState === "unconfirmed") ||
               (chatState === "input" &&
                 !isVoicePlaybackControllable &&
-                !message) ||
+                (!message || missingPilotInputs)) ||
+              (chatState === "streaming" && Boolean(message.trim()) && missingReportInputs) ||
               hasPendingFiles ||
               isClassifying
             }
@@ -798,7 +1112,8 @@ const AppInputBar = React.memo(
                 ? t("appInputBar.sendButton.stoppingLabel")
                 : hasPendingFiles
                   ? t("appInputBar.sendButton.processingFilesTooltip")
-                  : undefined
+                  : missingReportInputs ? reportingCopy("required")
+                    : missingSpreadsheet ? spreadsheetCopy("attach") : undefined
             }
             id="nortpole-chat-input-send-button"
             aria-label={
@@ -806,7 +1121,7 @@ const AppInputBar = React.memo(
                 ? t("appInputBar.sendButton.reloadLabel")
                 : chatState === "cancelling"
                   ? t("appInputBar.sendButton.stoppingLabel")
-                  : chatState !== "input" && message.trim()
+                  : chatState !== "input" && message.trim() && !spreadsheetPilot
                     ? t("appInputBar.sendButton.sendLabel")
                     : canStopGeneration || isVoicePlaybackControllable
                       ? t("appInputBar.sendButton.stopLabel")
@@ -819,7 +1134,7 @@ const AppInputBar = React.memo(
                   ? SvgRefreshCw
                   : isClassifying || chatState === "cancelling"
                     ? IconLoader
-                    : chatState !== "input" && message.trim()
+                    : chatState !== "input" && message.trim() && !spreadsheetPilot
                       ? SvgArrowUp
                       : canStopGeneration || isVoicePlaybackControllable
                         ? SvgStop
@@ -851,9 +1166,9 @@ const AppInputBar = React.memo(
                 return;
               }
               const canSubmitNormally = chatState === "input";
-              if (!canSubmitNormally && message.trim()) {
-                if (queuedMessages.length < MAX_QUEUED_MESSAGES) {
-                  enqueueCurrentMessage(message.trim());
+              if (!canSubmitNormally && message.trim() && !spreadsheetPilot) {
+                if (!missingReportInputs && queuedMessages.length < MAX_QUEUED_MESSAGES) {
+                  enqueueWithSelections();
                   clearMessage();
                   // Drop the draft now; a reload could outrace the debounced
                   // empty-save.
@@ -905,6 +1220,49 @@ const AppInputBar = React.memo(
               // modes. See the corresponding note there for details.
             )}
           >
+            {(contextPickers || showRoutePicker) && (
+              <div
+                className={cn(
+                  "flex flex-wrap items-center gap-1 border-b border-border-01 px-2 py-1",
+                  isRecording && "hidden"
+                )}
+              >
+                {contextPickers}
+                {showRoutePicker && (
+                  <RoutePicker
+                    llmManager={llmManager}
+                    requiredModelId={requiredModelId}
+                    applyDefault={isNewSession}
+                    disabled={disabled || isRecording || chatState !== "input"}
+                  />
+                )}
+              </div>
+            )}
+            {activeReview?.kind === "expense-review" && (
+              <ExpenseReviewForm
+                libraries={libraries}
+                files={currentMessageFiles}
+                initialLibrary={activeReview.library}
+                initialTitle={activeReview.option}
+                disabled={disabled || chatState !== "input" || isRecording || isVoicePlaybackActive}
+                onUpload={handleFileUpload}
+                onCancel={() => setReview(null)}
+                onRun={(library, policyTitle) => submitReview("expense-review", library, policyTitle)}
+              />
+            )}
+            {activeReview?.kind === "document-review" && (
+              <DocumentReviewForm
+                libraries={libraries}
+                packs={reviewPacks}
+                files={currentMessageFiles}
+                initialLibrary={activeReview.library}
+                initialPack={activeReview.option}
+                disabled={disabled || chatState !== "input" || isRecording || isVoicePlaybackActive}
+                onUpload={handleFileUpload}
+                onCancel={() => setReview(null)}
+                onRun={(library, pack) => submitReview("document-review", library, pack)}
+              />
+            )}
             {/* Voice waveform overlay (positioned outside normal flow to avoid resizing input) */}
             {isTTSActuallySpeaking ? (
               <div className="absolute bottom-full mb-1 start-1 z-10">
@@ -963,13 +1321,13 @@ const AppInputBar = React.memo(
                 <Popover.Anchor asChild>
                   <div
                     ref={inputWrapperRef}
-                    className="px-3 py-2 flex-1 flex h-11 overflow-hidden"
+                    className={cn("px-3 py-2 flex-1 flex overflow-hidden", meetingPilot ? "h-28" : "h-11")}
                   >
                     <div
                       ref={inputRef}
                       id="nortpole-chat-input-textbox"
                       role="textbox"
-                      aria-label={t("appInputBar.input.ariaLabel")}
+                      aria-label={meetingPilot ? meetingCopy("placeholder") : t("appInputBar.input.ariaLabel")}
                       contentEditable={!disabled}
                       // Direction follows what the user types. While empty
                       // it follows the placeholder so its punctuation sits
@@ -998,7 +1356,7 @@ const AppInputBar = React.memo(
                       }}
                       aria-multiline={true}
                       aria-disabled={disabled}
-                      aria-placeholder={t("appInputBar.input.placeholder")}
+                      aria-placeholder={activePlaceholder}
                       data-placeholder={activePlaceholder}
                       data-empty={!message ? "" : undefined}
                       onKeyDown={(event) => {
@@ -1033,9 +1391,11 @@ const AppInputBar = React.memo(
                             !disabled &&
                             !isClassifying &&
                             !hasPendingFiles &&
+                            !spreadsheetPilot &&
+                            !missingReportInputs &&
                             queuedMessages.length < MAX_QUEUED_MESSAGES
                           ) {
-                            enqueueCurrentMessage(message.trim());
+                            enqueueWithSelections();
                             clearMessage();
                             // Drop the draft now; a reload could outrace the
                             // debounced empty-save.
@@ -1130,6 +1490,39 @@ const AppInputBar = React.memo(
               )}
             </div>
 
+            {agentPilot?.kind === "document-analysis" && (
+              <PilotDocumentPicker key={selectionScope} libraries={agentPilot.libraries} selected={pilotDocuments}
+                onToggle={toggleSelection} disabled={disabled || chatState !== "input"} />
+            )}
+            {reporting && (
+              <ReportingInputs libraries={reporting.libraries}
+                value={report ?? { start: "", end: "", libraryIds: [] }}
+                onChange={(value) => setReportSelection({ scope: selectionScope, value })}
+                disabled={disabled || chatState !== "input"} />
+            )}
+            {spreadsheetPilot && (
+              <fieldset disabled={disabled || chatState !== "input" || currentMessageFiles.length > 0}
+                className="rounded-lg border border-border-01 px-3 py-2 text-sm">
+                <label className="flex flex-col gap-1">
+                  {spreadsheetCopy("attach")}
+                  <NativeInput type="file" accept=".csv,.xlsx" className="text-text-04"
+                    onChange={(event) => {
+                      const file = event.target.files?.[0];
+                      event.target.value = "";
+                      if (!file) return;
+                      if (!/\.(csv|xlsx)$/i.test(file.name) || file.size > 1024 * 1024) {
+                        setSpreadsheetError(spreadsheetCopy("invalidFile"));
+                        return;
+                      }
+                      setSpreadsheetError(null);
+                      void handleFileUpload([file]);
+                      if (!message.trim()) setMessage(spreadsheetCopy("prompt"));
+                    }} />
+                </label>
+                {spreadsheetError && <p role="alert" className="text-status-text-error-05">{spreadsheetError}</p>}
+              </fieldset>
+            )}
+            {selectionChips}
             {chatControls}
 
             {/* First recording cycle waveform below input */}

@@ -1,6 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { ResponsiveLayout } from "@opal/layouts";
+import { NativeInput } from "@opal/components";
+import { useTranslations as useWorkspaceTranslations } from "next-intl";
+import { useId, useState } from "react";
 import { useRoutePolicy } from "@/lib/routePolicy/hooks";
 import { saveUserPreferences, useUserPreferences, type DefaultRoute } from "@/lib/userPreferences/hooks";
 import type { RouteKind } from "@/lib/routePolicy/types";
@@ -16,6 +19,8 @@ const card = "rounded-2xl border border-border-01 bg-background-neutral-00 p-5 s
 
 /** Personal model settings: a default route for new tasks, and the routes your administrator allows. */
 export default function ModelsSettings() {
+  const inputPrefix = useId();
+  const workspaceText = useWorkspaceTranslations("workspaceUi");
   const { data: policy } = useRoutePolicy();
   const { data: prefs } = useUserPreferences();
   const [status, setStatus] = useState<"idle" | "saved" | "error">("idle");
@@ -41,20 +46,20 @@ export default function ModelsSettings() {
     policy && pref !== "auto" && !policy.routes.some((r) => r.kind === pref && r.allowed);
 
   return (
-    <div className="flex flex-col gap-6" data-testid="models-settings">
+    <ResponsiveLayout display="flex" className="flex-col gap-6" data-testid="models-settings">
       <section className={card} aria-labelledby="ms-default">
-        <h2 id="ms-default" className="mb-1 text-base font-semibold text-text-05">Default route</h2>
-        <p className="mb-4 text-sm text-text-03">
-          Where new tasks run unless you pick another route. Your administrator's policy always comes first: a route it
-          blocks for your workspace's data cannot be used, whatever you choose here.
-        </p>
-        <div role="radiogroup" aria-label="Default route" className="flex flex-col gap-2">
+        <h2 id="ms-default" className="mb-1 text-base font-semibold text-text-05">{workspaceText("defaultRoute")}</h2>
+        <p className="mb-4 text-sm text-text-03">{workspaceText("whereNewTasksRunUnlessYouPickAnotherRoute")}</p>
+        <ResponsiveLayout display="flex" role="radiogroup" aria-label={workspaceText("defaultRoute")} className="flex-col gap-2">
           {options.map((o) => (
-            <label
+            <ResponsiveLayout
               key={o.value}
-              className={`flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border px-4 py-2 ${pref === o.value ? "border-text-05 bg-background-neutral-01" : "border-border-01"}`}
+              display="flex"
+              className={`min-h-12 items-center gap-3 rounded-xl border px-4 py-2 ${pref === o.value ? "border-text-05 bg-background-neutral-01" : "border-border-01"}`}
             >
-              <input
+              <NativeInput
+                id={inputPrefix + o.value}
+                aria-describedby={inputPrefix + o.value + "-help"}
                 type="radio"
                 name="default-route"
                 className="h-4 w-4"
@@ -62,35 +67,32 @@ export default function ModelsSettings() {
                 onChange={() => choose(o.value)}
               />
               <span>
-                <span className="block text-sm font-semibold text-text-05">{o.label}</span>
-                <span className="block text-xs text-text-03">{o.help}</span>
+                <label htmlFor={inputPrefix + o.value} className="block cursor-pointer text-sm font-semibold text-text-05">{o.label}</label>
+                <span id={inputPrefix + o.value + "-help"} className="block text-xs text-text-03">{o.help}</span>
               </span>
-            </label>
+            </ResponsiveLayout>
           ))}
-        </div>
+        </ResponsiveLayout>
         {status === "saved" && (
-          <p role="status" className="mt-3 text-sm text-status-success-05">Saved.</p>
+          <p role="status" className="mt-3 text-sm text-status-success-05">{workspaceText("saved")}</p>
         )}
         {status === "error" && (
-          <p role="alert" className="mt-3 text-sm text-status-text-error-05">Could not save. Try again in a moment.</p>
+          <p role="alert" className="mt-3 text-sm text-status-text-error-05">{workspaceText("couldNotSaveTryAgainInAMoment")}</p>
         )}
         {blockedPref && (
-          <p role="status" className="mt-3 text-sm text-status-text-error-05">
-            Your administrator's policy does not currently allow {KIND_LABEL[pref as RouteKind]} routes for this workspace's
-            data, so Auto is used instead.
-          </p>
+          <p role="status" className="mt-3 text-sm text-status-text-error-05">{workspaceText("yourAdministratorSPolicyDoesNotCurrentlyAllow")}{" "}{KIND_LABEL[pref as RouteKind]}{" "}{workspaceText("routesForThisWorkspaceSDataSoAutoIs")}</p>
         )}
-        <p className="mt-3 text-xs text-text-03">Saved to your account, so it follows you to other devices.</p>
+        <p className="mt-3 text-xs text-text-03">{workspaceText("savedToYourAccountSoItFollowsYouTo")}</p>
       </section>
 
       <section className={card} aria-labelledby="ms-routes">
-        <h2 id="ms-routes" className="mb-1 text-base font-semibold text-text-05">Routes you can use</h2>
+        <h2 id="ms-routes" className="mb-1 text-base font-semibold text-text-05">{workspaceText("routesYouCanUse")}</h2>
         <p className="mb-4 text-sm text-text-03">
           {policy
             ? `This workspace treats data as ${policy.data_class} (policy v${policy.version}).`
             : "Loading the policy…"}
         </p>
-        {policy && policy.routes.length === 0 && <p className="text-sm text-text-03">No model routes are set up yet.</p>}
+        {policy && policy.routes.length === 0 && <p className="text-sm text-text-03">{workspaceText("noModelRoutesAreSetUpYet")}</p>}
         <ul className="divide-y divide-border-01">
           {policy?.routes.map((r) => (
             <li key={r.provider_id} className="flex flex-wrap items-center gap-3 py-3">
@@ -109,6 +111,6 @@ export default function ModelsSettings() {
           ))}
         </ul>
       </section>
-    </div>
+    </ResponsiveLayout>
   );
 }

@@ -333,6 +333,7 @@ class GenerationRequestParams(BaseModel):
     reasoning_effort: ReasoningEffort
     max_tokens: int | None
     sent_kwargs: dict[str, JsonValue]
+    served_model: str | None = None
 
 
 class _Event(BaseModel):

@@ -61,6 +61,8 @@ def next_run(cadence: str, at_time: str, tz: str, weekday: int | None, month_day
 
 
 def describe(cadence: str, at_time: str, tz: str, weekday: int | None, month_day: int | None, run_on: datetime.date | None) -> str:
+    if cadence == "source":
+        return "When a document changes in Knowledge"
     days = ["Mondays", "Tuesdays", "Wednesdays", "Thursdays", "Fridays", "Saturdays", "Sundays"]
     when = {"once": f"Once on {run_on.isoformat() if run_on else '?'}", "daily": "Every day", "weekdays": "Weekdays",
             "weekly": days[weekday] if weekday is not None else "Weekly", "monthly": f"Monthly on day {month_day}"}[cadence]

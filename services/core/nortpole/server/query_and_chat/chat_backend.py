@@ -4,7 +4,7 @@ import time
 from collections.abc import Generator
 from concurrent.futures import Future
 from datetime import timedelta
-from typing import Annotated
+from typing import Annotated, Literal
 from uuid import UUID
 
 from fastapi import (
@@ -18,12 +18,14 @@ from fastapi import (
 )
 from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel
-from sqlalchemy.orm import Session
+from sqlalchemy import String, cast, literal, or_, select, tuple_, union_all
+from sqlalchemy.orm import Session, aliased
 
 from nortpole.access.access import user_can_access_chat_file
+from nortpole.agents.models import RunStatus
 from nortpole.auth.api_key import get_hashed_api_key_from_request
 from nortpole.auth.pat import get_hashed_pat_from_request
-from nortpole.auth.permissions import require_permission
+from nortpole.auth.permissions import has_global_permission, require_permission, resolve_effective_permissions
 from nortpole.auth.users import current_chat_accessible_user
 from nortpole.background.task_utils import enqueue_user_file_deletes
 from nortpole.cache.factory import get_cache_backend
@@ -41,7 +43,7 @@ from nortpole.chat.incognito import (
     incognito_allowed_for_user,
 )
 from nortpole.chat.incognito_context import teardown_incognito_session
-from nortpole.chat.models import ChatFullResponse, ChatResponseOutcome, CreateChatSessionID
+from nortpole.chat.models import ChatFullResponse, ChatResponseOutcome, CreateChatSessionResponse
 from nortpole.chat.process_message import (
     handle_multi_model_stream,
     handle_stream_message_objects,
@@ -88,8 +90,11 @@ from nortpole.db.incognito import (
     is_incognito_teardown_target,
     mark_incognito_user_files_deleting,
 )
-from nortpole.db.models import ChatMessage, ChatSessionSharedStatus, Persona, User
-from nortpole.db.persona import get_persona_by_id
+from nortpole.db.models import AgentRelease, ChatMessage, ChatSession, ChatSessionSharedStatus, Persona, User
+from nortpole.chat.agent_pilots import AgentPilotInput, describe_pilot
+from nortpole.chat.agent_preview import require_preview_access
+from nortpole.chat.agent_releases import pinned_agent_release
+from nortpole.db.persona import get_persona_by_id, user_can_access_persona
 from nortpole.db.usage import UsageType, increment_usage
 from nortpole.db.user_file import get_file_id_by_user_file_id
 from nortpole.error_handling.error_codes import NortPoleErrorCode
@@ -170,6 +175,15 @@ from nortpole.tracing.framework.create import ChatTraceMetadata, ensure_trace
 from nortpole.utils.headers import get_relevant_headers
 from nortpole.utils.logger import setup_logger
 from nortpole.utils.telemetry import mt_cloud_telemetry
+from nortpole.work.document_reviews import open_finding_counts, router as document_reviews_router
+from nortpole.work.tasks.models import NortPoleTask
+from nortpole.work.workflow_schedules.recovery import can_retry
+from nortpole.work.workflow_schedules.runner import INTERRUPTED_AFTER, effective_outcome
+from nortpole.work.workflow_schedules.models import (
+    DriveRunSource,
+    NortPoleWorkflowRun,
+    NortPoleWorkflowSchedule,
+)
 from shared_configs.contextvars import get_current_tenant_id
 
 logger = setup_logger()
@@ -178,6 +192,7 @@ logger = setup_logger()
 MAX_CHAT_SESSION_PAGE_SIZE = 200
 
 router = APIRouter(prefix="/chat")
+router.include_router(document_reviews_router)
 
 
 def _get_available_tokens_for_persona(
@@ -217,6 +232,275 @@ def _get_available_tokens_for_persona(
         model_max_input_tokens=llm.config.max_input_tokens,
         system_and_agent_prompt_tokens=combined_prompt_tokens,
         num_tools=len(persona.tools),
+    )
+
+
+class ExpenseReviewRun(BaseModel):
+    id: int
+    chat_session_id: UUID
+    file_name: str | None
+    created_at: datetime.datetime
+    status: Literal["complete", "needs_review", "stopped", "failed", "running", "interrupted"]
+    drive_source: DriveRunSource | None = None
+    workflow: Literal["expense_review", "document_review"] = "expense_review"
+    open_findings: int | None = None
+    revision_of: int | None = None
+
+
+class SkippedExpenseReview(BaseModel):
+    id: UUID
+    name: str
+    created_at: datetime.datetime
+    reason: str | None
+
+
+class ExpenseReviewRunPage(BaseModel):
+    runs: list[ExpenseReviewRun]
+    next_before_id: int | None = None
+    recent_skips: list[SkippedExpenseReview]
+
+
+@router.get("/expense-review-runs")
+def list_expense_review_runs(
+    user: User = Depends(require_permission(Permission.READ_CHAT)),
+    db_session: Session = Depends(get_session),
+    page_size: Annotated[int, Query(ge=1, le=100)] = 25,
+    before_id: Annotated[int | None, Query(gt=0)] = None,
+) -> ExpenseReviewRunPage:
+    """List completed or stopped Expense Review responses in the caller's chat history."""
+    return _review_runs(user, db_session, page_size, before_id, include_document=False)
+
+
+@router.get("/workflow-runs")
+def list_workflow_runs(
+    user: User = Depends(require_permission(Permission.READ_CHAT)),
+    db_session: Session = Depends(get_session),
+    page_size: Annotated[int, Query(ge=1, le=100)] = 25,
+    before_id: Annotated[int | None, Query(gt=0)] = None,
+) -> ExpenseReviewRunPage:
+    return _review_runs(user, db_session, page_size, before_id, include_document=True)
+
+
+def _review_runs(
+    user: User, db_session: Session, page_size: int, before_id: int | None, *,
+    include_document: bool, response_ids: list[int] | None = None,
+) -> ExpenseReviewRunPage:
+    parent = aliased(ChatMessage)
+    expense = ChatMessage.receipt_review_needs_review.is_not(None)
+    document = ChatMessage.document_review_needs_review.is_not(None)
+    stmt = (
+        select(
+            ChatMessage.id,
+            ChatMessage.chat_session_id,
+            ChatMessage.time_sent,
+            ChatMessage.response_status,
+            ChatMessage.receipt_review_needs_review,
+            ChatMessage.document_review_needs_review,
+            ChatMessage.document_review_report,
+            parent.files,
+            NortPoleWorkflowRun.drive_source,
+        )
+        .join(ChatSession, ChatSession.id == ChatMessage.chat_session_id)
+        .outerjoin(
+            NortPoleWorkflowRun,
+            NortPoleWorkflowRun.chat_session_id == ChatMessage.chat_session_id,
+        )
+        .outerjoin(
+            parent,
+            (parent.id == ChatMessage.parent_message_id)
+            & (parent.chat_session_id == ChatMessage.chat_session_id),
+        )
+        .where(
+            ChatSession.user_id == user.id,
+            ChatSession.deleted.is_(False),
+            ChatSession.incognito_record_mode.is_(None),
+            or_(expense, document) if include_document else expense,
+        )
+        .order_by(ChatMessage.id.desc())
+        .limit(page_size + 1)
+    )
+    if response_ids is not None:
+        stmt = stmt.where(ChatMessage.id.in_(response_ids))
+    else:
+        stmt = stmt.where(ChatMessage.response_status.in_(
+            (RunStatus.COMPLETE, RunStatus.CANCELLED, RunStatus.ERROR, RunStatus.LIMIT)
+        ))
+    if before_id is not None:
+        stmt = stmt.where(ChatMessage.id < before_id)
+    rows = db_session.execute(stmt).all()
+    counts = open_finding_counts(db_session, {
+        row.id: row.document_review_report
+        for row in rows[:page_size]
+        if row.document_review_report is not None and row.response_status == RunStatus.COMPLETE
+    })
+    runs: list[ExpenseReviewRun] = []
+    for response_id, session_id, when, outcome, expense_review, document_review, report, files, drive_source in rows[:page_size]:
+        status: Literal["complete", "needs_review", "stopped", "failed", "running", "interrupted"]
+        open_findings = counts.get(response_id)
+        if outcome == RunStatus.COMPLETE:
+            needs_review = (expense_review or document_review) if open_findings is None else bool(open_findings)
+            status = "needs_review" if needs_review else "complete"
+        elif outcome == RunStatus.CANCELLED:
+            status = "stopped"
+        elif outcome is None or not outcome.is_terminal:
+            status = "interrupted" if when + INTERRUPTED_AFTER <= datetime.datetime.now(datetime.timezone.utc) else "running"
+        else:
+            status = "failed"
+        runs.append(ExpenseReviewRun(
+            id=response_id,
+            chat_session_id=session_id,
+            file_name=files[0].get("name") if files else None,
+            created_at=when,
+            status=status,
+            drive_source=drive_source if document_review is None else None,
+            workflow="expense_review" if document_review is None else "document_review",
+            open_findings=open_findings,
+            revision_of=((report or {}).get("revision") or {}).get("previous_id"),
+        ))
+    skips = []
+    if before_id is None and response_ids is None:
+        skipped_rows = db_session.execute(
+            select(NortPoleWorkflowRun.id, NortPoleWorkflowSchedule.name,
+                   NortPoleWorkflowRun.fired_at, NortPoleWorkflowRun.reason)
+            .join(NortPoleWorkflowSchedule)
+            .where(NortPoleWorkflowSchedule.owner_id == user.id,
+                   NortPoleWorkflowRun.outcome.in_(("no_new_csv", "drive_skipped")))
+            .order_by(NortPoleWorkflowRun.fired_at.desc())
+            .limit(5)
+        )
+        skips = [
+            SkippedExpenseReview(id=run_id, name=name, created_at=when, reason=reason)
+            for run_id, name, when, reason in skipped_rows
+        ]
+    return ExpenseReviewRunPage(
+        runs=runs,
+        next_before_id=runs[-1].id if len(rows) > page_size else None,
+        recent_skips=skips,
+    )
+
+
+class ScheduledRunEntry(BaseModel):
+    id: UUID
+    schedule_id: UUID
+    name: str
+    created_at: datetime.datetime
+    trigger: str | None
+    schedule_version: int | None
+    started_at: datetime.datetime | None
+    completed_at: datetime.datetime | None
+    outcome: str
+    reason: str | None
+    task_id: UUID | None
+    task_state: str | None
+    chat_session_id: UUID | None
+    chat_message_id: int | None = None
+    file_name: str | None = None
+    drive_source: DriveRunSource | None
+    expense_review: bool
+    retry_of_id: UUID | None = None
+    retry_id: UUID | None = None
+    can_retry: bool = False
+
+
+class WorkflowRunCursor(BaseModel):
+    at: datetime.datetime
+    key: str
+
+
+class WorkflowRunFeed(BaseModel):
+    runs: list[ScheduledRunEntry | ExpenseReviewRun]
+    next_before: WorkflowRunCursor | None = None
+
+
+@router.get("/workflow-run-feed")
+def workflow_run_feed(
+    user: User = Depends(require_permission(Permission.READ_CHAT)),
+    db_session: Session = Depends(get_session),
+    page_size: Annotated[int, Query(ge=1, le=100)] = 25,
+    before_at: datetime.datetime | None = None,
+    before_key: Annotated[str | None, Query(max_length=50)] = None,
+    include_run: UUID | None = None,
+) -> WorkflowRunFeed:
+    """Merge private schedule runs and direct Chat reviews with one stable cursor."""
+    run = NortPoleWorkflowRun
+    schedule = NortPoleWorkflowSchedule
+    message = ChatMessage
+    scheduled_keys = select(
+        (literal("run:") + cast(run.id, String)).label("key"), run.fired_at.label("at"),
+    ).join(schedule, schedule.id == run.schedule_id).where(schedule.owner_id == user.id)
+    review_keys = select(
+        (literal("review:") + cast(message.id, String)).label("key"), message.time_sent.label("at"),
+    ).join(ChatSession, ChatSession.id == message.chat_session_id).where(
+        ChatSession.user_id == user.id,
+        ChatSession.deleted.is_(False),
+        ChatSession.incognito_record_mode.is_(None),
+        or_(message.receipt_review_needs_review.is_not(None), message.document_review_needs_review.is_not(None)),
+        ~select(run.id).where(run.chat_session_id == message.chat_session_id).exists(),
+    )
+    keys = union_all(scheduled_keys, review_keys).subquery()
+    selection = select(keys).order_by(keys.c.at.desc(), keys.c.key.desc()).limit(page_size + 1)
+    if before_at is not None and before_key is not None:
+        selection = selection.where(tuple_(keys.c.at, keys.c.key) < tuple_(before_at, before_key))
+    rows = db_session.execute(selection).all()
+    page = rows[:page_size]
+    order = [row.key for row in page]
+    if include_run and f"run:{include_run}" not in order:
+        order.insert(0, f"run:{include_run}")
+
+    run_ids = [UUID(key.removeprefix("run:")) for key in order if key.startswith("run:")]
+    review_ids = [int(key.removeprefix("review:")) for key in order if key.startswith("review:")]
+    entries: dict[str, ScheduledRunEntry | ExpenseReviewRun] = {}
+    if run_ids:
+        now = datetime.datetime.now(datetime.timezone.utc)
+        retry = aliased(NortPoleWorkflowRun)
+        for record, definition, task, chat, retry_id in db_session.execute(
+            select(run, schedule, NortPoleTask, ChatSession, retry.id)
+            .join(schedule, schedule.id == run.schedule_id)
+            .outerjoin(retry, (retry.retry_of_id == run.id) & (retry.schedule_id == schedule.id))
+            .outerjoin(NortPoleTask, (NortPoleTask.id == run.task_id) & (NortPoleTask.owner_id == user.id))
+            .outerjoin(ChatSession, (
+                (ChatSession.id == run.chat_session_id) & (ChatSession.user_id == user.id)
+                & ChatSession.deleted.is_(False) & ChatSession.incognito_record_mode.is_(None)
+            ))
+            .where(schedule.owner_id == user.id, run.id.in_(run_ids))
+        ):
+            entries[f"run:{record.id}"] = ScheduledRunEntry(
+                id=record.id, schedule_id=definition.id, name=definition.name, created_at=record.fired_at,
+                trigger=record.trigger, schedule_version=record.schedule_version, started_at=record.started_at,
+                completed_at=record.completed_at, outcome=effective_outcome(record, now), reason=record.reason,
+                task_id=task.id if task else None, task_state=task.state if task else None,
+                chat_session_id=chat.id if chat else None, drive_source=record.drive_source,
+                chat_message_id=record.chat_result_id if chat else None,
+                expense_review=definition.expense_review is not None,
+                retry_of_id=record.retry_of_id, retry_id=retry_id,
+                can_retry=retry_id is None and can_retry(db_session, definition, record, task),
+            )
+        scheduled = [entry for entry in entries.values() if isinstance(entry, ScheduledRunEntry) and entry.chat_session_id]
+        if scheduled:
+            parent = aliased(ChatMessage)
+            results = {
+                chat_id: (response_id, files[0].get("name") if files else None)
+                for chat_id, response_id, files in db_session.execute(
+                    select(message.chat_session_id, message.id, parent.files)
+                    .outerjoin(parent, (parent.id == message.parent_message_id) & (parent.chat_session_id == message.chat_session_id))
+                    .where(
+                        message.chat_session_id.in_([entry.chat_session_id for entry in scheduled]),
+                        message.receipt_review_needs_review.is_not(None),
+                    )
+                    .distinct(message.chat_session_id)
+                    .order_by(message.chat_session_id, message.id)
+                )
+            }
+            for entry in scheduled:
+                message_id, file_name = results.get(entry.chat_session_id, (None, None))
+                if entry.chat_message_id is None or entry.chat_message_id == message_id:
+                    entry.chat_message_id, entry.file_name = message_id, file_name
+    if review_ids:
+        reviews = _review_runs(user, db_session, page_size, None, include_document=True, response_ids=review_ids)
+        entries.update({f"review:{review.id}": review for review in reviews.runs})
+    return WorkflowRunFeed(
+        runs=[entries[key] for key in order if key in entries],
+        next_before=WorkflowRunCursor(at=page[-1].at, key=page[-1].key) if len(rows) > page_size else None,
     )
 
 
@@ -272,6 +556,7 @@ def get_user_chat_sessions(
                 current_alternate_model=chat.current_alternate_model,
                 current_temperature_override=chat.temperature_override,
                 current_reasoning_effort_override=chat.reasoning_effort_override,
+                agent_preview_name=chat.agent_preview.name if chat.agent_preview else None,
             )
             for chat in chat_sessions
         ],
@@ -506,6 +791,7 @@ def get_chat_session(
         if msg.message_type == MessageType.ASSISTANT
     ]
 
+    release = db_session.get(AgentRelease, chat_session.agent_release_id) if chat_session.agent_release_id is not None else None
     return ChatSessionDetailResponse(
         chat_session_id=session_id,
         description=chat_session.description,
@@ -525,8 +811,35 @@ def get_chat_session(
         current_stream=current_stream,
         is_processing=is_processing,
         incognito=chat_session.incognito_record_mode is not None,
+        agent_preview_name=chat_session.agent_preview.name if chat_session.agent_preview else None,
+        agent_release_version=release.version if release is not None else None,
         has_older_messages=has_older_messages,
     )
+
+
+@router.get("/pilot-input/{session_id}")
+def get_chat_pilot_input(
+    session_id: UUID,
+    user: User = Depends(require_permission(Permission.READ_CHAT)),
+    db_session: Session = Depends(get_session),
+) -> AgentPilotInput | None:
+    try:
+        chat = get_chat_session_by_id(session_id, user.id, db_session)
+    except ValueError as exc:
+        raise NortPoleError(NortPoleErrorCode.NOT_FOUND, "Chat unavailable.") from exc
+    if chat.user_id != user.id:
+        raise NortPoleError(NortPoleErrorCode.NOT_FOUND, "Chat unavailable.")
+    if chat.agent_preview is not None:
+        if chat.agent_preview.pilot is None:
+            return None
+        require_preview_access(chat.persona, user, db_session)
+        return describe_pilot(chat.agent_preview, user, db_session)
+    if chat.agent_release_id is None:
+        return None
+    if chat.persona_id is None or not user_can_access_persona(db_session, chat.persona_id, user):
+        raise NortPoleError(NortPoleErrorCode.NOT_FOUND, "Agent unavailable.")
+    release = pinned_agent_release(chat, db_session)
+    return describe_pilot(release.configuration, user, db_session) if release else None
 
 
 @router.post("/create-chat-session", tags=PUBLIC_API_TAGS)
@@ -536,7 +849,7 @@ def create_new_chat_session(
         require_permission(Permission.WRITE_CHAT, allow_anonymous=True)
     ),
     db_session: Session = Depends(get_session),
-) -> CreateChatSessionID:
+) -> CreateChatSessionResponse:
     try:
         new_chat_session = create_chat_session_from_request(
             chat_session_request=chat_session_creation_request,
@@ -553,9 +866,14 @@ def create_new_chat_session(
         logger.exception(e)
         raise HTTPException(status_code=400, detail="Invalid Persona provided.")
 
-    return CreateChatSessionID(
+    release = (
+        db_session.get(AgentRelease, new_chat_session.agent_release_id)
+        if new_chat_session.agent_release_id is not None else None
+    )
+    return CreateChatSessionResponse(
         chat_session_id=new_chat_session.id,
         incognito=new_chat_session.incognito_record_mode is not None,
+        agent_release_version=release.version if release is not None else None,
     )
 
 
@@ -881,6 +1199,19 @@ def handle_send_chat_message(
     Returns:
         StreamingResponse | ChatFullResponse: Either streams or returns complete response.
     """
+    if chat_message_req.search_evidence:
+        token_scopes: list[Permission] | None = getattr(  # ods: ignore[getattr]
+            request.state, "token_scopes", None
+        )
+        if user.is_anonymous or not has_global_permission(user, Permission.READ_SEARCH) or (
+            token_scopes is not None and Permission.READ_SEARCH.value not in
+            resolve_effective_permissions({permission.value for permission in token_scopes})
+        ):
+            raise NortPoleError(
+                NortPoleErrorCode.INSUFFICIENT_PERMISSIONS,
+                "You do not have permission to use Search evidence.",
+            )
+
     # Session id only: the session's incognito mode isn't loaded yet, and a
     # verbatim prompt in the debug log would be exactly the durable message
     # log incognito must never leave behind.
@@ -1209,6 +1540,7 @@ def fetch_chat_file(
     parsed: bool = Query(False),
     user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
     db_session: Session = Depends(get_session),
+    fresh: bool = False,
 ) -> Response:
     # For user files, we need to get the file id from the user file id
     file_id_from_user_file = get_file_id_by_user_file_id(file_id, db_session)
@@ -1239,18 +1571,17 @@ def fetch_chat_file(
         fallback_disposition=None if parse_spreadsheet else "attachment",
     )
 
-    # Files served here are immutable (content-addressed by file_id), so allow long-lived caching.
-    # Use `private` because this is behind auth / tenant scoping.
+    # Search links opt out of caching so reopening the file checks current access.
     etag_variant: str = "-parsed" if parse_spreadsheet else ""
     etag: str = f'"{file_id}{etag_variant}-{RESPONSE_POLICY_VERSION}"'
     cache_headers: dict[str, str] = {
-        "Cache-Control": "private, max-age=31536000, immutable",
+        "Cache-Control": "private, no-store" if fresh else "private, max-age=31536000, immutable",
         "ETag": etag,
         "Vary": "Cookie",
         **security_headers,
     }
 
-    if request.headers.get("if-none-match") == etag:
+    if not fresh and request.headers.get("if-none-match") == etag:
         return Response(status_code=304, headers=cache_headers)
 
     if parse_spreadsheet:

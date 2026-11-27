@@ -1,5 +1,6 @@
 "use client";
 
+import AgentVerificationBadge from "./AgentVerificationBadge";
 import { useNavigation } from "@opal/navigation";
 import { createContext, useCallback, useContext, useMemo } from "react";
 import { useTranslations } from "next-intl";
@@ -108,74 +109,64 @@ export function AgentCard({ agent, onView, viewing = false }: AgentCardProps) {
         data-agent-card=""
       >
         <Hoverable.Root group="AgentCard" height="full">
-          {/* The card has a fixed height; the footer sits at its bottom. */}
           <Section
             justifyContent="between"
             alignItems="stretch"
             gap={0}
-            className="relative"
           >
-            <Section gap={1} padding={1} alignItems="stretch" height="fit">
-              <ContentAction
-                font="main-content-emphasis"
-                icon={(props) => <AgentAvatar agent={agent} {...props} />}
-                title={agent.name}
-                description={`${t("card.by.label")} ${
-                  agent.owner?.email?.split("@")[0] || "NortPole"
-                }`}
-                titleMaxLines={1}
-                padding={1.5}
-              />
-              <Section
-                className="absolute right-1 top-1"
-                flexDirection="row"
-                width="fit"
-                height="fit"
-                gap={0}
-                padding={1}
-              >
-                {/* Edit and share float over the title on hover, so the
-                        title keeps the full width at rest. */}
-                <div className="absolute right-11 top-2 flex flex-row rounded-08">
-                  {can(agent, "edit") && (
-                    <Hoverable.Item group="AgentCard">
-                      <Button
-                        icon={SvgEdit}
-                        prominence="tertiary"
-                        size="md"
-                        onClick={noProp(() =>
-                          navigation.go(`/app/agents/edit/${agent.id}`),
-                        )}
-                        tooltip={t("card.edit.tooltip")}
-                      />
+            <Section gap={0} padding={1} alignItems="stretch" height="fit">
+              <div className="min-w-0 wrap-anywhere">
+                <ContentAction
+                  font="main-content-emphasis"
+                  icon={(props) => <AgentAvatar agent={agent} {...props} />}
+                  title={agent.name}
+                  padding={1.5}
+                />
+              </div>
+              <div className="px-2">
+                <Section flexDirection="row" justifyContent="between" height="fit" gap={1}>
+                  <Text as="p" font="secondary-body" color="text-03" maxLines={1}>
+                    {`${t("card.by.label")} ${agent.owner?.email?.split("@")[0] || "NortPole"}`}
+                  </Text>
+                  <Section flexDirection="row" width="fit" height="fit" gap={0}>
+                    {can(agent, "edit") && (
+                      <Hoverable.Item group="AgentCard">
+                        <Button
+                          icon={SvgEdit}
+                          prominence="tertiary"
+                          size="md"
+                          onClick={noProp(() =>
+                            navigation.go(`/app/agents/edit/${agent.id}`),
+                          )}
+                          tooltip={t("card.edit.tooltip")}
+                        />
+                      </Hoverable.Item>
+                    )}
+                    {can(agent, "share") && (
+                      <Hoverable.Item group="AgentCard">
+                        <Button
+                          icon={SvgShare}
+                          prominence="tertiary"
+                          size="md"
+                          onClick={noProp(() => shareAgentModal.toggle(true))}
+                          tooltip={t("card.share.tooltip")}
+                        />
+                      </Hoverable.Item>
+                    )}
+                    <Hoverable.Item group="AgentCard" revealed={pinned}>
+                      {pinButton}
                     </Hoverable.Item>
-                  )}
-                  {can(agent, "share") && (
-                    <Hoverable.Item group="AgentCard">
-                      <Button
-                        icon={SvgShare}
-                        prominence="tertiary"
-                        size="md"
-                        onClick={noProp(() => shareAgentModal.toggle(true))}
-                        tooltip={t("card.share.tooltip")}
-                      />
-                    </Hoverable.Item>
-                  )}
-                </div>
-                {/* A pinned agent shows its pin at rest; an unpinned one only
-                        offers the action on hover. One wrapper either way, so the pin
-                        keeps its element and its rotation animates. */}
-                <Hoverable.Item group="AgentCard" revealed={pinned}>
-                  {pinButton}
-                </Hoverable.Item>
-              </Section>
+                  </Section>
+                </Section>
+              </div>
               {agent.description && (
-                <div className="px-2">
+                <div className="px-2 pb-2 wrap-anywhere">
                   <Text
                     as="p"
                     font="secondary-body"
                     color="text-03"
-                    maxLines={2}
+                    maxLines={3}
+                    overflowTooltip
                   >
                     {agent.description}
                   </Text>
@@ -197,6 +188,7 @@ export function AgentCard({ agent, onView, viewing = false }: AgentCardProps) {
                   the uneven padding sits on a plain wrapper. */}
               <div className="px-2 py-1">
                 <Section alignItems="stretch" width="auto" height="fit" gap={1}>
+                  {agent.company_verified_version != null && <AgentVerificationBadge version={agent.company_verified_version} />}
                   <Content
                     font="secondary-body"
                     icon={SvgActions}
@@ -210,7 +202,7 @@ export function AgentCard({ agent, onView, viewing = false }: AgentCardProps) {
 
               {/* Right side - Start Chat button */}
               <Button
-                prominence="tertiary"
+                prominence="secondary"
                 rightIcon={SvgBubbleText}
                 onClick={noProp(handleStartChat)}
               >

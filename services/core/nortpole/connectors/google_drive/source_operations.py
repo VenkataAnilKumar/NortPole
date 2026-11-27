@@ -17,6 +17,7 @@ import json
 import threading
 from collections.abc import Callable, Iterator
 from contextlib import contextmanager
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, ParamSpec, TypeVar, cast
 
@@ -788,6 +789,62 @@ class GoogleDriveSourceOperations(SourceOperations):
         )
 
     @source_operation(
+        capabilities={CredentialCapability.DOC_PERMISSION_SYNC},
+        consumes=OperationConsumes.CREDENTIAL,
+    )
+    def confirm_named_file_access(self, *, file_id: str, viewer_email: str) -> bool:
+        """Check a pilot search hit against current Drive metadata and direct user grants."""
+        base = f"https://www.googleapis.com/drive/v3/files/{file_id}"
+        reader = self._auth().primary_admin_email
+        item = self._get_capped_json(
+            user_email=reader,
+            url=base,
+            params={"supportsAllDrives": "true", "fields": "id,trashed"},
+            max_response_bytes=16_384,
+            timeout=3,
+        )
+        if not item or item.get("id") != file_id or item.get("trashed") is not False:
+            return False
+
+        params = {
+            "supportsAllDrives": "true",
+            "fields": "nextPageToken,permissions(type,role,emailAddress,deleted,expirationTime)",
+            "pageSize": "100",
+        }
+        now = datetime.now(timezone.utc)
+        for _ in range(3):
+            page = self._get_capped_json(
+                user_email=reader,
+                url=f"{base}/permissions",
+                params=params,
+                max_response_bytes=131_072,
+                timeout=3,
+            )
+            if not isinstance(page, dict) or not isinstance(page.get("permissions"), list):
+                return False
+            for permission in page["permissions"]:
+                if (
+                    permission.get("type") != "user"
+                    or permission.get("role") not in {"owner", "organizer", "fileOrganizer", "writer", "commenter", "reader"}
+                    or permission.get("deleted")
+                    or (permission.get("emailAddress") or "").strip().casefold() != viewer_email
+                ):
+                    continue
+                expires_at = permission.get("expirationTime")
+                if expires_at:
+                    try:
+                        if datetime.fromisoformat(expires_at) <= now:
+                            continue
+                    except (TypeError, ValueError):
+                        continue
+                return True
+            token = page.get("nextPageToken")
+            if not isinstance(token, str) or not token:
+                break
+            params["pageToken"] = token
+        return False
+
+    @source_operation(
         capabilities={CredentialCapability.INDEXING},
         consumes=OperationConsumes.CREDENTIAL,
     )
@@ -888,12 +945,13 @@ class GoogleDriveSourceOperations(SourceOperations):
         url: str,
         params: dict[str, str],
         max_response_bytes: int,
+        timeout: float = _DOCS_FETCH_TIMEOUT_SECONDS,
     ) -> dict[str, Any] | None:
         """The JSON body of a GET, streamed so an oversized one is never held
         whole. None when it exceeds ``max_response_bytes``."""
         with get_google_authorized_session(self._creds(), user_email) as session:
             with session.get(
-                url, params=params, stream=True, timeout=_DOCS_FETCH_TIMEOUT_SECONDS
+                url, params=params, stream=True, timeout=timeout
             ) as response:
                 response.raise_for_status()
                 buffer = bytearray()

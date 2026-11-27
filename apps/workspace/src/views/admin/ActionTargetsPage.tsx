@@ -1,5 +1,9 @@
 "use client";
 
+import { ResponsiveLayout } from "@opal/layouts";
+import { ActionButton, NativeInput, NativeSelect } from "@opal/components";
+import { NavLink } from "@opal/navigation";
+import { useTranslations as useWorkspaceTranslations } from "next-intl";
 import { useState } from "react";
 import useSWR from "swr";
 import { errorHandlingFetcher } from "@/lib/fetcher";
@@ -33,7 +37,7 @@ const secondary = "min-h-11 rounded-xl border border-border-02 px-4 text-sm font
 
 const HELD = "This change was not applied. It waits for a second administrator to approve it (Admin > Approvals).";
 
-async function send(url: string, method: string, body: unknown): Promise<string | null> {
+async function send(url: string, method: string, body: ReturnType<typeof patchBody>): Promise<string | null> {
   const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
   if (!res.ok) {
     let detail = "";
@@ -48,12 +52,13 @@ async function send(url: string, method: string, body: unknown): Promise<string 
 }
 
 function ClassPicker({ value, onChange }: { value: string[]; onChange: (v: string[]) => void }) {
+  const workspaceText = useWorkspaceTranslations("workspaceUi");
   return (
     <fieldset className="flex flex-wrap gap-3">
-      <legend className="mb-1 text-sm font-medium text-text-05">Data classes this destination may receive</legend>
+      <legend className="mb-1 text-sm font-medium text-text-05">{workspaceText("dataClassesThisDestinationMayReceive")}</legend>
       {CLASSES.map((c) => (
         <label key={c} className="flex min-h-11 items-center gap-2 text-sm text-text-05">
-          <input
+          <NativeInput
             type="checkbox"
             className="h-4 w-4"
             checked={value.includes(c)}
@@ -72,6 +77,7 @@ function ClassPicker({ value, onChange }: { value: string[]; onChange: (v: strin
  * for the destination; the check runs again at send time.
  */
 export default function ActionTargetsPage() {
+  const workspaceText = useWorkspaceTranslations("workspaceUi");
   const { data, error, isLoading, mutate } = useSWR<Target[]>(URL, errorHandlingFetcher);
   const [name, setName] = useState("");
   const [url, setUrl] = useState("");
@@ -82,7 +88,7 @@ export default function ActionTargetsPage() {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
-  const run = async (fn: () => Promise<string | null | void>) => {
+  async function run(fn: () => Promise<string | null | void>) {
     setBusy(true);
     setMessage(null);
     try {
@@ -94,57 +100,48 @@ export default function ActionTargetsPage() {
     } finally {
       setBusy(false);
     }
-  };
+  }
 
   return (
-    <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 p-8" data-testid="action-targets-page">
+    <ResponsiveLayout display="flex" className="mx-auto w-full max-w-4xl flex-col gap-6 p-8" data-testid="action-targets-page">
       <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold text-text-05">Send destinations</h1>
-        <p className="text-sm text-text-03">
-          Where an approved draft may be sent. Addresses that point to link-local or cloud-metadata locations are refused.
-          Leave all data classes unticked to keep a destination from receiving anything.
-        </p>
+        <h1 className="text-2xl font-semibold text-text-05">{workspaceText("sendDestinations")}</h1>
+        <p className="text-sm text-text-03">{workspaceText("whereAnApprovedDraftMayBeSentAddressesThat")}</p>
       </header>
 
       <section className={card} aria-labelledby="new-target">
-        <h2 id="new-target" className="mb-3 text-base font-semibold text-text-05">Add a destination</h2>
-        <div className="flex flex-col gap-3">
-          <label className="flex flex-col gap-1 text-sm font-medium text-text-05">
-            Name
-            <input className={input} value={name} onChange={(e) => setName(e.target.value)} />
+        <h2 id="new-target" className="mb-3 text-base font-semibold text-text-05">{workspaceText("addADestination")}</h2>
+        <ResponsiveLayout display="flex" className="flex-col gap-3">
+          <label className="flex flex-col gap-1 text-sm font-medium text-text-05">{workspaceText("name")}<NativeInput className={input} value={name} onChange={(e) => setName(e.target.value)} />
           </label>
-          <label className="flex flex-col gap-1 text-sm font-medium text-text-05">
-            Type
-            <select className={input} value={kind} onChange={(e) => { setKind(e.target.value as "webhook" | "email"); setUrl(""); }}>
-              <option value="webhook">Web address (webhook)</option>
-              <option value="email">Email (fixed recipients)</option>
-            </select>
+          <label className="flex flex-col gap-1 text-sm font-medium text-text-05">{workspaceText("type")}<NativeSelect className={input} value={kind} onChange={(e) => { setKind(e.target.value as "webhook" | "email"); setUrl(""); }}>
+              <option value="webhook">{workspaceText("webAddressWebhook")}</option>
+              <option value="email">{workspaceText("emailFixedRecipients")}</option>
+            </NativeSelect>
           </label>
           <label className="flex flex-col gap-1 text-sm font-medium text-text-05">
             {kind === "email" ? "Recipients (people choosing this destination cannot change them)" : "Web address (https recommended)"}
-            <input className={input} value={url} onChange={(e) => setUrl(e.target.value)} placeholder={kind === "email" ? "mailto:finance@example.com" : "https://example.com/hook"} />
+            <NativeInput className={input} value={url} onChange={(e) => setUrl(e.target.value)} placeholder={kind === "email" ? "mailto:finance@example.com" : "https://example.com/hook"} />
           </label>
-          <label className="flex flex-col gap-1 text-sm font-medium text-text-05">
-            How far the product may go
-            <select className={input} value={tier} onChange={(e) => setTier(e.target.value)}>
-              <option value="act_with_approval">Act with approval: prepare, approve the exact content, send</option>
-              <option value="draft_only">Draft only: prepare and review, but never approve or send</option>
-              <option value="read_only">Read only: nothing can be proposed</option>
-            </select>
+          <label className="flex flex-col gap-1 text-sm font-medium text-text-05">{workspaceText("howFarTheProductMayGo")}<NativeSelect className={input} value={tier} onChange={(e) => setTier(e.target.value)}>
+              <option value="act_with_approval">{workspaceText("actWithApprovalPrepareApproveTheExactContentSend")}</option>
+              <option value="draft_only">{workspaceText("draftOnlyPrepareAndReviewButNeverApproveOr")}</option>
+              <option value="read_only">{workspaceText("readOnlyNothingCanBeProposed")}</option>
+            </NativeSelect>
           </label>
           <ClassPicker value={classes} onChange={setClasses} />
           <label className="flex min-h-11 items-center gap-2 text-sm text-text-05">
-            <input type="checkbox" className="h-4 w-4" checked={second} onChange={(e) => setSecond(e.target.checked)} />
-            A second person must approve before anything is sent here
-          </label>
+            <NativeInput type="checkbox" className="h-4 w-4" checked={second} onChange={(e) => setSecond(e.target.checked)} />{workspaceText("aSecondPersonMustApproveBeforeAnythingIsSent")}</label>
           {message && <p role={message === HELD ? "status" : "alert"} className={`text-sm ${message === HELD ? "text-text-05" : "text-status-text-error-05"}`}>{message}</p>}
           <div>
-            <button
+            <ActionButton
               type="button"
               className={primary}
               disabled={busy || !name.trim() || !url.trim()}
               onClick={() =>
-                run(async () => {
+                run(
+                  // oxlint-disable-next-line react-doctor/no-impure-state-updater -- This callback is run by an event handler, outside React state updates.
+                  async () => {
                   const held = await send(URL, "POST", { name, kind, tier, url, allowed_data_classes: classes, enabled: true, require_second_approval: second });
                   setSecond(false);
                   setName("");
@@ -155,60 +152,58 @@ export default function ActionTargetsPage() {
               }
             >
               {busy ? "Saving…" : "Add destination"}
-            </button>
+            </ActionButton>
           </div>
-        </div>
+        </ResponsiveLayout>
       </section>
 
-      <p className="text-sm text-text-03" data-testid="second-queue-link">
-        Sends waiting for a second approver are in <a href="/admin/approvals" className="font-semibold text-text-05 underline">Approvals</a>.
+      <p className="text-sm text-text-03" data-testid="second-queue-link">{workspaceText("sendsWaitingForASecondApproverAreIn")}{" "}<NavLink href="/admin/approvals" className="font-semibold text-text-05 underline">{workspaceText("approvals")}</NavLink>.
       </p>
 
 
       {isLoading ? (
-        <p className="text-sm text-text-03">Loading…</p>
+        <p className="text-sm text-text-03">{workspaceText("loading")}</p>
       ) : error ? (
-        <p role="alert" className="text-sm text-text-05">Destinations could not be loaded.</p>
+        <p role="alert" className="text-sm text-text-05">{workspaceText("destinationsCouldNotBeLoaded")}</p>
       ) : (
         <ul className="flex flex-col gap-3">
           {(data ?? []).map((t) => (
             <li key={t.id} className={card} data-testid="target-item">
-              <div className="flex flex-wrap items-start justify-between gap-3">
+              <ResponsiveLayout display="flex" className="flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0">
                   <h2 className="truncate text-base font-semibold text-text-05">{t.name}</h2>
                   <p className="truncate text-sm text-text-03">{t.kind === "email" ? "Email · " : ""}{t.url}</p>
                   {t.tier && t.tier !== "act_with_approval" && <p className="text-sm text-text-03" data-testid="tier-note">{t.tier === "read_only" ? "Read only" : "Draft only"}</p>}
-                  <p className="text-sm text-text-03">
-                    May receive: {t.allowed_data_classes.length ? t.allowed_data_classes.join(", ") : "nothing"}
+                  <p className="text-sm text-text-03">{workspaceText("mayReceive")}{" "}{t.allowed_data_classes.length ? t.allowed_data_classes.join(", ") : "nothing"}
                   </p>
                   <p className="text-sm text-text-03" data-testid="second-note">
                     {t.require_second_approval ? "A second person must approve each send." : "One approval (the owner's) is enough."}
                   </p>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  <button
+                <ResponsiveLayout display="flex" className="flex-wrap gap-2">
+                  <ActionButton
                     type="button"
                     className={secondary}
                     disabled={busy}
                     onClick={() => run(() => send(`${URL}/${t.id}`, "PATCH", patchBody(t, { require_second_approval: !t.require_second_approval })))}
                   >
                     {t.require_second_approval ? "Stop requiring a second approver" : "Require a second approver"}
-                  </button>
-                  <button
+                  </ActionButton>
+                  <ActionButton
                     type="button"
                     className={secondary}
                     disabled={busy}
                     onClick={() => run(() => send(`${URL}/${t.id}`, "PATCH", patchBody(t, { enabled: !t.enabled })))}
                   >
                     {t.enabled ? "Disable" : "Enable"}
-                  </button>
-                </div>
-              </div>
-              {!t.enabled && <p className="mt-2 text-xs text-text-03">Disabled: nothing can be sent here.</p>}
+                  </ActionButton>
+                </ResponsiveLayout>
+              </ResponsiveLayout>
+              {!t.enabled && <p className="mt-2 text-xs text-text-03">{workspaceText("disabledNothingCanBeSentHere")}</p>}
             </li>
           ))}
         </ul>
       )}
-    </div>
+    </ResponsiveLayout>
   );
 }

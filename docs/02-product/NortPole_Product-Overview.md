@@ -1,16 +1,24 @@
 # NortPole — product overview
 
-Status: **proposed** · Updated: 2026-11-05
+Status: **pilot preview** · Updated: 2026-11-26
 
 ## Product thesis
 
-NortPole is a proposed platform for organizations to build, run, govern, and improve AI agents that complete real workflows. A shared horizontal platform supplies knowledge access, agent execution, model access, tools, approvals, evaluation, and operations. Vertical solutions package domain workflows, data connectors, policies, output formats, and evaluation sets on that foundation.
+NortPole is a workspace for organizations to build, run, govern, and improve AI agents that complete real workflows. A shared horizontal platform supplies knowledge access, agent execution, model access, tools, approvals, evaluation, and operations. Vertical packs package domain workflows, data connectors, policies, output formats, and evaluation sets on that foundation.
 
 The product should make a customer's specific workflow usable and trustworthy, rather than ask the customer to assemble an agent stack themselves.
 
 ## The enterprise workspace
 
-A team should be able to ask a question, search a permitted library, and turn that inquiry into a repeatable task in the same workspace. A practitioner chooses the sources and reviews the result. A workflow owner can publish a tested agent for the team. An administrator controls who may use it and where its data may be processed.
+The workspace sidebar follows this order.
+
+**New → Search → Inbox → Agents → Workflows → Projects → Knowledge → Sources**
+
+- **New, Search, and Inbox** are the daily entry points. Start a chat or use a task starter, search accessible knowledge and activity, or review a plan, draft, or request decision.
+- **Agents, Workflows, and Projects** organize how work gets done. Open a reusable chat agent from Agent Catalog, run or schedule a workflow, or keep related chats, files, instructions, and outputs in a project.
+- **Knowledge and Sources** connect information to the work that uses it. Browse collections you can access in Knowledge. Find integrations, tools, skills, and workspace requests in Sources.
+
+The [UI specification](../05-design/NortPole_UI-Spec.md#user-portal) describes the current navigation and controls. A workflow owner can publish a tested agent for the team. An administrator controls who may use it and where its data may be processed.
 
 The first offer pairs one approved source with one reviewed deliverable. For example, an operations team could ask what changed in a set of internal procedures. The agent prepares a brief with passages for each change. The reviewer checks each passage, corrects the brief, and approves a specific version. The example gives discovery interviews a concrete task. The launch segment remains open.
 

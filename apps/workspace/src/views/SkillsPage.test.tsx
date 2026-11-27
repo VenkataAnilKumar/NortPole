@@ -237,6 +237,25 @@ describe("SkillsPage preference toggles", () => {
     expect(screen.getByRole("dialog")).toHaveTextContent("Skill instructions");
   });
 
+  it("shows owned and shared custom skills in Sources", async () => {
+    skillsData.builtins = [builtinSkill()];
+    skillsData.customs = [
+      { ...customSkill("owned-id", "owned-skill"), user_permission: "OWNER" },
+      customSkill("shared-id", "shared-skill"),
+    ];
+    render(<SkillsPage surface="sources" />);
+
+    const section = within(screen.getByRole("region", { name: "My skills" }));
+    expect(section.getByRole("switch", { name: "owned-skill" })).toBeVisible();
+    expect(section.getByRole("switch", { name: "shared-skill" })).toBeVisible();
+    expect(section.queryByText(/Built-in skills/)).not.toBeInTheDocument();
+
+    const user = setupUser();
+    await user.click(section.getByRole("button", { name: "Create skill" }));
+    await user.click(screen.getByText("Start from scratch"));
+    expect(mockRouterReplace).toHaveBeenCalledWith("/app/sources/skills/new");
+  });
+
   it("keeps built-in skills collapsed until expanded", async () => {
     skillsData.builtins = [builtinSkill()];
     render(<SkillsPage />);

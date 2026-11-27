@@ -119,6 +119,7 @@ def test_temporary_content_is_saved_only_after_database_success(
         chat_session_id=session_id,
         persist_content=False,
         admission=Mock(spec=ChatTurnAdmission),
+        evidence={"library_id": 12},
     )
     response = ChatResponseSnapshot(
         answer="private answer",
@@ -150,6 +151,7 @@ def test_temporary_content_is_saved_only_after_database_success(
             assert [call[0] for call in calls.mock_calls] == ["database", "temporary"]
             save_temporary.assert_called_once()
             assert save_temporary.call_args.kwargs["messages"][0].text == "saved answer"
+            assert save_temporary.call_args.kwargs["evidence"] == {"library_id": 12}
         save_database.assert_called_once_with(
             message_id=17,
             chat_session_id=session_id,
@@ -362,3 +364,17 @@ def test_incognito_regeneration_preserves_results_before_selected_question() -> 
     assert messages[:2] == [search, image]
     assert search.metadata is None
     assert cached.messages[-1] is answer
+
+
+def test_temporary_compaction_preserves_provenance_for_summary_ancestors() -> None:
+    from nortpole.chat.incognito_context import _retained_state
+    from nortpole.llm.models import UserMessage
+
+    evidence = {"4": {"indexed_sources": [["source", 0, "file"]]}}
+    state = IncognitoState(
+        messages=[UserMessage(id="chat:8", content="New question")],
+        evidence_by_response=evidence,
+    )
+    retained = _retained_state(state)
+    assert retained.evidence_by_response == evidence
+    assert retained.evidence_by_response is not state.evidence_by_response

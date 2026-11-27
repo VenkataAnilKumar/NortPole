@@ -3,8 +3,6 @@
 import React from "react";
 import { toast } from "@opal/layouts";
 import { ChatSession } from "@/app/app/types";
-import { DEFAULT_AGENT_ID } from "@/lib/constants";
-import { LOCAL_STORAGE_KEYS } from "@/lib/sidebar/constants";
 
 /** Parameters shared by move-operation helpers. */
 export interface MoveOperationParams {
@@ -15,25 +13,6 @@ export interface MoveOperationParams {
   fetchProjects: () => Promise<any>;
   currentProjectId: number | null;
 }
-
-/**
- * Returns `true` when the "move to project" confirmation modal should be shown
- * for the given chat session.
- *
- * The modal is suppressed when the user has previously checked "don't show
- * again" (stored in localStorage) or when the chat is already using the
- * default agent (persona_id === DEFAULT_AGENT_ID), in which case switching
- * projects has no agent-specific implications to warn about.
- */
-export const shouldShowMoveModal = (chatSession: ChatSession): boolean => {
-  const hideModal =
-    typeof window !== "undefined" &&
-    window.localStorage.getItem(
-      LOCAL_STORAGE_KEYS.HIDE_MOVE_CUSTOM_AGENT_MODAL
-    ) === "true";
-
-  return !hideModal && chatSession.persona_id !== DEFAULT_AGENT_ID;
-};
 
 /** Displays a red error toast with the given message. */
 export const showErrorNotification = (message: string) => {

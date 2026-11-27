@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Any
 from uuid import UUID
 
@@ -60,6 +61,18 @@ class DocumentSetCreationRequest(BaseModel):
     groups: list[int] = Field(default_factory=list)
     # Federated connectors to include in the document set
     federated_connectors: list[FederatedConnectorConfig] = Field(default_factory=list)
+
+
+class CollectionDocument(BaseModel):
+    id: str
+    title: str
+    link: str | None
+    updated_at: datetime | None
+
+
+class CollectionDocumentPage(BaseModel):
+    documents: list[CollectionDocument]
+    next_cursor: str | None = None
 
 
 class DocumentSetUpdateRequest(BaseModel):

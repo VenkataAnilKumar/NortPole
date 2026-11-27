@@ -7,12 +7,3 @@ export const DRAG_TYPES = {
   /** The Recents section acting as a drop target (removes a chat from a project). */
   RECENTS: "recents",
 } as const;
-
-/** localStorage keys used by sidebar components. */
-export const LOCAL_STORAGE_KEYS = {
-  /**
-   * When `"true"`, the "move chat to project" confirmation modal is suppressed
-   * and the move proceeds silently.
-   */
-  HIDE_MOVE_CUSTOM_AGENT_MODAL: "nortpole:hideMoveCustomAgentModal",
-} as const;

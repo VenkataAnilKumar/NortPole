@@ -11,6 +11,8 @@ from nortpole.db.engine.sql_engine import get_session
 from nortpole.db.enums import NotificationSeverity, Permission
 from nortpole.db.models import User
 from nortpole.db.notification import (
+    InboxTab,
+    count_inbox_notifications,
     count_notifications,
     dismiss_notification,
     dismiss_user_notifications,
@@ -20,6 +22,7 @@ from nortpole.db.notification import (
 from nortpole.error_handling.error_codes import NortPoleErrorCode
 from nortpole.error_handling.exceptions import NortPoleError
 from nortpole.server.features.notifications.models import (
+    InboxNotificationSummary,
     NotificationResponse,
     NotificationSummary,
     PaginatedNotifications,
@@ -107,6 +110,7 @@ def get_notifications_api(
     min_severity: NotificationSeverity | None = None,
     user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
     db_session: Session = Depends(get_session),
+    inbox_tab: InboxTab | None = None,
 ) -> PaginatedNotifications:
     """
     Get a page of notifications for the current user, optionally filtered to a
@@ -124,7 +128,7 @@ def get_notifications_api(
     - Checking for misconfigurations due to version changes
     - Explicitly announcing breaking changes
     """
-    if page_num == 0:
+    if page_num == 0 and inbox_tab in (None, InboxTab.UPDATES):
         if notif_type is None and min_severity is None:
             _check_for_notifications_to_create(user, db_session)
         # A severity-only request is the banner queue's polled fetch: its
@@ -154,6 +158,7 @@ def get_notifications_api(
         db_session=db_session,
         notif_type=notif_type,
         min_severity=min_severity,
+        inbox_tab=inbox_tab,
     )
     offset = page_num * page_size
     notifications = [
@@ -166,6 +171,7 @@ def get_notifications_api(
             limit=page_size,
             offset=offset,
             min_severity=min_severity,
+            inbox_tab=inbox_tab,
         )
     ]
     return PaginatedNotifications(
@@ -194,6 +200,16 @@ def get_notifications_summary_api(
     return NotificationSummary(
         total_items=total_items,
         undismissed_count=undismissed_count,
+    )
+
+
+@router.get("/inbox-summary")
+def get_inbox_summary_api(
+    user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
+    db_session: Session = Depends(get_session),
+) -> InboxNotificationSummary:
+    return InboxNotificationSummary.model_validate(
+        count_inbox_notifications(user, db_session)
     )
 
 

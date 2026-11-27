@@ -91,25 +91,32 @@ function ProjectPopoverRow({
           {match.project.name}
         </SidebarTab>
         {open &&
-          match.chatSessions.map((chatSession) => (
+          match.chatSessions.map((chatSession) => {
+            const readOnly = chatSession.is_owned === false || match.project.role === "viewer";
+            return (
             <SidebarTab
               key={chatSession.id}
               // `nested` supplies the indent that lines a chat up under its
               // project, so the row needs no icon of its own.
               nested
-              href={appPosition.linkToChat(chatSession.id).href}
+              href={readOnly
+                ? `/app/projects/${match.project.id}/chats/${chatSession.id}`
+                : appPosition.linkToChat(chatSession.id).href}
               // Opening a chat pins its agent, the same as the sidebar's own
               // rows — the popover is another way in, not a different one.
               onClick={(event) => {
-                appPosition.linkToChat(chatSession.id).onClick(event);
-                pinChatAgent(chatSession);
+                if (!readOnly) {
+                  appPosition.linkToChat(chatSession.id).onClick(event);
+                  pinChatAgent(chatSession);
+                }
                 onNavigate();
               }}
               selected={appPosition.chat() === chatSession.id}
             >
               {chatSession.name || UNNAMED_CHAT}
             </SidebarTab>
-          ))}
+            );
+          })}
       </Section>
     </FolderIconProvider>
   );

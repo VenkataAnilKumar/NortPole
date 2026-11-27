@@ -7,12 +7,12 @@ export function refreshDocumentSets() {
   mutate(SWR_KEYS.documentSets);
 }
 
-export function useDocumentSets(getEditable: boolean = false) {
+export function useDocumentSets(getEditable: boolean = false, enabled = true) {
   const url = getEditable
     ? SWR_KEYS.documentSetsEditable
     : SWR_KEYS.documentSets;
 
-  const swrResponse = useSWR<DocumentSetSummary[]>(url, errorHandlingFetcher, {
+  const swrResponse = useSWR<DocumentSetSummary[]>(enabled ? url : null, errorHandlingFetcher, {
     // Fast poll while a set is syncing, slow background poll otherwise so we
     // still pick up syncs kicked off in another admin tab without hammering
     // the endpoint at 5 s intervals when nothing is happening.

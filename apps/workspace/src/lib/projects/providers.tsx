@@ -6,6 +6,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useState,
   useRef,
@@ -152,6 +153,8 @@ export function ProjectsProvider({ children }: ProjectsProviderProps) {
   const currentProjectId = currentProjectIdRaw
     ? Number.parseInt(currentProjectIdRaw)
     : null;
+  const activeProjectIdRef = useRef(currentProjectId);
+  const projectDetailsRequestRef = useRef(0);
   const [currentMessageFiles, setCurrentMessageFiles] = useState<ProjectFile[]>(
     []
   );
@@ -204,20 +207,26 @@ export function ProjectsProvider({ children }: ProjectsProviderProps) {
 
   // Load full details for current project
   const refreshCurrentProjectDetails = useCallback(async () => {
-    if (currentProjectId) {
-      setIsLoadingProjectDetails(true);
-      try {
-        const details = await svcGetProjectDetails(currentProjectId);
-        await fetchProjects();
-        setCurrentProjectDetails(details);
-        setAllCurrentProjectFiles(details.files || []);
-        if (projectToUploadFilesMapRef.current.has(currentProjectId)) {
-          setAllCurrentProjectFiles((prev) => [
-            ...prev,
-            ...(projectToUploadFilesMapRef.current.get(currentProjectId) || []),
-          ]);
-        }
-      } finally {
+    if (!currentProjectId || activeProjectIdRef.current !== currentProjectId) return;
+    const request = ++projectDetailsRequestRef.current;
+    setIsLoadingProjectDetails(true);
+    try {
+      const details = await svcGetProjectDetails(currentProjectId);
+      await fetchProjects();
+      if (request !== projectDetailsRequestRef.current) return;
+      setCurrentProjectDetails(details);
+      setAllCurrentProjectFiles([
+        ...(details.files ?? []),
+        ...(projectToUploadFilesMapRef.current.get(currentProjectId) ?? []),
+      ]);
+    } catch (error) {
+      if (request === projectDetailsRequestRef.current) {
+        setCurrentProjectDetails(null);
+        setAllCurrentProjectFiles([]);
+      }
+      throw error;
+    } finally {
+      if (request === projectDetailsRequestRef.current) {
         setIsLoadingProjectDetails(false);
       }
     }
@@ -241,16 +250,10 @@ export function ProjectsProvider({ children }: ProjectsProviderProps) {
 
   const createProject = useCallback(
     async (name: string): Promise<Project> => {
-      try {
-        const project: Project = await svcCreateProject(name);
-        // Navigate to the newly created project's page
-        appPosition.openProject(project.id);
-        // Refresh list to keep order consistent with backend
-        await fetchProjects();
-        return project;
-      } catch (err) {
-        throw err;
-      }
+      const project = await svcCreateProject(name);
+      appPosition.openProject(project.id);
+      await fetchProjects();
+      return project;
     },
     [fetchProjects, appPosition]
   );
@@ -607,15 +610,18 @@ export function ProjectsProvider({ children }: ProjectsProviderProps) {
     );
   }, [recentFiles]);
 
-  // Clear project details when switching projects to show skeleton
-  useEffect(() => {
+  // Invalidate pending details before a newly selected project is painted.
+  useLayoutEffect(() => {
+    activeProjectIdRef.current = currentProjectId;
+    projectDetailsRequestRef.current += 1;
     setCurrentProjectDetails(null);
     setAllCurrentProjectFiles([]);
+    setIsLoadingProjectDetails(currentProjectId !== null);
   }, [currentProjectId]);
 
   useEffect(() => {
     if (currentProjectId) {
-      refreshCurrentProjectDetails();
+      void refreshCurrentProjectDetails().catch(() => undefined);
     }
   }, [currentProjectId, refreshCurrentProjectDetails]);
 

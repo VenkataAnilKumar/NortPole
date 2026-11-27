@@ -131,7 +131,12 @@ async function handleRequest(request: NextRequest, path: string[]) {
       response.headers.get("Transfer-Encoding") === "chunked" ||
       response.headers.get("Content-Type")?.includes("stream")
     ) {
-      responseHeaders.set("Cache-Control", "no-cache, no-transform");
+      const cacheControl = responseHeaders.get("Cache-Control");
+      if (cacheControl?.toLowerCase().includes("no-store")) {
+        responseHeaders.set("Cache-Control", `${cacheControl}, no-transform`);
+      } else {
+        responseHeaders.set("Cache-Control", "no-cache, no-transform");
+      }
       responseHeaders.set("X-Accel-Buffering", "no");
       responseHeaders.delete("content-length");
 

@@ -111,6 +111,32 @@ def test_source_filter_uses_terms_query() -> None:
     } in filters
 
 
+def test_exact_document_lookup_preserves_agent_and_forced_scope() -> None:
+    query = DocumentQuery.get_from_document_id_query(
+        document_id="doc-1",
+        tenant_state=TenantState(tenant_id="public", multitenant=False),
+        index_filters=IndexFilters(
+            access_control_list=None,
+            attached_document_ids=["doc-1", "doc-2"],
+            forced_document_set=["Approved"],
+        ),
+        include_hidden=False,
+        max_chunk_size=512,
+        min_chunk_index=1,
+        max_chunk_index=1,
+    )
+
+    filters = query["query"]["bool"]["filter"]
+    assert {"term": {"document_id": {"value": "doc-1"}}} in filters
+    assert {"terms": {"document_sets": ["Approved"]}} in filters
+    assert {
+        "bool": {
+            "should": [{"terms": {"document_id": ["doc-1", "doc-2"]}}],
+            "minimum_should_match": 1,
+        }
+    } in filters
+
+
 def test_metadata_update_writes_multiple_source_types() -> None:
     index = OpenSearchDocumentIndex.__new__(OpenSearchDocumentIndex)
     index._index_name = "test-index"

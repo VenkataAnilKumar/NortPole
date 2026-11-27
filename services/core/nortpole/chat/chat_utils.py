@@ -32,7 +32,7 @@ from nortpole.db.chat_response import read_response_steps
 from nortpole.db.enums import IncognitoRecordMode, record_mode_persists_content
 from nortpole.db.models import ChatMessage, ChatSession, User
 from nortpole.db.persona import user_can_access_persona
-from nortpole.db.projects import check_project_ownership
+from nortpole.db.project_access import project_has_members, require_project
 from nortpole.error_handling.error_codes import NortPoleErrorCode
 from nortpole.error_handling.exceptions import NortPoleError
 from nortpole.file_store.models import (
@@ -70,7 +70,7 @@ def create_chat_session_from_request(
 ) -> ChatSession:
     """Create a chat session from a ChatSessionCreationRequest.
 
-    Includes project ownership and persona access validation.
+    Includes project role and persona access validation.
 
     Args:
         chat_session_request: The request containing persona_id, description, and project_id
@@ -89,8 +89,9 @@ def create_chat_session_from_request(
     """
     project_id = chat_session_request.project_id
     if project_id:
-        if not check_project_ownership(project_id, user.id, db_session):
-            raise ValueError("User does not have access to project")
+        require_project(project_id, user.id, db_session, minimum="editor", lock=True)
+        if chat_session_request.incognito and project_has_members(project_id, db_session):
+            raise NortPoleError(NortPoleErrorCode.INVALID_INPUT, "Incognito chats cannot join a shared project.")
 
     persona_id = chat_session_request.persona_id
     if persona_id != DEFAULT_PERSONA_ID:

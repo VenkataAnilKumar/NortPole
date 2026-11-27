@@ -494,3 +494,7 @@ The README still said an assistant cannot call an installed integration from cha
 ### README screenshots retaken, 2026-11-17
 
 All 11 README images were retaken from the running sandbox as an administrator (workspace, workflows, draft review, Inbox, Scheduled, Discover, Audit log, Approvals, Tools, Route policy, Quality). Approvals now shows the five second-administrator rules; Discover shows the 13 integrations with their logos; Tools shows the current wording. The sandbox's own data appears in them (mock model routes, test accounts such as admin@example.com and generated test addresses in the audit log). Not done: the images were not compared pixel by pixel with the old ones, and the audit-log shot starts below the page heading.
+
+### Pilot workspace navigation, 2026-11-26
+
+The README, product overview, and UI specification now follow the workspace sidebar order. The guides document the Agent Catalog landing view, the direct Projects page, and the Integrations, Tools, Skills, and Discover flows. The Workspace and Discover images were captured from the running pilot member view. Browser checks verified the sidebar order and Discover category labels. Repository structure and local Markdown link checks passed, along with 32 tool tests.

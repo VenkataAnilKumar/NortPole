@@ -91,7 +91,7 @@ describe("useVoiceRecorder", () => {
     const scriptNode = {
       connect: jest.fn(),
       disconnect: jest.fn(),
-      onaudioprocess: null,
+      onaudioprocess: null as ((event: AudioProcessingEvent) => void) | null,
     };
     const audioContext = {
       close: jest.fn(),
@@ -124,8 +124,59 @@ describe("useVoiceRecorder", () => {
       writable: true,
     });
 
-    return { audioContext, getUserMedia, sourceNode, stopTrack };
+    return { audioContext, getUserMedia, scriptNode, sourceNode, stopTrack };
   }
+
+  test("ends a spoken turn after silence and submits the provider's final transcript once", async () => {
+    jest.useFakeTimers();
+    const { scriptNode, stopTrack } = installStartupMocks();
+    const onFinalTranscript = jest.fn();
+    const { result } = renderHook(() =>
+      useVoiceRecorder({ autoStopOnSilence: true, onFinalTranscript })
+    );
+    let start: Promise<void> | undefined;
+    act(() => {
+      start = result.current.startRecording();
+    });
+    await waitFor(() => expect(TestWebSocket.instances).toHaveLength(1));
+    const socket = TestWebSocket.instances[0]!;
+    await act(async () => {
+      socket.open();
+      await start;
+    });
+
+    const samples = (amplitude: number) => {
+      scriptNode.onaudioprocess?.({
+        inputBuffer: {
+          sampleRate: 24000,
+          getChannelData: () => new Float32Array(4096).fill(amplitude),
+        },
+      } as unknown as AudioProcessingEvent);
+      jest.advanceTimersByTime(171);
+    };
+    const end = JSON.stringify({ type: "end" });
+    act(() => {
+      for (let index = 0; index < 8; index++) samples(0);
+      expect(socket.send).not.toHaveBeenCalledWith(end);
+      samples(0.05);
+      for (let index = 0; index < 8; index++) samples(0);
+    });
+
+    expect(socket.send.mock.calls.some(([payload]) => payload instanceof ArrayBuffer)).toBe(true);
+    expect(socket.send.mock.calls.filter(([payload]) => payload === end)).toHaveLength(1);
+    expect(stopTrack).toHaveBeenCalledTimes(1);
+    expect(onFinalTranscript).not.toHaveBeenCalled();
+    await act(async () => {
+      const final = new MessageEvent("message", {
+        data: JSON.stringify({ type: "transcript", text: "say hello", is_final: true }),
+      });
+      socket.onmessage?.(final);
+      socket.onmessage?.(final);
+    });
+    expect(onFinalTranscript).toHaveBeenCalledTimes(1);
+    expect(onFinalTranscript).toHaveBeenCalledWith("say hello");
+    expect(result.current.isRecording).toBe(false);
+  });
 
   test("ignores a repeated start while microphone access is pending", async () => {
     const rejectors: Array<(reason?: unknown) => void> = [];

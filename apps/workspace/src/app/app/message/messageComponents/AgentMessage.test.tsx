@@ -10,9 +10,11 @@ import { useChatSessionStore } from "@/app/app/stores/useChatSessionStore";
 import AgentMessage from "@/app/app/message/messageComponents/AgentMessage";
 import { FullChatState } from "@/app/app/message/messageComponents/types";
 import type { MinimalAgent } from "@/lib/agents/types";
+import { ValidSources } from "@/lib/connectors/types/source";
 
 const mockStreamTTS = jest.fn();
 const mockStopTTS = jest.fn();
+let mockAudioSyncNode: number | null = null;
 
 jest.mock("@/providers/VoiceModeProvider", () => ({
   useVoiceMode: () => ({
@@ -20,9 +22,9 @@ jest.mock("@/providers/VoiceModeProvider", () => ({
     streamTTS: mockStreamTTS,
     stopTTS: mockStopTTS,
     revealedCharCount: 0,
-    autoPlayback: false,
-    isAudioSyncActive: false,
-    activeMessageNodeId: null,
+    autoPlayback: mockAudioSyncNode !== null,
+    isAudioSyncActive: mockAudioSyncNode !== null,
+    activeMessageNodeId: mockAudioSyncNode,
     isAwaitingAutoPlaybackStart: false,
   }),
 }));
@@ -421,6 +423,22 @@ test("a failed streaming answer stops its existing autoplay session", async () =
     />
   );
   expect(mockStopTTS).toHaveBeenCalledTimes(1);
+});
+
+test("the server stop packet finalizes audio even when the text is waiting for playback", () => {
+  const nodeId = 102;
+  mockAudioSyncNode = nodeId;
+  mockStreamTTS.mockClear();
+  const props = { nodeId, chatState, llmManager: null, hideFooter: true };
+  try {
+    const view = render(<AgentMessage {...props} rawPackets={answerPackets.slice(0, 1)} packetCount={1} />);
+    view.rerender(<AgentMessage {...props} rawPackets={answerPackets.slice(0, 2)} packetCount={2} />);
+    expect(mockStreamTTS).toHaveBeenLastCalledWith("A quick answer.", false, nodeId);
+    view.rerender(<AgentMessage {...props} rawPackets={answerPackets} packetCount={3} />);
+    expect(mockStreamTTS).toHaveBeenLastCalledWith("A quick answer.", true, nodeId);
+  } finally {
+    mockAudioSyncNode = null;
+  }
 });
 
 test("a timed out answer explains its deadline without claiming the user stopped it", async () => {
@@ -1111,4 +1129,57 @@ test("a research step shows each of its nested calls once", async () => {
   } finally {
     view.unmount();
   }
+});
+
+test.each([false, true])("lists supplied evidence when the answer has no inline citation (pilot %s)", async (pilot) => {
+  seedSessionAwaitingAnswer();
+  const source = {
+    document_id: "selected-policy",
+    semantic_identifier: "Selected travel policy",
+    link: "https://example.com/travel",
+    source_type: ValidSources.File,
+    blurb: "",
+    boost: 0,
+    hidden: false,
+    score: 1,
+    chunk_ind: 0,
+    match_highlights: [],
+    metadata: {},
+    updated_at: null,
+    is_internet: false,
+    selected_evidence: true,
+  };
+  const start: Packet = {
+    placement,
+    obj: {
+      type: PacketType.MESSAGE_START,
+      id: "answer",
+      content: "",
+      final_documents: pilot
+        ? [{ ...source, selected_evidence: false }]
+        : [source, { ...source, document_id: "other-document", semantic_identifier: "Other search hit", selected_evidence: false }],
+    },
+  };
+  const show = (packets: Packet[]) => (
+    <AgentMessage rawPackets={packets} chatState={chatState}
+      nodeId={NEW_ANSWER_NODE_ID} llmManager={null} hideFooter disableTTS showPilotEvidence={pilot} />
+  );
+  const view = render(show([start, ...answerPackets.slice(1)]));
+  const name = pilot ? "Additional evidence" : "Selected evidence";
+  const evidence = await screen.findByRole("region", { name });
+  expect(within(evidence).getByRole("link", { name: "Selected travel policy" })).toHaveAttribute(
+    "href", "https://example.com/travel"
+  );
+  expect(within(evidence).queryByText("Other search hit")).not.toBeInTheDocument();
+  view.unmount();
+  render(show([
+    start,
+    ...answerPackets.slice(1, -1),
+    {
+      placement,
+      obj: { type: PacketType.CITATION_INFO, citation_number: 1, document_id: source.document_id },
+    },
+    ...answerPackets.slice(-1),
+  ]));
+  await waitFor(() => expect(screen.queryByRole("region", { name })).not.toBeInTheDocument());
 });

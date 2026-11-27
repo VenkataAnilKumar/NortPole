@@ -337,6 +337,13 @@ class _PinnedHostAdapter(HTTPAdapter):
         kwargs["assert_hostname"] = self._hostname
         super().init_poolmanager(*args, **kwargs)
 
+    def proxy_manager_for(self, proxy: str, **proxy_kwargs: Any) -> Any:
+        # A proxy uses a separate pool manager. Keep the validated IP as the
+        # tunnel destination and verify the origin's certificate by hostname.
+        proxy_kwargs["server_hostname"] = self._hostname
+        proxy_kwargs["assert_hostname"] = self._hostname
+        return super().proxy_manager_for(proxy, **proxy_kwargs)
+
 
 class _NoRedirectSession(requests.Session):
     """With ``allow_redirects=False`` requests still reads the full body of a

@@ -1,9 +1,9 @@
 from datetime import datetime
 from enum import Enum
-from typing import Any
+from typing import Any, Literal
 from uuid import UUID
 
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, Field, model_validator
 
 from nortpole.agents.models import RunStatus
 from nortpole.configs.constants import DocumentSource, MessageType, SessionType
@@ -33,8 +33,16 @@ class MessageOrigin(str, Enum):
 
 
 class MessageResponseIDInfo(BaseModel):
+    model_display_name: str | None = None
     user_message_id: int | None
     reserved_assistant_message_id: int
+
+
+class ResponseModelInfo(BaseModel):
+    """The concrete model identified by the provider during generation."""
+
+    response_model_name: str
+    response_model_index: int
 
 
 class ModelResponseSlot(BaseModel):
@@ -104,8 +112,28 @@ class ChatFeedbackRequest(BaseModel):
 
 # NOTE: This model is used for the core flow of the NortPole application, any changes to it should be reviewed and approved by an
 # experienced team member. It is very important to 1. avoid bloat and 2. that this remains backwards compatible across versions.
+class SearchEvidenceReference(BaseModel):
+    document_id: str = Field(min_length=1, max_length=2048)
+    chunk_id: int = Field(ge=0, le=2147483647)
+
+
+class SearchEvidenceSelection(BaseModel):
+    documents: list[SearchEvidenceReference] = Field(default_factory=list, max_length=5)
+    library_id: int | None = Field(default=None, gt=0)
+
+    @model_validator(mode="after")
+    def check_selection(self) -> "SearchEvidenceSelection":
+        if bool(self.documents) == (self.library_id is not None):
+            raise ValueError("Select documents or one Knowledge library.")
+        if len({item.document_id for item in self.documents}) != len(self.documents):
+            raise ValueError("Select one result per document.")
+        return self
+
+
 class SendMessageRequest(BaseModel):
     message: str
+    model_selection: Literal["auto", "manual"] | None = None
+    skill_ids: list[UUID] | None = None
 
     llm_override: LLMOverride | None = None
     # For multi-model mode: up to 3 LLM overrides to run in parallel.
@@ -128,6 +156,13 @@ class SendMessageRequest(BaseModel):
     file_descriptors: list[FileDescriptor] = []
 
     internal_search_filters: BaseFilters | None = None
+    ground_selected_knowledge: bool = False
+    search_evidence: SearchEvidenceSelection | None = None
+    # An empty title reviews the single unambiguous policy in the library.
+    receipt_review_policy_title: str | None = Field(default=None, max_length=300)
+    document_review: bool = False
+    document_review_pack: str | None = Field(default=None, pattern=r"^[a-z0-9][a-z0-9-]{1,62}$")
+    document_review_previous_id: int | None = Field(default=None, ge=1)
 
     deep_research: bool = False
 
@@ -167,6 +202,52 @@ class SendMessageRequest(BaseModel):
     def check_preference_supported(self) -> "SendMessageRequest":
         if self.deep_research and self.preferred_tool_id is not None:
             raise ValueError("preferred_tool_id is not supported with deep_research")
+        return self
+
+    @model_validator(mode="after")
+    def check_search_evidence_inputs(self) -> "SendMessageRequest":
+        if self.search_evidence and (
+            self.deep_research or self.ground_selected_knowledge or self.document_review
+        ):
+            raise ValueError("Use the selected Search evidence in a standard Chat turn.")
+        return self
+
+    @model_validator(mode="after")
+    def check_receipt_review_inputs(self) -> "SendMessageRequest":
+        if self.receipt_review_policy_title is None:
+            return self
+        libraries = self.internal_search_filters.document_set if self.internal_search_filters else None
+        if not self.ground_selected_knowledge or len(libraries or []) != 1:
+            raise ValueError("Expense Review requires one Knowledge library.")
+        if len(self.file_descriptors) != 1 or not (
+            self.file_descriptors[0].get("name") or ""
+        ).lower().endswith(".csv"):
+            raise ValueError("Expense Review requires one CSV attachment.")
+        if self.deep_research or self.llm_overrides:
+            raise ValueError("Expense Review requires a single chat response.")
+        return self
+
+    @model_validator(mode="after")
+    def check_document_review_inputs(self) -> "SendMessageRequest":
+        if not self.document_review:
+            if self.document_review_pack or self.document_review_previous_id is not None:
+                raise ValueError("Select Document Review to use a pack or review a revision.")
+            return self
+        from nortpole.chat.document_review import DOCUMENT_EXTENSIONS
+
+        if self.receipt_review_policy_title is not None or self.deep_research or self.llm_overrides or self.preferred_tool_id is not None:
+            raise ValueError("Document Review requires a single chat response.")
+        libraries = self.internal_search_filters.document_set if self.internal_search_filters else None
+        if not self.ground_selected_knowledge or len(libraries or []) != 1:
+            raise ValueError("Document Review requires one Knowledge library.")
+        if len(self.file_descriptors) != 1 or not (
+            self.file_descriptors[0].get("name") or ""
+        ).lower().endswith(DOCUMENT_EXTENSIONS):
+            raise ValueError("Document Review requires one PDF, DOCX, Markdown, or text attachment.")
+        if self.document_review_previous_id is not None and (
+            self.chat_session_id is None or self.parent_message_id != self.document_review_previous_id
+        ):
+            raise ValueError("A revised review must continue from the original review.")
         return self
 
     @model_validator(mode="after")
@@ -219,6 +300,7 @@ class ChatSessionDetails(BaseModel):
     current_alternate_model: str | None = None
     current_temperature_override: float | None = None
     current_reasoning_effort_override: str | None = None
+    agent_preview_name: str | None = None
 
     @classmethod
     def from_model(cls, model: ChatSession) -> "ChatSessionDetails":
@@ -232,6 +314,7 @@ class ChatSessionDetails(BaseModel):
             current_alternate_model=model.current_alternate_model,
             current_temperature_override=model.temperature_override,
             current_reasoning_effort_override=model.reasoning_effort_override,
+            agent_preview_name=model.agent_preview.name if model.agent_preview else None,
         )
 
 
@@ -312,6 +395,8 @@ class ChatSessionDetailResponse(BaseModel):
     # True for sessions pinned to an incognito record mode, so a reload can
     # restore the incognito UI state.
     incognito: bool = False
+    agent_preview_name: str | None = None
+    agent_release_version: int | None = None
     # Set on a paged load when the current branch has messages before the page.
     has_older_messages: bool = False
 

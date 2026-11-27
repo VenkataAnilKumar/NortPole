@@ -24,7 +24,6 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  pointerWithin,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -32,39 +31,18 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { useDroppable } from "@dnd-kit/core";
-import {
-  restrictToFirstScrollableAncestor,
-  restrictToVerticalAxis,
-} from "@dnd-kit/modifiers";
 import useChatSessions from "@/hooks/useChatSessions";
-import { useProjects } from "@/lib/projects/hooks";
 import { useAgents, useActiveAgent, usePinnedAgents } from "@/lib/agents/hooks";
-import {
-  FoldedProjectsPopover,
-  ProjectFolderButton,
-} from "@/lib/projects/components";
-import { CreateProjectModal } from "@/lib/projects/components";
-import { MoveCustomAgentChatModal } from "@/lib/agents/components";
-import { useProjectsContext } from "@/lib/projects/providers";
-import { removeChatSessionFromProject } from "@/lib/projects/svc";
-import type { Project } from "@/lib/projects/types";
 import { SidebarLoader } from "@opal/loaders";
-import { SidebarLayouts, useSidebarState, Section } from "@opal/layouts";
+import { SidebarLayouts, Section } from "@opal/layouts";
 import BrandedSidebarHeader from "@/sections/sidebar/BrandedSidebarHeader";
-import { Button as OpalButton, Text } from "@opal/components";
+import { Text } from "@opal/components";
 import { cn } from "@opal/utils";
 import { Disabled } from "@opal/core";
 import { usePlans, useTierAtLeast } from "@/lib/tiers/hooks";
 import { BetaTag, PlanTag } from "@/lib/tiers/components";
 import { Tier } from "@/lib/tiers/types";
-import { DRAG_TYPES, LOCAL_STORAGE_KEYS } from "@/lib/sidebar/constants";
 import { PHFeatureFlag, usePHFeatureFlag } from "@/lib/analytics/hooks";
-import {
-  shouldShowMoveModal,
-  showErrorNotification,
-} from "@/lib/sidebar/utils";
-import { handleMoveOperation } from "@/lib/sidebar/svc";
 import { SidebarTab } from "@opal/components";
 import { ChatSession } from "@/app/app/types";
 import { useUser } from "@/providers/UserProvider";
@@ -76,8 +54,8 @@ import { SWR_KEYS } from "@/lib/swr-keys";
 import { useUserPreferences } from "@/lib/userPreferences/hooks";
 import { useOwnWork } from "@/lib/inboxWork";
 import { inboxBadgeCount } from "@/lib/notifications/inbox";
-import type { Notification } from "@/lib/notifications/interfaces";
-import { useCreateModal } from "@opal/components";
+import type { InboxNotificationSummary } from "@/lib/notifications/interfaces";
+import { usePendingProposals } from "@/sections/inbox/IntegrationChanges";
 import { useModalContext } from "@/components/context/ModalContext";
 import {
   SvgDevKit,
@@ -86,8 +64,7 @@ import {
   SvgStackLine,
   SvgBell,
   SvgEditBig,
-  SvgFolderPlus,
-  SvgMoreHorizontal,
+  SvgFolder,
   SvgNortPoleOctagon,
   SvgSearchMenu,
   SvgSettings,
@@ -102,7 +79,6 @@ import { motion, AnimatePresence } from "motion/react";
 import { NotificationType } from "@/lib/notifications/interfaces";
 import { dismissNotification } from "@/lib/notifications/api";
 import { AccountPopover } from "@/lib/app/components";
-import ChatSearchCommandMenu from "@/sections/sidebar/ChatSearchCommandMenu";
 import { useQueryController } from "@/providers/QueryControllerProvider";
 import { DEFAULT_AGENT_ID } from "@/lib/constants";
 
@@ -142,13 +118,6 @@ function RecentsSection({
   onLoadMore,
 }: RecentsSectionProps) {
   const t = useTranslations("sidebar");
-  const { setNodeRef, isOver } = useDroppable({
-    id: DRAG_TYPES.RECENTS,
-    data: {
-      type: DRAG_TYPES.RECENTS,
-    },
-  });
-
   // Sentinel ref for IntersectionObserver-based infinite scroll
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const onLoadMoreRef = useRef(onLoadMore);
@@ -179,60 +148,49 @@ function RecentsSection({
   }, [hasMore, isLoadingMore]);
 
   return (
-    <div
-      ref={setNodeRef}
-      className={cn(
-        "transition-colors duration-200 rounded-08 h-full",
-        isOver && "bg-background-tint-03"
+    <SidebarLayouts.Section title={t("appSidebar.recents.title")}>
+      {isLoading ? (
+        <SidebarLoader count={5} />
+      ) : chatSessions.length === 0 ? (
+        <div className="px-3">
+          <Text as="p" color="text-03">
+            {t("appSidebar.recents.empty.text")}
+          </Text>
+        </div>
+      ) : (
+        <>
+          {chatSessions.map((chatSession) => (
+            <ChatButton
+              key={chatSession.id}
+              chatSession={chatSession}
+            />
+          ))}
+          {hasMore && (
+            <div
+              ref={sentinelRef}
+              // Waiting to scroll into view, nothing is loading yet.
+              aria-hidden={!isLoadingMore}
+              className={cn(
+                "transition-opacity duration-300",
+                isLoadingMore ? "opacity-100" : "opacity-40"
+              )}
+            >
+              <SidebarLoader count={3} />
+            </div>
+          )}
+        </>
       )}
-    >
-      <SidebarLayouts.Section title={t("appSidebar.recents.title")}>
-        {isLoading ? (
-          <SidebarLoader count={5} />
-        ) : chatSessions.length === 0 ? (
-          <div className="px-3">
-            <Text as="p" color="text-03">
-              {t("appSidebar.recents.empty.text")}
-            </Text>
-          </div>
-        ) : (
-          <>
-            {chatSessions.map((chatSession) => (
-              <ChatButton
-                key={chatSession.id}
-                chatSession={chatSession}
-                draggable
-              />
-            ))}
-            {hasMore && (
-              <div
-                ref={sentinelRef}
-                // Waiting to scroll into view, nothing is loading yet.
-                aria-hidden={!isLoadingMore}
-                className={cn(
-                  "transition-opacity duration-300",
-                  isLoadingMore ? "opacity-100" : "opacity-40"
-                )}
-              >
-                <SidebarLoader count={3} />
-              </div>
-            )}
-          </>
-        )}
-      </SidebarLayouts.Section>
-    </div>
+    </SidebarLayouts.Section>
   );
 }
 
 export default function AppSidebar() {
   const t = useTranslations("sidebar");
   const tCraftUpgrade = useTranslations("craft.upgrade");
-  const moveChatErrorMessage = t("appSidebar.moveChatError.message");
-  const { folded } = useSidebarState();
   const navigation = useNavigation();
   const { data: userPrefs } = useUserPreferences();
-  const { data: inboxFeed } = useSWR<{ notifications: Notification[] }>(
-    SWR_KEYS.notificationsPage(0, 50),
+  const { data: inboxFeed } = useSWR<InboxNotificationSummary>(
+    SWR_KEYS.inboxNotificationSummary,
     errorHandlingFetcher,
     { refreshInterval: 60_000 }
   );
@@ -242,14 +200,15 @@ export default function AppSidebar() {
     { refreshInterval: 15_000, shouldRetryOnError: false }
   );
   const ownWork = useOwnWork();
+  const pendingProposals = usePendingProposals().waiting.length;
   const inboxCount =
     userPrefs && inboxFeed
       ? inboxBadgeCount(
-          inboxFeed.notifications,
+          inboxFeed,
           userPrefs.notifications,
           new Date(),
           liveApprovals?.items.length ?? 0,
-          ownWork.plans.length + ownWork.drafts.length
+          ownWork.plans.length + ownWork.drafts.length + pendingProposals
         )
       : 0;
   const combinedSettingsData = useSettings();
@@ -259,17 +218,11 @@ export default function AppSidebar() {
   // Use SWR hooks for data fetching
   const {
     chatSessions,
-    refreshChatSessions,
     isLoading: isLoadingChatSessions,
     hasMore,
     isLoadingMore,
     loadMore,
   } = useChatSessions();
-  const {
-    projects,
-    refreshProjects,
-    isLoading: isLoadingProjects,
-  } = useProjects();
   const { isLoading: isLoadingAgents } = useAgents();
   const activeAgent = useActiveAgent();
   const {
@@ -280,18 +233,6 @@ export default function AppSidebar() {
 
   // Each section shows its own skeleton until its own data loads.
   const isLoadingAgentList = isLoadingAgents || isLoadingPinnedAgents;
-
-  // Still need some context for stateful operations
-  const { refreshCurrentProjectDetails, currentProjectId } =
-    useProjectsContext();
-
-  // State for custom agent modal
-  const [pendingMoveChatSession, setPendingMoveChatSession] =
-    useState<ChatSession | null>(null);
-  const [pendingMoveProjectId, setPendingMoveProjectId] = useState<
-    number | null
-  >(null);
-  const moveCustomAgentModal = useCreateModal();
 
   // Check if NortPole Craft is enabled via settings (backed by PostHog feature flag)
   // Only explicit true enables the feature; false or undefined = disabled
@@ -438,142 +379,12 @@ export default function AppSidebar() {
     ]
   );
 
-  // Perform the actual move
-  async function performChatMove(
-    targetProjectId: number,
-    chatSession: ChatSession
-  ) {
-    try {
-      await handleMoveOperation({
-        chatSession,
-        targetProjectId,
-        refreshChatSessions,
-        refreshCurrentProjectDetails,
-        fetchProjects: refreshProjects,
-        currentProjectId,
-      });
-      const projectRefreshPromise = currentProjectId
-        ? refreshCurrentProjectDetails()
-        : refreshProjects();
-      await Promise.all([refreshChatSessions(), projectRefreshPromise]);
-    } catch (error) {
-      console.error("Failed to move chat:", error);
-      throw error;
-    }
-  }
-
-  // Handle chat to project drag and drop
-  const handleChatProjectDragEnd = useCallback(
-    async (event: DragEndEvent) => {
-      const { active, over } = event;
-      if (!over) return;
-
-      const activeData = active.data.current;
-      const overData = over.data.current;
-
-      if (!activeData || !overData) {
-        return;
-      }
-
-      // Check if we're dragging a chat onto a project
-      if (
-        activeData?.type === DRAG_TYPES.CHAT &&
-        overData?.type === DRAG_TYPES.PROJECT
-      ) {
-        const chatSession = activeData.chatSession as ChatSession;
-        const targetProject = overData.project as Project;
-        const sourceProjectId = activeData.projectId;
-
-        // Don't do anything if dropping on the same project
-        if (sourceProjectId === targetProject.id) {
-          return;
-        }
-
-        if (shouldShowMoveModal(chatSession)) {
-          setPendingMoveChatSession(chatSession);
-          setPendingMoveProjectId(targetProject.id);
-          moveCustomAgentModal.toggle(true);
-          return;
-        }
-
-        try {
-          await performChatMove(targetProject.id, chatSession);
-        } catch (error) {
-          showErrorNotification(moveChatErrorMessage);
-        }
-      }
-
-      // Check if we're dragging a chat from a project to the Recents section
-      if (
-        activeData?.type === DRAG_TYPES.CHAT &&
-        overData?.type === DRAG_TYPES.RECENTS
-      ) {
-        const chatSession = activeData.chatSession as ChatSession;
-        const sourceProjectId = activeData.projectId;
-
-        // Only remove from project if it was in a project
-        if (sourceProjectId) {
-          try {
-            await removeChatSessionFromProject(chatSession.id);
-            const projectRefreshPromise = currentProjectId
-              ? refreshCurrentProjectDetails()
-              : refreshProjects();
-            await Promise.all([refreshChatSessions(), projectRefreshPromise]);
-          } catch (error) {
-            console.error("Failed to remove chat from project:", error);
-          }
-        }
-      }
-    },
-    [
-      currentProjectId,
-      refreshChatSessions,
-      refreshCurrentProjectDetails,
-      refreshProjects,
-      moveChatErrorMessage,
-      moveCustomAgentModal.toggle,
-    ]
-  );
-
   const { hasAdminAccess, adminCapabilities, user, isAdmin } = useUser();
   const activeSidebarTab = useAppPosition();
   const craftLink = navigation.linkTo(CRAFT_PATH, { scroll: false });
-  const createProjectModal = useCreateModal();
   const defaultAppMode =
     (user?.preferences?.default_app_mode?.toLowerCase() as "chat" | "search") ??
     "chat";
-
-  const moreAgentsButton = (
-    <div data-testid="AppSidebar/more-agents">
-      <SidebarTab
-        icon={
-          folded || visibleAgents.length === 0
-            ? SvgNortPoleOctagon
-            : SvgMoreHorizontal
-        }
-        {...navigation.linkTo("/app/agents", { scroll: false })}
-        selected={activeSidebarTab.isMoreAgents()}
-        variant={folded ? "sidebar-heavy" : "sidebar-light"}
-      >
-        {visibleAgents.length === 0
-          ? t("appSidebar.exploreAgents.label")
-          : t("appSidebar.moreAgents.label")}
-      </SidebarTab>
-    </div>
-  );
-
-  // Only the unfolded empty state uses this — folded, the sidebar shows
-  // `FoldedProjectsPopover` instead.
-  const newProjectButton = (
-    <SidebarTab
-      icon={SvgFolderPlus}
-      onClick={() => createProjectModal.toggle(true)}
-      selected={createProjectModal.isOpen}
-      variant="sidebar-light"
-    >
-      {t("appSidebar.newProject.label")}
-    </SidebarTab>
-  );
 
   const handleShowBuildIntro = useCallback(() => {
     setShowIntroAnimation(true);
@@ -581,40 +392,6 @@ export default function AppSidebar() {
 
   return (
     <>
-      <createProjectModal.Provider>
-        <CreateProjectModal />
-      </createProjectModal.Provider>
-
-      <moveCustomAgentModal.Provider>
-        <MoveCustomAgentChatModal
-          onCancel={() => {
-            moveCustomAgentModal.toggle(false);
-            setPendingMoveChatSession(null);
-            setPendingMoveProjectId(null);
-          }}
-          onConfirm={async (doNotShowAgain: boolean) => {
-            if (doNotShowAgain && typeof window !== "undefined") {
-              window.localStorage.setItem(
-                LOCAL_STORAGE_KEYS.HIDE_MOVE_CUSTOM_AGENT_MODAL,
-                "true"
-              );
-            }
-            const chat = pendingMoveChatSession;
-            const target = pendingMoveProjectId;
-            moveCustomAgentModal.toggle(false);
-            setPendingMoveChatSession(null);
-            setPendingMoveProjectId(null);
-            if (chat && target != null) {
-              try {
-                await performChatMove(target, chat);
-              } catch (error) {
-                showErrorNotification(moveChatErrorMessage);
-              }
-            }
-          }}
-        />
-      </moveCustomAgentModal.Provider>
-
       {/* Intro animation overlay */}
       <AnimatePresence>
         {showIntroAnimation && (
@@ -662,6 +439,13 @@ export default function AppSidebar() {
             </SidebarTab>
           </div>
           <SidebarTab
+            icon={SvgSearchMenu}
+            {...navigation.linkTo("/app/search", { scroll: false })}
+            selected={activeSidebarTab.isSearch()}
+          >
+            {t("appSidebar.searchChats.label")}
+          </SidebarTab>
+          <SidebarTab
             icon={SvgBell}
             {...navigation.linkTo("/app/inbox", { scroll: false })}
             selected={activeSidebarTab.isInbox()}
@@ -679,19 +463,26 @@ export default function AppSidebar() {
           >
             {t("appSidebar.inbox.label")}
           </SidebarTab>
-          <ChatSearchCommandMenu
-            trigger={(open, isOpen) => (
-              <SidebarTab icon={SvgSearchMenu} selected={isOpen} onClick={open}>
-                {t("appSidebar.searchChats.label")}
-              </SidebarTab>
-            )}
-          />
+          <SidebarTab
+            icon={SvgNortPoleOctagon}
+            {...navigation.linkTo("/app/agents", { scroll: false })}
+            selected={activeSidebarTab.isAgents()}
+          >
+            {t("appSidebar.agents.title")}
+          </SidebarTab>
           <SidebarTab
             icon={SvgStackLine}
             {...navigation.linkTo("/app/workflows", { scroll: false })}
             selected={activeSidebarTab.isWorkflows()}
           >
             {t("appSidebar.workflows.label")}
+          </SidebarTab>
+          <SidebarTab
+            icon={SvgFolder}
+            {...navigation.linkTo("/app/projects", { scroll: false })}
+            selected={activeSidebarTab.isProjects()}
+          >
+            {t("appSidebar.projects.title")}
           </SidebarTab>
           <SidebarTab
             icon={SvgFiles}
@@ -702,7 +493,7 @@ export default function AppSidebar() {
           </SidebarTab>
           <SidebarTab
             icon={SvgPlug}
-            {...navigation.linkTo("/app/sources/discover", { scroll: false })}
+            {...navigation.linkTo("/app/sources/integrations", { scroll: false })}
             selected={activeSidebarTab.isSources()}
           >
             {t("appSidebar.sources.label")}
@@ -752,82 +543,40 @@ export default function AppSidebar() {
               </Disabled>
             </div>
           )}
-          {/* Folded, the body's sections collapse into the header, in the
-              unfolded order: Agents, then Projects. */}
-          {folded && moreAgentsButton}
-          {folded && <FoldedProjectsPopover />}
         </BrandedSidebarHeader>
 
         <SidebarLayouts.Body scrollKey="app-sidebar">
           <>
-            {/* Agents */}
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleAgentDragEnd}
-            >
-              <SidebarLayouts.Section title={t("appSidebar.agents.title")}>
-                <SortableContext
-                  items={visibleAgentIds}
-                  strategy={verticalListSortingStrategy}
-                >
-                  {isLoadingAgentList ? (
-                    <SidebarLoader count={3} />
-                  ) : (
-                    visibleAgents.map((visibleAgent) => (
-                      <AgentButton key={visibleAgent.id} agent={visibleAgent} />
-                    ))
-                  )}
-                </SortableContext>
-                {!isLoadingAgentList && moreAgentsButton}
-              </SidebarLayouts.Section>
-            </DndContext>
-
-            {/* Wrap Projects and Recents in a shared DndContext for chat-to-project drag */}
-            <DndContext
-              sensors={sensors}
-              collisionDetection={pointerWithin}
-              modifiers={[
-                restrictToFirstScrollableAncestor,
-                restrictToVerticalAxis,
-              ]}
-              onDragEnd={handleChatProjectDragEnd}
-            >
-              {/* Projects */}
-              <SidebarLayouts.Section
-                title={t("appSidebar.projects.title")}
-                action={
-                  <OpalButton
-                    icon={SvgFolderPlus}
-                    prominence="tertiary"
-                    size="md"
-                    tooltip={t("appSidebar.newProject.tooltip")}
-                    aria-label={t("appSidebar.newProject.tooltip")}
-                    onClick={() => createProjectModal.toggle(true)}
-                  />
-                }
+            {(isLoadingAgentList || visibleAgents.length > 0) && (
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleAgentDragEnd}
               >
-                {isLoadingProjects ? (
-                  <SidebarLoader count={2} />
-                ) : (
-                  <>
-                    {projects.map((project) => (
-                      <ProjectFolderButton key={project.id} project={project} />
-                    ))}
-                    {projects.length === 0 && newProjectButton}
-                  </>
-                )}
-              </SidebarLayouts.Section>
+                <SidebarLayouts.Section>
+                  <SortableContext
+                    items={visibleAgentIds}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    {isLoadingAgentList ? (
+                      <SidebarLoader count={3} />
+                    ) : (
+                      visibleAgents.map((visibleAgent) => (
+                        <AgentButton key={visibleAgent.id} agent={visibleAgent} />
+                      ))
+                    )}
+                  </SortableContext>
+                </SidebarLayouts.Section>
+              </DndContext>
+            )}
 
-              {/* Recents */}
-              <RecentsSection
-                chatSessions={chatSessions}
-                isLoading={isLoadingChatSessions}
-                hasMore={hasMore}
-                isLoadingMore={isLoadingMore}
-                onLoadMore={loadMore}
-              />
-            </DndContext>
+            <RecentsSection
+              chatSessions={chatSessions}
+              isLoading={isLoadingChatSessions}
+              hasMore={hasMore}
+              isLoadingMore={isLoadingMore}
+              onLoadMore={loadMore}
+            />
           </>
         </SidebarLayouts.Body>
 

@@ -18,7 +18,6 @@ import { useTierAtLeast } from "@/lib/tiers/hooks";
 import { Tier } from "@/lib/tiers/types";
 import { IsPublicGroupSelector } from "@/components/IsPublicGroupSelector";
 import { useEffect, useState } from "react";
-import { useUser } from "@/providers/UserProvider";
 import { usePermissionAuthority } from "@/lib/permissions/hooks";
 import { ConnectorMultiSelect } from "@/components/ConnectorMultiSelect";
 import { NonSelectableConnectors } from "@/components/NonSelectableConnectors";
@@ -40,7 +39,6 @@ export const DocumentSetCreationForm = ({
   const businessTier = useTierAtLeast(Tier.BUSINESS);
   const isUpdate = existingDocumentSet !== undefined;
   const [localCcPairs] = useState(ccPairs);
-  const { } = useUser();
   const { isGlobalHolder, isScopedManager } = usePermissionAuthority(
     Permission.MANAGE_DOCUMENT_SETS
   );

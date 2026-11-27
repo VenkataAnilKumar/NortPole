@@ -290,9 +290,13 @@ class IntegrationProposalList(BaseModel):
 def list_proposals(
     user: User = Depends(require_permission(Permission.BASIC_ACCESS)),
     db: Session = Depends(get_session),
+    pending_only: bool = False,
 ) -> IntegrationProposalList:
     """The changes an assistant proposed for this person, waiting ones first."""
-    return IntegrationProposalList(items=[IntegrationProposalView(**proposals.view(r)) for r in proposals.list_mine(db, user)])
+    return IntegrationProposalList(items=[
+        IntegrationProposalView(**proposals.view(row))
+        for row in proposals.list_mine(db, user, pending_only=pending_only)
+    ])
 
 
 @router.post("/integration-proposals/{proposal_id}/approve")

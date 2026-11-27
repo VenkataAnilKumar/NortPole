@@ -1,7 +1,8 @@
 from datetime import datetime, timezone
+from enum import StrEnum
 from uuid import UUID
 
-from sqlalchemy import JSON, cast, select, update
+from sqlalchemy import JSON, and_, cast, or_, select, update
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
@@ -12,6 +13,61 @@ from nortpole.auth.permissions import has_global_permission
 from nortpole.configs.constants import NotificationType
 from nortpole.db.enums import NotificationSeverity, Permission
 from nortpole.db.models import Notification, User
+
+
+class InboxTab(StrEnum):
+    APPROVE = "approve"
+    REVIEW = "review"
+    UPDATES = "updates"
+    DISMISSED = "dismissed"
+    HISTORY = "history"
+
+
+def _inbox_filters() -> dict[InboxTab, ColumnElement[bool]]:
+    # Craft's live approvals are listed separately. Its notification records
+    # the request for later reference, including after the request expires.
+    craft_event = and_(
+        Notification.notif_type == NotificationType.APPROVAL_REQUESTED,
+        Notification.additional_data["approval_id"].astext.is_not(None),
+    )
+    approve = and_(
+        Notification.notif_type.in_(
+            (
+                NotificationType.APPROVAL_REQUESTED,
+                NotificationType.SCHEDULED_TASK_AWAITING_APPROVAL,
+                NotificationType.SCHEDULED_TASK_PRE_APPROVED_ACTION,
+            )
+        ),
+        ~craft_event,
+    )
+    review = Notification.notif_type.in_(
+        (
+            NotificationType.WORKFLOW_RUN_NEEDS_REVIEW,
+            NotificationType.DOCUMENT_REVIEW_NEEDS_REVIEW,
+        )
+    )
+    # The owner task already represents an actionable plan or draft. These
+    # notifications are historical receipts, including after the task changes.
+    history = or_(
+        Notification.notif_type.in_(
+            (
+                NotificationType.WORKFLOW_PLAN_READY,
+                NotificationType.WORKFLOW_DECISION_RECORDED,
+            )
+        ),
+        and_(
+            Notification.notif_type == NotificationType.WORKFLOW_RUN_COMPLETE,
+            Notification.additional_data["task_id"].astext.is_not(None),
+        ),
+    )
+    open_item = Notification.dismissed.is_(False)
+    return {
+        InboxTab.APPROVE: and_(open_item, approve),
+        InboxTab.REVIEW: and_(open_item, review),
+        InboxTab.UPDATES: and_(open_item, ~approve, ~review, ~history),
+        InboxTab.DISMISSED: and_(Notification.dismissed.is_(True), ~history),
+        InboxTab.HISTORY: history,
+    }
 
 
 def _notification_additional_data_key() -> ColumnElement[dict]:
@@ -30,6 +86,7 @@ def _notification_filters(
     notif_type: NotificationType | None = None,
     include_dismissed: bool = True,
     min_severity: NotificationSeverity | None = None,
+    inbox_tab: InboxTab | None = None,
 ) -> list[ColumnElement[bool]]:
     filters = [
         Notification.user_id == user.id if user else Notification.user_id.is_(None)
@@ -43,7 +100,17 @@ def _notification_filters(
         filters.append(
             Notification.severity.in_(ordered[ordered.index(min_severity) :])
         )
+    if inbox_tab is not None:
+        filters.append(_inbox_filters()[inbox_tab])
     return filters
+
+
+def _general_feed_filter(
+    inbox_tab: InboxTab | None, notif_type: NotificationType | None
+) -> list[ColumnElement[bool]]:
+    if inbox_tab is None and notif_type is None:
+        return [Notification.notif_type != NotificationType.WORKFLOW_DECISION_RECORDED]
+    return []
 
 
 def create_notification(
@@ -166,6 +233,7 @@ def get_notifications(
     limit: int | None = None,
     offset: int = 0,
     min_severity: NotificationSeverity | None = None,
+    inbox_tab: InboxTab | None = None,
 ) -> list[Notification]:
     query = select(Notification).where(
         *_notification_filters(
@@ -173,14 +241,13 @@ def get_notifications(
             notif_type=notif_type,
             include_dismissed=include_dismissed,
             min_severity=min_severity,
-        )
+            inbox_tab=inbox_tab,
+        ),
+        *_general_feed_filter(inbox_tab, notif_type),
     )
-    # Sort: undismissed first, then by date (newest first)
-    query = query.order_by(
-        Notification.dismissed.asc(),
-        Notification.first_shown.desc(),
-        Notification.id.desc(),
-    )
+    if inbox_tab != InboxTab.HISTORY:
+        query = query.order_by(Notification.dismissed.asc())
+    query = query.order_by(Notification.first_shown.desc(), Notification.id.desc())
     if limit is not None:
         query = query.limit(limit).offset(offset)
     return list(db_session.execute(query).scalars().all())
@@ -191,6 +258,7 @@ def count_notifications(
     db_session: Session,
     notif_type: NotificationType | None = None,
     min_severity: NotificationSeverity | None = None,
+    inbox_tab: InboxTab | None = None,
 ) -> tuple[int, int]:
     query = select(
         func.count(Notification.id),
@@ -200,10 +268,23 @@ def count_notifications(
             user=user,
             notif_type=notif_type,
             min_severity=min_severity,
-        )
+            inbox_tab=inbox_tab,
+        ),
+        *_general_feed_filter(inbox_tab, notif_type),
     )
     total_items, undismissed_count = db_session.execute(query).one()
     return total_items or 0, undismissed_count or 0
+
+
+def count_inbox_notifications(user: User, db_session: Session) -> dict[InboxTab, int]:
+    counts = select(
+        *(
+            func.count().filter(condition).label(tab.value)
+            for tab, condition in _inbox_filters().items()
+        )
+    ).where(*_notification_filters(user))
+    row = db_session.execute(counts).one()
+    return {tab: row._mapping[tab.value] for tab in InboxTab}
 
 
 def dismiss_all_notifications(

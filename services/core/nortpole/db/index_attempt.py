@@ -764,6 +764,7 @@ def get_latest_index_attempts(
     only_finished: bool = False,
     ignore_targeted_reindex: bool = True,
     ignore_backfill: bool = True,
+    cc_pair_ids: list[int] | None = None,
 ) -> Sequence[IndexAttempt]:
     ids_stmt = select(
         IndexAttempt.connector_credential_pair_id,
@@ -772,6 +773,8 @@ def get_latest_index_attempts(
 
     status = IndexModelStatus.FUTURE if secondary_index else IndexModelStatus.PRESENT
     ids_stmt = ids_stmt.where(SearchSettings.status == status)
+    if cc_pair_ids is not None:
+        ids_stmt = ids_stmt.where(IndexAttempt.connector_credential_pair_id.in_(cc_pair_ids))
     if ignore_targeted_reindex:
         ids_stmt = ids_stmt.where(IndexAttempt.targeted_reindex_job_id.is_(None))
     if ignore_backfill:

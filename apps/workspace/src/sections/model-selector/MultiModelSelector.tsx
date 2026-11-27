@@ -42,6 +42,9 @@ export interface MultiModelSelectorProps {
   /** See ModelSelectorProps. Powers the per-model detail pane. */
   temperatureManager?: TemperatureManager;
   reasoningManager?: ReasoningManager;
+  compactSingle?: boolean;
+  requiresImageInput?: boolean;
+  modelBlockedReason?: (option: LLMOption) => string | undefined;
 }
 
 /** Floating UI virtual element behind Radix's virtualRef; `contextElement` gets the scroll, resize and layout observers. */
@@ -57,6 +60,9 @@ export default function MultiModelSelector({
   onReplace,
   temperatureManager,
   reasoningManager,
+  compactSingle = false,
+  requiresImageInput,
+  modelBlockedReason,
 }: MultiModelSelectorProps) {
   const t = useTranslations("chat.modelSelector");
   const [open, setOpen] = useState(false);
@@ -109,8 +115,13 @@ export default function MultiModelSelector({
   );
 
   const isMultiModel = selectedModels.length > 1;
+  const hasAnotherModel = compactSingle && selectedModels.length > 0 && buildLlmOptions(llmProviders).some(
+    (option) => !option.isRouter &&
+      !selectedModels.some((model) => llmOptionKey(model) === llmOptionKey(option)) &&
+      (!requiresImageInput || option.supportsImageInput) && !modelBlockedReason?.(option)
+  );
   const canAdd: boolean =
-    multiModelAllowed && selectedModels.length < MAX_MODELS;
+    multiModelAllowed && selectedModels.length < MAX_MODELS && (!compactSingle || hasAnotherModel);
 
   // Container-level tooltip carries only the disabled reason. The add button
   // labels itself, so an enabled row shows no tooltip outside the button.
@@ -137,6 +148,7 @@ export default function MultiModelSelector({
 
   // The switch list cannot pick a model another pill already shows.
   const isDisabled = (option: LLMOption) => {
+    if (compactSingle && (option.isAuto || option.isRouter)) return true;
     const key = llmOptionKey(option);
     const selected: boolean = selectedKeys.has(key);
     if (replacingIndex !== null) return selected && key !== replacingKey;
@@ -159,7 +171,7 @@ export default function MultiModelSelector({
 
   const handleSelect = (option: LLMOption) => {
     // The content still takes clicks while it fades out after a pick.
-    if (!open) return;
+    if (!open || isDisabled(option) || modelBlockedReason?.(option)) return;
     const key = llmOptionKey(option);
 
     if (replacingIndex !== null) {
@@ -229,6 +241,8 @@ export default function MultiModelSelector({
     event.preventDefault();
   };
 
+  if (compactSingle && !isMultiModel && !canAdd) return null;
+
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
       {/* Disabled state blocks pointer events on children only, so the
@@ -257,7 +271,7 @@ export default function MultiModelSelector({
             />
           )}
 
-          {selectedModels.length > 0 && (
+          {selectedModels.length > 0 && (!compactSingle || isMultiModel) && (
             <>
               {canAdd && (
                 <Divider
@@ -325,6 +339,8 @@ export default function MultiModelSelector({
             onSelect={handleSelect}
             isSelected={isSelected}
             isDisabled={isDisabled}
+            requiresImageInput={requiresImageInput}
+            modelBlockedReason={modelBlockedReason}
             modelDetail={modelDetail}
           />
         </Popover.Content>

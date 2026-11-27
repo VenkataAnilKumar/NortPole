@@ -1,5 +1,8 @@
 "use client";
 
+import { ResponsiveLayout } from "@opal/layouts";
+import { ActionButton, NativeInput } from "@opal/components";
+import { useTranslations as useWorkspaceTranslations } from "next-intl";
 import { useState } from "react";
 import useSWR from "swr";
 import { errorHandlingFetcher } from "@/lib/fetcher";
@@ -24,7 +27,7 @@ const input = "min-h-11 w-full rounded-xl border border-border-02 bg-background-
 const primary = "min-h-11 rounded-xl bg-text-05 px-5 text-sm font-semibold text-background-neutral-00 disabled:opacity-50";
 const secondary = "min-h-11 rounded-xl border border-border-02 px-4 text-sm font-semibold text-text-05 disabled:opacity-50";
 
-async function call(url: string, method: string, body?: unknown): Promise<void> {
+async function call(url: string, method: string, body?: { name?: string; user_ids: string[] }): Promise<void> {
   const res = await fetch(url, {
     method,
     headers: body ? { "Content-Type": "application/json" } : undefined,
@@ -52,13 +55,14 @@ function MemberPicker({
   onChange: (next: Set<string>) => void;
   idPrefix: string;
 }) {
-  if (users.length === 0) return <p className="text-sm text-text-03">No users yet.</p>;
+  const workspaceText = useWorkspaceTranslations("workspaceUi");
+  if (users.length === 0) return <p className="text-sm text-text-03">{workspaceText("noUsersYet")}</p>;
   return (
     <ul className="max-h-56 overflow-y-auto rounded-xl border border-border-01">
       {users.map((u) => (
         <li key={u.id} className="border-t border-border-01 first:border-t-0">
           <label htmlFor={`${idPrefix}-${u.id}`} className="flex min-h-11 cursor-pointer items-center gap-3 px-3 text-sm text-text-05">
-            <input
+            <NativeInput
               id={`${idPrefix}-${u.id}`}
               type="checkbox"
               className="h-4 w-4"
@@ -78,7 +82,8 @@ function MemberPicker({
   );
 }
 
-function GroupCard({ group, users, onDone }: { group: Group; users: Member[]; onDone: () => Promise<unknown> }) {
+function GroupCard({ group, users, onDone }: { group: Group; users: Member[]; onDone: () => Promise<void> }) {
+  const workspaceText = useWorkspaceTranslations("workspaceUi");
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(group.name);
   const [selected, setSelected] = useState(new Set(group.members.map((m) => m.id)));
@@ -102,7 +107,7 @@ function GroupCard({ group, users, onDone }: { group: Group; users: Member[]; on
 
   return (
     <li className={card} data-testid={`group-${group.id}`}>
-      <div className="flex flex-wrap items-start justify-between gap-3">
+      <ResponsiveLayout display="flex" className="flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <h2 className="truncate text-base font-semibold text-text-05">{group.name}</h2>
           <p className="text-sm text-text-03">
@@ -116,51 +121,42 @@ function GroupCard({ group, users, onDone }: { group: Group; users: Member[]; on
           </p>
         </div>
         {group.is_default ? (
-          <span className="rounded-full border border-border-01 px-2.5 py-0.5 text-xs font-medium text-text-03">Built-in role group</span>
+          <span className="rounded-full border border-border-01 px-2.5 py-0.5 text-xs font-medium text-text-03">{workspaceText("builtInRoleGroup")}</span>
         ) : (
           !editing && (
-            <button type="button" className={secondary} onClick={() => setEditing(true)}>
-              Edit
-            </button>
+            <ActionButton type="button" className={secondary} onClick={() => setEditing(true)}>{workspaceText("edit")}</ActionButton>
           )
         )}
-      </div>
+      </ResponsiveLayout>
 
       {editing && (
-        <div className="mt-4 flex flex-col gap-3">
-          <label className="flex flex-col gap-1 text-sm font-medium text-text-05">
-            Name
-            <input className={input} value={name} disabled={readsSources} onChange={(e) => setName(e.target.value)} maxLength={80} />
+        <ResponsiveLayout display="flex" className="mt-4 flex-col gap-3">
+          <label className="flex flex-col gap-1 text-sm font-medium text-text-05">{workspaceText("name")}<NativeInput className={input} value={name} disabled={readsSources} onChange={(e) => setName(e.target.value)} maxLength={80} />
           </label>
           {readsSources && (
-            <p className="text-xs text-text-03">
-              This group can read a source, so it cannot be renamed or deleted. Remove it from the source first.
-            </p>
+            <p className="text-xs text-text-03">{workspaceText("thisGroupCanReadASourceSoItCannot")}</p>
           )}
-          <div className="text-sm font-medium text-text-05">Members</div>
+          <div className="text-sm font-medium text-text-05">{workspaceText("members")}</div>
           <MemberPicker users={users} selected={selected} onChange={setSelected} idPrefix={`g${group.id}`} />
           {error && <p role="alert" className="text-sm text-status-text-error-05">{error}</p>}
-          <div className="flex flex-wrap gap-2">
-            <button
+          <ResponsiveLayout display="flex" className="flex-wrap gap-2">
+            <ActionButton
               type="button"
               className={primary}
               disabled={busy || !name.trim()}
               onClick={() =>
-                run(() =>
-                  call(`${URL}/${group.id}`, "PATCH", {
-                    ...(readsSources ? {} : { name }),
-                    user_ids: [...selected],
-                  })
-                )
+                run(() => {
+                  const body: { name?: string; user_ids: string[] } = { user_ids: [...selected] };
+                  if (!readsSources) body.name = name;
+                  return call(`${URL}/${group.id}`, "PATCH", body);
+                })
               }
             >
               {busy ? "Saving…" : "Save"}
-            </button>
-            <button type="button" className={secondary} disabled={busy} onClick={() => setEditing(false)}>
-              Cancel
-            </button>
+            </ActionButton>
+            <ActionButton type="button" className={secondary} disabled={busy} onClick={() => setEditing(false)}>{workspaceText("cancel")}</ActionButton>
             {!readsSources && (
-              <button
+              <ActionButton
                 type="button"
                 className={`${secondary} ml-auto`}
                 disabled={busy}
@@ -169,12 +165,10 @@ function GroupCard({ group, users, onDone }: { group: Group; users: Member[]; on
                     void run(() => call(`${URL}/${group.id}`, "DELETE"));
                   }
                 }}
-              >
-                Delete group
-              </button>
+              >{workspaceText("deleteGroup")}</ActionButton>
             )}
-          </div>
-        </div>
+          </ResponsiveLayout>
+        </ResponsiveLayout>
       )}
     </li>
   );
@@ -186,6 +180,7 @@ function GroupCard({ group, users, onDone }: { group: Group; users: Member[]; on
  * in them. Removing someone takes effect on their next search.
  */
 export default function AccessGroupsPage() {
+  const workspaceText = useWorkspaceTranslations("workspaceUi");
   const { data: groups, error, isLoading, mutate } = useSWR<Group[]>(URL, errorHandlingFetcher);
   const { data: users } = useSWR<Member[]>(USERS_URL, errorHandlingFetcher);
   const [name, setName] = useState("");
@@ -210,46 +205,41 @@ export default function AccessGroupsPage() {
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 p-8" data-testid="access-groups-page">
+    <ResponsiveLayout display="flex" className="mx-auto w-full max-w-4xl flex-col gap-6 p-8" data-testid="access-groups-page">
       <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold text-text-05">Access groups</h1>
-        <p className="text-sm text-text-03">
-          Named sets of people. Add a group to a source's settings to let its members read that source. Removing
-          someone from a group takes effect on their next search.
-        </p>
+        <h1 className="text-2xl font-semibold text-text-05">{workspaceText("accessGroups")}</h1>
+        <p className="text-sm text-text-03">{workspaceText("namedSetsOfPeopleAddAGroupToA")}</p>
       </header>
 
       <section className={card} aria-labelledby="new-group">
-        <h2 id="new-group" className="mb-3 text-base font-semibold text-text-05">New group</h2>
-        <div className="flex flex-col gap-3">
-          <label className="flex flex-col gap-1 text-sm font-medium text-text-05">
-            Name
-            <input className={input} value={name} onChange={(e) => setName(e.target.value)} maxLength={80} placeholder="For example, Research" />
+        <h2 id="new-group" className="mb-3 text-base font-semibold text-text-05">{workspaceText("newGroup")}</h2>
+        <ResponsiveLayout display="flex" className="flex-col gap-3">
+          <label className="flex flex-col gap-1 text-sm font-medium text-text-05">{workspaceText("name")}<NativeInput className={input} value={name} onChange={(e) => setName(e.target.value)} maxLength={80} placeholder={workspaceText("forExampleResearch")} />
           </label>
-          <div className="text-sm font-medium text-text-05">Members</div>
+          <div className="text-sm font-medium text-text-05">{workspaceText("members")}</div>
           <MemberPicker users={people} selected={selected} onChange={setSelected} idPrefix="new" />
           {createError && <p role="alert" className="text-sm text-status-text-error-05">{createError}</p>}
           <div>
-            <button type="button" className={primary} disabled={busy || !name.trim()} onClick={create}>
+            <ActionButton type="button" className={primary} disabled={busy || !name.trim()} onClick={create}>
               {busy ? "Creating…" : "Create group"}
-            </button>
+            </ActionButton>
           </div>
-        </div>
+        </ResponsiveLayout>
       </section>
 
       {isLoading ? (
-        <p className="text-sm text-text-03">Loading groups…</p>
+        <p className="text-sm text-text-03">{workspaceText("loadingGroups")}</p>
       ) : error ? (
         <div className={card} role="alert">
-          <p className="text-sm text-text-05">Groups could not be loaded. Try again in a moment.</p>
+          <p className="text-sm text-text-05">{workspaceText("groupsCouldNotBeLoadedTryAgainInA")}</p>
         </div>
       ) : (
         <ul className="flex flex-col gap-3">
           {(groups ?? []).map((g) => (
-            <GroupCard key={`${g.id}-${g.name}-${g.members.length}`} group={g} users={people} onDone={() => mutate()} />
+            <GroupCard key={`${g.id}-${g.name}-${g.members.length}`} group={g} users={people} onDone={async () => { await mutate(); }} />
           ))}
         </ul>
       )}
-    </div>
+    </ResponsiveLayout>
   );
 }

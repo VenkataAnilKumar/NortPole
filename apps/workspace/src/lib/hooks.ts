@@ -214,6 +214,8 @@ export interface LlmDescriptor {
 
 export interface LlmManager {
   currentLlm: LlmDescriptor;
+  chatModelMode?: "auto" | "manual";
+  resetChatModel?: () => void;
   updateCurrentLlm: (newOverride: LlmDescriptor) => void;
   temperature: number;
   updateTemperature: (temperature: number) => void;
@@ -431,7 +433,8 @@ export function getValidLlmDescriptorForProviders(
 
 export function useLlmManager(
   currentChatSession?: ChatSession,
-  activeAgent?: MinimalAgent
+  activeAgent?: MinimalAgent,
+  chatModelSelection = false
 ): LlmManager {
   const { user } = useUser();
 
@@ -462,6 +465,7 @@ export function useLlmManager(
 
   const [userHasManuallyOverriddenLLM, setUserHasManuallyOverriddenLLM] =
     useState(false);
+  const [explicitAuto, setExplicitAuto] = useState(false);
   const [chatSession, setChatSession] = useState<ChatSession | null>(null);
   // Manual override value — only used when userHasManuallyOverriddenLLM is true
   const [manualLlm, setManualLlm] = useState<LlmDescriptor>({
@@ -480,8 +484,8 @@ export function useLlmManager(
       prevAgentIdRef.current !== undefined &&
       activeAgent.id !== prevAgentIdRef.current
     ) {
-      // User switched to a different assistant - reset manual override
       setUserHasManuallyOverriddenLLM(false);
+      setExplicitAuto(false);
     }
     prevAgentIdRef.current = activeAgent?.id;
   }, [activeAgent?.id]);
@@ -494,6 +498,7 @@ export function useLlmManager(
   useEffect(() => {
     const nextId = currentChatSession?.id;
     if (
+      !chatModelSelection &&
       nextId !== undefined &&
       prevDefinedSessionIdRef.current !== undefined &&
       nextId !== prevDefinedSessionIdRef.current
@@ -503,7 +508,36 @@ export function useLlmManager(
     if (nextId !== undefined) {
       prevDefinedSessionIdRef.current = nextId;
     }
-  }, [currentChatSession?.id]);
+  }, [chatModelSelection, currentChatSession?.id]);
+
+  const visibleSessionId = currentChatSession?.id;
+  const previousVisibleSessionId = useRef(visibleSessionId);
+  useEffect(() => {
+    if (
+      chatModelSelection &&
+      previousVisibleSessionId.current != null &&
+      previousVisibleSessionId.current !== visibleSessionId
+    ) {
+      setUserHasManuallyOverriddenLLM(false);
+      setExplicitAuto(false);
+    }
+    previousVisibleSessionId.current = visibleSessionId;
+  }, [chatModelSelection, visibleSessionId]);
+
+  const savedModel = currentChatSession?.current_alternate_model;
+  const savedChatModel = savedModel && !explicitAuto
+    ? parseLlmDescriptor(savedModel)
+    : null;
+  const requiredChatModelId =
+    chatModelSelection && activeAgent?.id !== DEFAULT_AGENT_ID
+      ? activeAgent?.default_model_configuration_id
+      : null;
+  const chatModelMode = chatModelSelection
+    ? requiredChatModelId == null &&
+      (userHasManuallyOverriddenLLM || savedChatModel?.modelConfigurationId != null)
+      ? "manual"
+      : "auto"
+    : undefined;
 
   function getValidLlmDescriptor(
     modelName: string | null | undefined
@@ -523,13 +557,19 @@ export function useLlmManager(
       return manualLlm;
     }
 
-    if (userHasManuallyOverriddenLLM) {
+    if (userHasManuallyOverriddenLLM && requiredChatModelId == null) {
       // Manual override wins over session's `current_alternate_model`.
       // Cleared on cross-session navigation by the effect above.
       return manualLlm;
     }
 
-    if (currentChatSession?.current_alternate_model) {
+    if (chatModelMode === "manual" && savedChatModel?.modelConfigurationId != null) {
+      // Keep the saved id even when it has become unavailable. The backend
+      // rejects stale manual choices instead of silently using a different model.
+      return savedChatModel;
+    }
+
+    if (!chatModelSelection && currentChatSession?.current_alternate_model) {
       return getValidLlmDescriptorForProviders(
         currentChatSession.current_alternate_model,
         llmProviders,
@@ -565,6 +605,11 @@ export function useLlmManager(
     llmProviders,
     defaultText,
     currentChatSession?.current_alternate_model,
+    chatModelSelection,
+    savedModel,
+    explicitAuto,
+    chatModelMode,
+    requiredChatModelId,
     userHasManuallyOverriddenLLM,
     manualLlm.name,
     manualLlm.provider,
@@ -598,6 +643,7 @@ export function useLlmManager(
 
   // Manually set the LLM
   const updateCurrentLlm = (newLlm: LlmDescriptor) => {
+    setExplicitAuto(false);
     setManualLlm(newLlm);
     setUserHasManuallyOverriddenLLM(true);
   };
@@ -845,6 +891,13 @@ export function useLlmManager(
 
   return {
     updateModelOverrideBasedOnChatSession,
+    chatModelMode,
+    resetChatModel: chatModelSelection
+      ? () => {
+          setUserHasManuallyOverriddenLLM(false);
+          setExplicitAuto(true);
+        }
+      : undefined,
     currentLlm,
     updateCurrentLlm,
     temperature,

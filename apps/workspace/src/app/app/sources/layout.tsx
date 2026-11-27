@@ -1,18 +1,20 @@
+import { ResponsiveLayout } from "@opal/layouts";
+import { useTranslations as useWorkspaceTranslations } from "next-intl";
 import SectionTabs from "@/sections/sidebar/SectionTabs";
 
 const TABS = [
-  { href: "/app/sources/connectors", label: "Connectors" },
-  { href: "/app/sources/plugins", label: "Plugins" },
-  { href: "/app/sources/skills", label: "Skills" },
+  { href: "/app/sources/integrations", label: "Integrations" },
+  { href: "/app/sources/tools", label: "Tools" },
+  { href: "/app/sources/skills", label: "Skills", matchDescendants: true },
   { href: "/app/sources/discover", label: "Discover" },
 ];
 
-/** Sources: the connected systems, the tools and the know-how this workspace offers, then Discover for finding and adding more. */
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const workspaceText = useWorkspaceTranslations("workspaceUi");
   return (
-    <div className="flex w-full flex-col">
-      <SectionTabs label="Sources" tabs={TABS} />
+    <ResponsiveLayout display="flex" className="w-full flex-col">
+      <SectionTabs label={workspaceText("sources")} tabs={TABS} />
       {children}
-    </div>
+    </ResponsiveLayout>
   );
 }
