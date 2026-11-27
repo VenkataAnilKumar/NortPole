@@ -133,8 +133,14 @@ def test_the_policy_page_shows_every_item_with_counts_and_changes_are_audited(wo
         rows = {r.id: r for r in changed.items}
         assert rows["wikipedia"].effective == "blocked" and rows["airtable"].effective == "allowed" and rows["airtable"].category_override == "allowed"
     with get_session_with_current_tenant() as s:
-        found = [r for r in s.scalars(select(NortPoleAuditEvent).where(NortPoleAuditEvent.action == "integration.policy_change")).all() if r.actor_email == f"api-admin-{TAG}@example.com"]
-        assert found and found[-1].details["integrations"]["wikipedia"] == [None, "blocked"]
+        event = s.scalars(
+            select(NortPoleAuditEvent).where(
+                NortPoleAuditEvent.action == "integration.policy_change",
+                NortPoleAuditEvent.actor_user_id == str(world["admin"]),
+            )
+        ).one()
+        assert event.details is not None
+        assert event.details["integrations"]["wikipedia"] == [None, "blocked"]
 
 
 def test_letting_people_use_a_write_action_without_asking_needs_a_confirmation(world, tmp_path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
@@ -147,8 +153,14 @@ def test_letting_people_use_a_write_action_without_asking_needs_a_confirmation(w
         done = api.put_policy(api.IntegrationPolicyBody(config=open_it, acknowledge_writes=True), user=admin, db=s)
         assert {r.id: r for r in done.items}["example-writer"].has_writes
     with get_session_with_current_tenant() as s:
-        rows = [r for r in s.scalars(select(NortPoleAuditEvent).where(NortPoleAuditEvent.action == "integration.policy_change")).all() if "example-writer" in json.dumps(r.details or {})]
-        assert rows and rows[-1].details["opens_writes"] == ["example-writer"]
+        event = s.scalars(
+            select(NortPoleAuditEvent).where(
+                NortPoleAuditEvent.action == "integration.policy_change",
+                NortPoleAuditEvent.actor_user_id == str(world["admin"]),
+            )
+        ).one()
+        assert event.details is not None
+        assert event.details["opens_writes"] == ["example-writer"]
         # tightening again needs no confirmation
         api.put_policy(api.IntegrationPolicyBody(config=policy.PolicyConfig()), user=s.get(User, world["admin"]), db=s)
 
